@@ -35,9 +35,11 @@
 ;;;
 ;;; Instruction MULTIPLE-VALUE-CALL-INSTRUCTION.
 ;;;
-;;; This instruction has a single input which is a lexical location
-;;; holding a function to call.  The values returned by the function
-;;; call are stored in the global values location.
+;;; This instruction has two inputs. The first input is a lexical
+;;; location holding a function to call.  The second input holds all
+;;; the values to be passed as arguments to the function being called.
+;;; The values returned by the function call are stored in the global
+;;; values location.
 
 (defclass multiple-value-call-instruction
     (instruction one-successor-mixin side-effect-mixin)
