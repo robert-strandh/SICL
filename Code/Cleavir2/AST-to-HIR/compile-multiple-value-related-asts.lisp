@@ -123,3 +123,48 @@
                       (nils (nil-fill nils (first successors)))
                       (t (first successors)))
                 context)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MULTIPLE-VALUE-CALL-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:multiple-value-call-ast) context)
+  (with-accessors ((results results)
+                   (successors successors))
+      context
+    (assert-context ast context nil 1)
+    (let* ((function-temp (cleavir-ir:new-temporary))
+	   (values-temp (cleavir-ir:new-temporary))
+           (successor
+             (make-instance 'cleavir-ir:multiple-value-call-instruction
+               :inputs (list function-temp values-temp)
+               :outputs '()
+               :successors
+               (if (eq results :values)
+                   successors
+                   (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                           :inputs '()
+                           :outputs results
+                           :successor (first successors)))))))
+      (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
+            do (setf successor
+                     (compile-ast
+                      client
+                      form-ast
+                      (clone-context
+                       context
+                       :results :values
+                       :successor
+                       (make-instance 'cleavir-ir:append-values-instruction
+			 :output values-temp
+                         :successor successor)))))
+      (compile-ast
+       client
+       (cleavir-ast:function-form-ast ast)
+       (clone-context
+        context
+        :result function-temp
+        :successor
+	(make-instance 'cleavir-ir:initialize-values-instruction
+	  :output values-temp
+	  :successor successor))))))
