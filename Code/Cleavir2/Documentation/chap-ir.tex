@@ -1092,6 +1092,35 @@ value of a function (unknown values).
 
 The name of this instruction is sometimes abbreviated ``F->M''.
 
+\subsection{Instruction \texttt{save-values-instruction}}
+\label{hir-instruction-save-values}
+
+\begin{tabular}{|l|l|}
+  \hline
+  Number of inputs & 0\\
+  \hline
+  Number of outputs & 1\\
+  \hline
+  Number of predecessors & any\\
+  \hline
+  Number of successors & 1\\
+  \hline
+\end{tabular}
+
+This instruction takes the values in the global values location and
+saves them to the dynamic environment by creating an entry on top of
+the existing dynamic environment.
+
+The single lexical output location holds the value of the augmented
+dynamic environment.
+
+This instruction is used for \texttt{multiple-value-prog1} to save the
+values returned by the first sub-form of the
+\texttt{multiple-value-prog1} form while the remaining body forms are
+evaluated.  Once all the body forms have been evaluated, the values
+are restored to the global values location by the
+\texttt{restore-values-instruction}.
+
 \subsection{Instruction \texttt{multiple-value-call-instruction}}
 \label{hir-instruction-multiple-value-call}
 
