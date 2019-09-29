@@ -1122,7 +1122,7 @@ are restored to the global values location by the
 \texttt{restore-values-instruction}.
 
 \subsection{Instruction \texttt{restore-values-instruction}}
-\label{hir-instruction-save-values}
+\label{hir-instruction-restore-values}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -1140,7 +1140,7 @@ This instruction takes the values stored in the top entry of the
 dynamic environment, and stores them in the global values location.
 
 \subsection{Instruction \texttt{initialize-values-instruction}}
-\label{hir-instruction-save-values}
+\label{hir-instruction-initialize-values}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -1158,6 +1158,27 @@ This instruction is used for \texttt{multiple-value-call}.  Its single
 output is a location holding an arbitrary number of values to pass as
 arguments to \texttt{multiple-value-call}.  This instruction
 initializes that location to have no values in it.
+
+\subsection{Instruction \texttt{append-values-instruction}}
+\label{hir-instruction-append-values}
+
+\begin{tabular}{|l|l|}
+  \hline
+  Number of inputs & 0\\
+  \hline
+  Number of outputs & 1\\
+  \hline
+  Number of predecessors & any\\
+  \hline
+  Number of successors & 1\\
+  \hline
+\end{tabular}
+
+This instruction is used for \texttt{multiple-value-call}.  Its single
+output is a location holding an arbitrary number of values to pass as
+arguments to \texttt{multiple-value-call}.  This instruction
+appends the values in the global values location to the location
+indicated by the output.
 
 \subsection{Instruction \texttt{multiple-value-call-instruction}}
 \label{hir-instruction-multiple-value-call}
