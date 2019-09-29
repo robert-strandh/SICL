@@ -1303,17 +1303,27 @@ Number of outputs & 0\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 1\\
+Number of successors & 0\\
 \hline
 \end{tabular}
 
-This instruction has one extra slot, usable with initarg
-\texttt{:invocation} and accessor \texttt{invocation}.
+This instruction has two additional slots:
 
-The result is executing this instruction is to \emph{unwind} the stack
-so that the function corresponding the owner of the successor of the
-\texttt{unwind-instruction} is now at the top of the stack.  Any
-intervening \texttt{unwind-protect} forms are executed as a result.
+\begin{enumerate}
+\item \texttt{destination} that can be initialized with
+  \texttt{:destination} and accessed with \texttt{destination}.  This
+  slot holds a \texttt{catch-instruction} to which the non-local
+  control is transferred.
+\item \texttt{index} that can be initialized with \texttt{:index} and
+  accessed with \texttt{index}.  This slot holds an index,
+  corresponding to one of the successors of the
+  \texttt{catch-instruction} to which control is transferred.
+\end{enumerate}
+
+The result of executing this instruction is to \emph{unwind} the stack
+so that the stack frame of the function of the destination is now at
+the top of the stack.  Any intervening \texttt{unwind-protect} forms
+are executed as a result.
 
 This instruction is emitted as a result of non-local control
 transfers.  As an example, consider the following code:
@@ -1326,9 +1336,6 @@ transfers.  As an example, consider the following code:
 In that code, the \texttt{return-from} form results in an
 \texttt{unwind-instruction}, effectively removing the invocation of
 the anonymous function from the top of the stack.
-
-The accessor \texttt{invocation} returns the owner of the successor of
-this \texttt{unwind-instruction}
 
 \subsection{Instruction \texttt{float-add-instruction}}
 \label{hir-instruction-float-add}
