@@ -1121,6 +1121,24 @@ evaluated.  Once all the body forms have been evaluated, the values
 are restored to the global values location by the
 \texttt{restore-values-instruction}.
 
+\subsection{Instruction \texttt{restore-values-instruction}}
+\label{hir-instruction-save-values}
+
+\begin{tabular}{|l|l|}
+  \hline
+  Number of inputs & 0\\
+  \hline
+  Number of outputs & 0\\
+  \hline
+  Number of predecessors & any\\
+  \hline
+  Number of successors & 1\\
+  \hline
+\end{tabular}
+
+This instruction takes the values stored in the top entry of the
+dynamic environment, and stores them in the global values location.
+
 \subsection{Instruction \texttt{multiple-value-call-instruction}}
 \label{hir-instruction-multiple-value-call}
 
