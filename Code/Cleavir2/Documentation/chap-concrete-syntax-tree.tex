@@ -1,0 +1,22 @@
+\chapter{Concrete Syntax Tree}
+
+Most \commonlisp{} compilers assume that the input has been obtain by
+an application of the \commonlisp{} \texttt{read} function to a
+sequence of characters, which then returns a nest list structure that
+serves as the input to the first pass of the compiler.
+
+The first pass of \sysname{}, on the other hand, takes a
+\emph{concrete syntax tree} (or \emph{CST} for short) as its input.  
+
+A CST has the exact same structure as the corresponding tree
+representing the source expression, except that some of the nodes in
+the tree have been augmented with information on source location.
+
+To obtain a CST from a sequence of characters, the most appropriate
+technique is to use the external library
+\texttt{concrete-syntax-tree}%
+\footnote{https://github.com/s-expressionists/Eclector}
+which does exactly that.
+
+
+
