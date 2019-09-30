@@ -14,9 +14,20 @@ the tree have been augmented with information on source location.
 
 To obtain a CST from a sequence of characters, the most appropriate
 technique is to use the external library
-\texttt{concrete-syntax-tree}%
+Eclector%
 \footnote{https://github.com/s-expressionists/Eclector}
 which does exactly that.
 
+The main advantage of a CST over the nested list structure used by
+most compilers is that the CST can have \emph{source information}
+associated with it.  Eclector allows for client code to customize this
+source information so as to adapt it to what the client needs.
 
-
+While the CST has a structure that is similar to that of the
+corresponding nested list structure that it represents, it can not be
+manipulated with the ordinary \commonlisp{} functions \texttt{cons},
+\texttt{car}, and \texttt{cdr}.  Instead, a separate library named
+Concrete Syntax Tree%
+\footnote{https://github.com/s-expressionists/Concrete-Syntax-Tree}
+contains functions for manipulating CSTs that parallel those
+\commonlisp{} functions.
