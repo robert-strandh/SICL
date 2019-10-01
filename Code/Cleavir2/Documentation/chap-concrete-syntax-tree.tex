@@ -30,4 +30,8 @@ manipulated with the ordinary \commonlisp{} functions \texttt{cons},
 Concrete Syntax Tree%
 \footnote{https://github.com/s-expressionists/Concrete-Syntax-Tree}
 contains functions for manipulating CSTs that parallel those
-\commonlisp{} functions.
+\commonlisp{} functions.  In particular, if you already have
+\commonlisp{} code in the form of nested lists, and you need to pass
+that code to the compiler, this library has a function named
+\texttt{cst-from-expression} that lets you create a CST from a
+\commonlisp{} expression, and then pass that CST to the compiler.
