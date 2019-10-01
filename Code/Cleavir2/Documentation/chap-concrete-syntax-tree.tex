@@ -35,3 +35,27 @@ contains functions for manipulating CSTs that parallel those
 that code to the compiler, this library has a function named
 \texttt{cst-from-expression} that lets you create a CST from a
 \commonlisp{} expression, and then pass that CST to the compiler.
+
+We can describe the structure of the CST for some expression $E$ by
+means of a transformation $C$ operating on $E$ as follows:
+
+\begin{itemize}
+\item $C[E] = CST[S, E, ()]$ if $E$ is an atom.
+\item $C[E] = CST[S, E,
+  (C[e_1]\enskip{}C[e_2]\enskip{}\cdots\enskip{}C[e_n])]$ if $E$ is
+  the list $(e_1\enskip{}e_2\enskip{}\cdots\enskip{}e_n)$.
+\item $C[E] = CST[S, E,
+  (C[e_1]\enskip{}C[e_2]\enskip{}\cdots\enskip{}C[e_{n-1}]\enskip{}.\enskip{}C[e_n])]$
+  if $E$ is the list
+  $(e_1\enskip{}e_2\enskip{}\cdots\enskip{}e_{n-1}\enskip{}.\enskip{}e_n)$
+  where $e_n$ is an atom other than \texttt{nil}.
+\end{itemize}
+
+In these equations, $CST$ is the constructor for CSTs, $S$ is the
+source information relating to $E$.  As we can see, the constructor
+for CSTs takes three arguments: the source information for the
+expression, the expression itself and the list of transformed
+\emph{children} of $E$.  If $E$ is a proper list, then the elements of
+that list are considered the children of $E$.  If $E$ is a dotted
+list, then the elements of the list and the \emph{atomic tail} of the
+list are considered the children of $E$.
