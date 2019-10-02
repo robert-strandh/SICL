@@ -1,0 +1,61 @@
+\chapter{Concrete Syntax Tree}
+
+Most \commonlisp{} compilers assume that the input has been obtain by
+an application of the \commonlisp{} \texttt{read} function to a
+sequence of characters, which then returns a nest list structure that
+serves as the input to the first pass of the compiler.
+
+The first pass of \sysname{}, on the other hand, takes a
+\emph{concrete syntax tree} (or \emph{CST} for short) as its input.  
+
+A CST has the exact same structure as the corresponding tree
+representing the source expression, except that some of the nodes in
+the tree have been augmented with information on source location.
+
+To obtain a CST from a sequence of characters, the most appropriate
+technique is to use the external library
+Eclector%
+\footnote{https://github.com/s-expressionists/Eclector}
+which does exactly that.
+
+The main advantage of a CST over the nested list structure used by
+most compilers is that the CST can have \emph{source information}
+associated with it.  Eclector allows for client code to customize this
+source information so as to adapt it to what the client needs.
+
+While the CST has a structure that is similar to that of the
+corresponding nested list structure that it represents, it can not be
+manipulated with the ordinary \commonlisp{} functions \texttt{cons},
+\texttt{car}, and \texttt{cdr}.  Instead, a separate library named
+Concrete Syntax Tree%
+\footnote{https://github.com/s-expressionists/Concrete-Syntax-Tree}
+contains functions for manipulating CSTs that parallel those
+\commonlisp{} functions.  In particular, if you already have
+\commonlisp{} code in the form of nested lists, and you need to pass
+that code to the compiler, this library has a function named
+\texttt{cst-from-expression} that lets you create a CST from a
+\commonlisp{} expression, and then pass that CST to the compiler.
+
+We can describe the structure of the CST for some expression $E$ by
+means of a transformation $C$ operating on $E$ as follows:
+
+\begin{itemize}
+\item $C[E] = CST[S, E, ()]$ if $E$ is an atom.
+\item $C[E] = CST[S, E,
+  (C[e_1]\enskip{}C[e_2]\enskip{}\cdots\enskip{}C[e_n])]$ if $E$ is
+  the list $(e_1\enskip{}e_2\enskip{}\cdots\enskip{}e_n)$.
+\item $C[E] = CST[S, E,
+  (C[e_1]\enskip{}C[e_2]\enskip{}\cdots\enskip{}C[e_{n-1}]\enskip{}.\enskip{}C[e_n])]$
+  if $E$ is the list
+  $(e_1\enskip{}e_2\enskip{}\cdots\enskip{}e_{n-1}\enskip{}.\enskip{}e_n)$
+  where $e_n$ is an atom other than \texttt{nil}.
+\end{itemize}
+
+In these equations, $CST$ is the constructor for CSTs, $S$ is the
+source information relating to $E$.  As we can see, the constructor
+for CSTs takes three arguments: the source information for the
+expression, the expression itself and the list of transformed
+\emph{children} of $E$.  If $E$ is a proper list, then the elements of
+that list are considered the children of $E$.  If $E$ is a dotted
+list, then the elements of the list and the \emph{atomic tail} of the
+list are considered the children of $E$.
