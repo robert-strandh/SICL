@@ -1,37 +1,5 @@
 (cl:in-package #:sicl-sequence-tiny)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Auxiliary functions
-
-;;; We might not need this one after all, because using it
-;;; would almost always violate the goal that the Tiny functions
-;;; should have the same semantics as the Fast functions.
-(defun dotted-list-length (object)
-  (cond ((null object)
-         nil)
-        ((atom object)
-         0)
-        (t
-         (let ((length 1)
-               (slow object)
-               (fast (cdr object)))
-           (loop when (null fast)
-                   return nil
-                 when (atom fast)
-                   return length
-                 when (eq fast slow)
-                   return t
-                 do (setf slow (cdr slow))
-                    (setf fast (cdr fast))
-                    (incf length)
-                 when (null fast)
-                   return nil
-                 when (atom fast)
-                   return length
-                 do (setf fast (cdr fast))
-                    (incf length))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Split a list into prefix and rest, as indicated by the
