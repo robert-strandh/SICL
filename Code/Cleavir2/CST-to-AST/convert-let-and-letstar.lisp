@@ -101,7 +101,7 @@
                                              :source origin))
                                         :source origin)
                 for binding-cst in (reverse binding-csts)
-                for declaration-cst in (reverse item-specific-dspecs)
+                for declaration-csts in (reverse item-specific-dspecs)
                 do (setf result
                          (cst:cons
                           (make-atom-cst 'let origin)
@@ -110,7 +110,7 @@
                                         (cst:list result)
                                         (cst:list
                                          (cst:cons (make-atom-cst 'declare)
-                                                   (cst:cstify (mapcar #'cst:rest declaration-csts)))
+                                                   (cst:cstify declaration-csts))
                                          result))
                                     :source origin)
                           :source origin))
