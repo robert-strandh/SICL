@@ -190,28 +190,6 @@
 	;; Skip the sentinel and return the rest. 
 	(cdr sentinel))))
 
-;;; FIXME: use a better condition that has both the 
-;;; original argument at the part of the tree that 
-;;; generated the error.
-(defmacro define-c*r-function (function-name letters)
-  (labels ((primitive (letter)
-             (if (eql letter #\A) 'car 'cdr))
-           (one-iteration (letter)
-             `(cond ((consp remaining)
-                     (setf remaining
-                           (,(primitive letter) remaining)))
-                    ((null remaining)
-                     (return-from ,function-name nil))
-                    (t
-                     (error 'must-be-list
-                            :datum remaining
-                            :name ',function-name)))))
-    `(defun ,function-name (list)
-       (let ((remaining list))
-         ,@(loop for letter in (reverse-list letters)
-                 collect (one-iteration letter))
-         remaining))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function rest
