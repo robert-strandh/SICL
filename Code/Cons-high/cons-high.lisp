@@ -233,29 +233,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function list*
-
-;;; this implementation assumes that there is no 
-;;; structure sharing between the &rest argument
-;;; and the last argument to apply
-(defun list* (&rest elements)
-  (when (null elements)
-    (error 'at-least-one-argument-required :name 'list*))
-  (if (null (cdr elements))
-      (car elements)
-      (loop for remaining on elements
-	    until (null (cddr remaining))
-	    finally (setf (cdr remaining)
-			  (cadr remaining))
-                    (return elements))))
-
-(define-compiler-macro list* (&whole form &rest args)
-  (cond  ((null args) form)
-	 ((null (cdr args)) (car args))
-	 (t `(cons ,(car args) (list* ,@(cdr args))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function last
 
 (defun last (list &optional (n 1))
