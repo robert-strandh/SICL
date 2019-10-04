@@ -37,6 +37,7 @@
     (cf "Cons/accessor-defuns.lisp")
     (cf "Cons/cxr.lisp")
     (cf "Cons/setf-cxr.lisp")
+    (cf "Cons/list-star-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
