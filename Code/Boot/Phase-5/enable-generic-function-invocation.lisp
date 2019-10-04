@@ -37,7 +37,8 @@
   ;; one with a particular name.  SUBSEQ is used to extract the
   ;; required arguments from a list of all the arguments to a
   ;; generic function.
-  (import-functions-from-host '(list* car cadr caddr cdddr find subseq) e5)
+  (import-functions-from-host '(list* car find subseq) e5)
+  (load-fasl "Cons/cxr.fasl" e5)
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" e5)
   (import-functions-from-host
    '(sicl-clos::add-path
