@@ -18,29 +18,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function mapcar
-;;;
-;;; The compiler macro is defined later because it uses the append
-;;; function that may not be defined at this point.
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun mapcar (function &rest lists)
-    (when (null lists)
-      (error 'at-least-one-list-required :name 'mapcar))
-    (loop for remaining = lists
-	    then (loop for list in remaining collect (cdr list))
-	  until (loop for list in remaining thereis (atom list))
-	  collect (apply function
-			 (loop for list in remaining collect (car list)))
-	  finally (loop for rem in remaining
-			for list in lists
-			do (when (not (listp rem))
-			     (error 'must-be-proper-list
-				    :datum list
-				    :name 'mapcar))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function nconc
 
 ;;; It used to be the case that the append function was defined
