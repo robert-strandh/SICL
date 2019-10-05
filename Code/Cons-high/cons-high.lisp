@@ -15,26 +15,6 @@
 ;;;; This file is part of the cons-high module of the SICL project.
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file cons-high.text for a description of the module.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Setf expander and setf function for rest
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (fmakunbound '(setf rest)))
-
-(defsetf rest (list) (new-value)
-  `(if (consp ,list)
-       (progn (rplacd ,list ,new-value) ,new-value)
-       (error 'must-be-cons
-	      :datum ,list
-	      :name '(setf rest))))
-
-(defun (setf rest) (new-value list)
-  (if (consp list)
-      (progn (rplacd list new-value) new-value)
-      (error 'must-be-cons
-	     :datum list
-	     :name '(setf rest))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
