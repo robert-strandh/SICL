@@ -18,20 +18,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Local function REVERSE-LIST.
-;;;
-;;; FIXME: signal an error if the list is not a proper list.
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun reverse-list (list)
-    (loop with result = '()
-	  for rest = list then (cdr rest)
-	  while (consp rest)
-	  do (setf result (cons (car rest) result))
-	  finally (return result))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function append
 
 ;;; We need the append function in macro expanders in this module
