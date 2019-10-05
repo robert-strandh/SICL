@@ -24,30 +24,30 @@
       ;; we use a sentinel, which is a cons cell whose cdr contains
       ;; the real result that we return in the end. 
       (let* ((sentinel (list nil))
-	     ;; The variable last points to the last cons cell of the
-	     ;; resulting list to be accumulated. 
-	     (last sentinel))
-	(loop until (null (cdr lists))
-	      do (loop with list = (car lists)
-		       do (cond ((consp list)
-				 ;; There are more cells, copy the first one.
-				 (setf (cdr last) (list (car list)))
-				 (setf last (cdr last))
-				 (setf list (cdr list)))
-				((null list)
-				 ;; The list is a proper list and we reached the
-				 ;; end of it.
-				 (loop-finish))
-				(t
-				 ;; The list is a dotted list
-				 (error 'must-be-proper-list
-					:datum (car lists)
-					:name 'append))))
-		 ;; We are through with the first list in lists
-		 (setf lists (cdr lists)))
-	;; When we get here, there is only one list left in lists.
-	;; And in fact, it doesn't have to be a list at all. 
-	;; Attach it to the end of what we have accumulated so far.
-	(setf (cdr last) (car lists))
-	;; Skip the sentinel and return the rest. 
-	(cdr sentinel))))
+             ;; The variable last points to the last cons cell of the
+             ;; resulting list to be accumulated. 
+             (last sentinel))
+        (loop until (null (cdr lists))
+              do (loop with list = (car lists)
+                       do (cond ((consp list)
+                                 ;; There are more cells, copy the first one.
+                                 (setf (cdr last) (list (car list)))
+                                 (setf last (cdr last))
+                                 (setf list (cdr list)))
+                                ((null list)
+                                 ;; The list is a proper list and we reached the
+                                 ;; end of it.
+                                 (loop-finish))
+                                (t
+                                 ;; The list is a dotted list
+                                 (error 'must-be-proper-list
+                                        :datum (car lists)
+                                        :name 'append))))
+                 ;; We are through with the first list in lists
+                 (setf lists (cdr lists)))
+        ;; When we get here, there is only one list left in lists.
+        ;; And in fact, it doesn't have to be a list at all. 
+        ;; Attach it to the end of what we have accumulated so far.
+        (setf (cdr last) (car lists))
+        ;; Skip the sentinel and return the rest. 
+        (cdr sentinel))))
