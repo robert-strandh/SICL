@@ -1160,44 +1160,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function rassoc-if
-
-(defun |rassoc-if key=other=identity| (predicate alist)
-  (with-alist-elements (element alist rassoc-if)
-    (when (funcall predicate (cdr element))
-      (return element))))
-
-(defun |rassoc-if key=other| (predicate alist key)
-  (with-alist-elements (element alist rassoc-if)
-    (when (funcall predicate (funcall key (cdr element)))
-      (return element))))
-
-(defun rassoc-if (predicate alist &key key)
-  (if key
-      (|rassoc-if key=other| predicate alist key)
-      (|rassoc-if key=other=identity| predicate alist)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function rassoc-if-not
-
-(defun |rassoc-if-not key=identity| (predicate alist)
-  (with-alist-elements (element alist rassoc-if-not)
-    (when (not (funcall predicate (cdr element)))
-      (return element))))
-
-(defun |rassoc-if-not key=other| (predicate alist key)
-  (with-alist-elements (element alist rassoc-if-not)
-    (when (not (funcall predicate (funcall key (cdr element))))
-      (return element))))
-
-(defun rassoc-if-not (predicate alist &key key)
-  (if key
-      (|rassoc-if-not key=other| predicate alist key)
-      (|rassoc-if-not key=identity| predicate alist)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Some helper macros
 
 (defmacro with-proper-list-rests ((rest-var list function-name) &body body)
