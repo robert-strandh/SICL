@@ -135,7 +135,7 @@
        (setf sicl-genv:macro-function)
        sicl-genv:macro-function
        sicl-genv:get-setf-expansion
-       cadr consp = first)
+       consp = first)
      e3)
     (do-symbols (symbol (find-package '#:common-lisp))
       (when (special-operator-p symbol)
