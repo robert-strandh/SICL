@@ -18,26 +18,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function list
-
-;;; We need the list function in the implementation of other functions
-;;; and or macros in this module, so we define it early.
-
-;;; this implementation assumes that there is no 
-;;; structure sharing between the &rest argument
-;;; and the last argument to apply
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun list (&rest elements)
-    elements))
-
-(define-compiler-macro list (&rest args)
-  (if (null args)
-      'nil
-      `(cons ,(car args) (list ,@(cdr args)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Local function REVERSE-LIST.
 ;;;
 ;;; FIXME: signal an error if the list is not a proper list.
