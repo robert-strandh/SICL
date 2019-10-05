@@ -16,28 +16,6 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file cons-high.text for a description of the module.
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function last
-
-(defun last (list &optional (n 1))
-  (unless (typep list 'list)
-    (error 'must-be-list
-	   :datum list
-	   :name 'last))
-  (unless (typep n '(integer 0))
-    (error 'must-be-nonnegative-integer
-	   :datum n
-	   :name 'last))
-  (let ((remaining list))
-    (loop repeat n
-	  until (atom remaining)
-	  do (setf remaining (cdr remaining)))
-    (loop until (atom remaining)
-	  do (setf list (cdr list))
-	  do (setf remaining (cdr remaining)))
-    list))
-
 ;;; special version of last used when the second argument to
 ;;; last is 1. 
 (eval-when (:compile-toplevel :load-toplevel :execute)
