@@ -15,21 +15,6 @@
 ;;;; This file is part of the cons-high module of the SICL project.
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file cons-high.text for a description of the module.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function rest
-
-(defun rest (list)
-  (cond ((consp list)
-	 (cdr list))
-	((null list)
-	 nil)
-	(t
-	 (error 'must-be-list
-		:datum list
-		:name 'rest))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Setf expander and setf function for rest
