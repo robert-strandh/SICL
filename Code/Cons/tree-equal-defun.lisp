@@ -1,10 +1,5 @@
 (cl:in-package #:sicl-cons)
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function tree-equal 
-
 (defun |tree-equal test=eq| (tree1 tree2)
   (or (and (atom tree1)
            (atom tree2)
