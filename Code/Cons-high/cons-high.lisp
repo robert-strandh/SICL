@@ -37,17 +37,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function endp
-
-(defun endp (list)
-  (unless (typep list 'list)
-    (error 'must-be-list
-	   :datum list
-	   :name 'endp))
-  (null list))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function mapc
 
 (defun mapc (function &rest lists)
