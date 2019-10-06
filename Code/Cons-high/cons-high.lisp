@@ -37,20 +37,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function copy-tree
-
-;;; This can probably be done better by using iteration in one
-;;; dimension and recurstion in the other.  Assuming trees are 
-;;; typically wider than they are deep, it would be better to
-;;; use iteration on the CDR and recursion on the CAR.
-
-(defun copy-tree (tree)
-  (if (atom tree)
-      tree
-      (cons (copy-tree (car tree)) (copy-tree (cdr tree)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function endp
 
 (defun endp (list)
