@@ -37,54 +37,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function mapcan
-
-(defun mapcan (function &rest lists)
-  (when (null lists)
-    (error 'at-least-one-list-required :name 'mapcan))
-  (loop for remaining = lists
-	  then (loop for list in remaining collect (cdr list))
-	until (loop for list in remaining thereis (atom list))
-	nconc (apply function
-		     (loop for list in remaining collect (car list)))
-	finally (loop for rem in remaining
-		      for list in lists
-		      do (when (not (listp rem))
-			   (error 'must-be-proper-list
-				  :datum list
-				  :name 'mapcan)))))
-
-;;; The compiler macro for mapcan generates code to loop
-;;; individually over each list given, and thus avoids having
-;;; a list of lists (which implies consing).  Since the number
-;;; of lists given is known, we can use funcall instead of 
-;;; apply when we call the function. 
-(define-compiler-macro mapcan (&whole form function &rest lists)
-  (if (null lists)
-      form
-      (let ((funvar (gensym))
-	    (listvars (loop for var in lists collect (gensym)))
-	    (vars (loop for var in lists collect (gensym))))
-	`(loop with ,funvar = ,function
-	       ,@(apply #'append (loop for listvar in listvars
-				       for list in lists
-				       collect `(with ,listvar = ,list)))
-	       ,@(apply #'append (loop for var in vars
-				       for listvar in listvars
-				       collect `(for ,var = ,listvar then (cdr ,var))))
-	       ,@(apply #'append (loop for var in vars
-				       collect `(until (atom ,var))))
-	       nconc (funcall ,funvar ,@(loop for var in vars
-					      collect `(car ,var)))
-	       finally (progn ,@(loop for var in vars
-				      for listvar in listvars
-				      collect `(unless (listp ,var)
-						 (error 'must-be-proper-list
-							:datum ,listvar
-							:name 'mapcan))))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function mapcon
 
 (defun mapcon (function &rest lists)
