@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-cons)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function nsubst
-
 (defun |nsubst key=identity test=eq| (new old tree)
   (labels ((traverse (tree)
              (cond ((eq (car tree) old)
@@ -152,7 +148,7 @@
           (t (traverse tree) tree))))
 
 (defun nsubst (new old tree
-	       &key key (test nil test-given) (test-not nil test-not-given))
+               &key key (test nil test-given) (test-not nil test-not-given))
   (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'nsubst))
   (if key
@@ -163,7 +159,7 @@
                   (|nsubst key=other test=eql| new old tree key)
                   (|nsubst key=other-test-other|  new old tree test key)))
           (if test-not-given
-	      (|nsubst key=other test-not=other|  new old tree test-not key)
+              (|nsubst key=other test-not=other|  new old tree test-not key)
               (|nsubst key=other test=eql| new old tree key)))
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
@@ -172,6 +168,6 @@
                   (|nsubst key=identity test=eql| new old tree)
                   (|nsubst key=identity test=other|  new old tree test)))
           (if test-not-given
-	      (|nsubst key=identity test-not=other|  new old tree test-not)
+              (|nsubst key=identity test-not=other|  new old tree test-not)
               (|nsubst key=identity test=eql| new old tree)))))
 
