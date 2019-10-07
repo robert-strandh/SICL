@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-cons)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function nsubst-if-not
-
 (defun |nsubst-if-not key=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
