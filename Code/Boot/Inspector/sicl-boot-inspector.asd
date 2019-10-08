@@ -2,7 +2,7 @@
 
 (defsystem #:sicl-boot-inspector
   :depends-on (#:sicl-boot
-               #:new-inspector)
+               #:clouseau)
   :serial t
   :components
   ((:file "packages")
