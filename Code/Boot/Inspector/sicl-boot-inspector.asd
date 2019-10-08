@@ -6,4 +6,4 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "function")))
+   (:file "configuration")))
