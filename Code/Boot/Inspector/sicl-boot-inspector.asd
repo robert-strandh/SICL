@@ -6,4 +6,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "inspect")
    (:file "configuration")))
