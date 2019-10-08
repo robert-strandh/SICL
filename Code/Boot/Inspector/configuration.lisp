@@ -1,1 +1,15 @@
 (cl:in-package #:sicl-boot-inspector)
+
+(defmethod clouseau:inspect-object-using-state
+    ((object sicl-simple-environment::function-entry)
+     (state clouseau:inspected-object)
+     (style (eql :collapsed))
+     (stream t))
+  (cond ((not (null (sicl-simple-environment::macro-function object)))
+         (format stream "MACRO"))
+        ((not (null (sicl-simple-environment::special-operator object)))
+         (format stream "SPECIAL OPERATOR"))
+        ((eq (car (sicl-simple-environment::function-cell object))
+          (sicl-simple-environment::unbound object))
+         (format stream "UNBOUND"))
+        (t (format stream "FUNCTION"))))
