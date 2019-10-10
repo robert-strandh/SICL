@@ -85,8 +85,9 @@
                     present-place
                     present-object)
                  (clim:formatting-row (stream)
-                   (clim:formatting-cell (stream)
-                     (format stream "~s" slot-name))
+                   (clim:formatting-cell (stream :align-y :center)
+                     (clouseau:with-style (stream :slot-like)
+                       (format stream "~s" slot-name)))
                    (clim:formatting-cell (stream)
                      (present-place stream))
                    (clim:formatting-cell (stream)
