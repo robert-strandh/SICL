@@ -56,7 +56,7 @@
   (let ((origin (cst:source var-cst)))
     (process-progn
      (list (make-initialization-ast
-	    client var-ast supplied-p-ast init-ast environment origin)
+            client var-ast supplied-p-ast init-ast environment origin)
            (set-or-bind-variable
             client
             var-cst var-ast
