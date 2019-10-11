@@ -265,12 +265,13 @@
 ;;; returns the augmented environment.
 (defun augment-environment-with-parameter
     (client var-cst supplied-p-cst dspecs environment)
-  (let ((new-env (augment-environment-with-variable
-		  client var-cst dspecs environment environment)))
+  (let ((new-env
+          (augment-environment-with-variable
+           client var-cst dspecs environment environment)))
     (if (null supplied-p-cst)
         new-env
         (augment-environment-with-variable
-	 client supplied-p-cst dspecs new-env new-env))))
+         client supplied-p-cst dspecs new-env new-env))))
 
 (defun augment-environment-with-local-function-name (client name-cst environment)
   (let* ((name (cst:raw name-cst))
