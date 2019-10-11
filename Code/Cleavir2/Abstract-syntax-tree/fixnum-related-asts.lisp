@@ -71,7 +71,7 @@
   `(progn 
      (defclass ,name (ast boolean-ast-mixin)
        ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
-	(%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+        (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
      (cleavir-io:define-save-info ,name
        (:arg1-ast arg1-ast)
