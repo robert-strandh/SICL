@@ -77,15 +77,15 @@
             (convert client expanded-cst environment))
           ;; There is a compiler macro, so we must see whether it will
           ;; accept or decline.
-          (let ((expanded-form (expand-compiler-macro
-				compiler-macro cst environment)))
+          (let ((expanded-form
+                  (expand-compiler-macro compiler-macro cst environment)))
             (if (eq (cst:raw cst) expanded-form)
                 ;; If the two are EQ, this means that the compiler macro
                 ;; declined.  Then we appply the macro function, and
                 ;; then convert the resulting form, just like we did
                 ;; when there was no compiler macro present.
-                (let* ((expanded-form (expand-macro
-				       expander cst environment))
+                (let* ((expanded-form
+                         (expand-macro expander cst environment))
                        (expanded-cst (cst:reconstruct expanded-form cst client)))
                   (setf (cst:source expanded-cst) (cst:source cst))
                   (convert client expanded-cst environment))
@@ -104,10 +104,10 @@
 (defun make-call (client cst info environment arguments-cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (let* ((name-cst (cst:first cst))
-         (function-ast (convert-called-function-reference
-			client name-cst info environment))
-         (argument-asts (convert-sequence
-			 client arguments-cst environment)))
+         (function-ast
+           (convert-called-function-reference client name-cst info environment))
+         (argument-asts
+           (convert-sequence client arguments-cst environment)))
     (cleavir-ast:make-ast 'cleavir-ast:call-ast
      :callee-ast function-ast
      :argument-asts argument-asts)))
@@ -130,8 +130,8 @@
         (make-call client cst info environment (cst:rest cst))
         ;; There is a compiler macro.  We must see whether it will
         ;; accept or decline.
-        (let ((expanded-form (expand-compiler-macro
-			      compiler-macro cst environment)))
+        (let ((expanded-form
+                (expand-compiler-macro compiler-macro cst environment)))
           (if (eq (cst:raw cst) expanded-form)
               ;; If the two are EQ, this means that the compiler macro
               ;; declined.  We are left with function-call form.
