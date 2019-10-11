@@ -18,8 +18,9 @@
                  :interactive (lambda ()
                                 (format *query-io* "Enter new name: ")
                                 (list (read *query-io*)))
-                 (setq result (trucler:describe-function
-			       client environment new-function-name)))))
+                 (setq result
+                       (trucler:describe-function
+                        client environment new-function-name)))))
     result))
 
 (defun describe-tag (client environment tag-name)
@@ -33,6 +34,7 @@
                  :interactive (lambda ()
                                 (format *query-io* "Enter new name: ")
                                 (list (read *query-io*)))
-                 (setq result (trucler:describe-tag
-			       client environment new-tag-name)))))
+                 (setq result
+                       (trucler:describe-tag
+                        client environment new-tag-name)))))
     result))
