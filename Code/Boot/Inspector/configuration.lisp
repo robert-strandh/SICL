@@ -41,14 +41,18 @@
      (state clouseau:inspected-object)
      (style (eql :collapsed))
      (stream t))
-  (format stream "~a [~a]" (class-name-of-object object) (object-type-name object)))
+  (format stream "~a [~a]" (class-name-of-object object) (object-type-name object))
+  (when (member (class-name-of-object object) '(standard-class built-in-class sicl-clos:funcallable-standard-class))
+    (format stream " ~a" (aref (rack-of-object object) 5))))
 
 (defmethod clouseau:inspect-object-using-state
     ((object sicl-boot-phase-3::header)
      (state clouseau:inspected-object)
      (style (eql :expanded-header))
      (stream t))
-  (format stream "~a [~a]" (class-name-of-object object) (object-type-name object)))
+  (format stream "~a [~a]" (class-name-of-object object) (object-type-name object))
+  (when (member (class-name-of-object object) '(standard-class built-in-class sicl-clos:funcallable-standard-class))
+    (format stream " ~a" (aref (rack-of-object object) 5))))
 
 (defclass ersatz-instance-slot-place
     (clouseau:key-value-place clouseau:read-only-place)
