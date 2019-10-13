@@ -5,9 +5,6 @@
                    (e5 sicl-boot:e5)
                    (e6 sicl-boot:e6))
       boot
-    (import-functions-from-host
-     '(endp cons)
-     e5)
     (let* ((gf-class-name 'standard-generic-function)
            (gf-class (sicl-genv:find-class gf-class-name e4))
            (method-class-name 'standard-method)
