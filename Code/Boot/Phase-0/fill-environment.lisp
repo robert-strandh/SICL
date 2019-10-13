@@ -115,6 +115,10 @@
     (ld "Iteration/do-dostar-defmacro.lisp")
     ;; Load a file containing the definition of the macro REMF.
     (ld "Cons/remf-defmacro.lisp")
+    ;; Load a file containing the definition of the macro
+    ;; WITH-PROPER-LIST-RESTS used by the functions MEMBER, MEMBER-IF,
+    ;; and MEMBER-IF-NOT.
+    (ld "Cons/with-proper-list-rests-defmacro.lisp")
     ;; Load a file containing the definition of the macro DEFCLASS.
     (ld "CLOS/defclass-defmacro.lisp")
     ;; Load a file containing the definition of the macro DEFGENERIC.
