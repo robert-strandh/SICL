@@ -8,11 +8,9 @@
        atom
        eq
        not
-       cdr
        (setf cdr)
        rplacd
        +
-       cddr
        symbolp)
      e5)
     (load-fasl "CLOS/t-defclass.fasl" e5)
