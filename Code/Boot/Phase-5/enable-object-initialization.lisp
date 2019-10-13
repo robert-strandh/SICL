@@ -67,10 +67,11 @@
                       e4)
                      instance slot-names class slots initargs))))
     (import-functions-from-host
-     '(list append length member consp
+     '(list append length consp error
        cleavir-code-utilities:proper-list-p
        (setf sicl-genv:fdefinition))
      e5)
+    (load-fasl "Cons/member-defun.fasl" e5)
     (import-functions-from-host
      '(atom cddr (setf cdr) <)
      e4)
