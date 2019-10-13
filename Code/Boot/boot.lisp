@@ -29,6 +29,8 @@
           *trace-output*)
     (setf (sicl-genv:special-variable '*trace-output* (e4 boot) t)
           *trace-output*)
+    (setf (sicl-genv:special-variable '*trace-output* (e5 boot) t)
+          *trace-output*)
     (sicl-boot-phase-0:boot boot)
     (sicl-boot-phase-1:boot boot)
     (sicl-boot-phase-2:boot boot)
