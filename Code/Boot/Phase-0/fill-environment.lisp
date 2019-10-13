@@ -119,6 +119,10 @@
     ;; WITH-PROPER-LIST-RESTS used by the functions MEMBER, MEMBER-IF,
     ;; and MEMBER-IF-NOT.
     (ld "Cons/with-proper-list-rests-defmacro.lisp")
+    ;; Load a file containing the definition of the macro
+    ;; WITH-PROPER-LIST-ELEMENTS used by several functions such as
+    ;; SET-DIFFERENCE, UNION, etc.
+    (ld "Cons/with-proper-list-elements-defmacro.lisp")
     ;; Load a file containing the definition of the macro DEFCLASS.
     (ld "CLOS/defclass-defmacro.lisp")
     ;; Load a file containing the definition of the macro DEFGENERIC.
