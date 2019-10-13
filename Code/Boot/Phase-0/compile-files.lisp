@@ -189,5 +189,6 @@
     (cf "Evaluation-and-compilation/lambda.lisp")
     (cf "Data-and-control-flow/setf.lisp")
     (cf "Data-and-control-flow/get-setf-expansion.lisp")
+    (cf "Data-and-control-flow/eq-defun.lisp")
     (cf "Conditionals/macros.lisp")
     (cf "Boot/Phase-3/sub-specializer-p.lisp")))
