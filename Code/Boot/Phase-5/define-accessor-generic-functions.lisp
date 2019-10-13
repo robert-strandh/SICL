@@ -12,7 +12,7 @@
     ;; SET-DIFFERENCE is called by the generic-function initialization
     ;; protocol to verify that the argument precedence order is a
     ;; permutation of the required arguments.
-    (import-function-from-host 'set-difference e5)
+    (load-fasl "Cons/set-difference-defun.fasl" e5)
     ;; STRINGP is called by the generic-function initialization
     ;; protocol to verify that the documentation is a string.
     (import-function-from-host 'stringp e5)
