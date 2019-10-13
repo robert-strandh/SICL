@@ -9,7 +9,6 @@
        eq
        not
        (setf cdr)
-       rplacd
        +
        symbolp)
      e5)
