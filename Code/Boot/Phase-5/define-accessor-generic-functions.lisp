@@ -92,9 +92,6 @@
                    (e6 sicl-boot:e6))
       boot
     (import-functions-from-host
-     '(cdr)
-     e5)
-    (import-functions-from-host
      '(listp)
      (sicl-boot:e4 boot))
     (sicl-hir-interpreter:fill-environment e6)
