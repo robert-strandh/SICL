@@ -6,7 +6,6 @@
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p
        atom
-       eq
        not
        (setf cdr)
        +
