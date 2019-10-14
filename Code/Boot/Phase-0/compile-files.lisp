@@ -133,7 +133,7 @@
     (cf "CLOS/compute-applicable-methods-defgenerics.lisp")
     (cf "CLOS/compute-applicable-methods-defmethods.lisp")
     (cf "CLOS/compute-effective-method-defgenerics.lisp")
-    (cf "CLOS/compute-effective-method-support-c.lisp")
+    (cf "CLOS/compute-effective-method-support.lisp")
     (cf "CLOS/compute-effective-method-defmethods.lisp")
     (cf "CLOS/no-applicable-method-defgenerics.lisp")
     (cf "CLOS/no-applicable-method.lisp")
