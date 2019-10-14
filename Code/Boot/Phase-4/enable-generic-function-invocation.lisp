@@ -26,7 +26,7 @@
 (defun define-compute-effective-method (e4)
   (load-fasl "CLOS/compute-effective-method-defgenerics.fasl" e4)
   (load-fasl "CLOS/compute-effective-method-support-c.fasl" e4)
-  (load-fasl "CLOS/compute-effective-method-defmethods-b.fasl" e4))
+  (load-fasl "CLOS/compute-effective-method-defmethods.fasl" e4))
 
 (defun define-compute-discriminating-function (e4)
   (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" e4)
