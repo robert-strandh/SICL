@@ -42,6 +42,7 @@
     (cf "Cons/member-defun.lisp")
     (cf "Cons/set-difference-defun.lisp")
     (cf "Cons/endp-defun.lisp")
+    (cf "Cons/make-list-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
