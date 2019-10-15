@@ -9,7 +9,7 @@
      e5)
     ;; MAKE-LIST is called from the :AROUND method on
     ;; SHARED-INITIALIZE specialized to GENERIC-FUNCTION.
-    (import-function-from-host 'make-list e5)
+    (load-fasl "Cons/make-list-defun.fasl" e5)
     ;; SET-DIFFERENCE is called by the generic-function initialization
     ;; protocol to verify that the argument precedence order is a
     ;; permutation of the required arguments.
