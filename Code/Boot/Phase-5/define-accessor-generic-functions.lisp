@@ -4,7 +4,8 @@
   (with-accessors ((e5 sicl-boot:e5)) boot
     (import-functions-from-host
      '(cleavir-code-utilities:parse-generic-function-lambda-list
-       cleavir-code-utilities:required)
+       cleavir-code-utilities:required
+       integerp >= <= -)
      e5)
     ;; MAKE-LIST is called from the :AROUND method on
     ;; SHARED-INITIALIZE specialized to GENERIC-FUNCTION.
