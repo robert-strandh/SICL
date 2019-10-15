@@ -10,9 +10,6 @@
 
 (defun define-add-remove-method (e5)
   (load-fasl "CLOS/add-remove-method-defgenerics.fasl" e5)
-  ;; MAKE-LIST is called when a method is removed and a new
-  ;; specializer profile must be computed.
-  (import-function-from-host 'make-list e5)
   ;; FIND-IF is called by ADD-METHOD in order to find and existing
   ;; method with the same specializers and the same qualifiers, so
   ;; that that existing method can be removed first.
