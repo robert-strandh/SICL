@@ -9,11 +9,11 @@
      e5)
     ;; MAKE-LIST is called from the :AROUND method on
     ;; SHARED-INITIALIZE specialized to GENERIC-FUNCTION.
-    (load-fasl "Cons/make-list-defun.fasl" e5)
+    (import-function-from-host 'make-list e5)
     ;; SET-DIFFERENCE is called by the generic-function initialization
     ;; protocol to verify that the argument precedence order is a
     ;; permutation of the required arguments.
-    (load-fasl "Cons/set-difference-defun.fasl" e5)
+    (import-function-from-host 'set-difference e5)
     ;; STRINGP is called by the generic-function initialization
     ;; protocol to verify that the documentation is a string.
     (import-function-from-host 'stringp e5)
