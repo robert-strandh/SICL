@@ -12,4 +12,7 @@
   (load-fasl "Data-and-control-flow/defconstant-defmacro.fasl" e5)
   (load-fasl "Data-and-control-flow/defparameter-defmacro.fasl" e5)
   (load-fasl "Data-and-control-flow/defvar-defmacro.fasl" e5)
-  (load-fasl "Data-and-control-flow/return-defmacro.fasl" e5))
+  (load-fasl "Data-and-control-flow/return-defmacro.fasl" e5)
+  (load-fasl "Data-and-control-flow/psetf-support.fasl" e5)
+  (load-fasl "Data-and-control-flow/psetf-defmacro.fasl" e5)
+  (load-fasl "Data-and-control-flow/psetq-defmacro.fasl" e5))
