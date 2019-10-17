@@ -208,5 +208,6 @@
     (cf "Data-and-control-flow/psetf-support.lisp")
     (cf "Data-and-control-flow/psetf-defmacro.lisp")
     (cf "Data-and-control-flow/psetq-defmacro.lisp")
+    (cf "Data-and-control-flow/destructuring-bind-defmacro.lisp")
     (cf "Conditionals/macros.lisp")
     (cf "Boot/Phase-3/sub-specializer-p.lisp")))
