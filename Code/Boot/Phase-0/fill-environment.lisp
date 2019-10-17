@@ -58,7 +58,7 @@
     ;; Load a file containing the definition of the macro
     ;; MULTIPLE-VALUE-LIST.  This definition is needed, because it is
     ;; used in the expansion of the macro NTH-VALUE loaded below.
-    (ld "Data-and-control-flow/multiple-value-list.lisp")
+    (ld "Data-and-control-flow/multiple-value-list-defmacro.lisp")
     ;; Load a file containing the definition of the macro NTH-VALUE.
     ;; This definition is needed by the function CONSTANTP which is
     ;; loaded as part of the file standard-environment-functions.lisp
