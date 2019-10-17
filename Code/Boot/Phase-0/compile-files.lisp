@@ -202,5 +202,6 @@
     (cf "Data-and-control-flow/functionp-defgeneric.lisp")
     (cf "Data-and-control-flow/functionp-defmethods.lisp")
     (cf "Data-and-control-flow/defconstant-defmacro.lisp")
+    (cf "Data-and-control-flow/defparameter-defmacro.lisp")
     (cf "Conditionals/macros.lisp")
     (cf "Boot/Phase-3/sub-specializer-p.lisp")))
