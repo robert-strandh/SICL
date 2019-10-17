@@ -205,5 +205,8 @@
     (cf "Data-and-control-flow/defparameter-defmacro.lisp")
     (cf "Data-and-control-flow/defvar-defmacro.lisp")
     (cf "Data-and-control-flow/return-defmacro.lisp")
+    (cf "Data-and-control-flow/psetf-support.lisp")
+    (cf "Data-and-control-flow/psetf-defmacro.lisp")
+    (cf "Data-and-control-flow/psetq-defmacro.lisp")
     (cf "Conditionals/macros.lisp")
     (cf "Boot/Phase-3/sub-specializer-p.lisp")))
