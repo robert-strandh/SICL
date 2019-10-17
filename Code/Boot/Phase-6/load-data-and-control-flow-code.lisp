@@ -6,4 +6,6 @@
   (load-fasl "Data-and-control-flow/fdefinition-defun.fasl" e5)
   (load-fasl "Data-and-control-flow/setf-fdefinition-defun.fasl" e5)
   (load-fasl "Data-and-control-flow/fboundp-defun.fasl" e5)
-  (load-fasl "Data-and-control-flow/fmakunbound-defun.fasl" e5))
+  (load-fasl "Data-and-control-flow/fmakunbound-defun.fasl" e5)
+  (load-fasl "Data-and-control-flow/functionp-defgeneric.fasl" e5)
+  (load-fasl "Data-and-control-flow/functionp-defmethods.fasl" e5))
