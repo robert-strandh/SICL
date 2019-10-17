@@ -9,4 +9,5 @@
   (load-fasl "Data-and-control-flow/fmakunbound-defun.fasl" e5)
   (load-fasl "Data-and-control-flow/functionp-defgeneric.fasl" e5)
   (load-fasl "Data-and-control-flow/functionp-defmethods.fasl" e5)
-  (load-fasl "Data-and-control-flow/defconstant-defmacro.fasl" e5))
+  (load-fasl "Data-and-control-flow/defconstant-defmacro.fasl" e5)
+  (load-fasl "Data-and-control-flow/defparameter-defmacro.fasl" e5))
