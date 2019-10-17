@@ -191,7 +191,7 @@
     (cf "CLOS/ensure-class-using-class-defgenerics.lisp")
     (cf "CLOS/ensure-class-using-class-defmethods.lisp")
     (cf "Evaluation-and-compilation/lambda.lisp")
-    (cf "Data-and-control-flow/setf.lisp")
+    (cf "Data-and-control-flow/setf-defmacro.lisp")
     (cf "Data-and-control-flow/get-setf-expansion.lisp")
     (cf "Data-and-control-flow/eq-defun.lisp")
     (cf "Data-and-control-flow/defun-defmacro.lisp")

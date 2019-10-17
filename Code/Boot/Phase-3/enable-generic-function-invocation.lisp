@@ -156,7 +156,7 @@
     (define-general-instance-access e3)
     (define-compile e3)
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e3)
-    (load-fasl "Data-and-control-flow/setf.fasl" e3)
+    (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e3)
     (define-compute-discriminating-function e3)
     (import-functions-from-host '(apply endp cons eq coerce) e3)
     (load-fasl "CLOS/standard-instance-access.fasl" e3)))

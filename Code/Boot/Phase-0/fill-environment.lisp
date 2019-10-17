@@ -33,7 +33,7 @@
     ;; defined DEFMACRO to call (SETF MACRO-FUNCTION) directly, but
     ;; that would have been less "natural", so we do it this way
     ;; instead.
-    (ld "Data-and-control-flow/setf.lisp")
+    (ld "Data-and-control-flow/setf-defmacro.lisp")
     ;; At this point, we have all the ingredients (the macros LAMBDA and
     ;; SETF) in order to redefine the macro DEFMACRO as a native macro.
     ;; SINCE we already have a primitive form of DEFMACRO, we use it to

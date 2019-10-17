@@ -128,7 +128,7 @@
             (error "(setf slot-value) called")))
     (define-compile e5)
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e5)
-    (load-fasl "Data-and-control-flow/setf.fasl" e5)
+    (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e5)
     (define-find-class e4 e5)
     (define-compute-discriminating-function e5)
     (import-functions-from-host '(apply endp cons eq coerce) e5)))
