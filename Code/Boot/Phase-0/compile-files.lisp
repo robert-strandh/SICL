@@ -197,5 +197,7 @@
     (cf "Data-and-control-flow/defun-defmacro.lisp")
     (cf "Data-and-control-flow/fdefinition-defun.lisp")
     (cf "Data-and-control-flow/setf-fdefinition-defun.lisp")
+    (cf "Data-and-control-flow/fboundp-defun.lisp")
+    (cf "Data-and-control-flow/fmakunbound-defun.lisp")
     (cf "Conditionals/macros.lisp")
     (cf "Boot/Phase-3/sub-specializer-p.lisp")))
