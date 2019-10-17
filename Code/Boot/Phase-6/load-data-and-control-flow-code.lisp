@@ -16,4 +16,7 @@
   (load-fasl "Data-and-control-flow/psetf-support.fasl" e5)
   (load-fasl "Data-and-control-flow/psetf-defmacro.fasl" e5)
   (load-fasl "Data-and-control-flow/psetq-defmacro.fasl" e5)
-  (load-fasl "Data-and-control-flow/destructuring-bind-defmacro.fasl" e5))
+  (load-fasl "Data-and-control-flow/destructuring-bind-defmacro.fasl" e5)
+  (load-fasl "Data-and-control-flow/rotatef-defmacro.fasl" e5)
+  (load-fasl "Data-and-control-flow/shiftf-support.fasl" e5)
+  (load-fasl "Data-and-control-flow/shiftf-defmacro.fasl" e5))
