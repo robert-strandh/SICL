@@ -20,4 +20,5 @@
   (load-fasl "Data-and-control-flow/rotatef-defmacro.fasl" e5)
   (load-fasl "Data-and-control-flow/shiftf-support.fasl" e5)
   (load-fasl "Data-and-control-flow/shiftf-defmacro.fasl" e5)
-  (load-fasl "Data-and-control-flow/multiple-value-list-defmacro.fasl" e5))
+  (load-fasl "Data-and-control-flow/multiple-value-list-defmacro.fasl" e5)
+  (load-fasl "Data-and-control-flow/get-setf-expansion-defun.fasl" e5))
