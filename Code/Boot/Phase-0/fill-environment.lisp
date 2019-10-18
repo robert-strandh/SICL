@@ -71,7 +71,7 @@
     ;; We can not use the version of this function provided by the host,
     ;; because it takes an environment argument, and the host version
     ;; does not work with the Cleavir/SICL environment objects.
-    (ld "Data-and-control-flow/get-setf-expansion.lisp")
+    (ld "Data-and-control-flow/get-setf-expansion-defun.lisp")
     ;; Load a file containing definisions of standard conditional
     ;; macros, such as AND, OR, CASE, etc.
     (ld "Conditionals/macros.lisp")
