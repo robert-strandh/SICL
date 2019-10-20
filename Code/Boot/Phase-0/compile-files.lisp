@@ -51,6 +51,7 @@
     (cf "Cons/assoc-defun.lisp")
     (cf "Cons/assoc-if-defun.lisp")
     (cf "Cons/assoc-if-not-defun.lisp")
+    (cf "Cons/butlast-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
