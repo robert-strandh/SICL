@@ -13,4 +13,5 @@
   (load-fasl "Cons/append-defun.fasl" e5)
   (load-fasl "Cons/assoc-defun.fasl" e5)
   (load-fasl "Cons/assoc-if-defun.fasl" e5)
-  (load-fasl "Cons/assoc-if-not-defun.fasl" e5))
+  (load-fasl "Cons/assoc-if-not-defun.fasl" e5)
+  (load-fasl "Cons/butlast-defun.fasl" e5))
