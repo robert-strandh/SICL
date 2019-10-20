@@ -46,6 +46,7 @@
     (cf "Cons/endp-defun.lisp")
     (cf "Cons/make-list-defun.lisp")
     (cf "Cons/acons-defun.lisp")
+    (cf "Cons/adjoin-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
