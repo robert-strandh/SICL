@@ -4,6 +4,7 @@
   (load-fasl "Cons/null-defun.fasl" e5)
   (load-fasl "Cons/list-defun.fasl" e5)
   (load-fasl "Cons/list-star-defun.fasl" e5)
+  (load-fasl "Cons/list-length-defun.fasl" e5)
   (load-fasl "Cons/make-list-defun.fasl" e5)
   (load-fasl "Cons/intersection-defun.fasl" e5)
   (load-fasl "Cons/set-difference-defun.fasl" e5)
