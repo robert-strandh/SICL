@@ -54,6 +54,7 @@
     (cf "Cons/butlast-defun.lisp")
     (cf "Cons/copy-alist-defun.lisp")
     (cf "Cons/copy-list-defun.lisp")
+    (cf "Cons/copy-tree-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
