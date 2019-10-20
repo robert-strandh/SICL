@@ -40,6 +40,7 @@
     (cf "Cons/null-defun.lisp")
     (cf "Cons/list-defun.lisp")
     (cf "Cons/list-star-defun.lisp")
+    (cf "Cons/list-length-defun.lisp")
     (cf "Cons/mapcar-defun.lisp")
     (cf "Cons/member-defun.lisp")
     (cf "Cons/intersection-defun.lisp")
