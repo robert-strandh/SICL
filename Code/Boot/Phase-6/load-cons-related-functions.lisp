@@ -20,4 +20,5 @@
   (load-fasl "Cons/copy-list-defun.fasl" e5)
   (load-fasl "Cons/copy-tree-defun.fasl" e5)
   (load-fasl "Cons/getf-defun.fasl" e5)
-  (load-fasl "Cons/get-properties-defun.fasl" e5))
+  (load-fasl "Cons/get-properties-defun.fasl" e5)
+  (load-fasl "Cons/last-defun.fasl" e5))
