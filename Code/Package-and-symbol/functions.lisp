@@ -1,8 +1,5 @@
 (cl:in-package #:sicl-package)
 
-(deftype string-designator ()
-  '(or character string symbol))
-
 (defun package-designator-to-package (package-designator)
   (cond ((packagep package-designator)
 	 package-designator)
