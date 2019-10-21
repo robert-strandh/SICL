@@ -49,6 +49,7 @@
     (cf "Cons/maplist-defun.lisp")
     (cf "Cons/member-defun.lisp")
     (cf "Cons/member-if-defun.lisp")
+    (cf "Cons/member-if-not-defun.lisp")
     (cf "Cons/intersection-defun.lisp")
     (cf "Cons/set-difference-defun.lisp")
     (cf "Cons/endp-defun.lisp")
