@@ -26,4 +26,5 @@
   (load-fasl "Cons/make-bindings-defun.fasl" e5)
   (load-fasl "Cons/mapcar-defun.fasl" e5)
   (load-fasl "Cons/mapcan-defun.fasl" e5)
-  (load-fasl "Cons/mapc-defun.fasl" e5))
+  (load-fasl "Cons/mapc-defun.fasl" e5)
+  (load-fasl "Cons/mapcon-defun.fasl" e5))
