@@ -11,6 +11,7 @@
   (load-fasl "Cons/endp-defun.fasl" e5)
   (load-fasl "Cons/member-defun.fasl" e5)
   (load-fasl "Cons/member-if-defun.fasl" e5)
+  (load-fasl "Cons/member-if-not-defun.fasl" e5)
   (load-fasl "Cons/acons-defun.fasl" e5)
   (load-fasl "Cons/adjoin-defun.fasl" e5)
   (load-fasl "Cons/append-defun.fasl" e5)
