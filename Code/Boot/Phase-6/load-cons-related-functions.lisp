@@ -23,4 +23,5 @@
   (load-fasl "Cons/getf-defun.fasl" e5)
   (load-fasl "Cons/get-properties-defun.fasl" e5)
   (load-fasl "Cons/last-defun.fasl" e5)
-  (load-fasl "Cons/make-bindings-defun.fasl" e5))
+  (load-fasl "Cons/make-bindings-defun.fasl" e5)
+  (load-fasl "Cons/mapcar-defun.fasl" e5))
