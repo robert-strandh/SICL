@@ -43,6 +43,7 @@
     (cf "Cons/list-length-defun.lisp")
     (cf "Cons/mapcar-defun.lisp")
     (cf "Cons/mapcan-defun.lisp")
+    (cf "Cons/mapc-defun.lisp")
     (cf "Cons/member-defun.lisp")
     (cf "Cons/intersection-defun.lisp")
     (cf "Cons/set-difference-defun.lisp")
