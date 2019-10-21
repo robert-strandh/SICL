@@ -6,7 +6,7 @@
   :depends-on (:acclimation)
   :components ((:file "packages")
                (:file "accessor-defgenerics")
-               (:file "package-class")
+               (:file "package-defclass")
                (:file "symbol-defclass")
                (:file "functions")
 	       (:file "conditions")
