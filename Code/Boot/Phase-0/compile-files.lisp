@@ -61,6 +61,7 @@
     (cf "Cons/assoc-if-defun.lisp")
     (cf "Cons/assoc-if-not-defun.lisp")
     (cf "Cons/butlast-defun.lisp")
+    (cf "Cons/nbutlast-defun.lisp")
     (cf "Cons/copy-alist-defun.lisp")
     (cf "Cons/copy-list-defun.lisp")
     (cf "Cons/copy-tree-defun.lisp")
