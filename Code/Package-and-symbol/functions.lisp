@@ -1,13 +1,5 @@
 (cl:in-package #:sicl-package)
 
-(defun package-designator-to-package (package-designator)
-  (cond ((packagep package-designator)
-	 package-designator)
-	((typep package-designator 'string-designator)
-	 (find-package package-designator))
-	(t
-	 (error 'not-a-package-designator :datum package-designator))))
-
 ;;; FIXME: signal correctable errors.
 ;;; FIXME: check that nicknames is a proper list of string designators
 ;;; FIXME: check that use is a proper list of package designators.
