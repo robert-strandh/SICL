@@ -1,11 +1,5 @@
 (cl:in-package #:sicl-cons)
 
-;;; The function make-bindings is duplicated from the sequences module. 
-;;; It would probably be better to avoid such duplication and to factor 
-;;; it out, but then I would introduce some dependencies, so keep it like
-;;; this for now.  Also see the sequences module for an explanation on
-;;; how it works. 
-
 ;;; Translate from a keyword to a variable name
 (defparameter *vars* '((:start . start)
                        (:end . end)
