@@ -57,6 +57,7 @@
     (cf "Cons/acons-defun.lisp")
     (cf "Cons/adjoin-defun.lisp")
     (cf "Cons/append-defun.lisp")
+    (cf "Cons/nconc-defun.lisp")
     (cf "Cons/assoc-defun.lisp")
     (cf "Cons/assoc-if-defun.lisp")
     (cf "Cons/assoc-if-not-defun.lisp")
