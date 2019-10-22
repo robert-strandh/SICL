@@ -54,6 +54,7 @@
     (cf "Cons/nintersection-defun.lisp")
     (cf "Cons/set-difference-defun.lisp")
     (cf "Cons/nset-difference-defun.lisp")
+    (cf "Cons/nset-exclusive-or-defun.lisp")
     (cf "Cons/endp-defun.lisp")
     (cf "Cons/make-list-defun.lisp")
     (cf "Cons/acons-defun.lisp")
