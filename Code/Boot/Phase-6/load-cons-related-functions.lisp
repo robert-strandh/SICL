@@ -10,6 +10,7 @@
   (load-fasl "Cons/nintersection-defun.fasl" e5)
   (load-fasl "Cons/set-difference-defun.fasl" e5)
   (load-fasl "Cons/nset-difference-defun.fasl" e5)
+  (load-fasl "Cons/nset-exclusive-or-defun.fasl" e5)
   (load-fasl "Cons/endp-defun.fasl" e5)
   (load-fasl "Cons/member-defun.fasl" e5)
   (load-fasl "Cons/member-if-defun.fasl" e5)
