@@ -7,6 +7,7 @@
   (load-fasl "Cons/list-length-defun.fasl" e5)
   (load-fasl "Cons/make-list-defun.fasl" e5)
   (load-fasl "Cons/intersection-defun.fasl" e5)
+  (load-fasl "Cons/nintersection-defun.fasl" e5)
   (load-fasl "Cons/set-difference-defun.fasl" e5)
   (load-fasl "Cons/endp-defun.fasl" e5)
   (load-fasl "Cons/member-defun.fasl" e5)
