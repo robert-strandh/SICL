@@ -5,11 +5,6 @@ There is a lot to be done in this directory:
    defined in this module.  It should be modeled after
    Cons-high/docstrings-en.lisp
 
- * The current file functions.lisp should be split.  Each function and
-   each macro should be in a separate file.  The files with function
-   definitions should be called <mumble>-defun.lisp or
-   <mumble>-defgeneric.lisp.  Similarly for macros and classes.
-
  * There are several FIXME comments in functions.lisp.  They should be
    taken care of accordingly.
 
