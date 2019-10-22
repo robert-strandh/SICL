@@ -3,9 +3,6 @@
 ;;; FIXME: it should be the CL-USER package.
 (defparameter *package* nil)
 
-(defun proper-list-p (list)
-  (integerp (ignore-errors (list-length list))))
-
 (defun export (symbols-designator &optional package-designator *package*)
   (let ((package (package-designator-to-package package-designator))
         (symbols (designated-list-of-symbols symbols-designator)))
