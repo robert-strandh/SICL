@@ -74,6 +74,7 @@
     (cf "Cons/get-properties-defun.lisp")
     (cf "Cons/last-defun.lisp")
     (cf "Cons/make-bindings-defun.lisp")
+    (cf "Cons/nsublis-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
