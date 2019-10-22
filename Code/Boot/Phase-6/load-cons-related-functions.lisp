@@ -38,4 +38,5 @@
   (load-fasl "Cons/mapcon-defun.fasl" e5)
   (load-fasl "Cons/mapl-defun.fasl" e5)
   (load-fasl "Cons/maplist-defun.fasl" e5)
-  (load-fasl "Cons/nsublis-defun.fasl" e5))
+  (load-fasl "Cons/nsublis-defun.fasl" e5)
+  (load-fasl "Cons/nsubst-defun.fasl" e5))
