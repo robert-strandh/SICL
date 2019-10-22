@@ -1,0 +1,26 @@
+(cl:in-package #:sicl-package)
+
+(defun find-symbol (symbol-name &optional (package-designator *package*))
+  (let ((package (package-designator-to-package package-designator)))
+    (loop for symbols = (external-symbols package)
+	    then (cdr symbols)
+	  while (consp symbols)
+	  when (string= (symbol-name (car symbols)) symbol-name)
+	    do (return-from find-symbol
+		 (values (car symbols) :external)))
+    (loop for symbols = (internal-symbols package)
+	    then (cdr symbols)
+	  while (consp symbols)
+	  when (string= (symbol-name (car symbols)) symbol-name)
+	    do (return-from find-symbol
+		 (values (car symbols) :internal)))
+    (loop for packages = (use-list package)
+	    then (cdr packages)
+	  while (consp packages)
+	  do (loop for symbols = (external-symbols (car packages))
+		     then (cdr symbols)
+		   while (consp symbols)
+		   when (string= (symbol-name (car symbols)) symbol-name)
+		     do (return-from find-symbol
+			  (values (car symbols) :inherited))))
+    (values nil nil)))
