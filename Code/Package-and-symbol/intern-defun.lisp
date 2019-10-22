@@ -1,0 +1,13 @@
+(cl:in-package #:sicl-package)
+
+(defun intern (symbol-name &optional (package-designator *package*))
+  (let ((package (package-designator-to-package package-designator)))
+    (multiple-value-bind (symbol-or-nil status)
+        (find-symbol symbol-name package)
+      (if (null symbol-or-nil)
+          (let ((new-symbol (make-symbol symbol-name))
+                (package (package-designator-to-package package-designator)))
+            (setf (sicl-symbol:package new-symbol) package)
+            (push new-symbol (internal-symbols package))
+            (values new-symbol nil))
+          (values symbol-or-nil status)))))
