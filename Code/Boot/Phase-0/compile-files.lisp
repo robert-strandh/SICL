@@ -51,6 +51,7 @@
     (cf "Cons/member-if-defun.lisp")
     (cf "Cons/member-if-not-defun.lisp")
     (cf "Cons/intersection-defun.lisp")
+    (cf "Cons/nintersection-defun.lisp")
     (cf "Cons/set-difference-defun.lisp")
     (cf "Cons/endp-defun.lisp")
     (cf "Cons/make-list-defun.lisp")
