@@ -76,6 +76,7 @@
     (cf "Cons/make-bindings-defun.lisp")
     (cf "Cons/nsublis-defun.lisp")
     (cf "Cons/nsubst-defun.lisp")
+    (cf "Cons/nsubst-if-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
