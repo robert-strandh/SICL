@@ -49,5 +49,6 @@
   (load-fasl "Cons/nsubst-if-defun.fasl" e5)
   (load-fasl "Cons/nsubst-if-not-defun.fasl" e5)
   (load-fasl "Cons/nth-defun.fasl" e5)
+  (load-fasl "Cons/setf-nth-defun.fasl" e5)
   (load-fasl "Cons/nthcdr-defun.fasl" e5)
   (load-fasl "Cons/pairlis-defun.fasl" e5))
