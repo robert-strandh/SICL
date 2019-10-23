@@ -24,6 +24,7 @@
   (load-fasl "Cons/assoc-defun.fasl" e5)
   (load-fasl "Cons/assoc-if-defun.fasl" e5)
   (load-fasl "Cons/assoc-if-not-defun.fasl" e5)
+  (load-fasl "Cons/rassoc-defun.fasl" e5)
   (load-fasl "Cons/butlast-defun.fasl" e5)
   (load-fasl "Cons/nbutlast-defun.fasl" e5)
   (load-fasl "Cons/copy-alist-defun.fasl" e5)
