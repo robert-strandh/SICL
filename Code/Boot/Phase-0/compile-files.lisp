@@ -83,6 +83,7 @@
     (cf "Cons/make-bindings-defun.lisp")
     (cf "Cons/sublis-defun.lisp")
     (cf "Cons/nsublis-defun.lisp")
+    (cf "Cons/subst-defun.lisp")
     (cf "Cons/nsubst-defun.lisp")
     (cf "Cons/nsubst-if-defun.lisp")
     (cf "Cons/nsubst-if-not-defun.lisp")
