@@ -19,6 +19,7 @@
   (load-fasl "Cons/acons-defun.fasl" e5)
   (load-fasl "Cons/adjoin-defun.fasl" e5)
   (load-fasl "Cons/append-defun.fasl" e5)
+  (load-fasl "Cons/revappend-defun.fasl" e5)
   (load-fasl "Cons/nconc-defun.fasl" e5)
   (load-fasl "Cons/nreconc-defun.fasl" e5)
   (load-fasl "Cons/assoc-defun.fasl" e5)
