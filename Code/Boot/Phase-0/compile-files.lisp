@@ -80,6 +80,7 @@
     (cf "Cons/get-properties-defun.lisp")
     (cf "Cons/last-defun.lisp")
     (cf "Cons/make-bindings-defun.lisp")
+    (cf "Cons/sublis-defun.lisp")
     (cf "Cons/nsublis-defun.lisp")
     (cf "Cons/nsubst-defun.lisp")
     (cf "Cons/nsubst-if-defun.lisp")
