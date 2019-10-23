@@ -85,6 +85,7 @@
     (cf "Cons/nsublis-defun.lisp")
     (cf "Cons/subst-defun.lisp")
     (cf "Cons/nsubst-defun.lisp")
+    (cf "Cons/subst-if-defun.lisp")
     (cf "Cons/nsubst-if-defun.lisp")
     (cf "Cons/nsubst-if-not-defun.lisp")
     (cf "Cons/nth-defun.lisp")
