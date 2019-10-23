@@ -8,5 +8,8 @@
   ((:file "packages")
    (:file "binary-char-equal-1-defun")
    (:file "char-equal-1-defun")
-   (:file "char-equal-1-define-compiler-macro")))
+   (:file "char-equal-1-define-compiler-macro")
+   (:file "binary-char-less-1-defun")
+   (:file "char-less-1-defun")
+   (:file "char-less-1-define-compiler-macro")))
 
