@@ -79,6 +79,7 @@
     (cf "Cons/nsubst-if-defun.lisp")
     (cf "Cons/nsubst-if-not-defun.lisp")
     (cf "Cons/nth-defun.lisp")
+    (cf "Cons/nthcdr-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
