@@ -1,10 +1,5 @@
 There is a lot to be done in this directory:
 
- * It needs a file called documentation-strings-english.lisp in which
-   there should be documentation strings for the functions and classes
-   defined in this module.  It should be modeled after
-   Cons-high/docstrings-en.lisp
-
  * There are several FIXME comments in functions.lisp.  They should be
    taken care of accordingly.
 
