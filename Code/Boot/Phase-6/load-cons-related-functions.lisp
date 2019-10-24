@@ -57,4 +57,5 @@
   (load-fasl "Cons/setf-nth-defun.fasl" e5)
   (load-fasl "Cons/nthcdr-defun.fasl" e5)
   (load-fasl "Cons/pairlis-defun.fasl" e5)
-  (load-fasl "Cons/ldiff-defun.fasl" e5))
+  (load-fasl "Cons/ldiff-defun.fasl" e5)
+  (load-fasl "Cons/tailp-defun.fasl" e5))
