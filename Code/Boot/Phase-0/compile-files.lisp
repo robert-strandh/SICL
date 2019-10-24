@@ -94,6 +94,7 @@
     (cf "Cons/nthcdr-defun.lisp")
     (cf "Cons/pairlis-defun.lisp")
     (cf "Cons/ldiff-defun.lisp")
+    (cf "Cons/tailp-defun.lisp")
     (cf "Sequence/sequence-defclass.lisp")
     (cf "Package-and-symbol/symbol-defclass.lisp")
     (cf "Arithmetic/number-defclass.lisp")
