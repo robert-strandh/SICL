@@ -14,5 +14,8 @@
    (:file "char-less-1-define-compiler-macro")
    (:file "binary-char-not-greaterp-1-defun")
    (:file "char-not-greaterp-1-defun")
-   (:file "char-not-greaterp-1-define-compiler-macro")))
+   (:file "char-not-greaterp-1-define-compiler-macro")
+   (:file "binary-char-greaterp-1-defun")
+   (:file "char-greaterp-1-defun")
+   (:file "char-greaterp-1-define-compiler-macro")))
 
