@@ -407,12 +407,9 @@
          (entry (car (member stamps (call-history generic-function)
                              :key #'class-number-cache :test #'equal))))
     (unless (null entry)
-      ;; Found an entry, call the effective method of the entry,
-      ;; passing it the arguments we received.
-      (return-from default-discriminating-function
-        (funcall (effective-method-cache entry) arguments)))
-    ;; Come here if the call history did not contain an entry for the
-    ;; current arguments.
+      ;; There should never be a valid entry, because it would
+      ;; then have been found by the TAGBODY preceding this code.
+      (error "entry found"))
     (let ((classes (mapcar #'class-of required-arguments))
           (method-combination
             (generic-function-method-combination generic-function)))
@@ -424,8 +421,11 @@
                                                    classes
                                                    applicable-methods))
                  (effective-method-function (compile nil effective-method)))
+            (set-funcallable-instance-function
+             generic-function
+             (compute-discriminating-function generic-function))
             (return-from default-discriminating-function
-              (funcall effective-method-function arguments))))
+              (apply generic-function arguments))))
         ;; Come here if we can't compute the applicable methods using
         ;; only the classes of the arguments.
         (let ((applicable-methods
