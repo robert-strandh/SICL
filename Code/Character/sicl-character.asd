@@ -26,5 +26,8 @@
    (:file "char-equal-2-define-compiler-macro")
    (:file "binary-char-lessp-2-defun")
    (:file "char-lessp-2-defun")
-   (:file "char-lessp-2-define-compiler-macro")))
+   (:file "char-lessp-2-define-compiler-macro")
+   (:file "binary-char-not-greaterp-2-defun")
+   (:file "char-not-greaterp-2-defun")
+   (:file "char-not-greaterp-2-define-compiler-macro")))
 
