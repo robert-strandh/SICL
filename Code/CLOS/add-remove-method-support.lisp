@@ -121,6 +121,14 @@
 ;;; method.
 
 (defun remove-method-default (generic-function method)
+  ;; Remove entries in the call history for which the method is
+  ;; applicable.
+  (setf (call-history generic-function)
+        (loop with profile = (specializer-profile generic-function)
+              for cache in (call-history generic-function)
+              for class-cache = (class-cache cache)
+              unless (applicable class-cache profile method)
+                collect cache))
   ;; Remove METHOD from the methods of GENERIC-FUNCTION.
   (setf (generic-function-methods generic-function)
         (remove method (generic-function-methods generic-function)))
