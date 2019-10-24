@@ -50,6 +50,7 @@
     (cf "Cons/member-defun.lisp")
     (cf "Cons/member-if-defun.lisp")
     (cf "Cons/member-if-not-defun.lisp")
+    (cf "Cons/union-defun.lisp")
     (cf "Cons/nunion-defun.lisp")
     (cf "Cons/intersection-defun.lisp")
     (cf "Cons/nintersection-defun.lisp")
