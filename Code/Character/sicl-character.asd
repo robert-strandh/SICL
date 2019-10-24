@@ -32,5 +32,8 @@
    (:file "char-not-greaterp-2-define-compiler-macro")
    (:file "binary-char-greaterp-2-defun")
    (:file "char-greaterp-2-defun")
-   (:file "char-greaterp-2-define-compiler-macro")))
+   (:file "char-greaterp-2-define-compiler-macro")
+   (:file "binary-char-not-lessp-2-defun")
+   (:file "char-not-lessp-2-defun")
+   (:file "char-not-lessp-2-define-compiler-macro")))
 
