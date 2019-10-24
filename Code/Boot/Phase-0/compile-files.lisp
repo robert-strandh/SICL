@@ -77,6 +77,7 @@
     (cf "Cons/copy-alist-defun.lisp")
     (cf "Cons/copy-list-defun.lisp")
     (cf "Cons/copy-tree-defun.lisp")
+    (cf "Cons/tree-equal-defun.lisp")
     (cf "Cons/getf-defun.lisp")
     (cf "Cons/get-properties-defun.lisp")
     (cf "Cons/last-defun.lisp")
