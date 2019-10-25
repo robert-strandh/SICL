@@ -8,6 +8,7 @@
   ((:file "packages")
    (:file "upper-case-p-defun")
    (:file "lower-case-p-defun")
+   (:file "char-upcase-defun")
    (:file "binary-char-equal-1-defun")
    (:file "char-equal-1-defun")
    (:file "char-equal-1-define-compiler-macro")
