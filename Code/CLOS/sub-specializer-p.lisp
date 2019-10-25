@@ -27,11 +27,10 @@
 ;;; comparison of the result of calling POSITION) will signal an
 ;;; error, which is reassuring.
 (defun sub-specializer-p (specializer1 specializer2 class-of-argument)
-  (cond ((typep specializer1 'eql-specializer)
-         t)
-        ((typep specializer2 'eql-specializer)
-         nil)
-        (t (let ((precedence-list (class-precedence-list class-of-argument)))
-             (< (position specializer1 precedence-list)
-                (position specializer2 precedence-list))))))
-
+  (if (classp specializer1)
+      (if (classp specializer2)
+          (let ((precedence-list (class-precedence-list class-of-argument)))
+            (< (position specializer1 precedence-list)
+               (position specializer2 precedence-list)))
+          nil)
+      t))
