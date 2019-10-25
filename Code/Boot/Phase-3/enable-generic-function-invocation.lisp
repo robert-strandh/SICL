@@ -9,7 +9,7 @@
 ;;; (indirectly) to determine which is two methods is more specific.
 (defun define-sub-specializer-p (environment)
   (import-function-from-host 'position environment)
-  (load-fasl "Boot/Phase-3/sub-specializer-p.fasl" environment))
+  (load-fasl "CLOS/sub-specializer-p.fasl" environment))
 
 ;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
 ;;; get the class of each of the arguments passed to a generic
