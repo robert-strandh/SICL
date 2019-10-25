@@ -266,5 +266,4 @@
     (cf "Data-and-control-flow/shiftf-support.lisp")
     (cf "Data-and-control-flow/shiftf-defmacro.lisp")
     (cf "Data-and-control-flow/multiple-value-list-defmacro.lisp")
-    (cf "Conditionals/macros.lisp")
-    (cf "Boot/Phase-3/sub-specializer-p.lisp")))
+    (cf "Conditionals/macros.lisp")))
