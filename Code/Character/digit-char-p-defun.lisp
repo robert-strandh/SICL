@@ -10,7 +10,7 @@
            nil))))
 
 (defun digit-char-p (character &optional (radix 10))
-  (unless (<= 2 radix 36)
+  (unless (typep radix '(integer 2 36))
     (error 'type-error
            :datum radix
            :expected-type '(integer 2 36)))
