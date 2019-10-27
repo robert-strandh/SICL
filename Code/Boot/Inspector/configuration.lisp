@@ -85,11 +85,7 @@
         (slot (clouseau:cell place)))
     (not (eql (rack-element-value instance slot) 10000000))))
 
-(defmethod clouseau:inspect-object-using-state
-    ((object sicl-boot-phase-3::header)
-     (state clouseau:inspected-object)
-     (style (eql :expanded-body))
-     (stream t))
+(defun inspect-very-pure-object (object stream)
   (let ((slots (aref (rack-of-object object) 1)))
     (clim:formatting-table (stream)
       (loop for slot in slots
@@ -109,3 +105,21 @@
                      (present-place stream))
                    (clim:formatting-cell (stream)
                      (present-object stream))))))))
+
+(defun inspect-pure-object (object stream)
+  (declare (ignore object))
+  (format stream "Pure object"))
+
+(defun inspect-impure-object (object stream)
+  (declare (ignore object))
+  (format stream "Impure object"))
+
+(defmethod clouseau:inspect-object-using-state
+    ((object sicl-boot-phase-3::header)
+     (state clouseau:inspected-object)
+     (style (eql :expanded-body))
+     (stream t))
+  (ecase (object-purity object)
+    (3 (inspect-very-pure-object object stream))
+    (2 (inspect-pure-object object stream))
+    (1 (inspect-impure-object object stream))))
