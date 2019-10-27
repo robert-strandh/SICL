@@ -9,4 +9,5 @@
    (:file "gethash-defmethod")
    (:file "setf-gethash-defmethod")
    (:file "hash-table-count-defmethod")
-   (:file "remhash-defmethod")))
+   (:file "remhash-defmethod")
+   (:file "maphash-defmethod")))
