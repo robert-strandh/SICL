@@ -4,5 +4,4 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "hash-table")))
-
+   (:file "hash-table-defclass")))
