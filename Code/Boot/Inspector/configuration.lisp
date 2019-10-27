@@ -33,6 +33,16 @@
     (1 "Ersatz (impure)")
     (0 "Host")))
 
+(defmacro with-purity-ink ((object stream) &body body)
+  (let ((ink-var (gensym)))
+    `(let ((,ink-var (ecase (object-purity ,object)
+                       (0 clim:+black+)
+                       (1 clim:+green+)
+                       (2 clim:+red+)
+                       (3 clim:+blue+))))
+       (clim:with-drawing-options (,stream :ink ,ink-var)
+         ,@body))))
+
 (defun class-of-object (object)
   (slot-value object 'sicl-boot-phase-3::%class))
 
@@ -55,7 +65,8 @@
   (format stream "~a [~a]" (class-name-of-object object) (object-purity-name object))
   (when (member (class-name-of-object object)
                 '(standard-class built-in-class sicl-clos:funcallable-standard-class))
-    (format stream " ~a" (aref (rack-of-object object) 5))))
+    (with-purity-ink (object stream)
+      (format stream " ~a" (aref (rack-of-object object) 5)))))
 
 (defmethod clouseau:inspect-object-using-state
     ((object sicl-boot-phase-3::header)
@@ -125,11 +136,11 @@
                    (clim:formatting-cell (stream)
                      (present-place stream))
                    (clim:formatting-cell (stream)
-                     (present-object stream)))))))
+                     (present-object stream))))))))
 
 (defun inspect-impure-object (object stream)
-  (declare (ignore object))
-  (format stream "Impure object"))
+  (with-purity-ink (object stream)
+    (format stream "Impure object")))
 
 (defmethod clouseau:inspect-object-using-state
     ((object sicl-boot-phase-3::header)
