@@ -8,4 +8,5 @@
    (:file "list-hash-table-defclass")
    (:file "gethash-defmethod")
    (:file "setf-gethash-defmethod")
-   (:file "hash-table-count-defmethod")))
+   (:file "hash-table-count-defmethod")
+   (:file "remhash-defmethod")))
