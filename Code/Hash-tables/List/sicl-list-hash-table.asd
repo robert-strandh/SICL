@@ -10,4 +10,5 @@
    (:file "setf-gethash-defmethod")
    (:file "hash-table-count-defmethod")
    (:file "remhash-defmethod")
-   (:file "maphash-defmethod")))
+   (:file "maphash-defmethod")
+   (:file "clrhash-defmethod")))
