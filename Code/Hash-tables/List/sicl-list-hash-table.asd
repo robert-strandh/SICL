@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "list-hash-table-defclass")
-   (:file "gethash-defmethod")))
+   (:file "gethash-defmethod")
+   (:file "setf-gethash-defmethod")))

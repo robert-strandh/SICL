@@ -1,0 +1,11 @@
+(cl:in-package #:sicl-list-hash-table)
+
+(defmethod (setf gethash) (new-value key (hash-table list-hash-table) &optional default)
+  (declare (ignore default))
+  (with-accessors ((contents contents)
+                   (test hash-table-test))
+      (let ((entry (assoc key contents :key #'car :test test)))
+        (if (null entry)
+            (push (cons key new-value) contents)
+            (setf (cdr entry) new-value))))
+  new-value)
