@@ -22,6 +22,3 @@
 (defgeneric maphash (function hash-table))
 
 (defgeneric clrhash (hash-table))
-
-
-
