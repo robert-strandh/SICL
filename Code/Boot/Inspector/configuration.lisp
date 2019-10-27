@@ -107,8 +107,25 @@
                      (present-object stream))))))))
 
 (defun inspect-pure-object (object stream)
-  (declare (ignore object))
-  (format stream "Pure object"))
+  (let ((slots (aref (rack-of-object object) 1)))
+    (clim:formatting-table (stream)
+      (loop for slot in slots
+            for slot-name = (aref (rack-of-object slot) 2)
+            for slot-value = (rack-element-value object slot)
+            do (clouseau:formatting-place
+                   (object
+                    'ersatz-instance-slot-place
+                    slot
+                    present-place
+                    present-object)
+                 (clim:formatting-row (stream)
+                   (clim:formatting-cell (stream :align-y :center)
+                     (clouseau:with-style (stream :slot-like)
+                       (format stream "~s" slot-name)))
+                   (clim:formatting-cell (stream)
+                     (present-place stream))
+                   (clim:formatting-cell (stream)
+                     (present-object stream)))))))
 
 (defun inspect-impure-object (object stream)
   (declare (ignore object))
