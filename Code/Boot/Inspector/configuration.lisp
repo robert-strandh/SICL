@@ -33,8 +33,10 @@
 (defun class-name-of-object (object)
   (let ((class-of-object (class-of-object object)))
     (if (typep class-of-object 'sicl-boot-phase-3::header)
-        (funcall (sicl-genv:fdefinition 'class-name (sicl-boot::e4 *boot*)) class-of-object)
-        (funcall (sicl-genv:fdefinition 'class-name (sicl-boot::e3 *boot*)) class-of-object))))
+        (funcall (sicl-genv:fdefinition 'class-name (sicl-boot::e4 *boot*))
+                 class-of-object)
+        (funcall (sicl-genv:fdefinition 'class-name (sicl-boot::e3 *boot*))
+                 class-of-object))))
 
 (defmethod clouseau:inspect-object-using-state
     ((object sicl-boot-phase-3::header)
@@ -42,7 +44,8 @@
      (style (eql :collapsed))
      (stream t))
   (format stream "~a [~a]" (class-name-of-object object) (object-type-name object))
-  (when (member (class-name-of-object object) '(standard-class built-in-class sicl-clos:funcallable-standard-class))
+  (when (member (class-name-of-object object)
+                '(standard-class built-in-class sicl-clos:funcallable-standard-class))
     (format stream " ~a" (aref (rack-of-object object) 5))))
 
 (defmethod clouseau:inspect-object-using-state
@@ -51,7 +54,8 @@
      (style (eql :expanded-header))
      (stream t))
   (format stream "~a [~a]" (class-name-of-object object) (object-type-name object))
-  (when (member (class-name-of-object object) '(standard-class built-in-class sicl-clos:funcallable-standard-class))
+  (when (member (class-name-of-object object)
+                '(standard-class built-in-class sicl-clos:funcallable-standard-class))
     (format stream " ~a" (aref (rack-of-object object) 5))))
 
 (defclass ersatz-instance-slot-place
