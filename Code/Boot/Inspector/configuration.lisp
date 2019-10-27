@@ -15,14 +15,23 @@
         (t (format stream "FUNCTION"))))
 
 (defun object-type (object)
-  (let ((class-of-object (slot-value object 'sicl-boot-phase-3::%class)))
-    (if (typep class-of-object 'sicl-boot-phase-3::header)
-        'pure-ersatz 'impure-ersatz)))
+  (if (typep object 'sicl-boot-phase-3::header)
+      (let ((class-of-object (slot-value object 'sicl-boot-phase-3::%class)))
+        (if (typep class-of-object 'sicl-boot-phase-3::header)
+            (let ((class-of-class-of-object
+                    (slot-value class-of-object 'sicl-boot-phase-3::%class)))
+              (if (typep class-of-class-of-object 'sicl-boot-phase-3::header)
+                  'very-pure-ersatz
+                  'pure-ersatz))
+            'impure-ersatz))
+      'host))
 
 (defun object-type-name (object)
   (ecase (object-type object)
+    (very-pure-ersatz "Ersatz (very pure)")
     (pure-ersatz "Ersatz (pure)")
-    (impure-ersatz "Ersatz (impure)")))
+    (impure-ersatz "Ersatz (impure)")
+    (host "Host")))
 
 (defun class-of-object (object)
   (slot-value object 'sicl-boot-phase-3::%class))
