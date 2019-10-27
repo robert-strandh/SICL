@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "list-hash-table-defclass")))
+   (:file "list-hash-table-defclass")
+   (:file "gethash-defmethod")))
