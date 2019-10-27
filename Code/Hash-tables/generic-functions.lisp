@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-hash-table)
 
 (defgeneric hash-table-p (object)
-  (:method (object) nil))
+  (:method (object) nil)
+  (:method ((object hash-table)) t))
 
 (defgeneric hash-table-count (hash-table))
 
