@@ -74,6 +74,14 @@
       (format stream " ~a" (aref (rack-of-object object) 5)))))
 
 (defmethod clouseau:inspect-object-using-state
+    ((object closer-mop:funcallable-standard-object)
+     (state clouseau:inspected-object)
+     (style (eql :collapsed))
+     (stream t))
+  (with-purity-ink (object stream)
+    (format stream " is this green?")))
+
+(defmethod clouseau:inspect-object-using-state
     ((object sicl-boot-phase-3::header)
      (state clouseau:inspected-object)
      (style (eql :expanded-header))
