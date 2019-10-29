@@ -11,4 +11,6 @@
    (:file "hash-table-count-defmethod")
    (:file "remhash-defmethod")
    (:file "maphash-defmethod")
-   (:file "clrhash-defmethod")))
+   (:file "clrhash-defmethod")
+   (:file "clrhash-defmethod")
+   (:file "make-hash-table-iterator-defmethod")))
