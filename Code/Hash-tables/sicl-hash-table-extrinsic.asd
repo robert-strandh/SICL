@@ -4,4 +4,5 @@
   :depends-on (#:sicl-hash-table-base-extrinsic
                #:sicl-list-hash-table-extrinsic)
   :serial t
-  :components ())
+  :components
+  ((:file "with-hash-table-iterator-defmacro")))

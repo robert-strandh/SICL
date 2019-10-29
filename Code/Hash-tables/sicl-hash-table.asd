@@ -4,4 +4,5 @@
   :depends-on (#:sicl-hash-table-base
                #:sicl-list-hash-table)
   :serial t
-  :components ())
+  :components
+  ((:file with-hash-table-iterator-defmacro)))
