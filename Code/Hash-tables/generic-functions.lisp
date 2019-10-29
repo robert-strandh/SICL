@@ -23,3 +23,6 @@
 (defgeneric maphash (function hash-table))
 
 (defgeneric clrhash (hash-table))
+
+;;; Internal
+(defgeneric make-hash-table-iterator (hash-table))
