@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-hash-table
   (:use #:common-lisp)
-  (:export))
+  (:export #:make-hash-table-iterator))

@@ -17,4 +17,5 @@
            #:hash-table-size #:hash-table-test
            #:puthash #:gethash #:remhash #:clrhash
            #:with-hash-table-iterator
-           #:maphash))
+           #:maphash
+           #:make-hash-table-iterator))
