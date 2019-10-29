@@ -21,25 +21,30 @@
             (let ((class-of-class-of-object
                     (slot-value class-of-object 'sicl-boot-phase-3::%class)))
               (if (typep class-of-class-of-object 'sicl-boot-phase-3::header)
-                  3
-                  2))
-            1))
-      0))
+                  4
+                  3))
+            2))
+      (if (eq (class-of (class-of object))
+              (find-class 'sicl-boot-phase-1::funcallable-standard-class))
+          1
+          0)))
 
 (defun object-purity-name (object)
   (ecase (object-purity object)
-    (3 "Ersatz (very pure)")
-    (2 "Ersatz (pure)")
-    (1 "Ersatz (impure)")
+    (4 "Ersatz (very pure)")
+    (3 "Ersatz (pure)")
+    (2 "Ersatz (impure)")
+    (1 "Bridge")
     (0 "Host")))
 
 (defmacro with-purity-ink ((object stream) &body body)
   (let ((ink-var (gensym)))
     `(let ((,ink-var (ecase (object-purity ,object)
                        (0 clim:+black+)
-                       (1 clim:+red+)
-                       (2 clim:+blue+)
-                       (3 clim:+yellow+))))
+                       (1 clim:+green+)
+                       (2 clim:+red+)
+                       (3 clim:+blue+)
+                       (4 clim:+yellow+))))
        (clim:with-drawing-options (,stream :ink ,ink-var)
          ,@body))))
 
