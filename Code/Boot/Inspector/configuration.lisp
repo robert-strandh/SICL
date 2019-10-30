@@ -74,14 +74,6 @@
       (format stream " ~a" (aref (rack-of-object object) 5)))))
 
 (defmethod clouseau:inspect-object-using-state
-    ((object closer-mop:funcallable-standard-object)
-     (state clouseau:inspected-object)
-     (style (eql :collapsed))
-     (stream t))
-  (with-purity-ink (object stream)
-    (format stream " is this green?")))
-
-(defmethod clouseau:inspect-object-using-state
     ((object sicl-boot-phase-3::header)
      (state clouseau:inspected-object)
      (style (eql :expanded-header))
@@ -116,6 +108,11 @@
         (clim:formatting-cell (stream :align-x :center :align-y :center)
           (with-purity-ink (object stream)
             (format stream "Very pure object"))))
+      (clim:formatting-row (stream)
+        (clim:formatting-cell (stream :align-x :center :align-y :center)
+          (format stream "Class:"))
+        (clim:formatting-cell (stream :align-x :center :align-y :center)
+          (format stream "~s" (class-of-object object))))
       (loop for slot in slots
             for slot-name = (aref (rack-of-object slot) 2)
             for slot-value = (rack-element-value object slot)
