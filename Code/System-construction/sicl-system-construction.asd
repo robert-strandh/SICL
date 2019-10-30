@@ -4,4 +4,5 @@
   :depdends-on ()
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "features-defparameter")))

@@ -4,4 +4,5 @@
   :depends-on ()
   :serial t
   :components
-  ((:file "packages-extrinsic")))
+  ((:file "packages-extrinsic")
+   (:file "features-defparameter")))
