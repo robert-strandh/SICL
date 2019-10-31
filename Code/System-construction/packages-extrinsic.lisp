@@ -2,5 +2,7 @@
 
 (defpackage #:sicl-system-construction
   (:use #:common-lisp)
-  (:shadow #:*features*)
-  (:export #:*features*))
+  (:shadow #:*features*
+           #:*modules*)
+  (:export #:*features*
+           #:*modules*))
