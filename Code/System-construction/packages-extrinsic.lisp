@@ -3,6 +3,8 @@
 (defpackage #:sicl-system-construction
   (:use #:common-lisp)
   (:shadow #:*features*
-           #:*modules*)
+           #:*modules*
+           #:*compile-file-pathname*)
   (:export #:*features*
-           #:*modules*))
+           #:*modules*
+           #:*compile-file-pathname*))
