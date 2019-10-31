@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "features-defparameter")))
+   (:file "features-defparameter")
+   (:file "modules-defparameter")))
