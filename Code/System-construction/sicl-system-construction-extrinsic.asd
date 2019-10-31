@@ -6,4 +6,5 @@
   :components
   ((:file "packages-extrinsic")
    (:file "features-defparameter")
-   (:file "modules-defparameter")))
+   (:file "modules-defparameter")
+   (:file "compile-file-pathname-defparameter")))
