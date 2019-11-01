@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "features-defparameter")
    (:file "modules-defparameter")
-   (:file "compile-file-pathname-defparameter")))
+   (:file "compile-file-pathname-defparameter")
+   (:file "compile-file-truename-defparameter")))
