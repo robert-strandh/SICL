@@ -17,4 +17,5 @@
    (:file "impure-built-in-class")
    (:file "impure-standard-reader-method")
    (:file "present-pure-object-slots")
-   (:file "pure-object")))
+   (:file "pure-object")
+   (:file "pure-standard-generic-function")))
