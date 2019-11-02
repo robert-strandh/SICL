@@ -29,13 +29,21 @@
      (state  inspected-impure-standard-generic-function)
      (style  (eql :expanded-body))
      (stream t))
-  (clouseau:with-preserved-cursor-x (stream)
-    (clim:formatting-table (stream)
-      (clouseau:format-place-row
-       stream
-       object
-       'clouseau:pseudo-place
-       (funcall (sicl-genv:fdefinition 'sicl-clos:generic-function-name (sicl-boot::e4 *boot*))
-                object)
-       :label "Name"))))
+  (let ((e4 (sicl-boot::e4 *boot*)))
+    (clouseau:with-preserved-cursor-x (stream)
+      (clim:formatting-table (stream)
+        (clouseau:format-place-row
+         stream
+         object
+         'clouseau:pseudo-place
+         (funcall (sicl-genv:fdefinition 'sicl-clos:generic-function-name e4)
+                  object)
+         :label "Name")
+        (clouseau:format-place-row
+         stream
+         object
+         'clouseau:pseudo-place
+         (funcall (sicl-genv:fdefinition 'sicl-clos:generic-function-lambda-list e4)
+                  object)
+         :label "Lambda list")))))
 
