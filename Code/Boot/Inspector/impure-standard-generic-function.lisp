@@ -36,6 +36,12 @@
          stream
          object
          'clouseau:pseudo-place
+         (aref (slot-value object 'sicl-boot-phase-3::%rack) 0)
+         :label "Stamp")
+        (clouseau:format-place-row
+         stream
+         object
+         'clouseau:pseudo-place
          (funcall (sicl-genv:fdefinition 'sicl-clos:generic-function-name e4)
                   object)
          :label "Name")
