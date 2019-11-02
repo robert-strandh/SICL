@@ -10,4 +10,5 @@
    (:file "object-state-class")
    (:file "ersatz-instance-slot-place")
    (:file "present-impure-object-slots")
-   (:file "impure-standard-generic-function")))
+   (:file "impure-standard-generic-function")
+   (:file "impure-standard-reader-method")))
