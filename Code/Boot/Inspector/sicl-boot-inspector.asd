@@ -7,4 +7,5 @@
   :components
   ((:file "packages")
    (:file "inspect")
-   (:file "object-state-class")))
+   (:file "object-state-class")
+   (:file "impure-standard-generic-function")))
