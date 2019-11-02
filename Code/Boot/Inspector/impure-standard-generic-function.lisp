@@ -36,7 +36,7 @@
          stream
          object
          'clouseau:pseudo-place
-         (aref (slot-value object 'sicl-boot-phase-3::%rack) 0)
+         (aref (rack-of-object object) 0)
          :label "Stamp")
         (clouseau:format-place-row
          stream

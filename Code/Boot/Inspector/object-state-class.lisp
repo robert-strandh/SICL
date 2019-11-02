@@ -166,7 +166,7 @@
 (defmethod clouseau:object-state-class
     ((object sicl-boot-phase-3::header)
      (place t))
-  (object-state-class-with-class object (slot-value object 'sicl-boot-phase-3::%class)))
+  (object-state-class-with-class object (class-of-object object)))
 
 ;;; This method is applicable for impure objects, so the class is found
 ;;; in E3.
@@ -188,7 +188,7 @@
     
 ;;; This method is applicable for all pure objects.
 (defmethod object-state-class-with-class (object (class sicl-boot-phase-3::header))
-  (object-state-class-with-class-and-metaclass object class (slot-value class 'sicl-boot-phase-3::%class)))
+  (object-state-class-with-class-and-metaclass object class (class-of-object class)))
 
 ;;; This method is applicable for pure objects, so the class is found
 ;;; in E4.
