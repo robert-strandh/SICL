@@ -105,11 +105,11 @@
   ())
 
 (defclass inspected-pure-standard-direct-slot-definition
-    (inspected-pure-slot-definition)
+    (inspected-pure-standard-slot-definition)
   ())
 
 (defclass inspected-pure-standard-effective-slot-definition
-    (inspected-pure-slot-definition)
+    (inspected-pure-standard-slot-definition)
   ())
 
 (defclass inspected-pure-method-combination
@@ -160,11 +160,11 @@
   ())
 
 (defclass inspected-very-pure-standard-direct-slot-definition
-    (inspected-very-pure-slot-definition)
+    (inspected-very-pure-standard-slot-definition)
   ())
 
 (defclass inspected-very-pure-standard-effective-slot-definition
-    (inspected-very-pure-slot-definition)
+    (inspected-very-pure-standard-slot-definition)
   ())
 
 (defclass inspected-very-pure-method-combination
