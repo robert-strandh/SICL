@@ -50,11 +50,11 @@
   ())
 
 (defclass inspected-impure-standard-direct-slot-definition
-    (inspected-impure-slot-definition)
+    (inspected-impure-standard-slot-definition)
   ())
 
 (defclass inspected-impure-standard-effective-slot-definition
-    (inspected-impure-slot-definition)
+    (inspected-impure-standard-slot-definition)
   ())
 
 ;;; Pure objects.
