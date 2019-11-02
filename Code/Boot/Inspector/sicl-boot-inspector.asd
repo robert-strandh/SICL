@@ -7,5 +7,4 @@
   :components
   ((:file "packages")
    (:file "inspect")
-   (:file "object-state-class")
-   (:file "configuration")))
+   (:file "object-state-class")))
