@@ -57,6 +57,10 @@
     (inspected-impure-standard-slot-definition)
   ())
 
+(defclass inspected-impure-method-combination
+    (inspected-impure-object)
+  ())
+
 ;;; Pure objects.
 
 (defclass inspected-pure-object (inspected-ersatz-object)
@@ -106,6 +110,10 @@
 
 (defclass inspected-pure-standard-effective-slot-definition
     (inspected-pure-slot-definition)
+  ())
+
+(defclass inspected-pure-method-combination
+    (inspected-pure-object)
   ())
 
 ;;; Very pure objects.
@@ -159,6 +167,10 @@
     (inspected-very-pure-slot-definition)
   ())
 
+(defclass inspected-very-pure-method-combination
+    (inspected-very-pure-object)
+  ())
+
 (defgeneric object-state-class-with-class (object class))
 
 (defgeneric object-state-class-with-class-and-metaclass (object class metaclass))
@@ -184,7 +196,8 @@
     (standard-method 'inspected-impure-standard-method)
     (sicl-clos:standard-direct-slot-definition 'inspected-impure-standard-direct-slot-definition)
     (sicl-clos:standard-effective-slot-definition 'inspected-impure-standard-effective-slot-definition)
-    (t 'clouseau:inspected-object)))
+    (method-combination 'inspected-impure-method-combination)
+    (t 'inspected-impure-object)))
     
 ;;; This method is applicable for all pure objects.
 (defmethod object-state-class-with-class (object (class sicl-boot-phase-3::header))
@@ -206,7 +219,8 @@
     (standard-method 'inspected-pure-standard-method)
     (sicl-clos:standard-direct-slot-definition 'inspected-pure-standard-direct-slot-definition)
     (sicl-clos:standard-effective-slot-definition 'inspected-pure-standard-effective-slot-definition)
-    (t 'clouseau:inspected-object)))
+    (method-combination 'inspected-pure-method-combination)
+    (t 'inspected-pure-object)))
   
 ;;; This method is applicable for very pure objects, so the class is
 ;;; found in E5.
@@ -225,4 +239,5 @@
     (standard-method 'inspected-very-pure-standard-method)
     (sicl-clos:standard-direct-slot-definition 'inspected-very-pure-standard-direct-slot-definition)
     (sicl-clos:standard-effective-slot-definition 'inspected-very-pure-standard-effective-slot-definition)
-    (t 'clouseau:inspected-object)))
+    (method-combination 'inspected-very-pure-method-combination)
+    (t 'inspected-very-pure-object)))
