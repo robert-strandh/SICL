@@ -8,4 +8,5 @@
   ((:file "packages")
    (:file "inspect")
    (:file "object-state-class")
+   (:file "ersatz-instance-slot-place")
    (:file "impure-standard-generic-function")))
