@@ -12,6 +12,7 @@
    (:file "present-impure-object-slots")
    (:file "impure-object")
    (:file "impure-standard-generic-function")
+   (:file "impure-standard-class")
    (:file "impure-standard-reader-method")
    (:file "present-pure-object-slots")
    (:file "pure-object")))
