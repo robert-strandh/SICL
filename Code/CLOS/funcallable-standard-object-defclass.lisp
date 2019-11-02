@@ -36,4 +36,5 @@
 ;;; Class FUNCALLABLE-STANDARD-OBJECT.
 
 (defclass funcallable-standard-object (standard-object function)
-  ())
+  ()
+  (:metaclass funcallable-standard-class))
