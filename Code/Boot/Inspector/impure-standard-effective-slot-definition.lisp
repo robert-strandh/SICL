@@ -2,24 +2,24 @@
 
 (defmethod clouseau:inspect-object-using-state
     ((object t)
-     (state  inspected-impure-effective-slot-definition)
+     (state  inspected-impure-standard-effective-slot-definition)
      (style  (eql :collapsed))
      (stream t))
   (clim:with-drawing-options (stream :ink clim:+red+)
     (format stream
-            "Impure effective slot definition")))
+            "Impure standard effective slot definition")))
 
 (defmethod clouseau:inspect-object-using-state
     ((object t)
-     (state  inspected-impure-effective-slot-definition)
+     (state  inspected-impure-standard-effective-slot-definition)
      (style  (eql :expanded-header))
      (stream t))
   (clim:with-drawing-options (stream :ink clim:+red+)
-    (format stream "Impure effective slot definition")))
+    (format stream "Impure standard effective slot definition")))
 
 (defmethod clouseau:inspect-object-using-state
     ((object t)
-     (state  inspected-impure-effective-slot-definition)
+     (state  inspected-impure-standard-effective-slot-definition)
      (style  (eql :expanded-body))
      (stream t))
   (let ((e4 (sicl-boot::e4 *boot*)))
