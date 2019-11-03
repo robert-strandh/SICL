@@ -33,4 +33,5 @@
    (:file "pure-standard-reader-method")
    (:file "pure-standard-writer-method")
    (:file "pure-standard-direct-slot-definition")
-   (:file "pure-standard-effective-slot-definition")))
+   (:file "pure-standard-effective-slot-definition")
+   (:file "pure-method-combination")))
