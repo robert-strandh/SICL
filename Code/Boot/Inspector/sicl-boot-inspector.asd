@@ -31,4 +31,5 @@
    (:file "pure-built-in-class")
    (:file "pure-standard-method")
    (:file "pure-standard-reader-method")
-   (:file "pure-standard-writer-method")))
+   (:file "pure-standard-writer-method")
+   (:file "pure-standard-direct-slot-definition")))
