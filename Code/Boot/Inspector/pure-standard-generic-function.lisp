@@ -5,7 +5,7 @@
      (state  inspected-pure-standard-generic-function)
      (style  (eql :collapsed))
      (stream t))
-  (clim:with-drawing-options (stream :ink clim:+red+)
+  (clim:with-drawing-options (stream :ink clim:+blue+)
     (format stream
             "Pure standard generic function ~s"
             (funcall (sicl-genv:fdefinition 'sicl-clos:generic-function-name
@@ -17,7 +17,7 @@
      (state  inspected-pure-standard-generic-function)
      (style  (eql :expanded-header))
      (stream t))
-  (clim:with-drawing-options (stream :ink clim:+red+)
+  (clim:with-drawing-options (stream :ink clim:+blue+)
     (format stream
             "Pure standard generic function ~s"
             (funcall (sicl-genv:fdefinition 'sicl-clos:generic-function-name
