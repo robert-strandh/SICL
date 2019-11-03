@@ -36,6 +36,12 @@
          stream
          object
          'clouseau:pseudo-place
+         (class-of-object object)
+         :label "Class")
+        (clouseau:format-place-row
+         stream
+         object
+         'clouseau:pseudo-place
          (aref (rack-of-object object) 0)
          :label "Stamp")
         (clouseau:format-place-row
