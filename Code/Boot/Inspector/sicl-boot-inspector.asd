@@ -21,6 +21,7 @@
    (:file "impure-standard-writer-method")
    (:file "impure-standard-direct-slot-definition")
    (:file "impure-standard-effective-slot-definition")
+   (:file "impure-method-combination")
    (:file "present-pure-object-slots")
    (:file "pure-object")
    (:file "pure-standard-generic-function")))
