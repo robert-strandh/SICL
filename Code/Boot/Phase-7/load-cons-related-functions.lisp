@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-6)
+(cl:in-package #:sicl-boot-phase-7)
 
 (defun load-cons-related-functions (e5)
   (load-fasl "Cons/null-defun.fasl" e5)
