@@ -25,4 +25,6 @@
    (:file "present-pure-object-slots")
    (:file "pure-object")
    (:file "pure-standard-generic-function")
-   (:file "pure-standard-class")))
+   (:file "pure-standard-class")
+   (:file "pure-eql-specializer")
+   (:file "pure-funcallable-standard-class")))
