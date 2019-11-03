@@ -2,24 +2,24 @@
 
 (defmethod clouseau:inspect-object-using-state
     ((object t)
-     (state  inspected-impure-direct-slot-definition)
+     (state  inspected-impure-standard-direct-slot-definition)
      (style  (eql :collapsed))
      (stream t))
   (clim:with-drawing-options (stream :ink clim:+red+)
     (format stream
-            "Impure direct slot definition")))
+            "Impure standard direct slot definition")))
 
 (defmethod clouseau:inspect-object-using-state
     ((object t)
-     (state  inspected-impure-direct-slot-definition)
+     (state  inspected-impure-standard-direct-slot-definition)
      (style  (eql :expanded-header))
      (stream t))
   (clim:with-drawing-options (stream :ink clim:+red+)
-    (format stream "Impure direct slot definition")))
+    (format stream "Impure standard direct slot definition")))
 
 (defmethod clouseau:inspect-object-using-state
     ((object t)
-     (state  inspected-impure-direct-slot-definition)
+     (state  inspected-impure-standard-direct-slot-definition)
      (style  (eql :expanded-body))
      (stream t))
   (let ((e4 (sicl-boot::e4 *boot*)))
