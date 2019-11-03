@@ -28,4 +28,5 @@
    (:file "pure-standard-class")
    (:file "pure-eql-specializer")
    (:file "pure-funcallable-standard-class")
-   (:file "pure-built-in-class")))
+   (:file "pure-built-in-class")
+   (:file "pure-standard-method")))
