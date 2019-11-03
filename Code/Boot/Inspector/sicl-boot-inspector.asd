@@ -24,4 +24,5 @@
    (:file "impure-method-combination")
    (:file "present-pure-object-slots")
    (:file "pure-object")
-   (:file "pure-standard-generic-function")))
+   (:file "pure-standard-generic-function")
+   (:file "pure-standard-class")))
