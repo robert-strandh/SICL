@@ -8,6 +8,7 @@
                #:sicl-boot-phase-3
                #:sicl-boot-phase-4
                #:sicl-boot-phase-5
+               #:sicl-boot-phase-6
                #:sicl-boot-phase-7)
   :serial t
   :components
