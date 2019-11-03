@@ -15,6 +15,7 @@
    (:file "impure-standard-class")
    (:file "impure-funcallable-standard-class")
    (:file "impure-built-in-class")
+   (:file "impure-standard-method")
    (:file "impure-standard-reader-method")
    (:file "impure-standard-writer-method")
    (:file "present-pure-object-slots")
