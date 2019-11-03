@@ -61,6 +61,10 @@
     (inspected-impure-object)
   ())
 
+(defclass inspected-impure-method-combination-template
+    (inspected-impure-object)
+  ())
+
 ;;; Pure objects.
 
 (defclass inspected-pure-object (inspected-ersatz-object)
@@ -113,6 +117,10 @@
   ())
 
 (defclass inspected-pure-method-combination
+    (inspected-pure-object)
+  ())
+
+(defclass inspected-pure-method-combination-template
     (inspected-pure-object)
   ())
 
@@ -171,6 +179,10 @@
     (inspected-very-pure-object)
   ())
 
+(defclass inspected-very-pure-method-combination-template
+    (inspected-very-pure-object)
+  ())
+
 (defgeneric object-state-class-with-class (object class))
 
 (defgeneric object-state-class-with-class-and-metaclass (object class metaclass))
@@ -197,6 +209,7 @@
     (sicl-clos:standard-direct-slot-definition 'inspected-impure-standard-direct-slot-definition)
     (sicl-clos:standard-effective-slot-definition 'inspected-impure-standard-effective-slot-definition)
     (method-combination 'inspected-impure-method-combination)
+    (sicl-method-combination:method-combination-template 'inspected-impure-method-combination-template)
     (t 'inspected-impure-object)))
     
 ;;; This method is applicable for all pure objects.
@@ -220,6 +233,7 @@
     (sicl-clos:standard-direct-slot-definition 'inspected-pure-standard-direct-slot-definition)
     (sicl-clos:standard-effective-slot-definition 'inspected-pure-standard-effective-slot-definition)
     (method-combination 'inspected-pure-method-combination)
+    (sicl-method-combination:method-combination-template 'inspected-pure-method-combination-template)
     (t 'inspected-pure-object)))
   
 ;;; This method is applicable for very pure objects, so the class is
@@ -240,4 +254,5 @@
     (sicl-clos:standard-direct-slot-definition 'inspected-very-pure-standard-direct-slot-definition)
     (sicl-clos:standard-effective-slot-definition 'inspected-very-pure-standard-effective-slot-definition)
     (method-combination 'inspected-very-pure-method-combination)
+    (sicl-method-combination:method-combination-template 'inspected-very-pure-method-combination-template)
     (t 'inspected-very-pure-object)))
