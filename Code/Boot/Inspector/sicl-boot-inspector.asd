@@ -18,6 +18,7 @@
    (:file "impure-standard-method")
    (:file "impure-standard-reader-method")
    (:file "impure-standard-writer-method")
+   (:file "impure-direct-slot-definition")
    (:file "present-pure-object-slots")
    (:file "pure-object")
    (:file "pure-standard-generic-function")))
