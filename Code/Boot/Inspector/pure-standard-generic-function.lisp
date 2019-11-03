@@ -53,4 +53,3 @@
                   object)
          :label "Lambda list")
         (present-pure-object-slots object stream)))))
-

@@ -33,4 +33,3 @@
          (aref (rack-of-object object) 0)
          :label "Stamp")
         (present-impure-object-slots object stream)))))
-

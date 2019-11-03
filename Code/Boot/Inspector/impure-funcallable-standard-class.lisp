@@ -46,4 +46,3 @@
                   object)
          :label "Name")
         (present-impure-object-slots object stream)))))
-
