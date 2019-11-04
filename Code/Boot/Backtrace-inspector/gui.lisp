@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-backtrace-inspector)
 
 (clim:define-application-frame inspector ()
-  ((%stack :initarg :stack)
+  ((%stack :initarg :stack :reader stack)
    (%current-frame :initform nil))
   (:panes (backtrace :application
                      :scroll-bars nil
@@ -17,8 +17,12 @@
                        (1/2 (clim:scrolling () source))))))
 
 (defun display-backtrace (frame pane)
-  (declare (ignore frame pane))
-  nil)
+  (loop for entry in (stack frame)
+        for origin = (sicl-hir-interpreter:origin entry)
+        for ink = (if (null origin) clim:+red+ clim:+green+)
+        do (clim:with-drawing-options (pane :ink ink)
+             (format pane
+                     "entry~%"))))
 
 (defun display-source (frame pane)
   (declare (ignore frame pane))
