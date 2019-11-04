@@ -2,7 +2,7 @@
 
 (clim:define-application-frame inspector ()
   ((%stack :initarg :stack :reader stack)
-   (%current-frame :initform nil))
+   (%current-entry :initform nil :accessor current-entry))
   (:panes (backtrace :application
                      :scroll-bars nil
                      :display-function 'display-backtrace)
@@ -21,12 +21,20 @@
         for origin = (sicl-hir-interpreter:origin entry)
         for ink = (if (null origin) clim:+red+ clim:+green+)
         do (clim:with-drawing-options (pane :ink ink)
-             (format pane
-                     "entry~%"))))
+             (clim:with-output-as-presentation
+                 (pane entry 'sicl-hir-interpreter:call-stack-entry)
+               (format pane
+                       "entry~%")))))
 
 (defun display-source (frame pane)
-  (declare (ignore frame pane))
-  nil)
+  (unless (null (current-entry frame))
+    (loop with entry = (current-entry frame)
+          with origin = (sicl-hir-interpreter:origin entry)
+          with start = (car origin)
+          with end = (cdr origin)
+          with lines = (sicl-source-tracking:lines start)
+          for line across lines
+          do (format pane "~a~%" line))))
 
 (defun inspect (stack &key new-process-p)
   (let ((frame (clim:make-application-frame 'inspector
