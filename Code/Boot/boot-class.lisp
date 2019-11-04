@@ -7,4 +7,5 @@
    (%e3 :initarg :e3 :accessor e3)
    (%e4 :initarg :e4 :accessor e4)
    (%e5 :initarg :e5 :accessor e5)
-   (%e6 :initarg :e6 :accessor e6)))
+   (%e6 :initarg :e6 :accessor e6)
+   (%e7 :initarg :e7 :accessor e7)))
