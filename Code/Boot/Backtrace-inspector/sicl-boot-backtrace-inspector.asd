@@ -5,4 +5,5 @@
                #:sicl-hir-interpreter)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "gui")))
