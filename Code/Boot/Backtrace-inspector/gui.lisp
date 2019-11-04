@@ -23,8 +23,14 @@
       (if (null origin)
           (clim:with-drawing-options (pane :ink clim:+red+)
             (format pane "entry~%"))
-          (clim:with-drawing-options (pane :ink clim:+green+)
-            (format pane "entry~%"))))))
+          (clim:with-drawing-options (pane :ink clim:+dark-green+)
+            (let* ((start (car origin))
+                   (line-index (sicl-source-tracking:line-index start))
+                   (line (aref (sicl-source-tracking:lines start) line-index))
+                   (char-index (sicl-source-tracking:character-index start)))
+              (format pane
+                      "entry ~a~%"
+                      (subseq line char-index))))))))
 
 (defun display-backtrace (frame pane)
   (loop for entry in (stack frame)
