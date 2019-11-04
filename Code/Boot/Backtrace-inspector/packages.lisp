@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-boot-backtrace-inspector
   (:use #:common-lisp)
+  (:shadow #:inspect #:inspector)
   (:export #:inspect))
