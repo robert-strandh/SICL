@@ -16,15 +16,19 @@
                               (1/10 (clim:scrolling () inter))))
                        (1/2 (clim:scrolling () source))))))
 
+(defun display-entry (pane entry)
+  (let ((origin (sicl-hir-interpreter:origin entry)))
+    (clim:with-output-as-presentation
+        (pane entry 'sicl-hir-interpreter:call-stack-entry)
+      (if (null origin)
+          (clim:with-drawing-options (pane :ink clim:+red+)
+            (format pane "entry~%"))
+          (clim:with-drawing-options (pane :ink clim:+green+)
+            (format pane "entry~%"))))))
+
 (defun display-backtrace (frame pane)
   (loop for entry in (stack frame)
-        for origin = (sicl-hir-interpreter:origin entry)
-        for ink = (if (null origin) clim:+red+ clim:+green+)
-        do (clim:with-drawing-options (pane :ink ink)
-             (clim:with-output-as-presentation
-                 (pane entry 'sicl-hir-interpreter:call-stack-entry)
-               (format pane
-                       "entry~%")))))
+        do (display-entry pane entry)))
 
 (defun display-source (frame pane)
   (unless (null (current-entry frame))
