@@ -18,7 +18,13 @@
             (lexical-value (cleavir-ir:dynamic-environment-location instruction)
                            lexical-environment)))
       (setf *global-values-location*
-            (multiple-value-list (apply #'funcall input-values)))))
+            (multiple-value-list
+             (let ((*call-stack*
+                     (cons (make-instance 'call-stack-entry
+                             :origin (cleavir-ast-to-hir:origin instruction)
+                             :arguments input-values)
+                           *call-stack*)))
+               (apply #'funcall input-values))))))
   (first (cleavir-ir:successors instruction)))
 
 (defmethod interpret-instruction
