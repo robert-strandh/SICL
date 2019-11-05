@@ -3,7 +3,11 @@
 (clim:define-application-frame inspector ()
   ((%stack :initarg :stack :reader stack)
    (%current-entry :initform nil :accessor current-entry))
-  (:panes (backtrace :application
+  (:panes (arguments :application
+                     :scroll-bars nil
+                     :end-of-line-action :allow
+                     :display-function 'display-arguments)
+          (backtrace :application
                      :scroll-bars nil
                      :display-function 'display-backtrace)
           (source :application
@@ -12,9 +16,24 @@
           (inter :interactor :scroll-bars nil))
   (:layouts (default (clim:horizontally (:width 1200 :height 900)
                        (1/2 (clim:vertically ()
-                              (9/10 (clim:scrolling () backtrace))
+                              (3/10 (clim:scrolling () arguments))
+                              (6/10 (clim:scrolling () backtrace))
                               (1/10 (clim:scrolling () inter))))
                        (1/2 (clim:scrolling () source))))))
+
+(defun display-arguments (frame pane)
+  (let ((entry (current-entry frame)))
+    (unless (null entry)
+      (loop for argument in (sicl-hir-interpreter:arguments entry)
+            for i from 1
+            do (clim:with-drawing-options (pane :ink clim:+red+)
+                 (format pane "~a:" i))
+               (multiple-value-bind (x y)
+                   (clim:stream-cursor-position pane)
+                 (declare (ignore x))
+                 (setf (clim:stream-cursor-position pane)
+                       (values 30 y)))
+               (format pane "~s~%" argument)))))
 
 (defun display-entry (pane entry)
   (let ((origin (sicl-hir-interpreter:origin entry)))
