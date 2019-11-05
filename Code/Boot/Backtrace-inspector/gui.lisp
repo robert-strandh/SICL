@@ -48,7 +48,7 @@
         (pane entry 'sicl-hir-interpreter:call-stack-entry)
       (if (null origin)
           (clim:with-drawing-options (pane :ink clim:+red+)
-            (format pane "entry~%"))
+            (format pane "entry with no source information~%"))
           (clim:with-drawing-options (pane :ink clim:+dark-green+)
             (let* ((start (car origin))
                    (line-index (sicl-source-tracking:line-index start))
@@ -59,9 +59,7 @@
                 (declare (ignore x))
                 (setf (clim:stream-cursor-position pane)
                       (values 20 y)))
-              (format pane
-                      "entry ~a~%"
-                      (subseq line char-index))))))))
+              (format pane "~a~%" (subseq line char-index))))))))
 
 (defun display-backtrace (frame pane)
   (loop for entry in (stack frame)
