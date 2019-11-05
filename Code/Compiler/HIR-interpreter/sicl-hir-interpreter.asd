@@ -11,6 +11,7 @@
   :components
   ((:file "packages")
    (:file "utilities")
+   (:file "call-stack")
    (:file "dynamic-environment")
    (:file "run-time")
    (:file "general-purpose-instructions")
