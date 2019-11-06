@@ -407,9 +407,7 @@
          (entry (car (member stamps (call-history generic-function)
                              :key #'class-number-cache :test #'equal))))
     (unless (null entry)
-      (set-funcallable-instance-function
-       generic-function
-       (compute-discriminating-function generic-function))
+      (compute-and-install-discriminating-function generic-function)
       (return-from default-discriminating-function
         (apply generic-function arguments)))
       ;; There should never be a valid entry, because it would
