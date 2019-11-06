@@ -44,5 +44,6 @@
     (sicl-boot-phase-4:boot boot)
     (sicl-boot-phase-5:boot boot)
     (sicl-boot-phase-6:boot boot)
-    (sicl-boot-phase-7:boot boot)
+    ;; Do not run phase 7 until TYPEP works.
+    ;; (sicl-boot-phase-7:boot boot)
     boot))
