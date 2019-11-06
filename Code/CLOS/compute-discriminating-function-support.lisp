@@ -407,9 +407,14 @@
          (entry (car (member stamps (call-history generic-function)
                              :key #'class-number-cache :test #'equal))))
     (unless (null entry)
+      (set-funcallable-instance-function
+       generic-function
+       (compute-discriminating-function generic-function))
+      (return-from default-discriminating-function
+        (apply generic-function arguments)))
       ;; There should never be a valid entry, because it would
       ;; then have been found by the TAGBODY preceding this code.
-      (error "entry found"))
+    ;; (error "entry found"))
     (let ((classes (mapcar #'class-of required-arguments))
           (method-combination
             (generic-function-method-combination generic-function)))
