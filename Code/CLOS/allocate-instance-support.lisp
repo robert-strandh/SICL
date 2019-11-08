@@ -48,4 +48,4 @@
 ;;; slot storage than there are slots with :INSTANCE allocation.
 (defun allocate-instance-built-in-class (class &rest initargs)
   (declare (ignore initargs))
-  (allocate-instance-common class 1))
+  (allocate-instance-common class 2))
