@@ -12,8 +12,8 @@
 ;;; For each primary method of the generic function, compute all the
 ;;; combinations of argument classes that would make it applicable.
 ;;; Compute a unique list of such combinations of classes.  For each
-;;; combination, do the same thing as is done of the generic function
-;;; is actually called with those classes, i.e., compute the
+;;; combination, do the same thing as is done if the generic function
+;;; were actually called with those classes, i.e., compute the
 ;;; applicable methods and the effective method and load up the call
 ;;; history.  Finally, compute and set the discriminating function.
 
