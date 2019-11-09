@@ -371,31 +371,31 @@ Phase~2 is divided into two steps:
   specialized to these classes.
 \end{enumerate}
 
-\subsubsection{Phase 2}
+\subsubsection{Phase 3}
 
-The purpose of phase~2 is to create a hierarchy of bridge classes that
+The purpose of phase~3 is to create a hierarchy of bridge classes that
 has the same structure as the hierarchy of MOP classes.
 
-Three different environments are involved in phase~2:
+Three different environments are involved in phase~3:
 
 \begin{itemize}
-\item The run-time environment $E_1$ is used to look up metaclasses to
+\item The run-time environment $E_2$ is used to look up metaclasses to
   instantiate in order to create the bridge classes.
 \item The run-time environment $E_3$ is the one in which bridge
   classes will be associated with names.
-\item The run-time environment $E_3$ is the one in which bridge
+\item The run-time environment $E_4$ is the one in which bridge
   generic functions will be associated with names.
 \end{itemize}
 
-We create bridge classes corresponding to the classes of the MOP
-hierarchy.  When a bridge class is created, it will automatically
-create bridge generic functions corresponding to slot readers and
-writers.  This is done by calling \texttt{ensure-generic-function} of
-phase 1.
+We start by creating generic functions corresponding to all slot
+accessors that are defined in the MOP hierarchy.  We then create
+bridge classes corresponding to the classes of the MOP hierarchy.
+When a bridge class is created, it will automatically create bridge
+methods on the bridge generic functions corresponding to slot readers
+and writers.
 
 Creating bridge classes this way will also instantiate the host class
-\texttt{target:direct-slot-definition}, so that our bridge classes
-contain host instances bridge in their slots. 
+\texttt{target:direct-slot-definition}.
 
 In this phase, we also prepare for the creation of ersatz instances.
 
