@@ -399,58 +399,28 @@ Creating bridge classes this way will also instantiate the host class
 
 In this phase, we also prepare for the creation of ersatz instances.
 
-\subsubsection{Phase 3}
+\subsubsection{Phase 4}
 
 The purpose of this phase is to create ersatz generic functions and
 ersatz classes, by instantiating bridge classes.  
 
 At the end of this phase, we have a set of ersatz instances, some of
 which are ersatz classes, except that the \texttt{class} slot of the
-header object of every such instance is a bridge class.  We also have
-a set of ersatz generic functions (mainly accessors) that are ersatz
-instances like all the others. 
+header object of every such instance is a bridge class.  We call such
+ersatz instances \emph{impure}.  We also have a set of ersatz generic
+functions (mainly accessors) that are ersatz instances like all the
+others.
 
-\subsubsection{Phase 4}
+\subsubsection{Phase 5}
 
 The first step of this phase is to finalize all the ersatz classes
-that were created in phase 3.  Finalization will create ersatz
+that were created in phase 4.  Finalization will create ersatz
 instances of bridge classes corresponding to effective slot
 definitions. 
 
-The second step is to \emph{patch} all the ersatz instances allocated
-so far.  There are two different ways in which ersatz instances must
-be patched.  First of all, all ersatz instances have a bridge class in
-the \texttt{class} slot of the header object.  We patch this
-information by accessing the \emph{name} of the bridge class and
-replacing the slot contents by the ersatz class with the same name.
-Second, ersatz instances of the class \texttt{standard-object} contain
-a list of effective slot definition objects in the second word of the
-rack, except that those effective slot definition objects
-are bridge instances, because they were copied form the
-\texttt{class-slots} slot of the bridge class when the bridge class
-was instantiated to obtain the ersatz instance.  Since all ersatz
-classes were finalized during the first step of this phase, they now
-all have a list of effective slot definition objects, and those
-objects are ersatz instances.  Patching consists of replacing the
-second word of the rack of all instances of
-\texttt{standard-object} by the contents of the \texttt{class-slots}
-slot of the class object of the instance, which is now a ersatz
-class. 
+\subsubsection{Phase 6}
 
-The final step in this phase is to \emph{install} some of the
-remaining bridge generic functions so that they are the
-\texttt{fdefinition}s of their respective names.  We do not install
-all remaining bridge generic functions, because some of them would
-clobber host generic functions with the same name that are still
-needed.  
-
-At the end of this phase, we have a complete set of bridge generic
-functions that operate on ersatz instances.  We still need bridge
-classes to create ersatz instances, because the \emph{initfunction}
-needs to be executed for slots that require it, and only host
-functions are executable at this point.
-
-\subsubsection{Phase 5}
+\subsubsection{Phase 7}
 
 The purpose of this phase is to create ersatz instances for all
 objects that are needed in order to obtain a viable image, including: 
@@ -466,21 +436,20 @@ objects that are needed in order to obtain a viable image, including:
 \item ersatz instances of those classes.
 \end{itemize}
 
-\subsubsection{Phase 6}
+\subsubsection{Phase 8}
 
 The purpose of this phase is to replace all the host instances that
 have been used so far as part of the entire ersatz structure, such as
 symbols, lists, and integers by their ersatz counterparts.
 
-\subsubsection{Phase 7}
+\subsubsection{Phase 9}
 
 The purpose of this phase is to take the simulated graph of objects
 used so far and transfer it to a \emph{memory image}.  
 
-\subsubsection{Phase 8}
+\subsubsection{Phase 10}
 
 Finally, the memory image is written to a binary file. 
-
 
 \subsection{Stage 2, compiling macro definitions}
 
