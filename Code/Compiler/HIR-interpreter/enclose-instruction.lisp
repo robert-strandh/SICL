@@ -8,7 +8,7 @@
          (output (first (cleavir-ir:outputs instruction)))
          (enter (cleavir-ir:code instruction)))
     (setf (lexical-value output lexical-environment)
-          (apply #'enclose
+          (apply (aref (lexical-value 'static-environment lexical-environment) 1)
                  (hir-to-host-function client enter)
                  (aref (lexical-value 'static-environment lexical-environment) 0)
                  (loop for input in inputs
