@@ -214,6 +214,10 @@ system.  Since \emph{fasl} files are independent of any particular
 environment, the same \emph{fasl} file can be loaded into different
 environments during the following phases of stage 1.
 
+Any code can be compiled, provided that the macros that are called by
+the code are defined in environment $E_0$.  In particular, code that
+defines macros can be compiled into \texttt{fasl}s.
+
 \subsubsection{Phase 1}
 
 We define a class named
