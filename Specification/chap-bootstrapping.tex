@@ -204,6 +204,18 @@ $E_6$, and $E_7$.
 
 \subsubsection{Phase 0}
 
+In phase $0$, we load enough functionality into environment $E0$ to be
+able to compile source files into \emph{fasl} files.  This
+functionality involves mainly standard macros that are required during
+compilation.
+
+We then compile all the files that are ultimately used in the final
+system.  Since \emph{fasl} files are independent of any particular
+environment, the same \emph{fasl} file can be loaded into different
+environments during the following phases of stage 1.
+
+\subsubsection{Phase 0}
+
 We define a class named
 \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
 environment.  It is defined as a direct subclass of the host class
