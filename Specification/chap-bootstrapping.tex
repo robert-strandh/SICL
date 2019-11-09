@@ -214,13 +214,13 @@ system.  Since \emph{fasl} files are independent of any particular
 environment, the same \emph{fasl} file can be loaded into different
 environments during the following phases of stage 1.
 
-\subsubsection{Phase 0}
+\subsubsection{Phase 1}
 
 We define a class named
-\texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
+\texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
 environment.  It is defined as a direct subclass of the host class
 \texttt{closer-mop:funcallable-standard-class}.  When we
-evaluate \texttt{defclass} forms in phase 1, the classes created are
+evaluate \texttt{defclass} forms in phase 2, the classes created are
 instances of this class.  We could have chosen this class only for
 instances that need to be executable in the host, and a subclass of
 the host class \texttt{standard-class} for the others, but the host
@@ -230,7 +230,7 @@ using one single class.
 
 We define an \texttt{:around} method on \texttt{initialize-instance}
 in the host environment, specialized to
-\texttt{sicl-boot-phase-0:funcallable-standard-class}.  The purpose of
+\texttt{sicl-boot-phase-1:funcallable-standard-class}.  The purpose of
 this \texttt{:around} method is to remove the \texttt{:reader} and
 \texttt{:accessor} slot options supplied in the \texttt{defclass}
 forms that we evaluate in phase 1.  Without this \texttt{:around}
@@ -239,11 +239,11 @@ keyword arguments \texttt{:readers} and \texttt{:writers} and it would
 then add methods to host generic functions corresponding to the names
 given.  Instead, this \texttt{:around} method adds the readers and
 writers to the generic function with the corresponding name in
-envirnoment $E_2$.  It assumes that this generic function exists, so
+envirnoment $E_3$.  It assumes that this generic function exists, so
 we must create it explicitly before a class that defines the accessor
 method can be defined.
 
-In environment $E_0$, we define the following classes:
+In environment $E_1$, we define the following classes:
 
 \begin{itemize}
 \item \texttt{t}.  This class is the same as the host class
@@ -256,26 +256,26 @@ In environment $E_0$, we define the following classes:
 \item \texttt{common-lisp:standard-method}.  This class is
   the same as the class with the same name in the host environment.
   This class will be used to create methods on the generic functions
-  that we create in environment $E_2$.
+  that we create in environment $E_3$.
 \item \texttt{common-lisp:standard-class}.  This class is the same as
   the class named
-  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.  It will be used to create most classes in $E_1$.
+  \texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
+  environment.  It will be used to create most classes in $E_2$.
 \item \texttt{common-lisp:built-in-class}.  This class is the same as
   the class named
-  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.  It will be used to create some classes in $E_1$, for
+  \texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
+  environment.  It will be used to create some classes in $E_2$, for
   example \texttt{t} and \texttt{function}.
 \item \texttt{sicl-clos:funcallable-standard-class}.  This class is
   the same as the class named
-  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.  It will be used to create some classes in $E_1$, such
+  \texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
+  environment.  It will be used to create some classes in $E_2$, such
   as \texttt{generic-function} and \texttt{standard-generic-function}.
 \item \texttt{sicl-clos:standard-direct-slot-definition}.  This class
   is the same as the class named
   \texttt{closer-mop:standard-direct-slot-definition} in the host
   environment.  This class will be used to create slot-definition
-  metaobjects for the classes that we create in environment $E_1$.
+  metaobjects for the classes that we create in environment $E_2$.
 \end{itemize}
 
 \subsubsection{Phase 1}
