@@ -9,3 +9,12 @@
    (%e5 :initarg :e5 :accessor e5)
    (%e6 :initarg :e6 :accessor e6)
    (%e7 :initarg :e7 :accessor e7)))
+
+(defvar *e0*)
+(defvar *e1*)
+(defvar *e2*)
+(defvar *e3*)
+(defvar *e4*)
+(defvar *e5*)
+(defvar *e6*)
+(defvar *e7*)

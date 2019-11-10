@@ -6,6 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "utilities")
    (:file "environment")
    (:file "enable-class-finalization")
    (:file "finalize-all-classes")

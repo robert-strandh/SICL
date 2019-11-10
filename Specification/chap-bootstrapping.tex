@@ -70,9 +70,11 @@ For the purpose of bootstrapping, it is convenient to think of
   environment.
 \item Tie.  The untied code produced by the first step is \emph{tied}
   to a particular run-time environment.  Tying is accomplished by
-  calling the top-level function created by the compilation, passing
-  it the result of evaluating \texttt{load-time-value} forms in a
-  particular environment.
+  calling the top-level function created by the compilation.  This
+  function takes a single argument, namely a ``function-cell finder''
+  function.  Calling that argument function with a function name,
+  returns a function cell in a particular environment, thereby tying
+  the code to that particular environment.
 \end{itemize}
 
 The reason we need to separate these two operations is that for
@@ -195,17 +197,34 @@ function.
 
 \subsubsection{Preparation}
 
-In addition to the host environment, six different \sysname{}
+In addition to the host environment, eight different \sysname{}
 first-class environments are involved in the bootstrapping procedure.
-We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, $E_4$, and $E_5$.
+We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, $E_4$, $E_5$,
+$E_6$, and $E_7$.
 
 \subsubsection{Phase 0}
 
+In phase $0$, we load enough functionality into environment $E0$ to be
+able to compile source files into \emph{fasl} files.  This
+functionality involves mainly standard macros that are required during
+compilation.
+
+We then compile all the files that are ultimately used in the final
+system.  Since \emph{fasl} files are independent of any particular
+environment, the same \emph{fasl} file can be loaded into different
+environments during the following phases of stage 1.
+
+Any code can be compiled, provided that the macros that are called by
+the code are defined in environment $E_0$.  In particular, code that
+defines macros can be compiled into \texttt{fasl}s.
+
+\subsubsection{Phase 1}
+
 We define a class named
-\texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
+\texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
 environment.  It is defined as a direct subclass of the host class
 \texttt{closer-mop:funcallable-standard-class}.  When we
-evaluate \texttt{defclass} forms in phase 1, the classes created are
+evaluate \texttt{defclass} forms in phase 2, the classes created are
 instances of this class.  We could have chosen this class only for
 instances that need to be executable in the host, and a subclass of
 the host class \texttt{standard-class} for the others, but the host
@@ -215,7 +234,7 @@ using one single class.
 
 We define an \texttt{:around} method on \texttt{initialize-instance}
 in the host environment, specialized to
-\texttt{sicl-boot-phase-0:funcallable-standard-class}.  The purpose of
+\texttt{sicl-boot-phase-1:funcallable-standard-class}.  The purpose of
 this \texttt{:around} method is to remove the \texttt{:reader} and
 \texttt{:accessor} slot options supplied in the \texttt{defclass}
 forms that we evaluate in phase 1.  Without this \texttt{:around}
@@ -224,11 +243,11 @@ keyword arguments \texttt{:readers} and \texttt{:writers} and it would
 then add methods to host generic functions corresponding to the names
 given.  Instead, this \texttt{:around} method adds the readers and
 writers to the generic function with the corresponding name in
-envirnoment $E_2$.  It assumes that this generic function exists, so
+envirnoment $E_3$.  It assumes that this generic function exists, so
 we must create it explicitly before a class that defines the accessor
 method can be defined.
 
-In environment $E_0$, we define the following classes:
+In environment $E_1$, we define the following classes:
 
 \begin{itemize}
 \item \texttt{t}.  This class is the same as the host class
@@ -241,197 +260,167 @@ In environment $E_0$, we define the following classes:
 \item \texttt{common-lisp:standard-method}.  This class is
   the same as the class with the same name in the host environment.
   This class will be used to create methods on the generic functions
-  that we create in environment $E_2$.
+  that we create in environment $E_3$.
 \item \texttt{common-lisp:standard-class}.  This class is the same as
   the class named
-  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.  It will be used to create most classes in $E_1$.
+  \texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
+  environment.  It will be used to create most classes in $E_2$.
 \item \texttt{common-lisp:built-in-class}.  This class is the same as
   the class named
-  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.  It will be used to create some classes in $E_1$, for
+  \texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
+  environment.  It will be used to create some classes in $E_2$, for
   example \texttt{t} and \texttt{function}.
 \item \texttt{sicl-clos:funcallable-standard-class}.  This class is
   the same as the class named
-  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.  It will be used to create some classes in $E_1$, such
+  \texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
+  environment.  It will be used to create some classes in $E_2$, such
   as \texttt{generic-function} and \texttt{standard-generic-function}.
 \item \texttt{sicl-clos:standard-direct-slot-definition}.  This class
   is the same as the class named
   \texttt{closer-mop:standard-direct-slot-definition} in the host
   environment.  This class will be used to create slot-definition
-  metaobjects for the classes that we create in environment $E_1$.
+  metaobjects for the classes that we create in environment $E_2$.
 \end{itemize}
 
-\subsubsection{Phase 1}
+\subsubsection{Phase 2}
 
-The purpose of phase~1 is:
+The purpose of phase~2 is:
 
 \begin{itemize}
-\item to create host generic functions in $E_2$ corresponding to all
+\item to create host generic functions in $E_3$ corresponding to all
   the accessor functions defined by \sysname{} on standard MOP
   classes, and
-\item to create a hierarchy in $E_1$ of host standard classes that has
+\item to create a hierarchy in $E_2$ of host standard classes that has
   the same structure as the hierarchy of MOP classes.
 \end{itemize}
 
 
-Three different environments are involved in phase~1:
+Three different environments are involved in phase~2:
 
 \begin{itemize}
-\item Environment $E_0$ is used to find find host classes to
-  instantiate.  The class named \texttt{standard-class} in $E_0$ is
-  used to instantiate most of the classes in environment $E_1$, for
+\item Environment $E_1$ is used to find find host classes to
+  instantiate.  The class named \texttt{standard-class} in $E_1$ is
+  used to instantiate most of the classes in environment $E_2$, for
   example, \texttt{standard-class}, \texttt{built-in-class},
   \texttt{slot-definition}, etc.  The class named
-  \texttt{built-in-class} in $E_0$ is used to create classes
+  \texttt{built-in-class} in $E_1$ is used to create classes
   \texttt{t} and \texttt{function} as well as some non-MOP classes in
-  $E_1$.  The class named \texttt{funcallable-standard-class} in $E_0$
+  $E_2$.  The class named \texttt{funcallable-standard-class} in $E_1$
   is used to create classes \texttt{generic-function} and
-  \texttt{standard-generic-function}, also in environment $E_1$.  The
-  class named \texttt{standard-direct-slot-definition} in $E_0$ is
+  \texttt{standard-generic-function}, also in environment $E_2$.  The
+  class named \texttt{standard-direct-slot-definition} in $E_1$ is
   used to define slot-definition metaobjects for the classes in
-  environment $E_1$.  Environment $E_0$ is also used to find host
+  environment $E_2$.  Environment $E_1$ is also used to find host
   classes \texttt{standard-generic-function} and
   \texttt{standard-method} to instantiate in order to create generic
-  functions in environment $E_2$ as well as methods on those generic
+  functions in environment $E_3$ as well as methods on those generic
   functions.
-\item The run-time environment $E_1$ is where instances of the host
+\item The run-time environment $E_2$ is where instances of the host
   classes named \texttt{standard-class},
   \texttt{funcallable-standard-class}, and \texttt{built-in-class} in
-  environment $E_0$ will be associated with the names of the MOP
+  environment $E_1$ will be associated with the names of the MOP
   hierarchy of classes.  These instances are thus host classes.  The
   entire MOP hierarchy is created as are some built-in classes such as
   \texttt{cons} and some of the number classes.
-\item The run-time environment $E_2$ is where instances of the host
+\item The run-time environment $E_3$ is where instances of the host
   class named \texttt{standard-generic-function} will be associated
   with the names of the different accessors specialized to host
-  classes created in $E_1$.
+  classes created in $E_2$.
 \end{itemize}
 
 One might ask at this point why generic functions are not defined in
 the same environment as classes.  The simple answer is that there are
-some generic functions that were automatically imported into $E_1$
-from the host, that we still need in $E_1$, and that would have been
+some generic functions that were automatically imported into $E_2$
+from the host, that we still need in $E_2$, and that would have been
 overwritten by new ones if we had defined new generic functions in
-$E_1$.
+$E_2$.
 
-Several adaptations are necessary in order to accomplish phase~1:
+Several adaptations are necessary in order to accomplish phase~2:
 
 \begin{itemize}
 \item A special version of the function
-  \texttt{ensure-generic-function} is defined in environment $E_2$.
+  \texttt{ensure-generic-function} is defined in environment $E_3$.
   It checks whether there is already a function with the name passed
-  as an argument in $E_2$, and if so, it returns that function.  It
+  as an argument in $E_3$, and if so, it returns that function.  It
   makes no verification that such an existing function is really a
   generic function; it assumes that it is.  It also assumes that the
   parameters of that generic function correspond to the arguments of
   \texttt{ensure-generic-function}.  If there is no generic function
-  with the name passed as an argument in $E_2$, it creates an instance
+  with the name passed as an argument in $E_3$, it creates an instance
   of the host class \texttt{standard-generic-function} and associate
-  it with the name in $E_2$.  To create such an instance, it calls the
+  it with the name in $E_3$.  To create such an instance, it calls the
   host function \texttt{make-instance}.
 \item The function \texttt{ensure-class} has a special version in
-  $E_1$.  Rather than checking for an existing class, it always
+  $E_2$.  Rather than checking for an existing class, it always
   creates a new one.
 \end{itemize}
 
-Phase~1 is divided into two steps:
+Phase~2 is divided into two steps:
 
 \begin{enumerate}
 \item First, the \texttt{defgeneric} forms corresponding to the
   accessors of the classes of the MOP hierarchy are evaluated using
-  $E_1$ as both the compilation environment and run-time environment.
-  The result of this step is a set of host generic functions in $E_2$,
+  $E_2$ as both the compilation environment and run-time environment.
+  The result of this step is a set of host generic functions in $E_3$,
   each having no methods.
 \item Next, the \texttt{defclass} forms corresponding to the classes
-  of the MOP hierarchy are evaluated using $E_1$ as both the
+  of the MOP hierarchy are evaluated using $E_2$ as both the
   compilation environment and run-time environment.  The result of
-  this step is a set of host classes in $E_1$ and host standard
+  this step is a set of host classes in $E_2$ and host standard
   methods on the accessor generic functions created in step~1
   specialized to these classes.
 \end{enumerate}
 
-\subsubsection{Phase 2}
+\subsubsection{Phase 3}
 
-The purpose of phase~2 is to create a hierarchy of bridge classes that
+The purpose of phase~3 is to create a hierarchy of bridge classes that
 has the same structure as the hierarchy of MOP classes.
 
-Three different environments are involved in phase~2:
+Three different environments are involved in phase~3:
 
 \begin{itemize}
-\item The run-time environment $E_1$ is used to look up metaclasses to
+\item The run-time environment $E_2$ is used to look up metaclasses to
   instantiate in order to create the bridge classes.
-\item The run-time environment $E_2$ is the one in which bridge
-  classes will be associated with names.
 \item The run-time environment $E_3$ is the one in which bridge
+  classes will be associated with names.
+\item The run-time environment $E_4$ is the one in which bridge
   generic functions will be associated with names.
 \end{itemize}
 
-We create bridge classes corresponding to the classes of the MOP
-hierarchy.  When a bridge class is created, it will automatically
-create bridge generic functions corresponding to slot readers and
-writers.  This is done by calling \texttt{ensure-generic-function} of
-phase 1.
+We start by creating generic functions corresponding to all slot
+accessors that are defined in the MOP hierarchy.  We then create
+bridge classes corresponding to the classes of the MOP hierarchy.
+When a bridge class is created, it will automatically create bridge
+methods on the bridge generic functions corresponding to slot readers
+and writers.
 
 Creating bridge classes this way will also instantiate the host class
-\texttt{target:direct-slot-definition}, so that our bridge classes
-contain host instances bridge in their slots. 
+\texttt{target:direct-slot-definition}.
 
 In this phase, we also prepare for the creation of ersatz instances.
 
-\subsubsection{Phase 3}
+\subsubsection{Phase 4}
 
 The purpose of this phase is to create ersatz generic functions and
 ersatz classes, by instantiating bridge classes.  
 
 At the end of this phase, we have a set of ersatz instances, some of
 which are ersatz classes, except that the \texttt{class} slot of the
-header object of every such instance is a bridge class.  We also have
-a set of ersatz generic functions (mainly accessors) that are ersatz
-instances like all the others. 
+header object of every such instance is a bridge class.  We call such
+ersatz instances \emph{impure}.  We also have a set of ersatz generic
+functions (mainly accessors) that are ersatz instances like all the
+others.
 
-\subsubsection{Phase 4}
+\subsubsection{Phase 5}
 
 The first step of this phase is to finalize all the ersatz classes
-that were created in phase 3.  Finalization will create ersatz
+that were created in phase 4.  Finalization will create ersatz
 instances of bridge classes corresponding to effective slot
 definitions. 
 
-The second step is to \emph{patch} all the ersatz instances allocated
-so far.  There are two different ways in which ersatz instances must
-be patched.  First of all, all ersatz instances have a bridge class in
-the \texttt{class} slot of the header object.  We patch this
-information by accessing the \emph{name} of the bridge class and
-replacing the slot contents by the ersatz class with the same name.
-Second, ersatz instances of the class \texttt{standard-object} contain
-a list of effective slot definition objects in the second word of the
-rack, except that those effective slot definition objects
-are bridge instances, because they were copied form the
-\texttt{class-slots} slot of the bridge class when the bridge class
-was instantiated to obtain the ersatz instance.  Since all ersatz
-classes were finalized during the first step of this phase, they now
-all have a list of effective slot definition objects, and those
-objects are ersatz instances.  Patching consists of replacing the
-second word of the rack of all instances of
-\texttt{standard-object} by the contents of the \texttt{class-slots}
-slot of the class object of the instance, which is now a ersatz
-class. 
+\subsubsection{Phase 6}
 
-The final step in this phase is to \emph{install} some of the
-remaining bridge generic functions so that they are the
-\texttt{fdefinition}s of their respective names.  We do not install
-all remaining bridge generic functions, because some of them would
-clobber host generic functions with the same name that are still
-needed.  
-
-At the end of this phase, we have a complete set of bridge generic
-functions that operate on ersatz instances.  We still need bridge
-classes to create ersatz instances, because the \emph{initfunction}
-needs to be executed for slots that require it, and only host
-functions are executable at this point.
-
-\subsubsection{Phase 5}
+\subsubsection{Phase 7}
 
 The purpose of this phase is to create ersatz instances for all
 objects that are needed in order to obtain a viable image, including: 
@@ -447,154 +436,17 @@ objects that are needed in order to obtain a viable image, including:
 \item ersatz instances of those classes.
 \end{itemize}
 
-\subsubsection{Phase 6}
+\subsubsection{Phase 8}
 
 The purpose of this phase is to replace all the host instances that
 have been used so far as part of the entire ersatz structure, such as
 symbols, lists, and integers by their ersatz counterparts.
 
-\subsubsection{Phase 7}
+\subsubsection{Phase 9}
 
 The purpose of this phase is to take the simulated graph of objects
 used so far and transfer it to a \emph{memory image}.  
 
-\subsubsection{Phase 8}
+\subsubsection{Phase 10}
 
 Finally, the memory image is written to a binary file. 
-
-
-\subsection{Stage 2, compiling macro definitions}
-
-Stage 1 of the bootstrapping process consists of using the cross
-compiler to compile files containing definitions of standard macros
-that will be needed for compiling other files. 
-
-When a \texttt{defmacro} form is compiled by the cross compiler, we
-distinguish between the two parts of that defmacro form, namely the
-\emph{expander code} and the \emph{resulting expansion code}.  The
-\emph{expander code} is the code that will be executed in order to
-compute the resulting expansion code when the macro is invoked.  The
-\emph{resulting expansion code} is the code that replaces the macro
-call form. 
-
-As an example, consider the hypothetical definition of the
-\texttt{and} macro shown in \refCode{code-defmacro-and}.
-
-\begin{codefragment}
-\inputcode{code-defmacro-and.code}
-\caption{\label{code-defmacro-and}
-Example implementation of the \texttt{and} macro.}
-\end{codefragment}
-
-In \refCode{code-defmacro-and}, the occurrences of \texttt{car},
-\texttt{cdr}, \texttt{null}, and \texttt{cond} are part of the
-\emph{expander code} whereas the occurrence of \texttt{when}, of
-\texttt{t}, and the occurrence of \texttt{and} in the last line are
-part of the resulting expansion code. 
-
-The result of expanding the \texttt{defmacro} form in
-\refCode{code-defmacro-and} is shown in
-\refCode{code-macro-expansion-and}. 
-
-\begin{codefragment}
-\inputcode{code-macro-expansion-and.code}
-\caption{\label{code-macro-expansion-and}
-Expansion of the macro call.}
-\end{codefragment}
-
-Thus, when the code in \refCode{code-defmacro-and} is compiled by the
-cross compiler, it is first expanded to the code in
-\refCode{code-macro-expansion-and}, and the resulting code is compiled
-instead.  Now \refCode{code-macro-expansion-and} contains an
-\texttt{eval-when} at the top level with all three situations (i.e.,
-\texttt{:compile-toplevel}, \texttt{:load-toplevel}, and
-\texttt{:execute}.  As a result, two things happen to the
-\texttt{funcall} form of \refCode{code-macro-expansion-and}:
-
-\begin{enumerate}
-\item It is \emph{evaluated} by the \emph{host function}
-  \texttt{eval}.
-\item It is \emph{minimally compiled} by the cross compiler.
-\end{enumerate}
-
-In order for the evaluation by the host function \texttt{eval} to be
-successful, the following must be true:
-
-\begin{itemize}
-\item All the \emph{functions} and \emph{macros} that are
-  \emph{invoked} as a result of the call to \texttt{eval} must exist.
-  In the case of \refCode{code-macro-expansion-and}, the function
-  \texttt{(setf sicl-environment::macro-function)} must exist, and that
-    is all.
-\item All the \emph{macros} that occur in macro forms that are
-  \emph{compiled} as a result of the call to \texttt{eval} must
-  exist.  These are the macros of the expansion code; in our example
-  only \texttt{cond}.  Clearly, if only standard \commonlisp{} macros are
-  used in the expansion code of macros, this requirement is
-  automatically fulfilled.
-\item It is \emph{preferable}, though not absolutely necessary for the
-  \emph{functions} that occur in function forms that are
-  \emph{compiled} as a result of the call to \texttt{eval} exist.  If
-  they do not exist, the compilation will succeed, but a warning will
-  probably be issued.  These functions are the functions of the
-  expansion code; in our example \texttt{car}, \texttt{cdr}, and
-  \texttt{null}.  Again, if only standard \commonlisp{} function are used in
-  the expansion code of macros, this requirement is automatically
-  fulfilled.  It is common, however, for other functions to be used as
-  well.  In that case, those functions should preferably have been
-  loaded into the host environment first. 
-\end{itemize}
-
-In order for the minimal compilation by the cross compiler to be
-successful, the following must be true:
-
-\begin{itemize}
-\item All the \emph{macros} that occur in macro forms that are
-  \emph{minimally compiled} by the cross compiler must exist.  These
-  are again the macros of the expansion code; in our example only
-  \texttt{cond}.  Now, the cross compiler uses the \emph{compilation
-    environment} of the \emph{target} when looking up macro
-  definitions.  Therefore, in order for the example in
-  \refCode{code-defmacro-and} to work, a file containing the
-  definition of the macro \texttt{cond} must first be compiled by the
-  cross compiler. 
-\item While it would have been desirable for the \emph{functions} that
-  occur in function forms that are \emph{minimally compiled} by the
-  cross compiler to exist, this is typically not the case.%
-  \fixme{Investigate the possibility of first compiling a bunch of
-    \texttt{declaim} forms containing type signatures of most
-    standard \commonlisp{} functions used in macro expansion code.}
-  As a
-  result, the cross compiler will emit warnings about undefined
-  functions.  The generated code will still work, however.
-\end{itemize}
-
-Of the constraints listed above, the most restrictive is the one that
-imposes an order between the files to be cross compiled, i.e., that
-the macros of the expansion code must be cross compiled first.  It is
-possible to avoid this restriction entirely by using \emph{auxiliary
-  functions} rather than macros.  The alternative implementation of
-the \texttt{and} macro in \refCode{code-defmacro-and-2} shows how this
-is done in the extreme case.
-
-\begin{codefragment}
-\inputcode{code-defmacro-and-2.code}
-\caption{\label{code-defmacro-and-2}
-Alternative implementation of the \texttt{and} macro.}
-\end{codefragment}
-
-We use the technique of \refCode{code-defmacro-and-2} only when the
-expansion code is fairly complex.  An example of a rather complex
-expansion code is that of the macro \texttt{loop} which uses mutually
-recursive functions and fairly complex data structures.  When this
-technique is used, we can even use a macro to implement its own
-expansion code.  For instance, nothing prevents us from using
-\texttt{loop} to implement the functions of the expander code of
-\texttt{loop}, because when the \texttt{loop} macro is used to expand
-code in the cross compiler, the occurrences of \texttt{loop} in the
-functions called by the expander code are executed by the host.  As it
-turns out, we do not do that, because we would like for the \sysname{}
-implementation of \texttt{loop} to be used as a drop-in extension in
-implementations other than \sysname{}.
-
-
