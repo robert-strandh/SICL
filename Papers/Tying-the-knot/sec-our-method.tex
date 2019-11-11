@@ -138,6 +138,11 @@ and ultimately to compute a new discriminating function.  This process
 is described in our paper on generic dispatch
 \cite{Strandh:2014:FGD:2635648.2635654}.
 
+A discriminating function with this kind of mixture of sub-functions
+tied to different environments is said to be \emph{impure}.  For a
+discriminating function to be considered pure, all the functions that
+it consists of must be tied to environment N.
+
 \subsection{Turning the structure cyclic}
 
 To see how we can make every part of the discriminating function tied
@@ -175,10 +180,10 @@ passing it itself as an argument.  For that self application to work,
 there must already be an installed discriminating function that is
 capable of handling standard generic functions as arguments. 
 
-There are several ways in which we can create an installed
-discriminating function into \texttt{compute-discriminating-function}
-in environment N.  One simple way is to just call it, passing it any
-generic function in either environment N or environment N+1.  The
+There are several ways in which we can create a discriminating
+function for \texttt{compute-discriminating-function} in environment N
+and then install it.  One simple way is to just call it, passing it
+any generic function in either environment N or environment N+1.  The
 machinery in environment N-1 will then be invoked and an impure
 discriminating function will be installed.  We can then call
 \texttt{compute-discriminating-function} on itself to recompute the
