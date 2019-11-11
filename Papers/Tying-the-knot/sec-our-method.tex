@@ -29,5 +29,28 @@ We invented first-class global environments for two distinct reasons:
   bootstrapping.
 \end{itemize}
 
+\subsection{Bootstrapping}
+
+The bootstrapping procedure of \sicl{} first creates an acyclic graph
+of metaobjects.  At the end of this process, we have a constellation
+of objects in the last two first-class global environments that can be
+illustrated as shown in \refFig{fig-constellation}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-constellation.pdf_t}
+\end{center}
+\caption{\label{fig-constellation}
+Constellation of metaobjects in acyclic graph.}
+\end{figure}
+
+In \refFig{fig-constellation}, we see two environments.  The last one
+created is labeled N and the preceding one is labeled N-1.  Slots such
+as the list of methods, the call history, etc. of a generic function
+in environment N can be accessed only by accessor generic function in
+environment N-1.  Other generic functions in environment N-1 must call
+the accessors, also in environment N-1, in order to accomplish higher
+level tasks such as computing effective method functions or computing
+the discriminating function.
 
 %%  LocalWords:  accessors metaobjects accessor immediates metaobject
