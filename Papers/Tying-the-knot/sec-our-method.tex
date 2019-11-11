@@ -1,4 +1,33 @@
 \section{Our technique}
 \label{sec-our-technique}
 
+\subsection{First-class global environments}
+
+Most \commonlisp{} systems have a single global environment.  Part of
+that environment is typically located in slots of symbols.  In
+particular, a symbol often contains a \emph{value cell} and a
+\emph{function cell}.  In contrast \sicl{} uses first-class global
+environments \cite{Strandh:2015:ELS:Environments} that contain this
+information, as well as information about classes, types, etc.
+With this technique, the name of a function can be associated with
+different functions in different global environments.
+
+We invented first-class global environments for two distinct reasons:
+
+\begin{itemize}
+\item We want \sicl{} to be a \emph{safe} system.  Part of this safety
+  involves protecting the system code itself from malicious external
+  software.  In particular, the default global environment contains
+  only functionality that the \commonlisp{} standard dictates.  Parts
+  of the system such as the compiler are contained in a separate
+  global environment that requires some additional manipulation to
+  access.
+\item \sicl{} is bootstrapped
+  \cite{Durand-Strandh:2019:ELS:Bootstrapping} on an existing
+  \commonlisp{} implementation.  We use first-class global
+  environments to isolate the \sicl{} code from the host system during
+  bootstrapping.
+\end{itemize}
+
+
 %%  LocalWords:  accessors metaobjects accessor immediates metaobject
