@@ -1,2 +1,22 @@
 \section{Introduction}
 \label{sec-introduction}
+
+As we describe in our paper on bootstrapping
+\cite{Durand-Strandh:2019:ELS:Bootstrapping}, after several phases of
+creating metaobjects, the bootstrapping procedure results in a
+collection of metaobjects that form an acyclic graph in that every
+object in some first-class global environment is an instance of a
+class defined in a preceding environment.  This graph must be turned
+into a cyclic graph, as described by the AMOP book
+\cite{Kiczales:1991:AMP:574212}, before the final system can be
+created.
+
+In this paper, we address a particular detail of this graph
+transformation, namely how to make sure that every generic function
+and its different effective method functions refer to other functions
+that are guaranteed to be part of the same first-class global
+environment as the generic function itself.  This property is a
+prerequisite for generating the final code of a native \sicl{}
+system. Other details of the graph transformation are fairly
+straightforward, and involve just a modification of the class slot of
+every metaobject.
