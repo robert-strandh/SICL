@@ -1,1 +1,60 @@
 \section{Previous work}
+
+Portable Common Loops (PCL) seems to be the most common implementation
+of the \closs{} (\clos{}) used by different \commonlisp{}
+implementations, and it includes a full implementation of the \clos{}
+Metaobject protocol, as specified in the book ``The Art of the
+Metaobject Protocol'' \cite{Kiczales:1991:AMP:574212} (AMOP).  In
+appendix C of that book, the authors explain how the class hierarchy
+of \clos{} is bootstrapped.  In particular, they explain that, since
+the class \texttt{standard-class} must exist before any other
+metaobject can be created using the function
+\texttt{allocate-instance}, that class must be created using some
+means other than using the normal ones.  In that appendix, the authors
+also identify several special cases for various functions, so as to
+avoid infinite computations.
+
+It is clear from the appendix that PCL was designed to be bolted onto
+an existing pre-\clos{} \commonlisp{} system with minimal required
+modifications.
+
+In our article on bootstrapping
+\cite{Durand-Strandh:2019:ELS:Bootstrapping}, we explain how
+bootstrapping is done in the \sicl{} system.  Our technique is
+completely different from the one used by PCL.  These days, we have
+several highly conforming \commonlisp{} implementations that also
+include full implementations of the metaobject protocol.  \sicl{}
+bootstrapping relies on such implementations by having code in the
+metaobject protocol be executed by a \emph{host} implementation.
+
+The result of our technique is that the code of the \sicl{}
+implementation of \clos{} looks more ``natural'', and that special
+cases are largely possible to avoid.  Perhaps the most spectacular
+example of how the \sicl{} \clos{} code differs in this respect from
+that of other \commonlisp{} implementations is the definition of the
+class named \texttt{t}, i.e., the root of the entire \clos{} class
+hierarchy:
+
+\begin{verbatim}
+    (defclass t ()
+      ()
+    (:metaclass built-in-class))
+\end{verbatim}
+
+Several other previously published techniques provide the basis for
+the technique described in this paper.
+
+Our paper on generic dispatch \cite{Strandh:2014:FGD:2635648.2635654}
+explains how the \sicl{} implementation of
+\texttt{compute-discriminating-function} works, and in particular the
+role of the \emph{call history} in this technique.
+
+In our paper on ``satiation'' \cite{Strandh:2014:RMI:2635648.2635656}
+we design a technique for filling the call history of a generic
+function so as to avoid the kind of metastability issues that are
+presented in appendix C of the AMOP book.
+
+Finally, a necessity for the multiple versions of the classes and the
+generic functions that are created as part of the \sicl{}
+bootstrapping procedure, is the existence of first-class global
+environments, explained in \cite{Strandh:2015:ELS:Environments}.
