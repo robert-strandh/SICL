@@ -145,9 +145,9 @@ it consists of must be tied to environment N.
 
 \subsection{Turning the structure cyclic}
 
-To see how we can make every part of the discriminating function tied
-to environment N, we must first introduce another level of
-environments.  We omitted the accessor generic functions in
+To see how we can ensure that every part of the discriminating
+function is tied to environment N, we must first introduce another
+level of environments.  We omitted the accessor generic functions in
 environment N of \refFig{fig-constellation}, but now we need to
 understand their capabilities.  In \refFig{fig-constellation-2}, we
 have added the environment N+1 in order to illustrate our technique.
@@ -208,7 +208,7 @@ Though the operation does not have the desired result, we should point
 out that we could have turned the two calls into a single one, namely,
 passing \texttt{compute-discriminating-function} in environment N as
 an argument to itself.  The existing discriminating function is then
-computed from an empty call history, so the machinery for computing a
+computed from an empty call history, so the machinery for computing an
 effective-method function in environment N-1 is invoked and a new
 discriminating function with the structure illustrated in
 \refFig{fig-structure-of-generic-function} would be installed.  This
@@ -231,13 +231,13 @@ follows:
 \begin{enumerate}
 \item First the existing call history is cleared.  This step does not
   alter the installed discriminating function.
-\item Then, for each primary method is examined in order to determine
+\item Then, each primary method is examined in order to determine
   what combination of classes of arguments would make it applicable.
   A method is applicable if the argument corresponding to every
   specialized parameter is an instance of some subclass of the
   specializer class.
-\item For each such combination of argument classes, each class being
-  represented by its unique number (see
+\item For each such combination of argument classes, where each class
+  being represented by its unique number (see
   \cite{Durand-Strandh:2019:ELS:Bootstrapping}), an effective method
   is computed, and \texttt{compile} is applied to it in order to
   create an effective-method function.  The class numbers and the
@@ -256,7 +256,7 @@ it on itself, the following steps will take place:
 \begin{enumerate}
 \item Initially, the call history of \texttt{satiate-generic-function}
   is empty and its discriminating function is not operational on the
-  class of argument (i.e. a standard generic function) that it was
+  class of argument (i.e., a standard generic function) that it was
   given.  Therefore, the machinery of environment N-1 will be invoked
   to compute an impure discriminating function for it.
 \item Once operational, \texttt{satiate-generic-function} will be
@@ -265,7 +265,7 @@ it on itself, the following steps will take place:
   computed, containing, among other things, an entry for the class
   \texttt{standard-generic-function} and a corresponding
   effective-method function.  This step is accomplished by the
-  existing installed impure discriminating function.  the
+  existing installed impure discriminating function.  The
   effective-method function is created using \texttt{compile} in
   environment N, since that is the environment to which method
   functions on \texttt{satiate-generic-function} are tied.
