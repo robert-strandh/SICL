@@ -20,7 +20,7 @@ We invented first-class global environments for two distinct reasons:
   involves protecting the system code itself from malicious external
   software.  In particular, the default global environment contains
   only functionality that the \commonlisp{} standard dictates.  Parts
-  of the system such as the compiler are contained in a separate
+  of the system (such as the compiler) are contained in a separate
   global environment that requires some additional manipulation to
   access.
 \item \sicl{} is bootstrapped
@@ -48,12 +48,12 @@ Constellation of metaobjects in acyclic graph.}
 In \refFig{fig-constellation}, we see two environments.  The last one
 created is labeled N and the preceding one is labeled N-1.  Slots such
 as the list of methods, the call history, etc. of a generic function
-in environment N can be accessed only by accessor generic function in
+in environment N can be accessed only by accessor generic functions in
 environment N-1.  Other generic functions in environment N-1 must call
 the accessors, also in environment N-1, in order to accomplish
 higher-level tasks.  In particular, in this paper we are interested in
-two such higher-level tasks, namely computing effective-method
-functions and computing the discriminating function.
+two such higher-level tasks: computing effective-method functions and
+computing the discriminating function.
 
 Although both these tasks involve calling other functions, generic or
 not, we are interested only in the result of calling the function
@@ -72,7 +72,7 @@ expression into a function.
 \subsection{Properties of functions in the acyclic graph}
 
 When source code is turned into a function by \texttt{compile}, the
-resulting function object contains two parts, namely the
+resulting function object contains two parts: the
 \emph{compiled code} and the \emph{static environment}.  In \sicl{},
 the static environment of a function $f$ contains non-trivial
 constants referred to by $f$, but most importantly, it contains the
@@ -86,7 +86,7 @@ acyclic graph illustrated by \refFig{fig-constellation}.
 
 \begin{definition}
 A function is \emph{present} in some environment $E$ if and only if it
-is referred to by some function function cell in $E$.
+is referred to by some function cell in $E$.
 \end{definition}
 
 \begin{definition}
