@@ -31,7 +31,26 @@
   \country{France}}
 
 \begin{abstract}
-Some abstract.
+After the first few phases of bootstrapping in the \sicl{} system, we
+have an acyclic graph of metaobjects where the class of an object in
+some first-class global environment is an object in a preceding
+environment.  Furthermore, while the method functions of a generic
+function in some environment $E_n$ belong to $E_n$ as well, this is
+not the case for the effective-method functions and the discriminating
+function, which turn individual method functions into a single
+function for the entire generic function.  As a result of how the
+bootstrapping procedure is designed, these components instead belong
+to $E_{n-1}$, resulting in what we call an \emph{impure} object.
+Before an executable \sicl{} system can be created, every component of
+an object in some environment $E_n$ must belong to $E_n$ as well.  In
+other words, every object must be pure.
+
+In this paper, we describe a technique for turning the
+effective-method functions and the discriminating function of every
+generic function in some environment $E_n$ into functions that belong
+to $E_n$ as well.  An important property of our technique is that it
+must not introduce metastability problems, and we describe how we
+aviod this potential problem.
 \end{abstract}
 
 \begin{CCSXML}
