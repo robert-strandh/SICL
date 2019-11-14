@@ -8,7 +8,7 @@
 ;;; even that they violate some aspect of the HyperSpec.  More though
 ;;; has to be given.
 ;;;
-;;; Tentatively, all specialized arrays are simple.
+;;; All arrays are simple.
 
 (defgeneric array-dimensions (array))
 
@@ -68,8 +68,6 @@
 ;;; no specialized displaced arrays, because after all specialization
 ;;; has to do with different representation, and all displaced arrays
 ;;; are represented the same way,
-;;;
-;;; Could a displaced array also be simple?
 
 (defclass displaced-array (array)
   ((%target :initarg :target)
