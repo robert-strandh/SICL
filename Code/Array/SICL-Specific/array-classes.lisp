@@ -78,14 +78,14 @@
 ;;;
 ;;; Class VECTOR.
 ;;;
-;;; All our vectors have fill pointers. 
-;;; [Should that be the case also for displaced vectors?]
+;;; All our vectors have a slot for the fill pointer.  When a vector
+;;; is created without a fill pointer, we set the slot to NIL.
 
-(defgeneric fill-pointer (vector))
-(defgeneric (setf fill-pointer) (new-fill-pointer vector))
+(defgeneric vector-fill-pointer (vector))
+(defgeneric (setf vector-fill-pointer) (new-fill-pointer vector))
 
 (defclass vector (array sequence)
-  ((%fill-pointer :initarg :fill-pointer :accessor fill-pointer))
+  ((%fill-pointer :initarg :fill-pointer :accessor vector-fill-pointer))
   (:metaclass built-in-class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
