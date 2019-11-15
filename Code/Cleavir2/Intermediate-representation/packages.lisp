@@ -64,6 +64,7 @@
    #:consp-instruction
    #:fixnump-instruction
    #:characterp-instruction
+   #:standard-object-p-instruction
    #:phi-instruction
    #:use-instruction
    #:aref-instruction #:aset-instruction
