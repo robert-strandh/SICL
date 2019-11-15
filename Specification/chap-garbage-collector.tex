@@ -12,7 +12,7 @@ objects.
 
 In \refChap{chap-data-representation} we describe the data
 representation where every heap allocated object is either a two-word
-\texttt{cons} cell or a \emph{general instance} represented as a
+\texttt{cons} cell or a \emph{standard object} represented as a
 two-word \emph{header} where the first of the two words is a tagged
 pointer to the class object, and the second of the two words is a
 pointer to the \emph{rack} using a special tag for racks.  For the
@@ -279,7 +279,7 @@ The names of these functions are exported by the package named
 This function takes an object that is allocated in some thread-local
 heap, copies it, and returns a copy that is allocated in the global
 heap.  All the objects referred to by \textit{object}, including the
-class of a general instance, must either be immediate objects, or
+class of a standard object, must either be immediate objects, or
 objects located in the global heap,
 
 \Defun {make-array} {dimensions \key element-type initial-element
@@ -604,7 +604,7 @@ in the live bitmap are set.
 
 Once the roots are found, the dyads marked as live in the nursery are
 traced according to the class of the object.  If the object is a
-general instance (as indicated by the fact that the second word
+standard object (as indicated by the fact that the second word
 contains a rack with the tag reserved for racks ($111$), then the
 class is found in the first word of the header.  The class object is
 recursively visited, and also consulted to determine the number of
@@ -621,7 +621,7 @@ The mark phase maintains an integer variable named \emph{live space}.
 It is initialized to $0$ at the beginning of the mark phase.  For
 every unmarked object in the nursery that is encountered, the value of
 the variable is incremented by the size of that object.  If the object
-is a general instance, then not only is the rack traced, but the size
+is a standard object, then not only is the rack traced, but the size
 of the rack is added to the value of the variable as well.  When the
 mark phase is finished, this variable contains the total amount of
 live space in the nursery.
@@ -656,7 +656,7 @@ initialized so that all its bits are cleared.  When an object has been
 promoted, the first word of the dyad contains a \emph{forwarding
   pointer} pointing to the promoted object in the global heap, and the
 bit in the promotion bitmap corresponding to the first word of the
-dyad is set.  Similarly, when a general instance has been promoted,
+dyad is set.  Similarly, when a standard object has been promoted,
 \emph{every word} of the rack contains a forwarding pointer, pointing
 to the new word in the global heap, and the bit in the promotion
 bitmap corresponding to that word is set.  The reason for treating the
@@ -765,7 +765,7 @@ internal pointers as well.
 
 Next, dyads in the nursery are traversed.  For a \texttt{cons} cell,
 the first break table is consulted in order to adjust both the
-\texttt{car} and the \texttt{cdr}.  For a general instance, the first
+\texttt{car} and the \texttt{cdr}.  For a standard object, the first
 break table is consulted in order to adjust the \texttt{class} slot
 and the second break table is consulted in order to adjust the
 \texttt{rack} slot.  Once the rack slot has been adjusted, the rack is
