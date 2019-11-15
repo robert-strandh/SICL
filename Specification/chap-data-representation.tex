@@ -21,12 +21,12 @@ represent four different \emph{tags} as follows:
   \seesec{sec-data-representation-immediate-objects}
 \item \texttt{101}.  This tag is used for all heap-allocated
   \commonlisp{} objects other than \texttt{cons} cells.  A heap
-  allocated object like this is called a \emph{general instance}.  It
+  allocated object like this is \emph{standard object}.  It
   is represented by a two-word header object with one word containing
   a tagged pointer to the \emph{class object} and the other word
   containing a tagged pointer to the \emph{rack}.  See
   \refSec{sec-data-representation-general-instances} for more
-  information about the representation of general instances.
+  information about the representation of standard objects.
 \item \texttt{111}.  This tag is used to tag a pointer to a
   \emph{rack}.  Notice that a rack is not a first-class \commonlisp{}
   object, so it can not be the value of any variable, slot, or
@@ -75,31 +75,31 @@ most-significant half of the word.
 A \texttt{cons} cell is represented as two consecutive machine
 words aligned on a double-word boundary.
 
-\section{Representation of general instances}
+\section{Representation of standard objects}
 \label{sec-data-representation-general-instances}
 
-Recall that a \emph{general instance} is a heap allocated object that
-is not a \texttt{cons} cell.  All general instances are represented in
+Recall that a \emph{standard object} is a heap allocated object that
+is not a \texttt{cons} cell.  All standard objects are represented in
 (at least) two parts, a \emph{header object} and a \emph{rack}.  The
 header object always consists of two consecutive words aligned on a
 double-word boundary (just like \texttt{cons} cells).  The first word
 always contains a tagged pointer to a \emph{class} object (which is
-another general instance).  The second word contains a tagged pointer
+another standard object).  The second word contains a tagged pointer
 (with tag $111$) to the first word of the rack.
 
-The first entry of the rack of every general instance is a
-small fixnum called the \emph{stamp} of the general instance.  The
+The first entry of the rack of every standard object is a
+small fixnum called the \emph{stamp} of the standard object.  The
 stamp is the \emph{unique class number} of the class of the general
 instance as it was when the instance was created.  The main purpose of
 this information is to be used in \emph{generic function dispatch}.
-It is also used to determine whether a general instance is an obsolete
-instance (in this case the stamp of the general instance will not be
+It is also used to determine whether a standard object is an obsolete
+instance (in this case the stamp of the standard object will not be
 the same as the \emph{current} unique class number of the class of the
-general instance).  Standard instances that can become obsolete are
+standard object).  Standard instances that can become obsolete are
 said to be \emph{flexible}.
 \seesec{sec-data-representation-standard-objects}
 
-One advantage of representing general instances this way is that the
+One advantage of representing standard objects this way is that the
 rack is \emph{internally consistent}.  To explain what we
 mean by this concept, let us take an \emph{adjustable array} as an
 example.  The implementation of \texttt{aref} must check that the
@@ -127,16 +127,14 @@ leaving the original generic function intact until the final
 instruction to store a reference to the the new rack in the
 header object.
 
-A general instance can be \emph{rigid} or \emph{flexible}.  A rigid
+A standard object can be \emph{rigid} or \emph{flexible}.  A rigid
 instance is an instance of a class that can not change, typically a
-built-in class.  A flexible instance is an instance of a class that
-may be modified, makings its instances \emph{obsolete}.  Standard
-objects are flexible instances, but other instances might be flexible
-too.  In \sysname{}, structure objects are flexible too, for
-instance.
+system class.  A flexible instance is an instance of a class that may
+be modified, makings its instances \emph{obsolete}.  In \sysname{},
+structure objects are flexible too.
 
 In the following sections we give the details of the representation
-for all possible general instances.
+for all possible standard objects.
 
 \section{Flexible instances}
 \label{sec-data-representation-flexible-instances}
@@ -300,16 +298,10 @@ The following tables are used for debugger support:
 
 Contrary to flexible instances, a \emph{rigid instance} is an instance
 of a class that is not allowed to change after the first instance is
-created.  Built-in classes are examples of such classes.  The class
+created.  System classes are examples of such classes.  The class
 definition might change as long as there are no instances, but the
-consequences are undefined if a built-in class is changed after it has
+consequences are undefined if a system class is changed after it has
 been instantiated.
-
-As a consequence, in rigid instances it is not necessary to keep a
-copy of the class slots in the rack.  However, the first
-cell of the rack of such instances still contain the
-\emph{stamp}, so that every general instance can be treated the same
-by all generic functions, thus avoiding a test for a special case.
 
 \section{Instances of built-in classes}
 
@@ -335,7 +327,7 @@ The general consensus seems to be that other subtypes are allowed.
 \subsection{Arrays}
 \label{sec-data-representation-arrays}
 
-An array being a general instance, it is represented as a two-word
+An array being a standard object, it is represented as a two-word
 header object and a rack.  The second word of the rack
 contains a proper list of dimensions.  The length of the list
 is the \emph{rank} of the array.
