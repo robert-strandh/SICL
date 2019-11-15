@@ -51,14 +51,15 @@ correspond to any classes.%
   unique numbers of the classes, compacting the sequence, but that
   probably will not be necessary.}
 
-Every \emph{general instance}%
-\footnote{Recall that a \emph{general instance} is an instance
+Every \emph{standard-object}%
+\footnote{Recall that a \emph{standard-object} is an instance
   allocated on the heap, excluding \texttt{cons}
   cells. \seechap{chap-data-representation}} contains a \emph{stamp},
 which is the unique number of its class as it was when the instance
 was created.  This number is always the first element of the rack of
-the general instance.  Even though built-in classes can not be
-redefined, general instances of built-in classes contain a stamp.
+the standard-object.  Even though some system classes can not be
+redefined, standard-objects that are instance of system classes
+contain a stamp.
 
 \subsection{Standard classes}
 \label{object-system-standard-classes}
@@ -103,7 +104,7 @@ contain enough information of the class as it was when the instance
 was created to determine whether slots have been added or removed.
 
 In \sysname{} the first location of the rack of each
-general instance contains a \emph{stamp}, which is the unique number
+standard-object contains a \emph{stamp}, which is the unique number
 of the class as it was when the instance was created.  In addition,
 if the instance is \emph{flexible}, it also contains a reference to the
 \emph{list of effective slots} of the class as it was when the
@@ -154,12 +155,11 @@ there we have a choice.  In \sysname{} all these classes will be
 implemented as either built-in classes or standard classes.  None of
 them will be structure classes. 
 
-Even though \sysname{} will implement many of the system classes as
+Even though \sysname{} will implement some of the system classes as
 built-in classes, this does not mean that we have to use
 special-purpose ways of implementing them.  The \sysname{} object
 system takes advantage of features of the metaobject protocol such as
-inheritance and class finalization to define built-in classes as well
-as standard classes.
+inheritance to define built-in classes as well as standard classes.
 
 Even for system classes where instances do not all have the same size,
 notably the \texttt{array} class and its subclasses, we plan to take
@@ -334,7 +334,7 @@ call history.
 If the call history has relatively few entries, then the
 discriminating function computes the \emph{identification}%
 \footnote{Recall that the \emph{identification} of an object is either
-  the \emph{stamp} of the object if it is a general instance, or the
+  the \emph{stamp} of the object if it is a standard-object, or the
   \emph{unique number} of the class of the object if it is a special
   instance.}
 of each of the required arguments.  It then uses numeric comparisons
@@ -369,7 +369,7 @@ is to compute the \emph{identification} of each required argument.
 The identification is computed as follows:
 
 \begin{itemize}
-\item If the object is a \emph{general instance}, then it is the
+\item If the object is a \emph{standard-object}, then it is the
   \emph{stamp} of the instance, i.e. the unique number of the class of
   the instance as it was when the instance was created.  The stamp is
   stored in the first element of the rack of the instance.
@@ -384,7 +384,7 @@ effective method, the following steps are taken:
 \begin{enumerate}
 \item The identification is checked against the unique
   number of the class of the object.  If they are not the same, then
-  the object is a general instance, and it is \emph{obsolete}.  The
+  the object is a standard-object, and it is \emph{obsolete}.  The
   machinery for updating the instance is invoked, and then a second
   attempt with the automaton is made. 
 \item If the object identification and the unique number of the
@@ -404,9 +404,9 @@ effective method, the following steps are taken:
 
 Notice that in most cases, no explicit test is required to determine
 whether an instance is obsolete.  Also notice that for up-to-date
-general instances, there is no need to access the class of the
+standard-objects, there is no need to access the class of the
 instance in order to determine an effective method to call.  For
-objects other than general instances, there is a small fixed number of
+objects other than standard-objects, there is a small fixed number of
 possible classes, so determining the identification of an object can
 be open coded.
 
