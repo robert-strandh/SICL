@@ -22,16 +22,16 @@
     raw-pointer-location))
 
 ;;; Given an instruction I and a lexical location containing a
-;;; reference to the header of a general instance G, insert and
+;;; reference to the header of a standard object G, insert and
 ;;; instruction J before I.  The instruction J is a memory reference
 ;;; instruction that outputs a reference to the rack of G and stores
 ;;; that reference in a fresh lexical location L.  The lexical
 ;;; location L is returned.  Recall that the reference to the rack is
 ;;; a tagged pointer, and its tag is #b111.
 
-(defun find-rack (instruction general-instance-location)
+(defun find-rack (instruction standard-object-location)
   (let* ((raw-pointer-location (raw-pointer-from-tagged-pointer instruction
-                                                                general-instance-location
+                                                                standard-object-location
                                                                 3))
         (rack-location (make-instance 'cleavir-ir:lexical-location
                          :name '#:rack-location)))
