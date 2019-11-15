@@ -265,6 +265,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction STANDARD-OBJECT-P-INSTRUCTION.
+;;;
+;;; This instruction is used to test whether its input is an instance
+;;; of STANDARD-OBJECT.  If that is the case, then the first output is
+;;; chosen.  Otherwise, the second output is chosen.
+
+(defclass standard-object-p-instruction (instruction multiple-successors-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction SYMBOL-VALUE-INSTRUCTION.
 
 (defclass symbol-value-instruction (instruction one-successor-mixin)
