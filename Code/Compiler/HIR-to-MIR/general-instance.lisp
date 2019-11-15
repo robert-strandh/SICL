@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-hir-to-mir)
 
-;;; The rack of every general instance has a prefix that contains
+;;; The rack of every standard object has a prefix that contains
 ;;; information about the rack, as opposed to the contents of the
-;;; object it represents.  For a general instance that is not an
+;;; object it represents.  For a standard object that is not an
 ;;; array, that prefix consists of 2 words, where the first word is
 ;;; the stamp and the second words contains a list of effective slot
 ;;; definitions.  For simple arrays, the prefix contains the stamp and
