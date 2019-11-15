@@ -10,7 +10,7 @@
    (:file "variables")
    (:file "cons")
    (:file "utilities")
-   (:file "general-instance")
+   (:file "standard-object")
    (:file "array")
    (:file "boxing")
    (:file "fixnum")
