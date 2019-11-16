@@ -80,6 +80,19 @@
 
 (defmethod interpret-instruction
     (client
+     (instruction cleavir-ir:standard-object-p-instruction)
+     lexical-environment)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (successors (cleavir-ir:successors instruction))
+         (value (input-value input lexical-environment)))
+    (if (or (characterp value)
+            (typep value 'fixnum)
+            (consp value))
+        (second successors)
+        (first successors))))
+
+(defmethod interpret-instruction
+    (client
      (instruction cleavir-ir:nop-instruction)
      lexical-environment)
   (first (cleavir-ir:successors instruction)))
