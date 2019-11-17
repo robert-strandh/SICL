@@ -993,6 +993,38 @@ This AST can be used to read a slot of a standard object.
 
 This AST can be used to write a slot of a standard object.
 
+\subsubsection{\texttt{cell-read-ast}}
+\label{sec-ast-cell-read}
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:object-ast} & \texttt{object-ast} & The AST for the object.\\
+  \texttt{:cell-number-ast} & \texttt{cell-number-ast} & The AST for
+  the cell number.\\
+  \hline
+\end{tabular}
+
+This AST can be used to read a cell of a standard object.
+
+\subsubsection{\texttt{cell-write-ast}}
+\label{sec-ast-cell-write}
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:object-ast} & \texttt{object-ast} & The AST for the object.\\
+  \texttt{:cell-number-ast} & \texttt{cell-number-ast} & The AST for
+  the cell number.\\
+  \texttt{:value-ast} & \texttt{value-ast} & The AST for\\
+  the value to be written.\\
+  \hline
+\end{tabular}
+
+This AST can be used to write a cell of a standard object.
+
 \section{A CLIM-based AST visualizer}
 
 \subsection{Profiles and how to combine them}
