@@ -146,6 +146,10 @@
 
 (defmethod label ((instruction cleavir-ir:slot-write-instruction)) "slot write")
 
+(defmethod label ((instruction cleavir-ir:cell-read-instruction)) "cell read")
+
+(defmethod label ((instruction cleavir-ir:cell-write-instruction)) "cell write")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions for multiple values.
