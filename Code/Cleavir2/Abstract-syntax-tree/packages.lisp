@@ -78,6 +78,8 @@
    #:subtype
    #:slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast
+   #:cell-read-ast #:cell-number-ast
+   #:cell-write-ast
    #:aref-ast #:aset-ast
    #:element-ast #:array-ast #:index-ast
    #:element-type #:simple-p #:boxed-p
