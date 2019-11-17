@@ -93,6 +93,8 @@
    #:rplacd-instruction
    #:slot-read-instruction
    #:slot-write-instruction
+   #:cell-read-instruction
+   #:cell-write-instruction
    #:multiple-to-fixed-instruction
    #:fixed-to-multiple-instruction
    #:save-values-instruction
