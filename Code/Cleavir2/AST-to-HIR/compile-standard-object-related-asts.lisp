@@ -57,3 +57,61 @@
             :inputs (list temp1 temp2 temp3)
             :outputs '()
             :successors (successors context))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a CELL-READ-AST
+
+(defmethod compile-ast (client (ast cleavir-ast:cell-read-ast) context)
+  (let ((temp1 (make-temp))
+        (temp2 (make-temp)))
+    (compile-ast
+     client
+     (cleavir-ast:object-ast ast)
+     (clone-context
+      context
+      :result temp1
+      :successor (compile-ast
+                  client
+                  (cleavir-ast:cell-number-ast ast)
+                  (clone-context
+                   context
+                   :result temp2
+                   :successor  (make-instance 'cleavir-ir:cell-read-instruction
+                                 :inputs (list temp1 temp2)
+                                 :outputs (results context)
+                                 :successors (successors context))))))))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a CELL-WRITE-AST
+
+(defmethod compile-ast (client (ast cleavir-ast:cell-write-ast) context)
+  (let ((temp1 (make-temp))
+        (temp2 (make-temp))
+        (temp3 (make-temp)))
+    (compile-ast
+     client
+     (cleavir-ast:object-ast ast)
+     (clone-context
+      context
+      :result temp1
+      :successor
+      (compile-ast
+       client
+       (cleavir-ast:cell-number-ast ast)
+       (clone-context
+        context
+        :result temp2
+        :successor
+        (compile-ast
+         client
+         (cleavir-ast:value-ast ast)
+         (clone-context
+          context
+          :result temp3
+          :successor
+          (make-instance 'cleavir-ir:cell-write-instruction
+            :inputs (list temp1 temp2 temp3)
+            :outputs '()
+            :successors (successors context))))))))))
