@@ -360,6 +360,44 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:CELL-READ.
+;;;
+;;; This primop takes two arguments.  The first argument is a form
+;;; that must evaluate to a standard object.  The second argument is
+;;; a form that must evaluate to a fixnum and that indicates the cell
+;;; number to be read.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:cell-read)) cst environment)
+  (check-simple-primop-syntax cst 2)
+  (cst:db origin (cell-read-cst instance-cst cell-number-cst) cst
+    (declare (ignore cell-read-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:cell-read-ast
+     :object-ast (convert client instance-cst environment)
+     :cell-number-ast (convert client cell-number-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CELL-WRITE.
+;;;
+;;; This primop takes three arguments.  The first argument is a form
+;;; that must evaluate to a standard object.  The second argument is
+;;; a form that must evaluate to a fixnum and that indicates the cell
+;;; number to be written.  The third argument is a form that evaluates
+;;; to the object that will be written to the cell.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:cell-write)) cst environment)
+  (check-simple-primop-syntax cst 3)
+  (cst:db origin (cell-write-cst instance-cst cell-number-cst value-cst) cst
+    (declare (ignore cell-write-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:cell-write-ast
+     :object-ast (convert client instance-cst environment)
+     :stot-number-ast (convert client cell-number-cst environment)
+     :value-ast (convert client value-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:AREF.
 ;;;
 ;;; This primop takes five arguments. The first and second are an
