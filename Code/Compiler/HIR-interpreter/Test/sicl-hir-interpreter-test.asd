@@ -5,7 +5,7 @@
                #:concrete-syntax-tree
                #:cleavir2-ast
                #:cleavir2-cst-to-ast
-               #:cleavir-primop
+               #:cleavir2-primop
                #:sicl-hir-interpreter)
   :components
   ((:file "packages")

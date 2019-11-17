@@ -12,7 +12,7 @@
                #:cleavir2-ast
                #:cleavir2-hir
                #:cleavir2-cst-to-ast
-               #:cleavir-primop)
+               #:cleavir2-primop)
   :serial t
   :components
   ((:file "packages")

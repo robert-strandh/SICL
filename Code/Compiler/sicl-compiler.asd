@@ -5,7 +5,7 @@
 	       :sicl-global-environment
 	       :eclector
 	       :cleavir-ast
-	       :cleavir-primop)
+	       :cleavir2-primop)
   :serial t
   :components
   ((:file "packages")

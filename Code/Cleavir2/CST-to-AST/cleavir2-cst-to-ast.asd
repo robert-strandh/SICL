@@ -5,7 +5,7 @@
                #:concrete-syntax-tree-destructuring
                #:cleavir2-ast
                #:cleavir2-ast-transformations
-               #:cleavir-primop
+               #:cleavir2-primop
                #:trucler-reference
                #:stealth-mixin
                #:acclimation)
