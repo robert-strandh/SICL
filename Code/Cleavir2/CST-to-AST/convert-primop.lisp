@@ -325,7 +325,7 @@
 ;;; Converting CLEAVIR-PRIMOP:SLOT-READ.
 ;;;
 ;;; This primop takes two arguments.  The first argument is a form
-;;; that must evaluate to a standard instance.  The second argument is
+;;; that must evaluate to a standard object.  The second argument is
 ;;; a form that must evaluate to a fixnum and that indicates the slot
 ;;; number to be read.
 
@@ -343,7 +343,7 @@
 ;;; Converting CLEAVIR-PRIMOP:SLOT-WRITE.
 ;;;
 ;;; This primop takes three arguments.  The first argument is a form
-;;; that must evaluate to a standard instance.  The second argument is
+;;; that must evaluate to a standard object.  The second argument is
 ;;; a form that must evaluate to a fixnum and that indicates the slot
 ;;; number to be written.  The third argument is a form that evaluates
 ;;; to the object that will be written to the slot.
