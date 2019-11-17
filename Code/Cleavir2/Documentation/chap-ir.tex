@@ -589,6 +589,53 @@ fixnum indicating the \emph{index} of the slot in the instance.  The
 third input can be any object.  The effect of the instruction is to
 replace the contents of the corresponding slot by the third input.
 
+\subsection{Instruction \texttt{cell-read-instruction}}
+\label{hir-instruction-cell-read}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a \emph{standard object},
+or some other object with the same structure as a standard object.
+The consequences are undefined if this is not the case.  For that
+reason, \emph{safe} code should have additional instructions inserted
+to ensure that this condition is respected.  The second input is a
+non-negative fixnum indicating the \emph{index} of the cell in the
+instance.  The output is the contents of the corresponding cell.
+
+\subsection{Instruction \texttt{cell-write-instruction}}
+\label{hir-instruction-cell-write}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a \emph{standard object},
+or some other object with the same structure as a standard object.
+The consequences are undefined if this is not the case.  For that
+reason, \emph{safe} code should have additional instructions inserted
+to ensure that this condition is respected.  The second input is a
+fixnum indicating the \emph{index} of the cell in the instance.  The
+third input can be any object.  The effect of the instruction is to
+replace the contents of the corresponding cell by the third input.
+
 \subsection{Instruction \texttt{aref-instruction}}
 \label{hir-instruction-aref}
 
