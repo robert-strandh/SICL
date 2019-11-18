@@ -13,7 +13,7 @@
   ;; During initialization the NAME keyword argument must be supplied.
   (unless name-p
     (error 'slot-definition-name-must-be-supplied
-	   :slot-definition slot-definition)))
+           :slot-definition slot-definition)))
 
 (defmethod shared-initialize :before
     ((slot-definition slot-definition)
@@ -38,55 +38,52 @@
   (declare (ignore type))
   (when (and initform-p (not initfunction-p))
     (error 'when-initform-supplied-initfunction-must-be-supplied
-	   :slot-definition slot-definition
-	   :name name))
+           :slot-definition slot-definition
+           :name name))
   (when (and (not initform-p) initfunction-p)
     (error 'when-initfunction-supplied-initform-must-be-supplied
-	   :slot-definition slot-definition
-	   :name name))
+           :slot-definition slot-definition
+           :name name))
   ;; FIXME: Check that if the TYPE keywords argument is supplied it is
   ;; a valid type specifier.
   (unless (symbolp allocation)
     (error 'allocation-must-be-symbol
-	   :slot-definition slot-definition
-	   :allocation allocation))
+           :slot-definition slot-definition
+           :allocation allocation))
   (unless (cleavir-code-utilities:proper-list-p initargs)
     (error 'initargs-must-be-proper-list
-	   :slot-definition slot-definition
-	   :initargs initargs))
+           :slot-definition slot-definition
+           :initargs initargs))
   (unless (every #'symbolp initargs)
     (error 'initarg-must-be-symbol
-	   :slot-definition slot-definition
-	   :initarg (find-if-not #'symbolp initargs)))
+           :slot-definition slot-definition
+           :initarg (find-if-not #'symbolp initargs)))
   (unless (cleavir-code-utilities:proper-list-p readers)
     (error 'readers-must-be-proper-list
-	   :slot-definition slot-definition
-	   :readers readers))
+           :slot-definition slot-definition
+           :readers readers))
   ;; The AMOP says that the readers must be function names, but it
   ;; would be silly to have a reader named (SETF <mumble>) so we
   ;; require that the readers be symbols.
   (unless (every #'symbolp readers)
     (error 'initarg-must-be-symbol
-	   :slot-definition slot-definition
-	   :reader (find-if-not #'symbolp readers)))
+           :slot-definition slot-definition
+           :reader (find-if-not #'symbolp readers)))
   (unless (cleavir-code-utilities:proper-list-p writers)
     (error 'writers-must-be-proper-list
-	   :slot-definition slot-definition
-	   :writers writers))
+           :slot-definition slot-definition
+           :writers writers))
   (loop for writer in writers
-	unless (or (symbolp writer)
-		   (and (consp writer)
-			(eq (car writer) 'setf)
-			(consp (cdr writer))
-			(symbolp (cadr writer))
-			(null (cddr writer))))
-	  do (error 'writer-must-be-function-name
-		    :slot-definition slot-definition
-		    :writer writer))
+        unless (or (symbolp writer)
+                   (and (consp writer)
+                        (eq (car writer) 'setf)
+                        (consp (cdr writer))
+                        (symbolp (cadr writer))
+                        (null (cddr writer))))
+          do (error 'writer-must-be-function-name
+                    :slot-definition slot-definition
+                    :writer writer))
   (unless (or (null documentation) (stringp documentation))
     (error 'slot-definition-documentation-must-be-nil-or-string
-	   :slot-definition slot-definition
-	   :documentation documentation)))
-
-
-
+           :slot-definition slot-definition
+           :documentation documentation)))
