@@ -11,4 +11,6 @@
            #:*call-stack*
            #:enclose
            #:fill-environment
-           #:make-function-cell-finder))
+           #:make-function-cell-finder
+           #:lexical-value
+           #:input-value))
