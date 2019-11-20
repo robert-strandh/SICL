@@ -42,24 +42,3 @@
 ;;; are instances of funcallable-standard-class.
 ;;;
 ;;; All other classes are instances of standard-class.
-
-;;; For performance reasons, it is important to order the class
-;;; definitions in this file in depth-first pre-order.  During
-;;; bootstrapping, this is the order in which the classes will be
-;;; finalized, and finalization is what assigns unique class numbers.
-;;; The depth-first pre-order ensures that the classes in a subtree
-;;; have consecutive class numbers, and during generic function
-;;; dispatch, the implications are that membership in an entire
-;;; subtree can be tested with at most 2 tests.  This property makes
-;;; it cheap to define common superclasses and methods specialized to
-;;; such classes.  For classes and generic functions defined at the
-;;; application level, this additional performance may not make much
-;;; difference, but for system-level classes and generic functions, it
-;;; may significantly improve overall performance.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; The MOP class hierarchy. 
-
-(defconstant +class-unique-number-offset+ 0)
-(defconstant +instance-slots-offset+ 1)
