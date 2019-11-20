@@ -1,3 +1,3 @@
 (cl:in-package #:sicl-clos)
 
-(defconstant +class-unique-number-offset+ 0)
+(defconstant +stamp-offset+ 0)

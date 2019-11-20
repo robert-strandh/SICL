@@ -25,7 +25,7 @@
   (let* ((size (+ (instance-size class) additional-size))
          (instance (allocate-general-instance class size)))
     ;; Store the unique number of the class in the instance.
-    (setf (general-instance-access instance +class-unique-number-offset+)
+    (setf (general-instance-access instance +stamp-offset+)
           (unique-number class))
     instance))
 
