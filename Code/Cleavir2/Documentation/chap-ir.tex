@@ -589,8 +589,8 @@ fixnum indicating the \emph{index} of the slot in the instance.  The
 third input can be any object.  The effect of the instruction is to
 replace the contents of the corresponding slot by the third input.
 
-\subsection{Instruction \texttt{cell-read-instruction}}
-\label{hir-instruction-cell-read}
+\subsection{Instruction \texttt{nook-read-instruction}}
+\label{hir-instruction-nook-read}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -609,11 +609,11 @@ or some other object with the same structure as a standard object.
 The consequences are undefined if this is not the case.  For that
 reason, \emph{safe} code should have additional instructions inserted
 to ensure that this condition is respected.  The second input is a
-non-negative fixnum indicating the \emph{index} of the cell in the
-instance.  The output is the contents of the corresponding cell.
+non-negative fixnum indicating the \emph{index} of the nook in the
+instance.  The output is the contents of the corresponding nook.
 
-\subsection{Instruction \texttt{cell-write-instruction}}
-\label{hir-instruction-cell-write}
+\subsection{Instruction \texttt{nook-write-instruction}}
+\label{hir-instruction-nook-write}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -632,9 +632,9 @@ or some other object with the same structure as a standard object.
 The consequences are undefined if this is not the case.  For that
 reason, \emph{safe} code should have additional instructions inserted
 to ensure that this condition is respected.  The second input is a
-fixnum indicating the \emph{index} of the cell in the instance.  The
+fixnum indicating the \emph{index} of the nook in the instance.  The
 third input can be any object.  The effect of the instruction is to
-replace the contents of the corresponding cell by the third input.
+replace the contents of the corresponding nook by the third input.
 
 \subsection{Instruction \texttt{aref-instruction}}
 \label{hir-instruction-aref}

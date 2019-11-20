@@ -2,7 +2,7 @@
 
 (defmethod sicl-hir-interpreter:interpret-instruction
     ((client sicl-boot:client)
-     (instruction cleavir-ir:read-cell-instruction)
+     (instruction cleavir-ir:nook-read-instruction)
      lexical-environment)
   (destructuring-bind (object-input index-input)
       (cleavir-ir:inputs instruction)
@@ -18,7 +18,7 @@
 
 (defmethod sicl-hir-interpreter:interpret-instruction
     ((client sicl-boot:client)
-     (instruction cleavir-ir:write-cell-instruction)
+     (instruction cleavir-ir:nook-write-instruction)
      lexical-environment)
   (destructuring-bind (object-input index-input value-input)
       (cleavir-ir:inputs instruction)

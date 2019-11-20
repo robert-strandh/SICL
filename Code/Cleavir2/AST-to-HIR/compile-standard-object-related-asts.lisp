@@ -60,9 +60,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a CELL-READ-AST
+;;; Compile a NOOK-READ-AST
 
-(defmethod compile-ast (client (ast cleavir-ast:cell-read-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:nook-read-ast) context)
   (let ((temp1 (make-temp))
         (temp2 (make-temp)))
     (compile-ast
@@ -73,20 +73,20 @@
       :result temp1
       :successor (compile-ast
                   client
-                  (cleavir-ast:cell-number-ast ast)
+                  (cleavir-ast:nook-number-ast ast)
                   (clone-context
                    context
                    :result temp2
-                   :successor  (make-instance 'cleavir-ir:cell-read-instruction
+                   :successor  (make-instance 'cleavir-ir:nook-read-instruction
                                  :inputs (list temp1 temp2)
                                  :outputs (results context)
                                  :successors (successors context))))))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a CELL-WRITE-AST
+;;; Compile a NOOK-WRITE-AST
 
-(defmethod compile-ast (client (ast cleavir-ast:cell-write-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:nook-write-ast) context)
   (let ((temp1 (make-temp))
         (temp2 (make-temp))
         (temp3 (make-temp)))
@@ -99,7 +99,7 @@
       :successor
       (compile-ast
        client
-       (cleavir-ast:cell-number-ast ast)
+       (cleavir-ast:nook-number-ast ast)
        (clone-context
         context
         :result temp2
@@ -111,7 +111,7 @@
           context
           :result temp3
           :successor
-          (make-instance 'cleavir-ir:cell-write-instruction
+          (make-instance 'cleavir-ir:nook-write-instruction
             :inputs (list temp1 temp2 temp3)
             :outputs '()
             :successors (successors context))))))))))
