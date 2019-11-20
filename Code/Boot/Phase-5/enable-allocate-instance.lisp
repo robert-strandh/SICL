@@ -12,7 +12,7 @@
      remove-if-not reverse find)
    e4)
   (import-function-from-host '(setf sicl-genv:constant-variable) e4)
-  (load-fasl "CLOS/class-unique-number-offset-defconstant.fasl" e4)
+  (load-fasl "CLOS/stamp-offset-defconstant.fasl" e4)
   (load-fasl "CLOS/allocate-instance-defgenerics.fasl" e4)
   (load-fasl "CLOS/allocate-instance-support.fasl" e4)
   (load-fasl "CLOS/allocate-instance-defmethods.fasl" e4))

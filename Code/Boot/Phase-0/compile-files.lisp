@@ -220,7 +220,7 @@
     (cf "CLOS/class-finalization-defgenerics.lisp")
     (cf "CLOS/class-finalization-support.lisp")
     (cf "CLOS/class-finalization-defmethods.lisp")
-    (cf "CLOS/class-unique-number-offset-defconstant.lisp")
+    (cf "CLOS/stamp-offset-defconstant.lisp")
     (cf "CLOS/allocate-instance-defgenerics.lisp")
     (cf "CLOS/allocate-instance-support.lisp")
     (cf "CLOS/allocate-instance-defmethods.lisp")
