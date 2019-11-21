@@ -44,7 +44,8 @@
   (let ((location (slot-definition-location slot)))
     (if (consp location)
         (setf (car location) new-value)
-        (setf (general-instance-access object location) new-value))))
+        (progn (cleavir-primop:nook-write object location new-value)
+               new-value))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
