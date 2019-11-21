@@ -119,7 +119,6 @@
    #:default-superclasses
    #:allocate-general-instance
    #:general-instance-p
-   #:general-instance-access
    #:add-direct-method
    #:remove-direct-method
    ;; SICL-specific macro
