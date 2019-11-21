@@ -355,7 +355,7 @@
     (declare (ignore slot-write-cst))
     (cleavir-ast:make-ast 'cleavir-ast:slot-write-ast
      :object-ast (convert client instance-cst environment)
-     :stot-number-ast (convert client slot-number-cst environment)
+     :slot-number-ast (convert client slot-number-cst environment)
      :value-ast (convert client value-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -393,7 +393,7 @@
     (declare (ignore nook-write-cst))
     (cleavir-ast:make-ast 'cleavir-ast:nook-write-ast
      :object-ast (convert client instance-cst environment)
-     :stot-number-ast (convert client nook-number-cst environment)
+     :nook-number-ast (convert client nook-number-cst environment)
      :value-ast (convert client value-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
