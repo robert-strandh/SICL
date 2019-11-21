@@ -63,11 +63,7 @@
   (with-accessors ((e3 sicl-boot:e3)
                    (e4 sicl-boot:e4)) boot
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e4)
-          (sicl-genv:fdefinition 'sicl-clos::general-instance-p e3))
-    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e4)
-          (sicl-genv:fdefinition 'sicl-clos::general-instance-access e3))
-    (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e4)
-          (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e3))))
+          (sicl-genv:fdefinition 'sicl-clos::general-instance-p e3))))
 
 (defun define-compile (e4)
   (setf (sicl-genv:fdefinition 'compile e4)

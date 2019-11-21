@@ -59,14 +59,6 @@
   (load-fasl "CLOS/compute-discriminating-function-support-c.fasl" e3)
   (load-fasl "CLOS/compute-discriminating-function-defmethods.fasl" e3))
 
-(defun define-general-instance-access (e3)
-  (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e3)
-        (lambda (object location)
-          (aref (slot-value object '%rack) location)))
-  (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e3)
-        (lambda (value object location)
-          (setf (aref (slot-value object '%rack) location) value))))
-
 (defun define-no-applicable-method (e3)
   (load-fasl "CLOS/no-applicable-method-defgenerics.fasl" e3)
   (load-fasl "CLOS/no-applicable-method.fasl" e3))
@@ -152,7 +144,6 @@
     (enable-method-combinations boot)
     (define-compute-effective-method e3)
     (define-no-applicable-method e3)
-    (define-general-instance-access e3)
     (define-compile e3)
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e3)
     (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e3)
