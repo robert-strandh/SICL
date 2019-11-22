@@ -268,4 +268,5 @@
     (cf "Data-and-control-flow/shiftf-support.lisp")
     (cf "Data-and-control-flow/shiftf-defmacro.lisp")
     (cf "Data-and-control-flow/multiple-value-list-defmacro.lisp")
-    (cf "Conditionals/macros.lisp")))
+    (cf "Conditionals/macros.lisp")
+    (cf "Character/character-defclass.lisp")))
