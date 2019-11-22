@@ -34,6 +34,7 @@
     (cf "CLOS/standard-generic-function-defclass.lisp")
     (cf "Cons/cons-defclass.lisp")
     (cf "Cons/list-defclass.lisp")
+    (cf "Cons/null-defclass.lisp")
     (cf "Cons/accessor-defuns.lisp")
     (cf "Cons/cxr.lisp")
     (cf "Cons/setf-cxr.lisp")
