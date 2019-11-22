@@ -201,7 +201,7 @@
   (unless (symbolp name)
     (error 'default-initarg-name-must-be-symbol
            :datum name))
-  `(,name ,form (lambda () ,form)))
+  `(list ,name ',form (lambda () ,form)))
 
 ;;; Canonicalize the :DEFAULT-INITARGS class option.
 (defun canonicalize-default-initargs (initargs)
@@ -211,8 +211,8 @@
   (unless (evenp (length initargs))
     (error 'malformed-default-initargs
            :datum `(:default-initargs ,@initargs)))
-  (loop for (name value) on initargs by #'cddr
-        collect (canonicalize-default-initarg name value)))
+  `(list ,@(loop for (name value) on initargs by #'cddr
+                 collect (canonicalize-default-initarg name value))))
 
 (defun check-options-non-empty (options)
   ;; Check that each option is a non-empty list
