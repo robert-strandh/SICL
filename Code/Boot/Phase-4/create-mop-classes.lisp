@@ -51,6 +51,7 @@
     (load-fasl "Sequence/sequence-defclass.fasl" e4)
     (load-fasl "Cons/list-defclass.fasl" e4)
     (load-fasl "Package-and-symbol/symbol-defclass.fasl" e4)
+    (load-fasl "Cons/null-defclass.fasl" e4)
     (load-fasl "Arithmetic/number-defclass.fasl" e4)
     (load-fasl "Arithmetic/real-defclass.fasl" e4)
     (load-fasl "Arithmetic/rational-defclass.fasl" e4)
