@@ -31,5 +31,4 @@
    (%shadowing-symbols
     :initarg :shadowing-symbols
     :initform '()
-    :accessor shadowing-symbols))
-  #+sicl(:metaclass built-in-class))
+    :accessor shadowing-symbols)))
