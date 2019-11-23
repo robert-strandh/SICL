@@ -5,16 +5,8 @@
       boot
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p
-       atom
-       eq
-       not
-       cdr
-       (setf cdr)
-       rplacd
-       +
-       member
-       cddr
-       symbolp)
+       atom eq not cdr cddr (setf cdr) rplacd
+       + member symbolp)
      e4)
     (load-fasl "CLOS/t-defclass.fasl" e4)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e4 t)
