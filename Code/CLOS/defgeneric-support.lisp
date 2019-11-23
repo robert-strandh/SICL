@@ -5,13 +5,14 @@
         do (unless (consp option-or-method)
              (error 'option-or-method-must-be-non-empty-list
                     :expression option-or-method))
-           (unless (member option-or-method '(:argument-precedence-order
-                                              declare
-                                              :documentation
-                                              :method-combination
-                                              :generic-function-class
-                                              :method-class
-                                              :method))
+           (unless (member (first option-or-method)
+                           '(:argument-precedence-order
+                             declare
+                             :documentation
+                             :method-combination
+                             :generic-function-class
+                             :method-class
+                             :method))
              ;; FIXME: Define signal type.
              (error 'unknown-defgeneric-option
                     :option option-or-method))))
@@ -40,6 +41,8 @@
            (method-combination-options (if (null method-combination-option)
                                            '()
                                            (rest method-combination-option)))
+           (argument-precedence-order
+             (assoc :argument-precedence-order options))
            (arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
            (function-type `(function ,arg-type t)))
       `(progn (eval-when (:compile-toplevel)
@@ -51,7 +54,11 @@
                 (let* ((env (sicl-global-environment:global-environment))
                        (fun (ensure-generic-function
                              ',name
+                             ;;; FIXME: handle all options.
                              :lambda-list ',lambda-list
+                             ,@(if (null argument-precedence-order)
+                                   '()
+                                   `(:argument-precedence-order ',(second argument-precedence-order)))
                              :environment env)))
                   (setf (sicl-global-environment:function-lambda-list ',name env)
                         ',lambda-list)
