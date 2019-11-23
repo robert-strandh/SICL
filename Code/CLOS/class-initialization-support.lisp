@@ -67,9 +67,7 @@
              (unless (symbolp name)
                (error 'name-of-direct-default-initarg-must-be-a-symbol
                       :initarg initarg :name name))
-             (unless (sicl-genv:typep function
-                                      'function
-                                      (sicl-genv:global-environment))
+             (unless (functionp function)
                (error 'third-element-of-direct-default-initarg-must-be-a-thunk
                       :initarg initarg :initfunction function)))))
 
