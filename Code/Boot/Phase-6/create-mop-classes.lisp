@@ -6,7 +6,7 @@
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p
        atom eq not cdr cadr cddr caddr cdddr (setf cdr) rplacd
-       + member symbolp)
+       + member symbolp functionp)
      e6)
     (load-fasl "CLOS/t-defclass.fasl" e6)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e6 t)
