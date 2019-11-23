@@ -20,26 +20,29 @@
 ;;; SLOT-VALUE, (SETF SLOT-VALUE),
 ;;; SLOT-VALUE-USING-CLASS (SETF SLOT-VALUE-USING-CLASS)
 
-(defmethod slot-value-using-class ((class standard-class)
-				   object
-				   (slot standard-effective-slot-definition))
+(defmethod slot-value-using-class
+    ((class standard-class)
+     object
+     (slot standard-effective-slot-definition))
   (slot-value-using-class-default class object slot))
 
-(defmethod slot-value-using-class ((class funcallable-standard-class)
-				   object
-				   (slot standard-effective-slot-definition))
+(defmethod slot-value-using-class
+    ((class funcallable-standard-class)
+     object
+     (slot standard-effective-slot-definition))
   (slot-value-using-class-default class object slot))
 
-(defmethod slot-value-using-class ((class built-in-class)
-				   object
-				   slot)
+(defmethod slot-value-using-class
+    ((class built-in-class)
+     object
+     slot)
   (declare (ignorable class) (ignore object slot))
   (error "no slots in an instance of a builtin class"))
 
 (defmethod (setf slot-value-using-class)
-  (new-value
+    (new-value
    (class standard-class)
-   object
+     object
    (slot standard-effective-slot-definition))
   (setf (slot-value-using-class-default class object slot) new-value))
 
@@ -62,19 +65,22 @@
 ;;;
 ;;; SLOT-BOUNDP SLOT-BOUNDP-USING-CLASS
 
-(defmethod slot-boundp-using-class ((class standard-class)
-				    object
-				    (slot standard-effective-slot-definition))
+(defmethod slot-boundp-using-class
+    ((class standard-class)
+     object
+     (slot standard-effective-slot-definition))
   (slot-boundp-using-class-default class object slot))
 
-(defmethod slot-boundp-using-class ((class funcallable-standard-class)
-				    object
-				    (slot standard-effective-slot-definition))
+(defmethod slot-boundp-using-class
+    ((class funcallable-standard-class)
+     object
+     (slot standard-effective-slot-definition))
   (slot-boundp-using-class-default class object slot))
 
-(defmethod slot-boundp-using-class ((class built-in-class)
-				    object
-				    slot)
+(defmethod slot-boundp-using-class
+    ((class built-in-class)
+     object
+     slot)
   (declare (ignorable class) (ignore object slot))
   (error "no slots in an instance of a builtin class"))
 
