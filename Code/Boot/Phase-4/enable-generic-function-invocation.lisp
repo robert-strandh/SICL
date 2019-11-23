@@ -39,7 +39,6 @@
   ;; generic function.
   (import-functions-from-host '(find subseq list*) e4)
   (load-fasl "Cons/accessor-defuns.fasl" e4)
-  (load-fasl "Cons/cxr.fasl" e4)
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" e4)
   (import-functions-from-host
    '(sicl-clos::add-path
