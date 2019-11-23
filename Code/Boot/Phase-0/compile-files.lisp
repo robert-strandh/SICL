@@ -213,6 +213,8 @@
     (cf "CLOS/add-remove-method-support.lisp")
     (cf "CLOS/add-remove-method-defmethods.lisp")
     (cf "CLOS/add-accessor-method.lisp")
+    (cf "CLOS/validate-superclass-defgenerics.lisp")
+    (cf "CLOS/validate-superclass-defmethods.lisp")
     (cf "CLOS/class-initialization-support.lisp")
     (cf "CLOS/class-initialization-defmethods.lisp")
     (cf "CLOS/effective-slot-definition-class-support.lisp")
