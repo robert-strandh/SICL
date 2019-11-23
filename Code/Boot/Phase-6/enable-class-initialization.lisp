@@ -48,8 +48,8 @@
           (sicl-genv:fdefinition name e7))))
 
 (defun define-validate-superclass (e6)
-  (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e6)
-        (constantly t)))
+  (load-fasl "CLOS/validate-superclass-defgenerics.fasl" e6)
+  (load-fasl "CLOS/validate-superclass-defmethods.fasl" e6))
 
 (defun define-dependent-protocol (e6)
   (setf (sicl-genv:fdefinition 'sicl-clos:map-dependents e6)
