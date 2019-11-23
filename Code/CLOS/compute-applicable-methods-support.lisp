@@ -28,12 +28,14 @@
 ;;; qualifiers.  This function is called with all applicable
 ;;; functions, independent of the qualifiers, so this situation might
 ;;; happen here.
-;;;
-;;; FIXME: take into account the argument precedence order.
-(defun method-more-specific-p (method1 method2 classes-of-arguments)
-  (loop for s1 in (method-specializers method1)
-        for s2 in (method-specializers method2)
-        for class-of-argument in classes-of-arguments
+
+(defun method-more-specific-p (method1 method2 classes-of-arguments indices)
+  (loop with specializers1 = (method-specializers method1)
+        with specializers2 = (method-specializers method2)
+        for index in indices
+        for s1 = (nth index specializers1)
+        for s2 = (nth index specializers2)
+        for class-of-argument = (nth index classes-of-arguments)
         unless (eq s1 s2)
           return (sub-specializer-p s1 s2 class-of-argument)))
 
@@ -80,6 +82,11 @@
                  (return-from definitely-applicable-p nil)))
         finally (return t)))
 
+(defun precedence-indices (lambda-list precedence-order)
+  (let ((required (subseq lambda-list 0 (length precedence-order))))
+    (loop for parameter in precedence-order
+          collect (position parameter required))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Support for generic function COMPUTE-APPLICABLE-METHODS.
@@ -92,13 +99,20 @@
 ;;; action below is valid for that method.
 
 (defun compute-applicable-methods-default (generic-function arguments)
-  (let ((classes-of-arguments (mapcar #'class-of arguments)))
+  (let* ((classes-of-arguments (mapcar #'class-of arguments))
+         (lambda-list (generic-function-lambda-list generic-function))
+         (precedence-order (generic-function-argument-precedence-order generic-function))
+         (indices (precedence-indices lambda-list precedence-order)))
     (let ((result (sort
                    (loop for method in (generic-function-methods generic-function)
                          when (definitely-applicable-p method arguments)
                            collect method)
                    (lambda (method1 method2)
-                     (method-more-specific-p method1 method2 classes-of-arguments)))))
+                     (method-more-specific-p
+                      method1
+                      method2
+                      classes-of-arguments
+                      indices)))))
       result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -115,16 +129,23 @@
 
 (defun compute-applicable-methods-using-classes-default
     (generic-function classes-of-arguments)
-  (block b
-    (values
-     (let ((result (sort
-                    (loop for method in (generic-function-methods generic-function)
-                          when (let ((a (maybe-applicable-p method classes-of-arguments)))
-                                 (if (eq a :somtimes)
-                                     (return-from b (values '() nil))
-                                     a))
-                            collect method)
-                    (lambda (method1 method2)
-                      (method-more-specific-p method1 method2 classes-of-arguments)))))
-       result)
-     t)))
+  (let* ((lambda-list (generic-function-lambda-list generic-function))
+         (precedence-order (generic-function-argument-precedence-order  generic-function))
+         (indices (precedence-indices lambda-list precedence-order)))
+    (block b
+      (values
+       (let ((result (sort
+                      (loop for method in (generic-function-methods generic-function)
+                            when (let ((a (maybe-applicable-p method classes-of-arguments)))
+                                   (if (eq a :somtimes)
+                                       (return-from b (values '() nil))
+                                       a))
+                              collect method)
+                      (lambda (method1 method2)
+                        (method-more-specific-p
+                         method1
+                         method2
+                         classes-of-arguments
+                         indices)))))
+         result)
+       t))))
