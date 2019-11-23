@@ -19,9 +19,9 @@
 
 (defun separate-options-and-methods (options-and-methods)
   (values (remove :method options-and-methods
-                  :key #'car :test-not #'eq)
+                  :key #'car :test #'eq)
           (remove :method options-and-methods
-                  :key #'car :test #'eq)))
+                  :key #'car :test-not #'eq)))
 
 (defun remove-initial-methods (generic-function)
   (loop for method in (initial-methods generic-function)
@@ -58,7 +58,7 @@
                              :lambda-list ',lambda-list
                              ,@(if (null argument-precedence-order)
                                    '()
-                                   `(:argument-precedence-order ',(second argument-precedence-order)))
+                                   `(:argument-precedence-order ',(rest argument-precedence-order)))
                              :environment env)))
                   (setf (sicl-global-environment:function-lambda-list ',name env)
                         ',lambda-list)
