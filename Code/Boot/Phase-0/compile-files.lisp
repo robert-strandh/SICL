@@ -195,7 +195,6 @@
     (cf "CLOS/no-applicable-method-defgenerics.lisp")
     (cf "CLOS/no-applicable-method.lisp")
     (cf "CLOS/compute-discriminating-function-defgenerics.lisp")
-    (cf "CLOS/stamp-defun.lisp")
     (cf "CLOS/compute-discriminating-function-support.lisp")
     (cf "CLOS/compute-discriminating-function-support-c.lisp")
     (cf "CLOS/compute-discriminating-function-defmethods.lisp")
