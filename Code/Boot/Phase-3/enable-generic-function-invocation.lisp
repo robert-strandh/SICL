@@ -28,9 +28,22 @@
   (load-fasl "CLOS/compute-effective-method-support.fasl" e3)
   (load-fasl "CLOS/compute-effective-method-defmethods.fasl" e3))
 
+(defun define-stamp (e3)
+  (flet ((unique-number (class-name)
+           (funcall (sicl-genv:fdefinition 'sicl-clos::unique-number e3)
+                    (sicl-genv:find-class class-name e3))))
+    (setf (sicl-genv:fdefinition 'sicl-clos::stamp e3)
+          (lambda (object)
+            (cond ((integerp object) (unique-number 'fixnum))
+                  ((consp object) (unique-number 'cons))
+                  ((null object) (unique-number 'null))
+                  ((symbolp object) (unique-number 'symbol))
+                  ((typep object 'header) (aref (slot-value object '%rack) 0))
+                  (t (error "Can't deal with object ~s" object)))))))
+
 (defun define-compute-discriminating-function (e3)
   (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" e3)
-  (load-fasl "CLOS/stamp-defun.fasl" e3)
+  (define-stamp e3)
   ;; LIST* is called in order to make a call cache.  CAR, CADR,
   ;; CADDR and CDDDR are used as accessors for the call cache.  FIND
   ;; is used to search a list of effictive-slot metaobjects to find
