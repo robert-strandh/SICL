@@ -16,3 +16,8 @@
     (error acclimation:condition)
   ((%indices :initarg :indices :reader indices)
    (%array :initarg :array :reader given-array)))
+
+(define-condition index-must-be-non-negative-and-less-than-dimension
+    (type-error acclimation:condition)
+  ((%array :initarg :array :reader given-array)
+   (%index-number :initarg :index-number :reader index-number)))
