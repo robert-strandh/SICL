@@ -39,3 +39,45 @@
                               t
                               t)
          new-element))
+
+(defmethod row-major-aref ((array array-double-float) index)
+  (cleavir-primop:aref array
+                       index
+                       double-float
+                       t
+                       nil))
+
+(defmethod (setf row-major-aref) (new-element (array array-double-float) index)
+  (unless (typep new-element 'double-float)
+    ;; FIXME: signal a more specific condition.
+    (error 'type-error
+           :datum new-element
+           :expected-type 'double-float))
+  (progn (cleavir-primop:aset array
+                              index
+                              new-element
+                              double-float
+                              t
+                              nil)
+         new-element))
+
+(defmethod row-major-aref ((array array-single-float) index)
+  (cleavir-primop:aref array
+                       index
+                       single-float
+                       t
+                       nil))
+
+(defmethod (setf row-major-aref) (new-element (array array-single-float) index)
+  (unless (typep new-element 'single-float)
+    ;; FIXME: signal a more specific condition.
+    (error 'type-error
+           :datum new-element
+           :expected-type 'single-float))
+  (progn (cleavir-primop:aset array
+                              index
+                              new-element
+                              single-float
+                              t
+                              nil)
+         new-element))
