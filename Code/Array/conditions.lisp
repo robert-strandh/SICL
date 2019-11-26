@@ -4,3 +4,6 @@
     (type-error acclimation:condition)
   ())
 
+(define-condition argument-to-array-element-type-must-be-an-array
+    (type-error acclimation:condition)
+  ())
