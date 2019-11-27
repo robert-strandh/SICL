@@ -123,3 +123,45 @@
                               t
                               nil)
          new-element))
+
+(defmethod row-major-aref ((array array-signed-byte-32) index)
+  (cleavir-primop:aref array
+                       index
+                       (signed-byte 32)
+                       t
+                       nil))
+
+(defmethod (setf row-major-aref) (new-element (array array-signed-byte-32) index)
+  (unless (typep new-element '(signed-byte 32))
+    ;; FIXME: signal a more specific condition.
+    (error 'type-error
+           :datum new-element
+           :expected-type '(signed-byte 32)))
+  (progn (cleavir-primop:aset array
+                              index
+                              new-element
+                              (signed-byte 32)
+                              t
+                              nil)
+         new-element))
+
+(defmethod row-major-aref ((array array-unsigned-byte-32) index)
+  (cleavir-primop:aref array
+                       index
+                       (unsigned-byte 32)
+                       t
+                       nil))
+
+(defmethod (setf row-major-aref) (new-element (array array-unsigned-byte-32) index)
+  (unless (typep new-element '(unsigned-byte 32))
+    ;; FIXME: signal a more specific condition.
+    (error 'type-error
+           :datum new-element
+           :expected-type '(unsigned-byte 32)))
+  (progn (cleavir-primop:aset array
+                              index
+                              new-element
+                              (unsigned-byte 32)
+                              t
+                              nil)
+         new-element))
