@@ -81,3 +81,24 @@
                               t
                               nil)
          new-element))
+
+(defmethod row-major-aref ((array array-signed-byte-64) index)
+  (cleavir-primop:aref array
+                       index
+                       (signed-byte 64)
+                       t
+                       nil))
+
+(defmethod (setf row-major-aref) (new-element (array array-signed-byte-64) index)
+  (unless (typep new-element '(signed-byte 64))
+    ;; FIXME: signal a more specific condition.
+    (error 'type-error
+           :datum new-element
+           :expected-type '(signed-byte 64)))
+  (progn (cleavir-primop:aset array
+                              index
+                              new-element
+                              (signed-byte 64)
+                              t
+                              nil)
+         new-element))
