@@ -207,3 +207,24 @@
                               t
                               nil)
          new-element))
+
+(defmethod row-major-aref ((array array-character) index)
+  (cleavir-primop:aref array
+                       index
+                       character
+                       t
+                       t))
+
+(defmethod (setf row-major-aref) (new-element (array array-character) index)
+  (unless (typep new-element 'character)
+    ;; FIXME: signal a more specific condition.
+    (error 'type-error
+           :datum new-element
+           :expected-type 'character))
+  (progn (cleavir-primop:aset array
+                              index
+                              new-element
+                              character
+                              t
+                              t)
+         new-element))
