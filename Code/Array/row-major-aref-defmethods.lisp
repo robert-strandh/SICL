@@ -186,3 +186,24 @@
                               t
                               nil)
          new-element))
+
+(defmethod row-major-aref ((array array-bit) index)
+  (cleavir-primop:aref array
+                       index
+                       bit
+                       t
+                       nil))
+
+(defmethod (setf row-major-aref) (new-element (array array-bit) index)
+  (unless (typep new-element 'bit)
+    ;; FIXME: signal a more specific condition.
+    (error 'type-error
+           :datum new-element
+           :expected-type 'bit))
+  (progn (cleavir-primop:aset array
+                              index
+                              new-element
+                              bit
+                              t
+                              nil)
+         new-element))
