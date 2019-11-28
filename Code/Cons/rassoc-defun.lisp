@@ -60,8 +60,8 @@
     (when (not (funcall test item (funcall key (cdr element))))
       (return element))))
   
-(defun rassoc (item alist
-	       &key key (test nil test-given) (test-not nil test-not-given))
+(defun rassoc
+    (item alist &key key (test nil test-given) (test-not nil test-not-given))
   (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'rassoc))
   (if key
