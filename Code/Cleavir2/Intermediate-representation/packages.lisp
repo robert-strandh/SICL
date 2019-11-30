@@ -91,7 +91,6 @@
    #:cdr-instruction
    #:rplaca-instruction
    #:rplacd-instruction
-   #:slot-read-instruction
    #:slot-write-instruction
    #:nook-read-instruction
    #:nook-write-instruction

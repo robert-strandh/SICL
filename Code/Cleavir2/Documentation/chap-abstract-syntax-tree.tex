@@ -961,21 +961,6 @@ This AST differs from the function \texttt{rplacd} in that it does
 not generate any value. An attempt to compile this AST in a context
 where a value is needed will result in an error being signaled.
 
-\subsubsection{\texttt{slot-read-ast}}
-\label{sec-ast-slot-read}
-
-\begin{tabular}{|l|l|l|}
-  \hline
-  Initarg & Reader & Description\\
-  \hline\hline
-  \texttt{:object-ast} & \texttt{object-ast} & The AST for the object.\\
-  \texttt{:slot-number-ast} & \texttt{slot-number-ast} & The AST for
-  the slot number.\\
-  \hline
-\end{tabular}
-
-This AST can be used to read a slot of a standard object.
-
 \subsubsection{\texttt{slot-write-ast}}
 \label{sec-ast-slot-write}
 

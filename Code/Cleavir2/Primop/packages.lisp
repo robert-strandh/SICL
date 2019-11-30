@@ -41,7 +41,7 @@
    ;; two addtional words preceding the first slot, then a call to
    ;; SLOT-READ with a slot number 3 would be equivelent to a call to
    ;; NOOK-READ with an index of 5.
-   #:slot-read #:slot-write
+   #:slot-write
    #:nook-read #:nook-write
    #:aref #:aset
    #:call-with-variable-bound

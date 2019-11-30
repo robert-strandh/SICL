@@ -2,19 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction SLOT-READ-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be a standard object.  The second is assumed to be a FIXNUM
-;;; and represents the index in the object of the slot to be read.
-;;; This instruction produces a single output, which is the contents
-;;; of the SLOT.
-
-(defclass slot-read-instruction (instruction one-successor-mixin)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction SLOT-WRITE-INSTRUCTION
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed

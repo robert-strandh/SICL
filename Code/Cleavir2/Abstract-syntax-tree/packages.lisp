@@ -76,8 +76,7 @@
    #:float-cos-ast
    #:float-sqrt-ast
    #:subtype
-   #:slot-read-ast #:slot-number-ast #:object-ast
-   #:slot-write-ast
+   #:slot-write-ast #:slot-number-ast #:object-ast
    #:nook-read-ast #:nook-number-ast
    #:nook-write-ast
    #:aref-ast #:aset-ast

@@ -142,8 +142,6 @@
 
 (defmethod label ((instruction cleavir-ir:rplacd-instruction)) "rplacd")
 
-(defmethod label ((instruction cleavir-ir:slot-read-instruction)) "slot read")
-
 (defmethod label ((instruction cleavir-ir:slot-write-instruction)) "slot write")
 
 (defmethod label ((instruction cleavir-ir:nook-read-instruction)) "nook read")
