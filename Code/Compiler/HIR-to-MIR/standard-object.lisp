@@ -16,7 +16,7 @@
   (make-instance 'cleavir-ir:immediate-input :value (- (* prefix-size 8) 7)))
 
 (defmethod  process-instruction
-    (client (instruction cleavir-ir:slot-read-instruction))
+    (client (instruction cleavir-ir:nook-read-instruction))
   (destructuring-bind (object-location slot-number-location)
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
@@ -28,7 +28,7 @@
                                                  slot-offset-location
                                                  instruction)))
       (change-class instruction 'cleavir-ir:memref1-instruction
-                    :input slot-location
+                    :inputs (list slot-location)
                     :outputs (cleavir-ir:outputs instruction)))))
 
 
