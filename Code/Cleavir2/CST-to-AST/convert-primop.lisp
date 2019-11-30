@@ -322,26 +322,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting CLEAVIR-PRIMOP:SLOT-WRITE.
-;;;
-;;; This primop takes three arguments.  The first argument is a form
-;;; that must evaluate to a standard object.  The second argument is
-;;; a form that must evaluate to a fixnum and that indicates the slot
-;;; number to be written.  The third argument is a form that evaluates
-;;; to the object that will be written to the slot.
-
-(defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:slot-write)) cst environment)
-  (check-simple-primop-syntax cst 3)
-  (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
-    (declare (ignore slot-write-cst))
-    (cleavir-ast:make-ast 'cleavir-ast:slot-write-ast
-     :object-ast (convert client instance-cst environment)
-     :slot-number-ast (convert client slot-number-cst environment)
-     :value-ast (convert client value-cst environment))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Converting CLEAVIR-PRIMOP:NOOK-READ.
 ;;;
 ;;; This primop takes two arguments.  The first argument is a form

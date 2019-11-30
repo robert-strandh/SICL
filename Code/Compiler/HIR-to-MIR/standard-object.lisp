@@ -31,9 +31,8 @@
                     :inputs (list slot-location)
                     :outputs (cleavir-ir:outputs instruction)))))
 
-
 (defmethod  process-instruction
-    (client (instruction cleavir-ir:slot-write-instruction))
+    (client (instruction cleavir-ir:nook-write-instruction))
   (destructuring-bind (object-location slot-number-location value-location)
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))

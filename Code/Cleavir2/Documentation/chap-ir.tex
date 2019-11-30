@@ -542,30 +542,6 @@ ensure that this condition is respected.  The second input can be any
 object.  The effect of the instruction is to replace the contents of
 the \texttt{cdr} of the \texttt{cons} cell by the second input.
 
-\subsection{Instruction \texttt{slot-write-instruction}}
-\label{hir-instruction-slot-write}
-
-\begin{tabular}{|l|l|}
-\hline
-Number of inputs & 3\\
-\hline
-Number of outputs & 0\\
-\hline
-Number of predecessors & any\\
-\hline
-Number of successors & 1\\
-\hline
-\end{tabular}
-
-The first input to this instruction must be a \emph{standard object},
-or some other object with the same structure as a standard object.
-The consequences are undefined if this is not the case.  For that
-reason, \emph{safe} code should have additional instructions inserted
-to ensure that this condition is respected.  The second input is a
-fixnum indicating the \emph{index} of the slot in the instance.  The
-third input can be any object.  The effect of the instruction is to
-replace the contents of the corresponding slot by the third input.
-
 \subsection{Instruction \texttt{nook-read-instruction}}
 \label{hir-instruction-nook-read}
 

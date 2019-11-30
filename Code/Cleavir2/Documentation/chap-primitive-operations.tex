@@ -430,23 +430,6 @@ the \emph{square root} of the argument.
 This operation always succeeds, since the value of the \texttt{SQRT}
 function is closer to $1$ than its argument.
 
-\Defprimop{slot-write} {}
-
-This primitive operation is used in the implementation of the MOP
-function \texttt{(setf standard-instance-access)}.  It takes three
-arguments.  The first argument is a form that must evaluate to a
-standard instance%
-\footnote{As with the primitive operation SLOT-READ, implementations
-  are free to use this primitive operation for other purposes as
-  well.}
-The second argument is a form that must evaluate to a fixnum and that
-indicates the slot number to be written.  The third argument is a form
-that evaluates to the object that will be written to the slot.
-
-Forms using this primitive operation must occur in a context that does
-not require a value, such as in a \texttt{progn} other than as the
-last form.
-
 \Defprimop{nook-read} {}
 
 This primitive operation is used in the implementation of the MOP
