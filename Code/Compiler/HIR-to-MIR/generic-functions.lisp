@@ -25,9 +25,7 @@
     cleavir-ir:initialize-values-instruction
     cleavir-ir:append-values-instruction
     ;; FIXME: these instructions should be processed
-    cleavir-ir:fixnum-divide-instruction
-    cleavir-ir:nook-read-instruction
-    cleavir-ir:nook-write-instruction))
+    cleavir-ir:fixnum-divide-instruction))
 
 (defmethod process-instruction (client instruction)
   (declare (ignore client))
