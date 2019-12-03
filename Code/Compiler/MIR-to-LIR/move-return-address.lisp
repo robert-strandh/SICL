@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-mir-to-lir)
 
 ;;;; When the function is entered, the return address is on top of the
-;;;; stack.  We need to  move it to the address indicated by RBP-8.
+;;;; stack.  We need to move it to the address indicated by RBP-8.
 ;;;;
 ;;;; 1. Pop the stack into R11.
 ;;;; 2. Copy RBP to R12.
