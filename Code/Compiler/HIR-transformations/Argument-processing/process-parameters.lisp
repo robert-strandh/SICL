@@ -89,17 +89,19 @@
           (setf (cleavir-ir:successors last)
                 (list more-arguments-branch))
           (setf more-arguments-branch first)))
-      (multiple-value-bind (first no-more-last more-last)
-          (initialize-optional-parameters
-           optional-parameters
-           argument-count-location
-           dynamic-environment-location
-           (+ (length required-parameters) (length optional-parameters)))
-        (setf (cleavir-ir:successors no-more-last)
-              (list no-more-arguments-branch))
-        (setf (cleavir-ir:successors more-last)
-              (list more-arguments-branch))
-        (setf more-arguments-branch first))
+      (if (and (null rest-parameter) (null key-p) (null optional-parameters))
+          (setf more-arguments-branch successor)
+          (multiple-value-bind (first no-more-last more-last)
+              (initialize-optional-parameters
+               optional-parameters
+               argument-count-location
+               dynamic-environment-location
+               (+ (length required-parameters) (length optional-parameters)))
+            (setf (cleavir-ir:successors no-more-last)
+                  (list no-more-arguments-branch))
+            (setf (cleavir-ir:successors more-last)
+                  (list more-arguments-branch))
+            (setf more-arguments-branch first)))
       (unless (null rest-parameter)
         (setf more-arguments-branch
               (make-instance 'cleavir-ir:assignment-instruction
