@@ -5,7 +5,7 @@
                                                error-function-location
                                                first-index)
   (let* ((remaining-argument-count-location
-           (make-instance 'cleavir-ir:lexical-location :name (gensym "remaining-argument-count")))
+           (make-instance 'cleavir-ir:lexical-location :name (gensym "rem-ac")))
          (quotient-location
            (make-instance 'cleavir-ir:lexical-location :name (gensym "quotient")))
          (remainder-location
