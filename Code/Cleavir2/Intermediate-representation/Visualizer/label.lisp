@@ -39,6 +39,9 @@
 (defmethod label ((instruction cleavir-ir:dynamic-allocation-instruction))
   "DX")
 
+(defmethod label ((instruction cleavir-ir:compute-argument-count-instruction))
+  "ArgC")
+
 (defmethod label ((instruction cleavir-ir:nop-instruction)) "nop")
 
 (defmethod label ((instruction cleavir-ir:unreachable-instruction)) "unreachable")
@@ -97,12 +100,12 @@
 ;;; Array instructions.
 
 (defmethod label ((instruction cleavir-ir:aref-instruction))
-  (format nil "~:[non-simple~;simple~] ~s aref"
+  (format nil "~:[ns~;s~] ~s aref"
 	  (cleavir-ir:simple-p instruction)
 	  (cleavir-ir:element-type instruction)))
 
 (defmethod label ((instruction cleavir-ir:aset-instruction))
-  (format nil "~:[non-simple~;simple~] ~s aset"
+  (format nil "~:[ns~;s~] ~s aset"
 	  (cleavir-ir:simple-p instruction)
 	  (cleavir-ir:element-type instruction)))
 
