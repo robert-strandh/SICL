@@ -53,9 +53,9 @@
          (no-more-arguments-branch successor)
          (more-arguments-branch successor)
          (argument-count-location
-           (make-instance 'cleavir-ir:lexical-location :name (gensym "argument-count")))
+           (make-instance 'cleavir-ir:lexical-location :name (gensym "argc")))
          (error-function-location
-           (make-instance 'cleavir-ir:lexical-location :name (gensym "error-function")))
+           (make-instance 'cleavir-ir:lexical-location :name (gensym "err-fun")))
          (dynamic-environment-location
            (cleavir-ir:dynamic-environment-location enter-instruction)))
     (setf (cleavir-ir:predecessors successor) '())
