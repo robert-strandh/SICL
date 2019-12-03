@@ -14,4 +14,5 @@
   (let ((enter-instructions
           (gather-enter-instructions top-level-enter-instruction)))
     (loop for enter-instruction in enter-instructions
-          collect (convert-one-function client enter-instruction))))
+          collect (convert-one-function client enter-instruction))
+    top-level-enter-instruction))
