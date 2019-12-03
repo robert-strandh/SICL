@@ -10,7 +10,7 @@
           (make-instance 'cleavir-ir:constant-input :value -1))
         (cons-function-location
           (make-instance 'cleavir-ir:lexical-location
-            :name (gensym "cons-function"))))
+            :name (gensym "consfun"))))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fetch-instruction
        :inputs (list static-environment-location cons-function-offset-input)
