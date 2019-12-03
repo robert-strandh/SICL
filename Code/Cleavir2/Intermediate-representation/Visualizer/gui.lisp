@@ -115,7 +115,7 @@
                           minimize (instruction-horizontal-position instruction)))
           (min-vpos (loop for instruction in instructions
                           minimize (instruction-vertical-position instruction))))
-      (let ((hpos (+ min-hpos 120)))
+      (let ((hpos (+ min-hpos 300)))
         (setf (datum-position datum) (cons hpos (/ (+ max-vpos min-vpos) 2)))))))
 
 (defun layout-inputs-and-outputs (instruction)
