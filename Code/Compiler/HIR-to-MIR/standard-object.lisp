@@ -13,7 +13,8 @@
                                                  instruction)))
       (change-class instruction 'cleavir-ir:memref1-instruction
                     :inputs (list slot-location)
-                    :outputs (cleavir-ir:outputs instruction)))))
+                    :outputs (cleavir-ir:outputs instruction)
+                    :successors (cleavir-ir:successors instruction)))))
 
 (defmethod  process-instruction
     (client (instruction cleavir-ir:nook-write-instruction))
@@ -27,4 +28,5 @@
                                                  slot-offset-location
                                                  instruction)))
       (change-class instruction 'cleavir-ir:memset1-instruction
-                    :inputs (list slot-location value-location)))))
+                    :inputs (list slot-location value-location)
+                    :successors (cleavir-ir:successors instruction)))))
