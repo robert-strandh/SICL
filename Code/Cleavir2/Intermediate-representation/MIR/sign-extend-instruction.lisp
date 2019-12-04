@@ -5,6 +5,7 @@
 
 (defmethod shared-initialize :around
     ((instruction sign-extend-instruction) slot-names
+     &rest keys
      &key
        inputs input
        outputs output
@@ -12,5 +13,8 @@
   (let ((inputs (if (null input) inputs (list input)))
         (outputs (if (null output) outputs (list output)))
         (successors (if (null successor) successors (list successor))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))

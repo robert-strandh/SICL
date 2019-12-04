@@ -9,6 +9,7 @@
 
 (defmethod shared-initialize :around
     ((instruction signed-add-instruction) slot-names
+     &rest keys
      &key
        inputs augend addend
        outputs output
@@ -18,8 +19,11 @@
   (let ((inputs (combine inputs augend addend))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors normal-successor overflow-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -30,6 +34,7 @@
 
 (defmethod shared-initialize :around
     ((instruction signed-sub-instruction) slot-names
+     &rest keys
      &key
        inputs minuend subtrahend
        outputs output
@@ -39,8 +44,11 @@
   (let ((inputs (combine inputs minuend subtrahend))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors normal-successor overflow-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -51,6 +59,7 @@
 
 (defmethod shared-initialize :around
     ((instruction signed-less-instruction) slot-names
+     &rest keys
      &key
        inputs argument1 argument2
        outputs output
@@ -60,8 +69,11 @@
   (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors true-successor false-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -72,6 +84,7 @@
 
 (defmethod shared-initialize :around
     ((instruction signed-not-greater-instruction) slot-names
+     &rest keys
      &key
        inputs argument1 argument2
        outputs output
@@ -81,8 +94,11 @@
   (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors true-successor false-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -93,6 +109,7 @@
 
 (defmethod shared-initialize :around
     ((instruction unsigned-add-instruction) slot-names
+     &rest keys
      &key
        inputs augend addend
        outputs output
@@ -102,8 +119,11 @@
   (let ((inputs (combine inputs augend addend))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors normal-successor carry-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -114,6 +134,7 @@
 
 (defmethod shared-initialize :around
     ((instruction unsigned-sub-instruction) slot-names
+     &rest keys
      &key
        inputs minuend subtrahend
        outputs output
@@ -123,8 +144,11 @@
   (let ((inputs (combine inputs minuend subtrahend))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors normal-successor carry-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -135,6 +159,7 @@
 
 (defmethod shared-initialize :around
     ((instruction unsigned-div-instruction) slot-names
+     &rest keys
      &key
        inputs dividend divisor
        outputs quotient remainder
@@ -143,8 +168,11 @@
   (let ((inputs (combine inputs dividend divisor))
         (outputs (combine outputs quotient remainder))
         (successors (if (null successor) successors (list successor))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -155,6 +183,7 @@
 
 (defmethod shared-initialize :around
     ((instruction unsigned-less-instruction) slot-names
+     &rest keys
      &key
        inputs argument1 argument2
        outputs output
@@ -164,8 +193,11 @@
   (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors true-successor false-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -176,6 +208,7 @@
 
 (defmethod shared-initialize :around
     ((instruction unsigned-not-greater-instruction) slot-names
+     &rest keys
      &key
        inputs argument1 argument2
        outputs output
@@ -185,8 +218,11 @@
   (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors true-successor false-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -197,6 +233,7 @@
 
 (defmethod shared-initialize :around
     ((instruction equal-instruction) slot-names
+     &rest keys
      &key
        inputs argument1 argument2
        outputs output
@@ -206,5 +243,8 @@
   (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
         (successors (combine successors true-successor false-successor)))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))

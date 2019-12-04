@@ -15,6 +15,7 @@
 
 (defmethod shared-initialize :around
     ((instruction shift-instruction) slot-names
+     &rest keys
      &key
        inputs shifted-input shift-count
        outputs output
@@ -23,8 +24,11 @@
   (let ((inputs (combine inputs shifted-input shift-count))
         (outputs (if (null output) outputs (list output)))
         (successors (if (null successor) successors (list successors))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

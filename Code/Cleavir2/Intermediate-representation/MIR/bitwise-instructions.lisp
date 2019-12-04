@@ -5,6 +5,7 @@
 
 (defmethod shared-initialize :around
     ((instruction binary-bitwise-instruction) slot-names
+     &rest keys
      &key
        inputs argument1 argument2
        outputs output
@@ -13,8 +14,11 @@
   (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
         (successors (if (null successor) successors (list successor))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 (defmethod argument1 ((instruction binary-bitwise-instruction))
   (first (inputs instruction)))
@@ -52,6 +56,7 @@
 
 (defmethod shared-initialize :around
     ((instruction bitwise-not-instruction) slot-names
+     &rest keys
      &key
        inputs argument
        outputs output
@@ -59,8 +64,11 @@
   (let ((inputs (if (null argument) inputs (list argument)))
         (outputs (if (null output) outputs (list output)))
         (successors (if (null successor) successors (list successor))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 (defmethod argument ((instruction bitwise-not-instruction))
   (first (inputs instruction)))

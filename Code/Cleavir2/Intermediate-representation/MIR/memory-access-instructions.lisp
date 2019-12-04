@@ -14,6 +14,7 @@
 
 (defmethod shared-initialize :around
     ((instruction memref1-instruction) slot-names
+     &rest keys
      &key
        inputs address
        outputs output
@@ -21,8 +22,11 @@
   (let ((inputs (if (null address) inputs (list address)))
         (outputs (if (null output) outputs (list output)))
         (successors (if (null successor) successors (list successor))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -40,6 +44,7 @@
 
 (defmethod shared-initialize :around
     ((instruction memref2-instruction) slot-names
+     &rest keys
      &key
        inputs base-address offset
        outputs output
@@ -48,8 +53,11 @@
   (let ((inputs (combine inputs base-address offset))
         (outputs (if (null output) outputs (list output)))
         (successors (if (null successor) successors (list successor))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -66,6 +74,7 @@
 
 (defmethod shared-initialize :around
     ((instruction memset1-instruction) slot-names
+     &rest keys
      &key
        inputs address value
        outputs output
@@ -75,8 +84,11 @@
   (assert (null output))
   (let ((inputs (combine inputs address value))
         (successors (if (null successor) successors (list successor))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -94,6 +106,7 @@
 
 (defmethod shared-initialize :around
     ((instruction memset2-instruction) slot-names
+     &rest keys
      &key
        inputs base-address offset value
        outputs output
@@ -103,5 +116,8 @@
   (assert (null output))
   (let ((inputs (combine inputs base-address offset value))
         (successors (if (null successor) successors (list successor))))
-    (call-next-method instruction slot-names
-                      :inputs inputs :outputs outputs :successors successors)))
+    (apply #'call-next-method instruction slot-names
+           :inputs inputs
+           :outputs outputs
+           :successors successors
+           keys)))
