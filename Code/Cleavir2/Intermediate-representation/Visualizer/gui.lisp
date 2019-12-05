@@ -227,6 +227,16 @@
                          :align-x :center :align-y :center
                        :ink clim:+dark-blue+)))))
 
+(defmethod draw-datum ((datum cleavir-ir:raw-integer) pane)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :ink clim:+light-green+
+                     :filled t)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)))
+
 (defvar *dynamic-environment-locations*)
 
 (defun draw-data (pane)
