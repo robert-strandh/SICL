@@ -13,22 +13,11 @@
 (defmethod shift-count ((instruction shift-instruction))
   (second (inputs instruction)))
 
-(defmethod shared-initialize :around
-    ((instruction shift-instruction) slot-names
-     &rest keys
-     &key
-       inputs shifted-input shift-count
-       outputs output
-       successors successor)
-  (assert (all-or-none shifted-input shift-count))
-  (let ((inputs (combine inputs shifted-input shift-count))
-        (outputs (if (null output) outputs (list output)))
-        (successors (if (null successor) successors (list successors))))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ shift-instruction
+ (shifted-input shift-count)
+ (output)
+ (successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
