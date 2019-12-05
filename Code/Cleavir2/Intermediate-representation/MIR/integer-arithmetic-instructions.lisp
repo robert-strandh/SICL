@@ -76,23 +76,11 @@
 (defclass signed-add-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction signed-add-instruction) slot-names
-     &rest keys
-     &key
-       inputs augend addend
-       outputs output
-       successors normal-successor overflow-successor)
-  (assert (all-or-none augend addend))
-  (assert (all-or-none normal-successor overflow-successor))
-  (let ((inputs (combine inputs augend addend))
-        (outputs (if (null output) outputs (list output)))
-        (successors (combine successors normal-successor overflow-successor)))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ signed-add-instruction
+ (augend addend)
+ (output)
+ (normal-successor overflow-successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -101,23 +89,11 @@
 (defclass signed-sub-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction signed-sub-instruction) slot-names
-     &rest keys
-     &key
-       inputs minuend subtrahend
-       outputs output
-       successors normal-successor overflow-successor)
-  (assert (all-or-none minuend subtrahend))
-  (assert (all-or-none normal-successor overflow-successor))
-  (let ((inputs (combine inputs minuend subtrahend))
-        (outputs (if (null output) outputs (list output)))
-        (successors (combine successors normal-successor overflow-successor)))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ signed-sub-instruction
+ (minuend subtrahend)
+ (output)
+ (normal-successor overflow-successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -126,23 +102,11 @@
 (defclass signed-less-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction signed-less-instruction) slot-names
-     &rest keys
-     &key
-       inputs argument1 argument2
-       outputs output
-       successors true-successor false-successor)
-  (assert (all-or-none argument1 argument2))
-  (assert (all-or-none true-successor false-successor))
-  (let ((inputs (combine inputs argument1 argument2))
-        (outputs (if (null output) outputs (list output)))
-        (successors (combine successors true-successor false-successor)))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ signed-less-instruction
+ (argument1 argument2)
+ (output)
+ (true-successor false-successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -151,23 +115,11 @@
 (defclass signed-not-greater-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction signed-not-greater-instruction) slot-names
-     &rest keys
-     &key
-       inputs argument1 argument2
-       outputs output
-       successors true-successor false-successor)
-  (assert (all-or-none argument1 argument2))
-  (assert (all-or-none true-successor false-successor))
-  (let ((inputs (combine inputs argument1 argument2))
-        (outputs (if (null output) outputs (list output)))
-        (successors (combine successors true-successor false-successor)))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ signed-not-greater-instruction
+ (argument1 argument2)
+ (output)
+ (true-successor false-successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -189,23 +141,11 @@
 (defclass unsigned-sub-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction unsigned-sub-instruction) slot-names
-     &rest keys
-     &key
-       inputs minuend subtrahend
-       outputs output
-       successors normal-successor carry-successor)
-  (assert (all-or-none minuend subtrahend))
-  (assert (all-or-none normal-successor carry-successor))
-  (let ((inputs (combine inputs minuend subtrahend))
-        (outputs (if (null output) outputs (list output)))
-        (successors (combine successors normal-successor carry-successor)))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ unsigned-sub-instruction
+ (minuend subtrahend)
+ (output)
+ (normal-successor carry-successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -214,22 +154,11 @@
 (defclass unsigned-div-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction unsigned-div-instruction) slot-names
-     &rest keys
-     &key
-       inputs dividend divisor
-       outputs quotient remainder
-       successors successor)
-  (assert (all-or-none dividend divisor))
-  (let ((inputs (combine inputs dividend divisor))
-        (outputs (combine outputs quotient remainder))
-        (successors (if (null successor) successors (list successor))))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ unsigned-div-instruction
+ (dividend divisor)
+ (quotient remainder)
+ (successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -238,23 +167,11 @@
 (defclass unsigned-less-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction unsigned-less-instruction) slot-names
-     &rest keys
-     &key
-       inputs argument1 argument2
-       outputs output
-       successors true-successor false-successor)
-  (assert (all-or-none argument1 argument2))
-  (assert (all-or-none true-successor false-successor))
-  (let ((inputs (combine inputs argument1 argument2))
-        (outputs (if (null output) outputs (list output)))
-        (successors (combine successors true-successor false-successor)))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ unsigned-less-instruction
+ (argument1 argument2)
+ (output)
+ (true-successor false-successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -263,23 +180,11 @@
 (defclass unsigned-not-greater-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction unsigned-not-greater-instruction) slot-names
-     &rest keys
-     &key
-       inputs argument1 argument2
-       outputs output
-       successors true-successor false-successor)
-  (assert (all-or-none argument1 argument2))
-  (assert (all-or-none true-successor false-successor))
-  (let ((inputs (combine inputs argument1 argument2))
-        (outputs (if (null output) outputs (list output)))
-        (successors (combine successors true-successor false-successor)))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ unsigned-not-greater-instruction
+ (argument1 argument2)
+ (output)
+ (true-successor false-successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -288,20 +193,8 @@
 (defclass equal-instruction (instruction multiple-successors-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction equal-instruction) slot-names
-     &rest keys
-     &key
-       inputs argument1 argument2
-       outputs output
-       successors true-successor false-successor)
-  (assert (all-or-none argument1 argument2))
-  (assert (all-or-none true-successor false-successor))
-  (let ((inputs (combine inputs argument1 argument2))
-        (outputs (if (null output) outputs (list output)))
-        (successors (combine successors true-successor false-successor)))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ equal-instruction
+ (argument1 argument2)
+ (output)
+ (true-successor false-successor))
