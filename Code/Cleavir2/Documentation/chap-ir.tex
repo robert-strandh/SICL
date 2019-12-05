@@ -283,7 +283,7 @@ the output without any modification.
 \hline
 Number of inputs & any\\
 \hline
-Number of outputs & 1\\
+Number of outputs & 0\\
 \hline
 Number of predecessors & any\\
 \hline
@@ -295,8 +295,8 @@ The first input of this instruction corresponds to the function being
 called.  The remaining inputs correspond to the arguments to be passed
 to the callee.
 
-The single output of this instruction is a values location,
-corresponding to the values returned by the callee.
+The values resulting from the call are stored in the global values
+location.
 
 \subsection{Instruction \texttt{funcall-no-return-instruction}}
 \label{hir-instruction-funcall-no-return}
@@ -351,7 +351,7 @@ output of the \texttt{funcall-instruction} is the input of the
 
 \begin{tabular}{|l|l|}
 \hline
-Number of inputs & 1\\
+Number of inputs & 0\\
 \hline
 Number of outputs & 0\\
 \hline
@@ -361,8 +361,8 @@ Number of successors & 0\\
 \hline
 \end{tabular}
 
-The input of this instruction is a values location, corresponding to
-the values transmitted to the caller.
+This instruction takes its values from the global values location,
+which is why it has no inputs.
 
 It terminates execution of the current function and returns to the
 caller. 
