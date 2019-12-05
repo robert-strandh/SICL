@@ -11,8 +11,7 @@
      instruction)
     (change-class instruction 'cleavir-ir:shift-left-instruction
                   :shifted-input word-location
-                  :shift-count shift-count-input
-                  :outputs (cleavir-ir:outputs instruction))))
+                  :shift-count shift-count-input)))
 
 (defun box-signed-integer (instruction)
   (let ((word-location (make-instance 'cleavir-ir:raw-integer :size 64))
@@ -25,8 +24,7 @@
      instruction)
     (change-class instruction 'cleavir-ir:shift-left-instruction
                   :shifted-input word-location
-                  :shift-count shift-count-input
-                  :outputs (cleavir-ir:outputs instruction))))
+                  :shift-count shift-count-input)))
 
 (defun box-single-float (instruction)
   (let ((word-location-1 (make-instance 'cleavir-ir:raw-integer :size 64))
@@ -47,8 +45,7 @@
        :successor instruction)
      instruction)
     (change-class instruction 'cleavir-ir:bitwise-or-instruction
-                  :inputs (list word-location-2 tag-input)
-                  :outputs (cleavir-ir:outputs instruction))))
+                  :inputs (list word-location-2 tag-input))))
 
 (defmethod process-instruction
     (client (instruction cleavir-ir:box-instruction))
@@ -82,8 +79,7 @@
        :successor instruction)
      instruction)
     (change-class instruction 'cleavir-ir:assignment-instruction
-                  :input word-location
-                  :outputs (cleavir-ir:outputs instruction))))
+                  :input word-location)))
 
 (defun unbox-single-float (instruction)
   (let ((word-location (make-instance 'cleavir-ir:raw-integer :size 64))
@@ -96,8 +92,7 @@
        :successor instruction)
      instruction)
     (change-class instruction 'cleavir-ir:assignment-instruction
-                  :input word-location
-                  :outputs (cleavir-ir:outputs instruction))))
+                  :input word-location)))
 
 (defmethod process-instruction
     (client (instruction cleavir-ir:unbox-instruction))

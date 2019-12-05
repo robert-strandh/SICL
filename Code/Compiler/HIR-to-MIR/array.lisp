@@ -25,9 +25,7 @@
                                                    slot-offset-location
                                                    instruction)))
         (change-class instruction 'cleavir-ir:memref1-instruction
-                      :inputs (list slot-location)
-                      :outputs (cleavir-ir:outputs instruction)
-                      :successors (cleavir-ir:successors instruction))))))
+                      :address slot-location)))))
 
 (defun process-bit-aref-instruction (instruction)
   (destructuring-bind (object-location index-location)
@@ -79,8 +77,7 @@
          instruction))
       (change-class instruction 'cleavir-ir:shift-left-instruction
                     :shifted-input masked-word-element-location
-                    :shoft-count immediate-input-1
-                    :sucessors (cleavir-ir:successors instruction)))))
+                    :shift-count immediate-input-1))))
 
 (defmethod process-instruction
     (client (instruction cleavir-ir:aref-instruction))
@@ -104,8 +101,8 @@
                                                    slot-offset-location
                                                    instruction)))
         (change-class instruction 'cleavir-ir:memset1-instruction
-                      :inputs (list slot-location value-location)
-                      :sucessors (cleavir-ir:successors instruction))))))
+                      :address slot-location
+                      :value value-location)))))
 
 (defun process-bit-aset-instruction (instruction)
   (destructuring-bind (object-location index-location value-location)
@@ -162,8 +159,8 @@
            :successor instruction)
          instruction)
       (change-class instruction 'cleavir-ir:memset1-instruction
-                    :inputs (list word-element-location modified-word-element-location)
-                    :sucessors (cleavir-ir:successors instruction))))))
+                    :address word-element-location
+                    :value modified-word-element-location)))))
 
 (defmethod process-instruction
     (client (instruction cleavir-ir:aset-instruction))
