@@ -38,5 +38,6 @@
                          'cleavir-ir:funcall-instruction
                          :inputs (list* enclose-function-lexical-location
                                         entry-point-input
-                                        (cleavir-ir:inputs instruction))))))
+                                        (cleavir-ir:inputs instruction))
+                         :outputs '()))))
      enter-instruction)))
