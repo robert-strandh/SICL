@@ -12,21 +12,11 @@
 (defclass memref1-instruction (instruction one-successor-mixin)
   ())
 
-(defmethod shared-initialize :around
-    ((instruction memref1-instruction) slot-names
-     &rest keys
-     &key
-       inputs address
-       outputs output
-       successors successor)
-  (let ((inputs (if (null address) inputs (list address)))
-        (outputs (if (null output) outputs (list output)))
-        (successors (if (null successor) successors (list successor))))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ memref1-instruction
+ (address)
+ (output)
+ (successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -42,22 +32,11 @@
 (defclass memref2-instruction (instruction one-successor-mixin)
   ((%offset :initarg :offset :reader offset)))
 
-(defmethod shared-initialize :around
-    ((instruction memref2-instruction) slot-names
-     &rest keys
-     &key
-       inputs base-address offset
-       outputs output
-       successors successor)
-  (assert (all-or-none base-address offset))
-  (let ((inputs (combine inputs base-address offset))
-        (outputs (if (null output) outputs (list output)))
-        (successors (if (null successor) successors (list successor))))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ memref2-instruction
+ (base-address offset)
+ (output)
+ (successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -71,24 +50,11 @@
 (defclass memset1-instruction (instruction one-successor-mixin)
   ())
 
-
-(defmethod shared-initialize :around
-    ((instruction memset1-instruction) slot-names
-     &rest keys
-     &key
-       inputs address value
-       outputs output
-       successors successor)
-  (assert (all-or-none address value))
-  (assert (null outputs))
-  (assert (null output))
-  (let ((inputs (combine inputs address value))
-        (successors (if (null successor) successors (list successor))))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ memset1-instruction
+ (address value)
+ ()
+ (successor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -104,20 +70,8 @@
 (defclass memset2-instruction (instruction one-successor-mixin)
   ((%offset :initarg :offset :reader offset)))
 
-(defmethod shared-initialize :around
-    ((instruction memset2-instruction) slot-names
-     &rest keys
-     &key
-       inputs base-address offset value
-       outputs output
-       successors successor)
-  (assert (all-or-none base-address offset value))
-  (assert (null outputs))
-  (assert (null output))
-  (let ((inputs (combine inputs base-address offset value))
-        (successors (if (null successor) successors (list successor))))
-    (apply #'call-next-method instruction slot-names
-           :inputs inputs
-           :outputs outputs
-           :successors successors
-           keys)))
+(normalize-arguments
+ memset2-instruction
+ (base-address offset value)
+ ()
+ (successor))
