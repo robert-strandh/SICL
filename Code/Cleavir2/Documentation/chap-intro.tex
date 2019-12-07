@@ -43,10 +43,12 @@ this transformation is an intermediate form called MIR.%
 \footnote{MIR means Medium-level Intermediate Representation.}  MIR
 differs from HIR in that it exposes address calculations and memory
 accesses using those addresses, whereas HIR manipulates only
-\commonlisp{} objects.  The notation becomes even more
-backend-specific in that it introduces features such as registers and
-stack frames.  The notation also becomes implementation specific in
-that it exposes choices such as argument passing.
+\commonlisp{} objects.  A number of optimizations can be applied to
+MIR before it is translated to LIR.%
+\footnote{LIR means Low-level Intermediate Representation.}
+LIR differens from MIR in that it introduces features such as
+registers and stack frames.  The notation also becomes implementation
+specific in that it exposes choices such as argument passing.
 
 Finally, the low-level code is translated into machine code.
 
