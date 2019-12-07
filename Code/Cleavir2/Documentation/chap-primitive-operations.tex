@@ -147,7 +147,7 @@ this:
         (cleavir-primop:rplaca cons object)
         (error 'type-error
                :datum object
-               :expected-type '(or cons null))))
+               :expected-type 'cons)))
 \end{verbatim}
 
 \Defprimop{rplacd} {cons object}
@@ -167,7 +167,7 @@ this:
         (cleavir-primop:rplacd cons object)
         (error 'type-error
                :datum object
-               :expected-type '(or cons null))))
+               :expected-type 'cons)))
 \end{verbatim}
 
 \Defprimop{let-uninitialized} {(\rest vars) \body forms}
