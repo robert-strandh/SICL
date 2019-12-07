@@ -298,6 +298,18 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
+\Defprimop{fixnum-equal} {}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{=}.  It takes two arguments, both
+forms that must evaluate to fixnums.  It can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+If the first argument is equal to the second argument,
+then the \emph{then} branch of the \texttt{if} form is evaluated.
+Otherwise, the \emph{else} branch of the \texttt{if} form is
+evaluated.
+
 \Defprimop{float-add} {}
 
 \def\ittakesthree{It takes three arguments.  The
