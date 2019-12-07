@@ -32,23 +32,22 @@ each implementation has its own representation and its own protocols.
 \sysname{} uses an external library called \emph{Trucler} for
 representing the compile-time environment.
 
-When \sysname{} is asked to convert a
-form to an abstract syntax tree, client code must supply an object
-that represents the startup environment.  During the conversion
-process, \sysname{} will call the functions documented in
-??? to augment the startup environment
-with information introduced by binding forms to create an augmented
-compilation environment.  To determine the meaning of the program
-elements in the form to be converted, \sysname{} will call the
-functions documented in ???.
+When \sysname{} is asked to convert a form to an abstract syntax tree,
+client code must supply an object that represents the startup
+environment.  During the conversion process, \sysname{} will call the
+functions documented in section 4.2 of the Trucler documentation to
+augment the startup environment with information introduced by binding
+forms to create an augmented compilation environment.  To determine
+the meaning of the program elements in the form to be converted,
+\sysname{} will call the functions documented in section 3.1 of the
+Trucler documentation.
 
-Client code must supply methods on the functions in
-??? to augment the environment and
-return the resulting environment.  Client code must also supply
-methods on the functions in ??? that
-will query the environment (whether the startup environment or the
-augmented environment) and return the relevant information to
-\sysname{}. 
+Client code must supply methods on the functions in section 4.2 of the
+Trucler documentation to augment the environment and return the
+resulting environment.  Client code must also supply methods on the
+functions in section 3.1 of the Trucler documentation that will query
+the environment (whether the startup environment or the augmented
+environment) and return the relevant information to \sysname{}.
 
 It might seem that \sysname{} could represent the \emph{local part} of
 the environment (i.e., the part of the environment that is temporarily
