@@ -474,111 +474,37 @@ Forms using this primitive operation must occur in a context that does
 not require a value, such as in a \texttt{progn} other than as the
 last form.
 
-\Defprimop{simple-t-aref} {array index}
+\Defprimop{aref} {array index element-type simple-p boxed-p}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{aref}.  The \textit{array} argument is
-a form that must evaluate to a \emph{simple} and \emph{unspecialized}
-array.  The \texttt{index} argument is a form that must evaluate to a
-fixnum.  It represents a valid row-major index into \textit{array}.
+\commonlisp{} function \texttt{aref}.  It takes five arguments.  The
+\textit{array} argument is a form that must evaluate to an array.  The
+\textit{index} argument is a form that must evaluate to fixnum
+representing a valid row-major index of the array.  The remaining
+arguments are not evaluated.  The \textit{element-type} argument is
+the element type of the array.  The \textit{simple-p} argument
+argument is a Boolean indicating whether the array is simple.  The
+\textit{boxed-p} argument is a Boolean indicating whether the elements
+of the array are boxed.
 
 This primitive operation returns the object at \textit{index} in
 \textit{array}.
 
-\Defprimop{simple-t-aset} {array index object}
+\Defprimop{aset} {array index object element-type simple-p boxed-p}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
-argument is a form that must evaluate to a \emph{simple} and
-\emph{unspecialized} array.  The \texttt{index} argument is a form
-that must evaluate to a fixnum.  It represents a valid row-major index
-into \textit{array}.
-
-This primitive operation stores \textit{object} at \textit{index} in
-\textit{array}.
-
-Forms using this primitive operation must occur in a context that does
-not require a value, such as in a \texttt{progn} other than as the
-last form.
-
-\Defprimop{non-simple-t-aref} {array index}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{aref}.  The \textit{array} argument is
-a form that must evaluate to a \emph{non-simple} and
-\emph{unspecialized} array.  The \texttt{index} argument is a form
-that must evaluate to a fixnum.  It represents a valid row-major index
-into \textit{array}.
-
-This primitive operation returns the object at \textit{index} in
-\textit{array}.
-
-\Defprimop{non-simple-t-aset} {array index object}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
-argument is a form that must evaluate to a \emph{non-simple} and
-\emph{unspecialized} array.  The \texttt{index} argument is a form
-that must evaluate to a fixnum.  It represents a valid row-major index
-into \textit{array}.
-
-This primitive operation stores \textit{object} at \textit{index} in
-\textit{array}.
-
-Forms using this primitive operation must occur in a context that does
-not require a value, such as in a \texttt{progn} other than as the
-last form.
-
-\Defprimop{float-aref} {array index}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{aref}.  The \textit{array} argument is
-a form that must evaluate to a specialized array with element type
-\texttt{short-float}.  The \texttt{index} argument is a form that must
-evaluate to a fixnum.  It represents a valid row-major index into
-\textit{array}.
-
-This primitive operation returns the short float value at
-\textit{index} in \textit{array}.
-
-\Defprimop{float-aset} {array index float}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
-argument is a form that must evaluate to a specialized array with
-element type \texttt{short-float}.  The \texttt{index} argument is a
-form that must evaluate to a fixnum.  It represents a valid row-major
-index into \textit{array}.
-
-This primitive operation stores \textit{short-float} at \textit{index}
-in \textit{array}.
-
-Forms using this primitive operation must occur in a context that does
-not require a value, such as in a \texttt{progn} other than as the
-last form.
-\Defprimop{bit-aref} {array index}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} functions \texttt{aref} and \texttt{bit}.  The
-\textit{array} argument is a form that must evaluate to a specialized
-array with element type \texttt{bit}.  The \texttt{index} argument is
-a form that must evaluate to a fixnum.  It represents a valid
-row-major index into \textit{array}.
-
-This primitive operation returns the bit value at \textit{index} in
-\textit{array}.
-
-\Defprimop{bit-aset} {array index bit}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} functions \texttt{(setf aref)} and \texttt{(setf bit)}.
-The \textit{array} argument is a form that must evaluate to a
-specialized array with element type \texttt{bit}.  The \texttt{index}
+argument is a form that must evaluate to an array.  The \texttt{index}
 argument is a form that must evaluate to a fixnum.  It represents a
-valid row-major index into \textit{array}.
+valid row-major index into \textit{array}.  The remaining arguments
+are not evaluated.  The \textit{element-type} argument is the element
+type of the array.  The \textit{simple-p} argument argument is a
+Boolean indicating whether the array is simple.  The \textit{boxed-p}
+argument is a Boolean indicating whether the elements of the array are
+boxed.
 
-This primitive operation stores the value \textit{bit} at
-\textit{index} in \textit{array}.
+This primitive operation stores \textit{object} at \textit{index} in
+\textit{array}.
 
 Forms using this primitive operation must occur in a context that does
 not require a value, such as in a \texttt{progn} other than as the
