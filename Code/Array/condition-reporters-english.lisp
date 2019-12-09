@@ -5,7 +5,7 @@
      stream
      (language acclimation:english))
   (format stream
-	  "An object of type ~s was expected,~@
+          "An object of type ~s was expected,~@
            but the following object was found instead~@
            ~s"
           (type-error-expected-type condition)
@@ -32,7 +32,7 @@
      stream
      (language acclimation:english))
   (format stream
-	  "The ~:R index given in order to access the array:~@
+          "The ~:R index given in order to access the array:~@
            ~s~@
            has a value of ~s~@
            but the ~:R dimension of the array is ~d,~@
