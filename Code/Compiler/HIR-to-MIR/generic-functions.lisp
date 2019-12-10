@@ -31,3 +31,15 @@
   (declare (ignore client))
   (unless (typep instruction *unprocessed-instruction-types*)
     (error "Don't know how to handle instruction ~s" instruction)))
+
+(defmethod process-instruction :before (client instruction)
+  (declare (ignore client))
+  (loop for input in (cleavir-ir:inputs instruction)
+        do (when (typep input 'cleavir-ir:constant-input)
+             (let ((value (cleavir-ir:value input)))
+               (change-class input 'cleavir-ir:immediate-input
+                             :value (etypecase value
+                                      (fixnum
+                                       (ash value 1))
+                                      (character
+                                       (+ (ash (char-code value) 5) 3))))))))
