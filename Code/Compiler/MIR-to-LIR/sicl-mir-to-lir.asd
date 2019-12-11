@@ -10,5 +10,6 @@
    (:file "registers")
    (:file "move-return-address")
    (:file "save-arguments")
-   (:file "process-instructions")))
+   (:file "process-instructions")
+   (:file "mir-to-lir")))
 
