@@ -237,6 +237,22 @@
                      (floor datum-width 2) (floor datum-height 2)
                      :filled nil)))
 
+(defmethod draw-datum ((datum cleavir-ir:register-location) pane)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :ink clim:+light-blue+
+                     :filled t)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)
+    (clim:with-text-size (pane :small)
+      (clim:draw-text* pane
+                       (cleavir-ir:name datum)
+                       hpos vpos
+                       :align-x :center :align-y :center
+                       :ink clim:+dark-blue+))))
+
 (defvar *dynamic-environment-locations*)
 
 (defun draw-data (pane)
