@@ -12,12 +12,14 @@
   (let ((worklist (list mir))
         (all-instructions '()))
     (loop until (null worklist)
-          do (cleavir-ir:map-instructions-arbitrary-order
-              (lambda (instruction)
-                (push instruction all-instructions)
-                (when (enclose-funcall-p instruction)
-                  (push (sicl-hir-to-mir::enter-instruction
-                         (second (cleavir-ir:inputs instruction)))
-                        worklist)))
-              (pop worklist)))
+          do (let ((enter-instruction (pop worklist)))
+               (cleavir-ir:map-instructions-arbitrary-order
+                (lambda (instruction)
+                  (push instruction all-instructions)
+                  (when (enclose-funcall-p instruction)
+                    (push (sicl-hir-to-mir::enter-instruction
+                           (second (cleavir-ir:inputs instruction)))
+                          worklist)))
+                enter-instruction)
+               (save-register-arguments enter-instruction)))
     (length all-instructions)))
