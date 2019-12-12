@@ -21,5 +21,6 @@
                            (second (cleavir-ir:inputs instruction)))
                           worklist)))
                 enter-instruction)
+               (insert-while-loop enter-instruction)
                (save-register-arguments enter-instruction)))
     (length all-instructions)))
