@@ -106,7 +106,6 @@
                           (assert (and ,@successor-names))
                           (assert (not successors-p))
                           (apply #'call-next-method instruction slot-names
-                                 :inputs (list ,@input-names)
                                  :successors (list ,@successor-names)
                                  keys))
                          (t
