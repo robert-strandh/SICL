@@ -102,7 +102,8 @@
      (make-instance 'cleavir-ir:assignment-instruction
        :input *rbp*
        :output *r13*)
-     enter-instruction)))
+     enter-instruction))
+  (cleavir-ir:set-predecessors enter-instruction))
 
 (defun save-register-arguments (enter-instruction)
   (let ((immediate-input-8
