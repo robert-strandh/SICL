@@ -10,22 +10,34 @@
 ;;;; always save the five registers.
 ;;;;
 ;;;; 1.  Subtract (5 + |lexicals|) * 8 from RSP.  The value to subract
-;;;;     is a constant that is known at compile time.
+;;;;     is a constant that is known at compile time.  The result of
+;;;;     this step is to leave room in the stack frame for each lexical
+;;;;     location and the (up to) five register arguments.
 ;;;; 2.  Copy RSP to R11 (a scratch register)
 ;;;; 3.  Store RDI on the stack at the address indicated by R11.
+;;;;     The first argument is now on top of the stack.
 ;;;; 4.  Add 8 to R11.
-;;;; 5.  Store RDI on the stack at the address indicated by R11.
+;;;; 5.  Store RSI on the stack at the address indicated by R11.
+;;;;     The second argument is now on top of the stack.
 ;;;; 6.  Add 8 to R11.
-;;;; 7.  Store RDI on the stack at the address indicated by R11.
+;;;; 7.  Store RDX on the stack at the address indicated by R11.
+;;;;     The third argument is now on top of the stack.
 ;;;; 8 . Add 8 to R11.
-;;;; 9.  Store RDI on the stack at the address indicated by R11.
+;;;; 9.  Store RCX on the stack at the address indicated by R11.
+;;;;     The fourth argument is now on top of the stack.
 ;;;; 10. Add 8 to R11.
-;;;; 11. Store RDI on the stack at the address indicated by R11.
-;;;; 12. Add 8 to R11.
+;;;; 11. Store R8 on the stack at the address indicated by R11.
+;;;;     The fifth argument is now on top of the stack.
+;;;; 12. Add 8 to R11.  R11 now contains the place to store
+;;;;     the sixth argument in case there are more than five
+;;;;     arguments
 ;;;; 13. Copy R11 to R12.
-;;;; 14. Add |lexicals|*8 to R12.
+;;;; 14. Add |lexicals|*8 to R12.  R12 now contains the address
+;;;;     of the sixth argument in case there are more than
+;;;;     five arguments.
 ;;;; 15. Copy RBP to R13.
-;;;; 16. Subtract 8 from R13.
+;;;; 16. Subtract 8 from R13.  R13 now points one word higher than
+;;;;     the last argument given.
 ;;;; 17. While R12 < R13
 ;;;;   17.1 Load the contents of the stack at address R12 to R14.
 ;;;;   17.2 Store R14 to the stack at address R11.
