@@ -25,7 +25,7 @@ represent four different \emph{tags} as follows:
   is represented by a two-word header object with one word containing
   a tagged pointer to the \emph{class object} and the other word
   containing a tagged pointer to the \emph{rack}.  See
-  \refSec{sec-data-representation-general-instances} for more
+  \refSec{sec-data-representation-standard-object} for more
   information about the representation of standard objects.
 \item \texttt{111}.  This tag is used to tag a pointer to a
   \emph{rack}.  Notice that a rack is not a first-class \commonlisp{}
@@ -76,7 +76,7 @@ A \texttt{cons} cell is represented as two consecutive machine
 words aligned on a double-word boundary.
 
 \section{Representation of standard objects}
-\label{sec-data-representation-general-instances}
+\label{sec-data-representation-standard-object}
 
 Recall that a \emph{standard object} is a heap allocated object that
 is not a \texttt{cons} cell.  All standard objects are represented in
@@ -164,14 +164,14 @@ both.  We simply store a reference to the \emph{list of effective
   slots} that the class of the instance defined when the instance was
 created.  This reference is stored as the \emph{second} word of the
 rack (recall that the first word is taken up by the
-\emph{stamp}). \seesec{sec-data-representation-general-instances}
+\emph{stamp}). \seesec{sec-data-representation-standard-object}
 
 This solution makes it possible to determine the layout of the
 rack of an obsolete instance, so that it can be traced by
 the garbage collector when necessary.  This solution also allows the
 system to determine which slots have been added and which slots have
 been removed since the instance was created.  As indicated in
-\refSec{sec-data-representation-general-instances}, in order to detect
+\refSec{sec-data-representation-standard-object}, in order to detect
 whether an object is obsolete, the contents of the first word of the
 rack (i.e. the \emph{stamp}) is compared to the
 \emph{class unique number} of the class of the object.  However, this
