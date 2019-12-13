@@ -48,7 +48,7 @@
      lexical-environment)
   (let ((output (first (cleavir-ir:outputs instruction))))
     (setf (lexical-value output lexical-environment)
-	  '()))
+          '()))
   (first (cleavir-ir:successors instruction)))
 
 (defmethod interpret-instruction
@@ -57,8 +57,8 @@
      lexical-environment)
   (let ((output (first (cleavir-ir:outputs instruction))))
     (setf (lexical-value output lexical-environment)
-	  (append (lexical-value output lexical-environment)
-		  *global-values-location*)))
+          (append (lexical-value output lexical-environment)
+                  *global-values-location*)))
   (first (cleavir-ir:successors instruction)))
 
 (defmethod interpret-instruction
@@ -70,5 +70,5 @@
     (setf *global-values-location*
           (multiple-value-list
            (apply (input-value function-location lexical-environment)
-		  (input-value values-location lexical-environment)))))
+                  (input-value values-location lexical-environment)))))
   (first (cleavir-ir:successors instruction)))
