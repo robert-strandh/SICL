@@ -11,5 +11,6 @@
    (:file "move-return-address")
    (:file "save-arguments")
    (:file "process-instructions")
+   (:file "arguments")
    (:file "mir-to-lir")))
 
