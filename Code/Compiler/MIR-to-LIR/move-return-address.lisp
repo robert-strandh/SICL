@@ -28,7 +28,7 @@
      enter-instruction)
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:unsigned-add-instruction
-       :input (list *rsp* immediate-input-8)
+       :inputs (list *rsp* immediate-input-8)
        :output *rsp*)
      enter-instruction)
     (cleavir-ir:insert-instruction-after
