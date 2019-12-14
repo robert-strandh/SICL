@@ -22,5 +22,6 @@
                           worklist)))
                 enter-instruction)
                (insert-while-loop enter-instruction)
-               (save-register-arguments enter-instruction)))
+               (save-register-arguments enter-instruction)
+               (move-return-address enter-instruction)))
     (length all-instructions)))
