@@ -306,36 +306,28 @@ The general consensus seems to be that other subtypes are allowed.
 \subsection{Arrays}
 \label{sec-data-representation-arrays}
 
-An array being a standard object, it is represented as a two-word
-header object and a rack.  The second word of the rack
-contains a proper list of dimensions.  The length of the list
-is the \emph{rank} of the array.
+Arrays are standard objects.  As a consequence, the exact layout of
+the rack of an array is determined by the MOP machinery for computing
+the slots when the class is finalized.  All arrays are simple.
 
-If the array is \emph{simple}, the second word is directly followed
-by the elements of the array.  If the array is \emph{not} simple, then
-it is either displaced to another array, or it has a fill pointer, or
-both.  If it has a fill pointer, then it is stored in the third word
-of the rack.  Finally, if the array is displaced to another
-array, the rack contains two words with the array to which
-this one is displaced, and the displacement offset.  If the array is
-not displaced, then the elements of the array follow.  The size of the
-rack is rounded up to the nearest multiple of a word.
+Every array class has a slot \texttt{dimensions} that contains a list
+of dimensions.  The length of the list is the \emph{rank} of the
+array.
 
-The exact class of the array differs according to whether the array is
-simple, has a fill pointer, or is displaced.
+The element-type is determined by the exact subclass of the
+\texttt{array} class.  The elements follow the explicit slots in the
+rack.  The size of the rack is rounded up to the nearest multiple of a
+word.
 
 All arrays are \emph{adjustable} thanks to the split representation
 with a header object and a rack.  Adjusting the array
 typically requires allocating a new rack.
 
-The element type of the array is determined by the exact class of the
-array.
-
-We suggest providing specialized arrays for the following data types:
+Specialized array classes with the following element types are
+provided:
 
 \begin{itemize}
 \item \texttt{double-float}
-\item \texttt{single-float}
 \item \texttt{(unsigned-byte 64)}.
 \item \texttt{(signed-byte 64)}.
 \item \texttt{(unsigned-byte 32)}.
@@ -347,8 +339,9 @@ We suggest providing specialized arrays for the following data types:
 \end{itemize}
 
 Since the element type determines where an element is located and how
-to access it, \texttt{aref} and \texttt{(setf aref)} are \emph{generic
-  functions} that specialize on the type of the array.
+to access it, \texttt{row-major-aref} and \texttt{(setf
+  row-major-aref)} are \emph{generic functions} that specialize on the
+type of the array.
 
 \subsubsection{System class \texttt{vector}}
 
@@ -356,24 +349,13 @@ A vector is a one-dimensional array.  As such, a vector has a rack
 where the second word is a proper list of a single element,
 namely the \emph{length} of the vector represented as a fixnum.
 
-The remaining words of the rack contain an optional fill
-pointer, and then either the elements of the vector or displacement
-information as indicated above.
+All vectors have a slot for the \emph{fill pointer}.  This slot
+contains \texttt{nil} for vectors without a fill pointer.
 
 \subsubsection{System class \texttt{string}}
 
-A string is a subtype of \texttt{array}.  Tentatively, we think that
-there is no need to optimize strings that contain only characters that
-could be represented in a single byte.  Thus the rack of a
-\emph{simple} string is represented as follows:
-
-\begin{itemize}
-\item The obligatory \emph{stamp}.
-\item A list of a single element corresponding to the \emph{length} of
-  the string.
-\item A number of consecutive words, each holding a tagged immediate
-  object representing a Unicode character.
-\end{itemize}
+Tentatively, we think that there is no need to optimize strings that
+contain only characters that could be represented in a single byte.
 
 \subsection{Symbols}
 
