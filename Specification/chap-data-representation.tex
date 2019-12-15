@@ -164,48 +164,29 @@ both.  We simply store a reference to the \emph{list of effective
   slots} that the class of the instance defined when the instance was
 created.  This reference is stored as the \emph{second} word of the
 rack (recall that the first word is taken up by the
-\emph{stamp}). \seesec{sec-data-representation-standard-object}
+\emph{stamp}).
 
-This solution makes it possible to determine the layout of the
-rack of an obsolete instance, so that it can be traced by
-the garbage collector when necessary.  This solution also allows the
-system to determine which slots have been added and which slots have
-been removed since the instance was created.  As indicated in
-\refSec{sec-data-representation-standard-object}, in order to detect
-whether an object is obsolete, the contents of the first word of the
-rack (i.e. the \emph{stamp}) is compared to the
-\emph{class unique number} of the class of the object.  However, this
-test is performed automatically in most cases, because when an
-obsolete object is passed as an argument to a generic function, the
-\emph{automation} of the discriminating function of the generic
-function will fail to find an effective method, triggering an update
-of the object.
+This solution makes it possible to determine the layout of the rack of
+an obsolete instance, so that it can be traced by the garbage
+collector when necessary.  This solution also allows the system to
+determine which slots have been added and which slots have been
+removed since the instance was created.  In order to detect whether an
+object is obsolete, the contents of the first word of the rack
+(i.e. the \emph{stamp}) is compared to the \emph{class unique number}
+of the class of the object.  However, this test is performed
+automatically in most cases, because when an obsolete object is passed
+as an argument to a generic function, the \emph{automation} of the
+discriminating function of the generic function will fail to find an
+effective method, triggering an update of the object.
 \seesec{sec-generic-function-dispatch-the-discriminating-function}
-
-\section{Standard objects}
-\label{sec-data-representation-standard-objects}
-
-By definition, a \emph{standard object} is an instance of a subclass
-of the class with the name \texttt{standard-object}.  Standard objects
-are \emph{flexible instances}.
-\seesec{sec-data-representation-flexible-instances}
-
-In addition to allowing for the class of an instance to be modified as
-described in \refSec{sec-data-representation-flexible-instances},
-Subclasses of \texttt{standard-object} must also allow for the class
-of an instance to be changed to some other class (through the use of
-\texttt{change-class}).  However, changing the class of an instance is
-fairly straightforward because the instance is then passed as an
-argument and the slots of the instance can be updated as appropriate.
 
 \section{Funcallable standard objects}
 \label{sec-data-representation-funcallable-standard-objects}
 
 By definition, a \emph{funcallable standard object} is an instance of
 a subclass of the class \texttt{funcallable-standard-object} which is
-itself a subclass of the class \texttt{standard-object}
-\seesec{sec-data-representation-standard-objects} and of the class
-\texttt{function}. \seesec{sec-data-representation-functions}
+itself a subclass of the class \texttt{standard-object} and of the
+class \texttt{function}. \seesec{sec-data-representation-functions}
 
 To make function invocation fast, we want every subclass of the class
 \texttt{function} to be invoked in the same way, i.e. by loading the
