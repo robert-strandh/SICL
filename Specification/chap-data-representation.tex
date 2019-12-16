@@ -346,8 +346,9 @@ type of the array.
 \subsubsection{System class \texttt{vector}}
 
 A vector is a one-dimensional array.  As such, a vector has a rack
-where the second word is a proper list of a single element,
-namely the \emph{length} of the vector represented as a fixnum.
+where \texttt{dimensions} slot contains a proper list of a single
+element, namely the \emph{length} of the vector represented as a
+fixnum.
 
 All vectors have a slot for the \emph{fill pointer}.  This slot
 contains \texttt{nil} for vectors without a fill pointer.
