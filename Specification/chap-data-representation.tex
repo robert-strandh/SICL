@@ -360,11 +360,10 @@ contain only characters that could be represented in a single byte.
 
 \subsection{Symbols}
 
-A symbol is represented with a two-word header (as usual) and a
-rack of three consecutive words.  The three words contain:
+A symbol is a standard object.  It has slots containing the following
+data:
 
 \begin{enumerate}
-\item The obligatory \emph{stamp}.
 \item The \emph{name} of the symbol.  The value of this slot is a
   string.
 \item The \emph{package} of the symbol.  The value of this slot is a
