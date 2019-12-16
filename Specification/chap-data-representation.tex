@@ -384,11 +384,9 @@ global environments.
 
 \subsection{Packages}
 
-A package is represented with a two-word header (as usual) and a
-rack of 8 words:
+A package is a standard object with the following slots:
 
 \begin{enumerate}
-\item The obligatory \emph{stamp}.
 \item The \emph{name} of the package.  The value of this slot is a
   string.
 \item The \emph{nicknames} of the package.  The value of this slot is
