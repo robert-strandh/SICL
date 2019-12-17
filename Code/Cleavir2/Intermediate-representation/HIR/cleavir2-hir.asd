@@ -14,4 +14,5 @@
    (:file "array-related-instructions")
    (:file "multiple-value-related-instructions")
    (:file "environment-related-instructions")
-   (:file "argument-parsing-related-instructions")))
+   (:file "argument-parsing-related-instructions")
+   (:file "return-value-related-instructions")))
