@@ -10,12 +10,20 @@ advantages:
 \item We simplify the translation of HIR code to LIR later on the
   translation process.
 \item HIR transformations such as constant hoisting and
-  \texttt{fdefinition} hoisting can be applied to the
-  argument-processing code, thereby simplifying this code.
+  \texttt{fdefinition} hoisting can be applied to the code for
+  processing return values, thereby simplifying this code.
 \item The HIR instructions introduced are subject to various HIR
   transformations such as value numbering, constant propagation,
   etc.
 \end{itemize}
+
+Clients that would like to use this technique for processing return
+values would have a HIR transformation that replaces the
+\texttt{multiple-to-fixed-instruction}.  Recall that the
+\texttt{multiple-to-fixed-instruction} accesses the distinguished
+location for multiple values and copies the values in that location to
+individual lexical locations that make up the outputs of the
+instruction.
 
 The code that replaces the \texttt{multiple-to-fixed-instruction} is
 shown in \refFig{fig-process-values}.
@@ -42,3 +50,12 @@ number $0$, even when there are no return values.  A function that
 returns no values puts \texttt{nil} in the first values location so
 that a caller that wants exactly one return value (the most common
 case) does not need to check the number of return values.
+
+Again referring to \refFig{fig-process-values}, RVC is a lexical
+location holding the return-values count as a fixnum.  Instructions
+labeled RV are instruction of type \texttt{return-value-instruction}
+that each takes a constant fixnum input, accesses the value with that
+index in the distinguished values location and assigns that value to
+the lexical location of its output.  The locations labeled ``var 0''
+to ``var N-1'' in \refFig{fig-process-values} are the outputs of the
+\texttt{multiple-to-fixed-instruction} that is being replaced.
