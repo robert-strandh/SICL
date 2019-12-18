@@ -1,0 +1,26 @@
+\chapter{Processing return values}
+
+In this chapter, we describe how processing return values is
+accomplished by inserting HIR instructions immediately after HIR code
+is generated from an abstract syntax tree.  As with the code for
+processing arguments, by doing it this way, we obtain several
+advantages:
+
+\begin{itemize}
+\item We simplify the translation of HIR code to LIR later on the
+  translation process.
+\item HIR transformations such as constant hoisting and
+  \texttt{fdefinition} hoisting can be applied to the
+  argument-processing code, thereby simplifying this code.
+\item The HIR instructions introduced are subject to various HIR
+  transformations such as value numbering, constant propagation,
+  etc.
+\end{itemize}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-process-values.pdf_t}
+\end{center}
+\caption{\label{fig-process-values}
+Processing return values.}
+\end{figure}
