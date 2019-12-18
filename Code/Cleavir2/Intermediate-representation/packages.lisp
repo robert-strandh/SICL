@@ -121,6 +121,8 @@
    #:offset
    #:compute-argument-count-instruction
    #:argument-instruction
+   #:compute-return-value-count-instruction
+   #:return-value-instruction
    ;; MIR instructions
    #:memref1-instruction
    #:memref2-instruction
