@@ -16,6 +16,7 @@
    (:file "run-time")
    (:file "general-purpose-instructions")
    (:file "argument-processing-instructions")
+   (:file "return-value-related-instructions")
    (:file "array-related-instructions")
    (:file "boxing-related-instructions")
    (:file "cons-related-instructions")
