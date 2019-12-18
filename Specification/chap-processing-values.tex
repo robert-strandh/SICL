@@ -17,6 +17,9 @@ advantages:
   etc.
 \end{itemize}
 
+The code that replaces the \texttt{multiple-to-fixed-instruction} is
+shown in \refFig{fig-process-values}.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-process-values.pdf_t}
@@ -24,3 +27,18 @@ advantages:
 \caption{\label{fig-process-values}
 Processing return values.}
 \end{figure}
+
+In \refFig{fig-process-values}, N is the number of outputs of the
+\texttt{multiple-to-fixed-instruction}.  The technique relies on the
+assumption that there are usually at least as many return values as
+the number of outputs of the \texttt{multiple-to-fixed-instruction}.
+If that is the case, then the first comparison succeeds, and no other
+comparison need to be executed.
+
+The last comparison instruction takes the constant $1$ as its first
+input.  We do not need to check for the number of return values being
+greater than $0$, because we are always allowed to access return value
+number $0$, even when there are no return values.  A function that
+returns no values puts \texttt{nil} in the first values location so
+that a caller that wants exactly one return value (the most common
+case) does not need to check the number of return values.
