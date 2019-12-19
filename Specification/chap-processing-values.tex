@@ -63,3 +63,33 @@ to ``var N-1'' in \refFig{fig-process-values} are the outputs of the
 \texttt{multiple-to-fixed-instruction} that is being replaced.
 
 \section{Replacing the \texttt{fixed-to-multiple-instruction}}
+
+Clients that would like to use this technique for processing return
+values would have a HIR transformation that replaces the
+\texttt{fixed-to-multiple-instruction}.  Recall that the
+\texttt{fixed-to-multiple-instruction} copies the values of individual
+lexical locations into the distinguished location for multiple values.
+
+The code that replaces the \texttt{fixed-to-multiple-instruction} is
+shown in \refFig{fig-set-values}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-set-values.pdf_t}
+\end{center}
+\caption{\label{fig-set-values}
+Setting return values.}
+\end{figure}
+
+In \refFig{fig-process-values}, N is the number of inputs of the
+\texttt{fixed-to-multiple-instruction}.  The
+\texttt{initialize-values-instruction} takes has a fixnum input that
+initializes the distinguished values location to contain N values.
+
+Following the initialization are N occurrences of the
+\texttt{set-return-value-instruction}, each taking as an input a
+fixnum indicating the index of the value, and the corresponding input
+of the \texttt{fixed-to-multiple-instruction}.  If there are no
+inputs, i.e. if no values are to be returned, there is nevertheless
+one occurrence of the \texttt{set-return-value-instruction} with
+inputs 0 and the constant \texttt{nil}.
