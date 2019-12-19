@@ -17,6 +17,8 @@ advantages:
   etc.
 \end{itemize}
 
+\section{Replacing the \texttt{multiple-to-fixed-instruction}}
+
 Clients that would like to use this technique for processing return
 values would have a HIR transformation that replaces the
 \texttt{multiple-to-fixed-instruction}.  Recall that the
@@ -59,3 +61,5 @@ index in the distinguished values location and assigns that value to
 the lexical location of its output.  The locations labeled ``var 0''
 to ``var N-1'' in \refFig{fig-process-values} are the outputs of the
 \texttt{multiple-to-fixed-instruction} that is being replaced.
+
+\section{Replacing the \texttt{fixed-to-multiple-instruction}}
