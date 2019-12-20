@@ -10,8 +10,6 @@
     sicl-ast-to-hir:breakpoint-instruction
     cleavir-ir:funcall-instruction
     cleavir-ir:return-instruction
-    cleavir-ir:multiple-to-fixed-instruction
-    cleavir-ir:fixed-to-multiple-instruction
     cleavir-ir:argument-instruction
     cleavir-ir:compute-argument-count-instruction
     cleavir-ir:unreachable-instruction
