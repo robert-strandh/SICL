@@ -1,13 +1,19 @@
 (cl:in-package #:cleavir-ir)
 
-;;;; These instruction can be used by implementation that would like
-;;;; to make return-value parsing explicitly represented in HIR code.
+;;;; These instruction can be used by implementations that would like
+;;;; to make return-value processing explicitly represented in HIR
+;;;; code.
 ;;;;
 ;;;; Such an implementation would translate the
-;;;; MULTIPLE-TO-FIXED-INSTRUCTION to tests comparing the value
+;;;; MULTIPLE-TO-FIXED-INSTRUCTION to tests, comparing the value
 ;;;; computed by the COMPUTE-RETURN-VALUE-COUNT-INSTRUCTION to fixnums
 ;;;; between 0 and the number of fixed outputs of the
 ;;;; MULTIPLE-TO-FIXED-INSTRUCTION.
+;;;;
+;;;; And such an implementation would translate the
+;;;; FIXED-TO-MULTIPLE-INSTRUCTION to an instance of the
+;;;; INITIALIZE-RETURN-VALUES-INSTRUCTION followed by a sequence of
+;;;; instances of the SET-RETURN-VALUE-INSTRUCTION.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
