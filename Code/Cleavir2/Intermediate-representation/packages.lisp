@@ -123,6 +123,8 @@
    #:argument-instruction
    #:compute-return-value-count-instruction
    #:return-value-instruction
+   #:initialize-return-values-instruction
+   #:set-return-value-instruction
    ;; MIR instructions
    #:memref1-instruction
    #:memref2-instruction
