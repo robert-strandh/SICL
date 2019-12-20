@@ -31,8 +31,9 @@
                 nil-location)
        :successor instruction)
      instruction)
-    (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
-                  :inputs '())))
+    (change-class instruction 'cleavir-ir:return-value-instruction
+                  :inputs (list (make-instance 'cleavir-ir:constant-input
+                                  :value 0)))))
 
 (defun eliminate-create-cell-instructions (initial-instruction)
   (cleavir-ir:map-instructions-with-owner
