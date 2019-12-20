@@ -2,28 +2,6 @@
 
 (defmethod interpret-instruction
     (client
-     (instruction cleavir-ir:multiple-to-fixed-instruction)
-     lexical-environment)
-  (let ((outputs (cleavir-ir:outputs instruction))
-        (successor (first (cleavir-ir:successors instruction))))
-    (loop for output in outputs
-          do (setf (lexical-value output lexical-environment)
-                   (pop *global-values-location*)))
-    successor))
-
-(defmethod interpret-instruction
-    (client
-     (instruction cleavir-ir:fixed-to-multiple-instruction)
-     lexical-environment)
-  (let ((inputs (cleavir-ir:inputs instruction))
-        (successor (first (cleavir-ir:successors instruction))))
-    (setf *global-values-location*
-          (loop for input in inputs
-                collect (input-value input lexical-environment)))
-    successor))
-
-(defmethod interpret-instruction
-    (client
      (instruction cleavir-ir:save-values-instruction)
      lexical-environment)
   (let ((output (first (cleavir-ir:outputs instruction))))
