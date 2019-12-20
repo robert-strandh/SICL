@@ -25,6 +25,8 @@
     cleavir-ir:initialize-values-instruction
     cleavir-ir:append-values-instruction
     ;; FIXME: these instructions should be processed
+    cleavir-ir:set-return-value-instruction
+    cleavir-ir:initialize-return-values-instruction
     cleavir-ir:fixnum-divide-instruction))
 
 (defmethod process-instruction (client instruction)
