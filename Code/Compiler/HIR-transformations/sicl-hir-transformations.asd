@@ -12,4 +12,5 @@
    (:file "eliminate-fetch")
    (:file "eliminate-cell-access")
    (:file "hoist-constant-inputs")
-   (:file "eliminate-fixed-to-multiple")))
+   (:file "eliminate-fixed-to-multiple")
+   (:file "eliminate-multiple-to-fixed")))
