@@ -31,7 +31,8 @@
               :output enclose-function-lexical-location)
             instruction)
            (cleavir-ir:insert-instruction-after
-            (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+            (make-instance 'cleavir-ir:return-value-instruction
+              :input (make-instance 'cleavir-ir:constant-input :value 0)
               :output (first (cleavir-ir:outputs instruction)))
             instruction)
            (change-class instruction
