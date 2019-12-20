@@ -12,4 +12,5 @@
            #:eliminate-write-cell-instructions
            #:constants
            #:top-level-enter-instruction
-           #:hoist-constant-inputs))
+           #:hoist-constant-inputs
+           #:eliminate-fixed-to-multiple-instructions))
