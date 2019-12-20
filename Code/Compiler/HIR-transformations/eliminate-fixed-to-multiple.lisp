@@ -21,12 +21,9 @@
                     :outputs '()
                     :dynamic-environment-location dynamic-environment-location)
                   instruction)))
-    (cleavir-ir:insert-instruction-after
-     (make-instance 'cleavir-ir:initialize-return-values-instruction
-       :inputs (list (make-instance 'cleavir-ir:constant-input :value (length inputs)))
-       :outputs '()
-       :dynamic-environment-location dynamic-environment-location)
-     instruction)))
+    (change-class instruction 'cleavir-ir:initialize-return-values-instruction
+                  :inputs (list (make-instance 'cleavir-ir:constant-input :value (length inputs)))
+                  :outputs '())))
 
 (defun eliminate-fixed-to-multiple-instructions (top-level-enter-instruction)
   (let ((fixed-to-multiple-instructions '()))
