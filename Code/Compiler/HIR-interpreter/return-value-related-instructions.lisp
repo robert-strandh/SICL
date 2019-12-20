@@ -37,9 +37,10 @@
     (client
      (instruction cleavir-ir:set-return-value-instruction)
      lexical-environment)
-  (setf (nth (input-value
-              (first (cleavir-ir:inputs instruction)) lexical-environment)
-             *global-values-location*)
-        (input-value
-         (second (cleavir-ir:inputs instruction)) lexical-environment))
+  (let* ((inputs (cleavir-ir:inputs instruction))
+         (index (input-value (first inputs) lexical-environment))
+         (value (input-value (second inputs) lexical-environment)))
+    (if (< index (length *global-values-location*))
+        (setf (nth index *global-values-location*) value)
+        (assert (zerop index))))
   (first (cleavir-ir:successors instruction)))
