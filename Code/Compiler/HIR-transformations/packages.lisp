@@ -13,4 +13,5 @@
            #:constants
            #:top-level-enter-instruction
            #:hoist-constant-inputs
-           #:eliminate-fixed-to-multiple-instructions))
+           #:eliminate-fixed-to-multiple-instructions
+           #:eliminate-multiple-to-fixed-instructions))
