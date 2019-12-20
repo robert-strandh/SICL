@@ -16,6 +16,7 @@
     (sicl-hir-transformations:convert-symbol-value hir)
     (sicl-hir-transformations:convert-set-symbol-value hir)
     (sicl-hir-transformations:hoist-fdefinitions hir)
+    (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
     (sicl-hir-transformations:hoist-constant-inputs hir)
     (cleavir-hir-transformations::process-captured-variables hir)
     (sicl-hir-transformations:eliminate-create-cell-instructions hir)
