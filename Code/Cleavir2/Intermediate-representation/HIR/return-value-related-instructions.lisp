@@ -36,3 +36,34 @@
 
 (defclass return-value-instruction (instruction one-successor-mixin)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction INITIALIZE-RETURN-VALUES-INSTRUCTION.
+;;;
+;;; This instruction has a single input, which must contain a
+;;; non-negative fixnum.  It has no outputs.  It is used to initialize
+;;; the return values from a function, and the input indicates how
+;;; many return values are to be returned.  Some implementations may
+;;; use this instruction to allocate room for return values.
+
+(defclass initialize-return-values-instruction
+    (instruction one-successor-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction SET-RETURN-VALUE-INSTRUCTION.
+;;;
+;;; This instruction has two inputs.  The first input must contain a
+;;; non-negative fixnum that is strictly less than the value given as
+;;; an input to the INITIALIZE-RETURN-VALUES-INSTRUCTION, except that
+;;; in implementations that always return NIL in the first
+;;; return-value position, an input value of 0 is always valid.  The
+;;; second input contains the value to be store in the the
+;;; distinguished values location, at the index corresponding to the
+;;; first input.
+
+(defclass set-return-value-instruction
+    (instruction one-successor-mixin)
+  ())
