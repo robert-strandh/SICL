@@ -32,3 +32,14 @@
          (input-value
           (first (cleavir-ir:inputs instruction)) lexical-environment)))
   (first (cleavir-ir:successors instruction)))
+
+(defmethod interpret-instruction
+    (client
+     (instruction cleavir-ir:set-return-value-instruction)
+     lexical-environment)
+  (setf (nth (input-value
+              (first (cleavir-ir:inputs instruction)) lexical-environment)
+             *global-values-location*)
+        (input-value
+         (second (cleavir-ir:inputs instruction)) lexical-environment))
+  (first (cleavir-ir:successors instruction)))
