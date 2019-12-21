@@ -8,6 +8,7 @@
   ((:file "packages")
    (:file "generic-functions")
    (:file "variables")
+   (:file "expand-funcall-instructions")
    (:file "cons")
    (:file "utilities")
    (:file "standard-object")
