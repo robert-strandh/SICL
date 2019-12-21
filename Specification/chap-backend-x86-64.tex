@@ -192,10 +192,10 @@ Return from callee to caller with no values:
 \item Return to the caller by executing the RET instruction.
 \end{enumerate}
 
-Return from callee to caller with a $1 - 4$ values:
+Return from callee to caller with a $1 - 5$ values:
 
 \begin{enumerate}
-\item Store the values to return in RAX, RDX, RCX, RSI.
+\item Store the values to return in RAX, RDX, RCX, RSI, R9.
 \item Store the number of values in RDI, represented as a fixnum.
 \item Store the value of \texttt{RBP}$ - 8$ in RSP so that the stack frame
   contains only the return address.  To accomplish this effect, the
@@ -203,13 +203,11 @@ Return from callee to caller with a $1 - 4$ values:
 \item Return to the caller by executing the RET instruction.
 \end{enumerate}
 
-Return from callee to caller with more than $4$ values:
+Return from callee to caller with more than $5$ values:
 
 \begin{enumerate}
-\item Store the first $4$ values to return in RAX, RDX, RCX, RSI.
-\item Access the \emph{thread} object in the dynamic environment in
-  order to obtain an address to be used for the remaining return
-  values and put that address in R8.
+\item Store the first $5$ values to return in RAX, RDX, RCX, RSI, R9.
+\item Store the remaining (up to 15) values in [RBP-8], [RBP-16], etc.
 \item Store the number of values in RDI, represented as a fixnum.
 \item Store the value of \texttt{RBP}$ - 8$ in RSP so that the stack frame
   contains only the return address.  To accomplish this effect, the
