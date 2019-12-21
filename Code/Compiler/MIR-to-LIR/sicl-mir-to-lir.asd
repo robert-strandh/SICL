@@ -12,5 +12,6 @@
    (:file "save-arguments")
    (:file "process-instructions")
    (:file "arguments")
+   (:file "funcall")
    (:file "mir-to-lir")))
 
