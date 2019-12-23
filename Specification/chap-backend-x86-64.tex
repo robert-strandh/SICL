@@ -337,6 +337,14 @@ A call to this generic function returns the cleanup thunk of
 \textit{unwind-protect-entry} that was supplied as the value of the
 initarg \texttt{:cleanup-thunk} when the entry was created.
 
+\Defclass {multiple-values-entry}
+
+This class is a subclass of the class named
+\texttt{dynamic-environment-entry}.  It is used to store a sequence of
+multiple values when the registers and stack entries for this purpose
+are insufficient.  In particular, \texttt{multiple-value-prog1} and
+\texttt{multiple-value-call} may need one or more of these entries.
+
 \texttt{catch} is implemented as a call to a function.  This function
 establishes a \texttt{catch} tag and calls a thunk containing the body
 of the \texttt{catch} form.
