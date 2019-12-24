@@ -3,7 +3,9 @@
 (defsystem #:sicl-mir-to-lir
   :depends-on (#:cleavir2-lir
                #:cleavir2-mir
-               #:cleavir2-hir)
+               #:cleavir2-hir
+               #:sicl-ast-to-hir
+               #:sicl-hir-to-mir)
   :serial t
   :components
   ((:file "packages")
