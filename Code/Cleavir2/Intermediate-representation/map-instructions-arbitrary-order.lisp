@@ -28,7 +28,6 @@
 	(register-if-unvisited initial-instruction)
 	(loop until (null instructions-to-process)
 	      do (let ((instruction (pop instructions-to-process)))
-		   (funcall function instruction)
 		   (when (typep instruction 'cleavir-ir:enclose-instruction)
 		     ;; When the instruction is an ENCLOSE-INSTRUCTION,
 		     ;; we must also account for the CODE slot of the
@@ -40,7 +39,9 @@
 		   ;; ultimately, unless, of course, it has already been
 		   ;; processed.
 		   (loop for successor in (successors instruction)
-			 do (register-if-unvisited successor))))))))
+			 do (register-if-unvisited successor)))))
+      (loop for instruction being each hash-key of visited-instructions
+            do (funcall function instruction)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
