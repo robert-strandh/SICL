@@ -50,12 +50,8 @@
                            :successors (list false-branch)))))))
 
 (defun eliminate-multiple-to-fixed-instructions (top-level-enter-instruction)
-  (let ((multiple-to-fixed-instructions '()))
-    (cleavir-ir:map-instructions-arbitrary-order
-     (lambda (instruction)
-       (when (typep instruction 'cleavir-ir:multiple-to-fixed-instruction)
-         (push instruction multiple-to-fixed-instructions)))
-     top-level-enter-instruction)
-    (loop for instruction in multiple-to-fixed-instructions
-          do (eliminate-multiple-to-fixed-instruction instruction))))
-
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (when (typep instruction 'cleavir-ir:multiple-to-fixed-instruction)
+       (eliminate-multiple-to-fixed-instruction instruction)))
+   top-level-enter-instruction))
