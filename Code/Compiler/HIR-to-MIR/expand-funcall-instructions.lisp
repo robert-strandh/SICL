@@ -31,13 +31,8 @@
                  (rest (cleavir-ir:inputs instruction))))))
 
 (defun expand-funcall-instructions (top-level-enter-instruction)
-  (let ((funcall-instructions '()))
-    (cleavir-ir:map-instructions-arbitrary-order
-     (lambda (instruction)
-       (when (typep instruction 'cleavir-ir:funcall-instruction)
-         (push instruction funcall-instructions)))
-     top-level-enter-instruction)
-    (loop for instruction in funcall-instructions
-          do (expand-one-funcall-instruction instruction))))
-              
-           
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (when (typep instruction 'cleavir-ir:funcall-instruction)
+       (expand-one-funcall-instruction instruction)))
+   top-level-enter-instruction))
