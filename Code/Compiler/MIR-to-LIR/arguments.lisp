@@ -13,3 +13,30 @@
      (first (cleavir-ir:outputs instruction))
      lexical-locations)))
 
+(defmethod process-instruction
+    ((instruction cleavir-ir:argument-instruction)
+     lexical-locations)
+  (let ((shift-count-input
+          (make-instance 'cleavir-ir:immediate-input :value 2)))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:assignment-instruction
+       :input (first (cleavir-ir:inputs instruction))
+       :output *rax*)
+     instruction)
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:shift-left-instruction
+       :inputs (list *rax* shift-count-input)
+       :output *rax*)
+     instruction)
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:assignment-instruction
+       :input *rsp*
+       :output *r11*)
+     instruction)
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:unsigned-add-instruction
+       :inputs (list *r11* *rax*)
+       :output *r11*)
+     instruction)
+    (change-class instruction 'cleavir-ir:memref1-instruction
+                  :address *r11*)))
