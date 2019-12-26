@@ -45,7 +45,7 @@
 ;;;;   17.2 Add 8 to R12.
 ;;;;
 ;;;; At this point, all the arguments are on top of the stack, in
-;;;; order.  Between the arguments an the base pointer there is now
+;;;; order.  Between the arguments and the base pointer there is now
 ;;;; room for the lexical variables.
 
 (defun insert-while-loop (enter-instruction)
