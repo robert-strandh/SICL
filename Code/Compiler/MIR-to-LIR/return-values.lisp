@@ -35,3 +35,10 @@
             (change-class instruction 'cleavir-ir:memset1-instruction
                           :address *r11*
                           :value value-location))))))
+
+(defmethod process-instruction
+    ((instruction cleavir-ir:compute-return-value-count-instruction)
+     lexical-locations)
+  (change-class instruction 'cleavir-ir:assignment-instruction
+                :input *rdi*))
+
