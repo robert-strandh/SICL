@@ -42,3 +42,28 @@
   (change-class instruction 'cleavir-ir:assignment-instruction
                 :input *rdi*))
 
+(defmethod process-instruction
+    ((instruction cleavir-ir:return-value-instruction)
+     lexical-locations)
+  (let ((input (first (cleavir-ir:inputs instruction))))
+    (assert (typep input 'cleavir-ir:constant-input))
+    (let ((index (cleavir-ir:value input)))
+      (if (< index 5)
+          (let ((register
+                  (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
+            (change-class instruction 'cleavir-ir:assignment-instruction
+                          :input register))
+          (let ((offset-input (make-instance 'cleavir-ir:immediate-input
+                                :value (* 8 (- index 4)))))
+            (cleavir-ir:insert-instruction-before
+             (make-instance 'cleavir-ir:assignment-instruction
+               :input *rsp*
+               :output *r11*)
+             instruction)
+            (cleavir-ir:insert-instruction-before
+             (make-instance 'cleavir-ir:unsigned-sub-instruction
+               :inputs (list *r11* offset-input)
+               :output *r11*)
+             instruction)
+            (change-class instruction 'cleavir-ir:memref1-instruction
+                          :address *r11*))))))
