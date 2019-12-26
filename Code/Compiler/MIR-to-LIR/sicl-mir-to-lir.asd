@@ -15,6 +15,7 @@
    (:file "process-instructions")
    (:file "arguments")
    (:file "funcall")
+   (:file "return")
    (:file "return-values")
    (:file "mir-to-lir")))
 
