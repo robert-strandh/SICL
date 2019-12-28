@@ -6,14 +6,20 @@
   (change-class instruction 'cleavir-ir:assignment-instruction
                 :output *rdi*))
 
+;;; We can only handle immediate inputs for now.  Recall that the
+;;; immediate input was converted from a constant input, and the
+;;; constant input was a non-negative fixnum indicating the index.
+;;; That fixnum was converted to an immediate input by HIR-to-MIR, so
+;;; its value is now twice what it used to be.  For that reason, we
+;;; essentially need to convert it back before processing it.
+
 (defmethod process-instruction
     ((instruction cleavir-ir:set-return-value-instruction)
      lexical-locations)
   (multiple-value-bind (index-input value-location)
       (cleavir-ir:inputs instruction)
-    ;; We can only handle constant inputs for now.
-    (assert (typep index-input 'cleavir-ir:constant-input))
-    (let ((index (cleavir-ir:value index-input)))
+    (assert (typep index-input 'cleavir-ir:immediate-input))
+    (let ((index (ash (cleavir-ir:value index-input) -1)))
       (if (< index 5)
           (let ((register
                   (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
@@ -46,8 +52,8 @@
     ((instruction cleavir-ir:return-value-instruction)
      lexical-locations)
   (let ((input (first (cleavir-ir:inputs instruction))))
-    (assert (typep input 'cleavir-ir:constant-input))
-    (let ((index (cleavir-ir:value input)))
+    (assert (typep input 'cleavir-ir:immediate-input))
+    (let ((index (ash (cleavir-ir:value input) -1)))
       (if (< index 5)
           (let ((register
                   (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
