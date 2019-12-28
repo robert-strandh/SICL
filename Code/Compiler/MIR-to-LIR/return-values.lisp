@@ -16,7 +16,7 @@
 (defmethod process-instruction
     ((instruction cleavir-ir:set-return-value-instruction)
      lexical-locations)
-  (multiple-value-bind (index-input value-location)
+  (destructuring-bind (index-input value-location)
       (cleavir-ir:inputs instruction)
     (assert (typep index-input 'cleavir-ir:immediate-input))
     (let ((index (ash (cleavir-ir:value index-input) -1)))
