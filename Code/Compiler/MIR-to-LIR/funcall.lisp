@@ -10,7 +10,7 @@
                   :inputs (list *rsp* constant-8)
                   :output *rsp*)
                 instruction)))
-    (loop for argument in (subseq inputs 3 (+ 3 5))
+    (loop for argument in (subseq inputs 3 (min (+ 3 5) (length inputs)))
           for register in (list *rdi* *rsi* *rdx* *rcx* *r8*)
           do (cleavir-ir:insert-instruction-before
               (make-instance 'cleavir-ir:assignment-instruction
