@@ -24,8 +24,8 @@
           (let ((register
                   (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
             (change-class instruction 'cleavir-ir:assignment-instruction
-                          :input value-location
-                          :output register))
+                          :inputs (list value-location)
+                          :outputs (list register)))
           (let ((offset-input (make-instance 'cleavir-ir:immediate-input
                                 :value (* 8 (- index 5)))))
             (cleavir-ir:insert-instruction-before
@@ -58,7 +58,7 @@
           (let ((register
                   (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
             (change-class instruction 'cleavir-ir:assignment-instruction
-                          :input register))
+                          :inputs (list register)))
           (let ((offset-input (make-instance 'cleavir-ir:immediate-input
                                 :value (* 8 (- index 4)))))
             (cleavir-ir:insert-instruction-before
