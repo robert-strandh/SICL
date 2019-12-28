@@ -9,32 +9,36 @@ chapter, we describe only the support that \sysname{} contains in
 order to make such a debugger possible.
 
 When a function is compiled with a high value of the \texttt{debug}
-quality, the execution of that function starts by loading a
-\emph{flag} from the thread instance into a lexical variable.  During
-compilation, that lexical variable is subject to register allocation
-just like any other lexical variable.  This flag indicates whether the
-current thread is being debugged.
+quality%
+\footnote{In fact, given the small cost of this feature, we might
+  include it even though the value of the \texttt{debug} quality is
+  low.},
+the execution of that function starts by loading a \emph{flag} that is
+specific to the thread into a lexical variable.  How that flag is
+passed has yet to be determined, but it could be in an ordinary
+register, in a floating-point register, or as a condition code.  This
+flag indicates whether the
+current thread is being debugged.  The function contains two versions
+of the code, one that does its execution normally and one that has a
+small test before and after the evaluation of each source-level form%
+\footnote{This idea was suggested by Michael Raskin.}.
+The flag determines which version is chosen.  Thus, when the thread is
+not being debugged, the only overhead is a single test at the
+beginning of the function.
 
-The compiler inserts a call to a small subroutine before and after
-every form to be evaluated.  The subroutine does not use the full
-\commonlisp{} function-call protocol.  Instead, it is just a very fast
-call that can be done with a \texttt{jsr} instruction (or equivalent)
-on must architectures.
+In the debug version of the function body the compiler inserts a call
+to a small subroutine before and after every form to be evaluated.
+The subroutine does not use the full \commonlisp{} function-call
+protocol.  Instead, it is just a very fast call that can be done with
+a \texttt{jsr} instruction (or equivalent) on must architectures.
 
-The subroutine starts by testing the flag to see whether the thread is
-being debugged.  Under normal circumstances, the value of the flag is
-\emph{false}, so the subroutine returns, and normal execution of the
-function code is resumed.  If the flag should turn out to be
-\texttt{true}, a second test is performed to see whether there is an
-action to be taken for this particular value of the program counter.
-
-This test is also done in two steps.  In the first step, the value of
-the program counter is taken modulo some reasonably large value such
-as 256, and a bit-table in the thread instance is queried to see
-whether the corresponding entry is a 1.  If it is 0, again, the
-subroutine again returns.  This first step will slow down every
-debugged thread a little bit, but most of the time, the value will be
-0, so again, normal function execution is resumed.
+The subroutine does a test in two steps.  In the first step, the value
+of the program counter is taken modulo some reasonably large value
+such as 256, and a bit-table in the thread instance is queried to see
+whether the corresponding entry is a 1.  If it is 0, the subroutine
+simply returns.  This first step will slow down every debugged thread
+a little bit, but most of the time, the value will be 0, and then,
+normal function execution is resumed.
 
 If the entry in the bit table turns out to be 1, then the final test
 is made.  The program counter is checked against a hash table in the
