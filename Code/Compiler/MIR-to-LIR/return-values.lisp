@@ -1,10 +1,10 @@
 (cl:in-package #:sicl-mir-to-lir)
 
 (defmethod process-instruction
-    ((instruction cleavir-ir:initialize-values-instruction)
+    ((instruction cleavir-ir:initialize-return-values-instruction)
      lexical-locations)
   (change-class instruction 'cleavir-ir:assignment-instruction
-                :output *rdi*))
+                :outputs (list *rdi*)))
 
 ;;; We can only handle immediate inputs for now.  Recall that the
 ;;; immediate input was converted from a constant input, and the
