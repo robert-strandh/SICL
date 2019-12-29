@@ -66,11 +66,15 @@
         (shift-count-input (make-instance 'cleavir-ir:immediate-input
                              :value shift-count)))
     (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:shift-left-instruction
-       :shifted-input slot-number-location
-       :shift-count shift-count-input
-       :output offset-location
-       :successor instruction)
+     (if (typep slot-number-location 'cleavir-ir:immediate-input)
+         (make-instance 'cleavir-ir:assignment-instruction
+           :input (make-instance 'cleavir-ir:immediate-input
+                    :value (ash (cleavir-ir:value slot-number-location) shift-count))
+           :output offset-location)
+         (make-instance 'cleavir-ir:shift-left-instruction
+           :shifted-input slot-number-location
+           :shift-count shift-count-input
+           :output offset-location))
      instruction)
     offset-location))
 
