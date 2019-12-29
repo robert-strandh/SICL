@@ -5,5 +5,6 @@
                #:cluster)
   :components
   ((:file "packages")
+   (:file "translate-data")
    (:file "translate-instruction")
    (:file "generate-code")))
