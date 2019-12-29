@@ -27,7 +27,7 @@
     (instruction register lexical-location lexical-locations)
   (let ((immediate-input
           (make-instance 'cleavir-ir:immediate-input
-            :value (+ (gethash lexical-location lexical-locations) 8))))
+            :value (* (1+ (gethash lexical-location lexical-locations)) 8))))
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:memset1-instruction
        :inputs (list *r11* register)
