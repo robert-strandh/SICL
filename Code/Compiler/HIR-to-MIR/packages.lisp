@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-hir-to-mir
   (:use #:common-lisp)
-  (:export #:hir-to-mir))
+  (:export #:hir-to-mir
+           #:entry-point-input))
