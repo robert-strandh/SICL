@@ -3,6 +3,6 @@
 (defmethod process-instruction
     ((instruction cleavir-ir:assignment-instruction) lexical-locations)
   (call-next-method)
-  (change-class instruction 'nop-instruction
+  (change-class instruction 'cleavir-ir:nop-instruction
                 :inputs '()
                 :outputs '()))
