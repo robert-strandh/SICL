@@ -19,5 +19,6 @@
    (:file "return")
    (:file "return-values")
    (:file "divide")
+   (:file "memory")
    (:file "mir-to-lir")))
 
