@@ -2,8 +2,9 @@
 
 (defgeneric process-instruction (instruction lexical-locations))
 
-(defmethod process-instruction (instruction lexical-locations)
-  nil)
+(defmethod process-instruction
+    ((instruction cleavir-ir:enter-instruction) lexical-locations)
+  (setf (cleavir-ir:outputs instruction) '()))
 
 ;;; Return a list of instructions that, when executed, loads the
 ;;; address of LEXICAL-LOCATION into TO-REGISTER.
@@ -58,74 +59,79 @@
   (let ((inputs (cleavir-ir:inputs instruction))
         (outputs (cleavir-ir:outputs instruction)))
     (assert (<= 1 (length inputs) 2))
-    (assert (= (length outputs) 1))
+    (assert (<= 0 (length outputs) 1))
     (if (typep (first inputs) 'cleavir-ir:lexical-location)
-        (if (typep (first outputs) 'cleavir-ir:lexical-location)
-            ;; We use *r11* as an intermediate register
-            (progn (insert-memref-before
-                    instruction
-                    (first inputs)
-                    *r11*
-                    *rax*
-                    lexical-locations)
-                   (setf (first inputs) *r11*)
-                   (insert-memset-after
-                    instruction
-                    *r11*
-                    (first outputs)
-                    *rax*
-                    lexical-locations)
-                   (setf (first outputs) *r11*)
-                   (when (and (= (length inputs) 2)
-                              (typep (second inputs) 'cleavir-ir:lexical-location))
-                     (insert-memref-before
-                      instruction
-                      (second inputs)
-                      *rax*
-                      *rax*
-                      lexical-locations)))
+        (cond ((null outputs)
+               nil)
+              ((typep (first outputs) 'cleavir-ir:lexical-location)
+               ;; We use *r11* as an intermediate register
+               (insert-memref-before
+                instruction
+                (first inputs)
+                *r11*
+                *rax*
+                lexical-locations)
+               (setf (first inputs) *r11*)
+               (insert-memset-after
+                instruction
+                *r11*
+                (first outputs)
+                *rax*
+                lexical-locations)
+               (setf (first outputs) *r11*)
+               (when (and (= (length inputs) 2)
+                          (typep (second inputs) 'cleavir-ir:lexical-location))
+                 (insert-memref-before
+                  instruction
+                  (second inputs)
+                  *rax*
+                  *rax*
+                  lexical-locations)))
             ;; We use the output register as an intermediate register
-            (progn (insert-memref-before
-                    instruction
-                    (first inputs)
-                    (first outputs)
-                    *rax*
-                    lexical-locations)
-                   (setf (first inputs) (first outputs))
-                   (when (and (= (length inputs) 2)
-                              (typep (second inputs) 'cleavir-ir:lexical-location))
-                     (insert-memref-before
-                      instruction
-                      (second inputs)
-                      *rax*
-                      *rax*
-                      lexical-locations))))
-        (if (typep (first outputs) 'cleavir-ir:lexical-location)
-            (progn (cleavir-ir:insert-instruction-before
-                    (make-instance 'cleavir-ir:assignment-instruction
-                      :input (first inputs)
-                      :output *r11*)
-                    instruction)
-                   (setf (first inputs) *r11*)
-                   (insert-memset-after
-                    instruction
-                    *r11*
-                    (first outputs)
-                    *rax*
-                    lexical-locations)
-                   (setf (first outputs) *r11*)
-                   (when (and (= (length inputs) 2)
-                              (typep (second inputs) 'cleavir-ir:lexical-location))
-                     (insert-memref-before
-                      instruction
-                      (second inputs)
-                      *rax*
-                      *rax*
-                      lexical-locations)))
-            (unless (eq (first inputs) (first outputs))
-              (cleavir-ir:insert-instruction-before
-               (make-instance 'cleavir-ir:assignment-instruction
-                 :input (first inputs)
-                 :output (first outputs))
-               instruction)
-              (setf (first inputs) (first outputs)))))))
+            (t (insert-memref-before
+                instruction
+                (first inputs)
+                (first outputs)
+                *rax*
+                lexical-locations)
+               (setf (first inputs) (first outputs))
+               (when (and (= (length inputs) 2)
+                          (typep (second inputs) 'cleavir-ir:lexical-location))
+                 (insert-memref-before
+                  instruction
+                  (second inputs)
+                  *rax*
+                  *rax*
+                  lexical-locations))))
+        (cond ((null outputs)
+               nil)
+              ((typep (first outputs) 'cleavir-ir:lexical-location)
+               (cleavir-ir:insert-instruction-before
+                (make-instance 'cleavir-ir:assignment-instruction
+                  :input (first inputs)
+                  :output *r11*)
+                instruction)
+               (setf (first inputs) *r11*)
+               (insert-memset-after
+                instruction
+                *r11*
+                (first outputs)
+                *rax*
+                lexical-locations)
+               (setf (first outputs) *r11*)
+               (when (and (= (length inputs) 2)
+                          (typep (second inputs) 'cleavir-ir:lexical-location))
+                 (insert-memref-before
+                  instruction
+                  (second inputs)
+                  *rax*
+                  *rax*
+                  lexical-locations)))
+              (t
+               (unless (eq (first inputs) (first outputs))
+                 (cleavir-ir:insert-instruction-before
+                  (make-instance 'cleavir-ir:assignment-instruction
+                    :input (first inputs)
+                    :output (first outputs))
+                  instruction)
+                 (setf (first inputs) (first outputs))))))))
