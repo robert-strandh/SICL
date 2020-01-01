@@ -13,6 +13,7 @@
    (:file "move-return-address")
    (:file "save-arguments")
    (:file "process-instructions")
+   (:file "assignment")
    (:file "arguments")
    (:file "funcall")
    (:file "return")
