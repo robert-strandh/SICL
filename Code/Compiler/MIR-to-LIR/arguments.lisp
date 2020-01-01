@@ -9,8 +9,9 @@
                  'cleavir-ir:register-location)
     (insert-memset-after
      instruction
-     *r11*
+     *r9*
      (first (cleavir-ir:outputs instruction))
+     *rax*
      lexical-locations)))
 
 (defmethod process-instruction
