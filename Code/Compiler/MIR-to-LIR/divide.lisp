@@ -9,7 +9,7 @@
        :input (make-instance 'cleavir-ir:immediate-input :value 0)
        :output *rdx*)
      instruction)
-    (cond ((typep (first inputs) 'cleavir-ir:lexical-location)
+    (cond ((lexical-p (first inputs))
            (insert-memref-before
             instruction
             (first inputs)
@@ -24,7 +24,7 @@
               :input (first inputs)
               :output *rax*)
             instruction)))
-    (when (typep (second inputs) 'cleavir-ir:lexical-location)
+    (when (lexical-p (second inputs))
       (insert-memref-before
        instruction
        (second inputs)
@@ -32,7 +32,7 @@
        *r11*
        lexical-locations)
       (setf (second inputs) *rcx*))
-    (cond ((typep (first outputs) 'cleavir-ir:lexical-location)
+    (cond ((lexical-p (first outputs))
            (insert-memset-after
             instruction
             *rax*
@@ -47,7 +47,7 @@
               :input *rax*
               :output (first outputs))
             instruction)))
-    (cond ((typep (second outputs) 'cleavir-ir:lexical-location)
+    (cond ((lexical-p (second outputs))
            (insert-memset-after
             instruction
             *rdx*

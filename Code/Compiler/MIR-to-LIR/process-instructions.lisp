@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-mir-to-lir)
 
+(defun lexical-p (datum)
+  (or (typep datum 'cleavir-ir:lexical-location)
+      (typep datum 'cleavir-ir:raw-integer)))
+
 (defgeneric process-instruction (instruction lexical-locations))
 
 (defmethod process-instruction
@@ -60,10 +64,10 @@
         (outputs (cleavir-ir:outputs instruction)))
     (assert (<= 1 (length inputs) 2))
     (assert (<= 0 (length outputs) 1))
-    (if (typep (first inputs) 'cleavir-ir:lexical-location)
+    (if (lexical-p (first inputs))
         (cond ((null outputs)
                nil)
-              ((typep (first outputs) 'cleavir-ir:lexical-location)
+              ((lexical-p (first outputs))
                ;; We use *r11* as an intermediate register
                (insert-memref-before
                 instruction
@@ -80,7 +84,7 @@
                 lexical-locations)
                (setf (first outputs) *r11*)
                (when (and (= (length inputs) 2)
-                          (typep (second inputs) 'cleavir-ir:lexical-location))
+                          (lexical-p (second inputs)))
                  (insert-memref-before
                   instruction
                   (second inputs)
@@ -96,7 +100,7 @@
                 lexical-locations)
                (setf (first inputs) (first outputs))
                (when (and (= (length inputs) 2)
-                          (typep (second inputs) 'cleavir-ir:lexical-location))
+                          (lexical-p (second inputs)))
                  (insert-memref-before
                   instruction
                   (second inputs)
@@ -105,7 +109,7 @@
                   lexical-locations))))
         (cond ((null outputs)
                nil)
-              ((typep (first outputs) 'cleavir-ir:lexical-location)
+              ((lexical-p (first outputs))
                (cleavir-ir:insert-instruction-before
                 (make-instance 'cleavir-ir:assignment-instruction
                   :input (first inputs)
@@ -120,7 +124,7 @@
                 lexical-locations)
                (setf (first outputs) *r11*)
                (when (and (= (length inputs) 2)
-                          (typep (second inputs) 'cleavir-ir:lexical-location))
+                          (lexical-p (second inputs)))
                  (insert-memref-before
                   instruction
                   (second inputs)

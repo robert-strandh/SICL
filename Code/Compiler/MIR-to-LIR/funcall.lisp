@@ -29,18 +29,18 @@
                   :inputs (list *rsp* constant-8)
                   :output *rsp*)
                 instruction)
-               (when (typep argument 'cleavir-ir:lexical-location)
+               (when (lexical-p argument)
                  (load-lexical argument *r11* instruction lexical-locations))
                (cleavir-ir:insert-instruction-before
                 (make-instance 'cleavir-ir:memset1-instruction
                   :address *rsp*
-                  :value (if (typep argument 'cleavir-ir:lexical-location)
+                  :value (if (lexical-p argument)
                              *r11*
                              argument))
                 instruction)))
     (loop for argument in (subseq inputs 3 (min (+ 3 5) (length inputs)))
           for register in (list *rdi* *rsi* *rdx* *rcx* *r8*)
-          do (if (typep argument 'cleavir-ir:lexical-location)
+          do (if (lexical-p argument)
                  (load-lexical argument register instruction lexical-locations)
                  (cleavir-ir:insert-instruction-before
                   (make-instance 'cleavir-ir:assignment-instruction
