@@ -55,28 +55,68 @@
           do (cleavir-ir:insert-instruction-after load-instruction instruction))))
 
 (defmethod process-instruction (instruction lexical-locations)
-  (loop for inputs = (cleavir-ir:inputs instruction)
-          then (rest inputs)
-        for register in (list *r11* *r12*)
-        until (null inputs)
-        unless (or (typep (first inputs) 'cleavir-ir:register-location)
-                   (typep (first inputs) 'cleavir-ir:immediate-input))
-          do (insert-memref-before
-              instruction
-              (first inputs)
-              register
-              *r11*
-              lexical-locations)
-             (setf (first inputs) register))
-  (loop for outputs = (cleavir-ir:outputs instruction)
-          then (rest outputs)
-        for register in (list *r11* *r12*)
-        until (null outputs)
-        unless (typep (first outputs) 'cleavir-ir:register-location)
-          do (insert-memset-after
-              instruction
-              register
-              (first outputs)
-              *r11*
-              lexical-locations)
-             (setf (first outputs) register)))
+  (let ((inputs (cleavir-ir:inputs instruction))
+        (outputs (cleavir-ir:outputs instruction)))
+    (if (typep (first inputs) 'cleavir-ir:lexical-location)
+        (if (typep (first outputs) 'cleavir-ir:lexical-location)
+            ;; We use *r11* as an intermediate register
+            (progn (insert-memref-before
+                    instruction
+                    (first inputs)
+                    *r11*
+                    *rax*
+                    lexical-locations)
+                   (setf (first inputs) *r11*)
+                   (insert-memset-after
+                    instruction
+                    *r11*
+                    (first outputs)
+                    *rax*
+                    lexical-locations)
+                   (setf (first outputs) *r11*)
+                   (when (and (= (length inputs) 2)
+                              (typep (second inputs) 'cleavir-ir:lexical-location))
+                     (insert-memref-before
+                      instruction
+                      (second inputs)
+                      *rax*
+                      *rax*
+                      lexical-locations)))
+            ;; We use the output register as an intermediate register
+            (progn (insert-memref-before
+                    instruction
+                    (first inputs)
+                    (first outputs)
+                    *rax*
+                    lexical-locations)
+                   (setf (first inputs) (first outputs))
+                   (when (and (= (length inputs) 2)
+                              (typep (second inputs) 'cleavir-ir:lexical-location))
+                     (insert-memref-before
+                      instruction
+                      (second inputs)
+                      *rax*
+                      *rax*
+                      lexical-locations))))
+        (if (typep (first outputs) 'cleavir-ir:lexical-location)
+            (progn (cleavir-ir:insert-instruction-before
+                    (make-instance 'cleavir-ir:assignment-instruction
+                      :input (first inputs)
+                      :output *r11*)
+                    instruction)
+                   (setf (first inputs) *r11*)
+                   (insert-memset-after
+                    instruction
+                    *r11*
+                    (first outputs)
+                    *rax*
+                    lexical-locations)
+                   (setf (first outputs) *r11*)
+                   (when (and (= (length inputs) 2)
+                              (typep (second inputs) 'cleavir-ir:lexical-location))
+                     (insert-memref-before
+                      instruction
+                      (second inputs)
+                      *rax*
+                      *rax*
+                      lexical-locations)))))))
