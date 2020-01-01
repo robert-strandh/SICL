@@ -57,6 +57,8 @@
 (defmethod process-instruction (instruction lexical-locations)
   (let ((inputs (cleavir-ir:inputs instruction))
         (outputs (cleavir-ir:outputs instruction)))
+    (assert (<= 1 (length inputs) 2))
+    (assert (= (length outputs) 1))
     (if (typep (first inputs) 'cleavir-ir:lexical-location)
         (if (typep (first outputs) 'cleavir-ir:lexical-location)
             ;; We use *r11* as an intermediate register
