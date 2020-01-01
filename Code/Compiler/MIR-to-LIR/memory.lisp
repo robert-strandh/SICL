@@ -18,7 +18,8 @@
        *r11*
        (first outputs)
        *rax*
-       lexical-locations))))
+       lexical-locations)
+      (setf (first outputs) *r11*))))
 
 (defmethod process-instruction
     ((instruction cleavir-ir:memset1-instruction) lexical-locations)
@@ -37,4 +38,5 @@
        (second inputs)
        *rax*
        *rax*
-       lexical-locations))))
+       lexical-locations)
+      (setf (second inputs) *rax*))))
