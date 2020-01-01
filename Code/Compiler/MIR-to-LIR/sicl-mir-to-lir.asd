@@ -18,5 +18,6 @@
    (:file "funcall")
    (:file "return")
    (:file "return-values")
+   (:file "divide")
    (:file "mir-to-lir")))
 
