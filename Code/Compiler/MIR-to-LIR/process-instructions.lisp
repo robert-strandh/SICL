@@ -121,4 +121,11 @@
                       (second inputs)
                       *rax*
                       *rax*
-                      lexical-locations)))))))
+                      lexical-locations)))
+            (unless (eq (first inputs) (first outputs))
+              (cleavir-ir:insert-instruction-before
+               (make-instance 'cleavir-ir:assignment-instruction
+                 :input (first inputs)
+                 :output (first outputs))
+               instruction)
+              (setf (first inputs) (first outputs)))))))
