@@ -40,4 +40,13 @@
        :output *r11*)
      instruction)
     (change-class instruction 'cleavir-ir:memref1-instruction
-                  :address *r11*)))
+                  :address *r11*))
+  (let ((outputs (cleavir-ir:outputs instruction)))
+    (when (lexical-p (first outputs))
+      (insert-memset-after
+       instruction
+       *r11*
+       (first outputs)
+       *rax*
+       lexical-locations)
+      (setf (first outputs) *r11*))))
