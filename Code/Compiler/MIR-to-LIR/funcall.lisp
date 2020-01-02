@@ -65,6 +65,13 @@
        :input (third inputs)
        :output *rbx*)
      instruction)
-    ;; Leave only the entry point as input
+    ;; Store the entry point in RAX
+    (insert-memref-before
+     instruction
+     (first inputs)
+     *rax*
+     *rax*
+     lexical-locations)
+    ;; Make RAX the only input.
     (setf (cleavir-ir:inputs instruction)
-          (list (first inputs)))))
+          (list *rax*))))
