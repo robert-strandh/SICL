@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-system-construction
-  :depdends-on ()
+  :depends-on ()
   :serial t
   :components
   ((:file "packages")
