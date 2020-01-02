@@ -54,17 +54,31 @@
   (do-arguments instruction lexical-locations)
   (let ((inputs (cleavir-ir:inputs instruction)))
      ;; Store the static environment to R10.
-    (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:assignment-instruction
-       :input (second inputs)
-       :output *r10*)
-     instruction)
+    (if (lexical-p (second inputs))
+        (insert-memref-before
+         instruction
+         (second inputs)
+         *r10*
+         *r11*
+         lexical-locations)
+        (cleavir-ir:insert-instruction-before
+         (make-instance 'cleavir-ir:assignment-instruction
+           :input (second inputs)
+           :output *r10*)
+         instruction))
     ;; Store the dynamic environment to RBX.
-    (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:assignment-instruction
-       :input (third inputs)
-       :output *rbx*)
-     instruction)
+    (if (lexical-p (third inputs))
+        (insert-memref-before
+         instruction
+         (third inputs)
+         *rbx*
+         *r11*
+         lexical-locations)
+        (cleavir-ir:insert-instruction-before
+         (make-instance 'cleavir-ir:assignment-instruction
+           :input (third inputs)
+           :output *rbx*)
+         instruction))
     ;; Store the entry point in RAX
     (insert-memref-before
      instruction
