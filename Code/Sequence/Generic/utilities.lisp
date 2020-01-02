@@ -1,46 +1,52 @@
 (cl:in-package #:sicl-sequence)
 
+(declaim (inline function-designator-function))
+(defun function-designator-function (function-designator)
+  (typecase function-designator
+    (function function-designator)
+    (symbol (coerce function-designator 'function))
+    (t (error 'must-be-function-designator
+              :datum function-designator))))
+
+(defmacro with-predicate ((name predicate) &body body)
+  (let ((f (gensym)))
+    `(let ((,f (function-designator-function ,predicate)))
+       (flet ((,name (x) (funcall ,f x)))
+         ,@body))))
+
 (defmacro with-key-function ((name key) &body body)
-  (let ((e (gensym))
-        (f (gensym)))
+  (let ((f (gensym)))
     (sicl-utilities:once-only (key)
       `(if (null ,key)
-          (flet ((,name (,e) ,e)) ,@body)
-          (let ((,f (if (functionp ,key) ,key (fdefinition ,key))))
-            (flet ((,name (,e) (funcall ,f ,e)))
+           (flet ((,name (x) x))
+             ,@body)
+          (let ((,f (function-designator-function ,key)))
+            (flet ((,name (x) (funcall ,f x)))
               ,@body))))))
 
 (declaim (inline canonicalize-test-and-test-not))
 (defun canonicalize-test-and-test-not (test test-not)
-  (cond ((and (not (null test))
-              (not (null test-not)))
-         (error 'both-test-and-test-not-given
-                :test test
-                :test-not test-not))
-        ((null test)
-         (cond ((null test-not)
-                (values #'eql nil))
-               ((functionp test-not)
-                (values test-not t))
-               (t
-                (values (fdefinition test-not) t))))
-        ((functionp test)
-         (values test nil))
-        (t
-         (values (fdefinition test) nil))))
+  (if (null test)
+      (if (null test-not)
+          (values #'eql nil)
+          (values (function-designator-function test-not) t))
+      (if (null test-not)
+          (values (function-designator-function test) nil)
+          (error 'both-test-and-test-not-given
+                    :test test
+                    :test-not test-not))))
 
 (defmacro with-test-function ((name test test-not) &body body)
-  (let ((e1 (gensym))
-        (e2 (gensym))
-        (f (gensym))
+  (let ((f (gensym))
         (complementp (gensym)))
     (sicl-utilities:once-only (test test-not)
       `(multiple-value-bind (,f ,complementp)
            (canonicalize-test-and-test-not ,test ,test-not)
-         (when ,complementp (setf ,f (complement ,f)))
-         (flet ((,name (,e1 ,e2)
-                  (funcall ,f ,e1 ,e2)))
-           ,@body)))))
+         (if ,complementp
+             (flet ((,name (a b) (not (funcall ,f a b))))
+               ,@body)
+             (flet ((,name (a b) (funcall ,f a b)))
+               ,@body))))))
 
 (defun class-subclasses (class)
   (list* class
