@@ -23,9 +23,19 @@
       (if (< index 5)
           (let ((register
                   (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
-            (change-class instruction 'cleavir-ir:assignment-instruction
-                          :inputs (list value-location)
-                          :outputs (list register)))
+            (if (lexical-p value-location)
+                (progn (insert-memref-before
+                        instruction
+                        value-location
+                        register
+                        *r11*
+                        lexical-locations)
+                       (change-class instruction 'cleavir-ir:nop-instruction
+                                     :inputs '()
+                                     :outputs '()))
+                (change-class instruction 'cleavir-ir:assignment-instruction
+                              :inputs (list value-location)
+                              :outputs (list register))))
           (let ((offset-input (make-instance 'cleavir-ir:immediate-input
                                 :value (* 8 (- index 5)))))
             (cleavir-ir:insert-instruction-before
@@ -38,9 +48,19 @@
                :inputs (list *r11* offset-input)
                :output *r11*)
              instruction)
-            (change-class instruction 'cleavir-ir:memset1-instruction
+            (if (lexical-p value-location)
+                (progn (change-class instruction 'cleavir-ir:memset1-instruction
                           :address *r11*
-                          :value value-location))))))
+                          :value *rax*)
+                       (insert-memref-before
+                        instruction
+                        value-location
+                        *rax*
+                        *r9*
+                        lexical-locations))
+                (change-class instruction 'cleavir-ir:memset1-instruction
+                              :address *r11*
+                              :value value-location)))))))
 
 (defmethod process-instruction
     ((instruction cleavir-ir:compute-return-value-count-instruction)
