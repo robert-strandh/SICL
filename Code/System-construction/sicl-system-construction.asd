@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-system-constructon
+(defsystem #:sicl-system-construction
   :depdends-on ()
   :serial t
   :components
