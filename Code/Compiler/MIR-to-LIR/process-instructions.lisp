@@ -10,6 +10,10 @@
     ((instruction cleavir-ir:enter-instruction) lexical-locations)
   (setf (cleavir-ir:outputs instruction) '()))
 
+(defmethod process-instruction
+    ((instruction cleavir-ir:nop-instruction) lexical-locations)
+  nil)
+
 ;;; Return a list of instructions that, when executed, loads the
 ;;; address of LEXICAL-LOCATION into TO-REGISTER.
 (defun load-address-of-lexical-location
