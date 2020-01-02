@@ -51,14 +51,25 @@
 (defmethod process-instruction
     ((instruction cleavir-ir:return-value-instruction)
      lexical-locations)
-  (let ((input (first (cleavir-ir:inputs instruction))))
+  (let ((input (first (cleavir-ir:inputs instruction)))
+        (outputs (cleavir-ir:outputs instruction)))
     (assert (typep input 'cleavir-ir:immediate-input))
     (let ((index (ash (cleavir-ir:value input) -1)))
       (if (< index 5)
           (let ((register
                   (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
-            (change-class instruction 'cleavir-ir:assignment-instruction
-                          :inputs (list register)))
+            (if (lexical-p (first outputs))
+                (progn (insert-memset-after
+                        instruction
+                        register
+                        (first outputs)
+                        *r11*
+                        lexical-locations)
+                       (change-class instruction 'cleavir-ir:nop-instruction
+                                     :inputs '()
+                                     :outputs '()))
+                (change-class instruction 'assignment-instruction
+                              :inputs (list register))))
           (let ((offset-input (make-instance 'cleavir-ir:immediate-input
                                 :value (* 8 (- index 4)))))
             (cleavir-ir:insert-instruction-before
@@ -71,5 +82,15 @@
                :inputs (list *r11* offset-input)
                :output *r11*)
              instruction)
-            (change-class instruction 'cleavir-ir:memref1-instruction
-                          :address *r11*))))))
+            (if (lexical-p (first outputs))
+                (progn (change-class instruction 'cleavir-ir:memref1-instruction
+                                     :address *r11*
+                                     :value *rax*)
+                       (insert-memset-after
+                        instruction
+                        *rax*
+                        (first outputs)
+                        *r9*
+                        lexical-locations))
+                (change-class instruction 'cleavir-ir:memref1-instruction
+                              :address *r11*)))))))
