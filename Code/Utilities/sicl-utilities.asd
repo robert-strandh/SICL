@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "once-only")))
+   (:file "once-only")
+   (:file "with-collectors")))
