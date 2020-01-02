@@ -90,7 +90,8 @@
                   (second inputs)
                   *rax*
                   *rax*
-                  lexical-locations)))
+                  lexical-locations)
+                 (setf (second inputs) *rax*)))
             ;; We use the output register as an intermediate register
             (t (insert-memref-before
                 instruction
@@ -106,7 +107,8 @@
                   (second inputs)
                   *rax*
                   *rax*
-                  lexical-locations))))
+                  lexical-locations)
+                 (setf (second inputs) *rax*))))
         (cond ((null outputs)
                nil)
               ((lexical-p (first outputs))
@@ -130,7 +132,8 @@
                   (second inputs)
                   *rax*
                   *rax*
-                  lexical-locations)))
+                  lexical-locations)
+                 (setf (second inputs) *rax*)))
               (t
                (unless (eq (first inputs) (first outputs))
                  (cleavir-ir:insert-instruction-before
