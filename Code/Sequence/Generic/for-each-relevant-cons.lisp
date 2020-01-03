@@ -23,7 +23,7 @@
     remaining))
 
 (defmacro for-each-relevant-cons
-    ((cons-var index-var list start end &optional (from-end nil from-end-p)) &body body)
+    ((cons-var index-var list start end &optional (from-end nil)) &body body)
   (let* ((fun-var (gensym))
          (list-var (gensym))
          (start-var (gensym))
@@ -122,9 +122,9 @@
                                     (traverse rest (+ index p1) p1)))))
                      (traverse ,list-var ,start-var ,length-var))))
          (loop-over-body
-           (if (not from-end-p)
-               forward
-               `(if ,from-end ,backward ,forward))))
+           (cond ((eql from-end nil) forward)
+                 ((eql from-end t) backward)
+                 (t `(if ,from-end ,backward ,forward)))))
     `(let (,length-var
            (,list-var ,list)
            (,start-var ,start)
