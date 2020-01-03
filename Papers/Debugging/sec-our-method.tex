@@ -1,0 +1,210 @@
+\section{Our technique}
+\label{sec-our-technique}
+
+\subsection{Two versions of every function body}
+\label{sec-two-body-versions}
+
+We use an additional machine register as a \emph{flag} to determine
+whether a function is being debugged or not, i.e. whether it is run
+under the control of the debugger or not.  While using an entire
+register for this purpose might seem wasteful, this register is only
+used for our debugging flag for a very short time, namely across a
+function call.  Therefore, any register that is otherwise used as a
+scratch register may be used for this purpose.
+
+At the beginning of the execution of each function, a test is
+performed to determine the value of the flag.  Based on the result of
+this test, a branch is made to one of two \emph{similar} (but not
+identical) copies of the entire function body%
+\footnote{This idea was suggested by Michael Raskin.}.  As soon as
+this choice
+has been made, the register is available for normal use by the
+register allocator.  When the flag is cleared, the branch is made to
+the \emph{ordinary} version of the function body.  When the flag is
+set, the branch is made to the \emph{debugging} version of the
+function body.
+
+By including both versions in the same function, we make it
+unnecessary for the application programmer to recompile the code with
+higher debug settings when it is desirable to have more debugging
+information than what the compiler would generate by default.
+
+The ordinary function body is compiled using every typical optimization
+technique used by a good compiler, including:
+
+\begin{itemize}
+\item constant folding,
+\item dead code elimination,
+\item common sub-expression elimination,
+\item loop-invariant code motion,
+\item induction-variable optimization, 
+\item elimination in-scope dead variables.
+\end{itemize}
+
+Some of these optimization techniques are essential for
+high-performance code, but many of them can make it significantly
+harder for the application programmer to understand what the
+program is doing:
+
+\begin{itemize}
+\item Common sub-expression elimination and similar techniques for
+  redundancy eliminatino may make it impossible to set
+  a breakpoint in some part of the code, simply because that code has
+  been eliminated by the compiler.
+\item When a variable is used for the last time, the compiler
+  typically reuses the place that it occupies for other purposes, even
+  though the variable may still be in scope.  This optimization makes
+  it impossible for the application programmer to examine the value of
+  a variable that has been eliminated.  An application programmer with
+  a poor understanding of compiler-optimization techniques will find
+  the result surprising.
+\item Loop-invariant code motion results in code being moved from
+  inside a loop to outside it.  Any attempt by the application
+  programmer to set a breakpoint in such code will fail.
+\item Induction-variable optimization will eliminate or replace
+  variables in source code by others that are more beneficial for to
+  the performance of the computation, again making it harder for the
+  application programmer to debug the code.
+\end{itemize}
+
+To avoid many of these inconveniences to the application programmer,
+the debugging version of the function body is compiled in a way that
+makes the code somewhat slower, but much more friendly for the purpose
+of debugging.  Some of the optimization techniques cited above will
+not be performed at all, or only in a less ``aggressive'' form.
+
+Furthermore, the debugging version of the code is compiled so that a
+small routine is called immediately before and immediately after the
+execution corresponding to the evaluation of a form in the source
+code.  This routine performs a short query from a modest size table;
+we think with a few hundred entries at most.  This table is maintained
+by the debugger, and made available in the reified thread object.  The
+debugging version of the function starts by accessing this table and
+storing it in a lexical variable, subject to register allocation as
+usual.
+
+The table is a bit vector indexed by the value of the program counter,
+modulo the size of the table.  If the corresponding bit is cleared,
+there is definitely not a breakpoint at the value of the program
+counter in question.  If the bit is set, it might be the case that
+there is such a breakpoint.  In most cases, the bit will be cleared,
+so the cost of test is low, even in a thread that is being debugged.
+If the bit is set, another query is performed, this time to a hash
+table, mapping values of the program counter to information about
+break points.  If turns out that the value of the program counter has
+a breakpoint associated with it, the thread informs the debugger.
+Details of the communication between the application thread and the
+debugger are discussed in
+\refSec{sec-debugger-application-communication}.
+
+In the normal version of the function body, when a function call is
+made, the debug flag is cleared, indicating to the callee that it is
+not under the control of the debugger.  In the debugging version of
+the function body, on the other hand, when a function call is
+made, the debug flag set.  This mechanism thus automatically
+propagates the information about debugging throughout the call chain.
+
+\subsection{Communication between the debugger and the application}
+\label{sec-debugger-application-communication}
+
+Debuggers in \unix{} systems have full access to the address space of
+the application, including the stack and the lexical variables.  The
+debugger can therefore modify any lexical variable and then continue
+the execution of the application.  Such manipulations may very well
+violate some of the assumptions made by the compiler for a particular
+code fragment.  For example, if the code contains a test for the value
+of a numeric variable, the compiler may make different assumptions
+about this value in the two different branches executed as a result of
+the test.
+
+Allowing the debugger to make arbitrary modifications to lexical
+variables, let alone to any memory location, in a \commonlisp{}
+application program will defeat any attempts at making the system
+safe, and safety is one of the purposes of the \sicl{} system as
+expressed in \refSec{sec-sicl-features}.  We must therefore come up
+with a different communication protocol that keeps the system safe.
+
+Our design contains two essential elements for this purpose:
+
+\begin{enumerate}
+\item The debugger consists of an interactive application with a
+  \emph{command loop}.  An iteration of this command loop can of
+  course be prompted by a user interaction.  However, when the
+  application detects a breakpoint by querying the tables described in
+  \refSec{sec-two-body-versions}, it injects a command into the
+  command loop of the debugger, triggering the execution of code to
+  handle the breakpoint.
+\item The debugger sends commands to the application on a \emph{queue}
+  protected by a \emph{semaphore}.  Once the application has informed
+  the debugger about a breakpoint, it \emph{waits} on the semaphore to
+  receive instructions from the debugger about what to do next.
+\end{enumerate}
+
+The debugger is in charge of taking into account the commands issued
+by the application programmer.  When the application programmer
+indicates a for a certain action to be performed at a particular place
+in the source code, the debugger populates the two tables mentioned in
+\refSec{sec-two-body-versions}, and records the particular action the
+application programmer desires, for example:
+
+\begin{itemize}
+\item Stop the execution of the application and take further action
+  based on the state of the application data.
+\item Print a \emph{trace message} and immediately continue the
+  execution.
+\item Step the execution of the program in one of several different
+  ways (in, out, over, finish)
+\item Continue normal expectation of the application program.
+\end{itemize}
+
+To allow for the application programmer to examine the state of the
+application, when the application thread detects a breakpoint, the
+command it injects into the debugger command loop contains a complete
+list of live local variables and their values%
+\footnote{Clearly, care must be taken so as to avoid the possibility
+  of the debugger making arbitrary modifications to structured data,
+  and thereby possibly violating the assumptions made by the compiler
+  when the application code was compiled.  We have yet to determine
+  exactly how to implement such restrictions.}
+
+\subsection{Debugger commands available to the application programmer}
+
+We have an embryonic implementation of an interactive debugger, called
+\clordane{}.  We used the \mcclim{} library for writing graphic user
+interfaces as a basis for this tool.  Currently, \clordane{} can show
+the source code of an application (one source file at a time) and an
+indication of the place of a breakpoint.  The application being
+debugged is then compiled with the \sicl{} compiler, generating
+high-level intermediate representation (HIR).  The HIR code is then
+interpreted using a small program running in a host \commonlisp{}
+implementation.
+
+The communication protocol described in
+\refSec{sec-debugger-application-communication} has been implemented
+and works to our satisfaction, but only a small subset of interactions
+have been implemented so far.
+
+We think that the following commands must be implemented in a fully
+featured debugger:
+
+\begin{itemize}
+\item The application programmer should be able to point to a location
+  in the source code to indicate a particular action to be taken at
+  that point:
+  \begin{itemize}
+  \item Stop the execution of the application and wait for further
+    actions.
+  \item Print a trace message, possibly containing the values of live
+    variables, and then continue the execution. 
+  \end{itemize}
+  It should be possible to make the action conditional, based on some
+  arbitrary expression to be evaluated in the debugger thread, and
+  which can contain references to live variables in the application.
+\item When the application is stopped, the application programmer
+  should be able to examine live variables, and (in some cases, with
+  restrictions) modify their values.
+\item Also, when the application is stopped, the application
+  programmer should be able to issue one of several types of
+  \emph{stepping} commands, implicitly indicating the next location
+  for the application to stop.
+\end{itemize}

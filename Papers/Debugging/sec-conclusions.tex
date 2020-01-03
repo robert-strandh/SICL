@@ -1,0 +1,51 @@
+\section{Conclusions and future work}
+
+We believe that a decent development environment for \commonlisp{}
+must include a very feature-full debugger for application programs, and
+we firmly believe that the best way of accomplishing such an
+environment is to have the debugger execute in the same process as the
+application, but to have the application react to debugging operations
+only when executed under the control of the debugger.
+
+While it may seem like a valid objection that the application
+programmer, as a result of detecting a defect, must rerun the
+application from the debugger in order to benefit from the features
+proposed by our technique, we disagree with this objection.  We simply
+think that there is usually no valid reason to run the application
+outside the debugger during the development phase.  The only exception
+we can think of would be applications with extreme performance
+requirements, or applications where response time is part of the
+specification.
+
+The validity technique described in this paper has been somewhat
+verified, in that we have an embryonic implementation of an
+interactive debugger, and an implementation of a small subset of the
+communication protocol between the application and the debugger.
+However, our current environment does not allow us to verify the
+ultimate performance of application code run under the control of the
+debugger.  We firmly believe that the performance loss for code
+without any breakpoints in it will be acceptable, and that the
+additional cost when breakpoints are involved is to be expected by the
+application programmer.
+
+We have not yet implemented the two-version body idea in \sicl{},
+mainly because the only implementation of \sicl{} that currently works
+is the interpreter for intermediate code.  This interpreter was
+written for bootstrapping purposes only and performance is not an
+issue.  For that reason, we have included only the debugging version
+of function bodies.
+
+In addition to producing a native version of the \sicl{} system, we
+also need additional work on the \clordane{} debugger, and on the
+additional components of the communication protocol between the
+debugger and the application.
+
+We think it would be desirable for existing \commonlisp{}
+implementations to incorporate the technique described in this paper,
+so as to allow for a much complete development environment for
+application programmers.  However, we are convinced that the
+modifications that would be required to those implementations would be
+prohibitive in terms of time invested by maintainers.  For that
+reason, we unfortunately do not hold out much hope for this
+possibility, and we intend to concentrate our efforts on making our
+technique work for the \sicl{} system.

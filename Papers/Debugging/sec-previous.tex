@@ -1,0 +1,17 @@
+\section{Previous work}
+
+With systems like \unix{}, debugging is usually performed as an
+interation between two \emph{processes}.  The debugger runs in one
+process and the application in another process.  For a breakpoint, the
+code of the application is modified by the debugger so that the
+application sends a signal to the debugger when the breakpoint has
+been reached.  For this purpose, the debugger maps the code pages of
+the application as \emph{copy on write} (or COW), so that instances of
+the same application that are not executed under the control of the
+debugger are not affected by the modified code.  In particular, with
+this technique any application can be debugged, including the
+debuggger itself.
+
+More stuff here, in particular about FLOSS commonlisp{} systems, about
+commercial \commonlisp{} systems, about Genera, and perhaps about
+other interactive systems like Scheme, etc.

@@ -1,0 +1,50 @@
+\section{Main features of the \sicl{} system}
+\label{sec-sicl-features}
+
+\sicl{} is a system that is written entirely in \commonlisp{}.  Thanks
+to the particular bootstrapping technique
+\cite{durand_irene_2019_2634314} we developed for \sicl{}, most parts
+of the system can use the entire language for their implementation.
+We thus avoid having to keep track of what particular subset of the
+language is allowed for the implementation of each module.
+
+There are multiple purposes of the \sicl{} system, including excellent
+maintainability and good performance.  However, the most important
+purpose in the context of this paper is \emph{support for excellent
+  debugging tools}.  We think it is going to be difficult to adapt
+existing \commonlisp{} implementations to support the kind of
+application debugging that we think is essential for good programmer
+productivity.
+
+Another main purpose of the \sicl{} system is \emph{safety}.  There
+are many situations described in the \commonlisp{} standard that have
+undefined or unspecified behavior, such as:
+
+\begin{enumerate}
+\item Many times when a standard function is called with some argument
+  that is not of the type indicated by the corresponding dictionary
+  entry, the behavior is undefined, allowing the implementation to
+  avoid potentially costly tests for exceptional situations.
+\item When a non-local transfer is attempted to an exit point that has
+  been ``abandoned'', the standard does not require this situation to
+  be detected, making it possible for the system to crash or (worse)
+  give the wrong result.
+\item When some entity is declared \texttt{dynamic-extent}, but some
+  necessary condition for this declaration is violated, the
+  implementation is again not required to detect the problem, again
+  potentially resulting in a crash or an incorrect computation.
+\end{enumerate}
+
+Fortunately, most potential situations of this type are not taken
+advantage of by the implementation in order to improve performance,
+but some are.  We think that the spirit of the \commonlisp{} standard
+is to to have a safe language, and that many of these situations of
+undefined or unspecified behavior exist only to avoid significantly
+more work for the system maintainers at the time the standard was
+established.
+
+For that reason, in the \sicl{} system, we do not intend to take
+advantage of these situations to make the system unsafe for the
+purpose of better performance, even though we might have to work
+somewhat harder in order to maintain good performance in all
+situations.

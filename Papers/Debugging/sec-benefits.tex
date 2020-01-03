@@ -1,0 +1,61 @@
+\section{Benefits of our technique}
+\label{sec-benefits}
+
+Our technique differ both from the tradition of debugging in
+\unix{}-type systems and from the tradition used in FLOSS
+\commonlisp{} systems.
+
+\subsection{Difference compared to \unix{}-like systems}
+
+Whereas \unix{}-like systems typically run the debugger in a different
+\emph{process} from that (or those) of the application, with our
+technique we run both the debugger and the application in the same
+process.
+
+The main advantage to this organization is that communication between
+the debugger and the application is greatly simplified.  There is no
+no need for a wire protocol to encode and decode data in the form of
+sequences of octets.  Instead, we can send data in the form of
+arbitrarily complex data structures between the two.  
+
+\subsection{Difference compared to most FLOSS \commonlisp{} systems}
+
+Most FLOSS \commonlisp{} implementations have a history that started
+before multi-threading was common.  As a result, features such as
+breakpoints and tracing are often implemented as modifications to
+modifications.
+
+For example, in \sbcl{}, the application programmer can choose to
+\emph{trace} a function in two different ways.  One way is by means of
+\emph{encapsulation}, meaning that the function is not modified, and
+instead wrapped in a small routine that then replaces the function as
+associated with the function \emph{name}.  The function being traced
+is not modified.  The other way is by means of an breakpoint, meaning
+that the code of the function being traced is modified.
+
+However, in both cases, every caller of the function being traced is
+affected, barring a caller that is in possession of the function
+object itself, rather than its name.  As a result, it is very likely
+impractical to trace system functions that may be used internally by
+the system.  For example, tracing \texttt{find} or \texttt{position}
+(if at all possible) is likely to generate so much information from
+callers that are irrelevant to the application programmer as to make
+the information impossible to exploit.  And tracing functions such as
+\texttt{print}, \texttt{format}, or \texttt{write} would be entirely
+impossible, since the trace output would very likely call these
+functions in order to generate the output information meant for the
+application programmer.
+
+With our suggested technique, tracing a function does not create an
+encapsulation and does not modify the code of the function.  Instead,
+the existing code communicates with the debugger, and the debugger,
+running in a different thread, is in charge of displaying information
+to the application programmer.  As a direct consequence, there are no
+restrictions such as those indicated above.  The only possible
+restriction has to do with inlining, though it may very well turn out
+to be possible to propagate debugging information with inlining,
+thereby making it possible to trace, or to set breakpoints in any
+function such as \texttt{car} or \texttt{+}.  However, it may turn out
+that the inclusion of debugging code in such low-level functions be
+prohibitive in terms of performance of code run under the control of
+the debugger.
