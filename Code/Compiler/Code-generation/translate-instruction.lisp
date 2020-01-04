@@ -141,3 +141,10 @@
                 :operands
                 (list
                  (find-instruction-label (second (cleavir-ir:outputs instruction)))))))))
+
+(defmethod translate-instruction
+    ((instruction cleavir-ir:funcall-instruction))
+  (make-instance 'cluster:code-command
+    :mnemonic "CALL"
+    :operands
+    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
