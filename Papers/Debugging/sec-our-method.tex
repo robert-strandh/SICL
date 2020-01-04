@@ -7,8 +7,8 @@
 We use an additional machine register as a \emph{flag} to determine
 whether a function is being debugged or not, i.e. whether it is run
 under the control of the debugger or not.  While using an entire
-register for this purpose might seem wasteful, this register is only
-used for our debugging flag for a very short time, namely across a
+register for this purpose might seem wasteful, this register is used
+for our debugging flag only for a very short time, namely across a
 function call.  Therefore, any register that is otherwise used as a
 scratch register may be used for this purpose.
 
@@ -38,7 +38,7 @@ technique used by a good compiler, including:
 \item common sub-expression elimination,
 \item loop-invariant code motion,
 \item induction-variable optimization, 
-\item elimination in-scope dead variables.
+\item elimination of in-scope dead variables.
 \end{itemize}
 
 Some of these optimization techniques are essential for
@@ -62,7 +62,7 @@ program is doing:
   inside a loop to outside it.  Any attempt by the application
   programmer to set a breakpoint in such code will fail.
 \item Induction-variable optimization will eliminate or replace
-  variables in source code by others that are more beneficial for to
+  variables in source code by others that are more beneficial for
   the performance of the computation, again making it harder for the
   application programmer to debug the code.
 \end{itemize}
@@ -83,25 +83,25 @@ debugging version of the function starts by accessing this table and
 storing it in a lexical variable, subject to register allocation as
 usual.
 
-The table is a bit vector indexed by the value of the program counter,
+The table is a bit-vector indexed by the value of the program counter,
 modulo the size of the table.  If the corresponding bit is cleared,
 there is definitely not a breakpoint at the value of the program
 counter in question.  If the bit is set, it might be the case that
 there is such a breakpoint.  In most cases, the bit will be cleared,
-so the cost of test is low, even in a thread that is being debugged.
-If the bit is set, another query is performed, this time to a hash
-table, mapping values of the program counter to information about
-break points.  If turns out that the value of the program counter has
-a breakpoint associated with it, the thread informs the debugger.
-Details of the communication between the application thread and the
-debugger are discussed in
+so the cost of the test is low, even in a thread that is being
+debugged.  If the bit is set, another query is performed, this time to
+a hash table, mapping values of the program counter to information
+about break points.  If it turns out that the value of the program
+counter has a breakpoint associated with it, the thread informs the
+debugger.  Details of the communication between the application thread
+and the debugger are discussed in
 \refSec{sec-debugger-application-communication}.
 
 In the normal version of the function body, when a function call is
 made, the debug flag is cleared, indicating to the callee that it is
 not under the control of the debugger.  In the debugging version of
 the function body, on the other hand, when a function call is
-made, the debug flag set.  This mechanism thus automatically
+made, the debug flag is set.  This mechanism thus automatically
 propagates the information about debugging throughout the call chain.
 
 \subsection{Communication between the debugger and the application}
@@ -142,10 +142,10 @@ Our design contains two essential elements for this purpose:
 
 The debugger is in charge of taking into account the commands issued
 by the application programmer.  When the application programmer
-indicates a for a certain action to be performed at a particular place
-in the source code, the debugger populates the two tables mentioned in
-\refSec{sec-two-body-versions}, and records the particular action the
-application programmer desires, for example:
+indicates that a certain action should be performed at a particular
+place in the source code, the debugger populates the two tables
+mentioned in \refSec{sec-two-body-versions}, and records the
+particular action the application programmer desires, for example:
 
 \begin{itemize}
 \item Stop the execution of the application and take further action
@@ -153,7 +153,7 @@ application programmer desires, for example:
 \item Print a \emph{trace message} and immediately continue the
   execution.
 \item Step the execution of the program in one of several different
-  ways (in, out, over, finish)
+  ways (in, out, over, finish).
 \item Continue normal expectation of the application program.
 \end{itemize}
 
@@ -165,7 +165,7 @@ list of live local variables and their values%
   of the debugger making arbitrary modifications to structured data,
   and thereby possibly violating the assumptions made by the compiler
   when the application code was compiled.  We have yet to determine
-  exactly how to implement such restrictions.}
+  exactly how to implement such restrictions.}.
 
 \subsection{Debugger commands available to the application programmer}
 
