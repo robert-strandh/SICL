@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "linearize")
+   (:file "labels")
    (:file "translate-data")
    (:file "translate-instruction")
    (:file "generate-code")))
