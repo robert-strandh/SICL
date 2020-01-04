@@ -32,6 +32,7 @@
      (:file "count")
      (:file "count-if")
      (:file "count-if-not")
+     (:file "delete-aux")
      (:file "delete")
      (:file "delete-if")
      (:file "delete-if-not")
