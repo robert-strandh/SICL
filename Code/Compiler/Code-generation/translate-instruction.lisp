@@ -11,6 +11,48 @@
   '())
 
 (defmethod translate-instruction
+    ((instruction cleavir-ir:unsigned-less-instruction))
+  (list (make-instance 'cluster:code-command
+          :mnemonic "CMP"
+          :operands
+          (list
+           (translate-datum (first (cleavir-ir:inputs instruction)))
+           (translate-datum (second (cleavir-ir:inputs instruction)))))
+        (make-instance 'cluster:code-command
+          :mnemonic "JNB"
+          :operands
+          (list
+           (find-instruction-label (second (cleavir-ir:outputs instruction)))))))
+
+(defmethod translate-instruction
+    ((instruction cleavir-ir:signed-less-instruction))
+  (list (make-instance 'cluster:code-command
+          :mnemonic "CMP"
+          :operands
+          (list
+           (translate-datum (first (cleavir-ir:inputs instruction)))
+           (translate-datum (second (cleavir-ir:inputs instruction)))))
+        (make-instance 'cluster:code-command
+          :mnemonic "JNL"
+          :operands
+          (list
+           (find-instruction-label (second (cleavir-ir:outputs instruction)))))))
+
+(defmethod translate-instruction
+    ((instruction cleavir-ir:signed-not-greater-instruction))
+  (list (make-instance 'cluster:code-command
+          :mnemonic "CMP"
+          :operands
+          (list
+           (translate-datum (first (cleavir-ir:inputs instruction)))
+           (translate-datum (second (cleavir-ir:inputs instruction)))))
+        (make-instance 'cluster:code-command
+          :mnemonic "JG"
+          :operands
+          (list
+           (find-instruction-label (second (cleavir-ir:outputs instruction)))))))
+
+(defmethod translate-instruction
     ((instruction cleavir-ir:assignment-instruction))
   (make-instance 'cluster:code-command
     :mnemonic "MOV"
