@@ -4,7 +4,7 @@
     ((instruction cleavir-ir:compute-argument-count-instruction)
      lexical-locations)
   (change-class instruction 'cleavir-ir:assignment-instruction
-                :input *r9*)
+                :inputs (list *r9*))
   (unless (typep (first (cleavir-ir:outputs instruction))
                  'cleavir-ir:register-location)
     (insert-memset-after
