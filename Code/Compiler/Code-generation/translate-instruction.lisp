@@ -3,11 +3,11 @@
 (defgeneric translate-instruction (instruction))
 
 (defmethod translate-instruction
-    ((instruction 'cleavir-ir:nop-instruction))
+    ((instruction cleavir-ir:nop-instruction))
   '())
 
 (defmethod translate-instruction
-    ((instruction 'cleavir-ir:enter-instruction))
+    ((instruction cleavir-ir:enter-instruction))
   '())
 
 (defmethod translate-instruction
@@ -93,3 +93,9 @@
     (list
      (translate-datum (first (cleavir-ir:outputs instruction)))
      (translate-datum (second (cleavir-ir:inputs instruction))))))
+
+(defmethod translate-instruction
+    ((instruction cleavir-ir:return-instruction))
+  (make-instance 'cluster:code-command
+    :mnemonic "RET"
+    :operands '()))
