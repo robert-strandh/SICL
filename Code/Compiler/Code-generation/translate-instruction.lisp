@@ -7,6 +7,10 @@
   '())
 
 (defmethod translate-instruction
+    ((instruction cleavir-ir:unreachable-instruction))
+  '())
+
+(defmethod translate-instruction
     ((instruction cleavir-ir:enter-instruction))
   '())
 
