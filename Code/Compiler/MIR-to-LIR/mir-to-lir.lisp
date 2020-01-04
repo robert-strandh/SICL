@@ -2,12 +2,6 @@
 
 (defgeneric mir-to-lir (client mir))
 
-(defun enclose-funcall-p (instruction)
-  (and (typep instruction 'cleavir-ir:funcall-instruction)
-       (>= (length (cleavir-ir:inputs instruction)) 2)
-       (typep (second (cleavir-ir:inputs instruction))
-              'sicl-hir-to-mir::entry-point-input)))
-
 (defun find-lexical-locations (enter-instruction)
   (let ((result (make-hash-table :test #'eq))
         (location 0))
@@ -26,6 +20,9 @@
        enter-instruction))
     result))
 
+(defun entry-point-input-p (input)
+  (typep input 'sicl-hir-to-mir:entry-point-input))
+
 (defmethod mir-to-lir (client mir)
   (loop with worklist = (list mir)
         until (null worklist)
@@ -36,9 +33,10 @@
              (move-return-address enter-instruction)
              (cleavir-ir:map-instructions-arbitrary-order
               (lambda (instruction)
-                (process-instruction instruction lexical-locations)
-                (when (enclose-funcall-p instruction)
-                  (push (sicl-hir-to-mir::enter-instruction
-                         (second (cleavir-ir:inputs instruction)))
-                        worklist)))
+                (let ((entry (find-if #'entry-point-input-p
+                                      (cleavir-ir:inputs instruction))))
+                  (unless (null entry)
+                    (push (sicl-hir-to-mir:enter-instruction entry)
+                          worklist)))
+                (process-instruction instruction lexical-locations))
               enter-instruction))))
