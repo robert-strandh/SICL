@@ -120,12 +120,38 @@
          (mapcan #'class-subclasses
                  (closer-mop:class-direct-subclasses class))))
 
+(defun sequence-class-element-type (sequence-class)
+  (if (subtypep sequence-class '(not vector))
+      't
+      (let ((direct-subclasses (closer-mop:class-direct-subclasses sequence-class)))
+        (if (null direct-subclasses)
+            (array-element-type
+             (coerce nil sequence-class))
+            `(or ,@(mapcar #'sequence-class-element-type direct-subclasses))))))
+
 (defmacro replicate-for-each-relevant-vectoroid (symbol &body body)
   `(progn
      ,@(loop for class in (list* (find-class 'sequence)
                                  (class-subclasses (find-class 'vector)))
-             unless (subtypep (class-name class) '(array nil))
+             unless (subtypep class '(array nil))
                append (subst class symbol body))))
+
+;;; A vectoroid is compatible with another vectoroid, if elements of the
+;;; former can be stored in the latter, i.e., when the intersection of both
+;;; element types is non-empty.
+(defmacro replicate-for-all-compatible-vectoroids (symbol-1 symbol-2 &body body)
+  (let ((vectoroid-classes (list* (find-class 'sequence) (class-subclasses (find-class 'vector))))
+        (forms '()))
+    (loop for class-1 in vectoroid-classes do
+      (loop for class-2 in vectoroid-classes do
+        (let ((element-type-1 (sequence-class-element-type class-1))
+              (element-type-2 (sequence-class-element-type class-2)))
+          (unless (subtypep element-type-1 nil)
+            (unless (subtypep element-type-2 nil)
+              (unless (subtypep `(and ,element-type-1 ,element-type-2) nil)
+                (push (subst class-2 symbol-2 (subst class-1 symbol-1 `(progn ,@body)))
+                      forms)))))))
+    `(progn ,@(cl:reverse forms))))
 
 (declaim (inline shrink-vector))
 (defun shrink-vector (vector new-length)
