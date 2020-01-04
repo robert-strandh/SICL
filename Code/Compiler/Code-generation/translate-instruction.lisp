@@ -82,3 +82,14 @@
        :base-register (translate-datum (first (cleavir-ir:inputs instruction)))
        :size 64)
      (translate-datum (second (cleavir-ir:inputs instruction))))))
+
+(defmethod translate-instruction
+    ((instruction cleavir-ir:shift-left-instruction))
+  (assert (eq (first (cleavir-ir:inputs instruction))
+              (first (cleavir-ir:outputs instruction))))
+  (make-instance 'cluster:code-command
+    :mnemonic "SHL"
+    :operands
+    (list
+     (translate-datum (first (cleavir-ir:outputs instruction)))
+     (translate-datum (second (cleavir-ir:inputs instruction))))))
