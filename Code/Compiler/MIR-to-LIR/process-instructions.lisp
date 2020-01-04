@@ -74,7 +74,14 @@
     (assert (<= 0 (length outputs) 1))
     (if (lexical-p (first inputs))
         (cond ((null outputs)
-               nil)
+               ;; We use *r11* as an intermediate register
+               (insert-memref-before
+                instruction
+                (first inputs)
+                *r11*
+                *rax*
+                lexical-locations)
+               (setf (first inputs) *r11*))
               ((lexical-p (first outputs))
                ;; We use *r11* as an intermediate register
                (insert-memref-before
