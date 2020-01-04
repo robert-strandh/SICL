@@ -14,6 +14,10 @@
     ((instruction cleavir-ir:nop-instruction) lexical-locations)
   nil)
 
+(defmethod process-instruction
+    ((instruction cleavir-ir:unreachable-instruction) lexical-locations)
+  nil)
+
 ;;; Return a list of instructions that, when executed, loads the
 ;;; address of LEXICAL-LOCATION into TO-REGISTER.
 (defun load-address-of-lexical-location
