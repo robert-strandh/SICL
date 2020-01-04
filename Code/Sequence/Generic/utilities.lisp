@@ -63,6 +63,29 @@
              :in-sequence sequence))
     (values start end)))
 
+;;; Skip a prefix of a list and signal an error if the list is too short,
+;;; or if it is not a proper list.  Also check that start is a nonnegative
+;;; integer.
+(defun skip-to-start (list start)
+  (declare (list list) (integer start))
+  (unless (plusp start)
+    (error 'invalid-start-index
+           :datum start
+           :expected-type unsigned-byte
+           :in-sequence list))
+  (do ((countdown start (1- countdown))
+       (remaining list (cdr remaining)))
+      ((or (zerop countdown)
+           (atom remaining))
+       (when (and (atom remaining)
+                  (not (null remaining)))
+         (error 'must-be-proper-list
+                :datum list))
+       (when (plusp countdown)
+         (error 'invalid-start-index
+                :datum start
+                :expected-type `(integer 0 ,(- start countdown))
+                :in-sequence list)))))
 
 (defmacro with-predicate ((name predicate) &body body)
   (let ((f (gensym)))
