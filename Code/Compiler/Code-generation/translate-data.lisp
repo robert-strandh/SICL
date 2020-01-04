@@ -8,21 +8,21 @@
 
 (defmethod translate-datum ((datum cleavir-ir:register-location))
   (make-instance 'cluster:gpr-operand
-    :code-number (case datum
-                   (sicl-mir-to-lir:*rax* 0)
-                   (sicl-mir-to-lir:*rbx* 1)
-                   (sicl-mir-to-lir:*rcx* 2)
-                   (sicl-mir-to-lir:*rdx* 3)
-                   (sicl-mir-to-lir:*rsp* 4)
-                   (sicl-mir-to-lir:*rbp* 5)
-                   (sicl-mir-to-lir:*rsi* 6)
-                   (sicl-mir-to-lir:*rdi* 7)
-                   (sicl-mir-to-lir:*r8* 8)
-                   (sicl-mir-to-lir:*r9* 9)
-                   (sicl-mir-to-lir:*r10* 10)
-                   (sicl-mir-to-lir:*r11* 11)
-                   (sicl-mir-to-lir:*r12* 12)
-                   (sicl-mir-to-lir:*r13* 13)
-                   (sicl-mir-to-lir:*r14* 14)
-                   (sicl-mir-to-lir:*r15* 15))
+    :code-number (position datum
+                  (list sicl-mir-to-lir:*rax*
+                        sicl-mir-to-lir:*rbx*
+                        sicl-mir-to-lir:*rcx*
+                        sicl-mir-to-lir:*rdx*
+                        sicl-mir-to-lir:*rsp*
+                        sicl-mir-to-lir:*rbp*
+                        sicl-mir-to-lir:*rsi*
+                        sicl-mir-to-lir:*rdi*
+                        sicl-mir-to-lir:*r8*
+                        sicl-mir-to-lir:*r9*
+                        sicl-mir-to-lir:*r10*
+                        sicl-mir-to-lir:*r11*
+                        sicl-mir-to-lir:*r12*
+                        sicl-mir-to-lir:*r13*
+                        sicl-mir-to-lir:*r14*
+                        sicl-mir-to-lir:*r15*))
     :size 64))
