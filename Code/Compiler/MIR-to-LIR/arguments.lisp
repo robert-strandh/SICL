@@ -12,7 +12,8 @@
      *r9*
      (first (cleavir-ir:outputs instruction))
      *rax*
-     lexical-locations)))
+     lexical-locations)
+    (setf (first (cleavir-ir:outputs instruction)) *r9*)))
 
 (defmethod process-instruction
     ((instruction cleavir-ir:argument-instruction)
