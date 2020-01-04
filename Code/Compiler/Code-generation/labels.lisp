@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-code-generation)
 
-(defun instructions-needing-label (instructions)
+(defun create-instruction-labels (instructions)
   (loop with table = (make-hash-table :test #'eq)
         for (instruction next) on instructions
         do (when (or (typep next 'cleavir-ir:enter-instruction)
@@ -8,7 +8,8 @@
                           (let ((predecessors (cleavir-ir:predecessors next)))
                             (or (> (length predecessors) 1)
                                 (not (eq instruction (first predecessors)))))))
-             (setf (gethash next table) t))
+             (setf (gethash next table)
+                   (make-instance 'cluster:label)))
         finally (return table)))
                                 
                              
