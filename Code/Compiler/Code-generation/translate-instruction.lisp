@@ -3,6 +3,14 @@
 (defgeneric translate-instruction (instruction))
 
 (defmethod translate-instruction
+    ((instruction 'cleavir-ir:nop-instruction))
+  '())
+
+(defmethod translate-instruction
+    ((instruction 'cleavir-ir:enter-instruction))
+  '())
+
+(defmethod translate-instruction
     ((instruction cleavir-ir:assignment-instruction))
   (make-instance 'cluster:code-command
     :mnemonic "MOV"
