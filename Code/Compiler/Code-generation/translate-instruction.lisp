@@ -26,7 +26,7 @@
           :mnemonic "JNB"
           :operands
           (list
-           (find-instruction-label (second (cleavir-ir:outputs instruction)))))))
+           (find-instruction-label (second (cleavir-ir:successors instruction)))))))
 
 (defmethod translate-instruction
     ((instruction cleavir-ir:signed-less-instruction))
@@ -40,7 +40,7 @@
           :mnemonic "JNL"
           :operands
           (list
-           (find-instruction-label (second (cleavir-ir:outputs instruction)))))))
+           (find-instruction-label (second (cleavir-ir:successors instruction)))))))
 
 (defmethod translate-instruction
     ((instruction cleavir-ir:signed-not-greater-instruction))
@@ -54,7 +54,7 @@
           :mnemonic "JG"
           :operands
           (list
-           (find-instruction-label (second (cleavir-ir:outputs instruction)))))))
+           (find-instruction-label (second (cleavir-ir:successors instruction)))))))
 
 (defmethod translate-instruction
     ((instruction cleavir-ir:assignment-instruction))
@@ -123,7 +123,7 @@
                 :mnemonic "JCF"
                 :operands
                 (list
-                 (find-instruction-label (second (cleavir-ir:outputs instruction)))))))))
+                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
 
 (defmethod translate-instruction
     ((instruction cleavir-ir:unsigned-sub-instruction))
@@ -144,7 +144,7 @@
                 :mnemonic "JCF"
                 :operands
                 (list
-                 (find-instruction-label (second (cleavir-ir:outputs instruction)))))))))
+                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
 
 (defmethod translate-instruction
     ((instruction cleavir-ir:funcall-instruction))
