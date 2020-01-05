@@ -18,6 +18,10 @@
   ()
   (:default-initargs :expected-type 'sequence))
 
+(define-condition must-be-function-designator (type-error)
+  ()
+  (:default-initargs :expected-type '(or function symbol)))
+
 ;;; This condition is used by functions and macros that require
 ;;; some argument to be a list (a cons or nil).
 (define-condition must-be-list (type-error)

@@ -1,68 +1,68 @@
 (cl:in-package #:sicl-sequence)
 
 (define-sealable-generic-function copy-seq
-(sequence))
+    (sequence))
 
 (define-sealable-generic-function elt
-(sequence index)
-(:argument-precedence-order sequence))
+    (sequence index)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function (setf elt)
-(value sequence index)
-(:argument-precedence-order sequence))
+    (value sequence index)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function fill
-(sequence item &key start end)
-(:argument-precedence-order sequence))
+    (sequence item &key start end)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function make-sequence-like
-(sequence length &key initial-element initial-contents)
-(:argument-precedence-order sequence))
+    (sequence length &key initial-element initial-contents)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function adjust-sequence
-(sequence length &key initial-element initial-contents)
-(:argument-precedence-order sequence))
+    (sequence length &key initial-element initial-contents)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function subseq
-(sequence start &optional end)
-(:argument-precedence-order sequence))
+    (sequence start &optional end)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function (setf subseq)
-(value sequence start &optional end)
-(:argument-precedence-order sequence))
+    (value sequence start &optional end)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function map-into
-(result-sequence function &rest sequences)
-(:argument-precedence-order result-sequence))
+    (result-sequence function &rest sequences)
+  (:argument-precedence-order result-sequence))
 
 (define-sealable-generic-function reduce
-(function sequence &key key from-end start end initial-value)
-(:argument-precedence-order sequence))
+    (function sequence &key key from-end start end initial-value)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function count
-(item sequence &key from-end start end key test test-not)
-(:argument-precedence-order sequence))
+    (item sequence &key from-end start end key test test-not)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function count-if
-(predicate sequence &key from-end start end key)
-(:argument-precedence-order sequence))
+    (predicate sequence &key from-end start end key)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function count-if-not
-(predicate sequence &key from-end start end key)
-(:argument-precedence-order sequence))
+    (predicate sequence &key from-end start end key)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function length
-(sequence))
+    (sequence))
 
 (define-sealable-generic-function reverse
-(sequence))
+    (sequence))
 
 (define-sealable-generic-function nreverse
-(sequence))
+    (sequence))
 
 (define-sealable-generic-function sort
-(sequence predicate &key key)
-(:argument-precedence-order sequence))
+    (sequence predicate &key key)
+  (:argument-precedence-order sequence))
 
 (define-sealable-generic-function stable-sort
     (sequence predicate &key key)
