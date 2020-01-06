@@ -37,10 +37,9 @@
 (defun canonicalize-start-and-end (sequence length start end)
   (declare (type (integer 0 (#.array-total-size-limit)) length))
   (let ((start (typecase start
-                 (null 0)
-                 ((integer 0) start)
+                 (unsigned-byte start)
                  (otherwise (error 'invalid-start-index-type
-                                   :expected-type '(or null (integer 0))
+                                   :expected-type '(or null unsigned-byte)
                                    :datum start
                                    :sequence sequence))))
         (end (typecase end
@@ -63,29 +62,48 @@
              :in-sequence sequence))
     (values start end)))
 
-;;; Skip a prefix of a list and signal an error if the list is too short,
-;;; or if it is not a proper list.  Also check that start is a nonnegative
-;;; integer.
-(defun skip-to-start (list start)
-  (declare (list list) (integer start))
-  (unless (plusp start)
+;;; Skips a prefix of a list and signals an error if the list is too short,
+;;; or if it is not a proper list.  Also, checks that start is a
+;;; nonnegative integer, and that end is either null, or an integer larger
+;;; than start.  Returns two values - the start of the interval and either
+;;; null, or its length.
+(defun list-interval-start-and-length (list start end)
+  (declare (list list))
+  (unless (typep start 'unsigned-byte)
     (error 'invalid-start-index
            :datum start
-           :expected-type unsigned-byte
+           :expected-type 'unsigned-byte
            :in-sequence list))
-  (do ((countdown start (1- countdown))
-       (remaining list (cdr remaining)))
-      ((or (zerop countdown)
-           (atom remaining))
-       (when (and (atom remaining)
-                  (not (null remaining)))
-         (error 'must-be-proper-list
-                :datum list))
-       (when (plusp countdown)
-         (error 'invalid-start-index
-                :datum start
-                :expected-type `(integer 0 ,(- start countdown))
-                :in-sequence list)))))
+  (let ((n (typecase end
+             (null nil)
+             (unsigned-byte
+              (let ((difference (- end start)))
+                (when (minusp difference)
+                  (error 'end-less-than-start
+                         :datum start
+                         :end-index end
+                         :in-sequence list
+                         :expected-type `(integer ,start)))
+                difference))
+             (otherwise
+              (error 'invalid-end-index
+                     :datum end
+                     :in-sequence list
+                     :expected-type '(or null unsigned-byte))))))
+    (do ((countdown start (1- countdown))
+         (remaining list (cdr remaining)))
+        ((or (zerop countdown)
+             (atom remaining))
+         (when (and (atom remaining)
+                    (not (null remaining)))
+           (error 'must-be-proper-list
+                  :datum list))
+         (when (plusp countdown)
+           (error 'invalid-start-index
+                  :datum start
+                  :expected-type `(integer 0 ,(- start countdown))
+                  :in-sequence list))
+         (values remaining n)))))
 
 (defmacro with-predicate ((name predicate) &body body)
   (let ((f (gensym)))

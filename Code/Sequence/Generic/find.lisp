@@ -4,7 +4,7 @@
   (error 'must-be-sequence
          :datum datum))
 
-(defmethod find (item (list list) &key from-end test test-not start end key)
+(defmethod find (item (list list) &key from-end test test-not (start 0) end key)
   (with-test-function (test test test-not)
     (with-key-function (key key)
       (for-each-relevant-cons (cons index list start end from-end)
@@ -13,7 +13,7 @@
             (return-from find element)))))))
 
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod find (item (vectoroid #1#) &key from-end test test-not start end key)
+  (defmethod find (item (vectoroid #1#) &key from-end test test-not (start 0) end key)
     (with-test-function (test test test-not)
       (with-key-function (key key)
         (for-each-relevant-element (element index vectoroid start end from-end)
