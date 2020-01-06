@@ -51,9 +51,24 @@ related to cross compilation are discussed in
 
 \section{Compilation phases}
 
-The Cleavir compiler framework converts source code to High-level
-Intermediate Representation (HIR) and performs various optimizations
-on this representation.
+\subsection{Reader used by the compiler}
+
+\sysname{} uses the eclector{}%
+\footnote{https://github.com/s-expressionists/Eclector}
+implementation-independent version of the standard function
+\texttt{read} and related functions.
+
+While \eclector{} is also the default reader of \sysname{}, for use
+with the compiler, \eclector{} is used to produce a \emph{concrete
+  syntax tree}%
+\footnote{https://github.com/s-expressionists/Concrete-Syntax-Tree} or
+CST for short.  A CST is a direct mirror of the representation of the
+source code as ordinary S-expressions, except that each sub-expression
+is wrapped in a standard object that may contain other information
+\emph{about} the expression.  In particular, the \sysname{} compiler
+includes information about \emph{source location} in the CST, so that
+this information can be propagated throughout the compilation
+procedure.
 
 \subsection{Convert to medium-level intermediate representation}
 
