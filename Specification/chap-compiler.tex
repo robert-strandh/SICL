@@ -70,6 +70,36 @@ includes information about \emph{source location} in the CST, so that
 this information can be propagated throughout the compilation
 procedure.
 
+In order to accomplish source tracking, \sysname{} starts by reading
+the entire source file into memory.  The internal representation of
+the source code is a vector of lines, where each line is a string.  We
+use this representation, rather than a single string for the entire
+file, in order to avoid the issue of now newlines are represented.
+
+The macro \texttt{with-source-tracking-stream-from-file} in the
+package named \texttt{sicl-source-tracking} takes a file
+specification and turns it into a Gray stream by reading the entire
+file contents and then wrapping that contents in an instance of the
+standard class \texttt{source-tracking-stream}.  An instance of that
+class contains the vector of lines of the initial file, the index of the
+\emph{current line}, and the index of the \emph{current character}
+within the current line.
+
+The library \texttt{trivial-gray-streams} is used to define methods on
+the generic functions \texttt{stream-read-char} and
+\texttt{stream-unread-char}.  These methods modify the index of the
+current line and the current character as appropriate.
+
+The system \texttt{sicl-source-tracking} also defines methods on two
+generic functions provided by the \eclector{} subsystem
+\texttt{eclector.parse-result}.  The method on
+\texttt{source-position} returns an instance of the class
+\texttt{sicl-source-position}.  Instances of this class contain the
+entire file contents as the vector of lines, together with the line
+and character index taken from the current values of the stream.  The
+method on \texttt{make-source-range} simply constructs a CONS of the
+start and the end position, provided they are both non-null.
+
 \subsection{Conversion from CST to AST}
 
 Once the CST has been produced by \eclector{}, it is converted to an
@@ -78,7 +108,7 @@ involves the use of a \emph{global environment} as defined in
 \refSec{sec-the-global-environment} and of lexical environments that
 evolve during the compilation procedure.
 
-For the lexical environments during compilation, \sysname uses a
+For the lexical environments during compilation, \sysname{} uses a
 library called \emph{Trucler}%
 \footnote{https://github.com/s-expressionists/Trucler} which provides
 a modern version of the environment-related functions defined in
