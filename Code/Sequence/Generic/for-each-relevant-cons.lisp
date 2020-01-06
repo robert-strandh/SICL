@@ -9,7 +9,7 @@
            (rest (gensym))
            (length (gensym))
            (forward
-             `(let ((,list (list-interval-start-and-length ,list ,start ,end)))
+             `(let ((,list (list-interval-beginning-and-length ,list ,start ,end)))
                 (loop for ,index of-type fixnum from ,start
                       for ,rest = ,list then (cdr ,rest)
                       do (if (atom ,rest)

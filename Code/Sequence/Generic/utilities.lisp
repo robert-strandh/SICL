@@ -62,12 +62,11 @@
              :in-sequence sequence))
     (values start end)))
 
-;;; Skips a prefix of a list and signals an error if the list is too short,
-;;; or if it is not a proper list.  Also, checks that start is a
-;;; nonnegative integer, and that end is either null, or an integer larger
-;;; than start.  Returns two values - the start of the interval and either
-;;; null, or its length.
-(defun list-interval-start-and-length (list start end)
+;;; Returns two values - the first cons of the interval and either null, or
+;;; its length.  Perform all relevant type check on the supplied list and
+;;; bounding index designators, except that no check is made whether the
+;;; end is too large.
+(defun list-interval-beginning-and-length (list start end)
   (declare (list list))
   (unless (typep start 'unsigned-byte)
     (error 'invalid-start-index
