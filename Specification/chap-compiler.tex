@@ -1,6 +1,18 @@
 \chapter{Compiler}
 \label{chap-compiler}
 
+\section{General description}
+
+The \sysname{} compiler is a \cleavir{}-based compiler.  As such it uses
+the intermediate representations defined by \cleavir{}, and in
+particular the abstract syntax trees and the instructions of the
+various levels of intermediate representations that it defines.
+
+However, \cleavir{} allows for substantial customization.  For that
+reason, in this chapter we describe exactly \emph{how} \sysname{} uses
+the features that \cleavir{} provies in order to create a complete
+compiler.
+
 \section{Different uses of the compiler}
 
 The compiler is used in several different situations.  There are
