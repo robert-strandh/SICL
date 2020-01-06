@@ -51,7 +51,7 @@ related to cross compilation are discussed in
 
 \section{Compilation phases}
 
-\subsection{Reader used by the compiler}
+\subsection{Reading the source code}
 
 \sysname{} uses the eclector{}%
 \footnote{https://github.com/s-expressionists/Eclector}
@@ -99,6 +99,17 @@ entire file contents as the vector of lines, together with the line
 and character index taken from the current values of the stream.  The
 method on \texttt{make-source-range} simply constructs a CONS of the
 start and the end position, provided they are both non-null.
+
+As a result of this source tracking, Every CST that corresponds to a
+precise location in the source file has a start and an end position
+associated with it.  Not every CST has a location in the source file,
+however.  For example, if the source file contains a list in the form
+of an opening parenthesis followed by several elements separated by
+spaces, then only the CSTs corresponding to the entire list, and those
+associated with each element, have source positions associated with
+them.  CSTs corresponding to the \texttt{cons} cells of the list,
+other than the first, do not have source positions associated with
+them.
 
 \subsection{Conversion from CST to AST}
 
