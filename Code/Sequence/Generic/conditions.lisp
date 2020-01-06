@@ -80,4 +80,4 @@
 ;;; We reuse the datum in the type-error for the start index,
 ;;; and add a slot for the end index.
 (define-condition end-less-than-start (invalid-bounding-index)
-  ((end-index :initarg :end-index :reader end-index)))
+  ((%start-index :initarg :start-index :reader start-index)))

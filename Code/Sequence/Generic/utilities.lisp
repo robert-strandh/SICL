@@ -1,5 +1,11 @@
 (cl:in-package #:sicl-sequence)
 
+(deftype array-index ()
+  '(integer 0 (#.(1- array-total-size-limit))))
+
+(deftype array-length ()
+  '(integer 0 (#.array-total-size-limit)))
+
 (declaim (inline function-designator-function))
 (defun function-designator-function (function-designator)
   (typecase function-designator
@@ -34,8 +40,11 @@
          (min count most-positive-fixnum))))
 
 (declaim (inline canonicalize-start-and-end))
+(declaim (ftype (function (sequence array-length t t)
+                          (values array-index array-index &optional))
+                canonicalize-start-and-end))
 (defun canonicalize-start-and-end (sequence length start end)
-  (declare (type (integer 0 (#.array-total-size-limit)) length))
+  (declare (sequence sequence) (array-length length))
   (let ((start (typecase start
                  (unsigned-byte start)
                  (otherwise (error 'invalid-start-index-type
@@ -62,47 +71,50 @@
              :in-sequence sequence))
     (values start end)))
 
-;;; Returns two values - the first cons of the interval and either null, or
-;;; its length.  Perform all relevant type check on the supplied list and
-;;; bounding index designators, except that no check is made whether the
-;;; end is too large.
-(defun list-interval-beginning-and-length (list start end)
+;;; Returns the first cons of the interval.  Perform all relevant type
+;;; check on the supplied list and bounding index designators, except that
+;;; no check is made whether the end is too large.
+(declaim (ftype (function (list t t)
+                          (values t unsigned-byte (or null unsigned-byte) &optional))
+                canonicalize-list-interval))
+(defun canonicalize-list-interval (list start end)
   (declare (list list))
+  ;; Check START.
   (unless (typep start 'unsigned-byte)
     (error 'invalid-start-index
            :datum start
            :expected-type 'unsigned-byte
            :in-sequence list))
-  (let ((n (typecase end
-             (null nil)
-             (unsigned-byte
-              (let ((difference (- end start)))
-                (when (minusp difference)
-                  (error 'end-less-than-start
-                         :datum start
-                         :end-index end
-                         :in-sequence list
-                         :expected-type `(integer ,start)))
-                difference))
-             (otherwise
-              (error 'invalid-end-index
-                     :datum end
-                     :in-sequence list
-                     :expected-type '(or null unsigned-byte))))))
-    (do ((countdown start (1- countdown))
-         (remaining list (cdr remaining)))
-        ((or (zerop countdown)
-             (atom remaining))
-         (when (and (atom remaining)
-                    (not (null remaining)))
-           (error 'must-be-proper-list
-                  :datum list))
-         (when (plusp countdown)
-           (error 'invalid-start-index
-                  :datum start
-                  :expected-type `(integer 0 ,(- start countdown))
-                  :in-sequence list))
-         (values remaining n)))))
+  ;; Check END.
+  (typecase end
+    (null)
+    (integer
+     (unless (<= start end)
+       (error 'end-less-than-start
+              :datum end
+              :start-index start
+              :in-sequence list
+              :expected-type `(integer ,start))))
+    (otherwise
+     (error 'invalid-end-index
+            :datum end
+            :in-sequence list
+            :expected-type '(or null unsigned-byte))))
+  ;; Cautiously skip the first START conses.
+  (do ((countdown start (1- countdown))
+       (remaining list (cdr remaining)))
+      ((or (zerop countdown)
+           (atom remaining))
+       (when (and (atom remaining)
+                  (not (null remaining)))
+         (error 'must-be-proper-list
+                :datum list))
+       (when (plusp countdown)
+         (error 'invalid-start-index
+                :datum start
+                :expected-type `(integer 0 ,(- start countdown))
+                :in-sequence list))
+       (values remaining start end))))
 
 (defmacro with-predicate ((name predicate) &body body)
   (let ((f (gensym)))
