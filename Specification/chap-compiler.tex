@@ -111,6 +111,11 @@ them.  CSTs corresponding to the \texttt{cons} cells of the list,
 other than the first, do not have source positions associated with
 them.
 
+The source is read in a loop that reads top-level expressions until
+end of file.  The expressions are then wrapped in a CST representing
+the special operator \texttt{progn} so as to produce a single CST for
+the entire source code in the file.
+
 \subsection{Conversion from CST to AST}
 
 Once the CST has been produced by \eclector{}, it is converted to an
