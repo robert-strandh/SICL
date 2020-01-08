@@ -4,7 +4,8 @@
   :depends-on (#:sicl-extrinsic-environment
                #:sicl-ast-to-hir
                #:sicl-hir-interpreter
-               #:sicl-hir-to-mir)
+               #:sicl-hir-to-mir
+               #:sicl-mir-to-lir)
   :serial t
   :components
   ((:file "packages")
