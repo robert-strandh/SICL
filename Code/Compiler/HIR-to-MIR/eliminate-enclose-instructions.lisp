@@ -3,8 +3,6 @@
 (defclass entry-point-input (cleavir-ir:immediate-input)
   ((%enter-instruction :initarg :enter-instruction :reader enter-instruction)))
 
-;;; Replace each ENTER instruction that is an immediate child of
-;;; ENTER-INSTRUCTION with an AREF-instruction.
 (defun eliminate-enclose-instructions (client enter-instruction)
   (declare (ignore client))
   (let ((static-environment-location
