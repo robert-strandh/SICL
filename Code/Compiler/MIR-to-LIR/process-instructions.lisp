@@ -91,6 +91,21 @@
    scratch-register
    lexical-locations))
 
+(defun insert-memsets-after
+    (instruction
+     from-register
+     to-lexical-location
+     scratch-register
+     lexical-locations)
+  (loop for successor in (cleavir-ir:successors instruction)
+        do (insert-memset-between
+            instruction
+            successor
+            from-register
+            to-lexical-location
+            scratch-register
+            lexical-locations)))
+
 (defmethod process-instruction (instruction lexical-locations)
   (let ((inputs (cleavir-ir:inputs instruction))
         (outputs (cleavir-ir:outputs instruction)))
@@ -115,7 +130,7 @@
                 *rax*
                 lexical-locations)
                (setf (first inputs) *r11*)
-               (insert-memset-after
+               (insert-memsets-after
                 instruction
                 *r11*
                 (first outputs)
@@ -157,7 +172,7 @@
                   :output *r11*)
                 instruction)
                (setf (first inputs) *r11*)
-               (insert-memset-after
+               (insert-memsets-after
                 instruction
                 *r11*
                 (first outputs)
