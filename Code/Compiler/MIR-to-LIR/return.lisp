@@ -48,6 +48,3 @@
     :inputs (list *rsp* (make-instance 'cleavir-ir:immediate-input :value 8))
     :output *rsp*)
   instruction)
-  
-
-           
