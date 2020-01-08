@@ -55,21 +55,41 @@
      :output to-register)
    instruction))
 
+(defun insert-memset-between
+    (instruction
+     successor
+     from-register
+     to-lexical-location
+     scratch-register
+     lexical-locations)
+  (let ((memset (make-instance 'cleavir-ir:memset1-instruction
+                  :inputs (list scratch-register from-register))))
+    (cleavir-ir:insert-instruction-between
+     memset
+     instruction
+     successor)
+    (let ((load-instructions
+            (load-address-of-lexical-location
+             to-lexical-location scratch-register lexical-locations)))
+      (loop for load-instruction in load-instructions
+            do (cleavir-ir:insert-instruction-before
+                load-instruction
+                memset)))))
+
 (defun insert-memset-after
     (instruction
      from-register
      to-lexical-location
      scratch-register
      lexical-locations)
-  (cleavir-ir:insert-instruction-after
-   (make-instance 'cleavir-ir:memset1-instruction
-     :inputs (list scratch-register from-register))
-   instruction)
-  (let ((load-instructions
-          (load-address-of-lexical-location
-           to-lexical-location scratch-register lexical-locations)))
-    (loop for load-instruction in (reverse load-instructions)
-          do (cleavir-ir:insert-instruction-after load-instruction instruction))))
+  (assert (= (length (cleavir-ir:successors instruction)) 1))
+  (insert-memset-between
+   instruction
+   (first (cleavir-ir:successors instruction))
+   from-register
+   to-lexical-location
+   scratch-register
+   lexical-locations))
 
 (defmethod process-instruction (instruction lexical-locations)
   (let ((inputs (cleavir-ir:inputs instruction))
