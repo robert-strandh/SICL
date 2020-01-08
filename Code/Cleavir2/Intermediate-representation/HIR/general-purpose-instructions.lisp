@@ -184,9 +184,8 @@
 ;;; The process of unwinding may involve dynamically determined side
 ;;; effects due to UNWIND-PROTECT.
 ;;;
-;;; The instruction has two inputs: the continuation output by a
-;;; CATCH-INSTRUCTION (see its comment for details) and the dynamic
-;;; environment.
+;;; The instruction has a single inputs: the continuation output by a
+;;; CATCH-INSTRUCTION (see its comment for details).
 
 (defclass unwind-instruction
     (instruction no-successors-mixin side-effect-mixin)
