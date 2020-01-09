@@ -2,7 +2,8 @@
 
 (defsystem sicl-hir-transformations
   :depends-on (#:cleavir2-hir
-               #:cleavir2-ast-to-hir)
+               #:cleavir2-ast-to-hir
+               #:sicl-hir-to-mir)
   :serial t
   :components
   ((:file "packages")
