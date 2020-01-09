@@ -6,7 +6,8 @@
          (index-input (second inputs))
          (index-value (cleavir-ir:value index-input))
          (new-index-input (make-instance 'cleavir-ir:constant-input
-                            :value (+ index-value 4))))
+                            :value (+ index-value
+                                      sicl-hir-to-mir:+first-constant-index+))))
     (change-class instruction
                   'cleavir-ir:aref-instruction
                   :inputs (list static-environment-input new-index-input)
