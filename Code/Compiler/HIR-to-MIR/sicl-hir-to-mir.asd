@@ -6,6 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "static-environment")
    (:file "generic-functions")
    (:file "variables")
    (:file "expand-funcall-instructions")
