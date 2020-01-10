@@ -2,7 +2,7 @@
 
 (defsystem :sicl-clos-support
   :depends-on (:sicl-clos-package
-	       :sicl-global-environment)
+               :sicl-global-environment)
   :serial t
   :components
   ((:file "ensure-generic-function-using-class-support")
