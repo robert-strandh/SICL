@@ -11,5 +11,4 @@
   ((:file "packages")
    (:file "client")
    (:file "ast-to-hir")
-   (:file "breakpoint-instruction")
    (:file "customization")))
