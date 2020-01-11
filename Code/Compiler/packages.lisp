@@ -2,4 +2,10 @@
 
 (defpackage #:sicl-compiler
   (:use #:common-lisp)
-  (:export))
+  (:export #:+code-object-index+
+           #:+enclose-function-index+
+           #:+cons-function-index+
+           #:+nil-index+
+           #:+first-constant-index+
+           #:breakpoint-instruction
+           #:debug-information))
