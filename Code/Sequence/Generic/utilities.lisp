@@ -39,7 +39,6 @@
         (t
          (min count most-positive-fixnum))))
 
-(declaim (inline canonicalize-start-and-end))
 (declaim (ftype (function (sequence array-length t t)
                           (values array-index array-index &optional))
                 canonicalize-start-and-end))
@@ -70,51 +69,6 @@
              :end-index end
              :in-sequence sequence))
     (values start end)))
-
-;;; Returns the first cons of the interval.  Perform all relevant type
-;;; check on the supplied list and bounding index designators, except that
-;;; no check is made whether the end is too large.
-(declaim (ftype (function (list t t)
-                          (values t unsigned-byte (or null unsigned-byte) &optional))
-                canonicalize-list-interval))
-(defun canonicalize-list-interval (list start end)
-  (declare (list list))
-  ;; Check START.
-  (unless (typep start 'unsigned-byte)
-    (error 'invalid-start-index
-           :datum start
-           :expected-type 'unsigned-byte
-           :in-sequence list))
-  ;; Check END.
-  (typecase end
-    (null)
-    (integer
-     (unless (<= start end)
-       (error 'end-less-than-start
-              :datum end
-              :start-index start
-              :in-sequence list
-              :expected-type `(integer ,start))))
-    (otherwise
-     (error 'invalid-end-index
-            :datum end
-            :in-sequence list
-            :expected-type '(or null unsigned-byte))))
-  ;; Cautiously skip the first START conses.
-  (do ((countdown start (1- countdown))
-       (remaining list (cdr remaining)))
-      ((or (zerop countdown)
-           (atom remaining))
-       (when (and (atom remaining)
-                  (not (null remaining)))
-         (error 'must-be-proper-list
-                :datum list))
-       (when (plusp countdown)
-         (error 'invalid-start-index
-                :datum start
-                :expected-type `(integer 0 ,(- start countdown))
-                :in-sequence list))
-       (values remaining start end))))
 
 (defmacro with-predicate ((name predicate) &body body)
   (let ((f (gensym)))
@@ -191,3 +145,21 @@
          (setf (fill-pointer vector) new-length))
         (t
          (subseq vector 0 new-length))))
+
+(declaim (inline skip-to-start))
+(defun skip-to-start (list start)
+  (do ((index 0 (1+ index))
+       (rest list (cdr rest)))
+      ((or (= index start)
+           (atom rest))
+       (unless (or (not (atom rest))
+                   (null rest))
+         (error 'must-be-proper-list
+                :datum list))
+       (unless (= index start)
+         (error 'invalid-start-index
+                :datum start
+                :expected-type `(integer 0 ,(1- index))
+                :in-sequence list))
+       rest)
+    (declare (fixnum index))))
