@@ -19,20 +19,4 @@
    #:convert-to-lir
    #:required-register #:preferred-register
    #:spill-cost
-   #:collect-dynamic-locations
-   ))
-
-(defpackage #:sicl-type-proclamations
-  (:use #:common-lisp)
-  (:shadowing-import-from #:sicl-global-environment
-			  #:proclaim))
-
-(defpackage #:sicl-compiler
-  (:use #:common-lisp)
-  (:shadow #:compile-file)
-  (:export
-   #:*backend*
-   #:compile-file
-   #:type-inference
-   #:trim-instruction-graph
-   ))
+   #:collect-dynamic-locations))
