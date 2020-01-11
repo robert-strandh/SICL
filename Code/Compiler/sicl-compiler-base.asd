@@ -2,4 +2,5 @@
 
 (defsystem #:sicl-compiler-base
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "static-environment")))
