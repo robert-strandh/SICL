@@ -8,7 +8,7 @@
         (funcall call-next-method)
         (let* ((new-successors
                  (loop for successor in (cleavir-ast-to-hir:successors context)
-                       collect (make-instance 'breakpoint-instruction
+                       collect (make-instance 'sicl-compiler:breakpoint-instruction
                                  :debug-information (cdr origin)
                                  :successor successor
                                  :dynamic-environment-location
@@ -17,7 +17,7 @@
                (result (funcall call-next-method client ast new-context)))
           (if (typep result 'cleavir-ir:enter-instruction)
               result
-              (make-instance 'breakpoint-instruction
+              (make-instance 'sicl-compiler:breakpoint-instruction
                 :debug-information (car origin)
                 :successor result
                 :dynamic-environment-location

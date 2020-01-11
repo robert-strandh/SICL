@@ -7,7 +7,7 @@
     cleavir-ir:enter-instruction
     cleavir-ir:nop-instruction
     cleavir-ir:assignment-instruction
-    sicl-ast-to-hir:breakpoint-instruction
+    sicl-compiler:breakpoint-instruction
     cleavir-ir:funcall-instruction
     cleavir-ir:return-instruction
     cleavir-ir:argument-instruction
