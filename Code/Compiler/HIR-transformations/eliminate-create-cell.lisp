@@ -1,16 +1,24 @@
 (cl:in-package #:sicl-hir-transformations)
 
 (defun eliminate-create-cell-instruction (instruction owner)
-  (let ((static-environment-location (cleavir-ir:static-environment owner))
-        (nil-location
-          (make-instance 'cleavir-ir:lexical-location :name (gensym "nil")))
-        (cons-function-offset-input
-          (make-instance 'cleavir-ir:constant-input :value -2))
-        (nil-offset-input
-          (make-instance 'cleavir-ir:constant-input :value -1))
-        (cons-function-location
-          (make-instance 'cleavir-ir:lexical-location
-            :name (gensym "consfun"))))
+  (let* ((static-environment-location (cleavir-ir:static-environment owner))
+         (nil-location
+           (make-instance 'cleavir-ir:lexical-location :name (gensym "nil")))
+         (cons-function-offset
+           (- sicl-compiler:+cons-function-index+
+              sicl-compiler:+first-constant-index+))
+         (cons-function-offset-input
+           (make-instance 'cleavir-ir:constant-input
+             :value cons-function-offset))
+         (nil-offset
+           (- sicl-compiler:+nil-index+
+              sicl-compiler:+first-constant-index+))
+         (nil-offset-input
+           (make-instance 'cleavir-ir:constant-input
+             :value nil-offset))
+         (cons-function-location
+           (make-instance 'cleavir-ir:lexical-location
+             :name (gensym "consfun"))))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fetch-instruction
        :inputs (list static-environment-location cons-function-offset-input)

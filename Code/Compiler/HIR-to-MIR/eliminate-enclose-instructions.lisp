@@ -15,7 +15,7 @@
                    :name (gensym "enclose-function")))
                (static-input-enclose-function-index
                  (make-instance 'cleavir-ir:constant-input
-                   :value +enclose-function-index+))
+                   :value sicl-compiler:+enclose-function-index+))
                (entry-point-input
                  (make-instance 'entry-point-input
                    :value 0
