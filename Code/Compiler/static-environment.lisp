@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-hir-to-mir)
+(cl:in-package #:sicl-compiler)
 
 (defparameter +code-object-index+ 0)
 
