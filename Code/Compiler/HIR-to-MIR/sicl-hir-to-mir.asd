@@ -2,11 +2,11 @@
 
 (defsystem #:sicl-hir-to-mir
   :depends-on (#:cleavir2-hir
-               #:cleavir2-mir)
+               #:cleavir2-mir
+               #:sicl-compiler-base)
   :serial t
   :components
   ((:file "packages")
-   (:file "static-environment")
    (:file "generic-functions")
    (:file "expand-funcall-instructions")
    (:file "cons")
