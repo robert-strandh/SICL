@@ -4,7 +4,7 @@
   (error 'must-be-sequence
          :datum datum))
 
-(defmethod count (item (list list) &key from-end start end key test test-not)
+(defmethod count (item (list list) &key from-end (start 0) end key test test-not)
   (let ((count 0))
     (with-test-function (test test test-not)
       (with-key-function (key key)
@@ -14,7 +14,7 @@
     count))
 
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod count (item (vectoroid #1#) &key from-end start end key test test-not)
+  (defmethod count (item (vectoroid #1#) &key from-end (start 0) end key test test-not)
     (let ((count 0))
       (with-test-function (test test test-not)
         (with-key-function (key key)

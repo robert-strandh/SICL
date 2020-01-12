@@ -4,7 +4,7 @@
   (error 'must-be-sequence
          :datum datum))
 
-(defmethod delete-if-not (test (list list) &key from-end start end count key)
+(defmethod delete-if-not (test (list list) &key from-end (start 0) end count key)
   (with-predicate (predicate test)
     (with-key-function (key key)
       (delete-in-list
@@ -12,7 +12,7 @@
        list from-end start end count))))
 
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod delete-if-not (test (vectoroid #1#) &key from-end start end count key)
+  (defmethod delete-if-not (test (vectoroid #1#) &key from-end (start 0) end count key)
     (with-predicate (predicate test)
       (with-key-function (key key)
         (delete-in-vector

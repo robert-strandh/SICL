@@ -1,5 +1,11 @@
 (cl:in-package #:sicl-sequence)
 
+(deftype array-index ()
+  '(integer 0 (#.(1- array-total-size-limit))))
+
+(deftype array-length ()
+  '(integer 0 (#.array-total-size-limit)))
+
 (declaim (inline function-designator-function))
 (defun function-designator-function (function-designator)
   (typecase function-designator
@@ -33,14 +39,15 @@
         (t
          (min count most-positive-fixnum))))
 
-(declaim (inline canonicalize-start-and-end))
+(declaim (ftype (function (sequence array-length t t)
+                          (values array-index array-index &optional))
+                canonicalize-start-and-end))
 (defun canonicalize-start-and-end (sequence length start end)
-  (declare (type (integer 0 (#.array-total-size-limit)) length))
+  (declare (sequence sequence) (array-length length))
   (let ((start (typecase start
-                 (null 0)
-                 ((integer 0) start)
+                 (unsigned-byte start)
                  (otherwise (error 'invalid-start-index-type
-                                   :expected-type '(or null (integer 0))
+                                   :expected-type '(or null unsigned-byte)
                                    :datum start
                                    :sequence sequence))))
         (end (typecase end
@@ -62,30 +69,6 @@
              :end-index end
              :in-sequence sequence))
     (values start end)))
-
-;;; Skip a prefix of a list and signal an error if the list is too short,
-;;; or if it is not a proper list.  Also check that start is a nonnegative
-;;; integer.
-(defun skip-to-start (list start)
-  (declare (list list) (integer start))
-  (unless (plusp start)
-    (error 'invalid-start-index
-           :datum start
-           :expected-type unsigned-byte
-           :in-sequence list))
-  (do ((countdown start (1- countdown))
-       (remaining list (cdr remaining)))
-      ((or (zerop countdown)
-           (atom remaining))
-       (when (and (atom remaining)
-                  (not (null remaining)))
-         (error 'must-be-proper-list
-                :datum list))
-       (when (plusp countdown)
-         (error 'invalid-start-index
-                :datum start
-                :expected-type `(integer 0 ,(- start countdown))
-                :in-sequence list)))))
 
 (defmacro with-predicate ((name predicate) &body body)
   (let ((f (gensym)))
@@ -162,3 +145,21 @@
          (setf (fill-pointer vector) new-length))
         (t
          (subseq vector 0 new-length))))
+
+(declaim (inline skip-to-start))
+(defun skip-to-start (list start)
+  (do ((index 0 (1+ index))
+       (rest list (cdr rest)))
+      ((or (= index start)
+           (atom rest))
+       (unless (or (not (atom rest))
+                   (null rest))
+         (error 'must-be-proper-list
+                :datum list))
+       (unless (= index start)
+         (error 'invalid-start-index
+                :datum start
+                :expected-type `(integer 0 ,(1- index))
+                :in-sequence list))
+       rest)
+    (declare (fixnum index))))

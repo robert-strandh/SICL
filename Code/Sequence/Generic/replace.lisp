@@ -8,18 +8,24 @@
   (error 'must-be-sequence
          :datum datum))
 
-;;; TODO replace on lists.
+(defmethod replace ((list1 list) (list2 list) &key (start1 0) end1 (start2 0) end2)
+  (let ((dst (make-list-writer list1 start1 end1 nil (lambda () (return-from replace list1))))
+        (src (make-list-reader list2 start2 end2 nil (lambda () (return-from replace list1)))))
+    (loop (funcall dst (funcall src)))))
+
+(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+  (defmethod replace ((list list) (vector #1#) &key (start1 0) end1 (start2 0) end2)
+    (let ((dst (make-list-writer list start1 end1 nil (lambda () (return-from replace list))))
+          (src (make-vector-reader vector start2 end2 nil (lambda () (return-from replace list)))))
+      (loop (funcall dst (funcall src)))))
+
+  (defmethod replace ((vector #1#) (list list) &key (start1 0) end1 (start2 0) end2)
+    (let ((dst (make-vector-writer vector start1 end1 nil (lambda () (return-from replace vector))))
+          (src (make-list-reader list start2 end2 nil (lambda () (return-from replace vector)))))
+      (loop (funcall dst (funcall src))))))
 
 (replicate-for-all-compatible-vectoroids #1=#:vectoroid-1 #2=#:vectoroid-2
   (defmethod replace ((vectoroid-1 #1#) (vectoroid-2 #2#) &key start1 end1 start2 end2)
-    (let ((length-1 (length vectoroid-1))
-          (length-2 (length vectoroid-2)))
-      (multiple-value-bind (start1 end1)
-          (canonicalize-start-and-end vectoroid-1 length-1 start1 end1)
-        (multiple-value-bind (start2 end2)
-            (canonicalize-start-and-end vectoroid-1 length-2 start2 end2)
-          (let ((n (min (- end1 start1) (- end2 start2))))
-            (loop for offset below n do
-              (setf (elt vectoroid-1 (+ start1 offset))
-                    (elt vectoroid-2 (+ start2 offset))))))))
-    vectoroid-1))
+    (let ((dst (make-vector-writer vectoroid-1 start1 end1 nil (lambda () (return-from replace vectoroid-1))))
+          (src (make-vector-reader vectoroid-2 start2 end2 nil (lambda () (return-from replace vectoroid-1)))))
+      (loop (funcall dst (funcall src))))))
