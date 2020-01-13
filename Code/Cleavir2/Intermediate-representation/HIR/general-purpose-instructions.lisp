@@ -184,16 +184,21 @@
 ;;; The process of unwinding may involve dynamically determined side
 ;;; effects due to UNWIND-PROTECT.
 ;;;
-;;; The instruction has a single inputs: the continuation output by a
+;;; The instruction has a single input: the continuation output by a
 ;;; CATCH-INSTRUCTION (see its comment for details).
+;;;
+;;; This instruction has no "normal" successors.  The instruction to
+;;; which control is to be transferred is instead determined by the
+;;; combination of the DESTINATION and the INDEX.
 
 (defclass unwind-instruction
     (instruction no-successors-mixin side-effect-mixin)
   (;; The destination of the UNWIND-INSTRUCTION is the
-   ;; instruction to which it will eventually transfer control.
-   ;; This instruction must be the successor of a CATCH-INSTRUCTION.
-   ;; It is not a normal successor because the exit is non-local.
+   ;; CATCH-INSTRUCTION that is the result of compiling the
+   ;; corresponding BLOCK-AST.
    (%destination :initarg :destination :accessor destination)
+   ;; The index of the UNWIND-INSTRUCTION is the index into the list
+   ;; of successors of the CATCH-INSTRUCTION that is the DESTINATION.
    (%index :initarg :index :accessor unwind-index)))
 
 (defmethod clone-initargs append ((instruction unwind-instruction))
