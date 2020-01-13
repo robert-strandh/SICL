@@ -110,6 +110,6 @@
            bounding indexes, because start must be less than or equal~@
            to end.  The sequence is:~@
            ~s."
+          (start-index c)
           (type-error-datum c)
-          (end-index c)
           (in-sequence c)))

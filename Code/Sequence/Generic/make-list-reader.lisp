@@ -5,13 +5,13 @@
   (declare (list list))
   (if (not from-end)
       ;; Forward iteration.
-      (multiple-value-bind (start end)
+      (multiple-value-bind (start limit)
           (canonicalize-start-and-end list (1- array-total-size-limit) start end)
         (let ((rest (skip-to-start list start))
               (index start))
           (declare (array-index index))
           (lambda ()
-            (cond ((= index end)
+            (cond ((= index limit)
                    (funcall terminate))
                   ((consp rest)
                    (let ((v (first rest))
@@ -22,6 +22,8 @@
                   ((not (null rest))
                    (error 'must-be-proper-list
                           :datum list))
+                  ((null end)
+                   (funcall terminate))
                   (t
                    (error 'invalid-end-index
                           :datum index
