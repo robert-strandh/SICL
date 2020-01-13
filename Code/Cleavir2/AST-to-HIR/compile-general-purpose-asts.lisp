@@ -189,8 +189,8 @@
           ;; harder case: unwind.
           (let* ((new-successor (make-instance 'cleavir-ir:unwind-instruction
                                   :input continuation
-                                  :destination
-                                  destination :index 1))
+                                  :destination destination
+                                  :index 1))
                  (new-context (clone-context
                                context
                                :results (results block-context)
