@@ -166,9 +166,9 @@
 ;;; FORM-AST with the same results as the ones in the context in which
 ;;; the BLOCK-AST was compiled, but in the current invocation.  We
 ;;; then insert an UNWIND-INSTRUCTION that serves as the successor of
-;;; the compilation of the FORM-AST.  The destination of that
-;;; UNWIND-INSTRUCTION is the successor of the context in which the
-;;; BLOCK-AST was compiled.
+;;; the compilation of the FORM-AST.  The DESTINATION of that
+;;; UNWIND-INSTRUCTION is the CATCH-INSTRUCTION that resulted from the
+;;; compilation of the corresponding BLOCK-AST.
 
 (defmethod compile-ast (client (ast cleavir-ast:return-from-ast) context)
   (let* ((block-info (block-info (cleavir-ast:block-ast ast)))
