@@ -17,7 +17,6 @@
                   (lexical-value (cleavir-ir:dynamic-environment-location instruction)
                                  lexical-environment)))
       (catch abandon-tag
-        (loop for index = 0
+        (loop for successor = (first successors)
                 then  (catch transfer-tag
-                        (interpret-instructions client successor lexical-environment))
-              for successor = (nth index successors))))))
+                        (interpret-instructions client successor lexical-environment)))))))
