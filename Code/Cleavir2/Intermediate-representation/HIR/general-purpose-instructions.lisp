@@ -143,7 +143,7 @@
 ;;; Instruction CATCH-INSTRUCTION.
 ;;;
 ;;; This instruction is used to mark a control point and stack frame
-;;; as an exit point. It has one input, two outputs, and one or more
+;;; as an exit point. It has no inputs, two outputs, and one or more
 ;;; successors.
 ;;;
 ;;; When reached normally, control proceeds unconditionally to the
