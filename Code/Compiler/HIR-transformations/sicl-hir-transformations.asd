@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "preprocess-unwind")
+   (:file "preprocess-catch")
    (:file "convert-symbol-value")
    (:file "hoist-fdefinitions")
    (:file "eliminate-create-cell")
