@@ -159,3 +159,15 @@
 (define-sealable-generic-function delete-duplicates
     (sequence &key from-end test test-not start end key)
   (:argument-precedence-order sequence))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Auxiliary Functions
+
+(define-sealable-generic-function make-sequence-reader
+    (sequence start end from-end terminate)
+  (:argument-precedence-order sequence))
+
+(define-sealable-generic-function make-sequence-writer
+    (sequence start end from-end terminate)
+  (:argument-precedence-order sequence))

@@ -182,3 +182,6 @@
                 :in-sequence list))
        rest)
     (declare (fixnum index))))
+
+(defmacro seal (function-name)
+  `(sealable-metaobjects:seal-generic-function #',function-name))
