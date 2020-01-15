@@ -19,3 +19,7 @@
       (replace
        (make-sequence-like vector (- end start))
        vector :start2 start :end2 end))))
+
+(defsetf subseq (sequence start &optional end) (value)
+  `(progn (replace ,sequence ,value :start1 ,start :end1 ,end) ,value))
+

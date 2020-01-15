@@ -27,10 +27,6 @@
     (sequence start &optional end)
   (:argument-precedence-order sequence))
 
-(define-sealable-generic-function (setf subseq)
-    (value sequence start &optional end)
-  (:argument-precedence-order sequence))
-
 (define-sealable-generic-function map-into
     (result-sequence function &rest sequences)
   (:argument-precedence-order result-sequence))
