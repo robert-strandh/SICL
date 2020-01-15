@@ -229,6 +229,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction UNWIND-PROTECT-INSTRUCTION.
+;;;
+;;; This instruction is used in order to create an entry on the
+;;; dynamic environment that will perform the cleanup actions
+;;; specified in an UNWIND-PROTECT form whenever the environment is
+;;; unwound.
+;;;
+;;; The instruction has a single input, namely a thunk, typically
+;;; resulting from the execution of an ENCLOSE-INSTRUCTION of the code
+;;; in the cleanup forms of the UNWIND-PROTECT form.
+;;;
+;;; The instruction has a single output, a lexical location indicating
+;;; a new dynamic environment in which the variable is bound.
+
+(defclass unwind-protect-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
+
+(defmethod dynamic-environment-output ((instruction unwind-protect-instruction))
+  (first (outputs instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction EQ-INSTRUCTION.
 
 (defclass eq-instruction (instruction multiple-successors-mixin)
