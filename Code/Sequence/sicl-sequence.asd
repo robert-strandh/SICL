@@ -14,21 +14,22 @@
      (:file "utilities")
      (:file "conditions")
      (:file "condition-reporters-en")
-     (:file "for-each-relevant-cons")
-     (:file "for-each-relevant-element")
-     (:file "make-list-reader")
-     (:file "make-list-writer")
-     (:file "make-vector-reader")
-     (:file "make-vector-writer")
 
-     ;; First, load the a few elementary sequence functions and seal them.
-     ;; This way, the subsequent definitions can already use optimized
-     ;; versions of them.
+     ;; Firstly, load the a few elementary sequence functions and seal
+     ;; them.  This way, the subsequent definitions can already use
+     ;; optimized versions of them.
      (:file "elt")
      (:file "length")
      (:file "adjust-sequence")
      (:file "make-sequence-like")
      (:file "seal-elementary-sequence-functions")
+
+     ;; Secondly, load several high-level utilities for working with sequences.
+     (:file "for-each-relevant-cons")
+     (:file "for-each-relevant-element")
+     (:file "make-sequence-reader")
+     (:file "make-sequence-writer")
+     (:file "seal-auxiliary-generic-functions")
 
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the bulk of the sequence functions.

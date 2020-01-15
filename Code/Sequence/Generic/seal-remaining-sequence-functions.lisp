@@ -1,8 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmacro seal (function-name)
-  `(sealable-metaobjects:seal-generic-function #',function-name))
-
 (seal copy-seq)
 (seal elt)
 (seal (setf elt))

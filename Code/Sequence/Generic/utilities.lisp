@@ -40,14 +40,14 @@
          (min count most-positive-fixnum))))
 
 (declaim (ftype (function (sequence array-length t t)
-                          (values array-index array-index &optional))
+                          (values array-index array-length &optional))
                 canonicalize-start-and-end))
 (defun canonicalize-start-and-end (sequence length start end)
   (declare (sequence sequence) (array-length length))
   (let ((start (typecase start
                  (unsigned-byte start)
                  (otherwise (error 'invalid-start-index-type
-                                   :expected-type '(or null unsigned-byte)
+                                   :expected-type 'unsigned-byte
                                    :datum start
                                    :sequence sequence))))
         (end (typecase end
@@ -146,8 +146,27 @@
         (t
          (subseq vector 0 new-length))))
 
+(declaim (inline nth-cons))
+(defun nth-cons (list index)
+  (declare (array-index index))
+  (labels ((nth-cons-aux (rest counter)
+             (declare (array-index counter))
+             (if (atom rest)
+                 (if (null rest)
+                     (error 'invalid-sequence-index
+                            :datum index
+                            :in-sequence list
+                            :expected-type `(integer 0 ,(1- (length list))))
+                     (error 'must-be-proper-list
+                            :datum list))
+                 (if (zerop counter)
+                     rest
+                     (nth-cons-aux (cdr rest) (1- counter))))))
+    (nth-cons-aux list index)))
+
 (declaim (inline skip-to-start))
 (defun skip-to-start (list start)
+  (declare (array-index start))
   (do ((index 0 (1+ index))
        (rest list (cdr rest)))
       ((or (= index start)
@@ -163,3 +182,6 @@
                 :in-sequence list))
        rest)
     (declare (fixnum index))))
+
+(defmacro seal (function-name)
+  `(sealable-metaobjects:seal-generic-function #',function-name))

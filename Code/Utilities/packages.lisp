@@ -2,4 +2,6 @@
 
 (defpackage #:sicl-utilities
   (:use #:common-lisp)
-  (:export #:once-only))
+  (:export
+   #:once-only
+   #:with-collectors))
