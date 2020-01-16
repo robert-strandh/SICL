@@ -7,7 +7,6 @@
 (seal make-sequence-like)
 (seal adjust-sequence)
 (seal subseq)
-(seal (setf subseq))
 (seal map-into)
 (seal reduce)
 (seal count)
