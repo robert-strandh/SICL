@@ -1,5 +1,7 @@
 \section{Previous work}
 
+\subsection{Process-based debugging}
+
 With systems like \unix{}, debugging is usually performed as an
 interaction between two \emph{processes}.  The debugger runs in one
 process and the application in another process.  For a breakpoint, the
@@ -11,6 +13,31 @@ the same application that are not executed under the control of the
 debugger are not affected by the modified code.  In particular, with
 this technique any application can be debugged, including the
 debuggger itself.
+
+\subsection{\sbcl{}}
+
+The \sbcl{} \commonlisp{} implementation has a breakpoint facility.
+Given a code location, a breakpoint can be set, which results in the
+code being modified at that location, so that an arbitrary function
+(given to the constructor of the breakpoint) is called when execution
+reaches that location.
+
+The only feature that uses the breakpoint facility is \texttt{trace}.
+Furthermore, it is hard for the application programmer to use the
+breakpoint facility directly, given that a function such as
+\texttt{make-breakpoint} requires an argument indicating the code
+location.  We are unaware of the existence of a debugger for \sbcl{}
+that can use the breakpoint facility.
+
+\sbcl{} also has a \emph{single stepper} that the manual says is
+``instrumentation based''.  as it turns out, the kind of
+instrumentation used by the stepper is not that of the breakpoint
+facility.  Instead, when the value of the \texttt{debug} optimization
+quality is sufficiently high compared to the values of other
+optimization qualities, the compiler inserts code that signals
+conditions that are specific to the stepper.
+
+\subsection{TODO}
 
 More stuff here, in particular about FLOSS commonlisp{} systems, about
 commercial \commonlisp{} systems, about Genera, and perhaps about
