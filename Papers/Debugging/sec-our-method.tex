@@ -80,17 +80,17 @@ code.  This routine performs a short query from a modest fixed-size
 table; we think with a few hundred entries at most.  This table is
 maintained by the debugger, and made available to the application in
 the reified thread object of the application.  The debugging version
-of the function starts by accessing this table and storing it in a
-lexical variable, subject to register allocation as usual.
+of the application function starts by accessing this table and storing
+it in a lexical variable, subject to register allocation as usual.
 
 The table is a bit-vector indexed by the value of the program counter,
 modulo the size of the table.  If the corresponding bit value is $0$
 there is definitely not a breakpoint at the value of the program
 counter in question.  If the bit value is $1$, it might be the case
-that there is such a breakpoint.  In most cases, the bit will be
-cleared, so the cost of the test is low, even in a thread that is
-being debugged.  If the bit value is $1$, another query is performed,
-this time to a hash table, mapping values of the program counter to
+that there is such a breakpoint.  In most cases, the bit value will be
+$0$, so the cost of the test is low, even in a thread that is being
+debugged.  If the bit value is $1$, another query is performed, this
+time to a hash table, mapping values of the program counter to
 information about break points.  If it turns out that the value of the
 program counter has a breakpoint associated with it, the thread
 informs the debugger.  Details of the communication between the
