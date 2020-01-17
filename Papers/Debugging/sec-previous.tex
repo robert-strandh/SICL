@@ -37,6 +37,19 @@ quality is sufficiently high compared to the values of other
 optimization qualities, the compiler inserts code that signals
 conditions that are specific to the stepper.
 
+\subsection{\ccl{}}
+
+The \ccl{} \commonlisp{} implementation does not have the concept of
+breakpoints.
+
+The \ccl{} \texttt{trace} command uses \emph{encapsulation}, meaning
+that the association between the \emph{name} of a function and the
+function object itself is altered so that it contains a \emph{wrapper}
+function that displays the information requested and that calls the
+original function to accomplish its task.
+
+Currently, \ccl{} does not have a working single stepper.
+
 \subsection{TODO}
 
 More stuff here, in particular about FLOSS commonlisp{} systems, about
