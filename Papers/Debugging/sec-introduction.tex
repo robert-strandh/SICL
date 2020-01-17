@@ -42,11 +42,11 @@ the debugger itself, setting such a breakpoint would make the entire
 system useless.  This restriction typically applies also to tracing.
 Most \commonlisp{} implementations would either not allow for the
 programmer to trace important system functions such as
-\texttt{make-instance} or \texttt{shared-initialize}, or they would be
-rendered useless with any such attempt.  The reason is of course that
-these functions would be called by the system itself, so that output
-would be drowned in traces of calls that are unimportant to the
-application programmer.
+\texttt{make-instance} or \texttt{shared-initialize}, or these
+functions would be rendered useless with any such attempt.  The reason
+is of course that these functions would be called by the system
+itself, so that output would be drowned in traces of calls that are
+unimportant to the application programmer.
 
 In this paper, we suggest a technique that solves these problems.  The
 key features of this technique is that breakpoints and traces take
