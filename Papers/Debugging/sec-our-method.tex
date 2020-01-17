@@ -76,25 +76,44 @@ not be performed at all, or only in a less ``aggressive'' form.
 Furthermore, the debugging version of the code is compiled so that a
 small routine is called immediately before and immediately after the
 execution corresponding to the evaluation of a form in the source
-code.  This routine performs a short query from a modest fixed-size
-table; we think with a few hundred entries at most.  This table is
-maintained by the debugger, and made available to the application in
-the reified thread object of the application.  The debugging version
-of the application function starts by accessing this table and storing
-it in a lexical variable, subject to register allocation as usual.
+code.  In order to determine whether a breakpoint is present at that
+particular location in the source code, this routine performs a query
+of at least one of two tables called the \emph{summary table} and the
+\emph{breakpoint table}.  Both these tables are managed by the
+debugger, in that actions on the part of the user may alter their
+contents.  The application consults these table, directly or
+indirectly, to determine whether a breakpoint is present.
 
-The table is a bit-vector indexed by the value of the program counter,
-modulo the size of the table.  If the corresponding bit value is $0$
-there is definitely not a breakpoint at the value of the program
-counter in question.  If the bit value is $1$, it might be the case
-that there is such a breakpoint.  In most cases, the bit value will be
-$0$, so the cost of the test is low, even in a thread that is being
-debugged.  If the bit value is $1$, another query is performed, this
-time to a hash table, mapping values of the program counter to
-information about break points.  If it turns out that the value of the
-program counter has a breakpoint associated with it, the thread
-informs the debugger.  Details of the communication between the
-application thread and the debugger are discussed in
+The purpose of the summary table is to provide a quick test that
+almost always indicates that no breakpoint is present.  Thus, the
+summary table is a fixed-size bit vector.  The size will typically be
+a small power of $2$, for instance $1024$ which represents a modest 16
+64-bit words on a modern processor.  The application routine computes
+the value of the program counter modulo the size of the table in order
+to determine an index.  If the entry in the table contains $0$, then
+there is definitely not a breakpoint present at the source location in
+question.  Since there are typically only a modest number of
+breakpoints in a program, most of the time, the entry will contain a
+$0$, making the routine return immediately, and normal form evaluation
+to continue.  The debugging version of the function body accesses this
+table early on in order to create a reference to it in a lexical
+variable.  This lexical variable is subject to register allocation as
+usual.
+
+If the entry in the summary table contains $1$, then there is a
+breakpoint at \emph{some} value of the program counter that, when
+taken modulo the size of the table, has a breakpoint present.  If this
+is the case, then the routine consults the breakpoint table.
+The breakpoint table is a hash table in which the keys are values of
+the program counter%
+\footnote{In implementations where code can be moved by the garbage
+  collector, this table must be re-hashed after a collection.  The
+  tentative decision for SICL is to have all code at fixed locations.}
+and the values are objects that the debugger uses in order to
+determine information about the breakpoint in question.  When the
+routine finds that a breakpoint is present at the current source
+location, it informs the debugger.  Details of the communication
+between the application thread and the debugger are discussed in
 \refSec{sec-debugger-application-communication}.
 
 In the normal version of the function body, when a function call is
