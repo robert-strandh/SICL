@@ -23,14 +23,14 @@ arbitrarily complex data structures between the two.
 Most FLOSS \commonlisp{} implementations have a history that started
 before multi-threading was common.  As a result, features such as
 breakpoints and tracing are often implemented as modifications to
-modifications.
+the code.
 
 For example, in \sbcl{}, the application programmer can choose to
 \emph{trace} a function in two different ways.  One way is by means of
 \emph{encapsulation}, meaning that the function is not modified, and
 instead wrapped in a small routine that then replaces the function as
 associated with the function \emph{name}.  The function being traced
-is not modified.  The other way is by means of an breakpoint, meaning
+is not modified.  The other way is by means of a breakpoint, meaning
 that the code of the function being traced is modified.
 
 However, in both cases, every caller of the function being traced is
