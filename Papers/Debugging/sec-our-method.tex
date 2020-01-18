@@ -152,20 +152,23 @@ Our design contains two essential elements for this purpose:
   course be prompted by a user interaction.  However, when the
   application detects a breakpoint by querying the tables described in
   \refSec{sec-two-body-versions}, it injects a command into the
-  command loop of the debugger, triggering the execution of code to
-  handle the breakpoint.
-\item The debugger sends commands to the application on a \emph{queue}
-  protected by a \emph{semaphore}.  Once the application has informed
-  the debugger about a breakpoint, it \emph{waits} on the semaphore to
-  receive instructions from the debugger about what to do next.
+  command loop of the debugger, triggering the execution of code in
+  the debugger to handle the breakpoint.
+\item A shared \emph{queue} is used to send messages from the debugger
+  to the application.  This queue has a \emph{semaphore} associated
+  with it.
+\item Once the application has informed the debugger about a
+  breakpoint, it attempts to \emph{dequeue} the next message on the
+  queue.  If the queue is empty, the application automatically
+  \emph{waits} on the associated semaphore, until the debugger issues
+  an \emph{enqueue} operation with instructions for the application.
 \end{enumerate}
 
 The debugger is in charge of taking into account the commands issued
-by the user.  When the user
-indicates that a certain action should be performed at a particular
-place in the source code, the debugger populates the two tables
-mentioned in \refSec{sec-two-body-versions}, and records the
-particular action the user desires, for example:
+by the user.  When the user indicates that a certain action should be
+performed at a particular place in the source code, the debugger
+populates the two tables mentioned in \refSec{sec-two-body-versions},
+and records the particular action the user desires, for example:
 
 \begin{itemize}
 \item Stop the execution of the application and take further action
