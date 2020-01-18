@@ -171,13 +171,27 @@ populates the two tables mentioned in \refSec{sec-two-body-versions},
 and records the particular action the user desires, for example:
 
 \begin{itemize}
-\item Stop the execution of the application and take further action
-  based on the state of the application data.
-\item Print a \emph{trace message} and immediately continue the
-  execution.
-\item Step the execution of the program in one of several different
-  ways (in, out, over, finish).
-\item Continue normal expectation of the application program.
+\item The user might indicate that the application should stop and
+  wait for further actions by the user, after the user has examined
+  the state of application data.  In this case, the debugger records
+  this desire in the breakpoint table.  When the application then
+  reaches the breakpoint in question, the debugger waits for further
+  user action in its command loop.
+\item After the user has examined the state of application data as a
+  result of the application having stopped, the user can issue a
+  command that makes the application continue normal execution.  The
+  debugger then immediately sends a message to this effect to the
+  application.
+\item The user might indicate that a \emph{trace message} should be
+  printed without stopping the application.  Then, when the breakpoint
+  is reached, the debugger displays the message to the user and sends
+  a message to the application to continue execution.
+\item The user can also indicate that the execution of the application
+  should be \emph{stepped} in one of several different ways (in, out,
+  over, finish).  The debugger then sets one or more \emph{volatile
+    breakpoints}, i.e. breakpoints that will be removed once reached,
+  at source locations corresponding to the type of stepping required.
+  It then instructs the application to continue execution as usual.
 \end{itemize}
 
 To allow for the user to examine the state of the
