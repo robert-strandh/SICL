@@ -25,7 +25,7 @@ before multi-threading was common.  As a result, features such as
 breakpoints and tracing are often implemented as modifications to
 the code.
 
-For example, in \sbcl{}, the application programmer can choose to
+For example, in \sbcl{}, the user can choose to
 \emph{trace} a function in two different ways.  One way is by means of
 \emph{encapsulation}, meaning that the function is not modified, and
 instead wrapped in a small routine that then replaces the function as
@@ -39,18 +39,18 @@ object itself, rather than its name.  As a result, it is very likely
 impractical to trace system functions that may be used internally by
 the system.  For example, tracing \texttt{find} or \texttt{position}
 (if at all possible) is likely to generate so much information from
-callers that are irrelevant to the application programmer as to make
+callers that are irrelevant to the user as to make
 the information impossible to exploit.  And tracing functions such as
 \texttt{print}, \texttt{format}, or \texttt{write} would be entirely
 impossible, since the trace output would very likely call these
 functions in order to generate the output information meant for the
-application programmer.
+user.
 
 With our suggested technique, tracing a function does not create an
 encapsulation and does not modify the code of the function.  Instead,
 the existing code communicates with the debugger, and the debugger,
 running in a different thread, is in charge of displaying information
-to the application programmer.  As a direct consequence, there are no
+to the user.  As a direct consequence, there are no
 restrictions such as those indicated above.  The only possible
 restriction has to do with inlining, though it may very well turn out
 to be possible to propagate debugging information with inlining,

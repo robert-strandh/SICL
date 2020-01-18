@@ -43,8 +43,7 @@ technique used by a good compiler, including:
 
 Some of these optimization techniques are essential for
 high-performance code, but many of them can make it significantly
-harder for the application programmer to understand what the
-program is doing:
+harder for the user to understand what the program is doing:
 
 \begin{itemize}
 \item Common sub-expression elimination and similar techniques for
@@ -54,8 +53,8 @@ program is doing:
 \item When a variable is used for the last time, the compiler
   typically reuses the place that it occupies for other purposes, even
   though the variable may still be in scope.  This optimization makes
-  it impossible for the application programmer to examine the value of
-  a variable that has been eliminated.  An application programmer with
+  it impossible for the user to examine the value of
+  a variable that has been eliminated.  A user with
   a poor understanding of compiler-optimization techniques will find
   the result surprising.
 \item Loop-invariant code motion results in code being moved from
@@ -64,10 +63,10 @@ program is doing:
 \item Induction-variable optimization will eliminate or replace
   variables in source code by others that are more beneficial for
   the performance of the computation, again making it harder for the
-  application programmer to debug the code.
+  user to debug the code.
 \end{itemize}
 
-To avoid many of these inconveniences to the application programmer,
+To avoid many of these inconveniences to the user,
 the debugging version of the function body is compiled in a way that
 makes the code somewhat slower, but much more friendly for the purpose
 of debugging.  Some of the optimization techniques cited above will
@@ -162,11 +161,11 @@ Our design contains two essential elements for this purpose:
 \end{enumerate}
 
 The debugger is in charge of taking into account the commands issued
-by the application programmer.  When the application programmer
+by the user.  When the user
 indicates that a certain action should be performed at a particular
 place in the source code, the debugger populates the two tables
 mentioned in \refSec{sec-two-body-versions}, and records the
-particular action the application programmer desires, for example:
+particular action the user desires, for example:
 
 \begin{itemize}
 \item Stop the execution of the application and take further action
@@ -178,7 +177,7 @@ particular action the application programmer desires, for example:
 \item Continue normal expectation of the application program.
 \end{itemize}
 
-To allow for the application programmer to examine the state of the
+To allow for the user to examine the state of the
 application, when the application thread detects a breakpoint, the
 command it injects into the debugger command loop contains a complete
 list of live local variables and their values, as well as of special
@@ -198,7 +197,7 @@ problem.  In addition, we must make sure that information about type
 and structure is not propagated by the compiler from the compilation
 of one source form to another source form.
 
-\subsection{Debugger commands available to the application programmer}
+\subsection{Debugger commands available to the user}
 
 We have an embryonic implementation of an interactive debugger, called
 \clordane{}.  We use the \mcclim{} library for writing graphic user
@@ -219,7 +218,7 @@ We think that the following commands must be implemented in a fully
 featured debugger:
 
 \begin{itemize}
-\item The application programmer should be able to point to a location
+\item The user should be able to point to a location
   in the source code to indicate a particular action to be taken at
   that point:
   \begin{itemize}
@@ -231,7 +230,7 @@ featured debugger:
   It should be possible to make the action conditional, based on some
   arbitrary expression to be evaluated in the debugger thread, and
   which can contain references to live variables in the application.
-\item When the application is stopped, the application programmer
+\item When the application is stopped, the user
   should be able to examine live variables, and (in some cases, with
   restrictions) modify their values.
 \item Also, when the application is stopped, the application
