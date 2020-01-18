@@ -59,3 +59,15 @@ function such as \texttt{car} or \texttt{+}.  However, it may turn out
 that the inclusion of debugging code in such low-level functions would be
 prohibitive in terms of performance of code run under the control of
 the debugger.
+
+Finally, a significant advantage to our technique is that the
+application programmer does not have to choose between compiling the
+code for debugging or for performance.  In most existing systems, in
+order for it to be possible to benefit from all the debugging
+information possible, the programmer has to compile the code with a
+combination of values of the existing \texttt{debug} qualities that is
+not optimal for performance.  This limitation means that it is often
+necessary to recompile the application for one of the two purposes.
+With the technique presented in this paper, no such choice is
+required, since both versions of the application are always
+available.
