@@ -117,26 +117,28 @@ between the application thread and the debugger are discussed in
 \refSec{sec-debugger-application-communication}.
 
 In the normal version of the function body, when a function call is
-made, the debug flag is cleared, indicating to the callee that it is
-not under the control of the debugger.  In the debugging version of
-the function body, on the other hand, when a function call is
-made, the debug flag is set.  This mechanism thus automatically
-propagates the information about debugging throughout the call chain.
+made, the caller clears the debug flag register before initiating the
+call, thereby indicating to the callee that it is not under the
+control of the debugger.  In the debugging version of the function
+body, on the other hand, when a function call is made, the caller
+stores a $1$ in the debug flag register.  This mechanism thus
+automatically propagates the information about debugging throughout
+the call chain.
 
 \subsection{Communication between the debugger and the application}
 \label{sec-debugger-application-communication}
 
 Debuggers in \unix{} systems have full access to the address space of
-the application, including the stack and the lexical variables.  The
-debugger can therefore modify any lexical variable and then continue
-the execution of the application.  Such manipulations may very well
-violate some of the assumptions made by the compiler for a particular
-code fragment.  For example, if the code contains a test for the value
-of a numeric variable, the compiler may make different assumptions
-about this value in the two different branches executed as a result of
-the test.
+the application, including the stack and the lexical variables.  A
+\unix{} debugger can therefore modify any lexical variable and then
+continue the execution of the application.  Such manipulations may
+very well violate some of the assumptions made by the compiler for a
+particular code fragment.  For example, if the code contains a test
+for the value of a numeric variable, the compiler may make different
+assumptions about this value in the two different branches executed as
+a result of the test.
 
-Allowing the debugger to make arbitrary modifications to lexical
+Allowing a debugger to make arbitrary modifications to lexical
 variables, let alone to any memory location, in a \commonlisp{}
 application program will defeat any attempts at making the system
 safe, and safety is one of the purposes of the \sicl{} system as
@@ -179,12 +181,21 @@ particular action the application programmer desires, for example:
 To allow for the application programmer to examine the state of the
 application, when the application thread detects a breakpoint, the
 command it injects into the debugger command loop contains a complete
-list of live local variables and their values%
-\footnote{Clearly, care must be taken so as to avoid the possibility
-  of the debugger making arbitrary modifications to structured data,
-  and thereby possibly violating the assumptions made by the compiler
-  when the application code was compiled.  We have yet to determine
-  exactly how to implement such restrictions.}.
+list of live local variables and their values.
+
+Since we intend to provide debugger commands for examining and
+modifying application data, we must make sure that any such
+manipulation on the part of the user preserves the integrity of the
+application.
+
+In particular, any assumptions made by the compiler about the
+structure or type of some lexical variable must be impossible to
+violate through the modification of the value of a lexical variable.
+Only allowing breakpoints immediately before and immediately after the
+evaluation of a form that is present in source code mostly solves this
+problem.  In addition, we must make sure that information about type
+and structure is not propagated by the compiler from the compilation
+of one source form to another source form.
 
 \subsection{Debugger commands available to the application programmer}
 
