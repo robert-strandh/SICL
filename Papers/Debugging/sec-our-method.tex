@@ -181,7 +181,8 @@ particular action the application programmer desires, for example:
 To allow for the application programmer to examine the state of the
 application, when the application thread detects a breakpoint, the
 command it injects into the debugger command loop contains a complete
-list of live local variables and their values.
+list of live local variables and their values, as well as of special
+variables bound in the application thread.
 
 Since we intend to provide debugger commands for examining and
 modifying application data, we must make sure that any such
@@ -200,7 +201,7 @@ of one source form to another source form.
 \subsection{Debugger commands available to the application programmer}
 
 We have an embryonic implementation of an interactive debugger, called
-\clordane{}.  We used the \mcclim{} library for writing graphic user
+\clordane{}.  We use the \mcclim{} library for writing graphic user
 interfaces as a basis for this tool.  Currently, \clordane{} can show
 the source code of an application (one source file at a time) and an
 indication of the place of a breakpoint.  The application being
