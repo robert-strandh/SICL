@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod delete (item (datum t) &key &allow-other-keys)
+(defmethod delete (item (datum t) &key from-end test test-not (start 0) end count key)
+  (declare (ignore from-end test test-not start end count key))
   (error 'must-be-sequence
          :datum datum))
 

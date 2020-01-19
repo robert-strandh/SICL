@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod find-if (predicate (datum t) &key &allow-other-keys)
+(defmethod find-if (predicate (datum t) &key from-end (start 0) end key)
+  (declare (ignore from-end start end key))
   (error 'must-be-sequence
          :datum datum))
 

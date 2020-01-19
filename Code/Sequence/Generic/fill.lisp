@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod fill ((datum t) item &key &allow-other-keys)
+(defmethod fill ((datum t) item &key (start 0) end)
+  (declare (ignore start end))
   (error 'must-be-sequence
          :datum datum))
 
