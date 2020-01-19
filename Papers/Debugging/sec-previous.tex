@@ -56,8 +56,23 @@ original function to accomplish its task.
 
 Currently, \ccl{} does not have a working single stepper.
 
+\subsection{\ecl{}}
+
+The \ecl{} \commonlisp{} implementation does not have the concept of
+breakpoints, so an external debugger such as GDB has to be used for
+breakpoints.  \ecl{} does have a special instruction type in the bytecode
+virtual machine that is used for stepping.
+
+The \texttt{trace} facility uses encapsulation.
+
+\subsection{\clasp{}}
+
+The \clasp{} commonlisp{} implementation does not have the concept of
+breakpoints, nor does it have a stepper.  The \texttt{trace} facility
+uses encapsulation.
+
 \subsection{TODO}
 
-More stuff here, in particular about FLOSS commonlisp{} systems, about
-commercial \commonlisp{} systems, about Genera, and perhaps about
-other interactive systems like Scheme, etc.
+More stuff here, in particular about commercial \commonlisp{} systems,
+about Genera, and perhaps about other interactive systems like Scheme,
+etc.
