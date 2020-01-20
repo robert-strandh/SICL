@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "hash-table-defclass")
-   (:file "generic-functions")))
+   (:file "generic-functions")
+   (:file "make-hash-table")))

@@ -6,9 +6,9 @@
    #:hash-table
    #:make-hash-table #:hash-table-p
    #:hash-table-count #:hash-table-rehash-threshold #:hash-table-rehash-size
-   #:hash-table-size #:hash-table-test
+   #:hash-table-size #:hash-table-test #:%hash-table-test
    #:puthash #:gethash #:remhash #:clrhash
    #:with-hash-table-iterator
    #:maphash)
   (:use #:common-lisp)
-  (:export #:sicl-list-hash-table))
+  (:export #:list-hash-table))
