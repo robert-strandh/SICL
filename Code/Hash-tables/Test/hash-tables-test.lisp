@@ -82,8 +82,8 @@
         (loop as result = (multiple-value-list (next-entry))
               until (not (first result))
               do (push result results)))
-      (assert-equal (or (equal results '((t foo 100) (t bar 200)))
-                        (equal results '((t bar 200) (t foo 100))))))))
+      (assert-true (or (equal results '((t foo 100) (t bar 200)))
+                       (equal results '((t bar 200) (t foo 100))))))))
 
 (define-test rehashing
   (let ((ht (make-hash-table :size 2 :rehash-size 3)))
