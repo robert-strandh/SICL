@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-list-hash-table
+(defpackage #:sicl-bucket-hash-table
   (:shadowing-import-from
    #:sicl-hash-table
    #:hash-table
@@ -11,4 +11,4 @@
    #:with-hash-table-iterator
    #:maphash)
   (:use #:common-lisp)
-  (:export #:list-hash-table))
+  (:export #:bucket-hash-table))

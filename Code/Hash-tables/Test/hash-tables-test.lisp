@@ -1,6 +1,6 @@
-(defpackage #:sicl-hash-tables-test
+(defpackage #:sicl-hash-table-test
   (:use #:common-lisp #:lisp-unit)
-  (:shadowing-import-from #:sicl-hash-tables
+  (:shadowing-import-from #:sicl-hash-table
                           #:hash-table
                           #:make-hash-table #:hash-table-p
                           #:hash-table-count #:hash-table-rehash-threshold #:hash-table-rehash-size
@@ -9,7 +9,7 @@
                           #:with-hash-table-iterator
                           #:maphash))
 
-(in-package #:sicl-hash-tables-test)
+(in-package #:sicl-hash-table-test)
 
 (define-test construction
   (let ((ht1 (make-hash-table))
@@ -17,26 +17,29 @@
         (ht3 (make-hash-table :size 123)))
     (assert-true (hash-table-p ht1))
     (assert-false (hash-table-p "foobar"))
-    (assert-equal #'eql (hash-table-test ht1))
-    (assert-equal #'equal (hash-table-test ht2))
-    (assert-equal 123 (hash-table-size ht3))
-    (assert-equal 0 (hash-table-count ht1))))
+    (assert-equal 'eql (hash-table-test ht1))
+    (assert-equal 'equal (hash-table-test ht2))
+    (assert-number-equal 123 (hash-table-size ht3))
+    (assert-number-equal 0 (hash-table-count ht1))))
 
-(define-test gethash-puthash
+(define-test setf-gethash
   (let ((ht-eql (make-hash-table))
         (ht-equal (make-hash-table :test #'equal)))
-    (assert-equal 0 (hash-table-count ht-eql))
-    (puthash "foobar" ht-eql 100)
-    (assert-equal 1 (hash-table-count ht-eql))
-    (puthash "foobar" ht-equal 100)
+    (assert-equal (hash-table-count ht-eql))
+    (setf (gethash "foobar" ht-eql) 100)
+    (assert-number-equal 1 (hash-table-count ht-eql))
+    (setf (gethash "foobar" ht-equal) 100)
+    ;; SBCL appears to coalesce all "foobar" literal strings into one string,
+    ;; so this test doesn't make sense.
+    #+(or)
     (multiple-value-bind (value found-p)
         (gethash "foobar" ht-eql)
-      (assert-equal nil value)
-      (assert-equal nil found-p))
+      (is eql nil value)
+      (is eql nil found-p))
     (multiple-value-bind (value found-p)
         (gethash "foobar" ht-equal)
       (assert-equal 100 value)
-      (assert-equal t found-p))))
+      (assert-true found-p))))
 
 (define-test setf-gethash
   (let ((ht (make-hash-table)))
@@ -44,7 +47,7 @@
     (multiple-value-bind (value found-p)
         (gethash 'foobar ht)
       (assert-equal 100 value)
-      (assert-equal t found-p))))
+      (assert-true found-p))))
 
 (define-test setf-remhash
   (let ((ht (make-hash-table)))
@@ -53,22 +56,22 @@
     (multiple-value-bind (value found-p)
         (gethash 'foobar ht)
       (assert-equal nil value)
-      (assert-equal nil found-p))))
+      (assert-false found-p))))
     
 (define-test clrhash
   (let ((ht (make-hash-table)))
-    (assert-equal 0 (hash-table-count ht))
+    (assert-number-equal 0 (hash-table-count ht))
     (setf (gethash 'foo ht) 100)
     (setf (gethash 'bar ht) 200)
     (setf (gethash 'baz ht) 300)
-    (assert-equal 3 (hash-table-count ht))
+    (assert-number-equal 3 (hash-table-count ht))
     (clrhash ht)
-    (assert-equal 0 (hash-table-count ht))
+    (assert-number-equal 0 (hash-table-count ht))
     (loop for key in '(foo bar baz)
           do (multiple-value-bind (value found-p)
                  (gethash key ht)
                (assert-equal nil value)
-               (assert-equal nil found-p)))))
+               (assert-false found-p)))))
 
 (define-test with-hash-table-iterator
   (let ((ht (make-hash-table)))
@@ -87,7 +90,7 @@
     (setf (gethash 'foo ht) 100)
     (setf (gethash 'bar ht) 200)
     (setf (gethash 'baz ht) 300)
-    (assert-equal 5 (hash-table-size ht))
+    (assert-number-equal 5 (hash-table-size ht))
     (assert-equal 100 (gethash 'foo ht))
     (assert-equal 200 (gethash 'bar ht))
     (assert-equal 300 (gethash 'baz ht)))
@@ -95,9 +98,7 @@
     (setf (gethash 'foo ht) 100)
     (setf (gethash 'bar ht) 200)
     (setf (gethash 'baz ht) 300)
-    (assert-equal 6 (hash-table-size ht))
+    (assert-number-equal 6 (hash-table-size ht))
     (assert-equal 100 (gethash 'foo ht))
     (assert-equal 200 (gethash 'bar ht))
     (assert-equal 300 (gethash 'baz ht))))
-
-

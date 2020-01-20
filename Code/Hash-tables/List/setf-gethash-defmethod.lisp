@@ -1,13 +1,14 @@
 (cl:in-package #:sicl-list-hash-table)
 
-(defmethod (setf gethash) (new-value key (hash-table list-hash-table) &optional default)
+(defmethod (setf gethash)
+    (new-value key (hash-table list-hash-table) &optional default)
   (declare (ignore default))
   (with-accessors ((contents contents)
-                   (test hash-table-test)
+                   (test %hash-table-test)
                    (rehash-size hash-table-rehash-size)
                    (size size))
       hash-table
-    (let ((entry (assoc key contents :key #'car :test test)))
+    (let ((entry (assoc key contents :test test)))
       (if (null entry)
           (progn
             (push (cons key new-value) contents)

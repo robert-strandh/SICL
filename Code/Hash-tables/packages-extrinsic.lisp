@@ -11,7 +11,8 @@
            #:puthash #:gethash #:remhash #:clrhash
            #:with-hash-table-iterator
            #:maphash)
-  (:export #:hash-table
+  (:export #:*default-hash-table-class*
+           #:hash-table
            #:make-hash-table #:hash-table-p
            #:hash-table-count #:hash-table-rehash-threshold #:hash-table-rehash-size
            #:hash-table-size #:hash-table-test
