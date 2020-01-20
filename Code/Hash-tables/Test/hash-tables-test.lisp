@@ -102,5 +102,3 @@
     (assert-equal 100 (gethash 'foo ht))
     (assert-equal 200 (gethash 'bar ht))
     (assert-equal 300 (gethash 'baz ht))))
-
-
