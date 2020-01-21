@@ -17,7 +17,9 @@
   (setf (valid-p entry) nil))
 
 (defclass block/tagbody-entry (exit-point)
-  ((%frame-pointer :initarg :frame-pointer :reader frame-pointer)))
+  ((%stack-pointer :initarg :stack-pointer :reader stack-pointer)
+   (%frame-pointer :initarg :frame-pointer :reader frame-pointer)
+   (%continuation :initarg :continuation :reader continuation)))
 
 (defmethod print-object ((object block/tagbody-entry) stream)
   (print-unreadable-object (object stream :type t :identity t)
