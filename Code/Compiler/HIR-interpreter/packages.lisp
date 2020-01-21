@@ -14,4 +14,5 @@
            #:make-function-cell-finder
            #:interpret-instruction
            #:lexical-value
-           #:input-value))
+           #:input-value
+           #:augment-with-block/tagbody-entry))
