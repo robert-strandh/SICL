@@ -97,8 +97,8 @@ generic functions provided by the \eclector{} subsystem
 \texttt{sicl-source-position}.  Instances of this class contain the
 entire file contents as the vector of lines, together with the line
 and character index taken from the current values of the stream.  The
-method on \texttt{make-source-range} simply constructs a CONS of the
-start and the end position, provided they are both non-null.
+method on \texttt{make-source-range} simply constructs a \texttt{cons}
+of the start and the end position, provided they are both non-null.
 
 As a result of this source tracking, Every CST that corresponds to a
 precise location in the source file has a start and an end position
