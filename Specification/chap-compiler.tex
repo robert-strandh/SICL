@@ -74,7 +74,7 @@ In order to accomplish source tracking, \sysname{} starts by reading
 the entire source file into memory.  The internal representation of
 the source code is a vector of lines, where each line is a string.  We
 use this representation, rather than a single string for the entire
-file, in order to avoid the issue of now newlines are represented.
+file, in order to avoid the issue of how newlines are represented.
 
 The macro \texttt{with-source-tracking-stream-from-file} in the
 package named \texttt{sicl-source-tracking} takes a file
