@@ -17,11 +17,11 @@
   (setf (valid-p entry) nil))
 
 (defclass block/tagbody-entry (exit-point)
-  ((%abandon-tag :initarg :abandon-tag :reader abandon-tag)))
+  ((%frame-pointer :initarg :frame-pointer :reader frame-pointer)))
 
 (defmethod print-object ((object block/tagbody-entry) stream)
   (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s" (abandon-tag object))))
+    (format stream "~s" (frame-pointer object))))
 
 (defclass catch-entry (exit-point)
   ((%tag :initarg :tag :reader tag)))
@@ -72,7 +72,7 @@
                       do (setf result entry)
                     finally (return result))))
         (unless (null last-block/tagbody)
-          (throw (abandon-tag last-block/tagbody)
+          (throw (frame-pointer last-block/tagbody)
             instruction))))))
 
 (defmethod interpret-instruction :after
