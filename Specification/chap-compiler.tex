@@ -141,8 +141,15 @@ file and a \emph{similar} AST can be created by an application of the
 of the file.  In fact, this textual representation is the \emph{fasl}
 format that \sysname{} uses.  It fulfills the requirements for
 \emph{minimal compilation} defined by the \commonlisp{} standard.
+For more information, see \refChap{chap-compiled-files}.
 
 \subsection{Conversion from AST to HIR}
+
+The acronym HIR stands for \emph{High-level Intermediate
+  Representation}.  This representation is defined by \cleavir{} and
+documented in chapter 6 of the \cleavir{} documentation.
+The main characteristic of HIR is that the objects manipulated are all
+\commonlisp{} objects, though some of them might be \emph{unboxed}.
 
 \subsection{Convert to medium-level intermediate representation}
 
