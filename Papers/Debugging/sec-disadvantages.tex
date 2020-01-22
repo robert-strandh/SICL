@@ -1,0 +1,30 @@
+\section{Disadvantages of our technique}
+
+Perhaps the most obvious disadvantage of our technique is that the
+size of the code will more than double.  The debugging version of the
+function body must implement the same functionality as the
+non-debugging version, but in addition to that functionality, it must
+also contain code for communication with the debugger.  Furthermore,
+since fewer optimizations are applied to the non-debugging version,
+even without the code for communication, the debugging version would
+be larger than the non-debugging version.
+
+While the additional code will impact the memory footprint of the
+system, we do not think it will have any negative influence on
+caching.  The two versions of the body are kept separate, and the same
+versions is typically executed repeatedly.
+
+A minor disadvantage is the initial test that every function must
+perform, plus the initialization of the debug-flag register for every
+function call, in both versions of the function body.  These
+Because the same body version is executed repeatedly, the branch
+prediction logic would very likely make the correct prediction for the
+initial test.  And with significant inlining of functions, the number
+of function calls is reduced, and therefore also the number of times
+the debug-flag register needs to be initialized.
+
+Finally, the fact that the technique proposed in this paper is
+incompatible with the way most \commonlisp{} systems work, makes it
+unlikely that existing systems will be able to use it.  We are
+convinced, however, that our technique will represent a major
+advantage in terms of productivity for the application programmer.
