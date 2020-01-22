@@ -71,8 +71,26 @@ The \clasp{} commonlisp{} implementation does not have the concept of
 breakpoints, nor does it have a stepper.  The \texttt{trace} facility
 uses encapsulation.
 
-\subsection{TODO}
+\subsection{\lispworks{}}
 
-More stuff here, in particular about commercial \commonlisp{} systems,
-about Genera, and perhaps about other interactive systems like Scheme,
-etc.
+The \lispworks{} \commonlisp{} implementation provides breakpoints.
+Breakpoints can be set either from the stepper or from the editor.
+The first time a breakpoint is set in a definition, the source code of
+the defining form is re-evaluated with additional annotations that
+provide information for the stepper.
+
+When a breakpoint has been set, it is active no matter how the code
+containing it was called.  If that code was called outside the
+stepper, the stepper is automatically started.  Thus, breakpoints
+provide the essential mechanism for the stepper.
+
+Since setting a breakpoint requires access to the source code, and
+since the source code of the system itself is not supplied, the user
+can not set breakpoints in system code.
+
+The \texttt{trace} facility in \lispworks{} is accomplished through
+encapsulation.
+
+\subsection{\allegro{}}
+
+
