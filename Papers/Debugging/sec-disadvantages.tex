@@ -23,6 +23,28 @@ initial test.  And with significant inlining of functions, the number
 of function calls is reduced, and therefore also the number of times
 the debug-flag register needs to be initialized.
 
+Feedback on draft versions of this paper indicate that many readers
+are worried about the possibility of the behavior of the different
+versions of the function body described in
+\refSec{sec-two-body-versions}.  This worry is based on experience,
+as this situation is common, especially with implementations of
+programming languages other than \commonlisp{}.  As we see it, there
+are two possible causes for such difference in behavior:
+
+\begin{enumerate}
+\item A defect in the compiler can result in native code that does not
+  correspond to the semantics of the source code, and the resulting
+  code can be different in the different versions.
+\item The compiler is exploiting undefined or unspecified behavior,
+  probably in order to improve performance of the resulting code, and
+  it exploits such behavior in different ways in the two different
+  versions.
+\end{enumerate}
+
+We briefly addressed the first cause in \refsec{sec-introduction}, by
+specifically targeting application programming, assuming that the
+compiler is essentially free of defects.
+
 Finally, the fact that the technique proposed in this paper is
 incompatible with the way most \commonlisp{} systems work, makes it
 unlikely that existing systems will be able to use it.  We are
