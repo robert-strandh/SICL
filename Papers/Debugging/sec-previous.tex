@@ -93,4 +93,34 @@ encapsulation.
 
 \subsection{\allegro{}}
 
+The \allegro{} \commonlisp{} implementation%
+\footnote{https://franz.com/products/allegro-common-lisp/}
+has the most complete and most sophisticated implementation of
+breakpoints of all the \commonlisp{} implementations we investigated.
 
+High-level debugging features are based on a low-level breakpoint
+mechanism described in a paper by Duane Rettig
+\cite{Rettig:Instruction-level-breakpoints}.  In many respects, the
+low-level mechanism is similar to the one used by \unix{}-style
+debugging, in that it replaces the ordinary machine instruction by one
+that will \emph{trap}, and thus cause the operating system to send a
+signal to the Lisp process.  However, their mechanism differes in a
+significant way from the one used by \unix{}-style debugging, in that
+it allows the breakpoint to be handled by the same operating-system
+process that contains it, with very few exceptions.
+
+Same-process debugging is made possible by their mechanism that allows
+existing breakpoints to be \emph{installed} or not.  Only installed
+breakpoints correspond to replaced instructions, whereas uninstalled
+breakpoints are remembered by the system and can be installed
+according to the kind of debugging that the higher-level tool
+implements.  The clever aspect of their mechanism is to have the
+signal handler start its action by uninstalling all breakpoints.
+Thus, even if a breakpoint exists in some system code that is also
+used by the debugger, once the debugger is entered, the breakpoint is
+no longer active.
+
+This mechanism allows for instruction-level stepping in a way similar
+to what is possible in separate-process \unix{}-style debuggers, but
+crucially, it is also the mechanism used to build high-level tools
+such as source-level debuggers, steppers, etc.
