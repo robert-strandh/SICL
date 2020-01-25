@@ -37,12 +37,8 @@
        :input function-name-input
        :output function-temp)
      instruction)
-    (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:funcall-instruction
-       :inputs (list function-temp value-input variable-name-input))
-     instruction)
-    (change-class instruction 'cleavir-ir:nop-instruction
-                  :inputs '())))
+    (change-class instruction 'cleavir-ir:funcall-instruction
+                  :inputs (list function-temp value-input variable-name-input))))
 
 (defun convert-set-symbol-value (initial-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
