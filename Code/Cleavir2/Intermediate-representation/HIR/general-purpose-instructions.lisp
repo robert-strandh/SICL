@@ -304,6 +304,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction SYMBOL-VALUE-INSTRUCTION.
+;;;
+;;; This instruction is used when the value of a special variable is
+;;; required.  It has a single input, a constant input containing the
+;;; symbol naming the variable.  It has a single output, a lexical
+;;; location that will hold the value of the special variable.
 
 (defclass symbol-value-instruction (instruction one-successor-mixin)
   ())
@@ -311,6 +316,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction SET-SYMBOL-VALUE-INSTRUCTION.
+;;;
+;;; This instruction is generated as a result of an assignment to a
+;;; special variable.  It has two inputs, a constant input containing
+;;; the symbol naming the variable, and a lexical location or a
+;;; constant input that will become the value of the special variable.
+;;; This instruction has no outputs.
 
 (defclass set-symbol-value-instruction
     (instruction one-successor-mixin side-effect-mixin)
