@@ -207,7 +207,17 @@ environment.  Again, we emit a \texttt{fetch-instruction}, again with
 a negative index corresponding to the position of \texttt{nil} in the
 static environment.  Since we emit \texttt{fetch-instruction}s, this
 transformation must precede the transformation that eliminates
-these instructions.
+these instructions.%
+\fixme{Investigate whether we could annotate the
+  \texttt{create-cell-instruction}s with inputs representing the
+  \texttt{cons} function as output from an
+  \texttt{fdefinition-instruction} and the constant \texttt{nil}.  It
+  may not be possible since a \texttt{create-cell} instruction is
+  created as a result of closure conversion, and adding an
+  \texttt{fdefinition-instruction} means that it must be hoisted, and
+  followed by closure conversion.  Perhaps it is possible if we do the
+  closure conversion inside-out, since there are no
+  \texttt{create-cell-instruction}s in the innermost function.}
 
 \subsubsection{Eliminating \texttt{read-cell-instruction}s}
 
