@@ -157,6 +157,38 @@ The main characteristic of HIR is that the objects manipulated are all
 
 \subsection{HIR transformations}
 
+\subsubsection{Hoisting \texttt{fdefinition-instruction}s}
+
+All \texttt{fdefinition-instruction}s are \emph{hoisted}, meaning that
+they are transformed and executed at the top level.  The lexical
+location that holds the function in question then becomes a shared
+variable that must later be processed during closure conversion.
+
+We assume that the input of the \texttt{fdefinition-instruction} is a
+constant representing the name of the desired function.
+
+We keep an \texttt{equal} hash table of functions that have already
+been hoisted.  The key of the hash table is the name of the function,
+and the value is the lexical location that holds the \emph{function
+  cell} of the function in the global environment.
+
+The \texttt{fdefinition-instruction} is turned into a
+\texttt{car-instruction} with the input being the lexical location
+holding the function cell.  At the top level, we insert a
+\texttt{funcall-instruction} that calls the function that, given a
+function name, returns a function cell.  This function is the
+first-and only argument to the top-level function, so we find it by
+inserting an \texttt{argument-instruction} with a constant input with
+a value of $0$.  The return value of the call is obtained by a
+\texttt{multiple-to-fixed-instruction} immediately following the
+inserted \texttt{funcall-instruction}.%
+\fixme{Check whether we really need to insert a
+  \texttt{multiple-to-fixed} instruction.  It might be possible to
+  insert a \texttt{return-value-instruction} since we know that there
+  is a single return value.}
+
+\subsubsection{Hoisting non-trivial constants}
+
 \subsubsection{Eliminating \texttt{create-cell-instruction}s}
 
 A \texttt{create-cell-instruction} is turned into a
