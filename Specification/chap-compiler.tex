@@ -165,7 +165,9 @@ location that holds the function in question then becomes a shared
 variable that must later be processed during closure conversion.
 
 We assume that the input of the \texttt{fdefinition-instruction} is a
-constant representing the name of the desired function.
+constant representing the name of the desired function.  For that
+reason, this transformation must be accomplished before constants are
+hoisted.
 
 We keep an \texttt{equal} hash table of functions that have already
 been hoisted.  The key of the hash table is the name of the function,
