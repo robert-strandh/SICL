@@ -176,6 +176,20 @@ original output.
 
 \subsubsection{Converting \texttt{set-symbol-value-instruction}s}
 
+A \texttt{set-symbol-value-instruction} is converted to an
+\texttt{fdefinition-instruction} followed by a
+\texttt{funcall-instruction}.  The input to the
+\texttt{fdefinition-instruction} is the constant input with a value of
+\texttt{(setf symbol-value)}.  The output of the
+\texttt{fdefinition-instruction} becomes the first input to the
+\texttt{funcall-instruction}.  The second input to the
+\texttt{funcall-instruction} is the constant input (i.e. the symbol
+of which the value is wanted) of the original instruction.  The third
+input to the is the value to assign to the variable.
+
+Since no outputs are involved, the original instruction is converted
+directly to the \texttt{funcall-instruction}.
+
 \subsubsection{Hoisting \texttt{fdefinition-instruction}s}
 
 All \texttt{fdefinition-instruction}s are \emph{hoisted}, meaning that
