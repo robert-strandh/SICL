@@ -41,7 +41,7 @@
      (make-instance 'cleavir-ir:funcall-instruction
        :inputs (list function-temp value-input variable-name-input))
      instruction)
-    (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
+    (change-class instruction 'cleavir-ir:nop-instruction
                   :inputs '())))
 
 (defun convert-set-symbol-value (initial-instruction)
