@@ -157,23 +157,25 @@ The main characteristic of HIR is that the objects manipulated are all
 
 \subsection{HIR transformations}
 
-\subsubsection{Eliminating cell-related instructions}
+\subsubsection{Eliminating \texttt{create-cell-instruction}s}
 
 A \texttt{create-cell-instruction} is turned into a
 \texttt{funcall-instruction} with \texttt{cons} as the function to
-call and \texttt{nil} as both the arguments.  The \texttt{cons}
-function is loaded from the static environment.  To do that, we emit a
-\texttt{fetch-instruction} with the static environment location and
-the offset of the \texttt{cons} function in the static environment.
-The static environment contains four objects before the what the
-\texttt{fetch-instruction} considers to be object $0$, the
-\texttt{fetch-instruction} is given a negative offset.  Similarly, the
-constant \texttt{nil} is loaded from the static environment.  Again,
-we emit a \texttt{fetch-instruction}, again with a negative index
-corresponding to the position of \texttt{nil} in the static
-environment.  Since we emit \texttt{fetch-instruction}s, this
+call and \texttt{nil} as both the arguments.
+
+The \texttt{cons} function is loaded from the static environment.  To
+do that, we emit a \texttt{fetch-instruction} with the static
+environment location and the offset of the \texttt{cons} function in
+the static environment.  The static environment contains four objects
+before the what the \texttt{fetch-instruction} considers to be object
+$0$, the \texttt{fetch-instruction} is given a negative offset.
+
+Similarly, the constant \texttt{nil} is loaded from the static
+environment.  Again, we emit a \texttt{fetch-instruction}, again with
+a negative index corresponding to the position of \texttt{nil} in the
+static environment.  Since we emit \texttt{fetch-instruction}s, this
 transformation must precede the transformation that eliminates
-\texttt{fetch-instruction}s.
+these instructions.
 
 \subsection{Convert to medium-level intermediate representation}
 
