@@ -177,6 +177,21 @@ static environment.  Since we emit \texttt{fetch-instruction}s, this
 transformation must precede the transformation that eliminates
 these instructions.
 
+\subsubsection{Eliminating \texttt{read-cell-instruction}s}
+
+A \texttt{read-cell-instruction} is simply replaced by a
+\texttt{car-instruction}.  The \texttt{car-instruction} assumes that
+its argument is a \texttt{cons} cell, but we know that is the case,
+because we created the cell by a call to the \texttt{cons} function.
+
+\subsubsection{Eliminating \texttt{write-cell-instruction}s}
+
+A \texttt{write-cell-instruction} is simply replaced by a
+\texttt{rplaca-instruction}.  The \texttt{rplaca-instruction} assumes
+that its argument is a \texttt{cons} cell, but we know that is the
+case, because we created the cell by a call to the \texttt{cons}
+function.
+
 \subsection{Convert to medium-level intermediate representation}
 
 The HIR representation is then converted to Medium-level Intermediate
