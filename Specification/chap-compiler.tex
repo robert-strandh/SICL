@@ -285,6 +285,16 @@ these instructions.%
   closure conversion inside-out, since there are no
   \texttt{create-cell-instruction}s in the innermost function.}
 
+\subsubsection{Eliminating \texttt{fetch-instruction}s}
+
+A \texttt{fetch-instruction} is turned into an
+\texttt{aref-instruction} with a modified index input, in that we add
+$4$ to the constant input of the \texttt{fetch-instruction} in order
+to get the constant input to the \texttt{aref-instruction}.  The
+reason for this difference is that the \texttt{fetch-instruction} does
+not take into account the four initial elements of the static
+environment.
+
 \subsubsection{Eliminating \texttt{read-cell-instruction}s}
 
 A \texttt{read-cell-instruction} is simply replaced by a
