@@ -236,6 +236,31 @@ inserted \texttt{funcall-instruction}.%
   insert a \texttt{return-value-instruction} since we know that there
   is a single return value.}
 
+\subsubsection{Eliminating \texttt{fixed-to-multiple-instruction}s}
+
+Recall that the \texttt{fixed-to-multiple-instruction} takes a
+number of inputs and stores the corresponding values as multiple
+values in the distinguished location for this purpose.
+
+Eliminating a \texttt{fixed-to-multiple-instruction} involves the
+introduction of two new instruction classes.
+
+The first one is named \texttt{initialize-return-values-instruction}.
+It takes a single constant input value which is a fixnum that
+indicates the number of multiple values that the distinguished
+location should hold.
+
+The second one is named \texttt{set-return-value-instruction}.  It
+takes two inputs.  The first input is a constant input containing a
+fixnum that indicates the index (starting at 0) of the value to
+store.  The second input is the value to store at that index.
+
+Notice that if the \texttt{fixed-to-multiple-instruction} has no
+inputs, we still generate an
+\texttt{initialize-return-values-instruction} with the value 0, and a
+single \texttt{set-return-value-instruction} with the value
+\texttt{nil} in its constant input.
+
 \subsubsection{Hoisting non-trivial constants}
 
 Non-trivial constants must be hoisted to the top-level function.
