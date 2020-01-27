@@ -268,6 +268,47 @@ inputs, we still generate an
 single \texttt{set-return-value-instruction} with the value
 \texttt{nil} in its constant input.
 
+\subsubsection{Eliminating \texttt{multiple-to-fixed-instruction}s}
+
+Recall that the \texttt{multiple-to-fixed-instruction} fetches
+multiple values from the distinguished location for this purpose, and
+stores each one in a fixed lexical location.
+
+Eliminating the \texttt{multiple-to-fixed-instruction} involves the
+introduction of two new instruction classes.
+
+The first one is name
+\texttt{compute-return-value-count-instruction}.  It has no inputs and
+a single output that will contain the number of values in the
+distinguished location.
+
+The second one is named \texttt{return-value-instruction}.  It has a
+single input which is the index of the value in the distinguished
+location that is wanted.  It has a single output which is a lexical
+location that will contain the value at the given index in the
+distinguished location.
+
+This transformation is more complicated than the one used for
+eliminating the \texttt{fixed-to-multiple-instruction}, because of the
+default values that are given to outputs with an index greater than or
+equal to the number of available values.  The generated code contains
+two main branches, each one with as many stages as there are outputs
+of the original instruction.  In one branch, the index of the desired
+value is less than the number of available values, so the
+corresponding value is assigned to the output.  In the other branch,
+the index of the desired value is greater than or equal to the number
+of available values, so \texttt{nil} is assigned to the output
+instead.  At each stage in the first branch, a test is emitted to see
+whether there are any more values.  If that is not the case, control
+is transferred to the second branch.
+
+As a special optimization, when there is a single output of the
+original instruction, we do not emit any
+\texttt{compute-return-value-count-instruction}.  Instead a single
+\texttt{return-value-instruction} is generated with an index of $0$.
+We are allowed to do that because even when no values are returned
+from a function, the first location must contain \texttt{nil}.
+
 \subsubsection{Hoisting non-trivial constants}
 
 Non-trivial constants must be hoisted to the top-level function.
