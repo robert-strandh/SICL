@@ -255,6 +255,13 @@ takes two inputs.  The first input is a constant input containing a
 fixnum that indicates the index (starting at 0) of the value to
 store.  The second input is the value to store at that index.
 
+We generate a single \texttt{initialize-return-values-instruction}
+which is given the length of the input list to the original
+instruction.  Then we generate as many
+\texttt{set-return-value-instruction}s as there are inputs, each one
+given the next input in the list of inputs of the original
+instruction.
+
 Notice that if the \texttt{fixed-to-multiple-instruction} has no
 inputs, we still generate an
 \texttt{initialize-return-values-instruction} with the value 0, and a
