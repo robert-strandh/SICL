@@ -397,14 +397,16 @@ that its argument is a \texttt{cons} cell, but we know that is the
 case, because we created the cell by a call to the \texttt{cons}
 function.
 
-\subsection{Convert to medium-level intermediate representation}
+\subsection{Conversion from HIR to MIR}
 
-The HIR representation is then converted to Medium-level Intermediate
-Representation (MIR), which is lower level than HIR in that address
-computations are explicit.
+MIR differs from HIR in that address calculations are explicit.
+Conversion to MIR is done one function (i.e. starting with an
+\texttt{enter-instruction} at a time.  For each function, conversion
+starts by eliminating \texttt{enclose-instruction}s in that function.
+Following that, the function \texttt{process-instruction} is called
+for each instruction in the function.
 
-Exposing these computations opens the possibility of further
-optimizations such as loop invariants, etc.
+\subsubsection{Eliminating \texttt{enclose-instruction}s}
 
 \subsection{Register allocation}
 
