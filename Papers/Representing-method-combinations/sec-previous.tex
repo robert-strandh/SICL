@@ -1,1 +1,15 @@
 \section{Previous work}
+
+\subsection{SBCL}
+
+The \sbcl{} \commonlisp{} implementation unsurprisingly defines the
+class \texttt{method-combination} and then the class
+\texttt{standard-method-combination} as a subclass of
+\texttt{method-combination}.
+
+More surprisingly, it then defines two subclasses of
+\texttt{standard-method-combination}, namely
+\texttt{long-method-combination} and
+\texttt{short-method-combination}, each for use with the different
+forms (long and short) of the macro
+\texttt{define-method-combination}.
