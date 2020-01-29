@@ -1,1 +1,61 @@
 \section{Introduction}
+
+The \commonlisp{} standard contains very little information about
+method combinations.  The dictionary entry for the system class
+\texttt{method-combination} requires a \emph{method combination
+  object} to be an \emph{indirect instance} of the system class named
+\texttt{method-combination}.  The standard further requires such an
+object to contain information both about the \emph{type} of method
+combination and the \emph{arguments} used with that type.
+
+The term \emph{indirect instance}, as explained in the glossary,
+excludes the possibility of such a method combination object to be an
+immediate instance of the class \texttt{method-combination}.  We can
+interpret this requirement as the need to create a subclass, say,
+\texttt{standard-method-combination} to parallel the situation for
+\texttt{method} vs \texttt{standard-method} and
+\texttt{generic-function} vs \texttt{standard-generic-function}, i.e.,
+so as to allow the programmer to create very different objects from
+those that the \texttt{standard-} version can provide.
+
+Clearly, the text of the dictionary entry means that when the macro
+\texttt{defgeneric} is used with the \texttt{:method-combination}
+option given, such a method combination object is what the generic
+function will contain.  We can confirm this view by examining the
+description of the MOP generic function
+\texttt{generic-function-method-combination} which states that the
+return value is ``a method combination metaobject''.
+
+However, the macro \texttt{define-method-combination} does \emph{not}
+define a method combination object.  The reason is of course that no
+arguments are supplied to this macro.  The dictionary entry for this
+macro also clearly says that the macro is used to define new
+\texttt{types} of method combination.
+
+The main issue for the person implementing a \commonlisp{} system,
+then, is how to interpret the relation between a \emph{method
+  combination type} and a \emph{method combination object}.
+
+It is easy to draw the conclusion that a call to the macro
+\texttt{define-method-combination} creates a new \emph{class}, as
+suggested by the use of the word \emph{type} in the standard, and that
+method combination objects of that type are instances of the new
+class.  However, this view creates several problems.  In particular,
+one must then determine whether each use of the same combination of
+the type and the arguments in the \texttt{:method-combination} option
+to \texttt{defgeneric} creates a new instance of the class, or whether
+existing instances are somehow kept track of and reused.  The first
+possibility would have the unfortunate consequence that two calls to
+\texttt{generic-function-method-combination} with different
+generic-function metaobjects would return two method combination
+objects that are not identical.
+
+In this paper, we argue that a \emph{method combination type} is
+itself an instance of a completely different class that we shall call
+\texttt{method-combination-template}, and that a \emph{method
+  combination object} is a \emph{variant} of the template in that it
+contains a reference to the template as well as the values of the
+\emph{arguments} that this particular method combination type allows.
+To conform to the standard, we obviously maintain that method
+combination objects are instances of
+\texttt{standard-method-combination}.
