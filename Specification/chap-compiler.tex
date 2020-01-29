@@ -408,6 +408,49 @@ for each instruction in the function.
 
 \subsubsection{Eliminating \texttt{enclose-instruction}s}
 
+The \texttt{enclose-instruction} is turned into a
+\texttt{funcall-instruction}.  The function being called is an element
+of the static environment (currently at index 1).
+
+The arguments to the \texttt{enclose} function are:
+
+\begin{enumerate}
+\item A constant representing the absolute address of the entry point
+  of the function resulting from the enclose operation.
+\item An arbitrary number of inputs that become the elements of the
+  static environment of the function resulting from the enclose
+  operation.
+\end{enumerate}
+
+The absolute address of the entry point is not known when this
+transformation is applied.  We therefore generate a constant of 0
+instead.  But we must keep track of this constant so that it can be
+patched, once the address of the entry point is known.  For that
+reason, we do not generate an ordinary constant input, but an instance
+of a subclass of \texttt{constant-input} named
+\texttt{entry-point-input} that, in addition to the constant value,
+also contains a reference to the enter instruction being enclosed.
+
+The remaining arguments to the \texttt{funcall-instruction} are just
+the inputs of the \texttt{enclose-instruction} being replaced.
+
+Therefore, the complete sequence of instructions that replaces the
+\texttt{enclose-instruction} is:
+
+\begin{enumerate}
+\item An \texttt{aref-instruction} taking as inputs the lexical
+  location holding the static environment and a constant input holding
+  the value 1.  The output is a lexical location holding the
+  \texttt{enclose} function to be called.
+\item A \texttt{funcall-instruction} with a first input being the
+  lexical location of the output of the \texttt{aref-instruction} and
+  the remaining inputs being the inputs of the
+  \texttt{enclose-intruction}.
+\item A \texttt{return-value-instruction} with a constant input having
+  the value $0$, meaning we obtain the first and only value returned
+  by the preceding \texttt{funcall} instruction.
+\end{enumerate}
+
 \subsection{Register allocation}
 
 For register allocation, we use the traditional \emph{graph coloring}
