@@ -451,6 +451,22 @@ Therefore, the complete sequence of instructions that replaces the
   by the preceding \texttt{funcall} instruction.
 \end{enumerate}
 
+\subsubsection{Eliminating \texttt{car-instruction}s}
+
+To eliminate a \texttt{car-instruction} we first insert an
+\texttt{unsigned-sub-instruction}.  There are two inputs to that
+instruction.  The first input is the input of the original
+instruction.  The second input is an \texttt{immediate-input} with a
+value of 1.  The output is a \texttt{raw-integer}.  This instruction
+has a single successor, meaning that we do not care about any carry,
+since there can not be any.
+
+Next, we change the class of the \texttt{car-instruction} so that it
+becomes a \texttt{memref1\-instruction}.  The input of the
+\texttt{memref1-instruction} is the \texttt{raw-integer} computed by
+the \texttt{unsigned-sub-instruction}.  The output is the output of
+the original \texttt{car-instruction}.
+
 \subsection{Register allocation}
 
 For register allocation, we use the traditional \emph{graph coloring}
