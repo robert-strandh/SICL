@@ -483,6 +483,23 @@ becomes a \texttt{memref1\-instruction}.  The input of the
 the \texttt{unsigned-sub-instruction}.  The output is the output of
 the original \texttt{cdr-instruction}.
 
+\subsubsection{Eliminating \texttt{rplaca-instruction}s}
+
+To eliminate an \texttt{rplaca-instruction} we first insert an
+\texttt{unsigned-sub-instruction}.  There are two inputs to that
+instruction.  The first input is the first input of the original
+instruction.  The second input is an \texttt{immediate-input} with a
+value of 1.  The output is a \texttt{raw-integer}.  This instruction
+has a single successor, meaning that we do not care about any carry,
+since there can not be any.
+
+Next, we change the class of the \texttt{rplaca-instruction} so that
+it becomes a \texttt{memset1-instruction}.  The \texttt{:address}
+input of the \texttt{memset1-instruction} is the \texttt{raw-integer}
+computed by the \texttt{unsigned-sub-instruction}.  The
+\texttt{:value} input of the \texttt{memset1-instruction} is the
+second input of the original instruction.
+
 \subsection{Register allocation}
 
 For register allocation, we use the traditional \emph{graph coloring}
