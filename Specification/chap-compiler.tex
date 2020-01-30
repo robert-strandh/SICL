@@ -517,6 +517,21 @@ computed by the \texttt{unsigned-sub-instruction}.  The
 \texttt{:value} input of the \texttt{memset1-instruction} is the
 second input of the original instruction.
 
+\subsubsection{Eliminating \texttt{aref-instruction}s}
+
+To eliminate an \texttt{aref-instruction}, we first insert an
+\texttt{unsigned-add-instruction}.  There are two inputs to that
+instruction.  The first input is the first input of the original
+instruction.  The second input is an \texttt{immediate-input} with a
+value of 3.  The output is a \texttt{raw-integer}.  This instruction
+has a single successor, meaning that we do not care about any carry,
+since there can not be any.
+
+Next, we insert a \texttt{memref1-instruction}.  The input to this
+instruction is the \texttt{raw-integer} computed in the first step.
+The output is a fresh lexical location that will hold the \emph{rack}
+of the array.
+
 \subsection{Register allocation}
 
 For register allocation, we use the traditional \emph{graph coloring}
