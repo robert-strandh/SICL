@@ -532,7 +532,14 @@ instruction is the \texttt{raw-integer} computed in the first step.
 The output is a fresh lexical location that will hold the \emph{rack}
 of the array.
 
-\subsection{Register allocation}
+The next step depends on whether the array is a bit-array or not,
+because if it is a bit-array we can't just use a memory reference to
+read the element; it has to be masked and shifted from a bigger
+datum.
+
+\subsection{Conversion from MIR to LIR}
+
+\subsubsection{Register allocation}
 
 For register allocation, we use the traditional \emph{graph coloring}
 method.  Since this problem is intractable, we use the method
