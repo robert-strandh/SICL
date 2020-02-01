@@ -537,6 +537,29 @@ because if it is a bit-array we can't just use a memory reference to
 read the element; it has to be masked and shifted from a bigger
 datum.
 
+\subsubsection{Expanding \texttt{funcall-instruction}s}
+
+In HIR, the \texttt{funcall-instruction} takes a function object as
+its first input.  During the conversion to MIR, we replace that input
+with three inputs:
+
+\begin{enumerate}
+\item A lexical location containing a fixnum that represents the
+  absolute address of the code of the callee.
+\item A lexical location containing the static environment to be
+  passed to the callee.
+\item A lexical location containing the dynamic environment to be
+  passed to the callee.
+\end{enumerate}
+
+The first two items are fetched from the rack of the function object.
+We use a \texttt{nook-read} instruction for each one.  For this
+reason, \texttt{funcall-instruction}s must be expanded before
+\texttt{nook-read-instruction}s and \texttt{nook-write-instruction}s.
+
+The dynamic environment is a lexical location that is kept in a slot
+of the \texttt{funcall-instruction}.
+
 \subsection{Conversion from MIR to LIR}
 
 \subsubsection{Register allocation}
