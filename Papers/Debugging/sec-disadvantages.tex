@@ -14,15 +14,6 @@ system, we do not think it will have any negative influence on
 caching.  The two versions of the body are kept separate, and the same
 versions is typically executed repeatedly.
 
-A minor disadvantage is the initial test that every function must
-perform, plus the initialization of the debug-flag register for every
-function call, in both versions of the function body.  These
-Because the same body version is executed repeatedly, the branch
-prediction logic would very likely make the correct prediction for the
-initial test.  And with significant inlining of functions, the number
-of function calls is reduced, and therefore also the number of times
-the debug-flag register needs to be initialized.
-
 Feedback on draft versions of this paper indicate that many readers
 are worried about the possibility of the behavior of the different
 versions of the function body described in
