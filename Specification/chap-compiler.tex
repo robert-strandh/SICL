@@ -400,11 +400,41 @@ function.
 \subsection{Conversion from HIR to MIR}
 
 MIR differs from HIR in that address calculations are explicit.
-Conversion to MIR is done one function (i.e. starting with an
+
+The conversion from HIR to MIR starts by \emph{expanding}
+\texttt{funcall-instruction}s as described below.  This transformation
+is done first, because it introduces \texttt{read-nook-instruction}s
+that must be expanded by transformations that are made later.
+
+Following the expansion of \texttt{funcall-instruction}s, conversion
+to MIR is done one function (i.e. starting with an
 \texttt{enter-instruction} at a time.  For each function, conversion
 starts by eliminating \texttt{enclose-instruction}s in that function.
 Following that, the function \texttt{process-instruction} is called
 for each instruction in the function.
+
+\subsubsection{Expanding \texttt{funcall-instruction}s}
+
+In HIR, the \texttt{funcall-instruction} takes a function object as
+its first input.  During the conversion to MIR, we replace that input
+with three inputs:
+
+\begin{enumerate}
+\item A lexical location containing a fixnum that represents the
+  absolute address of the code of the callee.
+\item A lexical location containing the static environment to be
+  passed to the callee.
+\item A lexical location containing the dynamic environment to be
+  passed to the callee.
+\end{enumerate}
+
+The first two items are fetched from the rack of the function object.
+We use a \texttt{nook-read} instruction for each one.  For this
+reason, \texttt{funcall-instruction}s must be expanded before
+\texttt{nook-read-instruction}s and \texttt{nook-write-instruction}s.
+
+The dynamic environment is a lexical location that is kept in a slot
+of the \texttt{funcall-instruction}.
 
 \subsubsection{Eliminating \texttt{enclose-instruction}s}
 
@@ -536,29 +566,6 @@ The next step depends on whether the array is a bit-array or not,
 because if it is a bit-array we can't just use a memory reference to
 read the element; it has to be masked and shifted from a bigger
 datum.
-
-\subsubsection{Expanding \texttt{funcall-instruction}s}
-
-In HIR, the \texttt{funcall-instruction} takes a function object as
-its first input.  During the conversion to MIR, we replace that input
-with three inputs:
-
-\begin{enumerate}
-\item A lexical location containing a fixnum that represents the
-  absolute address of the code of the callee.
-\item A lexical location containing the static environment to be
-  passed to the callee.
-\item A lexical location containing the dynamic environment to be
-  passed to the callee.
-\end{enumerate}
-
-The first two items are fetched from the rack of the function object.
-We use a \texttt{nook-read} instruction for each one.  For this
-reason, \texttt{funcall-instruction}s must be expanded before
-\texttt{nook-read-instruction}s and \texttt{nook-write-instruction}s.
-
-The dynamic environment is a lexical location that is kept in a slot
-of the \texttt{funcall-instruction}.
 
 \subsection{Conversion from MIR to LIR}
 
