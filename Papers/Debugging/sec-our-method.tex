@@ -4,25 +4,14 @@
 \subsection{Two versions of every function body}
 \label{sec-two-body-versions}
 
-We use an additional machine register as a \emph{flag} to determine
-whether a function is being debugged or not, i.e. whether it is run
-under the control of the debugger or not.  While using an entire
-register for this purpose might seem wasteful, this register is used
-for our debugging flag only for a very short time, namely across a
-function call.  Therefore, any register that is otherwise used as a
-scratch register may be used for this purpose.
-
-At the beginning of the execution of each function, a test is
-performed to determine the value of the flag.  Based on the result of
-this test, a branch is made to one of two \emph{similar} (but not
+We provide two different versions of every function body%
+\footnote{This idea was suggested by Michael Raskin.}.
+One version, called the \emph{ordinary} version, and the other one is
+called the \emph{debugging} version.  Each version is provided as a
+separate \emph{entry point} for the function%
+\footnote{This idea was suggested by Frode Fjeld.}.
+The two versions are \emph{similar} (but not
 identical) copies of the entire function body%
-\footnote{This idea was suggested by Michael Raskin.}.  As soon as
-this choice
-has been made, the register is available for normal use by the
-register allocator.  When the flag is cleared, the branch is made to
-the \emph{ordinary} version of the function body.  When the flag is
-set, the branch is made to the \emph{debugging} version of the
-function body.
 
 By including both versions in the same function, we make it
 unnecessary for the application programmer to recompile the code with
@@ -115,14 +104,14 @@ location, it informs the debugger.  Details of the communication
 between the application thread and the debugger are discussed in
 \refSec{sec-debugger-application-communication}.
 
-In the normal version of the function body, when a function call is
-made, the caller clears the debug flag register before initiating the
-call, thereby indicating to the callee that it is not under the
-control of the debugger.  In the debugging version of the function
-body, on the other hand, when a function call is made, the caller
-stores a $1$ in the debug flag register.  This mechanism thus
-automatically propagates the information about debugging throughout
-the call chain.
+In the ordinary version of the function body, when a function call is
+made, the caller uses the entry point of the callee corresponding to
+the ordinary version of the body of the callee.  In the debugging
+version of the function body, on the other hand, when a function call
+is made, the caller uses the entry point of the callee corresponding
+to the debugging version of the body of the callee.  This mechanism
+thus automatically propagates the information about debugging
+throughout the call chain.
 
 \subsection{Communication between the debugger and the application}
 \label{sec-debugger-application-communication}
