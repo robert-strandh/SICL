@@ -22,11 +22,12 @@ for \ecl{}.
 
 \subsection{\sbcl{}}
 
-The \sbcl{} \commonlisp{} implementation has a breakpoint facility.
-Given a code location, a breakpoint can be set, which results in the
-code being modified at that location, so that an arbitrary function
-(given to the constructor of the breakpoint) is called when execution
-reaches that location.
+The \sbcl{} \commonlisp{} implementation%
+\footnote{http://www.sbcl.org/}
+has a breakpoint facility.  Given a code location, a breakpoint can be
+set, which results in the code being modified at that location, so
+that an arbitrary function (given to the constructor of the
+breakpoint) is called when execution reaches that location.
 
 The only feature that uses the breakpoint facility is \texttt{trace}.
 Furthermore, it is hard for the user to take advantage of the
@@ -45,8 +46,9 @@ conditions that are specific to the stepper.
 
 \subsection{\ccl{}}
 
-The \ccl{} \commonlisp{} implementation does not have the concept of
-breakpoints.
+The \ccl{} \commonlisp{} implementation%
+\footnote{https://ccl.clozure.com/}
+does not have the concept of breakpoints.
 
 The \ccl{} \texttt{trace} command uses \emph{encapsulation}, meaning
 that the association between the \emph{name} of a function and the
@@ -58,26 +60,30 @@ Currently, \ccl{} does not have a working single stepper.
 
 \subsection{\ecl{}}
 
-The \ecl{} \commonlisp{} implementation does not have the concept of
-breakpoints, so an external debugger such as GDB has to be used for
-breakpoints.  \ecl{} does have a special instruction type in the bytecode
-virtual machine that is used for stepping.
+The \ecl{} \commonlisp{} implementation%
+\footnote{https://common-lisp.net/project/ecl/}
+does not have the concept of breakpoints, so an external debugger such
+as GDB has to be used for breakpoints.  \ecl{} does have a special
+instruction type in the bytecode virtual machine that is used for
+stepping.
 
 The \texttt{trace} facility uses encapsulation.
 
 \subsection{\clasp{}}
 
-The \clasp{} commonlisp{} implementation does not have the concept of
-breakpoints, nor does it have a stepper.  The \texttt{trace} facility
-uses encapsulation.
+The \clasp{} commonlisp{} implementation%
+\footnote{https://github.com/clasp-developers/clasp}
+does not have the concept of breakpoints, nor does it have a stepper.
+The \texttt{trace} facility uses encapsulation.
 
 \subsection{\lispworks{}}
 
-The \lispworks{} \commonlisp{} implementation provides breakpoints.
-Breakpoints can be set either from the stepper or from the editor.
-The first time a breakpoint is set in a definition, the source code of
-the defining form is re-evaluated with additional annotations that
-provide information for the stepper.
+The \lispworks{} \commonlisp{} implementation%
+\footnote{http://www.lispworks.com/products/lispworks.html}
+provides breakpoints.  Breakpoints can be set either from the stepper
+or from the editor.  The first time a breakpoint is set in a
+definition, the source code of the defining form is re-evaluated with
+additional annotations that provide information for the stepper.
 
 When a breakpoint has been set, it is active no matter how the code
 containing it was called.  If that code was called outside the
