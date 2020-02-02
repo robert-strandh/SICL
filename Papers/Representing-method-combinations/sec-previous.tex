@@ -33,9 +33,15 @@ one is constructed, pushed on the cache, and returned.  The new
 element is constructed by consing the list of options and the result
 of applying a \emph{constructor function} to the list of options.
 This constructor function is stored in a slot in the info structure.
-
 As a result, existing method-combination instances are reused whenever
 possible.
+
+\sbcl{} handles re-evaluation of \texttt{define-method-combination}
+forms with the name of an existing info entry in the hash table.
+Every method-combination instance contains a list of back pointers to
+generic functions that use this method combination.  The cache of the
+existing info entry is traversed, and for each method combination, the
+effective methods of its generic functions are invalidated.
 
 \subsection{ECL}
 
