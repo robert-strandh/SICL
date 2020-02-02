@@ -14,6 +14,29 @@ More surprisingly, it then defines two subclasses of the class
 forms (long and short) of the macro
 \texttt{define\--method\--combination}.
 
+An invocation of \texttt{define-method-combination} does not create
+any new class.  Instead, an \emph{info} structure is created, and
+stored in a hash table that uses the name of the method-combination
+type as a key.  This info structure contains a \emph{cache}, which is
+an association list.  The key of an element of the association list is
+a list of options for the method combination, and the value of an
+element is the method-combination object.  Initially, the cache is
+empty, except for the info structure associated with the
+\texttt{standard} method combination.
+
+The function \texttt{find-method-combination} is given the
+method-combination name and the desired options.  It looks up the
+appropriate info structure, and searches the cache for an element
+corresponding to the options.  If such an element is found, the
+method-combination object is returned.  If no element is found, a new
+one is constructed, pushed on the cache, and returned.  The new
+element is constructed by consing the list of options and the result
+of applying a \emph{constructor function} to the list of options.
+This constructor function is stored in a slot in the info structure.
+
+As a result, existing method-combination instances are reused whenever
+possible.
+
 \subsection{ECL}
 
 The \ecl{} \commonlisp{} implementation defines the class
