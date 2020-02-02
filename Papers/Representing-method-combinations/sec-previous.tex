@@ -1,18 +1,35 @@
 \section{Previous work}
 
-\subsection{\sbcl{}}
+\subsection{\pcl{}}
+\label{sec-pcl}
 
-The \sbcl{} \commonlisp{} implementation unsurprisingly defines the
-class \texttt{method\--combination} and then the class
-\texttt{standard\--method\--combination} as a subclass of
-the class named \texttt{method\--combination}.
+Portable Common Loops, PCL for short, is a library that implements the
+functions defined in the book ``The Art of the Metaobject Protocol''
+\cite{Kiczales:1991:AMP:574212}, and is meant as an add-on to
+pre-standard \commonlisp{} implementations, i.e., implementations
+without \clos{}.
+
+Most \commonlisp{} implementations that exist today were initially
+written before the standard was published, and many of those
+implementations chose to use \pcl{} to incorporate \clos{}
+functionality, though frequently, the code has since been adapted for
+each specific implementation.
+
+\pcl{} unsurprisingly defines the class \texttt{method\--combination}
+and then the class \texttt{standard\--method\--combination} as a
+subclass of the class named \texttt{method\--combination}.
 
 More surprisingly, it then defines two subclasses of the class
 \texttt{standard\--method\--combination}, namely
-\texttt{long\--method\--combination} and
+\texttt{long\--method\-combination} and
 \texttt{short\--method\--combination}, each for use with the different
 forms (long and short) of the macro
-\texttt{define\--method\--combination}.
+\texttt{define\-method\--combination}.
+
+\subsection{\sbcl{}}
+
+The \sbcl{} \commonlisp{} implementation uses a heavily modified
+version of \pcl{} (See \refSec{sec-pcl}).
 
 An invocation of \texttt{define-method-combination} does not create
 any new class.  Instead, an \emph{info} structure is created, and
