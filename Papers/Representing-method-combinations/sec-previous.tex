@@ -13,3 +13,32 @@ More surprisingly, it then defines two subclasses of the class
 \texttt{short\--method\--combination}, each for use with the different
 forms (long and short) of the macro
 \texttt{define\--method\--combination}.
+
+\subsection{ECL}
+
+The \ecl{} \commonlisp{} implementation defines the class
+\texttt{method-combination}, and method-combination metaobjects are
+direct instances of this class, which is not conforming.
+
+The macro \texttt{define-method-combination} does not define a method
+combination.  Instead it defines a function that we will call the
+\emph{method-combination function}.  This function computes the
+effective method of a generic function.  The lambda list of the
+method-combination function consists of two required parameters,
+namely a generic function and a list of applicable methods, followed
+by the lambda list given to \texttt{define-method-combination}.  That
+lambda list will contain \texttt{\&optional (order
+  :most-specific-first)} for most built-in method-combination types.
+The resulting function is stored in a hash table with the name of the
+method-combination type as a key.
+
+When a generic function is created, a new instance of the
+\texttt{method-combination} class is created.  The new instance
+contains the method-combination function and a list of the options
+given after the method-combination name in the
+\texttt{:method-combination} option to \texttt{defgeneric}.
+
+Since a new instance is created each time, two different generic
+function that, when created, were given the same method-combination
+name and the same method-combination arguments, will have two
+different instances of the class \texttt{method-combination}.
