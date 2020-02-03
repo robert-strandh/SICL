@@ -29,7 +29,14 @@ forms (long and short) of the macro
 \subsection{\sbcl{}}
 
 The \sbcl{} \commonlisp{} implementation uses a heavily modified
-version of \pcl{} (See \refSec{sec-pcl}).
+version of \pcl{} (See \refSec{sec-pcl}).  Prior to April of 2018,
+\sbcl{} used the unmodified technique from \pcl{} as described in
+\refsec{sec-pcl}.  The technique described in this section is a result
+of significant modifications to the code for handling method
+combinations.  An article by Didier Verna \cite{verna.18.els}
+published at ELS in April of 2018 contained a detailed description of
+the technique used by \sbcl{} at that time.  Perhaps the improvements
+to \sbcl{} were a result of the descriptions in this article.
 
 An invocation of \texttt{define-method-combination} does not create
 any new class.  Instead, an \emph{info} structure is created, and
