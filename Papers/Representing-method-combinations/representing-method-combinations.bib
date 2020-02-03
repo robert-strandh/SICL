@@ -1,3 +1,38 @@
+@InProceedings{	  verna.18.els,
+  author	= {Didier Verna},
+  title		= {Method Combinators},
+  booktitle	= {11th European Lisp Symposium},
+  isbn		= 9782955747421,
+  doi		= {10.5281/zenodo.3247610},
+  year		= 2018,
+  month		= apr,
+  address	= {Marbella, Spain},
+  abstract	= {In traditional object-oriented languages, the dynamic
+		  dispatch algorithm is hardwired: for every polymorphic
+		  call, only the most specific method is used. \textsc{Clos},
+		  the Common Lisp Object System, goes beyond the traditional
+		  approach by providing an abstraction known as \emph{method
+		  combinations}: when several methods are applicable, it is
+		  possible to select several of them, decide in which order
+		  they will be called, and how to combine their results,
+		  essentially making the dynamic dispatch algorithm
+		  user-programmable.\par Although a powerful abstraction,
+		  method combinations are under-specified in the Common Lisp
+		  standard, and the \textsc{Mop}, the Meta-Object Protocol
+		  underlying many implementations of \textsc{Clos}, worsens
+		  the situation by either contradicting it or providing
+		  unclear protocols. As a consequence, too much freedom is
+		  granted to conforming implementations. The exact or
+		  intended behavior of method combinations is unclear and not
+		  necessarily coherent with the rest of \textsc{Clos}.\par In
+		  this paper, we provide a detailed analysis of the problems
+		  posed by method combinations, the consequences of their
+		  lack of proper specification in one particular
+		  implementation, and a \textsc{Mop}-based extension called
+		  \emph{method combinators}, aiming at correcting these
+		  problems and possibly offer new functionality.}
+}
+
 @book{Kiczales:1991:AMP:574212,
  author = {Kiczales, Gregor and Rivieres, Jim Des},
  title = {The  Art of the Metaobject Protocol},
