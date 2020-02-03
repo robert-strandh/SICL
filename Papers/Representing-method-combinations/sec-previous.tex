@@ -104,6 +104,17 @@ The reason for the two being different is that the method combination
 is identified by the ordered list of options, and the lists are
 different for the different \texttt{defgeneric} forms.
 
+When a generic function is defined with one of the built-in method
+combinations, \sbcl{} will check that the options given to the
+\texttt{:method-combination} \texttt{defgeneric} option are valid.
+This verification is done by special-purpose code.  However, with a
+user-defined method combination, no verification is made.  It is only
+when an attempt is made to invoke the generic function that the
+function resulting from the custom method combination is invoked, and
+the incompatible lambda lists are detected.  Furthermore, the error
+message is very general and can be difficult to decipher by the
+programmer.
+
 \sbcl{} handles re-evaluation of \texttt{define-method-combination}
 forms with the name of an existing info entry in the hash table.
 Every method-combination instance contains a list of back pointers to
