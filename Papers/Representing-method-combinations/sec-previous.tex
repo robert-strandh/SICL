@@ -38,6 +38,10 @@ published at ELS in April of 2018 contained a detailed description of
 the technique used by \sbcl{} at that time.  Perhaps the improvements
 to \sbcl{} were a result of the descriptions in this article.
 
+One aspect of the \sbcl{} code that remains from the previous version
+is that the two subclasses of \texttt{method-combination} are still
+present.
+
 An invocation of \texttt{define-method-combination} does not create
 any new class.  Instead, an \emph{info} structure is created, and
 stored in a hash table that uses the name of the method-combination
@@ -128,6 +132,49 @@ Every method-combination instance contains a list of back pointers to
 generic functions that use this method combination.  The cache of the
 existing info entry is traversed, and for each method combination, the
 effective methods of its generic functions are invalidated.
+
+\subsection{\ccl{}}
+\label{sec-ccl}
+
+The \ccl{} \commonlisp{} implementation defines the class
+\texttt{method-combination} and then tree subclasses of that class:
+
+\begin{itemize}
+\item \texttt{standard-method-combination} with a single instance,
+  namely the standard method combination.  This class is used as a
+  specializer in a method on \texttt{compute-effective-method} so as
+  to handle the standard method combination as a special case.
+\item \texttt{short-method-combination} which is used for method
+  combinations defined by the short form of
+  \texttt{define-method-combination}.
+\item \texttt{long-method-combination} which is used for method
+  combinations defined by the long form of
+  \texttt{define-method-combination}.
+\end{itemize}
+
+The class \texttt{standard-method-combination} in \ccl{} thus does not
+play the role as a general subclass of \texttt{method-combination}.
+
+In \ccl{}, the macro \texttt{define-method-combination} does not
+define a method combination, nor a new method-combination class.
+Instead it defines an \emph{info} vector (disguised as a structure)
+that acts as a template for creating method combinations later.  The
+info vector contains the following elements:
+
+\begin{itemize}
+\item The name of the method-combination class to be created which is
+  either \texttt{short-method-combination} or
+  \texttt{long-method-combination}.
+\item An element that contains the short-form options if the info
+  vector was created as a result of the short form of
+  \texttt{define-method-combination}, and an \emph{expander function}
+  if the info vector was created as a result of the long form.
+\item A list of \emph{instances}, i.e. method-combination objects that
+  share the same info vector.
+\item A list of generic functions using method combinations of the
+  type defined by the info vector.
+\end{itemize}
+
 
 \subsection{\ecl{}}
 \label{sec-ecl}
