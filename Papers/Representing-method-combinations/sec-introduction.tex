@@ -1,12 +1,13 @@
 \section{Introduction}
 
-The \commonlisp{} standard contains very little information about
-method combinations.  The dictionary entry for the system class
-\texttt{method-combination} requires a \emph{method combination
-  object} to be an \emph{indirect instance} of the system class named
-\texttt{method-combination}.  The standard further requires such an
-object to contain information both about the \emph{type} of method
-combination and the \emph{arguments} used with that type.
+The \commonlisp{} standard \cite{ansi:common:lisp} contains very
+little information about method combinations.  The dictionary entry
+for the system class \texttt{method-combination} requires a
+\emph{method combination object} to be an \emph{indirect instance} of
+the system class named \texttt{method-combination}.  The standard
+further requires such an object to contain information both about the
+\emph{type} of method combination and the \emph{arguments} used with
+that type.
 
 The term \emph{indirect instance}, as explained in the glossary,
 excludes the possibility of such a method combination object to be an
@@ -61,17 +62,26 @@ To conform to the standard, we obviously maintain that method
 combination objects are instances of
 \texttt{standard-method-combination}.
 
+A call to the macro \texttt{define-method-combination} results in a
+function that can be applied to a list of arguments which include at
+least a generic function and a list of applicable methods.  This
+function becomes associated with the \emph{name} of the
+method-combination \emph{type} thus defined.  The standard briefly
+uses the term \emph{procedure} to refer to this resulting function.
+We adapt that convention in this paper, and refer to the resulting
+function as the \emph{method-combination procedure}.
+
 When a generic function is defined or redefined, it would be desirable
-to have the options of the \texttt{method-combination}
+to have the options of the \texttt{:method-combination}
 \texttt{defgeneric} option checked for validity when the definition or
 redefinition occurs.  For the built-in method combination types, most
 implementations also handle this check as a special case.  However,
 all implementations we have investigated fail to check the options to
-a user-defined method-combination type defined by the long-form of
-\texttt{define-method-combination}.  Instead, if the options are
+a user-defined method-combination type defined by the long-form of the
+macro \texttt{define-method-combination}.  Instead, if the options are
 incompatible with the define method-combination type, in the best
-case, an error is signaled when the method-combination is applied to a
-list of applicable methods by the generic function
+case, an error is signaled when the method-combination procedure is
+applied to a list of applicable methods by the generic function
 \texttt{compute-effective-method}.  Furthermore, the error being
 signaled can be hard to decipher, as it typically results from invalid
 arguments to a function with a particular lambda list.
@@ -82,9 +92,23 @@ mechanism is available to the creator of custom method-combination
 types, and also used to verify the options to the built-in
 method-combination types.
 
+The macro \texttt{define-method-combination} comes in two versions
+called the \emph{long form} and the \emph{short form} in the
+\commonlisp{} standard.  The short form of the macro can be expressed
+in terms of the long form, but it may not be obvious how the options
+to the short form should be propagated to the long form.
+
+Furthermore, in the description of the short form of the macro, the
+standard states that the procedure resulting from such a definition
+accepts an optional argument (named \texttt{order}) that can have two
+values, \texttt{:most-specific-first} and
+\texttt{:most-specific-last}, with \texttt{:most-specific-first} being
+the default.  It is not obvious how this restriction can be expressed
+as a long-form definition of a similar procedure.
+
 Throughout this paper, we assume that it is an error to attempt to
 create a generic function using a method-combination type that is not
-already defined.  Recall that the standard clearly states that when a
+already defined.  Recall that the standard states that when a
 \texttt{define-method-combination} form appears at the top level, the
 compiler must recognize the name of that type as valid in subsequent
 \texttt{defgeneric} forms, but that the body of the
