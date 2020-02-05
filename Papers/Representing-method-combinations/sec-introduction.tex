@@ -59,3 +59,24 @@ contains a reference to the template as well as the values of the
 To conform to the standard, we obviously maintain that method
 combination objects are instances of
 \texttt{standard-method-combination}.
+
+When a generic function is defined or redefined, it would be desirable
+to have the options of the \texttt{method-combination}
+\texttt{defgeneric} option checked for validity when the definition or
+redefinition occurs.  For the built-in method combination types, most
+implementations also handle this check as a special case.  However,
+all implementations we have investigated fail to check the options to
+a user-defined method-combination type defined by the long-form of
+\texttt{define-method-combination}.  Instead, if the options are
+incompatible with the define method-combination type, in the best
+case, an error is signaled when the method-combination is applied to a
+list of applicable methods by the generic function
+\texttt{compute-effective-method}.  Furthermore, the error being
+signaled can be hard to decipher, as it typically results from invalid
+arguments to a function with a particular lambda list.
+
+In this paper, we propose a general mechanism for early detection of
+incompatible options to a particular method-combination type.  This
+mechanism is available to the creator of custom method-combination
+types, and also used to verify the options to the built-in
+method-combination types.
