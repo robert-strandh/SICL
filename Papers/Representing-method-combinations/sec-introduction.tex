@@ -122,6 +122,49 @@ form appears at the top level.  In this paper, we do not address the
 mechanism by which the compile-time behavior required by the standard
 is implemented.
 
+There are several scenarios that are discussed in this paper:
+
+\begin{enumerate}
+\item The user correctly defines a custom method-combination type
+  using \texttt{define-method-combination}.  Subsequently, the user
+  defines a generic function with that method-combination type, but
+  makes a mistake in the list of options.
+\item The user defines a custom method-combination type using
+  \texttt{define-method-combination}, but makes a mistake in the
+  lambda list so that the options that the resulting
+  method-combination procedure are not the ones that were intended.
+  Subsequently, the user defines a generic function with a list of
+  options that were indented to be acceptable.
+\item The user initially correctly defines a custom method combination
+  type using \texttt{define-method-combination}, and then also
+  correctly defines one or more generic functions with that method
+  combination type.  Then the user decides to make a change to the
+  code of the method-combination type, so the
+  \texttt{define-method-combination} is re-executed, but the new
+  lambda list is incompatible with the options given when the generic
+  functions were created, either as a result of a mistake or of a
+  deliberate decision.
+\end{enumerate}
+
+In the first two scenarios, the ideal consequence would be that a
+warning is initially signaled, stating that the options supplied to
+the creation of the generic function are incompatible with the type of
+the desired method combination.  Any subsequent attempt to execute the
+generic function would result in an appropriate error being signaled.
+Once the incorrect definition has been corrected and the corresponding
+form has been re-executed, the generic function should be operational.
+
+In the third scenario, the ideal consequence would be that a warning
+is signaled, giving a list of generic functions with a list of options
+that are now incompatible with the redefined method-combination type.
+Any subsequent attempt to execute one of these generic functions would
+result in an appropriate error being signaled.  If a mistake was made,
+the re-execution of a corrected \texttt{define-method-combination}
+form should render the existing generic functions operational again.
+If the change was deliberate, the list of generic functions in the
+message can be used to determine which definitions to correct and
+re-execute.
+
 The technique described in this paper has been implemented only
 partially.  We are currently working on incorporating the remaining
 elements of our technique into the \sicl{}%
