@@ -3,13 +3,48 @@
 We introduce a class named \texttt{method-combination-template}.  An
 instance of this class represents all method combinations with the
 same \emph{name}, independent of the options.  There is a template for
-\texttt{standard}, a template for \texttt{and}, etc.
-
-A method combination, as used by the \commonlisp{} standard and by the
-MOP is an instance of the class \texttt{method-combination}.  There is
-not a subclass of this class for each method-combination type
-mentioned in the \commonlisp{} standard.  In other words, a method
+\texttt{standard}, a template for \texttt{and}, etc.  Furthermore, in
+order to respect the restriction required by the standard, we
+introduce a class \texttt{standard-method-combination} which is a
+subclass of \texttt{method-combination}.  All method-combination
+metaobjects are direct instances of
+\texttt{standard-method-combination}.  There are no sublcasses of
+\texttt{standard-method-combination}, neither for specific
+method-combination types, nor for distinguishing between method
+combinations defined by the long and the short form of
+\texttt{define-method-combination}.  In other words, a method
 combination is a \emph{variant} of a method-combination template.
+
+A method-combination instance is uniquely defined by a reference to
+its template and a list of method-combination \emph{options} that
+appear after method-combination name the \texttt{:method-combination}
+\texttt{defgeneric} option.  The expansion of the \texttt{defgeneric}
+macro contains a call to \texttt{ensure-generic-function}.
+If the \texttt{:method-combination} option is explicitly supplied to
+\texttt{defgeneric}, then the call to \texttt{ensure-generic-function}
+contains a keyword argument \texttt{:method-combination} followed by a
+call to \texttt{find-method-combination} with the generic function,
+the name of the method-combination type, and the options.  If no
+\texttt{:method-combination} option is given in the
+\texttt{defgeneric} form, the \texttt{:method-combination} keyword
+argument to \texttt{ensure-generic-function} is not supplied.
+
+The call to \texttt{find-method-combination} either return an existing
+method-combination instance corresponding to the type and the options
+given, or it creates and stores a new such instance.
+
+A call to \texttt{ensure-generic-function} results in a call to
+\texttt{ensure-generic-function-using-class} where the first argument
+is either an existing generic function or \texttt{nil} if no generic
+function with the given name exists.  The method on
+\texttt{ensure-generic-function-using-class} specialized to the class
+\texttt{null} supplies the \texttt{standard} method-combination a
+default value of the \texttt{:method-combination} when calling
+\texttt{make-instance} to create a new generic function.
+
+When a generic function is created, it is
+given a method-combination object corresponding to the
+\texttt{:method-combination}.
 
 To avoid creating a new variant instance for each generic function, we
 use the following technique.  We analyze the lambda list in the long
