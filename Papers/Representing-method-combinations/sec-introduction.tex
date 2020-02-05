@@ -80,3 +80,18 @@ incompatible options to a particular method-combination type.  This
 mechanism is available to the creator of custom method-combination
 types, and also used to verify the options to the built-in
 method-combination types.
+
+Throughout this paper, we assume that it is an error to attempt to
+create a generic function using a method-combination type that is not
+already defined.  Recall that the standard clearly states that when a
+\texttt{define-method-combination} form appears at the top level, the
+compiler must recognize the name of that type as valid in subsequent
+\texttt{defgeneric} forms, but that the body of the
+\texttt{define-method-combination} form is not executed until the form
+itself is executed.  In other words, the method-combination type may
+not have been defined when a \texttt{defgeneric} form using the name
+is encountered by the compiler.  However, our assumption is still
+valid, since the compiler also does not create the generic function
+when a \texttt{defgeneric} form appears at the top level.  In this
+paper, we do not address the mechanism by which the compile-time
+behavior required by the standard is implemented.
