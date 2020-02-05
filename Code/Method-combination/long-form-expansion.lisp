@@ -34,4 +34,3 @@
                   ',name (sicl-genv:global-environment))
                  template))
          ',name))))
-
