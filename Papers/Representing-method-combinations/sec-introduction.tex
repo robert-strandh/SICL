@@ -99,27 +99,28 @@ in terms of the long form, but it may not be obvious how the options
 to the short form should be propagated to the long form.
 
 Furthermore, in the description of the short form of the macro, the
-standard states that the procedure resulting from such a definition
-accepts an optional argument (named \texttt{order}) that can have two
-values, \texttt{:most-specific-first} and
-\texttt{:most-specific-last}, with \texttt{:most-specific-first} being
-the default.  It is not obvious how this restriction can be expressed
-as a long-form definition of a similar procedure.
+standard states that the method-combination procedure resulting from
+such a definition accepts an optional argument (named \texttt{order})
+that can have two values, \texttt{:most-specific-first} and
+\texttt{:most-specific-last}, with the value
+\texttt{:most-specific-first} being the default.  It is not obvious
+how this restriction can be expressed as a long-form definition of a
+similar procedure.
 
 Throughout this paper, we assume that it is an error to attempt to
 create a generic function using a method-combination type that is not
 already defined.  Recall that the standard states that when a
 \texttt{define-method-combination} form appears at the top level, the
 compiler must recognize the name of that type as valid in subsequent
-\texttt{defgeneric} forms, but that the body of the
-\texttt{define-method-combination} form is not executed until the form
-itself is executed.  In other words, the method-combination type may
-not have been defined when a \texttt{defgeneric} form using the name
-is encountered by the compiler.  However, our assumption is still
-valid, since the compiler also does not create the generic function
-when a \texttt{defgeneric} form appears at the top level.  In this
-paper, we do not address the mechanism by which the compile-time
-behavior required by the standard is implemented.
+\texttt{defgeneric} forms, but that the resulting method-combination
+procedure is not executed until the form itself is executed.  In other
+words, the method-combination type may not have been defined when a
+\texttt{defgeneric} form using the name is encountered by the
+compiler.  However, our assumption is still valid, since the compiler
+also does not create the generic function when a \texttt{defgeneric}
+form appears at the top level.  In this paper, we do not address the
+mechanism by which the compile-time behavior required by the standard
+is implemented.
 
 The technique described in this paper has been implemented only
 partially.  We are currently working on incorporating the remaining
