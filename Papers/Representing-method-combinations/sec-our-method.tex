@@ -7,31 +7,52 @@ same \emph{name}, independent of the options.  There is a template for
 order to respect the restriction required by the standard, we
 introduce a class \texttt{standard-method-combination} which is a
 subclass of \texttt{method-combination}.  All method-combination
-metaobjects are direct instances of
-\texttt{standard-method-combination}.  There are no sublcasses of
-\texttt{standard-method-combination}, neither for specific
-method-combination types, nor for distinguishing between method
-combinations defined by the long and the short form of
+metaobjects are direct instances of this subclass.  There are no
+sublcasses of \texttt{standard-method-combination}, neither for
+specific method-combination types, nor for distinguishing between
+method combinations defined by the long and the short form of
 \texttt{define-method-combination}.  In other words, a method
-combination is a \emph{variant} of a method-combination template.
+combination is a \emph{variant} of a method-combination template.  The
+template contains a list of all its variants in use.
 
-A method-combination instance is uniquely defined by a reference to
-its template and a list of method-combination \emph{options} that
-appear after method-combination name the \texttt{:method-combination}
-\texttt{defgeneric} option.  The expansion of the \texttt{defgeneric}
-macro contains a call to \texttt{ensure-generic-function}.
-If the \texttt{:method-combination} option is explicitly supplied to
+A method-combination instance contains the following slots:
+
+\begin{itemize}
+\item A reference to its template.
+\item The list of method-combination \emph{options} that appear after
+  method-combination name the \texttt{:method-combination}
+  \texttt{defgeneric} option.
+\item The method-combination procedure.  This procedure has two
+  parameters, both required.  The first parameter is a generic
+  function for which an effective method is to be computed.  The
+  second parameter is a list of pairs.  Each pair contains an
+  applicable method, and a list of method \emph{qualifiers} for that
+  method.  The result of applying the method-combination procedure is
+  a form called the \emph{effective method}.  Notice that the
+  method-combination procedure does \emph{not} have the
+  method-combination options in its lambda list.
+\item A list of generic functions that contain this method combination.
+\end{itemize}
+
+The expansion of the \texttt{defgeneric} macro contains a call to the
+ordinary function \texttt{ensure-generic-function}.  If the
+\texttt{:method-combination} option is explicitly supplied to
 \texttt{defgeneric}, then the call to \texttt{ensure-generic-function}
-contains a keyword argument \texttt{:method-combination} followed by a
-call to \texttt{find-method-combination} with the generic function,
-the name of the method-combination type, and the options.  If no
+contains an explicit keyword argument \texttt{:method-combination}
+with the value form being a call to the generic function
+\texttt{find-method-combination} with the generic function, the name
+of the method-combination type, and the options.  If no
 \texttt{:method-combination} option is given in the
 \texttt{defgeneric} form, the \texttt{:method-combination} keyword
 argument to \texttt{ensure-generic-function} is not supplied.
 
 The call to \texttt{find-method-combination} either return an existing
 method-combination instance corresponding to the type and the options
-given, or it creates and stores a new such instance.
+given, or it creates and stores a new such instance.  If the options
+are incompatible with the method-combination template, a warning is
+signaled, and the method-combination procedure is one that signals an
+error if invoked.  The mechanism for detecting this incompatibility is
+described later in this section.
 
 A call to \texttt{ensure-generic-function} results in a call to
 \texttt{ensure-generic-function-using-class} where the first argument
@@ -42,68 +63,66 @@ function with the given name exists.  The method on
 default value of the \texttt{:method-combination} when calling
 \texttt{make-instance} to create a new generic function.
 
-When a generic function is created, it is
-given a method-combination object corresponding to the
-\texttt{:method-combination}.
-
-To avoid creating a new variant instance for each generic function, we
-use the following technique.  We analyze the lambda list in the long
-form of \texttt{define-method-combination}.  The \commonlisp{}
-standard requires this lambda list to be an \emph{ordinary} lambda
-list.  We assume that this lambda list contains only lexical
-variables.  The result of the analysis of this lambda list is a list
-of lexical variables that are available to the body of the code in the
-\texttt{define-method-combination} form.  From this list, we define a
-function called the \emph{variant determiner} as follows:
+To detect whether a list of method-combination options are invalid for
+a particular method-combination template, we analyze the
+\emph{lambda-list} given in the long form of
+\texttt{define-method-combination}.  The analysis consists of
+extracting all parameters that can be referenced in the
+method-combination procedure.  We then construct a lambda expression
+as follows:
 
 \begin{verbatim}
 (lambda (...)
   (list v1 v2 ... vn))
 \end{verbatim}
 
-The lambda list of this function is the lambda list of the
+which is then compiled so that a function is obtained.  The lambda
+list of this function is the lambda list of the
 \texttt{define-method-combination} form and \texttt{v1}, \texttt{v2},
 ..., \texttt{vn} are the lexical variables resulting from our analysis
-of the lambda list.  Applying this function to the \emph{options}
-given in the \texttt{defgeneric} form or given to the
-\texttt{find-method-combination} function returns a list of objects
-that uniquely determines the result of a variant, provided that it
-only refers to the lexical variables in its lambda list.  We call this
-list the \emph{variant signature}.
+of the lambda list.  Applying this function to the options given to
+the \texttt{find-method-combination} function returns a list of
+objects.  The lambda list typically
+contains \&aux lambda list keywords, with forms that check the
+validity of the options supplied, and signal an error whenever an
+invalid option combination is detected.  Thus, if either the lambda
+list is incompatible with the options given, or one of these \&aux
+forms detect an invalid option combination, an error is signaled.  We
+handle this error, turn it into a warning, and return a
+method-combination instance with a method-combination that signals an
+error whenever invoked.
 
-In addition to the variant-determiner function, we create a second
-function as follows:
+This technique for detecting incompatible or invalid options handles
+the first scenario described in \refSec{sec-introduction}.  When the
+user corrects the incorrect form that created or reinitialized the
+generic function (typically a \texttt{defgeneric} form), the
+validation process is re-invoked and a method-combination with a
+viable method-combination procedure is assigned to the generic
+function.  This technique also detects the second scenario described
+in \refSec{sec-introduction}.  The way the user can correct the
+situation in this scenario is described below.
+
+When the options given to \texttt{find-method-combination} are
+compatible and valid, a viable method-combination procedure is
+constructed as follows:
 
 \begin{verbatim}
-(lambda (<method-list> v1 v2 ... vn)
-  <body>)
+(lambda (generic-function method-qualifier-pairs)
+  (let ((v1 ...) (v2 ...) ... (vn ...))
+    <body>))
 \end{verbatim}
 
-where \texttt{<method-list>} is a lexical variable that contains the
-list of methods to be processed by the method combination, and where
-\texttt{<body>} is the expanded body of the
-\texttt{define-method-combination} form.  We call this function the
-\emph{effective method form function}.  Clearly, with the
-restrictions that we impose, applying this function to the variant
-signature has the same effect as if the original lambda list had been
-used with the method-combination options given in the
-\texttt{defgeneric} form or given to the
-\texttt{find-method-combination} function.
+where \texttt{v1}, \texttt{v2}, ..., \texttt{vn} are again the lexical
+variables resulting from our analysis of the lambda list.  The
+initialization forms for the variables are the values returned in the
+resulting list of our analysis function.
 
-We store the effective method form function in the method-combination
-template.  The template contains a list of variants and each variant
-contains a reference to the template as well as the variant signature.
-
-When \texttt{find-method-combination} is called, we find the template
-with the name that is passed as an argument.  Then, we apply the
-variant determiner to the options, also passed as an argument in order
-to obtain a variant signature.  We use the variant signature to
-traverse the list of variants to determine whether any signature is
-\texttt{equal} to the one just computed.  If so, the corresponding
-variant is returned.  If not, a new variant is allocated, stored in
-the list of variants, and then returned.
-
-Clearly, there are some restrictions associated with our technique.  A
-method-combination option can only be of certain restricted types that
-allow comparisons using \texttt{equal}.  In practice, however, options
-are typically symbols, so this restriction should not pose a problem.
+When a \texttt{define-method-combination} form is re-evaluated, we
+locate the corresponding method-combination template.  We then invoke
+the same analysis as before to every variant, i.e. to every existing
+method combination having this type name.  If an analysis fails, we
+then signal a warning containing all generic functions using the now
+invalid method-combination, and we set the method-combination
+procedure of the invalid method combination to one that will signal an
+error when invoked.  If the analysis succeeds, then the corresponding
+method combination is assigned a viable method-combination procedure.
