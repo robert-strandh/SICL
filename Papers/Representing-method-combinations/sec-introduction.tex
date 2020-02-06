@@ -105,7 +105,12 @@ that can have two values, \texttt{:most-specific-first} and
 \texttt{:most-specific-last}, with the value
 \texttt{:most-specific-first} being the default.  It is not obvious
 how this restriction can be expressed as a long-form definition of a
-similar procedure.
+similar procedure.  A common solution to this problem is to define a
+subclass \texttt{short-method-combination} of the class
+\texttt{method-combination}, and to introduce special-purpose code for
+checking this restriction.  The technique presented in this paper does
+not require such a subclass, as the long-form version of the
+short-form definition is able to check the restriction.
 
 Throughout this paper, we assume that it is an error to attempt to
 create a generic function using a method-combination type that is not
