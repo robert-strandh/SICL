@@ -1,5 +1,7 @@
 \section{Our technique}
 
+\subsection{Representation of method combinations}
+
 We introduce a class named \texttt{method-combination-template}.  An
 instance of this class represents all method combinations with the
 same \emph{name}, independent of the options.  There is a template for
@@ -33,6 +35,8 @@ A method-combination instance contains the following slots:
   method-combination options in its lambda list.
 \item A list of generic functions that contain this method combination.
 \end{itemize}
+
+\subsection{When \texttt{find-method-combination} is called}
 
 The expansion of the \texttt{defgeneric} macro contains a call to the
 ordinary function \texttt{ensure-generic-function}.  If the
@@ -116,6 +120,8 @@ where \texttt{v1}, \texttt{v2}, ..., \texttt{vn} are again the lexical
 variables resulting from our analysis of the lambda list.  The
 initialization forms for the variables are the values returned in the
 resulting list of our analysis function.
+
+\subsection{Redefining a method-combination type}
 
 When a \texttt{define-method-combination} form is re-evaluated, we
 locate the corresponding method-combination template.  We then invoke
