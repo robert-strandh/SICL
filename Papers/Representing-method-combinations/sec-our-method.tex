@@ -132,3 +132,85 @@ invalid method-combination, and we set the method-combination
 procedure of the invalid method combination to one that will signal an
 error when invoked.  If the analysis succeeds, then the corresponding
 method combination is assigned a viable method-combination procedure.
+
+\subsection{Expanding the short form to the long form}
+
+As mentioned in \refSec{sec-introduction}, it is not obvious how to
+transform the short form of \texttt{define-method-combination} into
+the long form.  Recall that the syntax of the short form is:
+\vskip 0.1cm
+\noindent
+\texttt{(define-method-combination} \textit{name [[short-form-options]]}\texttt{)}
+
+where a \textit{short-form-option} can be:
+
+\begin{itemize}
+\item \texttt{:documentation} \textit{documentation}
+\item \texttt{:identity-with-one-argument} \textit{identity-with-one-argument}
+\item \texttt{:operator} \textit{operator}
+\end{itemize}
+
+Here, \textit{documentation} is a string that is not evaluated.  When
+the short form gets turned into the long form, it becomes an ordinary
+documentation string, preceding the forms of the body of the long
+form.
+
+To illustrate where the remaining options end up in the long form,
+recall the following example from the dictionary entry for
+\texttt{define-method-combination}, where both the short form and the
+long form are used to define the built-in method-combination
+\texttt{and}.  We have only changed the layout of the code so that it
+will fit on the page.
+
+\noindent
+The short form is:
+
+{\small\begin{verbatim}
+(define-method-combination and
+  :identity-with-one-argument t)
+\end{verbatim}}
+
+\noindent
+The long form is;
+
+{\small\begin{verbatim}
+(define-method-combination and
+        (&optional (order :most-specific-first))
+        ((around (:around))
+         (primary (and) :order order :required t))
+  (let ((form (if (rest primary)
+                  `(and ,@(mapcar
+                            #'(lambda (method)
+                                `(call-method ,method))
+                            primary))
+                  `(call-method ,(first primary)))))
+    (if around
+        `(call-method ,(first around)
+                      (,@(rest around)
+                       (make-method ,form)))
+        form)))
+\end{verbatim}}
+
+\noindent
+The option \textit{identity-with-one-argument} is responsible for the
+form:
+
+{\small\begin{verbatim}
+(if (rest primary)
+    `(and ,@(mapcar
+              #'(lambda (method)
+                  `(call-method ,method))
+              primary))
+    `(call-method ,(first primary)))))
+\end{verbatim}}
+
+\noindent
+Had this option been \texttt{nil} or not present, the corresponding
+form would have looked like this instead:
+
+{\small\begin{verbatim}
+`(and ,@(mapcar
+          #'(lambda (method)
+              `(call-method ,method))
+          primary))
+\end{verbatim}}
