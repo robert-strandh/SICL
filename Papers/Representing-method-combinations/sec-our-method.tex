@@ -70,7 +70,7 @@ default value of the \texttt{:method-combination} when calling
 To detect whether a list of method-combination options are invalid for
 a particular method-combination template, we analyze the
 \emph{lambda-list} given in the long form of
-\texttt{define-method-combination}.  The analysis consists of
+\texttt{define-method\-combination}.  The analysis consists of
 extracting all parameters that can be referenced in the
 method-combination procedure.  We then construct a lambda expression
 as follows:
@@ -82,7 +82,7 @@ as follows:
 
 \noindent
 which is then compiled so that a function is obtained.  The lambda
-list of this function is the lambda list of the
+list of this function is the lambda list that appears in the
 \texttt{define-method-combination} form and \texttt{v1}, \texttt{v2},
 ..., \texttt{vn} are the lexical variables resulting from our analysis
 of the lambda list.  Applying this function to the options given to
