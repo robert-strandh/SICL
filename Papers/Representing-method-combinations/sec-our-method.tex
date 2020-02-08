@@ -216,3 +216,22 @@ form would have looked like this instead:
               `(call-method ,method))
           primary))
 \end{verbatim}}
+
+\noindent
+In order for our technique to work for the short form, when we express
+the short form in terms of the long form, we modify the lambda list of
+the long form compared to the example above as follows:
+
+{\small\begin{verbatim}
+(&optional (order :most-specific-first)
+ &aux (ignore (unless (member order
+                              '(:most-specific-first
+                                :most-specific-last))
+                (error ....))))
+\end{verbatim}}
+
+\noindent
+Now, any attempt to call a function with this lambda list with
+a number of arguments other than exactly 1, or with one argument that
+is neither \texttt{:most-specific-first} nor
+\texttt{:most-specific-last} will fail.
