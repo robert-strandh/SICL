@@ -64,7 +64,33 @@
 
 
 \begin{abstract}
-Method combinations...
+The \commonlisp{} standard has few requirements on method
+combinations, and so does the semi-standard metaobject protocol for
+\commonlisp{}.  For that reason, there is great variety between
+different \commonlisp{} implementations regarding how method
+combinations are represented and handled.  Some implementations
+allocate a new method-combination instance for each generic function,
+whereas others attempt to reuse existing ones as much as possible.
+Most implementations are able to verify the validity of
+method-combination options for the built-in method-combination types,
+but no free \commonlisp{} implementation can verify custom
+method-combination types using the long form of the macro
+\texttt{define-method\-combination} immediately when a generic function
+is created, nor when a method-combination type is redefined.  Instead,
+incompatibilities between supplied options and the method-combination
+type are then only verified when an attempt is made to execute the
+resulting method-combination procedure in order to create an effective
+method.
+
+We propose a technique that makes early detection of incompatible
+method-combination options possible even for custom long-form
+method-combination types.  We augment the lambda list of the
+method-combination definition with \texttt{\&aux} entries that verify
+restrictions, and we construct a function with the augmented lambda
+list that will fail whenever there is such an incompatibility.  With
+this technique, when an incompatibility is detected, we are also able
+to signal more relevant errors than most existing free implementations
+are able to do.
 \end{abstract}
 
  \begin{CCSXML}
