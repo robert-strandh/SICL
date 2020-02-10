@@ -4,7 +4,7 @@ Perhaps the most obvious disadvantage of our technique is that the
 size of the code will more than double.  The debugging version of the
 function body must implement the same functionality as the
 non-debugging version, but in addition to that functionality, it must
-also contain code for communication with the debugger.  Furthermore,
+also contain code for communicating with the debugger.  Furthermore,
 since fewer optimizations are applied to the non-debugging version,
 even without the code for communication, the debugging version would
 be larger than the non-debugging version.
@@ -12,7 +12,7 @@ be larger than the non-debugging version.
 While the additional code will impact the memory footprint of the
 system, we do not think it will have any negative influence on
 caching.  The two versions of the body are kept separate, and the same
-versions is typically executed repeatedly.
+version is typically executed repeatedly.
 
 Feedback on draft versions of this paper indicate that many readers
 are worried about the possibility of the behavior of the different
