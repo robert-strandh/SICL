@@ -1,2 +1,28 @@
 \section{Conclusions and future work}
 \label{sec-conclusions}
+
+We define a subclass \texttt{standard-method-combination} of the
+specified class \texttt{method-combination}.  Method combinations
+created from a method-combination type defined by the macro
+\texttt{define-method-combination} are all instances of this subclass.
+
+Our technique allows for early detection of mismatches between the
+method-combination options given when a method combination is created
+as a result of calling \texttt{find-method\-combination} and the lambda
+list given to the invocation of \texttt{define-method-combination}.
+We detect such mismatches when a new method combination is created,
+but also when a method-combination type is redefined with a modified
+invocation of \texttt{define-method-combination} using the name
+of an existing method-combination type.
+
+Furthermore, while a mismatch exists, our technique results in an
+error being signaled whenever an attempt is made to use the faulty
+method combination in order to create an effective method.
+
+Future work includes incorporating our technique into the \sicl{} code
+base.  Currently, \sicl{} does not have any data structure allowing
+weak references, but such references would be desirable for the back
+pointer froma method combination to the generic functions using it.
+Otherwise, a memory leak would result from using \texttt{fmakunbound}
+or some other operator that makes a generic function unreferenced
+aside from the back pointer.
