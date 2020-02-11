@@ -26,6 +26,54 @@ More surprisingly, it then defines two subclasses of the class
 forms (long and short) of the macro
 \texttt{define\-method\--combination}.
 
+The class \texttt{short-method-combination} contains slots for the for
+the method-combination type (i.e. a symbol), and the
+method-combination options.
+
+The class \texttt{short-method-combination} adds two more slots,
+namely the operator and a Boolean that indicates whether the operator
+is the identify function when given a single argument.
+
+The short form of \texttt{define-method-combination} adds a method to
+the generic function \texttt{find-method-combination}.  The second
+parameter of this method has an \texttt{eql} specializer with the name
+of the method-combination type being defined.  The method function of
+this method first checks that the options given are valid for the
+short form of \texttt{define-method\-combination}, and then it creates
+a fresh instance of the class \texttt{short-method-combination}.  In
+other words, a fresh method combination is created whenever
+\texttt{find-method-combination} is called, which is typically
+whenever a generic function is created.  Furthermore,
+\texttt{compute-effective-method} has a method specialized to the
+class \texttt{short-method-combination} that handles the case of the
+short method combination as a special case.
+
+The long form of \texttt{define-method-combination} turns the body of
+the for into a method-combination \emph{function}.  This function has
+the same lambda list as \texttt{compute-effective-method}.  The
+expansion of the macro stores this function in a global hash table,
+using the method-combination type as a key.
+
+Like the short form, the long form also creates a method on
+\texttt{find-method-combination}, also with an \texttt{eql}
+specializer for the second parameter. This method simply creates an
+instance of the class \texttt{long-method-combination}.  The generic
+function \texttt{compute-effective-method} has a method specialized to
+the class \texttt{long-method-combination}.  This method consults the
+hash table to find the method-combination function and applies that
+function to the generic function, the method combination, and the
+applicable methods.
+
+In summary then, the generic function named \texttt{find-method\-combination}
+acts as a container for method-combination types, encoded as
+\texttt{eql}-specialized methods.  Furthermore, there is no attempt to
+reuse existing method combinations.  A new one is created whenever
+\texttt{find-method-combination} is called.  Finally, while the
+validity of the options is verified for the built-in method
+combination types, no such verification is made for custom
+method-combination types defined by the long form of
+\texttt{define-method-combination}.
+
 \subsection{\sbcl{}}
 
 The \sbcl{} \commonlisp{} implementation uses a heavily modified
