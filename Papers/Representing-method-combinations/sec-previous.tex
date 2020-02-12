@@ -185,14 +185,24 @@ info vector contains the following elements:
   \texttt{long-method-combination}.
 \item An element that contains the short-form options if the info
   vector was created as a result of the short form of
-  \texttt{define-method-combination}, and an \emph{expander function}
-  if the info vector was created as a result of the long form.
+  \texttt{define-method-combination}, and the method-combination
+  procedure (called the \emph{expander function} in \ccl{}) if the
+  info vector was created as a result of the long form.
 \item A list of \emph{instances}, i.e. method-combination objects that
   share the same info vector.
 \item A list of generic functions using method combinations of the
   type defined by the info vector.
 \end{itemize}
 
+When a long method-combination type is redefined using the short form
+of \texttt{define-method-combination}, every generic function having
+a method combination of that type is accessed, and the
+method-combination options are checked so that they are valid for the
+short method combination, i.e. either there are no explicit options or
+the options consist of a singleton list containing either
+\texttt{:most-specific-first} or \texttt{:most-specific-last}.  No
+analogous verification is made when a short method-combination type is
+redefined using the long form.
 
 \subsection{\ecl{}}
 \label{sec-ecl}
