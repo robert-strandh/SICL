@@ -56,12 +56,12 @@ specialized to the class \texttt{short-method-combination} that
 handles the case of the short method combination as a special case.
 
 The long form of \texttt{define-method-combination} turns the body of
-the for into a method-combination \emph{function}.  This function has
-the same lambda list as \texttt{compute-effective\-method}.  The
-expansion of the macro stores this function in a global hash table,
-using the method-combination type as a key.  There is a slot for this
-function in the class \texttt{long-method\-combination}, but this slot
-is not used.
+the for into a method-combination procedure.  This procedure has the
+same lambda list as \texttt{compute-effective\-method}.  The expansion
+of the macro stores this procedure in a global hash table, using the
+method-combination type as a key.  There is a slot for this procedure
+in the class \texttt{long-method\-combination}, but this slot is not
+used.
 
 Like the short form, the long form also creates a method on
 \texttt{find-method-combination}, also with an \texttt{eql}
@@ -69,8 +69,8 @@ specializer for the second parameter. This method simply creates an
 instance of the class \texttt{long-method-combination}.  The generic
 function \texttt{compute-effective-method} has a method specialized to
 the class \texttt{long-method-combination}.  This method consults the
-hash table to find the method-combination function and applies that
-function to the generic function, the method combination, and the
+hash table to find the method-combination procedure and applies that
+procedure to the generic function, the method combination, and the
 applicable methods.
 
 Appendix B of \cite{verna.18.els} shows some very strange consequences
@@ -140,7 +140,7 @@ the incompatible lambda lists are detected.  Furthermore, the error
 message is very general and can be difficult to decipher by the
 programmer.
 
-\sbcl{} handles re-evaluation of \texttt{define-method-combination}
+\sbcl{} handles reevaluation of \texttt{define-method-combination}
 forms with the name of an existing info entry in the hash table.
 Every method-combination instance contains a list of back pointers to
 generic functions that use this method combination.  The cache of the
