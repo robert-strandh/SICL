@@ -173,6 +173,16 @@ The class \texttt{standard-method-combination} in \ccl{} thus does not
 play the role as a general instantiable subclass of
 \texttt{method-combination}.
 
+The generic function \texttt{compute-effective-method} has a method
+specialized to each of these subclasses.  The method specialized to
+\texttt{standard-method-combination} uses special-purpose code in
+order to achieve the effect of the standard method combination.  The
+standard method combination is thus not defined using
+\texttt{define-method-combination}.  Similarly, the method specialized
+to \texttt{short-method-combination} uses special purpose code.  Only
+the method specialized to \texttt{long-method-combination} invokes the
+method-combination procedure to achieve the desired effect.
+
 In \ccl{}, the macro \texttt{define-method-combination} does not
 define a method combination, nor a new method-combination class.
 Instead it defines an \emph{info} vector (disguised as a structure)
@@ -202,7 +212,10 @@ short method combination, i.e. either there are no explicit options or
 the options consist of a singleton list containing either
 \texttt{:most-specific-first} or \texttt{:most-specific-last}.  No
 analogous verification is made when a short method-combination type is
-redefined using the long form.
+redefined using the long form.  However, in both cases, the method
+combination with the redefined type is passed to
+\texttt{change-class}, thereby making the redefinition effective in
+all generic function with a method combination of that type.
 
 \subsection{\ecl{}}
 \label{sec-ecl}
