@@ -127,58 +127,7 @@ element is constructed by consing the list of options and the result
 of applying a \emph{constructor function} to the list of options.
 This constructor function is stored in a slot in the info structure.
 As a result, existing method-combination instances are reused whenever
-possible.  However, the reuse is not perfect.  Consider the following
-definition of a method combination:
-
-{\small\begin{verbatim}
-(define-method-combination my-and
-    (&key (order :most-specific-first)
-          (exclude-around :t))
-  ((around (:around))
-   (primary (and) :order order :required t))
-  (let ((form `(and ,@(mapcar
-                        #'(lambda (method)
-                            `(call-method ,method))
-                        primary))))
-    (if (and around (not exclude-around))
-        `(call-method ,(first around)
-                      (,@(rest around)
-                       (make-method ,form)))
-                 form)))
-\end{verbatim}}
-
-It differs from from the built-in \texttt{and} method combination type
-in that it has two options, and that those options are defined as
-keyword parameters rather than optional parameters.
-
-Now, if we define the following two generic functions using this
-method combination:
-
-{\small\begin{verbatim}
-(defgeneric ff (x)
-  (:method-combination my-and
-      :order :most-specific-first
-      :exclude-around nil))
-
-(defgeneric gg (x)
-  (:method-combination my-and
-      :exclude-around nil
-      :order :most-specific-first))
-\end{verbatim}}
-
-\noindent
-then these two functions do not have the same method combination, as
-the following experiment shows:
-
-{\small\begin{verbatim}
-(eq (sb-mop:generic-function-method-combination #'ff)
-    (sb-mop:generic-function-method-combination #'gg))
-=> NIL
-\end{verbatim}}
-
-The reason for the two being different is that the method combination
-is identified by the ordered list of options, and the lists are
-different for the different \texttt{defgeneric} forms.
+possible.
 
 When a generic function is defined with one of the built-in method
 combinations, \sbcl{} will check that the options given to the
