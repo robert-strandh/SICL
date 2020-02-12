@@ -204,6 +204,11 @@ info vector contains the following elements:
   type defined by the info vector.
 \end{itemize}
 
+This information is used in order to invalidate effective-method
+caches when a method-combination type is redefined.  Therefore, \ccl{}
+does not have the problem that \pcl{} does, described in
+\refSec{sec-pcl}.
+
 When a long method-combination type is redefined using the short form
 of \texttt{define-method-combination}, every generic function having
 a method combination of that type is accessed, and the
