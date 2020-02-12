@@ -13,7 +13,10 @@ Most \commonlisp{} implementations that exist today were initially
 written before the standard was published, and many of those
 implementations chose to use \pcl{} to incorporate \clos{}
 functionality, though frequently, the code has since been adapted for
-each specific implementation.
+each specific implementation.  Much of the analysis in this section
+was also described in \cite{verna.18.els}, although the description in
+that paper refers to the way \sbcl{} handled method combinations at
+the time that article was written.
 
 \pcl{} unsurprisingly defines the class \texttt{method\--combination}
 and then the class \texttt{standard\--method\--combination} as a
@@ -43,16 +46,22 @@ short form of \texttt{define-method\-combination}, and then it creates
 a fresh instance of the class \texttt{short-method-combination}.  In
 other words, a fresh method combination is created whenever
 \texttt{find-method-combination} is called, which is typically
-whenever a generic function is created.  Furthermore,
-\texttt{compute-effective-method} has a method specialized to the
-class \texttt{short-method-combination} that handles the case of the
-short method combination as a special case.
+whenever a generic function is created.  As a result, with a
+method-combination type defined by the short form, the method
+combination of a generic function using this type is not updated as a
+result of redefining that method-combination type.
+
+Furthermore, \texttt{compute-effective-method} has a method
+specialized to the class \texttt{short-method-combination} that
+handles the case of the short method combination as a special case.
 
 The long form of \texttt{define-method-combination} turns the body of
 the for into a method-combination \emph{function}.  This function has
-the same lambda list as \texttt{compute-effective-method}.  The
+the same lambda list as \texttt{compute-effective\-method}.  The
 expansion of the macro stores this function in a global hash table,
-using the method-combination type as a key.
+using the method-combination type as a key.  There is a slot for this
+function in the class \texttt{long-method\-combination}, but this slot
+is not used.
 
 Like the short form, the long form also creates a method on
 \texttt{find-method-combination}, also with an \texttt{eql}
@@ -63,6 +72,14 @@ the class \texttt{long-method-combination}.  This method consults the
 hash table to find the method-combination function and applies that
 function to the generic function, the method combination, and the
 applicable methods.
+
+Appendix B of \cite{verna.18.els} shows some very strange consequences
+of the use of the global hash table, combined with the fact that the
+effective-method cache is not flushed when the method-combination type
+is redefined using the long form.  A generic function may well end up
+with some effective methods computed \emph{before} the redefinition
+and some  computed \emph{after} it.  Needless to say, this behavior is
+very undesirable.
 
 In summary then, the generic function named \texttt{find-method\-combination}
 acts as a container for method-combination types, encoded as
