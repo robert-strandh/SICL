@@ -153,7 +153,10 @@ method-combination type is redefined with a different form of
 class of the method-combinations of the type in question, but it fails
 to verify that the existing options are compatible with the new
 definition, even when the redefinition is using the short form of
-\texttt{define-method-combination}.
+\texttt{define-method-combination}.  The reason for this failure is
+that the options are verified only as a result of a call to
+\texttt{find-method-combination}, and this function is not called when
+a method-combination type is redefined.
 
 \subsection{\clcl{}}
 \label{sec-ccl}
