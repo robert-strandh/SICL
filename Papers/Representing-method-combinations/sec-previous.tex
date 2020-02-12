@@ -147,7 +147,13 @@ generic functions that use this method combination.  The cache of the
 existing info entry is traversed, and for each method combination, the
 effective methods of its generic functions are invalidated.
 The problems indicated in Appendix B of \cite{verna.18.els} therefore
-no longer exist in recent versions of \sbcl{}.
+no longer exist in recent versions of \sbcl{}.  When the
+method-combination type is redefined with a different form of
+\texttt{define-method-combination}, \sbcl{} correctly changes the
+class of the method-combinations of the type in question, but it fails
+to verify that the existing options are compatible with the new
+definition, even when the redefinition is using the short form of
+\texttt{define-method-combination}.
 
 \subsection{\clcl{}}
 \label{sec-ccl}
