@@ -604,6 +604,80 @@ up in eventually, such as a register for a particular argument.%
   global function or variable value might change across a function
   call.}
 
+\subsubsection{Alternative strategy for register allocation}
+
+The material is this section is derived from random thoughts on an
+alternative strategy for register allocation.  It may be removed, or
+it may be improved in the future.
+
+Assume for the moment that all registers are equivalent.  Also assume
+that for each program point we maintain a set of all the live
+variables.  An element in the set consist of:
+
+\begin{itemize}
+\item the live variable itself,
+\item a dedicated stack location to save it in should that be necessary,
+\item an estimated \emph{distance} until it is going to be needed (in
+  a register) next, and
+\item a set of locations where it is currently available. 
+\end{itemize}
+
+The set of locations where it is currently available has at least one
+element in it.  Possible elements are the dedicated stack location and
+any number of registers.
+
+We will come back to how to calculate the estimated distance later.
+For now, let's assume that this computation has already been made.
+
+Now, let's assume that we hit an instruction of one of two kinds:
+
+\begin{itemize}
+\item reg $\leftarrow$ op(reg)
+\item reg $\leftarrow$ op(reg, constant)
+\end{itemize}
+
+There are several cases:
+
+\begin{itemize}
+\item Case 1: The output and the first input of the instruction are the same
+  lexical variable.
+\item Case 2: The output and the first input of the instruction are
+  \emph{not} the same lexical variable.
+\end{itemize}
+
+Case 1:
+\begin{itemize}
+\item Case 1.1: The lexical variable in question is already in a register.
+  Then, the register assignments is preserved, except that after the
+  instruction, the stack location is not a member of the set for
+  this variable.
+\item Case 1.2: The lexical variable is not in a register, so one must be
+  allocated for it.
+\end{itemize}
+
+Case 1.2:
+\begin{itemize}
+\item Case 1.2.1: There is an available register.  Use it.
+\item Case 1.2.2: There is not an available register.  Once must be freed up.
+  Among the live variables that have a register in its set, choose
+  the one that has the furthest future distance.
+\end{itemize}
+
+Case 1.2.2.1:
+\begin{itemize}
+\item Case 1.2.2.1.1: If there is more than one register in its set, choose one
+  register, and just remove it from the set.
+\item Case 1.2.2.1.2: If there is a single register in the set, then
+  \begin{itemize}
+  \item If the dedicated stack location is also in the set, then
+    choose the register and remove it from the set.
+  \item If the dedicated stack location is \emph{not} in the
+    set, then emit an instruction for saving the register to the
+    stack location, and change the set so that it contains the
+    stack location instead.
+  \end{itemize}
+\end{itemize}
+
 \subsection{Code generation} 
 
 \subsection{Access to special variables and global functions}
