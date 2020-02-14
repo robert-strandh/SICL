@@ -260,6 +260,30 @@ contains the method-combination procedure and a list of the options
 given after the method-combination name in the
 \texttt{:method-combination} option to \texttt{defgeneric}.
 
+Redefining a method-combination type does not have any effect on
+existing generic functions having a method combination of that type.
+The hash table containing method-combination procedures is updated,
+but this update does not affect existing generic functions.
+
+The \texttt{standard} method combination is not defined using the
+macro \texttt{define-method-combination}.  Instead, it is define using
+special-purpose code.
+
+Incompatibilities between method-combination options given to
+\texttt{find-method-combination} and the lambda list of the
+method-combination procedure are detected when an effective method
+needs to be computed.  Because there is no specific class for method
+combinations defined by the short form, this is true also for
+method-combination types defined by the short form.
+
+Because the short form is rewritten into the long form, and the body
+of the resulting form contains no verification that the option is
+either \texttt{:most-specific-first} or \texttt{:most-specific\-last},
+it is possible to give any object as option as an argument to
+\texttt{find-method-combination}.  Any object different from
+\texttt{:most-specific-last} will make the resulting method
+combination behave as if \texttt{:most-specific-first} had been given.
+
 \subsection{\clasp{}}
 
 \clasp{} is a \commonlisp{} implementation based on \ecl{} (See
