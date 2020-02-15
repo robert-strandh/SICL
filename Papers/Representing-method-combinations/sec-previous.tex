@@ -81,11 +81,11 @@ applicable methods.
 
 Appendix B of \cite{verna.18.els} shows some very strange consequences
 of the use of the global hash table, combined with the fact that the
-effective-method cache is not flushed when the method-combination type
-is redefined using the long form.  A generic function may well end up
-with some effective methods computed \emph{before} the redefinition
-and some  computed \emph{after} it.  Needless to say, this behavior is
-very undesirable.
+effective-method caches of existing generic functions are not flushed
+when the method-combination type is redefined using the long form.  A
+generic function may well end up with some effective methods computed
+\emph{before} the redefinition and some computed \emph{after} it.
+Needless to say, this behavior is very undesirable.
 
 In summary then, the generic function named \texttt{find-method\-combination}
 acts as a container for method-combination types, encoded as
