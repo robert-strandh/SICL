@@ -66,7 +66,7 @@ the form into a method-combination procedure.  This procedure has the
 same lambda list as \texttt{compute-effective\-method}.  The expansion
 of the macro stores this procedure in a global hash table, using the
 method-combination type as a key.  There is a slot for this procedure
-in the class \texttt{long-method\-combination}, but this slot is not
+in the class \texttt{long-method-combination}, but this slot is not
 used.
 
 Like the short form, the long form also creates a method on
@@ -123,8 +123,8 @@ element is the method-combination object.  Initially, the cache is
 empty, except for the info structure associated with the
 \texttt{standard} method combination.
 
-The function \texttt{find-method-combination} is given the
-method-combination name and the desired options.  It looks up the
+The function \texttt{find-method-combination} is given the name of the
+method combination and the desired options.  It looks up the
 appropriate info structure, and searches the cache for an element
 corresponding to the options.  If such an element is found, the
 method-combination object is returned.  If no element is found, a new
