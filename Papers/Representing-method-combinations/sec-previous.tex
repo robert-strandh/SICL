@@ -136,13 +136,14 @@ As a result, existing method-combination instances are reused whenever
 possible.
 
 When a generic function is defined with one of the built-in method
-combinations, \sbcl{} will check that the options given to the
+combinations, or with a method combination defined using the short
+form, \sbcl{} will check that the options given to the
 \texttt{:method-combination} \texttt{defgeneric} option are valid.
 This verification is done by special-purpose code.  However, with a
-user-defined method combination, no verification is made.  It is only
-when an attempt is made to invoke the generic function that the
-function resulting from the custom method combination is invoked, and
-the incompatible lambda lists are detected.  Furthermore, the error
+user-defined method combination using the long form, no verification
+is made.  It is only when an attempt is made to invoke the generic
+function that the method-combination procedure is invoked, and the
+incompatible lambda lists are detected.  Furthermore, the error
 message is very general and can be difficult to decipher by the
 programmer.
 
