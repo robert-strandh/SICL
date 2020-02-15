@@ -21,8 +21,9 @@ A method-combination instance contains the following slots:
 
 \begin{itemize}
 \item A reference to its template.
-\item The list of method-combination \emph{options} that appear after
-  method-combination name the \texttt{:method-combination}
+\item The list of method-combination \emph{options} to be given to
+  \texttt{find-method-combination}, and that typically appear after
+  the method-combination name of the \texttt{:method\-combination}
   \texttt{defgeneric} option.
 \item The method-combination procedure.  This procedure has two
   parameters, both required.  The first parameter is a generic
@@ -40,15 +41,15 @@ A method-combination instance contains the following slots:
 
 The expansion of the \texttt{defgeneric} macro contains a call to the
 ordinary function \texttt{ensure-generic-function}.  If the
-\texttt{:method-combination} option is explicitly supplied to
-\texttt{defgeneric}, then the call to \texttt{ensure-generic-function}
-contains an explicit keyword argument \texttt{:method-combination}
-with the value form being a call to the generic function
-\texttt{find-method-combination} with the generic function, the name
-of the method-combination type, and the options.  If no
-\texttt{:method-combination} option is given in the
+\texttt{:method-combination} option is explicitly supplied to the call
+to \texttt{defgeneric}, then the call to
+\texttt{ensure-generic-function} contains an explicit keyword argument
+\texttt{:method-combination} with the value form being a call to the
+generic function \texttt{find-method-combination} with the generic
+function, the name of the method-combination type, and the options.
+If no \texttt{:method-combination} option is given in the
 \texttt{defgeneric} form, the \texttt{:method-combination} keyword
-argument to \texttt{ensure-generic-function} is not supplied.
+argument to the call to \texttt{ensure-generic-function} is not supplied.
 
 The call to \texttt{find-method-combination} either return an existing
 method-combination instance corresponding to the type and the options
@@ -63,7 +64,7 @@ A call to \texttt{ensure-generic-function} results in a call to
 is either an existing generic function or \texttt{nil} if no generic
 function with the given name exists.  The method on
 \texttt{ensure-generic-function-using-class} specialized to the class
-\texttt{null} supplies the \texttt{standard} method-combination a
+\texttt{null} supplies the \texttt{standard} method-combination as a
 default value of the \texttt{:method-combination} when calling
 \texttt{make-instance} to create a new generic function.
 
@@ -87,15 +88,14 @@ list of this function is the lambda list that appears in the
 ..., \texttt{vn} are the lexical variables resulting from our analysis
 of the lambda list.  Applying this function to the options given to
 the \texttt{find-method-combination} function returns a list of
-objects.  The lambda list typically
-contains \&aux lambda list keywords, with forms that check the
-validity of the options supplied, and signal an error whenever an
-invalid option combination is detected.  Thus, if either the lambda
-list is incompatible with the options given, or one of these \&aux
-forms detect an invalid option combination, an error is signaled.  We
-handle this error, turn it into a warning, and return a
-method-combination instance with a method-combination that signals an
-error whenever invoked.
+objects.  The lambda list typically contains \texttt{\&aux} lambda
+list keywords, with forms that check the validity of the options
+supplied, and signal an error whenever an invalid option combination
+is detected.  Thus, if either the lambda list is incompatible with the
+options given, or one of these \texttt{\&aux} forms detect an invalid
+option combination, an error is signaled.  We handle this error, turn
+it into a warning, and return a method-combination instance with a
+method-combination procedure that signals an error whenever invoked.
 
 This technique for detecting incompatible or invalid options handles
 the first scenario described in \refSec{sec-introduction}.  When the
@@ -148,7 +148,7 @@ where a \textit{short-form-option} can be:
 
 \begin{itemize}
 \item \texttt{:documentation} \textit{documentation}
-\item \texttt{:identity-with-one-argument} \textit{identity-with-one-argument}
+\item \texttt{:identity-with-one-argument}\\ \textit{identity-with-one-argument}
 \item \texttt{:operator} \textit{operator}
 \end{itemize}
 
