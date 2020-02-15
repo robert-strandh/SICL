@@ -200,10 +200,10 @@ the method specialized to \texttt{long-method-combination} invokes the
 method-combination procedure to achieve the desired effect.
 
 In \ccl{}, the macro \texttt{define-method-combination} does not
-define a method combination, nor a new method-combination class.
-Instead it defines an \emph{info} vector (disguised as a structure)
-that acts as a template for creating method combinations later.  The
-info vector contains the following elements:
+define a method combination class.  Instead it defines an \emph{info}
+vector (disguised as a structure) that acts as a template for creating
+method combinations later.  The info vector contains the following
+elements:
 
 \begin{itemize}
 \item The name of the method-combination class to be created which is
@@ -249,17 +249,18 @@ Unlike \pcl{}, \sbcl{}, and \ccl{}, \ecl{} does not define any
 subclasses of the instantiable class.  Method-combination types
 defined by the short form are rewritten to the equivalent long form.
 
-The macro \texttt{define-method-combination} does not define a method
-combination, nor a new method-combination class.  Instead it defines a
-the method-combination procedure.  This procedure computes the
-effective method of a generic function.  The lambda list of the
-method-combination procedure consists of two required parameters,
-namely a generic function and a list of applicable methods, followed
-by the lambda list given to \texttt{define-method-combination}.  That
-lambda list will contain \texttt{\&optional (order
-  :most-specific-first)} for most built-in method-combination types.
-The resulting method-combination procedure is stored in a hash table
-with the name of the method-combination type as a key.
+The macro \texttt{define-method-combination} does not define a new
+method-combination class.  Instead it defines a method-combination
+procedure.  This procedure computes the effective method of a generic
+function.  The lambda list of the method-combination procedure
+consists of two required parameters, namely a generic function and a
+list of applicable methods, followed by the lambda list given to
+\texttt{define-method\-combination}.  For most built-in
+method-combination types, that lambda list will contain an optional
+parameter named \texttt{order} with a default value of
+\texttt{:most-specific-first}.  The resulting method-combination
+procedure is stored in a hash table with the name of the
+method-combination type as a key.
 
 When a generic function is created, a new instance of the
 \texttt{method-combination} class is created.  The new instance
@@ -273,8 +274,8 @@ The hash table containing method-combination procedures is updated,
 but this update does not affect existing generic functions.
 
 The \texttt{standard} method combination is not defined using the
-macro \texttt{define-method-combination}.  Instead, it is define using
-special-purpose code.
+macro \texttt{define-method-combination}.  Instead, it is defined
+using special-purpose code.
 
 Incompatibilities between method-combination options given to
 \texttt{find-method-combination} and the lambda list of the
@@ -286,9 +287,9 @@ method-combination types defined by the short form.
 Because the short form is rewritten into the long form, and the body
 of the resulting form contains no verification that the option is
 either \texttt{:most-specific-first} or \texttt{:most-specific\-last},
-it is possible to give any object as option as an argument to
-\texttt{find-method-combination}.  Any object different from
-\texttt{:most-specific-last} will make the resulting method
+it is possible to give any object as an option to
+\texttt{find\-method-combination}.  Any object different from the
+keyword \texttt{:most-specific-last} will make the resulting method
 combination behave as if \texttt{:most-specific-first} had been given.
 
 \subsection{\clasp{}}
