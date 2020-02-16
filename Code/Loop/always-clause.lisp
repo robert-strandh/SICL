@@ -23,11 +23,11 @@
 
 (define-parser always-clause-parser
   (consecutive (lambda (always form)
-		 (declare (ignore always))
-		 (make-instance 'always-clause
-		   :form form))
-	       (keyword-parser 'always)
-	       'anything-parser))
+                 (declare (ignore always))
+                 (make-instance 'always-clause
+                   :form form))
+               (keyword-parser 'always)
+               'anything-parser))
 
 (add-clause-parser 'always-clause-parser)
 
