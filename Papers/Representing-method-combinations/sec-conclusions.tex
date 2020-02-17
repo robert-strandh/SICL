@@ -24,5 +24,7 @@ base.  Currently, \sicl{} does not have any data structure allowing
 weak references, but such references would be desirable for the back
 pointer from a method combination to the generic functions using it.
 Otherwise, a memory leak would result from using \texttt{fmakunbound}
-or some other operator that makes the back pointer the only reference
-to the generic function.
+or some other operator that makes the back pointer be the only
+reference to the generic function.  In general, it is impossible to
+have such operators remove the back pointer, since there could be any
+number of references to the generic function in question.
