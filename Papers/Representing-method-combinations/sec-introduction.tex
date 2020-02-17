@@ -31,9 +31,9 @@ description of the MOP generic function
 
 However, the macro \texttt{define-method-combination} does \emph{not}
 define a method combination object.  The reason is of course that no
-arguments are supplied to this macro.  The dictionary entry for this
-macro also clearly says that the macro is used to define new
-\emph{types} of method combinations.
+method-combination options are supplied to this macro.  The dictionary
+entry for this macro also clearly says that the macro is used to
+define new \emph{types} of method combinations.
 
 The main issue for the person implementing a \commonlisp{} system,
 then, is how to interpret the relation between a \emph{method
@@ -138,7 +138,7 @@ There are several scenarios that are discussed in this paper:
   makes a mistake in the list of options.
 \item The user defines a custom method-combination type using
   \texttt{define-method-combination}, but makes a mistake in the
-  lambda list so that the options that the resulting
+  lambda list so that the options of the resulting
   method-combination procedure are not the ones that were intended.
   Subsequently, the user defines a generic function with a list of
   options that were indented to be acceptable.
