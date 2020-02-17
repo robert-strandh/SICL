@@ -9,7 +9,9 @@ implementation uses with the three scenarios specified in
 \subsection{\pcl{}}
 \label{sec-pcl}
 
-Portable Common Loops, \pcl{} for short, is a library that implements
+Portable Common Loops%
+\footnote{https://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/lisp/oop/clos/pcl/0.html},
+\pcl{} for short, is a library that implements
 the functions defined in the book ``The Art of the Metaobject
 Protocol'' \cite{Kiczales:1991:AMP:574212}, and is meant as an add-on
 to pre-standard \commonlisp{} implementations, i.e. implementations
@@ -99,7 +101,9 @@ method-combination types defined by the long form of
 
 \subsection{\sbcl{}}
 
-The \sbcl{} \commonlisp{} implementation uses a heavily modified
+The \sbcl{}%
+\footnote{http://www.sbcl.org/}
+\commonlisp{} implementation uses a heavily modified
 version of \pcl{} (See \refSec{sec-pcl}).  Prior to April of 2018,
 \sbcl{} used the unmodified technique from \pcl{} as described in
 \refsec{sec-pcl}.  The technique described in this section is a result
@@ -168,7 +172,9 @@ a method-combination type is redefined.
 \subsection{\clcl{}}
 \label{sec-ccl}
 
-The \clcl{} implementation (\ccl{} for short) defines the class
+The \clcl{}%
+\footnote{https://ccl.clozure.com/}
+implementation (\ccl{} for short) defines the class
 \texttt{method-combination} and then three subclasses of that class:
 
 \begin{itemize}
@@ -241,7 +247,9 @@ all generic function with a method combination of that type.
 \subsection{\ecl{}}
 \label{sec-ecl}
 
-The \ecl{} \commonlisp{} implementation defines the class
+The \ecl{}%
+\footnote{https://common-lisp.net/project/ecl/}
+\commonlisp{} implementation defines the class
 \texttt{method-combination}, and method-combination metaobjects are
 direct instances of this class, which is not conforming.
 
@@ -294,7 +302,9 @@ combination behave as if \texttt{:most-specific-first} had been given.
 
 \subsection{\clasp{}}
 
-\clasp{} is a \commonlisp{} implementation based on \ecl{} (See
+\clasp{}%
+\footnote{https://github.com/clasp-developers/clasp}
+is a \commonlisp{} implementation based on \ecl{} (See
 \refSec{sec-ecl}), although all the \clanguage{} code in \ecl{} was
 rewritten in \cplusplus{}.
 
