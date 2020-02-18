@@ -606,24 +606,40 @@ The material is this section is derived from random thoughts on an
 alternative strategy for register allocation.  It may be removed, or
 it may be improved in the future.
 
-Assume for the moment that all registers are equivalent.  Also assume
-that for each program point we maintain a set of all the live
-variables.  An element in the set consist of:
+Assume that for each program point we maintain a set of
+\emph{entries}.  Each entry corresponds to a lexical variable that is
+\emph{live} at that program point.  An entry contains the following
+information:
 
 \begin{itemize}
-\item the live variable itself,
-\item a dedicated stack location to save it in should that be necessary,
-\item an estimated \emph{distance} until it is going to be needed (in
-  a register) next, and
-\item a set of locations where it is currently available. 
+\item The live variable itself.
+\item A dedicated stack location to save it in, should that be necessary.
+\item An estimated \emph{distance} until it is going to be needed (in
+  a register) next.
+\item A \emph{location} where it is needed next.  There are three
+  possible values for this location:
+  \begin{itemize}
+  \item A specific register.  This possibility is used when the
+    variable is next needed as a register argument in a function call.
+  \item The symbol \texttt{:callee-saves}.  This possibility is used
+    when the variable is next needed past a
+    \texttt{funcall-instruction}.
+  \item The symbol \texttt{:any}.  This possibility is used when the
+    the variable is next needed to be in a register, but there are no
+    restrictions on what kind of register it is.
+  \end{itemize}
+\item A set of locations where it is currently available.  This set is
+  represented as a list.  An element of the set can be a specific
+  register, or the symbol \texttt{:stack} meaning that it is available
+  in its dedicated stack location.  This set has at least one element
+  in it.
 \end{itemize}
 
-The set of locations where it is currently available has at least one
-element in it.  Possible elements are the dedicated stack location and
-any number of registers.
-
-We will come back to how to calculate the estimated distance later.
-For now, let's assume that this computation has already been made.
+There are two aspects to this technique.  The first aspect is the
+computation of the estimated distance.  The second aspect is how
+decisions are made to assign a lexical variable to a register and
+which variable to no longer assign to a register when there are not
+enough registers to go around.
 
 Now, let's assume that we hit an instruction of one of two kinds:
 
