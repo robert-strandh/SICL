@@ -641,54 +641,63 @@ decisions are made to assign a lexical variable to a register and
 which variable to no longer assign to a register when there are not
 enough registers to go around.
 
-Now, let's assume that we hit an instruction of one of two kinds:
+We first consider the second problem, and discuss the first problem later.
 
-\begin{itemize}
-\item reg $\leftarrow$ op(reg)
-\item reg $\leftarrow$ op(reg, constant)
-\end{itemize}
+Now let us assume that we have some register assignment A before
+executing some instruction I.  We want to process this instruction and
+determine a register assignment B after the execution if I.
+Processing the instruction may involve altering it, but also perhaps
+inserting new instructions before it and after it.
 
-There are several cases:
-
-\begin{itemize}
-\item Case 1: The output and the first input of the instruction are the same
-  lexical variable.
-\item Case 2: The output and the first input of the instruction are
-  \emph{not} the same lexical variable.
-\end{itemize}
-
-Case 1:
-\begin{itemize}
-\item Case 1.1: The lexical variable in question is already in a register.
-  Then, the register assignments is preserved, except that after the
-  instruction, the stack location is not a member of the set for
-  this variable.
-\item Case 1.2: The lexical variable is not in a register, so one must be
-  allocated for it.
-\end{itemize}
-
-Case 1.2:
-\begin{itemize}
-\item Case 1.2.1: There is an available register.  Use it.
-\item Case 1.2.2: There is not an available register.  Once must be freed up.
-  Among the live variables that have a register in its set, choose
-  the one that has the furthest future distance.
-\end{itemize}
-
-Case 1.2.2.1:
-\begin{itemize}
-\item Case 1.2.2.1.1: If there is more than one register in its set, choose one
-  register, and just remove it from the set.
-\item Case 1.2.2.1.2: If there is a single register in the set, then
-  \begin{itemize}
-  \item If the dedicated stack location is also in the set, then
-    choose the register and remove it from the set.
-  \item If the dedicated stack location is \emph{not} in the
-    set, then emit an instruction for saving the register to the
-    stack location, and change the set so that it contains the
-    stack location instead.
-  \end{itemize}
-\end{itemize}
+{\small
+\begin{verbatim}
+case register-type
+  assignment-instruction v2 <- v1
+    if v1 is already in a register R:
+    then
+      if v1 is dead after I:
+      then
+        . Change I to a nop-instruction.
+        . Make R a member of the entry
+          for v2 after I
+      else
+        if a register S of the type
+        needed for v2 is available:
+        then
+          . Make S a member of the entry
+            for v2 after I.
+        else
+          . Find all variables v such that
+            a register S of the right type
+            is in the set of v.
+          . Between v2 and all the v,
+            determine which one is
+            needed furthest in the future.
+          if that variable is v:
+          then
+            . Change I to a MOV instruction
+              moving R to the privileged
+              stack location for v2.
+          else
+            . Let v0 be the variable that
+              is needed furthest in the
+              future and let S0 be its
+              associated register.
+            if the privileged stack location
+            when v0 is not in its set:
+              . Emit a MOV instruction before I,
+                using S0 as a source and the
+                privileged stack location as its
+                destination.
+              . Add the privileged stack location
+                to the set for v0.
+            . Change I to a MOV instruction with
+              R being the source and S0 being
+              the destination.
+            . Remove S0 from the set associated
+              with v0.
+    else v1 is not in a register
+\end{verbatim}}
 
 \subsection{Code generation} 
 
