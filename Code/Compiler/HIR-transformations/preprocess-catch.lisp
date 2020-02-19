@@ -8,19 +8,19 @@
 
 (defmethod preprocess-catch-instruction
     ((instruction cleavir-ir:catch-instruction))
-  (let* ((make-instance-constant-input
+  (let* ((augment-function-constant-input
            (make-instance 'cleavir-ir:constant-input
-             :value 'sicl-hir-interpreter:augment-with-block/tagbody-entry))
-         (make-instance-location
+             :value 'sicl-run-time:augment-with-block/tagbody-entry))
+         (augment-function-location
            (make-instance 'cleavir-ir:lexical-location
              :name "augmentation-function")))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fdefinition-instruction
-       :input make-instance-constant-input
-       :output make-instance-location)
+       :input augment-function-constant-input
+       :output augment-function-location)
      instruction)
     (setf (cleavir-ir:inputs instruction)
-          (list make-instance-location))))
+          (list augment-function-location))))
 
 (defun preprocess-catch-instructions
     (top-level-enter-instruction)
