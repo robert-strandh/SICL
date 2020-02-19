@@ -16,6 +16,9 @@
                     :frame-pointer abandon-tag)
                   (lexical-value (cleavir-ir:dynamic-environment-location instruction)
                                  lexical-environment)))
+      (setf *global-values-location*
+            (list (lexical-value dynamic-environment-output lexical-environment)
+                  transfer-tag))
       (catch abandon-tag
         (loop for successor = (first successors)
                 then  (catch transfer-tag
