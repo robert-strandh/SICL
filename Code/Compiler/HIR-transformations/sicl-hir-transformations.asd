@@ -3,7 +3,8 @@
 (defsystem sicl-hir-transformations
   :depends-on (#:cleavir2-hir
                #:cleavir2-ast-to-hir
-               #:sicl-compiler-base)
+               #:sicl-compiler-base
+               #:sicl-run-time)
   :serial t
   :components
   ((:file "packages")
