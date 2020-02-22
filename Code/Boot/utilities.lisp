@@ -9,7 +9,7 @@
          (hir (sicl-ast-to-hir:ast-to-hir client ast))
          (hir2 (sicl-ast-to-hir:ast-to-hir client ast))
          (fun (sicl-hir-interpreter:top-level-hir-to-host-function client hir))
-         (sicl-hir-interpreter:*dynamic-environment* '()))
+         (sicl-run-time:*dynamic-environment* '()))
     (sicl-hir-to-mir:hir-to-mir client hir2)
     (funcall fun
              (sicl-hir-interpreter:make-function-cell-finder global-environment)
