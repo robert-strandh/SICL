@@ -9,4 +9,7 @@
            #:special-variable-entry
            #:name
            #:value
+           #:unwind-protect-entry
+           #:thunk
+           #:invalidate-entry
            #:augment-with-block/tagbody-entry))
