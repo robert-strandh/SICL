@@ -8,7 +8,7 @@
       (cleavir-ir:inputs instruction)
     (setf (lexical-value (cleavir-ir:dynamic-environment-output instruction)
                          lexical-environment)
-          (cons (make-instance 'special-variable-entry
+          (cons (make-instance 'sicl-run-time:special-variable-entry
                   :name (input-value symbol-input lexical-environment)
                   :value (input-value value-input lexical-environment))
                 (lexical-value (cleavir-ir:dynamic-environment-location instruction)

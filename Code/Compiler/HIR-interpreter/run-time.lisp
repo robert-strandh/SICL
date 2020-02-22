@@ -26,7 +26,7 @@
        (funcall entry-point
                 args
                 (static-environment closure)
-                *dynamic-environment*)))
+                sicl-run-time:*dynamic-environment*)))
     closure))
 
 (defun make-function-cell-finder (environment)
@@ -35,10 +35,10 @@
 
 (defun symbol-value-function (global-environment)
   (lambda (symbol)
-    (loop for entry in *dynamic-environment*
-          when (and (typep entry 'special-variable-entry)
-                    (eq (name entry) symbol))
-            return (value entry)
+    (loop for entry in sicl-run-time:*dynamic-environment*
+          when (and (typep entry 'sicl-run-time:special-variable-entry)
+                    (eq (sicl-run-time:name entry) symbol))
+            return (sicl-run-time:value entry)
           finally
              (multiple-value-bind (value boundp)
                  (sicl-genv:special-variable symbol global-environment)
@@ -52,10 +52,10 @@
 
 (defun set-symbol-value-function (global-environment)
   (lambda (value symbol)
-    (loop for entry in *dynamic-environment*
-          when (and (typep entry 'special-variable-entry)
-                    (eq (name entry) symbol))
-            do (setf (value entry) value)
+    (loop for entry in sicl-run-time:*dynamic-environment*
+          when (and (typep entry 'sicl-run-time:special-variable-entry)
+                    (eq (sicl-run-time:name entry) symbol))
+            do (setf (sicl-run-time:value entry) value)
                (return-from set-symbol-value-function value)
           finally
              ;; FIXME, make sure it is special.
