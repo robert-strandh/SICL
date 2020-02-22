@@ -3,4 +3,5 @@
 (defsystem #:sicl-run-time
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "dynamic-environment")))
