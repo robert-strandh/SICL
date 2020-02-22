@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-hir-interpreter)
+(cl:in-package #:sicl-run-time)
 
 (defparameter *dynamic-environment* '())
 
