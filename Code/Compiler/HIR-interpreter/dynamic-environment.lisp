@@ -13,19 +13,19 @@
       (loop for env = env1 then (rest env)
             for entry = (first env)
             until (eq env env2)
-            do (invalidate-entry entry))
+            do (sicl-run-time:invalidate-entry entry))
       (let ((last-block/tagbody
               (loop with result = nil
                     for env = env1 then (rest env)
                     for entry = (first env)
                     until (eq env env2)
-                    when (typep entry 'unwind-protect-entry)
-                      do (funcall (thunk entry))
-                    when (typep entry 'block/tagbody-entry)
+                    when (typep entry 'sicl-run-time:unwind-protect-entry)
+                      do (funcall (sicl-run-time:thunk entry))
+                    when (typep entry 'sicl-run-time:block/tagbody-entry)
                       do (setf result entry)
                     finally (return result))))
         (unless (null last-block/tagbody)
-          (throw (frame-pointer last-block/tagbody)
+          (throw (sicl-run-time:frame-pointer last-block/tagbody)
             instruction))))))
 
 (defmethod interpret-instruction :after
