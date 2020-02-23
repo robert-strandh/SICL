@@ -8,5 +8,3 @@
                     :frame-pointer abandon-tag)
                   *dynamic-environment*)
             transfer-tag)))
-
-            
