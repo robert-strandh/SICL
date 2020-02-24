@@ -15,6 +15,7 @@
    (:file "array")
    (:file "boxing")
    (:file "fixnum")
+   (:file "augment-catch-instruction")
    (:file "eliminate-enclose-instructions")
    (:file "gather-enter-instructions")
    (:file "hir-to-mir")))
