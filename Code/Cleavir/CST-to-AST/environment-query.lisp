@@ -43,10 +43,12 @@
 (defun parse-function-type (ftype)
   (flet ((give-up ()
            (return-from parse-function-type nil)))
-    (handler-case
-        (destructuring-bind (fn &optional (lambda-list '*) (values '*))
-            ftype
-          (declare (ignore fn values))
+    (if (and (consp ftype)
+             (eq (car ftype) 'cl:function)
+             (consp (cdr ftype))
+             (cleavir-code-utilities:proper-list-p (cadr ftype)))
+        (destructuring-bind (lambda-list &optional (values '*)) (cdr ftype)
+          (declare (ignore values))
           (loop with state = :required
                 with required with optional with restp
                 with rest with keysp with keys with aok-p
@@ -75,33 +77,38 @@
                         ((&rest) (cond (restp (give-up))
                                        (t (setf restp t) (setf rest item))))
                         ((&key)
-                         ;; We want to signal an error/give up if the syntax is bad.
-                         (destructuring-bind (keyword type) item
-                           (push (list keyword type) keys))))))
+                         ;; Syntax check: Should be (keyword type)
+                         (if (and (consp item)
+                                  (consp (cdr item))
+                                  (null (cddr item)))
+                             (push (copy-list item) keys)
+                             (give-up))))))
                 finally
                    (return (values t (nreverse required) (nreverse optional)
                                    restp rest keysp (nreverse keys) aok-p))))
-      (error () (give-up)))))
+        (give-up))))
 
 ;;; This function takes a type specifier and returns a (FUNCTION ...) type specifier.
 (defun normalize-ftype (ftype)
   (if (consp ftype)
-      (handler-case
-          (case (car ftype)
-            ((function)
-             ;; This may be from a user declaration, so don't accept it out of hand
-             (destructuring-bind (&optional (lambda-list '*) (ret '*))
-                 (rest ftype)
-               `(function ,lambda-list ,ret)))
-            ((and)
+      (case (car ftype)
+        ((function)
+         ;; This may be from a user declaration, so don't accept it out of hand
+         (let ((len (cleavir-code-utilities:proper-list-length ftype)))
+           (if (and len (<= len 1 3))
+               (destructuring-bind (&optional (lambda-list '*) (ret '*))
+                   ftype
+                 `(function ,lambda-list ,rest))
+               '(function * *))))
+        ((and)
+         (if (cleavir-code-utilities:proper-list-p ftype)
              ;; We just collect the first valid and helpful one. TODO: Actually merge?
              (loop for sub in (rest ftype)
                    for normalized = (normalize-ftype sub)
                    unless (equal normalized '(function * *))
                      return normalized
-                   finally (return '(function * *))))
-            (t '(function * *)))
-        (error () '(function * *)))
+                   finally (return '(function * *)))))
+        (otherwise '(function * *)))
       '(function * *)))
 
 (defun function-type (info)
