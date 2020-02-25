@@ -152,3 +152,10 @@
     :mnemonic "CALL"
     :operands
     (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+
+(defmethod translate-instruction
+    ((instruction cleavir-ir:catch-instruction))
+  (make-instance 'cluster:code-command
+    :mnemonic "CALL"
+    :operands
+    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
