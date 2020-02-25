@@ -8,3 +8,9 @@
                     :frame-pointer abandon-tag)
                   *dynamic-environment*)
             transfer-tag)))
+
+(defun augment-with-special-variable-entry (name value)
+  (cons (make-instance 'special-variable-entry
+          :name name
+          :value value)
+        *dynamic-environment*))
