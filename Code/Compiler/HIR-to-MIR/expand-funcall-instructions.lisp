@@ -33,6 +33,7 @@
 (defun expand-funcall-instructions (top-level-enter-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
-     (when (typep instruction 'cleavir-ir:funcall-instruction)
+     (when (or (typep instruction 'cleavir-ir:funcall-instruction)
+               (typep instruction 'cleavir-ir:catch-instruction))
        (expand-one-funcall-instruction instruction)))
    top-level-enter-instruction))
