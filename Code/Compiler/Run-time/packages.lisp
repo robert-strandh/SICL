@@ -12,4 +12,5 @@
            #:unwind-protect-entry
            #:thunk
            #:invalidate-entry
-           #:augment-with-block/tagbody-entry))
+           #:augment-with-block/tagbody-entry
+           #:augment-with-special-variable-entry))
