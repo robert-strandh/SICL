@@ -11,4 +11,6 @@
   ((:file "packages")
    (:file "client")
    (:file "ast-to-hir")
-   (:file "customization")))
+   (:file "customization")
+   (:file "dynamic-environment")
+   (:file "stack")))
