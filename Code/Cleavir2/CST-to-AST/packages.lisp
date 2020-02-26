@@ -85,4 +85,5 @@
            #:consider-global
            #:consider-special
            #:substitute #:substitute-cst
-           #:signal-original-condition))
+           #:signal-original-condition
+           #:check-simple-primop-syntax))
