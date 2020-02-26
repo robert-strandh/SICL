@@ -64,7 +64,8 @@
                              (cst:first rest-csts))))
           (loop while (null info)
                 do (restart-case (error 'cleavir-env:no-block-info
-                                        :cst block-name-cst)
+                                        :name block-name
+                                        :origin (cst:source block-name-cst))
                      (substitute (new-block-name)
                        :report (lambda (stream)
                                  (format stream "Substitute a different name."))
