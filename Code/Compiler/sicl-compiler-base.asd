@@ -6,5 +6,4 @@
                #:sicl-ir)
   :components
   ((:file "packages")
-   (:file "static-environment")
-   (:file "breakpoint-instruction")))
+   (:file "static-environment")))

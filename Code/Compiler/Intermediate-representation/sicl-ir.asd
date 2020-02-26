@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "breakpoint-instruction")
    (:file "dynamic-environment")
    (:file "stack")))
 
