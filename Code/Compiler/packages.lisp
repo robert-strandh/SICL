@@ -7,5 +7,4 @@
            #:+cons-function-index+
            #:+nil-index+
            #:+first-constant-index+
-           #:breakpoint-instruction
            #:debug-information))
