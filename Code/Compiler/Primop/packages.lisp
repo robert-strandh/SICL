@@ -15,4 +15,4 @@
    ;; contains the stack pointer and the frame pointer that must be
    ;; restored when the stack is unwound.
    #:caller-stack-pointer
-   #:caller-frame-popinter))
+   #:caller-frame-pointer))
