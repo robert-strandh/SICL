@@ -2,7 +2,7 @@
 
 (defmethod interpret-instruction
     (client
-     (instruction sicl-compiler:breakpoint-instruction)
+     (instruction sicl-ir:breakpoint-instruction)
      lexical-environment)
   (declare (ignore client lexical-environment))
   ;; (clordane::show (sicl-compiler:debug-information instruction))

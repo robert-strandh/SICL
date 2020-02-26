@@ -19,7 +19,7 @@
   nil)
 
 (defmethod process-instruction
-    ((instruction sicl-compiler:breakpoint-instruction) lexical-locations)
+    ((instruction sicl-ir:breakpoint-instruction) lexical-locations)
   nil)
 
 ;;; Return a list of instructions that, when executed, loads the

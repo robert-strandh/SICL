@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-compiler)
+(cl:in-package #:sicl-ir)
 
 (defclass breakpoint-instruction
     (cleavir-ir:instruction cleavir-ir:one-successor-mixin)
