@@ -17,4 +17,5 @@
    #:successors
    #:clone-context
    #:dynamic-environment-location
-   #:origin))
+   #:origin
+   #:assert-context))
