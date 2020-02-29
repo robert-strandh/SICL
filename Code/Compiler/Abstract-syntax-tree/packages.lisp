@@ -12,4 +12,6 @@
    #:caller-frame-pointer-ast
    ;; This AST class is the result of converting the
    ;; primop ESTABLISH-STACK-FRAME.
-   #:establish-stack-frame-ast))
+   #:establish-stack-frame-ast
+   #:stack-pointer-ast
+   #:frame-pointer-ast))
