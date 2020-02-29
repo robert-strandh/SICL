@@ -15,4 +15,8 @@
    ;; contains the stack pointer and the frame pointer that must be
    ;; restored when the stack is unwound.
    #:caller-stack-pointer
-   #:caller-frame-pointer))
+   #:caller-frame-pointer
+   ;; This primpot has two parameters.  It does not return any values.
+   ;; The effect is that the parameters are used in order to install a
+   ;; new stack pointer and a new frame pointer.
+   #:establish-stack-frame))
