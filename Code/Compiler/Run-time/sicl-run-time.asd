@@ -4,5 +4,4 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "dynamic-environment")
-   (:file "environment-augmentation")))
+   (:file "dynamic-environment")))
