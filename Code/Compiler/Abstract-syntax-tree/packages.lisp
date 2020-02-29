@@ -9,4 +9,7 @@
    ;; These two AST classes are the result of converting the primops
    ;; CALLER-STACK-POINTER and CALLER-FRAME-POINTER.
    #:caller-stack-pointer-ast
-   #:caller-frame-pointer-ast))
+   #:caller-frame-pointer-ast
+   ;; This AST class is the result of converting the
+   ;; primop ESTABLISH-STACK-FRAME.
+   #:establish-stack-frame-ast))
