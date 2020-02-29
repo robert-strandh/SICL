@@ -6,5 +6,5 @@
    #:breakpoint-instruction
    #:dynamic-environment-instruction
    #:caller-stack-pointer-instruction
-   #:caller-frame-pointer-instruction))
-
+   #:caller-frame-pointer-instruction
+   #:establish-stack-frame-instruction))
