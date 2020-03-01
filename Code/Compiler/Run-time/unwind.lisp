@@ -16,16 +16,14 @@
             until (eq entry exit-point)
             when (typep entry 'exit-point)
               do (setf (valid-p entry) nil))
-      ;; Next, execute thunks of UNWIND-PROTECT entries.  FIXME: this
-      ;; is not quite correct.  We need to find a way to execute
-      ;; UNWIND-PROTECT thunks in the partially unwound dynamic
-      ;; environment.
-      (loop for entry in dynamic-environment
+      ;; Next, execute thunks of UNWIND-PROTECT entries.
+      (loop for env = dynamic-environment then (rest env)
+            for entry = (first env)
             until (eq entry exit-point)
             when (typep entry 'unwind-protect-entry)
-              ;; This is where we somehow need to modify the dynamic
-              ;; environment.
-              do (funcall (thunk entry)))
+              do (sicl-primop:with-dynamic-environment
+                     (rest env)
+                   (funcall (thunk entry))))
       ;; Set the stack frame
       (sicl-primop:establish-stack-frame
        (stack-pointer exit-point)
