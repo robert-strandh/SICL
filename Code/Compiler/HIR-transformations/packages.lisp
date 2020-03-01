@@ -16,4 +16,5 @@
            #:eliminate-fixed-to-multiple-instructions
            #:eliminate-multiple-to-fixed-instructions
            #:preprocess-unwind-instructions
-           #:preprocess-catch-instructions))
+           #:preprocess-catch-instructions
+           #:preprocess-bind-instructions))
