@@ -4,8 +4,9 @@
     (client
      (instruction cleavir-ir:bind-instruction)
      lexical-environment)
-  (destructuring-bind (symbol-input value-input)
+  (destructuring-bind (function-input symbol-input value-input)
       (cleavir-ir:inputs instruction)
+    (declare (ignore function-input))
     (setf (lexical-value (cleavir-ir:dynamic-environment-output instruction)
                          lexical-environment)
           (cons (make-instance 'sicl-run-time:special-variable-entry
