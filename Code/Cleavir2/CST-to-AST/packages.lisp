@@ -76,6 +76,7 @@
            #:compiler-macro-expansion-warning
            #:compiler-macro-expansion-style-warning
            #:eval-error #:eval-warning #:eval-style-warning
+           #:process-progn
            ;; Condition readers.
            #:cst
            #:original-condition
