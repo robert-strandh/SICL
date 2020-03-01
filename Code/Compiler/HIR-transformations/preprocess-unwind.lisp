@@ -8,12 +8,19 @@
 
 (defmethod preprocess-unwind-instruction
     ((instruction cleavir-ir:unwind-instruction))
-  (let* ((catch-instruction (cleavir-ir:destination instruction))
-         (index (cleavir-ir:unwind-index instruction))
-         (successors (cleavir-ir:successors catch-instruction))
-         (successor (nth index successors)))
-    (setf (cleavir-ir:successors instruction)
-          (list successor))))
+  (let* ((augment-function-constant-input
+           (make-instance 'cleavir-ir:constant-input
+             :value 'sicl-run-time:unwind))
+         (augment-function-location
+           (make-instance 'cleavir-ir:lexical-location
+             :name "augmentation-function")))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:fdefinition-instruction
+       :input augment-function-constant-input
+       :output augment-function-location)
+     instruction)
+    (push augment-function-location
+          (cleavir-ir:inputs instruction))))
 
 (defun preprocess-unwind-instructions
     (top-level-enter-instruction)
