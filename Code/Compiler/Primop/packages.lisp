@@ -16,7 +16,13 @@
    ;; restored when the stack is unwound.
    #:caller-stack-pointer
    #:caller-frame-pointer
-   ;; This primpot has two parameters.  It does not return any values.
+   ;; This primop has two parameters.  It does not return any values.
    ;; The effect is that the parameters are used in order to install a
    ;; new stack pointer and a new frame pointer.
-   #:establish-stack-frame))
+   #:establish-stack-frame
+   ;; This primop has at least one parameter.  The first parameter is
+   ;; a form that computes a dynamic environment.  The remaining
+   ;; parameters are forms that are executed in the dynamic
+   ;; environment computed by the first form.  The remaining forms are
+   ;; an implicit PROGN.
+   #:with-dynamic-environment))
