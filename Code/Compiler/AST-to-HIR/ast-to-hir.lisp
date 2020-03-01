@@ -14,6 +14,7 @@
     (change-class hir 'sicl-hir-transformations:top-level-enter-instruction)
     (sicl-argument-processing:process-parameters hir)
     (sicl-hir-transformations:preprocess-catch-instructions hir)
+    (sicl-hir-transformations:preprocess-bind-instructions hir)
     (sicl-hir-transformations:convert-symbol-value hir)
     (sicl-hir-transformations:convert-set-symbol-value hir)
     (sicl-hir-transformations:hoist-fdefinitions hir)
