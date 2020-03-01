@@ -10,6 +10,7 @@
   ((:file "packages")
    (:file "preprocess-unwind")
    (:file "preprocess-catch")
+   (:file "preprocess-bind")
    (:file "convert-symbol-value")
    (:file "hoist-fdefinitions")
    (:file "eliminate-create-cell")
