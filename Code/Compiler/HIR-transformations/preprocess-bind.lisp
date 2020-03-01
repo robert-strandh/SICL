@@ -10,7 +10,7 @@
     ((instruction cleavir-ir:bind-instruction))
   (let* ((augment-function-constant-input
            (make-instance 'cleavir-ir:constant-input
-             :value 'sicl-run-time:augment-with-block/tagbody-entry))
+             :value 'sicl-run-time:augment-with-special-variable-entry))
          (augment-function-location
            (make-instance 'cleavir-ir:lexical-location
              :name "augmentation-function")))
