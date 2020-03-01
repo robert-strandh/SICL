@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "dynamic-environment-ast")
-   (:file "stack-asts")))
+   (:file "stack-asts")
+   (:file "with-dynamic-environment-ast")))
