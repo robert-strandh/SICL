@@ -14,4 +14,9 @@
    ;; primop ESTABLISH-STACK-FRAME.
    #:establish-stack-frame-ast
    #:stack-pointer-ast
-   #:frame-pointer-ast))
+   #:frame-pointer-ast
+   ;; This AST class is the result of converting the primop
+   ;; WITH-DYNAMIC-ENVIRONMENT.
+   #:with-dynamic-environment-ast
+   #:dynamic-environment-ast
+   #:body-ast))
