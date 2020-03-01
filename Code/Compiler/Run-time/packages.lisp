@@ -13,4 +13,5 @@
            #:thunk
            #:invalidate-entry
            #:augment-with-block/tagbody-entry
-           #:augment-with-special-variable-entry))
+           #:augment-with-special-variable-entry
+           #:unwind))
