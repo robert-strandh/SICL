@@ -14,7 +14,6 @@
     cleavir-ir:compute-argument-count-instruction
     cleavir-ir:unreachable-instruction
     cleavir-ir:unwind-instruction
-    cleavir-ir:bind-instruction
     cleavir-ir:eq-instruction
     cleavir-ir:multiple-value-call-instruction
     cleavir-ir:save-values-instruction
