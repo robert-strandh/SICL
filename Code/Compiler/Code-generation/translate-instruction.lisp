@@ -166,3 +166,14 @@
     :mnemonic "CALL"
     :operands
     (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+
+(defmethod translate-instruction
+    ((instruction cleavir-ir:unwind-instruction))
+  (list (make-instance 'cluster:code-command
+          :mnemonic "CALL"
+          :operands
+          (list (translate-datum (first (cleavir-ir:inputs instruction)))))
+        (make-instance 'cluster:code-command
+          :mnemonic "JMP"
+          :operands
+          (list (translate-datum sicl-mir-to-lir:*rax*)))))
