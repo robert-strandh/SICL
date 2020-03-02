@@ -18,6 +18,7 @@
    (:file "funcall")
    (:file "catch")
    (:file "bind")
+   (:file "unwind")
    (:file "return")
    (:file "return-values")
    (:file "divide")
