@@ -48,9 +48,7 @@
                     :output register)
                   instruction)))))
 
-(defmethod process-instruction
-    ((instruction cleavir-ir:funcall-instruction)
-     lexical-locations)
+(defun process-funcall (instruction lexical-locations)
   (do-arguments instruction lexical-locations)
   (let ((inputs (cleavir-ir:inputs instruction)))
      ;; Store the static environment to R10.
@@ -89,3 +87,8 @@
     ;; Make RAX the only input.
     (setf (cleavir-ir:inputs instruction)
           (list *rax*))))
+
+(defmethod process-instruction
+    ((instruction cleavir-ir:funcall-instruction)
+     lexical-locations)
+  (process-funcall instruction lexical-locations))
