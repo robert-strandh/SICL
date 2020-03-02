@@ -9,7 +9,9 @@
   (sicl-utilities:with-collectors ((result collect))
     (let ((read (make-sequence-reader
                  list start end nil
-                 (lambda () (return-from subseq (result))))))
+                 (lambda (sequence n)
+                   (declare (ignore sequence n))
+                   (return-from subseq (result))))))
       (loop (collect (funcall read))))))
 
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid

@@ -11,7 +11,7 @@
           (declare (array-index index))
           (lambda (new-value)
             (cond ((= index limit)
-                   (funcall terminate))
+                   (funcall terminate (- index start)))
                   ((consp rest)
                    (let ((v (shiftf (first rest) new-value))
                          (i index))
@@ -22,7 +22,7 @@
                    (error 'must-be-proper-list
                           :datum list))
                   ((null end)
-                   (funcall terminate))
+                   (funcall terminate (- index start)))
                   (t
                    (error 'invalid-end-index
                           :datum index
@@ -34,7 +34,7 @@
         (declare (array-length index))
         (lambda (new-value)
           (cond ((= index start)
-                 (funcall terminate))
+                 (funcall terminate (- end index)))
                 ((consp rest)
                  (let ((v (shiftf (first rest) new-value))
                        (i (decf index)))
@@ -61,7 +61,7 @@
             (declare (array-length index))
             (lambda (new-value)
               (cond ((= index end)
-                     (funcall terminate))
+                     (funcall terminate (- index start)))
                     (t
                      (let ((v (shiftf (aref vector index) new-value))
                            (i index))
@@ -72,7 +72,7 @@
             (declare (array-length index))
             (lambda (new-value)
               (cond ((= index start)
-                     (funcall terminate))
+                     (funcall terminate (- end index)))
                     (t
                      (let ((v (shiftf (aref vector index) new-value))
                            (i (decf index)))
