@@ -16,6 +16,7 @@
    (:file "assignment")
    (:file "arguments")
    (:file "funcall")
+   (:file "catch")
    (:file "return")
    (:file "return-values")
    (:file "divide")
