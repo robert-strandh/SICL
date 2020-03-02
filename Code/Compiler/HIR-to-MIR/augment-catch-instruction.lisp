@@ -35,6 +35,7 @@
     (client (instruction cleavir-ir:catch-instruction))
   (destructuring-bind (continuation-output dynamic-environment-output)
       (cleavir-ir:outputs instruction)
+    (setf (cleavir-ir:outputs instruction) '())
     (cleavir-ir:insert-instruction-between
      (make-instance 'cleavir-ir:return-value-instruction
        :input (make-instance 'cleavir-ir:constant-input
