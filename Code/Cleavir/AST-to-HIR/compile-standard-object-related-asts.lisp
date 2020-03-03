@@ -9,18 +9,21 @@
 	(temp2 (make-temp)))
     (compile-ast
      (cleavir-ast:object-ast ast)
-     (context
-      (list temp1)
+     (clone-context
+      context
+      :results (list temp1)
+      :successors
       (list (compile-ast
 	     (cleavir-ast:slot-number-ast ast)
-	     (context (list temp2)
-		      (list (make-instance 'cleavir-ir:slot-read-instruction
-			      :inputs (list temp1 temp2)
-			      :outputs (results context)
-			      :successors (successors context)))
-		      (invocation context))))
-      (invocation context)))))
-  
+	     (clone-context
+              context
+              :results (list temp2)
+              :successors
+              (list (make-instance 'cleavir-ir:slot-read-instruction
+                      :inputs (list temp1 temp2)
+                      :outputs (results context)
+                      :successors (successors context))))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a SLOT-WRITE-AST
@@ -31,20 +34,23 @@
 	(temp3 (make-temp)))
     (compile-ast
      (cleavir-ast:object-ast ast)
-     (context
-      (list temp1)
+     (clone-context
+      context
+      :results (list temp1)
+      :successors
       (list (compile-ast
 	     (cleavir-ast:slot-number-ast ast)
-	     (context
-	      (list temp2)
+	     (clone-context
+              context
+	      :results (list temp2)
+              :successors
 	      (list (compile-ast
                      (cleavir-ast:value-ast ast)
-                     (context
-                      (list temp3)
+                     (clone-context
+                      context
+                      :results (list temp3)
+                      :successors
                       (list (make-instance 'cleavir-ir:slot-write-instruction
                               :inputs (list temp1 temp2 temp3)
                               :outputs '()
-                              :successors (successors context)))
-                      (invocation context))))
-	      (invocation context))))
-      (invocation context)))))
+                              :successors (successors context)))))))))))))

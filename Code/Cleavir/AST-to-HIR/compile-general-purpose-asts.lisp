@@ -75,12 +75,13 @@
              (let ((temp (make-temp)))
                (call-next-method
                 ast
-                (context (list temp)
-                         (list (cleavir-ir:make-fixed-to-multiple-instruction
-                                (list temp)
-                                results
-                                (first successors)))
-                         invocation))))
+                (clone-context
+                 context
+                 :results (list temp)
+                 :successors (list (cleavir-ir:make-fixed-to-multiple-instruction
+                                    (list temp)
+                                    results
+                                    (first successors)))))))
             ((null results)
              ;; We don't need the result.  This situation typically
              ;; happens when we compile a form other than the last of
@@ -95,18 +96,17 @@
                  ;; We allocate a temporary variable to receive the
                  ;; result, and that variable will not be used.
                  (call-next-method ast
-                                   (context (list (make-temp))
-                                            successors
-                                            invocation))))
+                                   (clone-context context
+                                                  :results (list (make-temp))))))
             (t
              ;; We have at least one result.  In case there is more
              ;; than one, we generate a successor where all but the
              ;; first one are filled with NIL.
              (let ((successor (nil-fill (rest results) (first successors))))
                (call-next-method ast
-                                 (context (list (first results))
-                                          (list successor)
-                                          invocation))))))))
+                                 (clone-context context
+                                                :results (list (first results))
+                                                :successors (list successor)))))))))
 
 ;;; If these checks fail, it's an internal bug, since the
 ;;; :around method should fix the results and successors.
@@ -136,16 +136,20 @@
     (let ((temp1 (make-temp)) (temp2 (make-temp)))
       (compile-ast
        (arg1-ast ast)
-       (context (list temp1)
-                (list (compile-ast
-                       (arg2-ast ast)
-                       (context (list temp2)
-                                (list (make-instance 'whatever-instruction
-                                        :inputs (list temp1 temp2)
-                                        :outputs (results context)
-                                        :successors (successors context)))
-                                (invocation context))))
-                (invocation context))))
+       (clone-context
+        context
+        :results (list temp1)
+        :successors
+        (list (compile-ast
+               (arg2-ast ast)
+               (clone-context
+                context
+                :results (list temp2)
+                :successors
+                (list (make-instance 'whatever-instruction
+                                     :inputs (list temp1 temp2)
+                                     :outputs (results context)
+                                     :successors (successors context)))))))))
     (labels ((recur (remaining-readers remaining-temps)
                (if (null remaining-readers)
                    `(make-instance ',instruction
@@ -158,10 +162,11 @@
                          (rest-temps (rest remaining-temps)))
                      `(compile-ast
                        (,reader ast)
-                       (context
-                        (list ,temp)
-                        (list ,(recur rest-readers rest-temps))
-                        (invocation context)))))))
+                       (clone-context
+                        context
+                        :results (list ,temp)
+                        :successors (list
+                                     ,(recur rest-readers rest-temps))))))))
       `(defmethod compile-ast ((ast ,ast) context)
          (let (,@(loop for temp in temps
                        collect `(,temp (make-temp))))
@@ -180,9 +185,10 @@
   (let ((then-branch (compile-ast (cleavir-ast:then-ast ast) context))
 	(else-branch (compile-ast (cleavir-ast:else-ast ast) context)))
     (compile-ast (cleavir-ast:test-ast ast)
-		 (context '()
-			  (list then-branch else-branch)
-			  (invocation context)))))
+                 (clone-context
+                  context
+                  :results nil
+                  :successors (list then-branch else-branch)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -203,9 +209,10 @@
     (let ((next (compile-ast (car (last form-asts)) context)))
       (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
 	    do (setf next (compile-ast sub-ast
-				       (context '()
-						(list next)
-						(invocation context)))))
+                                       (clone-context
+                                        context
+                                        :results '()
+                                        :successors (list next)))))
       next)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -293,17 +300,19 @@
           ;; simple case: we are returning locally.
           (compile-ast
            (cleavir-ast:form-ast ast)
-           (context results
-                    (list
-                     (cleavir-ir:make-local-unwind-instruction
-                      (first successors)))
-                    invocation))
+           (clone-context
+            context
+            :results results
+            :successors (list
+                         (cleavir-ir:make-local-unwind-instruction
+                          (first successors)))))
           ;; harder case: unwind.
 	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
                                  continuation destination 1))
-		 (new-context (context results
-				       (list new-successor)
-				       (invocation context))))
+		 (new-context (clone-context
+                               context
+                               :successors (list new-successor)
+                               :results results)))
 	    (compile-ast (cleavir-ast:form-ast ast) new-context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -374,7 +383,10 @@
             ;; if it's not a tag, we compile it, expecting no values.
             else do (setf next
                           (compile-ast item-ast
-                                       (context '() (list next) invocation)))
+                                       (clone-context
+                                        context
+                                        :results '()
+                                        :successors (list next))))
             ;; lastly we hook up the main CATCH to go to the item code the first
             ;; time through. (As the first successor.)
             finally (setf (cleavir-ir:successors catch) (list next)))
@@ -435,7 +447,7 @@
 	       :successors
 	       (list (cleavir-ir:make-multiple-to-fixed-instruction
 		      values-temp results (first successors))))))
-       (invocation context)))))
+       context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -523,10 +535,7 @@
   (let ((location (find-or-create-location (cleavir-ast:lhs-ast ast))))
     (compile-ast
      (cleavir-ast:value-ast ast)
-     (context
-      (list location)
-      (successors context)
-      (invocation context)))))
+     (clone-context context :results (list location)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -537,10 +546,13 @@
 		    for form-ast in (reverse (cleavir-ast:form-asts ast))
 		    do (setf successor
 			     (compile-ast form-ast
-					  (context () (list successor) (invocation context))))
+                                          (clone-context
+                                           context
+                                           :results '()
+                                           :successors (list successor))))
 		    finally (return successor))))
     (compile-ast (cleavir-ast:first-form-ast ast)
-		 (context (results context) (list next) (invocation context)))))
+                 (clone-context context :successors (list next)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -573,7 +585,7 @@
                     finally (return succ))))))
     (compile-ast
      (cleavir-ast:form-ast ast)
-     (context results (list assign) (invocation context)))))
+     (clone-context context :results results :successors (list assign)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -584,8 +596,7 @@
 
 (defmethod compile-ast ((ast cleavir-ast:the-ast) context)
   (with-accessors ((results results)
-		   (successors successors)
-		   (invocation invocation))
+		   (successors successors))
       context
     (assert-context ast context nil 1)
     (let ((form-ast (cleavir-ast:form-ast ast))
@@ -596,12 +607,12 @@
       (cond
 	((typep results 'cleavir-ir:values-location)
 	 (compile-ast form-ast
-		      (context results
-			       (list
-				(cleavir-ir:make-the-values-instruction
-				 results successor
-				 required optional rest))
-			       invocation)))
+                      (clone-context
+                       context
+                       :successors (list
+                                    (cleavir-ir:make-the-values-instruction
+                                     results successor
+                                     required optional rest)))))
 	(t ; lexical locations
 	 (loop for lex in results
 	       do (setf successor
@@ -610,9 +621,8 @@
 					 (required (pop required))
 					 (optional (pop optional))
 					 (t rest)))))
-	 (compile-ast form-ast (context results
-					(list successor)
-					invocation)))))))
+	 (compile-ast form-ast
+                      (clone-context context :successors (list successor))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -628,11 +638,11 @@
     ;; It's a ONE-VALUE-AST-MIXIN, so RESULTS is one lexical loc.
     (compile-ast
      (cleavir-ast:form-ast ast)
-     (context results
-              (list
-               (cleavir-ir:make-dynamic-allocation-instruction
-                (first results) (first successors)))
-              invocation))))
+     (clone-context
+      context
+      :successors (list
+                   (cleavir-ir:make-dynamic-allocation-instruction
+                    (first results) (first successors)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -684,13 +694,13 @@
     (let ((temp (make-temp)))
       (compile-ast
        (cleavir-ast:value-ast ast)
-       (context
-        (list temp)
-        (list (cleavir-ir:make-set-constant-symbol-value-instruction
-               (cleavir-ast:name ast)
-               temp
-               (first successors)))
-        (invocation context))))))
+       (clone-context
+        context
+        :results (list temp)
+        :successors (list (cleavir-ir:make-set-constant-symbol-value-instruction
+                           (cleavir-ast:name ast)
+                           temp
+                           (first successors))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -722,13 +732,13 @@
     (let ((temp (make-temp)))
       (compile-ast
        (cleavir-ast:form-ast ast)
-       (context
-	(list temp)
-	(list (cleavir-ir:make-typeq-instruction
-	       temp
-	       successors
-	       (cleavir-ast:type-specifier ast)))
-	(invocation context))))))
+       (clone-context
+        context
+        :results (list temp)
+	:successors (list (cleavir-ir:make-typeq-instruction
+                           temp
+                           successors
+                           (cleavir-ast:type-specifier ast))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -819,14 +829,15 @@
   (loop for argument in arguments
 	collect (make-temp)))
 
-(defun compile-arguments (arguments temps successor invocation)
+(defun compile-arguments (arguments temps successor context)
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
 	do (setf succ (compile-ast arg
-				   (context `(,temp)
-					    `(,succ)
-					    invocation)))
+                                   (clone-context
+                                    context
+                                    :results `(,temp)
+                                    :successors `(,succ))))
 	finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -878,10 +889,14 @@
 	      do (setf successor
 		       (compile-ast
 			form-ast
-			(context form-temp (list successor) invocation))))
+                        (clone-context context
+                                       :results (list form-temp)
+                                       :successors (list successor)))))
 	(compile-ast
 	 (cleavir-ast:function-form-ast ast)
-	 (context (list function-temp) (list successor) invocation)))))
+         (clone-context context
+                        :results (list function-temp)
+                        :successors (list successor))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -912,7 +927,7 @@
 		arguments temps
 		(cleavir-ir:make-fixed-to-multiple-instruction
 		 temps results (first successors))
-		invocation)))
+                context)))
 	    (t ;lexical locations
 	     ;; this is a bit tricky because there may be more or less
 	     ;; arguments than results, in which case we must compile
@@ -930,13 +945,14 @@
 		       (loop with succ = (first successors)
 			     for arg in (reverse valueless)
 			     do (setf succ (compile-ast arg
-							(context '()
-								 (list succ)
-								 invocation)))
+                                                        (clone-context
+                                                         context
+                                                         :results '()
+                                                         :successors (list succ))))
 			     finally (return succ)))
 		      (nils (nil-fill nils (first successors)))
 		      (t (first successors)))
-		invocation)))))))
+                context)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -962,17 +978,18 @@
 	     (temp2 (cleavir-ir:new-temporary)))
          (compile-ast
           arg1-ast
-          (context
-	   (list temp1)
-	   (list (compile-ast
-	          arg2-ast
-	          (context
-		   (list temp2)
-		   (list (cleavir-ir:make-eq-instruction
-		          (list temp1 temp2)
-		          successors))
-		   invocation)))
-	   invocation)))))))
+          (clone-context
+           context
+           :results (list temp1)
+           :successors (list (compile-ast
+                              arg2-ast
+                              (clone-context
+                               context
+                               :results (list temp2)
+                               :successors (list
+                                            (cleavir-ir:make-eq-instruction
+                                             (list temp1 temp2)
+                                             successors))))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -7,7 +7,7 @@
 ;;; compiled in a context with a single successor and a single result.
 
 (defun compile-and-unbox-arguments
-    (arguments temps element-type successor invocation)
+    (arguments temps element-type successor context)
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
@@ -19,7 +19,10 @@
 		   :outputs (list temp)
 		   :successors (list succ)))
 	   (setf succ
-		 (compile-ast arg (context `(,inter) `(,succ) invocation)))
+		 (compile-ast arg
+                              (clone-context context
+                                             :results `(,inter)
+                                             :successors `(,succ))))
 	finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -46,7 +49,7 @@
           :inputs temps
           :outputs (list temp)
           :successors (list successor))
-        (invocation context)))))
+        context))))
 
 (compile-simple-float-arithmetic-ast cleavir-ast:float-add-ast
                                      cleavir-ir:float-add-instruction)
@@ -89,7 +92,7 @@
           :inputs (,input-transformer temps)
           :outputs '()
           :successors (successors context))
-        (invocation context)))))
+        context))))
 
 (compile-simple-float-comparison-ast cleavir-ast:float-less-ast
                                      cleavir-ir:float-less-instruction
@@ -123,8 +126,10 @@
         (unboxed-output (cleavir-ir:new-temporary)))
     (compile-ast
      arg
-     (context
-      (list input)
+     (clone-context
+      context
+      :results (list input)
+      :successors
       (list
        (make-instance 'cleavir-ir:unbox-instruction
          :element-type from
@@ -137,5 +142,4 @@
                                :element-type to
                                :inputs (list unboxed-output)
                                :outputs (results context)
-                               :successors (successors context))))))
-      (invocation context)))))
+                               :successors (successors context))))))))))
