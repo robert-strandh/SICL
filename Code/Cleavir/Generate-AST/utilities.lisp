@@ -235,12 +235,8 @@
              ;; Set up the body in a special thunk so that
              ;; the dynamic environment is hooked up correctly.
              (cleavir-primop:ast
-              ,(let* ((cleavir-ast:*dynamic-environment*
-                        (cleavir-ast:make-dynamic-environment-ast
-                         '#:cwvb-dynamic-environment))
-                      (next-ast (funcall next-thunk)))
-                 (cleavir-ast:make-function-ast
-                  next-ast nil cleavir-ast:*dynamic-environment*))))
+              ,(cleavir-ast:make-function-ast
+                (funcall next-ast) nil)))
            env system))
 
 ;;; ENV is an environment that is known to contain information about

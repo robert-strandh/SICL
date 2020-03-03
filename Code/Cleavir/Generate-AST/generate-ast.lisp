@@ -487,12 +487,7 @@
       (let ((canonicalized-dspecs
 	      (cleavir-code-utilities:canonicalize-declaration-specifiers
 	       (reduce #'append (mapcar #'cdr declarations))
-               (cleavir-env:declarations env)))
-            ;; make a fresh dynamic environment. The body as well as the
-            ;; lambda list parsing code must be compiled with it.
-            (cleavir-ast:*dynamic-environment*
-              (cleavir-ast:make-dynamic-environment-ast
-               '#:dynamic-environment-argument)))
+               (cleavir-env:declarations env))))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
 	     (itemize-lambda-list parsed-lambda-list)
@@ -503,7 +498,7 @@
                (make-body rdspecs forms block-name block-name-p)
                env system)
 	    (cleavir-ast:make-function-ast
-             ast lexical-lambda-list cleavir-ast:*dynamic-environment*)))))))
+             ast lexical-lambda-list)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -546,12 +541,7 @@
 	   (cleavir-env:eval form environment environment))
 	 (convert-lambda-call form environment system))))
 
-(defun generate-ast (form environment system
-                          &optional (cleavir-ast:*dynamic-environment*
-                                     (cleavir-ast:make-dynamic-environment-ast
-                                      '#:unused-dynamic-environment
-                                      :policy (cleavir-env:environment-policy
-                                               environment))))
+(defun generate-ast (form environment system)
   (let ((*subforms-are-top-level-p* t)
 	(*compile-time-too* nil))
     (convert form environment system)))
