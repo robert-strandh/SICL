@@ -38,14 +38,14 @@
     (setf (cleavir-ir:outputs instruction) '())
     (cleavir-ir:insert-instruction-between
      (make-instance 'cleavir-ir:return-value-instruction
-       :input (make-instance 'cleavir-ir:constant-input
-                :value 1)
+       :input (make-instance 'cleavir-ir:immediate-input
+                :value 2)
        :output dynamic-environment-output)
      instruction
      (first (cleavir-ir:successors instruction)))
     (cleavir-ir:insert-instruction-between
      (make-instance 'cleavir-ir:return-value-instruction
-       :input (make-instance 'cleavir-ir:constant-input
+       :input (make-instance 'cleavir-ir:immediate-input
                 :value 0)
        :output continuation-output)
      instruction
