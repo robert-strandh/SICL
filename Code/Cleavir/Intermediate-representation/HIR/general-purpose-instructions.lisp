@@ -262,6 +262,30 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction LOCAL-UNWIND-INSTRUCTION.
+;;;
+;;; This instruction is used to indicate a lexical local transfer of
+;;; control resulting from a GO or RETURN-FROM form.
+;;;
+;;; The process of unwinding may involve statically determined side
+;;; effects due to UNWIND-PROTECT. These effects can be determined
+;;; by comparing this instruction's dynamic environment with that
+;;; of its successor.
+;;;
+;;; Unlike an UNWIND-INSTRUCTION, this instruction has an actual
+;;; successor, which is probably the alternate successor of the
+;;; relevant CATCH-INSTRUCTION.
+
+(defclass local-unwind-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
+
+(defun make-local-unwind-instruction (successor)
+  (make-instance 'local-unwind-instruction
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction EQ-INSTRUCTION.
 
 (defclass eq-instruction (instruction multiple-successors-mixin)
