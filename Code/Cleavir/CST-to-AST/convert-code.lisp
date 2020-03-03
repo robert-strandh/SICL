@@ -468,12 +468,14 @@
                 system
                 (cleavir-env:declarations env)
                 declaration-specifiers))
-             ;; Note that lambda-list-from-parameter-groups makes ASTs,
-             ;; so this needs to be bound around that call.
-             (cleavir-ast:*dynamic-environment*
+             (old-dynenv cleavir-ast:*dynamic-environment*)
+             (new-dynenv
                (cleavir-ast:make-dynamic-environment-ast
                 '#:dynamic-environment-argument
-                :origin origin)))
+                :origin origin))
+             ;; Note that lambda-list-from-parameter-groups makes ASTs,
+             ;; so this needs to be bound around that call.
+             (cleavir-ast:*dynamic-environment* new-dynenv))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers-by-parameter-group
              (itemize-lambda-list parsed-lambda-list)
@@ -487,7 +489,8 @@
                      entries
                      (make-body rdspecs (cst-for-body forms-cst block-name-cst origin))
                      env
-                     system)))
+                     system))
+                  (cleavir-ast:*dynamic-environment* old-dynenv))
               (cleavir-ast:make-function-ast ast lexical-lambda-list
-                                             cleavir-ast:*dynamic-environment*
+                                             new-dynenv
                                              :origin origin))))))))
