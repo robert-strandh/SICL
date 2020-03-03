@@ -56,20 +56,16 @@
 ;;; instructions for satisfying the unfit context, or it signals an
 ;;; error if appropriate.
 (defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
-  (let (;; KLUDGE: These bindings are redundant w/r/t the other :around
-        ;; method, but since this method does make instructions, we
-        ;; need these things bound. (Since this method is more specific,
-        ;; it runs around the other :around.)
-        (cleavir-ir:*policy* (cleavir-ast:policy ast))
-        (cleavir-ir:*origin* (cleavir-ast:origin ast))
-        (cleavir-ir:*dynamic-environment*
-          (find-or-create-location
-           (cleavir-ast:dynamic-environment ast))))
-    (with-accessors ((results results)
-                     (successors successors)
-                     (invocation invocation))
-        context
-      (assert-context ast context nil 1)
+  (with-accessors ((results results)
+		   (successors successors)
+		   (invocation invocation))
+      context
+    (assert-context ast context nil 1)
+    (let ((cleavir-ir:*policy* (cleavir-ast:policy ast))
+          (cleavir-ir:*origin* (cleavir-ast:origin ast))
+          (cleavir-ir:*dynamic-environment*
+            (find-or-create-location
+             (cleavir-ast:dynamic-environment ast))))
       ;; We have a context with one successor, so RESULTS can be a
       ;; list of any length, or it can be a values location,
       ;; indicating that all results are needed.
@@ -284,7 +280,8 @@
 ;;; BLOCK-AST was compiled.
 
 (defmethod compile-ast ((ast cleavir-ast:return-from-ast) context)
-  (let* ((block-info (block-info (cleavir-ast:block-ast ast)))
+  (let* ((block-ast (cleavir-ast:block-ast ast))
+         (block-info (block-info block-ast))
          (block-context (first block-info))
          (continuation (second block-info))
          (destination (third block-info)))
@@ -294,7 +291,13 @@
         block-context
       (if (eq (invocation context) invocation)
           ;; simple case: we are returning locally.
-	  (compile-ast (cleavir-ast:form-ast ast) block-context)
+          (compile-ast
+           (cleavir-ast:form-ast ast)
+           (context results
+                    (list
+                     (cleavir-ir:make-local-unwind-instruction
+                      (first successors)))
+                    invocation))
           ;; harder case: unwind.
 	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
                                  continuation destination 1))
@@ -399,7 +402,7 @@
          (nop (third info))
          (destination (fourth info)) (index (fifth info)))
     (if (eq invocation (invocation context))
-	nop
+        (cleavir-ir:make-local-unwind-instruction nop)
 	(cleavir-ir:make-unwind-instruction
          continuation destination index))))
 
