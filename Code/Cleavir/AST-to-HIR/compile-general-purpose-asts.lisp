@@ -56,52 +56,61 @@
 ;;; instructions for satisfying the unfit context, or it signals an
 ;;; error if appropriate.
 (defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
-  (with-accessors ((results results)
-		   (successors successors)
-		   (invocation invocation))
-      context
-    (assert-context ast context nil 1)
-    ;; We have a context with one successor, so RESULTS can be a
-    ;; list of any length, or it can be a values location,
-    ;; indicating that all results are needed.
-    (cond ((typep results 'cleavir-ir:values-location)
-	   ;; The context is such that all multiple values are
-	   ;; required.
-	   (let ((temp (make-temp)))
-	     (call-next-method
-	      ast
-	      (context (list temp)
-		       (list (cleavir-ir:make-fixed-to-multiple-instruction
-			      (list temp)
-			      results
-			      (first successors)))
-		       invocation))))
-	  ((null results)
-	   ;; We don't need the result.  This situation typically
-	   ;; happens when we compile a form other than the last of
-	   ;; a PROGN-AST.
-	   (if (cleavir-ast:side-effect-free-p ast)
-	       (progn
-		 ;; For now, we do not emit this warning.  It is a bit
-		 ;; too annoying because there is some automatically
-		 ;; generated code that is getting warned about.
-		 ;; (warn "Form compiled in a context requiring no value.")
-		 (first successors))
-	       ;; We allocate a temporary variable to receive the
-	       ;; result, and that variable will not be used.
-	       (call-next-method ast
-				 (context (list (make-temp))
-					  successors
-					  invocation))))
-	  (t
-	   ;; We have at least one result.  In case there is more
-	   ;; than one, we generate a successor where all but the
-	   ;; first one are filled with NIL.
-	   (let ((successor (nil-fill (rest results) (first successors))))
-	     (call-next-method ast
-			       (context (list (first results))
-					(list successor)
-					invocation)))))))
+  (let (;; KLUDGE: These bindings are redundant w/r/t the other :around
+        ;; method, but since this method does make instructions, we
+        ;; need these things bound. (Since this method is more specific,
+        ;; it runs around the other :around.)
+        (cleavir-ir:*policy* (cleavir-ast:policy ast))
+        (cleavir-ir:*origin* (cleavir-ast:origin ast))
+        (cleavir-ir:*dynamic-environment*
+          (find-or-create-location
+           (cleavir-ast:dynamic-environment ast))))
+    (with-accessors ((results results)
+                     (successors successors)
+                     (invocation invocation))
+        context
+      (assert-context ast context nil 1)
+      ;; We have a context with one successor, so RESULTS can be a
+      ;; list of any length, or it can be a values location,
+      ;; indicating that all results are needed.
+      (cond ((typep results 'cleavir-ir:values-location)
+             ;; The context is such that all multiple values are
+             ;; required.
+             (let ((temp (make-temp)))
+               (call-next-method
+                ast
+                (context (list temp)
+                         (list (cleavir-ir:make-fixed-to-multiple-instruction
+                                (list temp)
+                                results
+                                (first successors)))
+                         invocation))))
+            ((null results)
+             ;; We don't need the result.  This situation typically
+             ;; happens when we compile a form other than the last of
+             ;; a PROGN-AST.
+             (if (cleavir-ast:side-effect-free-p ast)
+                 (progn
+                   ;; For now, we do not emit this warning.  It is a bit
+                   ;; too annoying because there is some automatically
+                   ;; generated code that is getting warned about.
+                   ;; (warn "Form compiled in a context requiring no value.")
+                   (first successors))
+                 ;; We allocate a temporary variable to receive the
+                 ;; result, and that variable will not be used.
+                 (call-next-method ast
+                                   (context (list (make-temp))
+                                            successors
+                                            invocation))))
+            (t
+             ;; We have at least one result.  In case there is more
+             ;; than one, we generate a successor where all but the
+             ;; first one are filled with NIL.
+             (let ((successor (nil-fill (rest results) (first successors))))
+               (call-next-method ast
+                                 (context (list (first results))
+                                          (list successor)
+                                          invocation))))))))
 
 ;;; If these checks fail, it's an internal bug, since the
 ;;; :around method should fix the results and successors.
