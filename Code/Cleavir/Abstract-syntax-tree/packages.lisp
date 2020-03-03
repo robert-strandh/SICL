@@ -13,13 +13,9 @@
    #:one-value-ast-mixin
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
-   #:*dynamic-environment* #:dynamic-environment
-   #:dynamic-environment-output-ast-mixin
-   #:dynamic-environment-out-ast
    #:immediate-ast #:make-immediate-ast #:value
    #:constant-ast #:make-constant-ast #:value
    #:lexical-ast #:make-lexical-ast
-   #:make-dynamic-environment-ast
    #:symbol-value-ast #:make-symbol-value-ast
    #:set-symbol-value-ast #:make-set-symbol-value-ast
    #:set-constant-symbol-value-ast #:make-set-constant-symbol-value-ast

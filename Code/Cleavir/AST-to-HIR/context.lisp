@@ -31,6 +31,11 @@
 ;;; 3. INVOCATION, always an ENTER-INSTRUCTION.  It indicates the
 ;;; function to which the code to be compiled belongs.
 ;;;
+;;; 4. DYNAMIC-ENVIRONMENT, which is a lexical location that indicates
+;;; in which dynamic environment an instruction is executed. The value
+;;; of this component is stored in the corresponding slot in each
+;;; instruction.
+;;;
 ;;; The following combinations of SUCCESSORS and RESULTS can occur:
 ;;;
 ;;;   SUCCESSORS has one element.  then RESULTS can be a list of
@@ -64,7 +69,9 @@
 (defclass context ()
   ((%results :initarg :results :reader results)
    (%successors :initarg :successors :accessor successors)
-   (%invocation :initarg :invocation :reader invocation)))
+   (%invocation :initarg :invocation :reader invocation)
+   (%dynamic-environment :initarg :dynamic-environment
+                         :reader dynamic-environment)))
 
 (defmethod initialize-instance :after ((context context) &rest initargs)
   (declare (ignore initargs))
@@ -85,13 +92,17 @@
     (when (and (= (length successors) 2) (not (null results)))
       (error "Illegal combination of results and successors"))
     (unless (typep (invocation context) 'cleavir-ir:enter-instruction)
-      (error "Illegal invocation"))))
+      (error "Illegal invocation"))
+    (unless (typep (dynamic-environment context) 'cleavir-ir:lexical-location)
+      (error "Illegal dynamic environment location ~s"
+             (dynamic-environment context)))))
 
-(defun context (results successors invocation)
+(defun context (results successors invocation dynamic-environment)
   (make-instance 'context
     :results results
     :successors successors
-    :invocation invocation))
+    :invocation invocation
+    :dynamic-environment dynamic-environment))
 
 (defmethod print-object ((obj context) stream)
   (print-unreadable-object (obj stream)
@@ -99,11 +110,14 @@
     (format stream " successors: ~s" (successors obj))))
 
 (defun clone-context (context &rest keyword-arguments
-                      &key results successors invocation)
-  (declare (ignore results successors invocation))
+                      &key results successors invocation
+                        dynamic-environment)
+  (declare (ignore results successors invocation
+                   dynamic-environment))
   (apply #'make-instance 'context
          (append
           keyword-arguments
           (list :results (results context)
                 :successors (successors context)
-                :invocation (invocation context)))))
+                :invocation (invocation context)
+                :dynamic-environment (dynamic-environment context)))))
