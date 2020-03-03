@@ -1,15 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod replace ((datum t) sequence &rest rest)
-  (declare (ignore rest))
-  (error 'must-be-sequence
-         :datum datum))
-
-(defmethod replace (sequence (datum t) &rest rest)
-  (declare (ignore rest))
-  (error 'must-be-sequence
-         :datum datum))
-
 (defmethod replace ((list1 list) (list2 list) &key (start1 0) end1 (start2 0) end2)
   (flet ((terminate (n)
            (declare (ignore n))

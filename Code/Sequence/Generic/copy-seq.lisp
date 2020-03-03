@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod copy-seq ((datum t))
-  (error 'must-be-sequence
-         :datum datum))
-
 (defmethod copy-seq ((list list))
   (sicl-utilities:with-collectors ((result collect))
     (do ((rest list (cdr rest)))
@@ -17,3 +13,5 @@
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod copy-seq ((vector #1#))
     (make-sequence-like vector (length vector) :initial-contents vector)))
+
+(seal-domain #'copy-seq '(sequence))

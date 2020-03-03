@@ -1,10 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod find (item (datum t) &key from-end test test-not (start 0) end key)
-  (declare (ignore from-end test test-not start end key))
-  (error 'must-be-sequence
-         :datum datum))
-
 (defmethod find (item (list list) &key from-end test test-not (start 0) end key)
   (with-test-function (test test test-not)
     (with-key-function (key key)

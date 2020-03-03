@@ -148,7 +148,8 @@
 
 (declaim (inline nth-cons))
 (defun nth-cons (list index)
-  (declare (array-index index))
+  (declare (list list)
+           (array-index index))
   (labels ((nth-cons-aux (rest counter)
              (declare (array-index counter))
              (if (atom rest)

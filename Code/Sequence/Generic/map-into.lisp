@@ -1,10 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod map-into ((datum t) function &rest sequences)
-  (declare (ignore function sequences))
-  (error 'must-be-sequence
-         :datum datum))
-
 (defmethod map-into ((list list) function &rest sequences)
   (flet ((terminate (n)
            (declare (ignore n))

@@ -1,10 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod delete-if (test (datum t) &key from-end (start 0) end count key)
-  (declare (ignore from-end start end count key))
-  (error 'must-be-sequence
-         :datum datum))
-
 (defmethod delete-if (test (list list) &key from-end (start 0) end count key)
   (with-predicate (predicate test)
     (with-key-function (key key)

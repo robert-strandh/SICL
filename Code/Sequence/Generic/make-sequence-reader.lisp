@@ -77,3 +77,5 @@
                      (let ((v (aref vector index))
                            (i (decf index)))
                        (values v i))))))))))
+
+(seal-domain #'make-sequence-reader '(sequence t t t t))

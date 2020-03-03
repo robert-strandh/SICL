@@ -77,3 +77,5 @@
                      (let ((v (shiftf (aref vector index) new-value))
                            (i (decf index)))
                        (values v i))))))))))
+
+(seal-domain #'make-sequence-writer '(sequence t t t t))

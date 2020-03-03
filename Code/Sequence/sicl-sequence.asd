@@ -18,18 +18,16 @@
      ;; Firstly, load the a few elementary sequence functions and seal
      ;; them.  This way, the subsequent definitions can already use
      ;; optimized versions of them.
-     (:file "elt")
      (:file "length")
+     (:file "elt")
      (:file "adjust-sequence")
      (:file "make-sequence-like")
-     (:file "seal-elementary-sequence-functions")
 
      ;; Secondly, load several high-level utilities for working with sequences.
      (:file "for-each-relevant-cons")
      (:file "for-each-relevant-element")
      (:file "make-sequence-reader")
      (:file "make-sequence-writer")
-     (:file "seal-auxiliary-generic-functions")
 
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the bulk of the sequence functions.
@@ -64,6 +62,5 @@
      (:file "subseq")
      (:file "substitute")
      (:file "substitute-if")
-     (:file "substitute-if-not")
-     (:file "seal-remaining-sequence-functions")))))
+     (:file "substitute-if-not")))))
 
