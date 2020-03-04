@@ -6,12 +6,13 @@
   (change-class instruction 'cleavir-ir:assignment-instruction
                 :outputs (list *rdi*)))
 
-;;; We can only handle immediate inputs for now.  Recall that the
-;;; immediate input was converted from a constant input, and the
-;;; constant input was a non-negative fixnum indicating the index.
-;;; That fixnum was converted to an immediate input by HIR-to-MIR, so
-;;; its value is now twice what it used to be.  For that reason, we
-;;; essentially need to convert it back before processing it.
+;;; The input representing the index of the value can be either
+;;; immediate or lexical.  When it is a lexical input, it is not one
+;;; of the 5 registers used for multiple return values, but is
+;;; necessarily an offset to be subtracted from RSP.  When it is an
+;;; immediate input, it can be either one of the registers, or it can
+;;; be an offset into the stack.  The offset is a fixnum, so it has to
+;;; be converted to a byte offset.
 
 (defun set-return-value-instruction-with-lexical-input
     (instruction index-input value-location lexical-locations)
