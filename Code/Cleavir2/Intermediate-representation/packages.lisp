@@ -139,6 +139,7 @@
    #:unsigned-div-instruction
    #:unsigned-less-instruction
    #:unsigned-not-greater-instruction
+   #:negate-instruction
    #:equal-instruction
    #:shift-left-instruction
    #:logic-shift-right-instruction
