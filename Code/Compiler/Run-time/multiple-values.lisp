@@ -15,3 +15,14 @@
 (defun initialize-return-values ()
   (let ((argument-list (make-list 50)))
     (cons argument-list argument-list)))
+
+;;; When this function is called, the VALUES contains the 51-element
+;;; list described above.  We need to extract the values that were
+;;; appended by the APPEND-VALUES-INSTRUCTION and then APPLY the
+;;; function.
+(defun call-with-values (function values)
+  (apply function
+         (loop with end = (car values)
+               for cell = (cdr values) then (cdr cell)
+               until (eq cell end)
+               collect (car cell))))
