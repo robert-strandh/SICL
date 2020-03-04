@@ -73,24 +73,21 @@
   (change-class instruction 'cleavir-ir:assignment-instruction
                 :input *rdi*))
 
-(defun set-return-value-instruction-with-immediate-input
-    (instruction index-input value-location lexical-locations)
-
 (defmethod process-instruction
     ((instruction cleavir-ir:return-value-instruction)
      lexical-locations)
   (let ((input (first (cleavir-ir:inputs instruction)))
-        (outputs (cleavir-ir:outputs instruction)))
+        (output (first (cleavir-ir:outputs instruction))))
     (assert (typep input 'cleavir-ir:immediate-input))
     (let ((index (ash (cleavir-ir:value input) -1)))
       (if (< index 5)
           (let ((register
                   (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
-            (if (lexical-p (first outputs))
+            (if (lexical-p output)
                 (progn (insert-memset-after
                         instruction
                         register
-                        (first outputs)
+                        output
                         *r11*
                         lexical-locations)
                        (change-class instruction 'cleavir-ir:nop-instruction
@@ -110,14 +107,14 @@
                :inputs (list *r11* offset-input)
                :output *r11*)
              instruction)
-            (if (lexical-p (first outputs))
+            (if (lexical-p output)
                 (progn (change-class instruction 'cleavir-ir:memref1-instruction
                                      :address *r11*
                                      :value *rax*)
                        (insert-memset-after
                         instruction
                         *rax*
-                        (first outputs)
+                        output
                         *r9*
                         lexical-locations))
                 (change-class instruction 'cleavir-ir:memref1-instruction
