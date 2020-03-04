@@ -167,6 +167,8 @@
      lexical-locations)
   (let ((input (first (cleavir-ir:inputs instruction)))
         (output (first (cleavir-ir:outputs instruction))))
-    (assert (typep input 'cleavir-ir:immediate-input))
-    (return-value-instruction-with-immediate-input
-     instruction input output lexical-locations)))
+    (if (typep input 'cleavir-ir:immediate-input)
+        (return-value-instruction-with-immediate-input
+         instruction input output lexical-locations)
+        (return-value-instruction-with-lexical-input
+         instruction input output lexical-locations))))
