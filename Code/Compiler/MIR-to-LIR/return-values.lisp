@@ -13,6 +13,54 @@
 ;;; its value is now twice what it used to be.  For that reason, we
 ;;; essentially need to convert it back before processing it.
 
+(defun set-return-value-instruction-with-lexical-input
+    (instruction index-input value-location lexical-locations)
+  ;; Load the value of the lexical input into register R11.
+  (load-lexical index-input *r11* instruction lexical-locations)
+  ;; Subtract 4*2 from R11 to get the offset (in words) to subtract
+  ;; from RSP in order to get to the value location in question.
+  (cleavir-ir:insert-instruction-before
+   (make-instance 'cleavir-ir:unsigned-sub-instruction
+     :inputs (list *r11* (make-instance 'cleavir-ir:immediate-input :value 8))
+     :output *r11*)
+   instruction)
+  ;; Shift R11 left by 3 positions to convert the word offset to a
+  ;; byte offset.
+  (cleavir-ir:insert-instruction-before
+   (make-instance 'cleavir-ir:shift-left-instruction
+     :inputs (list *r11* (make-instance 'cleavir-ir:immediate-input :value 3))
+     :output *r11*)
+   instruction)
+  ;; Negate the value of R11 so that we can later add RSP to it.
+  (cleavir-ir:insert-instruction-before
+   (make-instance 'cleavir-ir:negate-instruction
+     :input *r11*
+     :output *r11*)
+   instruction)
+  ;; Add RSP to R11.
+  (cleavir-ir:insert-instruction-before
+   (make-instance 'cleavir-ir:unsigned-add-instruction
+     :inputs (list *r11* *rsp*)
+     :output *r11*)
+   instruction)
+  ;; In R11, we now have the the address of the value location in
+  ;; question.
+  (if (lexical-p value-location)
+      ;; FIXME: using RAX here is very likely wrong since it is the
+      ;; one holding the first return value.
+      (progn (change-class instruction 'cleavir-ir:memset1-instruction
+                           :address *r11*
+                           :value *rax*)
+             (insert-memref-before
+              instruction
+              value-location
+              *rax*
+              *r9*
+              lexical-locations))
+      (change-class instruction 'cleavir-ir:memset1-instruction
+                    :address *r11*
+                    :value value-location)))
+
 (defun set-return-value-instruction-with-immediate-input
     (instruction index-input value-location lexical-locations)
   (let ((index (ash (cleavir-ir:value index-input) -1)))
@@ -45,6 +93,8 @@
              :output *r11*)
            instruction)
           (if (lexical-p value-location)
+              ;; FIXME: using RAX here is very likely wrong since it is the
+              ;; one holding the first return value.
               (progn (change-class instruction 'cleavir-ir:memset1-instruction
                                    :address *r11*
                                    :value *rax*)
@@ -56,7 +106,7 @@
                       lexical-locations))
               (change-class instruction 'cleavir-ir:memset1-instruction
                             :address *r11*
-                            :value value-location)))))  )
+                            :value value-location))))))
 
 (defmethod process-instruction
     ((instruction cleavir-ir:set-return-value-instruction)
