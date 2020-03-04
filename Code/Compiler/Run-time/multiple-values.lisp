@@ -12,7 +12,7 @@
 ;;; pointing to the second CONS cell.  The CAR is then used by the
 ;;; APPEND-VALUES-INSTRUCTION as a pointer into the remaining list.
 ;;; The CDR holds the beginning of the list.
-(defun initialize-return-values ()
+(defun initialize-values ()
   (let ((argument-list (make-list 50)))
     (cons argument-list argument-list)))
 
