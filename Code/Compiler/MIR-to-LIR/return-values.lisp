@@ -73,6 +73,50 @@
   (change-class instruction 'cleavir-ir:assignment-instruction
                 :input *rdi*))
 
+(defun return-value-instruction-with-lexical-input
+    (instruction input output lexical-locations)
+  ;; Load the value of the lexical input into register R11.
+  (load-lexical input *r11* instruction lexical-locations)
+  ;; Subtract 4*2 from R11 to get the offset (in words) to subtract
+  ;; from RSP in order to get to the value in question.
+  (cleavir-ir:insert-instruction-before
+   (make-instance 'cleavir-ir:unsigned-sub-instruction
+     :inputs (list *r11* (make-instance 'cleavir-ir:immediate-input :value 8))
+     :output *r11*)
+   instruction)
+  ;; Shift R11 left by 3 positions to convert the word offset to a
+  ;; byte offset.
+  (cleavir-ir:insert-instruction-before
+   (make-instance 'cleavir-ir:shift-left-instruction
+     :inputs (list *r11* (make-instance 'cleavir-ir:immediate-input :value 3))
+     :output *r11*)
+   instruction)
+  ;; Negate the value of R11 so that we can later add RSP to it.
+  (cleavir-ir:insert-instruction-before
+   (make-instance 'cleavir-ir:negate-instruction
+     :input *r11*
+     :output *r11*)
+   instruction)
+  ;; Add RSP to R11.
+  (cleavir-ir:insert-instruction-before
+   (make-instance 'cleavir-ir:unsigned-add-instruction
+     :inputs (list *r11* *rsp*)
+     :output *r11*)
+   instruction)
+  ;; In R11, we now have the the address of the value in question.
+  (if (lexical-p output)
+      (progn (change-class instruction 'cleavir-ir:memref1-instruction
+                           :address *r11*
+                           :value *r11*)
+             (insert-memset-after
+              instruction
+              *r11*
+              output
+              *r9*
+              lexical-locations))
+      (change-class instruction 'cleavir-ir:memref1-instruction
+                    :address *r11*)))
+
 (defun return-value-instruction-with-immediate-input
     (instruction input output lexical-locations)
   (let ((index (ash (cleavir-ir:value input) -1)))
@@ -104,6 +148,8 @@
              :output *r11*)
            instruction)
           (if (lexical-p output)
+              ;; FIXME: using RAX here is very likely wrong since it is the
+              ;; one holding the first return value.
               (progn (change-class instruction 'cleavir-ir:memref1-instruction
                                    :address *r11*
                                    :value *rax*)
