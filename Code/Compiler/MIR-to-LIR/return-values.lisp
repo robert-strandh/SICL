@@ -113,9 +113,11 @@
      lexical-locations)
   (destructuring-bind (index-input value-location)
       (cleavir-ir:inputs instruction)
-    (assert (typep index-input 'cleavir-ir:immediate-input))
-    (set-return-value-instruction-with-immediate-input
-     instruction index-input value-location lexical-locations)))
+    (if (typep index-input 'cleavir-ir:immediate-input)
+        (set-return-value-instruction-with-immediate-input
+         instruction index-input value-location lexical-locations)
+        (set-return-value-instruction-with-lexical-input
+         instruction index-input value-location lexical-locations))))
 
 (defmethod process-instruction
     ((instruction cleavir-ir:compute-return-value-count-instruction)
