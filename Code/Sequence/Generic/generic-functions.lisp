@@ -1,169 +1,173 @@
 (cl:in-package #:sicl-sequence)
 
-(define-sealable-generic-function copy-seq
-    (sequence))
+(defgeneric copy-seq
+    (sequence)
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function elt
+(defgeneric elt
     (sequence index)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function (setf elt)
+(defgeneric (setf elt)
     (value sequence index)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function fill
+(defgeneric fill
     (sequence item &key start end)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function make-sequence-like
+(defgeneric make-sequence-like
     (sequence length &key initial-element initial-contents)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function adjust-sequence
+(defgeneric adjust-sequence
     (sequence length &key initial-element initial-contents)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function subseq
+(defgeneric subseq
     (sequence start &optional end)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function map-into
+(defgeneric map-into
     (result-sequence function &rest sequences)
-  (:argument-precedence-order result-sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function reduce
+(defgeneric reduce
     (function sequence &key key from-end start end initial-value)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function count
+(defgeneric count
     (item sequence &key from-end start end key test test-not)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function count-if
+(defgeneric count-if
     (predicate sequence &key from-end start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function count-if-not
+(defgeneric count-if-not
     (predicate sequence &key from-end start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function length
-    (sequence))
+(defgeneric length
+    (sequence)
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function reverse
-    (sequence))
+(defgeneric reverse
+    (sequence)
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function nreverse
-    (sequence))
+(defgeneric nreverse
+    (sequence)
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function sort
+(defgeneric sort
     (sequence predicate &key key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function stable-sort
+(defgeneric stable-sort
     (sequence predicate &key key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function find
+(defgeneric find
     (item sequence &key from-end test test-not start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function find-if
+(defgeneric find-if
     (predicate sequence &key from-end start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function find-if-not
+(defgeneric find-if-not
     (predicate sequence &key from-end start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function position
+(defgeneric position
     (item sequence &key from-end test test-not start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function position-if
+(defgeneric position-if
     (predicate sequence &key from-end start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function position-if-not
+(defgeneric position-if-not
     (predicate sequence &key from-end start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function search
+(defgeneric search
     (sequence-1 sequence-2 &key from-end test test-not key start1 start2 end1 end2)
-  (:argument-precedence-order sequence-1 sequence-2))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function mismatch
+(defgeneric mismatch
     (sequence-1 sequence-2 &key from-end test test-not key start1 start2 end1 end2)
-  (:argument-precedence-order sequence-1 sequence-2))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function replace
+(defgeneric replace
     (sequence-1 sequence-2 &key start1 end1 start2 end2)
-  (:argument-precedence-order sequence-1 sequence-2))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function substitute
+(defgeneric substitute
     (newitem olditem sequence &key from-end test test-not start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function substitute-if
+(defgeneric substitute-if
     (newitem predicate sequence &key from-end start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function substitute-if-not
+(defgeneric substitute-if-not
     (newitem predicate sequence &key from-end start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function nsubstitute
+(defgeneric nsubstitute
     (newitem olditem sequence &key from-end test test-not start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function nsubstitute-if
+(defgeneric nsubstitute-if
     (newitem predicate sequence &key from-end start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function nsubstitute-if-not
+(defgeneric nsubstitute-if-not
     (newitem predicate sequence &key from-end start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function remove
+(defgeneric remove
     (item sequence &key from-end test test-not start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function remove-if
+(defgeneric remove-if
     (test sequence &key from-end start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function remove-if-not
+(defgeneric remove-if-not
     (test sequence &key from-end start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function delete
+(defgeneric delete
     (item sequence &key from-end test test-not start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function delete-if
+(defgeneric delete-if
     (test sequence &key from-end start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function delete-if-not
+(defgeneric delete-if-not
     (test sequence &key from-end start end count key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function remove-duplicates
+(defgeneric remove-duplicates
     (sequence &key from-end test test-not start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function delete-duplicates
+(defgeneric delete-duplicates
     (sequence &key from-end test test-not start end key)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Auxiliary Functions
 
-(define-sealable-generic-function make-sequence-reader
+(defgeneric make-sequence-reader
     (sequence start end from-end terminate)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))
 
-(define-sealable-generic-function make-sequence-writer
+(defgeneric make-sequence-writer
     (sequence start end from-end terminate)
-  (:argument-precedence-order sequence))
+  (:generic-function-class fast-generic-function))

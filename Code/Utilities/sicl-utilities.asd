@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "once-only")
+   (:file "with-gensyms")
    (:file "with-collectors")))

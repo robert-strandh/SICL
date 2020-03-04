@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod make-sequence-like ((datum t) length &key &allow-other-keys)
-  (error 'must-be-sequence
-         :datum datum))
-
 (defmethod make-sequence-like
     ((list list) length &key (initial-element nil initial-element-p)
                              (initial-contents nil initial-contents-p))
@@ -34,3 +30,5 @@
                               :initial-contents initial-contents))
           (t
            (make-array length :element-type (array-element-type vectoroid))))))
+
+(seal-domain #'make-sequence-like '(sequence t))

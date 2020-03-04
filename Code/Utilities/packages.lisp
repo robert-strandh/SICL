@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export
    #:once-only
+   #:with-gensyms
    #:with-collectors))

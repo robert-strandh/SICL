@@ -1,10 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod count-if (predicate (datum t) &key from-end (start 0) end key)
-  (declare (ignore from-end start end key))
-  (error 'must-be-sequence
-         :datum datum))
-
 (defmethod count-if (predicate (list list) &key from-end (start 0) end key)
   (let ((count 0))
     (with-predicate (predicate predicate)

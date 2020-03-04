@@ -11,7 +11,7 @@
           (declare (array-index index))
           (lambda ()
             (cond ((= index limit)
-                   (funcall terminate))
+                   (funcall terminate (- index start)))
                   ((consp rest)
                    (let ((v (first rest))
                          (i index))
@@ -22,7 +22,7 @@
                    (error 'must-be-proper-list
                           :datum list))
                   ((null end)
-                   (funcall terminate))
+                   (funcall terminate (- index start)))
                   (t
                    (error 'invalid-end-index
                           :datum index
@@ -34,7 +34,7 @@
         (declare (array-length index))
         (lambda ()
           (cond ((= index start)
-                 (funcall terminate))
+                 (funcall terminate (- end index)))
                 ((consp rest)
                  (let ((v (first rest))
                        (i (decf index)))
@@ -61,7 +61,7 @@
             (declare (array-length index))
             (lambda ()
               (cond ((= index end)
-                     (funcall terminate))
+                     (funcall terminate (- index start)))
                     (t
                      (let ((v (aref vector index))
                            (i index))
@@ -72,8 +72,10 @@
             (declare (array-length index))
             (lambda ()
               (cond ((= index start)
-                     (funcall terminate))
+                     (funcall terminate (- end index)))
                     (t
                      (let ((v (aref vector index))
                            (i (decf index)))
                        (values v i))))))))))
+
+(seal-domain #'make-sequence-reader '(sequence t t t t))

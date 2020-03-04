@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod length ((datum t))
-  (error 'must-be-sequence
-         :datum datum))
-
 (defmethod length ((list list))
   (labels ((len (rest counter)
              (if (atom rest)
@@ -14,5 +10,8 @@
                  (len (cdr rest) (1+ counter)))))
     (len list 0)))
 
-(defmethod length ((vector vector))
-  (cl:length vector))
+(replicate-for-each-relevant-vectoroid #1=#:vector
+  (defmethod length ((vector #1#))
+    (cl:length vector)))
+
+(seal-domain #'length '(sequence))
