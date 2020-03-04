@@ -129,3 +129,10 @@
  (argument1 argument2)
  (output)
  (true-successor false-successor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MIR instruction NEGATE-INSTRUCTION
+
+(defclass negate-instruction (instruction one-successor-mixin)
+  ())
