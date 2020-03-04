@@ -13,60 +13,68 @@
 ;;; its value is now twice what it used to be.  For that reason, we
 ;;; essentially need to convert it back before processing it.
 
+(defun set-return-value-instruction-with-immediate-input
+    (instruction index-input value-location lexical-locations)
+  (let ((index (ash (cleavir-ir:value index-input) -1)))
+    (if (< index 5)
+        (let ((register
+                (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
+          (if (lexical-p value-location)
+              (progn (insert-memref-before
+                      instruction
+                      value-location
+                      register
+                      *r11*
+                      lexical-locations)
+                     (change-class instruction 'cleavir-ir:nop-instruction
+                                   :inputs '()
+                                   :outputs '()))
+              (change-class instruction 'cleavir-ir:assignment-instruction
+                            :inputs (list value-location)
+                            :outputs (list register))))
+        (let ((offset-input (make-instance 'cleavir-ir:immediate-input
+                              :value (* 8 (- index 5)))))
+          (cleavir-ir:insert-instruction-before
+           (make-instance 'cleavir-ir:assignment-instruction
+             :input *rsp*
+             :output *r11*)
+           instruction)
+          (cleavir-ir:insert-instruction-before
+           (make-instance 'cleavir-ir:unsigned-sub-instruction
+             :inputs (list *r11* offset-input)
+             :output *r11*)
+           instruction)
+          (if (lexical-p value-location)
+              (progn (change-class instruction 'cleavir-ir:memset1-instruction
+                                   :address *r11*
+                                   :value *rax*)
+                     (insert-memref-before
+                      instruction
+                      value-location
+                      *rax*
+                      *r9*
+                      lexical-locations))
+              (change-class instruction 'cleavir-ir:memset1-instruction
+                            :address *r11*
+                            :value value-location)))))  )
+
 (defmethod process-instruction
     ((instruction cleavir-ir:set-return-value-instruction)
      lexical-locations)
   (destructuring-bind (index-input value-location)
       (cleavir-ir:inputs instruction)
     (assert (typep index-input 'cleavir-ir:immediate-input))
-    (let ((index (ash (cleavir-ir:value index-input) -1)))
-      (if (< index 5)
-          (let ((register
-                  (case index (0 *rax*) (1 *rdx*) (2 *rcx*) (3 *rsi*) (4 *r9*))))
-            (if (lexical-p value-location)
-                (progn (insert-memref-before
-                        instruction
-                        value-location
-                        register
-                        *r11*
-                        lexical-locations)
-                       (change-class instruction 'cleavir-ir:nop-instruction
-                                     :inputs '()
-                                     :outputs '()))
-                (change-class instruction 'cleavir-ir:assignment-instruction
-                              :inputs (list value-location)
-                              :outputs (list register))))
-          (let ((offset-input (make-instance 'cleavir-ir:immediate-input
-                                :value (* 8 (- index 5)))))
-            (cleavir-ir:insert-instruction-before
-             (make-instance 'cleavir-ir:assignment-instruction
-               :input *rsp*
-               :output *r11*)
-             instruction)
-            (cleavir-ir:insert-instruction-before
-             (make-instance 'cleavir-ir:unsigned-sub-instruction
-               :inputs (list *r11* offset-input)
-               :output *r11*)
-             instruction)
-            (if (lexical-p value-location)
-                (progn (change-class instruction 'cleavir-ir:memset1-instruction
-                          :address *r11*
-                          :value *rax*)
-                       (insert-memref-before
-                        instruction
-                        value-location
-                        *rax*
-                        *r9*
-                        lexical-locations))
-                (change-class instruction 'cleavir-ir:memset1-instruction
-                              :address *r11*
-                              :value value-location)))))))
+    (set-return-value-instruction-with-immediate-input
+     instruction index-input value-location lexical-locations)))
 
 (defmethod process-instruction
     ((instruction cleavir-ir:compute-return-value-count-instruction)
      lexical-locations)
   (change-class instruction 'cleavir-ir:assignment-instruction
                 :input *rdi*))
+
+(defun set-return-value-instruction-with-immediate-input
+    (instruction index-input value-location lexical-locations)
 
 (defmethod process-instruction
     ((instruction cleavir-ir:return-value-instruction)
