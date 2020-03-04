@@ -40,7 +40,6 @@
 
 ;;; Instructions inherit policies from the AST that birthed them.
 (defmethod compile-ast :around ((ast cleavir-ast:ast) context)
-  (declare (ignore context))
   (let ((cleavir-ir:*policy* (cleavir-ast:policy ast))
         (cleavir-ir:*origin* (cleavir-ast:origin ast))
         (cleavir-ir:*dynamic-environment*
@@ -891,7 +890,7 @@
 		       (compile-ast
 			form-ast
                         (clone-context context
-                                       :results (list form-temp)
+                                       :results form-temp
                                        :successors (list successor)))))
 	(compile-ast
 	 (cleavir-ast:function-form-ast ast)

@@ -81,7 +81,7 @@
                      (every (lambda (result)
                               (typep result 'cleavir-ir:lexical-location))
                             results))
-                (typep result 'cleavir-ir:values-location))
+                (typep results 'cleavir-ir:values-location))
       (error "illegal results: ~s" results))
     (unless (and (listp successors)
                  (<= 1 (length successors) 2)

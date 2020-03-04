@@ -236,7 +236,7 @@
              ;; the dynamic environment is hooked up correctly.
              (cleavir-primop:ast
               ,(cleavir-ast:make-function-ast
-                (funcall next-ast) nil)))
+                (funcall next-thunk) nil)))
            env system))
 
 ;;; ENV is an environment that is known to contain information about

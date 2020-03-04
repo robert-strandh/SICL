@@ -23,5 +23,6 @@
                                 ,(cst:cst-from-expression
                                   `(cleavir-primop:ast ,value-ast))
                                 ,(cst:cst-from-expression
-                                  `(lambda () (cleavir-primop:ast ,next-ast)))))))
+                                  `(lambda () (cleavir-primop:ast
+                                               ,(funcall next-thunk))))))))
     (convert new-cst env system)))
