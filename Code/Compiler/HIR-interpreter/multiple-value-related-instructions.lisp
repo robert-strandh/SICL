@@ -43,8 +43,9 @@
     (client
      (instruction cleavir-ir:multiple-value-call-instruction)
      lexical-environment)
-  (destructuring-bind (function-location values-location)
+  (destructuring-bind (call-function-location function-location values-location)
       (cleavir-ir:inputs instruction)
+    (declare (ignore call-function-location))
     (setf *global-values-location*
           (multiple-value-list
            (apply (input-value function-location lexical-environment)
