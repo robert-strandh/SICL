@@ -7,7 +7,7 @@
     (setf (cleavir-ir:outputs instruction) '())
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:return-value-instruction
-       :input (make-instance 'cleavir-ir:constant-input
+       :input (make-instance 'cleavir-ir:immediate-input
                 :value 0)
        :output dynamic-environment-output)
      instruction)))
