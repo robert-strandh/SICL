@@ -10,7 +10,7 @@
     ((instruction cleavir-ir:multiple-value-call-instruction))
   (let* ((call-function-constant-input
            (make-instance 'cleavir-ir:constant-input
-             :value 'sicl-run-time:multiple-value-call))
+             :value 'sicl-run-time:call-with-values))
          (call-function-location
            (make-instance 'cleavir-ir:lexical-location
              :name "call-function")))
