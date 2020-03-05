@@ -19,4 +19,5 @@
            #:preprocess-catch-instructions
            #:preprocess-bind-instructions
            #:preprocess-initialize-values-instructions
+           #:preprocess-multiple-value-call-instructions
            #:preprocess-unwind-instructions))

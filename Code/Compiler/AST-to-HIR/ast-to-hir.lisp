@@ -16,6 +16,7 @@
     (sicl-hir-transformations:preprocess-catch-instructions hir)
     (sicl-hir-transformations:preprocess-bind-instructions hir)
     (sicl-hir-transformations:preprocess-initialize-values-instructions hir)
+    (sicl-hir-transformations:preprocess-multiple-value-call-instructions hir)
     (sicl-hir-transformations:preprocess-unwind-instructions hir)
     (sicl-hir-transformations:convert-symbol-value hir)
     (sicl-hir-transformations:convert-set-symbol-value hir)
