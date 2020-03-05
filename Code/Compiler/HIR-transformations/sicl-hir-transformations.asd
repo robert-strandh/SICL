@@ -11,6 +11,7 @@
    (:file "preprocess-unwind")
    (:file "preprocess-catch")
    (:file "preprocess-bind")
+   (:file "preprocess-initialize-values")
    (:file "convert-symbol-value")
    (:file "hoist-fdefinitions")
    (:file "eliminate-create-cell")

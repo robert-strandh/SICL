@@ -18,4 +18,5 @@
            #:preprocess-unwind-instructions
            #:preprocess-catch-instructions
            #:preprocess-bind-instructions
+           #:preprocess-initialize-values-instructions
            #:preprocess-unwind-instructions))
