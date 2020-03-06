@@ -10,6 +10,6 @@
    #:compile-ast
    #:translate-lambda-list
    #:compile-function
-   #:context
+   #:context #:clone-context
    #:compile-arguments
    #:invocation))

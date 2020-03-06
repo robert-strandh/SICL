@@ -39,13 +39,12 @@
           with cleavir-ir:*dynamic-environment* = call-dynenv
           for location in (cleavir-ir:parameters enter)
           for arg in (rest (cleavir-ir:inputs call))
-          for assign = (cleavir-ir:make-assignment-instruction arg location) 
-          do (when (cleavir-ir:using-instructions location)
-               (let ((binding-assign (first (cleavir-ir:using-instructions location))))
-                 (change-class binding-assign 'binding-assignment-instruction)
-                 (push binding-assign *binding-assignments*)))
+          for assign = (make-instance 'binding-assignment-instruction
+                                      :inputs (list arg)
+                                      :outputs (list location))
+          do (push assign *binding-assignments*)
              (cleavir-ir:insert-instruction-before assign call))
-    ;; Turn any unwinds in the body to the function being inlined into
+    ;; Turn any unwinds in the body to the function being inlined
     ;; into direct control transfers.
     (loop with target-enter = (instruction-owner call)
           for unwind in unwinds
@@ -56,10 +55,11 @@
             ;; (Similar to the unwind-instruction method on inline-one-instruction)
             do (let* ((target (nth (cleavir-ir:unwind-index unwind)
                                    (cleavir-ir:successors destination)))
-                      (nop (let ((cleavir-ir:*policy* (cleavir-ir:policy unwind))
-                                 (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment unwind)))
-                             (cleavir-ir:make-nop-instruction (list target)))))
-                 (cleavir-ir:bypass-instruction nop unwind)))
+                      (new (let ((cleavir-ir:*policy* (cleavir-ir:policy unwind))
+                                 (cleavir-ir:*dynamic-environment*
+                                   (cleavir-ir:dynamic-environment unwind)))
+                             (cleavir-ir:make-local-unwind-instruction target))))
+                 (cleavir-ir:bypass-instruction new unwind)))
     ;; Fix up the return values, and replace return instructions with NOPs that go to after the call.
     (loop with caller-values = (first (cleavir-ir:outputs call))
           with next = (first (cleavir-ir:successors call))

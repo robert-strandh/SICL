@@ -18,11 +18,8 @@
     ((symbol (eql 'block)) form env system)
   (db origin (block name . body) form
     (declare (ignore block))
-    (let* ((new-dynenv (cleavir-ast:make-lexical-ast
-                        '#:block-dynamic-environment))
-           (ast (cleavir-ast:make-block-ast nil new-dynenv :origin origin))
-	   (new-env (cleavir-env:add-block env name ast))
-           (cleavir-ast:*dynamic-environment* new-dynenv))
+    (let* ((ast (cleavir-ast:make-block-ast nil :origin origin))
+	   (new-env (cleavir-env:add-block env name ast)))
       (setf (cleavir-ast:body-ast ast)
 	    (process-progn (convert-sequence body new-env system)))
       ast)))
@@ -753,27 +750,23 @@
     ((symbol (eql 'tagbody)) form env system)
   (db origin (tagbody . items) form
     (declare (ignore tagbody))
-    (let* ((new-dynenv (cleavir-ast:make-dynamic-environment-ast
-                        '#:tagbody-dynamic-environment))
-           (tag-asts
-             (loop with cleavir-ast:*dynamic-environment* = new-dynenv
-                   for item in (raw items)
-                   for raw-item = (raw item)
-                   when (tagp raw-item)
-                     collect (cleavir-ast:make-tag-ast
-                              raw-item
-                              :origin (location item))))
-           (new-env env))
+    (let ((tag-asts
+            (loop for item in (raw items)
+                  for raw-item = (raw item)
+                  when (tagp raw-item)
+                    collect (cleavir-ast:make-tag-ast
+                             raw-item
+                             :origin (location item))))
+          (new-env env))
       (loop for ast in tag-asts
 	    do (setf new-env (cleavir-env:add-tag
 			      new-env (cleavir-ast:name ast) ast)))
-      (let ((item-asts (loop with cleavir-ast:*dynamic-environment* = new-dynenv
-                             for item in (raw items)
+      (let ((item-asts (loop for item in (raw items)
 			     collect (if (tagp (raw item))
 					 (pop tag-asts)
 					 (convert item new-env system)))))
 	(process-progn
-	 (list (cleavir-ast:make-tagbody-ast item-asts new-dynenv :origin origin)
+	 (list (cleavir-ast:make-tagbody-ast item-asts :origin origin)
 	       (convert-constant nil env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

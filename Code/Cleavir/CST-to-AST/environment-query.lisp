@@ -98,7 +98,7 @@
            (if (and len (<= len 1 3))
                (destructuring-bind (&optional (lambda-list '*) (ret '*))
                    ftype
-                 `(function ,lambda-list ,rest))
+                 `(function ,lambda-list ,ret))
                '(function * *))))
         ((and)
          (if (cleavir-code-utilities:proper-list-p ftype)
