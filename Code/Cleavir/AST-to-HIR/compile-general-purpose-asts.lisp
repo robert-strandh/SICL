@@ -246,12 +246,17 @@
                           '#:block-continuation))
            (dynenv-out (cleavir-ir:make-lexical-location
                         '#:block-dynenv))
+           (local-unwind
+             (let ((cleavir-ir:*dynamic-environment* dynenv-out))
+               (cleavir-ir:make-local-unwind-instruction after)))
            (catch (cleavir-ir:make-catch-instruction
                    continuation
                    dynenv-out
                    (list after)))
            (new-context
-             (clone-context context :dynamic-environment dynenv-out)))
+             (clone-context context
+                            :successors (list local-unwind)
+                            :dynamic-environment dynenv-out)))
       (setf (block-info ast) (list context continuation catch))
       ;; Now just hook up the catch to go to the body normally.
       (push (compile-ast (cleavir-ast:body-ast ast) new-context)
@@ -366,7 +371,9 @@
                    (incf index)
                    (setf (go-info item-ast) (list invocation continuation nop catch index))))
       ;; Now we actually compile the items, in reverse order (like PROGN).
-      (loop with next = (first successors)
+      (loop with next = (let ((cleavir-ir:*dynamic-environment* dynenv-out))
+                          (cleavir-ir:make-local-unwind-instruction
+                           (first successors)))
             for item-ast in (reverse (cleavir-ast:item-asts ast))
             ;; if an item is a tag, we set the catch's NOP to succeed
             ;; to the right place (the current NEXT).

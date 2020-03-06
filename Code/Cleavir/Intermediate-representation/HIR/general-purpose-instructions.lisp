@@ -265,7 +265,9 @@
 ;;; Instruction LOCAL-UNWIND-INSTRUCTION.
 ;;;
 ;;; This instruction is used to indicate a lexical local transfer of
-;;; control resulting from a GO or RETURN-FROM form.
+;;; control from one dynamic environment to another. This can result
+;;; explicitly, from GO or RETURN-FROM, but also as the normal
+;;; return from a BLOCK or TAGBODY.
 ;;;
 ;;; The process of unwinding may involve statically determined side
 ;;; effects due to UNWIND-PROTECT. These effects can be determined
