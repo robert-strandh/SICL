@@ -60,3 +60,23 @@
              :successor true-successor)))
        false-successor))))
 
+(defun make-loop
+    (successor
+     value-count-location
+     cell-location
+     index-location
+     dynamic-environment-location)
+  (let* ((nop (make-instance 'cleavir-ir:nop-instruction))
+         (increment (make-incrementation-instruction
+                     nop
+                     index-location
+                     dynamic-environment-location))
+         (test (make-test-step
+                increment
+                successor
+                value-count-location
+                index-location
+                cell-location
+                dynamic-environment-location)))
+    (rplaca (cleavir-ir:successors increment) test)
+    test))
