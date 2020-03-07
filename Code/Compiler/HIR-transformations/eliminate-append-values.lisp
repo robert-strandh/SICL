@@ -23,3 +23,10 @@
               :value 1)
     :dynamic-environment-location dynamic-environment-location
     :successor successor))
+
+(defun make-final-instruction
+    (successor values-location cell-location dynamic-environment-location)
+  (make-instance 'cleavir-ir:rplaca-instruction
+    :inputs (list values-location cell-location)
+    :dynamic-environment-location dynamic-environment-location
+    :successor successor))
