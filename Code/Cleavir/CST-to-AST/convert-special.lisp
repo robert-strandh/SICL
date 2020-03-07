@@ -32,12 +32,9 @@
     (let ((name (cst:raw name-cst)))
       (unless (symbolp name)
         (error 'block-name-must-be-a-symbol :cst name-cst))
-      (let* ((new-dynenv (cleavir-ast:make-dynamic-environment-ast
-                          '#:block-dynamic-environment))
-             (ast (cleavir-ast:make-block-ast
-                   nil new-dynenv :origin origin))
-             (new-env (cleavir-env:add-block env name ast))
-             (cleavir-ast:*dynamic-environment* new-dynenv))
+      (let* ((ast (cleavir-ast:make-block-ast
+                   nil :origin origin))
+             (new-env (cleavir-env:add-block env name ast)))
         (setf (cleavir-ast:body-ast ast)
               (process-progn (convert-sequence body-cst new-env system)
                              origin))
@@ -359,23 +356,18 @@
                               (cleavir-ast:make-tag-ast
                                (cst:raw tag-cst)
                                :origin (cst:source tag-cst)))))
-          (new-dynenv (cleavir-ast:make-dynamic-environment-ast
-                       '#:tagbody-dynamic-environment))
           (new-env env))
-      (loop with cleavir-ast:*dynamic-environment* = new-dynenv
-            for ast in tag-asts
+      (loop for ast in tag-asts
             do (setf new-env (cleavir-env:add-tag
                               new-env (cleavir-ast:name ast) ast)))
-      (let ((item-asts (loop with cleavir-ast:*dynamic-environment* = new-dynenv
-                             for rest = body-cst then (cst:rest rest)
+      (let ((item-asts (loop for rest = body-cst then (cst:rest rest)
                              until (cst:null rest)
                              collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
                                            (convert item-cst new-env system))))))
         (process-progn
-         (list (cleavir-ast:make-tagbody-ast item-asts new-dynenv
-                                             :origin origin)
+         (list (cleavir-ast:make-tagbody-ast item-asts :origin origin)
                (convert-constant (make-atom-cst nil origin) env system))
          origin)))))
 

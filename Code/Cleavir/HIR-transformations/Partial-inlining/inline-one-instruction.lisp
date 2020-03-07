@@ -140,14 +140,14 @@
   (let ((destination (cleavir-ir:destination instruction)))
     (if (local-catch-p destination)
         ;; We are unwinding to the function being inlined into,
-        ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
+        ;; so the UNWIND-INSTRUCTION must be reduced to a LOCAL-UNWIND-INSTRUCTION.
         (let ((target (nth (cleavir-ir:unwind-index instruction)
                            (cleavir-ir:successors destination)))
               (cleavir-ir:*policy* (cleavir-ir:policy instruction))
               (cleavir-ir:*dynamic-environment*
                 (translate-input (cleavir-ir:dynamic-environment instruction)
                                  mapping)))
-          (cleavir-ir:make-nop-instruction (list target)))
+          (cleavir-ir:make-local-unwind-instruction target))
         ;; We are still actually unwinding, but need to ensure the
         ;; DESTINATION is hooked up correctly.
         (let* ((inputs (cleavir-ir:inputs instruction))

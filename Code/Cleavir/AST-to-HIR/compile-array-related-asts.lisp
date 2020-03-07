@@ -26,20 +26,25 @@
 		   (list (box-for-type type unboxed context)))))
     (compile-ast
      (cleavir-ast:array-ast ast)
-     (context
+     (clone-context
+      context
+      :results
       (list array-temp)
+      :successors
       (list (compile-ast
 	     (cleavir-ast:index-ast ast)
-	     (context (list index-temp)
-		      (list (make-instance 'cleavir-ir:aref-instruction
-			      :element-type type
-			      :simple-p (cleavir-ast:simple-p ast)
-			      :boxed-p (cleavir-ast:boxed-p ast)
-			      :inputs (list array-temp index-temp)
-			      :outputs unboxed
-			      :successors succ))
-		      (invocation context))))
-      (invocation context)))))
+	     (clone-context
+              context
+              :results
+              (list index-temp)
+              :successors
+              (list (make-instance 'cleavir-ir:aref-instruction
+                      :element-type type
+                      :simple-p (cleavir-ast:simple-p ast)
+                      :boxed-p (cleavir-ast:boxed-p ast)
+                      :inputs (list array-temp index-temp)
+                      :outputs unboxed
+                      :successors succ)))))))))
 
 (defun unbox-for-type (type input output successor)
   (make-instance 'cleavir-ir:unbox-instruction
@@ -66,30 +71,37 @@
 		 :successors (successors context))))
     (compile-ast
      (cleavir-ast:array-ast ast)
-     (context
+     (clone-context
+      context
+      :results
       (list array-temp)
+      :successors
       (list
        (compile-ast
 	(cleavir-ast:index-ast ast)
-	(context
+	(clone-context
+         context
+         :results
 	 (list index-temp)
+         :successors
 	 (list
 	  (compile-ast
 	   (cleavir-ast:element-ast ast)
 	   (if (cleavir-ast:boxed-p ast)
 	       ;; simple case: no unbox required
-	       (context (list element-temp)
-			(list aset)
-			(invocation context))
+	       (clone-context
+                context
+                :results (list element-temp)
+                :successors (list aset))
 	       ;; if we have to unbox the new value first, compile
 	       ;; the element-ast in a context where the successor
 	       ;; is an unboxer and the output is a different temp.
 	       (let ((boxed-temp (make-temp)))
-		 (context
-		  (list boxed-temp)
+                 (clone-context
+                  context
+                  :results
+                  (list boxed-temp)
+                  :successors
 		  (list
 		   (unbox-for-type type boxed-temp
-				   element-temp aset))
-		  (invocation context))))))
-	 (invocation context))))
-      (invocation context)))))
+				   element-temp aset))))))))))))))
