@@ -91,9 +91,10 @@
     (successor
      values-location
      value-count-location
-     cell-location
      dynamic-environment-location)
-  (let* ((final (make-final-instruction
+  (let* ((cell-location (make-instance 'cleavir-ir:lexical-location
+                          :name (gensym "cell")))
+         (final (make-final-instruction
                  successor
                  values-location
                  cell-location
