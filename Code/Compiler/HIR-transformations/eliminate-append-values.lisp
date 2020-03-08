@@ -64,9 +64,10 @@
     (successor
      value-count-location
      cell-location
-     index-location
      dynamic-environment-location)
-  (let* ((nop (make-instance 'cleavir-ir:nop-instruction))
+  (let* ((index-location (make-instance 'cleavir-ir:lexical-location
+                           :name (gensym "index")))
+         (nop (make-instance 'cleavir-ir:nop-instruction))
          (increment (make-incrementation-instruction
                      nop
                      index-location
@@ -91,7 +92,6 @@
      values-location
      value-count-location
      cell-location
-     index-location
      dynamic-environment-location)
   (let* ((final (make-final-instruction
                  successor
@@ -102,7 +102,6 @@
                        final
                        value-count-location
                        cell-location
-                       index-location
                        dynamic-environment-location)))
     (loop for i downfrom 4 to 0
           do (setf true-branch
