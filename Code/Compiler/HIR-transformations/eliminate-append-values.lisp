@@ -90,10 +90,11 @@
 (defun make-replacement
     (successor
      values-location
-     value-count-location
      dynamic-environment-location)
   (let* ((cell-location (make-instance 'cleavir-ir:lexical-location
                           :name (gensym "cell")))
+         (value-count-location (make-instance 'cleavir-ir:lexical-location
+                                 :name (gensym "VC")))
          (final (make-final-instruction
                  successor
                  values-location
