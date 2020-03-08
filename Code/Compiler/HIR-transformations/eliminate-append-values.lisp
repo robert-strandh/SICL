@@ -79,7 +79,12 @@
                 cell-location
                 dynamic-environment-location)))
     (rplaca (cleavir-ir:successors increment) test)
-    test))
+    (make-instance 'cleavir-ir:assignment-instruction
+      :input (make-instance 'cleavir-ir:constant-input
+               :value 5)
+      :output index-location
+      :dynamic-environment-location dynamic-environment-location
+      :successor test)))
 
 (defun make-replacement
     (successor
@@ -93,18 +98,12 @@
                  values-location
                  cell-location
                  dynamic-environment-location))
-         (test (make-loop
-                final
-                value-count-location
-                cell-location
-                index-location
-                dynamic-environment-location))
-         (true-branch (make-instance 'cleavir-ir:assignment-instruction
-                        :input (make-instance 'cleavir-ir:constant-input
-                                 :value 5)
-                        :output index-location
-                        :dynamic-environment-location dynamic-environment-location
-                        :successor test)))
+         (true-branch (make-loop
+                       final
+                       value-count-location
+                       cell-location
+                       index-location
+                       dynamic-environment-location)))
     (loop for i downfrom 4 to 0
           do (setf true-branch
                    (make-test-step
