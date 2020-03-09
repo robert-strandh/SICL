@@ -124,7 +124,7 @@
     ((instruction cleavir-ir:compute-return-value-count-instruction)
      lexical-locations)
   (change-class instruction 'cleavir-ir:assignment-instruction
-                :input *rdi*))
+                :inputs (list *rdi*)))
 
 (defun return-value-instruction-with-lexical-input
     (instruction input output lexical-locations)
