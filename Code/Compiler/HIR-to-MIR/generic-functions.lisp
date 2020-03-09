@@ -24,6 +24,15 @@
     cleavir-ir:return-value-instruction
     cleavir-ir:set-return-value-instruction
     cleavir-ir:initialize-return-values-instruction
+    cleavir-ir:signed-add-instruction
+    cleavir-ir:signed-sub-instruction
+    cleavir-ir:unsigned-add-instruction
+    cleavir-ir:unsigned-sub-instruction
+    cleavir-ir:signed-less-instruction
+    cleavir-ir:signed-not-greater-instruction
+    cleavir-ir:unsigned-less-instruction
+    cleavir-ir:unsigned-not-greater-instruction
+    cleavir-ir:negate-instruction
     ;; FIXME: these instructions should be processed
     cleavir-ir:fixnum-divide-instruction))
 
