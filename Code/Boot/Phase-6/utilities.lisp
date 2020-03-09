@@ -10,6 +10,7 @@
          (hir2 (sicl-ast-to-hir:ast-to-hir client ast))
          (fun (sicl-hir-interpreter:top-level-hir-to-host-function client hir))
          (sicl-run-time:*dynamic-environment* '()))
+    (sicl-hir-transformations:eliminate-append-values-instructions hir2)
     (sicl-hir-to-mir:hir-to-mir client hir2)
     ;; (sicl-mir-to-lir:mir-to-lir client hir2)
     (funcall fun
