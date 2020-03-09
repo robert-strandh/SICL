@@ -121,3 +121,10 @@
      value-count-location
      cell-location
      dynamic-environment-location)))
+
+(defun eliminate-append-values-instructions (initial-instruction)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (when (typep instruction 'cleavir-ir:append-values-instruction)
+       (eliminate-append-values-instruction instruction)))
+   initial-instruction))
