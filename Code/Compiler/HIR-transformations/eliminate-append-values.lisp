@@ -136,12 +136,14 @@
       (setf (cleavir-ir:predecessors first)
             (cleavir-ir:predecessors instruction))
       (loop for predecessor in (cleavir-ir:predecessors first)
-            do (substitute first
-                           instruction
-                           (cleavir-ir:successors predecessor)))
-      (substitute last
-                  instruction
-                  (cleavir-ir:predecessors successor)))))
+            do (setf (cleavir-ir:successors predecessor)
+                     (substitute first
+                                 instruction
+                                 (cleavir-ir:successors predecessor))))
+      (setf (cleavir-ir:predecessors successor)
+            (substitute last
+                        instruction
+                        (cleavir-ir:predecessors successor))))))
 
 (defun eliminate-append-values-instructions (initial-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
