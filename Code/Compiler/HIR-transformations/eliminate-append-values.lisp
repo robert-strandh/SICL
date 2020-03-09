@@ -46,6 +46,7 @@
       :successors
       (list
        (make-instance 'cleavir-ir:return-value-instruction
+         :input index-input
          :output temp-location
          :dynamic-environment-location dynamic-environment-location
          :successor
