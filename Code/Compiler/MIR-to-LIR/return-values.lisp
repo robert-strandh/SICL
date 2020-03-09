@@ -159,8 +159,8 @@
   ;; In R11, we now have the the address of the value in question.
   (if (lexical-p output)
       (progn (change-class instruction 'cleavir-ir:memref1-instruction
-                           :address *r11*
-                           :value *r11*)
+                           :inputs (list *r11*)
+                           :outputs (list *r11*))
              (insert-memset-after
               instruction
               *r11*
