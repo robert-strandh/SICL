@@ -115,12 +115,13 @@
                       :value i)
                     cell-location
                     dynamic-environment-location)))
-    (make-initial-instructions
-     true-branch
-     values-location
-     value-count-location
-     cell-location
-     dynamic-environment-location)))
+    (values (make-initial-instructions
+             true-branch
+             values-location
+             value-count-location
+             cell-location
+             dynamic-environment-location)
+            final)))
 
 (defun eliminate-append-values-instructions (initial-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
