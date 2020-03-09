@@ -123,6 +123,26 @@
              dynamic-environment-location)
             final)))
 
+(defun eliminate-append-values-instruction (instruction)
+  (let* ((values-location (first (cleavir-ir:outputs instruction)))
+         (dynamic-environment-location
+           (cleavir-ir:dynamic-environment-location instruction))
+         (successor (first (cleavir-ir:successors instruction))))
+    (multiple-value-bind (first last)
+        (make-replacement
+         successor
+         values-location
+         dynamic-environment-location)
+      (setf (cleavir-ir:predecessors first)
+            (cleavir-ir:predecessors instruction))
+      (loop for predecessor in (cleavir-ir:predecessors first)
+            do (substitute first
+                           instruction
+                           (cleavir-ir:successors predecessor)))
+      (substitute last
+                  instruction
+                  (cleavir-ir:predecessors successor)))))
+
 (defun eliminate-append-values-instructions (initial-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
