@@ -177,3 +177,10 @@
           :mnemonic "JMP"
           :operands
           (list (translate-datum sicl-mir-to-lir:*rax*)))))
+
+(defmethod translate-instruction
+    ((instruction cleavir-ir:multiple-value-call-instruction))
+  (make-instance 'cluster:code-command
+    :mnemonic "CALL"
+    :operands
+    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
