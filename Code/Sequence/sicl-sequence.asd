@@ -10,6 +10,7 @@
   ((:module "Generic"
     :components
     ((:file "packages")
+     (:file "sequence-function")
      (:file "generic-functions")
      (:file "utilities")
      (:file "conditions")
@@ -30,7 +31,7 @@
      (:file "make-sequence-writer")
 
      ;; Now that all utilities and elementary sequence functions have been
-     ;; defined, it is possible to load the bulk of the sequence functions.
+     ;; defined, it is possible to load the remaining functions.
      (:file "copy-seq")
      (:file "count")
      (:file "count-if")

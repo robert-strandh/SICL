@@ -18,3 +18,5 @@
             (when (test item (key element))
               (incf count)))))
       count)))
+
+(seal-domain #'count '(t sequence))

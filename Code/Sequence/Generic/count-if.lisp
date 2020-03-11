@@ -18,3 +18,5 @@
             (when (predicate (key element))
               (incf count)))))
       count)))
+
+(seal-domain #'count-if '(t sequence))

@@ -1,12 +1,14 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:sicl-sequence
-  (:use #:common-lisp)
+  (:use #:closer-common-lisp)
 
   (:import-from
    #:sealable-metaobjects
    #:fast-generic-function
-   #:seal-domain)
+   #:seal-domain
+   #:sealed-domains
+   #:no-primary-method)
 
   (:shadow
    . #1=
