@@ -8,6 +8,8 @@
    #:fast-generic-function
    #:seal-domain
    #:sealed-domains
+   #:method-properties
+   #:inlineable
    #:no-primary-method)
 
   (:shadow
