@@ -17,7 +17,7 @@
   (dolist (sealed-domain (sealed-domains sequence-function))
     (loop for specializer in sealed-domain
           for argument in arguments
-          when (eq specializer (find-class 'sequence))
+          when (subtypep specializer 'sequence)
             unless (typep argument 'sequence)
               do (error 'type-error
                         :expected-type 'sequence
