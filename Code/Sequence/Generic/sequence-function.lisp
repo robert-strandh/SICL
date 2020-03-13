@@ -11,7 +11,8 @@
 
 (defmethod no-primary-method
     ((sequence-function sequence-function) &rest arguments)
-  (maybe-signal-sequence-type-error sequence-function arguments))
+  (maybe-signal-sequence-type-error sequence-function arguments)
+  (call-next-method))
 
 (defun maybe-signal-sequence-type-error (sequence-function arguments)
   (dolist (sealed-domain (sealed-domains sequence-function))
