@@ -3,6 +3,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FIXNUM-ADD-INSTRUCTION.
+;;;
+;;; This instruction can have one or two successors.  If it has a
+;;; single successor, overflow is not tested for.  If it has two
+;;; successors, then the first successor is chosen when there is no
+;;; overflow.  The second successor is chosen when there is an
+;;; overflow.
 
 (defclass fixnum-add-instruction (instruction multiple-successors-mixin)
   ())
@@ -10,6 +16,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FIXNUM-SUB-INSTRUCTION.
+;;;
+;;; This instruction can have one or two successors.  If it has a
+;;; single successor, overflow is not tested for.  If it has two
+;;; successors, then the first successor is chosen when there is no
+;;; overflow.  The second successor is chosen when there is an
+;;; overflow.
 
 (defclass fixnum-sub-instruction (instruction multiple-successors-mixin)
   ())
