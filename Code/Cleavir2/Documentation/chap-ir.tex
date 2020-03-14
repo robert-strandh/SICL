@@ -709,7 +709,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1 or 2\\
 \hline
 \end{tabular}
 
@@ -718,8 +718,8 @@ the program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.  The output is a
 \texttt{fixnum}.
 
-If the first successor is chosen, then the output is the sum of the
-two inputs.
+When there are two successors, if the first successor is chosen, then
+the output is the sum of the two inputs.
 
 If the second successor is chosen, then the sum of the inputs is not
 possible to represent as a fixnum, so in order to obtain the sum of
@@ -735,6 +735,8 @@ the two inputs, the following adjustment has to be made:
 
 The second successor is typically a \texttt{funcall-instruction} to
 some function that accomplishes this adjustment and returns a bignum.
+
+If there is a single successor, overflow is not tested for.
 
 \subsection{Instruction \texttt{fixnum-sub-instruction}}
 \label{hir-instruction-fixnum-sub}
