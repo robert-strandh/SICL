@@ -3,6 +3,7 @@
 (defmethod make-sequence-like
     ((list list) length &key (initial-element nil initial-element-p)
                              (initial-contents nil initial-contents-p))
+  (declare (method-properties inlineable))
   (cond ((and initial-element-p initial-contents-p)
          (error "Both ~S and ~S supplied to ~D."
                 :initial-element :initial-contents 'make-sequence-like))
@@ -19,6 +20,7 @@
   (defmethod make-sequence-like
     ((vectoroid #1#) length &key (initial-element nil initial-element-p)
                                  (initial-contents nil initial-contents-p))
+    (declare (method-properties inlineable))
     (cond ((and initial-element-p initial-contents-p)
            (error "Both ~S and ~S supplied to ~D."
                   :initial-element :initial-contents 'make-sequence-like))

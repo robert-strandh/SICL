@@ -4,8 +4,8 @@
   (sicl-utilities:with-collectors ((result collect))
     (let ((read (make-sequence-reader
                  list start end nil
-                 (lambda (sequence n)
-                   (declare (ignore sequence n))
+                 (lambda (n)
+                   (declare (ignore n))
                    (return-from subseq (result))))))
       (loop (collect (funcall read))))))
 
