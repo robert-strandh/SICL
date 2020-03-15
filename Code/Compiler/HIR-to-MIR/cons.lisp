@@ -2,32 +2,34 @@
 
 (defmethod process-instruction (client
                                 (instruction cleavir-ir:car-instruction))
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-         (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input -1)))
-    (change-class instruction 'cleavir-ir:memref1-instruction
-                  :address raw-pointer-location)))
+  (change-class instruction 'cleavir-ir:memref2-instruction
+                :inputs (list (first (cleavir-ir:inputs instruction))
+                              (make-instance 'cleavir-ir:immediate-input
+                                :value -1))))
 
 (defmethod process-instruction (client
                                 (instruction cleavir-ir:cdr-instruction))
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-         (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input 7)))
-    (change-class instruction 'cleavir-ir:memref1-instruction
-                  :address raw-pointer-location)))
+  (change-class instruction 'cleavir-ir:memref2-instruction
+                :inputs (list (first (cleavir-ir:inputs instruction))
+                              (make-instance 'cleavir-ir:immediate-input
+                                :value 7))))
 
 (defmethod process-instruction (client
                                 (instruction cleavir-ir:rplaca-instruction))
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-         (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input -1))
-         (value-location (second (cleavir-ir:inputs instruction))))
-    (change-class instruction 'cleavir-ir:memset1-instruction
-                  :address raw-pointer-location
-                  :value value-location)))
+  (destructuring-bind (cons-input value-input)
+      (cleavir-ir:inputs instruction)
+    (change-class instruction 'cleavir-ir:memset2-instruction
+                  :inputs (list cons-input
+                                (make-instance 'cleavir-ir:immediate-input
+                                  :value -1)
+                                value-input))))
 
 (defmethod process-instruction (client
                                 (instruction cleavir-ir:rplacd-instruction))
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-         (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input 7))
-         (value-location (second (cleavir-ir:inputs instruction))))
-    (change-class instruction 'cleavir-ir:memset1-instruction
-                  :address raw-pointer-location
-                  :value value-location)))
+  (destructuring-bind (cons-input value-input)
+      (cleavir-ir:inputs instruction)
+    (change-class instruction 'cleavir-ir:memset2-instruction
+                  :inputs (list cons-input
+                                (make-instance 'cleavir-ir:immediate-input
+                                  :value 7)
+                                value-input))))
