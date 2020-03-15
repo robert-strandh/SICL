@@ -9,4 +9,5 @@
    (:file "labels")
    (:file "translate-data")
    (:file "translate-instruction")
+   (:file "memory")
    (:file "generate-code")))
