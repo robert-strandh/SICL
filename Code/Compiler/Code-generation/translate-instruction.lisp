@@ -15,6 +15,10 @@
   '())
 
 (defmethod translate-instruction
+    ((instruction sicl-ir:breakpoint-instruction))
+  '())
+
+(defmethod translate-instruction
     ((instruction cleavir-ir:unsigned-less-instruction))
   (list (make-instance 'cluster:code-command
           :mnemonic "CMP"
