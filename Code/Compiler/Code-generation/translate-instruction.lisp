@@ -130,6 +130,27 @@
                  (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
 
 (defmethod translate-instruction
+    ((instruction cleavir-ir:signed-sub-instruction))
+  (assert (eq (first (cleavir-ir:inputs instruction))
+              (first (cleavir-ir:outputs instruction))))
+  (let ((successors (cleavir-ir:successors instruction))
+        (add (make-instance 'cluster:code-command
+               :mnemonic "SUB"
+               :operands
+               (list
+                (translate-datum (first (cleavir-ir:inputs instruction)))
+                (translate-datum (second (cleavir-ir:inputs instruction)))))))
+    (if (or (= (length successors) 1)
+            (eq (first successors) (second successors)))
+        add
+        (list add
+              (make-instance 'cluster:code-command
+                :mnemonic "JOF"
+                :operands
+                (list
+                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
+
+(defmethod translate-instruction
     ((instruction cleavir-ir:unsigned-add-instruction))
   (assert (eq (first (cleavir-ir:inputs instruction))
               (first (cleavir-ir:outputs instruction))))
