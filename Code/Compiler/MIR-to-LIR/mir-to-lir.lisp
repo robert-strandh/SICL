@@ -28,8 +28,7 @@
         until (null worklist)
         do (let* ((enter-instruction (pop worklist))
                   (lexical-locations (find-lexical-locations enter-instruction)))
-             (insert-while-loop enter-instruction)
-             (save-register-arguments enter-instruction)
+             (save-arguments enter-instruction)
              (move-return-address enter-instruction)
              (cleavir-ir:map-instructions-arbitrary-order
               (lambda (instruction)

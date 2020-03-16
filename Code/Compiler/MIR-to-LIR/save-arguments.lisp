@@ -4,7 +4,10 @@
 ;;;; Recall that the five first arguments are passed in RDI, RSI, RDX,
 ;;;; RCX, and R8.  Remaining arguments are on top of the stack at
 ;;;; function entry, with the last argument at the highest address in
-;;;; the frame, i.e. at RBP-16.
+;;;; the frame, i.e. at RBP-16.  When this procedure has been
+;;;; executed, we have the argument count on top of the stack,
+;;;; followed by the arguments in the order from the first to the
+;;;; last.
 ;;;;
 ;;;; To avoid too many tests for the exact number of arguments, we
 ;;;; always save the five registers.
@@ -46,7 +49,8 @@
 ;;;;
 ;;;; At this point, all the arguments are on top of the stack, in
 ;;;; order.  Between the arguments and the base pointer there is now
-;;;; room for the lexical variables.
+;;;; room for the lexical variables.  We finish the procedure by
+;;;; saving the argument count on the top of the stack.
 
 (defun insert-while-loop (enter-instruction)
   (let* ((dynamic-environment-location
@@ -118,3 +122,7 @@
               (make-instance 'cleavir-ir:memset1-instruction
                 :inputs (list *r11* register))
               enter-instruction))))
+
+(defun save-arguments (enter-instruction)
+  (insert-while-loop enter-instruction)
+  (save-register-arguments enter-instruction))
