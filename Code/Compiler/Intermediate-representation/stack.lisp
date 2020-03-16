@@ -23,3 +23,17 @@
 (defclass establish-stack-frame-instruction
     (cleavir-ir:instruction cleavir-ir:one-successor-mixin)
   ())
+
+;;; This instruction pushes a value on the stack.
+;;;
+;;; It has a single input, no outputs, and a single successor.
+(defclass push-instruction
+    (cleavir-ir:instruction cleavir-ir:one-successor-mixin)
+  ())
+
+;;; This instruction pops a value from the stack.
+;;;
+;;; It has no inputs, a single output, and a single successor.
+(defclass pop-instruction
+    (cleavir-ir:instruction cleavir-ir:one-successor-mixin)
+  ())
