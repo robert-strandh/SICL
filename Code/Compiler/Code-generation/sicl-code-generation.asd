@@ -10,4 +10,5 @@
    (:file "translate-data")
    (:file "translate-instruction")
    (:file "memory")
+   (:file "stack")
    (:file "generate-code")))
