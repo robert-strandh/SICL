@@ -42,18 +42,15 @@
     (instruction
      from-lexical-location
      to-register
-     scratch-register
      lexical-locations)
-  (let ((load-instructions
-          (load-address-of-lexical-location
-           from-lexical-location scratch-register lexical-locations)))
-    (loop for load-instruction in load-instructions
-          do (cleavir-ir:insert-instruction-before load-instruction instruction)))
-  (cleavir-ir:insert-instruction-before
-   (make-instance 'cleavir-ir:memref1-instruction
-     :input scratch-register
-     :output to-register)
-   instruction))
+  (let ((location (* (1+ (gethash from-lexical-location lexical-locations)) 8)))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:memref2-instruction
+       :inputs (list *rbp*
+                     (make-instance 'cleavir-ir:immediate-input
+                       :value (- location)))
+       :output to-register)
+     instruction)))
 
 (defun insert-memset-between
     (instruction
@@ -118,7 +115,6 @@
                 instruction
                 (first inputs)
                 *r11*
-                *rax*
                 lexical-locations)
                (setf (first inputs) *r11*))
               ((lexical-p (first outputs))
@@ -127,7 +123,6 @@
                 instruction
                 (first inputs)
                 *r11*
-                *rax*
                 lexical-locations)
                (setf (first inputs) *r11*)
                (insert-memsets-after
@@ -143,7 +138,6 @@
                   instruction
                   (second inputs)
                   *rax*
-                  *rax*
                   lexical-locations)
                  (setf (second inputs) *rax*)))
             ;; We use the output register as an intermediate register
@@ -151,7 +145,6 @@
                 instruction
                 (first inputs)
                 (first outputs)
-                *rax*
                 lexical-locations)
                (setf (first inputs) (first outputs))
                (when (and (= (length inputs) 2)
@@ -159,7 +152,6 @@
                  (insert-memref-before
                   instruction
                   (second inputs)
-                  *rax*
                   *rax*
                   lexical-locations)
                  (setf (second inputs) *rax*))))
@@ -184,7 +176,6 @@
                  (insert-memref-before
                   instruction
                   (second inputs)
-                  *rax*
                   *rax*
                   lexical-locations)
                  (setf (second inputs) *rax*)))

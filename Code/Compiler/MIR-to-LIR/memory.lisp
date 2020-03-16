@@ -9,7 +9,6 @@
        instruction
        (first inputs)
        *r11*
-       *rax*
        lexical-locations)
       (setf (first inputs) *r11*))
     (when (lexical-p (first outputs))
@@ -29,14 +28,12 @@
        instruction
        (first inputs)
        *r11*
-       *rax*
        lexical-locations)
       (setf (first inputs) *r11*))
     (when (lexical-p (second inputs))
       (insert-memref-before
        instruction
        (second inputs)
-       *rax*
        *rax*
        lexical-locations)
       (setf (second inputs) *rax*))))
@@ -50,7 +47,6 @@
        instruction
        (first inputs)
        *r11*
-       *rax*
        lexical-locations)
       (setf (first inputs) *r11*))
     (when (lexical-p (first outputs))
@@ -70,14 +66,12 @@
        instruction
        (first inputs)
        *r11*
-       *rax*
        lexical-locations)
       (setf (first inputs) *r11*))
     (when (lexical-p (third inputs))
       (insert-memref-before
        instruction
        (third inputs)
-       *rax*
        *rax*
        lexical-locations)
       (setf (third inputs) *rax*))))

@@ -56,7 +56,6 @@
               instruction
               value-location
               *rax*
-              *r9*
               lexical-locations))
       (change-class instruction 'cleavir-ir:memset1-instruction
                     :address *r11*
@@ -73,7 +72,6 @@
                       instruction
                       value-location
                       register
-                      *r11*
                       lexical-locations)
                      (change-class instruction 'cleavir-ir:nop-instruction
                                    :inputs '()
@@ -103,7 +101,6 @@
                       instruction
                       value-location
                       *rax*
-                      *r9*
                       lexical-locations))
               (change-class instruction 'cleavir-ir:memset1-instruction
                             :address *r11*

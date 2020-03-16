@@ -57,7 +57,6 @@
          instruction
          (second inputs)
          *r10*
-         *r11*
          lexical-locations)
         (cleavir-ir:insert-instruction-before
          (make-instance 'cleavir-ir:assignment-instruction
@@ -70,7 +69,6 @@
          instruction
          (third inputs)
          *rbx*
-         *r11*
          lexical-locations)
         (cleavir-ir:insert-instruction-before
          (make-instance 'cleavir-ir:assignment-instruction
@@ -81,7 +79,6 @@
     (insert-memref-before
      instruction
      (first inputs)
-     *rax*
      *rax*
      lexical-locations)
     ;; Make RAX the only input.

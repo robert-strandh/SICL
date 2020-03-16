@@ -14,7 +14,6 @@
             instruction
             (first inputs)
             *rax*
-            *r11*
             lexical-locations))
           ((eq (first inputs) *rax*)
            nil)
@@ -29,7 +28,6 @@
        instruction
        (second inputs)
        *rcx*
-       *r11*
        lexical-locations)
       (setf (second inputs) *rcx*))
     (cond ((lexical-p (first outputs))
