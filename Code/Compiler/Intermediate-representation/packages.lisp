@@ -7,4 +7,6 @@
    #:dynamic-environment-instruction
    #:caller-stack-pointer-instruction
    #:caller-frame-pointer-instruction
-   #:establish-stack-frame-instruction))
+   #:establish-stack-frame-instruction
+   #:push-instruction
+   #:pop-instruction))
