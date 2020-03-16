@@ -123,6 +123,15 @@
                 :inputs (list *r11* register))
               enter-instruction))))
 
+(defun save-argument-count (enter-instruction)
+  (cleavir-ir:insert-instruction-after
+   (make-instance 'sicl-ir:push-instruction
+     :input *r9*
+     :dynamic-environment-location
+     (cleavir-ir:dynamic-environment-location enter-instruction))
+   enter-instruction))
+
 (defun save-arguments (enter-instruction)
+  (save-argument-count enter-instruction)
   (insert-while-loop enter-instruction)
   (save-register-arguments enter-instruction))
