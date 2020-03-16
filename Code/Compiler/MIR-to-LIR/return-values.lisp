@@ -162,7 +162,6 @@
               instruction
               *r11*
               output
-              *r9*
               lexical-locations))
       (change-class instruction 'cleavir-ir:memref1-instruction
                     :address *r11*)))
@@ -178,7 +177,6 @@
                       instruction
                       register
                       output
-                      *r11*
                       lexical-locations)
                      (change-class instruction 'cleavir-ir:nop-instruction
                                    :inputs '()
@@ -207,7 +205,6 @@
                       instruction
                       *rax*
                       output
-                      *r9*
                       lexical-locations))
               (change-class instruction 'cleavir-ir:memref1-instruction
                             :address *r11*))))))

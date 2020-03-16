@@ -35,7 +35,6 @@
             instruction
             *rax*
             (first outputs)
-            *r11*
             lexical-locations))
           ((eq (first inputs) *rax*)
            nil)
@@ -50,7 +49,6 @@
             instruction
             *rdx*
             (second outputs)
-            *r11*
             lexical-locations))
           ((eq (second outputs) *rdx*)
            nil)

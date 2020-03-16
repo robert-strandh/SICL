@@ -11,7 +11,6 @@
      instruction
      *r9*
      (first (cleavir-ir:outputs instruction))
-     *rax*
      lexical-locations)
     (setf (first (cleavir-ir:outputs instruction)) *r9*)))
 
@@ -48,6 +47,5 @@
        instruction
        *r11*
        (first outputs)
-       *rax*
        lexical-locations)
       (setf (first outputs) *r11*))))

@@ -16,7 +16,6 @@
        instruction
        *r11*
        (first outputs)
-       *rax*
        lexical-locations)
       (setf (first outputs) *r11*))))
 
@@ -54,7 +53,6 @@
        instruction
        *r11*
        (first outputs)
-       *rax*
        lexical-locations)
       (setf (first outputs) *r11*))))
 

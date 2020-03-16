@@ -57,27 +57,21 @@
      successor
      from-register
      to-lexical-location
-     scratch-register
      lexical-locations)
-  (let ((memset (make-instance 'cleavir-ir:memset1-instruction
-                  :inputs (list scratch-register from-register))))
+  (let ((location (* (1+ (gethash to-lexical-location lexical-locations)) 8)))
     (cleavir-ir:insert-instruction-between
-     memset
+     (make-instance 'cleavir-ir:memset2-instruction
+       :inputs (list *rbp*
+                      (make-instance 'cleavir-ir:immediate-input
+                        :value (- location))
+                     from-register))
      instruction
-     successor)
-    (let ((load-instructions
-            (load-address-of-lexical-location
-             to-lexical-location scratch-register lexical-locations)))
-      (loop for load-instruction in load-instructions
-            do (cleavir-ir:insert-instruction-before
-                load-instruction
-                memset)))))
+     successor)))
 
 (defun insert-memset-after
     (instruction
      from-register
      to-lexical-location
-     scratch-register
      lexical-locations)
   (assert (= (length (cleavir-ir:successors instruction)) 1))
   (insert-memset-between
@@ -85,14 +79,12 @@
    (first (cleavir-ir:successors instruction))
    from-register
    to-lexical-location
-   scratch-register
    lexical-locations))
 
 (defun insert-memsets-after
     (instruction
      from-register
      to-lexical-location
-     scratch-register
      lexical-locations)
   (loop for successor in (cleavir-ir:successors instruction)
         do (insert-memset-between
@@ -100,7 +92,6 @@
             successor
             from-register
             to-lexical-location
-            scratch-register
             lexical-locations)))
 
 (defmethod process-instruction (instruction lexical-locations)
@@ -129,7 +120,6 @@
                 instruction
                 *r11*
                 (first outputs)
-                *rax*
                 lexical-locations)
                (setf (first outputs) *r11*)
                (when (and (= (length inputs) 2)
@@ -168,7 +158,6 @@
                 instruction
                 *r11*
                 (first outputs)
-                *rax*
                 lexical-locations)
                (setf (first outputs) *r11*)
                (when (and (= (length inputs) 2)
