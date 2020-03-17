@@ -132,7 +132,7 @@
   ;; Load the value of the lexical input into register R11.
   (insert-memref-before
    instruction
-   index-input
+   input
    *r11*
    lexical-locations)
   ;; Subtract 4*2 from R11 to get the offset (in words) to subtract
