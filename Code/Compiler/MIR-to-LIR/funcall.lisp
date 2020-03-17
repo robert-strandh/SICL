@@ -41,11 +41,18 @@
                 instruction)))
     (loop for argument in (subseq inputs 3 (min (+ 3 5) (length inputs)))
           for register in (list *rdi* *rsi* *rdx* *rcx* *r8*)
-          do (insert-memref-before
-              instruction
-              argument
-              register
-              lexical-locations))))
+          do (if (lexical-p argument)
+                 (insert-memref-before
+                  instruction
+                  argument
+                  register
+                  lexical-locations)
+                 ;; It is an immediate input.
+                 (cleavir-ir:insert-instruction-before
+                  (make-instance 'cleavir-ir:assignment-instruction
+                    :input argument
+                    :output register)
+                  instruction)))))
 
 (defun process-funcall (instruction lexical-locations)
   (do-arguments instruction lexical-locations)
