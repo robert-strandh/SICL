@@ -2,11 +2,13 @@
 
 (defmethod process-instruction
     ((instruction cleavir-ir:assignment-instruction) lexical-locations)
-  (insert-memref-before
-   instruction
-   (first (cleavir-ir:inputs instruction))
-   *r11*
-   lexical-locations)
+  (when (lexical-p (first (cleavir-ir:inputs instruction)))
+    (insert-memref-before
+     instruction
+     (first (cleavir-ir:inputs instruction))
+     *r11*
+     lexical-locations)
+    (setf (cleavir-ir:inputs instruction) (list *r11*)))
   (insert-memset-after
    instruction
    *r11*
