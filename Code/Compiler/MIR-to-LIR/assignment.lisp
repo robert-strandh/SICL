@@ -2,7 +2,13 @@
 
 (defmethod process-instruction
     ((instruction cleavir-ir:assignment-instruction) lexical-locations)
-  (call-next-method)
-  (change-class instruction 'cleavir-ir:nop-instruction
-                :inputs '()
-                :outputs '()))
+  (insert-memref-before
+   instruction
+   (first (cleavir-ir:inputs instruction))
+   *r11*
+   lexical-locations)
+  (insert-memset-after
+   instruction
+   *r11*
+   (first (cleavir-ir:outputs instruction))
+   lexical-locations))
