@@ -89,3 +89,7 @@
 (defmethod process-instruction
     ((instruction cleavir-ir:equal-instruction) lexical-locations)
   (process-comparison-instruction instruction lexical-locations))
+
+(defmethod process-instruction
+    ((instruction cleavir-ir:eq-instruction) lexical-locations)
+  (process-comparison-instruction instruction lexical-locations))
