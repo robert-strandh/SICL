@@ -20,6 +20,7 @@
    (:file "catch")
    (:file "bind")
    (:file "unwind")
+   (:file "initialize-values")
    (:file "multiple-value-call")
    (:file "return")
    (:file "return-values")
