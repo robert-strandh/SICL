@@ -15,6 +15,7 @@
    (:file "process-instructions")
    (:file "assignment")
    (:file "arguments")
+   (:file "integer-arithmetic")
    (:file "funcall")
    (:file "catch")
    (:file "bind")
