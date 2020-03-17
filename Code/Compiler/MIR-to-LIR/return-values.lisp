@@ -17,7 +17,11 @@
 (defun set-return-value-instruction-with-lexical-input
     (instruction index-input value-location lexical-locations)
   ;; Load the value of the lexical input into register R11.
-  (load-lexical index-input *r11* instruction lexical-locations)
+  (insert-memref-before
+   instruction
+   index-input
+   *r11*
+   lexical-locations)
   ;; Subtract 4*2 from R11 to get the offset (in words) to subtract
   ;; from RSP in order to get to the value location in question.
   (cleavir-ir:insert-instruction-before
@@ -126,7 +130,11 @@
 (defun return-value-instruction-with-lexical-input
     (instruction input output lexical-locations)
   ;; Load the value of the lexical input into register R11.
-  (load-lexical input *r11* instruction lexical-locations)
+  (insert-memref-before
+   instruction
+   index-input
+   *r11*
+   lexical-locations)
   ;; Subtract 4*2 from R11 to get the offset (in words) to subtract
   ;; from RSP in order to get to the value in question.
   (cleavir-ir:insert-instruction-before
