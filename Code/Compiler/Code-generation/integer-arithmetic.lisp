@@ -86,6 +86,12 @@
                  (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
 
 (defmethod translate-instruction
+    ((instruction cleavir-ir:fixnum-divide-instruction))
+  (make-instance 'cluster:code-command
+    :mnemonic "DIV"
+    :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
+
+(defmethod translate-instruction
     ((instruction cleavir-ir:unsigned-less-instruction))
   (list (make-instance 'cluster:code-command
           :mnemonic "CMP"
