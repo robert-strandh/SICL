@@ -30,7 +30,7 @@
               *r11*
               (first (cleavir-ir:outputs instruction))
               lexical-locations))
-    (setf (cleavir-ir:outputs instruction) (list *r11*))))
+    (setf (cleavir-ir:outputs instruction) (list *r11*)))
 
 (defmethod process-instruction
     ((instruction cleavir-ir:unsigned-add-instruction) lexical-locations)
