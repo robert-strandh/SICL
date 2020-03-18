@@ -8,12 +8,16 @@
    (first (cleavir-ir:outputs instruction))
    lexical-locations)
   (if (lexical-p (first (cleavir-ir:inputs instruction)))
-      (progn (insert-memref-before
-              instruction
-              (first (cleavir-ir:inputs instruction))
-              *r11*
-              lexical-locations)
-             (change-class instruction 'cleavir-ir:nop-instruction
-                           :inputs '()
-                           :outputs '()))
-      (setf (cleavir-ir:outputs instruction) (list *r11*))))
+      (insert-memref-before
+       instruction
+       (first (cleavir-ir:inputs instruction))
+       *r11*
+       lexical-locations)
+      (cleavir-ir:insert-instruction-before
+       (make-instance 'cleavir-ir:assignment-instruction
+         :input (first (cleavir-ir:inputs instruction))
+         :output *r11*)
+       instruction))
+  (change-class instruction 'cleavir-ir:nop-instruction
+                :inputs '()
+                :outputs '()))
