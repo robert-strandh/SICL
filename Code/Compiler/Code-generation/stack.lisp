@@ -8,7 +8,7 @@
     (list (translate-datum (first (cleavir-ir:inputs instruction))))))
 
 (defmethod translate-instruction
-    ((instruction sicl-ir:push-instruction))
+    ((instruction sicl-ir:pop-instruction))
   (make-instance 'cluster:code-command
     :mnemonic "POP"
     :operands
