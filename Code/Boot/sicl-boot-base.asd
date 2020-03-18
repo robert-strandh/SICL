@@ -5,7 +5,8 @@
                #:sicl-ast-to-hir
                #:sicl-hir-interpreter
                #:sicl-hir-to-mir
-               #:sicl-mir-to-lir)
+               #:sicl-mir-to-lir
+               #:sicl-code-generation)
   :serial t
   :components
   ((:file "packages")
