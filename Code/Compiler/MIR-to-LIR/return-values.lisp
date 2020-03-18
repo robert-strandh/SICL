@@ -124,8 +124,14 @@
 (defmethod process-instruction
     ((instruction cleavir-ir:compute-return-value-count-instruction)
      lexical-locations)
-  (change-class instruction 'cleavir-ir:assignment-instruction
-                :inputs (list *rdi*)))
+  (insert-memset-after
+   instruction
+   *rdi*
+   (first (cleavir-ir:outputs instruction))
+   lexical-locations)
+  (change-class instruction 'cleavir-ir:nop-instruction
+                :inputs '()
+                :outputs '()))
 
 (defun return-value-instruction-with-lexical-input
     (instruction input output lexical-locations)
