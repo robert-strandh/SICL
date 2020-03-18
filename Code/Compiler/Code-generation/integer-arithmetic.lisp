@@ -44,6 +44,25 @@
                  (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
 
 (defmethod translate-instruction
+    ((instruction cleavir-ir:negate-instruction))
+  (assert (eq (first (cleavir-ir:inputs instruction))
+              (first (cleavir-ir:outputs instruction))))
+  (let ((successors (cleavir-ir:successors instruction))
+        (neg (make-instance 'cluster:code-command
+               :mnemonic "NEG"
+               :operands
+               (list (translate-datum (first (cleavir-ir:inputs instruction)))))))
+    (if (or (= (length successors) 1)
+            (eq (first successors) (second successors)))
+        neg
+        (list neg
+              (make-instance 'cluster:code-command
+                :mnemonic "JOF"
+                :operands
+                (list
+                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
+
+(defmethod translate-instruction
     ((instruction cleavir-ir:unsigned-add-instruction))
   (assert (eq (first (cleavir-ir:inputs instruction))
               (first (cleavir-ir:outputs instruction))))
