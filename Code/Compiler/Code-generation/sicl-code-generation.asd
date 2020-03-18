@@ -2,7 +2,8 @@
 
 (defsystem #:sicl-code-generation
   :depends-on (#:sicl-mir-to-lir
-               #:cluster)
+               #:cluster
+               #:cluster-x86-instruction-database)
   :components
   ((:file "packages")
    (:file "linearize")
