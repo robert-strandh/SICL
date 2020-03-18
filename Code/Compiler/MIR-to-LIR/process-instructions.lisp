@@ -6,6 +6,10 @@
 
 (defgeneric process-instruction (instruction lexical-locations))
 
+(defmethod process-instruction :after (instruction lexical-location)
+  (assert (notany #'lexical-p (cleavir-ir:inputs instruction)))
+  (assert (notany #'lexical-p (cleavir-ir:outputs instruction))))
+
 (defmethod process-instruction
     ((instruction cleavir-ir:enter-instruction) lexical-locations)
   (setf (cleavir-ir:outputs instruction) '()))
