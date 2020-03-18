@@ -21,6 +21,7 @@
     :augend index-location
     :addend (make-instance 'cleavir-ir:constant-input
               :value 1)
+    :output index-location
     :dynamic-environment-location dynamic-environment-location
     :successor successor))
 
