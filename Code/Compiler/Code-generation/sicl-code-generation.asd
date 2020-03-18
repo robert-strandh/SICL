@@ -9,6 +9,7 @@
    (:file "labels")
    (:file "translate-data")
    (:file "translate-instruction")
+   (:file "integer-arithmetic")
    (:file "memory")
    (:file "stack")
    (:file "generate-code")))
