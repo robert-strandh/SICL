@@ -1,19 +1,28 @@
 (cl:in-package #:sicl-mir-to-lir)
 
 (defun process-arithmetic-instruction (instruction lexical-locations)
-  (let ((new-inputs
-          (loop for input in (cleavir-ir:inputs instruction)
-                for register in (list *r11* *r12*)
-                if (lexical-p input)
-                  do (insert-memref-before
-                      instruction
-                      input
-                      register
-                      lexical-locations)
-                  and collect register
-                else
-                  collect input)))
-    (setf (cleavir-ir:inputs instruction) new-inputs)
+  (if (lexical-p (first (cleavir-ir:inputs instruction)))
+      (insert-memref-before
+       instruction
+       (first (cleavir-ir:inputs instruction))
+       *r11*
+       lexical-locations)
+      (cleavir-ir:insert-instruction-before
+       (make-instance 'cleavir-ir:assignment-instruction
+         :input (first (cleavir-ir:inputs instruction))
+         :output *r11*)
+       instruction))
+  (if (null (rest (cleavir-ir:inputs instruction)))
+      (setf (cleavir-ir:inputs instruction) (list *r11*))
+      (if (lexical-p (second (cleavir-ir:inputs instruction)))
+          (progn (insert-memref-before
+                  instruction
+                  (second (cleavir-ir:inputs instruction))
+                  *r12*
+                  lexical-locations)
+                 (setf (cleavir-ir:inputs instruction) (list *r11* *r12*)))
+          (setf (cleavir-ir:inputs instruction)
+                (cons *r11* (rest (cleavir-ir:inputs instruction))))))
     (loop for successor in (cleavir-ir:successors instruction)
           do (insert-memset-between
               instruction
