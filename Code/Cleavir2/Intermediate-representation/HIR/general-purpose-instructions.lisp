@@ -26,7 +26,7 @@
 (defun make-top-level-enter-instruction (lambda-list forms dynenv)
   (let ((enter (make-enter-instruction lambda-list dynenv)))
     (change-class enter 'top-level-enter-instruction
-		  :forms forms)))
+                  :forms forms)))
 
 (defmethod clone-initargs append ((instruction top-level-enter-instruction))
   (list :forms (forms instruction)))

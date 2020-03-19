@@ -11,18 +11,18 @@
 
 (defun format-item (item)
   (cond ((symbolp item)
-	 item)
-	((listp item)
-	 (mapcar #'format-item item))
-	((typep item 'cleavir-ir:lexical-location)
-	 (cleavir-ir:name item))
-	(t
-	 (error "unknown item in lambda list ~s" item))))
+         item)
+        ((listp item)
+         (mapcar #'format-item item))
+        ((typep item 'cleavir-ir:lexical-location)
+         (cleavir-ir:name item))
+        (t
+         (error "unknown item in lambda list ~s" item))))
 
 (defmethod label ((instruction cleavir-ir:enter-instruction))
   (with-output-to-string (stream)
     (format stream "enter ~a"
-	    (mapcar #'format-item (cleavir-ir:lambda-list instruction)))))
+            (mapcar #'format-item (cleavir-ir:lambda-list instruction)))))
 
 (defmethod label ((instruction cleavir-ir:the-instruction))
   (format nil "the ~a" (cleavir-ir:value-type instruction)))
@@ -101,13 +101,13 @@
 
 (defmethod label ((instruction cleavir-ir:aref-instruction))
   (format nil "~:[ns~;s~] ~s aref"
-	  (cleavir-ir:simple-p instruction)
-	  (cleavir-ir:element-type instruction)))
+          (cleavir-ir:simple-p instruction)
+          (cleavir-ir:element-type instruction)))
 
 (defmethod label ((instruction cleavir-ir:aset-instruction))
   (format nil "~:[ns~;s~] ~s aset"
-	  (cleavir-ir:simple-p instruction)
-	  (cleavir-ir:element-type instruction)))
+          (cleavir-ir:simple-p instruction)
+          (cleavir-ir:element-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
