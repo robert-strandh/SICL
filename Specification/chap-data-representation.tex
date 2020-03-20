@@ -243,17 +243,20 @@ A code object contains the following information:
   of the bitmap represents the stack location at address $b-i$ where
   $b$ is the value of the base pointer.
 \item A table mapping a value of the program counter to a
-  \emph{callee-saves map}.  This table is indexed by a callee-saved
+  \emph{callee-saves map}.  This map is indexed by a callee-saved
   register and contains a stack location in which the contents of the
   saved register was stored before the current function could use the
   register.  If the current function did not save the register, the
-  corresponding entry contains some default value indicating this
-  fact.  For a typical backend such as x86-64, the entries in the
-  table represent the registers \texttt{RBX}, \texttt{R12},
-  \texttt{R13}, \texttt{R14}, and \texttt{R15} as described in
+  corresponding entry contains some default value ($0$) indicating
+  this fact.  For a typical backend such as x86-64, the entries in the
+  table represent the registers \texttt{RBX} (index 0), \texttt{R12}
+  (index 1), \texttt{R13} (index 2), \texttt{R14} (index 3), and
+  \texttt{R15} (index 4) as described in
   \refSec{sec-backend-x86-84-register-use}.  The value of an entry
-  represents the value to add to the value of the base pointer in order
-  to get the stack location of the saved register.
+  represents the value to subtract from the value of the base pointer
+  in order to get the stack location of the saved register.  A value
+  of $0$ indicates that the register is not used by this function at
+  this program point.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
