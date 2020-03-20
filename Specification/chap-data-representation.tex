@@ -224,21 +224,24 @@ A code object contains the following information:
   unsigned bytes.
 \item Tables providing support for commands of the debugger.  See
   below for more detailed information about these tables.
-\item A table mapping a value of the program counter to a \emph{frame
-  map}.  This is a bitmap containing information that is used by the
-  garbage collector to determine which stack locations may contain
-  \commonlisp{} objects that should be traced.  Only values of the
-  program counter corresponding to program points immediately after a
-  \texttt{call} instruction are present in this table.  Stack
-  locations containing data owned by the current function invocation
-  are present in the table.  If a datum owned by the current function
-  invocation is stored in a callee-saves register, the stack location
-  where the old value of that register is stored is indicated instead.
-  The compiler may omit stack locations that are known to contain
-  immediate \commonlisp{} objects that the garbage collector does not
-  have to trace.  For a typical backend, index $i$ of the bitmap
-  represents the stack location at address $b-i$ where $b$ is the
-  value of the base pointer.
+\item A hash table mapping a value of the program counter to a
+  \emph{frame map}.  A frame map is a bitmap containing information
+  that is used by the garbage collector to determine which stack
+  locations contain \commonlisp{} objects that should be traced.  Only
+  values of the program counter corresponding to \emph{safe program
+    points} are present in this table.  Recall that a \emph{safe
+    program point} is either the address of the instruction
+  immediately after a \texttt{call} instruction or the address of a
+  control-transfer instruction with a target having a smaller address.
+  Stack locations containing data owned by the current function
+  invocation are present in the table.  If a datum owned by the
+  current function invocation is stored in a callee-saves register,
+  the stack location where the old value of that register is stored is
+  indicated instead.  The compiler may omit stack locations that are
+  known to contain immediate \commonlisp{} objects that the garbage
+  collector does not have to trace.  For a typical backend, index $i$
+  of the bitmap represents the stack location at address $b-i$ where
+  $b$ is the value of the base pointer.
 \item A table mapping a value of the program counter to a
   \emph{callee-saves map}.  This table is indexed by a callee-saved
   register and contains a stack location in which the contents of the
