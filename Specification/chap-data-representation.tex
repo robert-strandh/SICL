@@ -242,7 +242,7 @@ A code object contains the following information:
   collector does not have to trace.  For a typical backend, index $i$
   of the bitmap represents the stack location at address $b-i$ where
   $b$ is the value of the base pointer.
-\item A table mapping a value of the program counter to a
+\item A hash table mapping a value of the program counter to a
   \emph{callee-saves map}.  This map is indexed by a callee-saved
   register and contains a stack location in which the contents of the
   saved register was stored before the current function could use the
