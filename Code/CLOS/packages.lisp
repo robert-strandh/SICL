@@ -12,6 +12,7 @@
    #:class #:standard-class #:built-in-class #:structure-class
    #:funcallable-standard-class
    #:standard-object #:function #:funcallable-standard-object
+   #:simple-function
    #:generic-function #:standard-generic-function
    #:method #:standard-method
    #:metaobject
