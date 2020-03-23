@@ -260,9 +260,7 @@ A code object contains the following information:
   \emph{callee-saves stack map}.  This map is indexed by a
   callee-saved register and contains a stack location in which the
   contents of the saved register was stored before the current
-  function could use the register.  If the current function did not
-  save the register, the corresponding entry contains some default
-  value ($0$) indicating this fact.  For a typical backend such as
+  function could use the register.  For a typical backend such as
   x86-64, the entries in the table represent the registers
   \texttt{RBX} (index 0), \texttt{R12} (index 1), \texttt{R13} (index
   2), \texttt{R14} (index 3), and \texttt{R15} (index 4) as described
@@ -270,7 +268,9 @@ A code object contains the following information:
   represents the value to subtract from the value of the base pointer
   in order to get the stack location of the saved register.  A value
   of $0$ indicates that the register is not used by this function at
-  this program point.
+  this program point, i.e. either current function did not save the
+  register, or it restored the register after having finished using
+  it,
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
@@ -432,7 +432,10 @@ is a proper list of packages that use this package.
 \subsection{Functions}
 \label{sec-data-representation-functions}
 
-The \emph{class} of a function is a subclass of \texttt{function}.
+Ordinary (non-generic) SICL functions are instances of the class named
+\texttt{simple\-function}.  The class \texttt{simple-function} is
+a direct subclass of \texttt{funcallable\-standard-object}.  These two
+symbols both have the package \texttt{sicl-clos} as their home package.
 
 In order to obtain reasonable performance, we represent functions in a
 somewhat complex way, as illustrated by
