@@ -30,6 +30,7 @@
     (cf "CLOS/forward-referenced-class-defclass.lisp")
     (cf "CLOS/eql-specializer-defclass.lisp")
     (cf "CLOS/funcallable-standard-object-defclass.lisp")
+    (cf "CLOS/simple-function-defclass.lisp")
     (cf "CLOS/generic-function-defclass.lisp")
     (cf "CLOS/standard-generic-function-defclass.lisp")
     (cf "Cons/cons-defclass.lisp")
