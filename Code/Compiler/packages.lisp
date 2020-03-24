@@ -7,4 +7,9 @@
            #:+cons-function-index+
            #:+nil-index+
            #:+first-constant-index+
-           #:debug-information))
+           #:debug-information
+           #:code-object
+           #:instructions
+           #:frame-maps
+           #:callee-saves-register-maps
+           #:callee-saves-stack-maps))
