@@ -50,4 +50,5 @@
     (load-fasl "Arithmetic/rational-defclass.fasl" e5)
     (load-fasl "Arithmetic/integer-defclass.fasl" e5)
     (load-fasl "Arithmetic/fixnum-defclass.fasl" e5)
-    (load-fasl "Character/character-defclass.fasl" e5)))
+    (load-fasl "Character/character-defclass.fasl" e5)
+    (load-fasl "Compiler/Code-object/code-object-defclass.fasl" e5)))

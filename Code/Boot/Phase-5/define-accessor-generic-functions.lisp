@@ -85,7 +85,8 @@
   (load-fasl "CLOS/variant-signature-defgeneric.fasl" e6)
   (load-fasl "CLOS/template-defgeneric.fasl" e6)
   (load-fasl "Package-and-symbol/symbol-name-defgeneric.fasl" e6)
-  (load-fasl "Package-and-symbol/symbol-package-defgeneric.fasl" e6))
+  (load-fasl "Package-and-symbol/symbol-package-defgeneric.fasl" e6)
+  (load-fasl "Compiler/Code-object/generic-functions.fasl" e6))
 
 (defun define-accessor-generic-functions (boot)
   (with-accessors ((e5 sicl-boot:e5)
