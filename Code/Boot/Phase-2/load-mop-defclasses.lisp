@@ -32,6 +32,7 @@
       (ld "CLOS/funcallable-standard-class-defclass.fasl")
       (ld "CLOS/built-in-class-defclass.fasl")
       (ld "CLOS/funcallable-standard-object-defclass.fasl")
+      (ld "CLOS/simple-function-defclass.fasl")
       (ld "CLOS/generic-function-defclass.fasl")
       (ld "CLOS/standard-generic-function-defclass.fasl")
       (ld "Cons/cons-defclass.fasl")

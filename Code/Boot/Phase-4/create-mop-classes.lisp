@@ -37,6 +37,7 @@
     (load-fasl "CLOS/funcallable-standard-class-defclass.fasl" e4)
     (load-fasl "CLOS/built-in-class-defclass.fasl" e4)
     (load-fasl "CLOS/funcallable-standard-object-defclass.fasl" e4)
+    (load-fasl "CLOS/simple-function-defclass.fasl" e4)
     (load-fasl "CLOS/generic-function-defclass.fasl" e4)
     (load-fasl "CLOS/standard-generic-function-defclass.fasl" e4)
     (load-fasl "Cons/cons-defclass.fasl" e4)
