@@ -271,4 +271,6 @@
     (cf "Data-and-control-flow/shiftf-defmacro.lisp")
     (cf "Data-and-control-flow/multiple-value-list-defmacro.lisp")
     (cf "Conditionals/macros.lisp")
-    (cf "Character/character-defclass.lisp")))
+    (cf "Character/character-defclass.lisp")
+    (cf "Compiler/Code-object/generic-functions.lisp")
+    (cf "Compiler/Code-object/code-object-defclass.lisp")))
