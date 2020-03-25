@@ -14,7 +14,7 @@
     (sicl-hir-to-mir:hir-to-mir client hir2)
     (sicl-mir-to-lir:mir-to-lir client hir2)
     (multiple-value-bind (instructions label-map)
-        (sicl-code-generation:generate-code hir2)
+        (cluster:assemble (sicl-code-generation:generate-code hir2))
       (declare (ignore label-map))
       (funcall fun
                (sicl-hir-interpreter:make-function-cell-finder global-environment)
@@ -34,7 +34,7 @@
                                                  nil
                                                  static-environment-values))
                                         (closure (funcall (sicl-genv:fdefinition 'make-instance sicl-boot:*e5*)
-                                                          'function
+                                                          'sicl-clos:simple-function
                                                           :environment static-environment)))
                                    (closer-mop:set-funcallable-instance-function
                                     closure
