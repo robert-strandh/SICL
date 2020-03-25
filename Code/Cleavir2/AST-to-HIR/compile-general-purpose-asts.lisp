@@ -765,18 +765,36 @@
              (arg2-ast (cleavir-ast:arg2-ast ast))
              (temp1 (cleavir-ir:new-temporary))
              (temp2 (cleavir-ir:new-temporary)))
-         (compile-ast
-          client
-          arg1-ast
-          (clone-context
-           context
-           :result temp1
-           :successor (compile-ast
-                       client
-                       arg2-ast
-                       (clone-context
-                        context
-                        :result temp2
-                        :successor (make-instance 'cleavir-ir:eq-instruction
-                                     :inputs (list temp1 temp2)
-                                     :successors successors))))))))))
+         (if (eq (first successors)
+                 (second successors))
+             ;; This means we don't really need the test
+             (compile-ast
+              client
+              arg1-ast
+              (clone-context
+               context
+               :results '()
+               :successor
+               (compile-ast
+                client
+                arg2-ast
+                (clone-context
+                 context
+                 :results '()
+                 :successor (first successors)))))
+             (compile-ast
+              client
+              arg1-ast
+              (clone-context
+               context
+               :result temp1
+               :successor
+               (compile-ast
+                client
+                arg2-ast
+                (clone-context
+                 context
+                 :result temp2
+                 :successor (make-instance 'cleavir-ir:eq-instruction
+                              :inputs (list temp1 temp2)
+                              :successors successors)))))))))))
