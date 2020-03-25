@@ -23,13 +23,21 @@
               :input (first inputs)
               :output *rax*)
             instruction)))
-    (when (lexical-p (second inputs))
-      (insert-memref-before
-       instruction
-       (second inputs)
-       *rcx*
-       lexical-locations)
-      (setf (second inputs) *rcx*))
+    (cond ((lexical-p (second inputs))
+           (insert-memref-before
+            instruction
+            (second inputs)
+            *rcx*
+            lexical-locations)
+           (setf (second inputs) *rcx*))
+          ((typep (second inputs) 'cleavir-ir:immediate-input)
+           (cleavir-ir:insert-instruction-before
+            (make-instance 'cleavir-ir:assignment-instruction
+              :input (second inputs)
+              :output *r11*)
+            instruction)
+           (setf (second inputs) *r11*))
+          (t nil))
     (cond ((lexical-p (first outputs))
            (insert-memset-after
             instruction
