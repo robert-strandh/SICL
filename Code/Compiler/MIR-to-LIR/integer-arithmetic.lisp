@@ -75,6 +75,13 @@
                       register
                       lexical-locations)
                   and collect register
+                else if (typep input 'cleavir-ir:immediate-input)
+                       do (cleavir-ir:insert-instruction-before
+                           (make-instance 'cleavir-ir:assignment-instruction
+                             :input input
+                             :output register)
+                           instruction)
+                       and collect register
                 else
                   collect input)))
     (setf (cleavir-ir:inputs instruction) new-inputs)))
