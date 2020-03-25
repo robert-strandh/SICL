@@ -1,181 +1,149 @@
 (cl:in-package #:sicl-code-generation)
 
+(defun compute-branches (instruction next mnemonic1 mnemonic2)
+  (let ((successors (cleavir-ir:successors instruction)))
+    (cond ((eq (first successors) next)
+           (list (make-instance 'cluster:code-command
+                   :mnemonic mnemonic1
+                   :operands
+                   (list
+                    (find-instruction-label (second successors))))))
+          ((eq (second successors) next)
+           (list (make-instance 'cluster:code-command
+                   :mnemonic mnemonic2
+                   :operands
+                   (list
+                    (find-instruction-label (first successors))))))
+          (t
+           (list (make-instance 'cluster:code-command
+                   :mnemonic mnemonic1
+                   :operands
+                   (list
+                    (find-instruction-label (second successors))))
+                 (make-instance 'cluster:code-command
+                   :mnemonic "JMP"
+                   :operands
+                   (list
+                    (find-instruction-label (first successors)))))))))
 
-(defmethod translate-instruction
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:signed-add-instruction))
   (assert (eq (first (cleavir-ir:inputs instruction))
               (first (cleavir-ir:outputs instruction))))
-  (let ((successors (cleavir-ir:successors instruction))
-        (add (make-instance 'cluster:code-command
-               :mnemonic "ADD"
-               :operands
-               (list
-                (translate-datum (first (cleavir-ir:inputs instruction)))
-                (translate-datum (second (cleavir-ir:inputs instruction)))))))
-    (if (or (= (length successors) 1)
-            (eq (first successors) (second successors)))
-        add
-        (list add
-              (make-instance 'cluster:code-command
-                :mnemonic "JOF"
-                :operands
-                (list
-                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
+  (make-instance 'cluster:code-command
+    :mnemonic "ADD"
+    :operands
+    (list
+     (translate-datum (first (cleavir-ir:inputs instruction)))
+     (translate-datum (second (cleavir-ir:inputs instruction))))))
 
-(defmethod translate-instruction
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:signed-add-instruction) next)
+  (cons
+   (translate-simple-instruction instruction)
+   (compute-branches instruction next "JOF" "JNO")))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:signed-sub-instruction))
   (assert (eq (first (cleavir-ir:inputs instruction))
               (first (cleavir-ir:outputs instruction))))
-  (let ((successors (cleavir-ir:successors instruction))
-        (add (make-instance 'cluster:code-command
-               :mnemonic "SUB"
-               :operands
-               (list
-                (translate-datum (first (cleavir-ir:inputs instruction)))
-                (translate-datum (second (cleavir-ir:inputs instruction)))))))
-    (if (or (= (length successors) 1)
-            (eq (first successors) (second successors)))
-        add
-        (list add
-              (make-instance 'cluster:code-command
-                :mnemonic "JOF"
-                :operands
-                (list
-                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
+  (make-instance 'cluster:code-command
+    :mnemonic "SUB"
+    :operands
+    (list
+     (translate-datum (first (cleavir-ir:inputs instruction)))
+     (translate-datum (second (cleavir-ir:inputs instruction))))))
 
-(defmethod translate-instruction
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:signed-sub-instruction) next)
+  (cons
+   (translate-simple-instruction instruction)
+   (compute-branches instruction next "JOF" "JNO")))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:negate-instruction))
   (assert (eq (first (cleavir-ir:inputs instruction))
               (first (cleavir-ir:outputs instruction))))
-  (let ((successors (cleavir-ir:successors instruction))
-        (neg (make-instance 'cluster:code-command
-               :mnemonic "NEG"
-               :operands
-               (list (translate-datum (first (cleavir-ir:inputs instruction)))))))
-    (if (or (= (length successors) 1)
-            (eq (first successors) (second successors)))
-        neg
-        (list neg
-              (make-instance 'cluster:code-command
-                :mnemonic "JOF"
-                :operands
-                (list
-                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
+  (make-instance 'cluster:code-command
+    :mnemonic "NEG"
+    :operands
+    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
 
-(defmethod translate-instruction
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:negate-instruction) next)
+  (cons
+   (translate-simple-instruction instruction)
+   (compute-branches instruction next "JOF" "JNO")))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:unsigned-add-instruction))
   (assert (eq (first (cleavir-ir:inputs instruction))
               (first (cleavir-ir:outputs instruction))))
-  (let ((successors (cleavir-ir:successors instruction))
-        (add (make-instance 'cluster:code-command
-               :mnemonic "ADD"
-               :operands
-               (list
-                (translate-datum (first (cleavir-ir:inputs instruction)))
-                (translate-datum (second (cleavir-ir:inputs instruction)))))))
-    (if (or (= (length successors) 1)
-            (eq (first successors) (second successors)))
-        add
-        (list add
-              (make-instance 'cluster:code-command
-                :mnemonic "JCF"
-                :operands
-                (list
-                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
+  (make-instance 'cluster:code-command
+    :mnemonic "ADD"
+    :operands
+    (list
+     (translate-datum (first (cleavir-ir:inputs instruction)))
+     (translate-datum (second (cleavir-ir:inputs instruction))))))
 
-(defmethod translate-instruction
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:unsigned-add-instruction) next)
+  (cons
+   (translate-simple-instruction instruction)
+   (compute-branches instruction next "JC" "JNC")))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:unsigned-sub-instruction))
   (assert (eq (first (cleavir-ir:inputs instruction))
               (first (cleavir-ir:outputs instruction))))
-  (let ((successors (cleavir-ir:successors instruction))
-        (add (make-instance 'cluster:code-command
-               :mnemonic "SUB"
-               :operands
-               (list
-                (translate-datum (first (cleavir-ir:inputs instruction)))
-                (translate-datum (second (cleavir-ir:inputs instruction)))))))
-    (if (or (= (length successors) 1)
-            (eq (first successors) (second successors)))
-        add
-        (list add
-              (make-instance 'cluster:code-command
-                :mnemonic "JCF"
-                :operands
-                (list
-                 (find-instruction-label (second (cleavir-ir:successors instruction)))))))))
+  (make-instance 'cluster:code-command
+    :mnemonic "SUB"
+    :operands
+    (list
+     (translate-datum (first (cleavir-ir:inputs instruction)))
+     (translate-datum (second (cleavir-ir:inputs instruction))))))
 
-(defmethod translate-instruction
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:unsigned-sub-instruction) next)
+  (cons
+   (translate-simple-instruction instruction)
+   (compute-branches instruction next "JC" "JNC")))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:fixnum-divide-instruction))
   (make-instance 'cluster:code-command
     :mnemonic "DIV"
     :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
 
-(defmethod translate-instruction
-    ((instruction cleavir-ir:unsigned-less-instruction))
-  (list (make-instance 'cluster:code-command
-          :mnemonic "CMP"
-          :operands
-          (list
-           (translate-datum (first (cleavir-ir:inputs instruction)))
-           (translate-datum (second (cleavir-ir:inputs instruction)))))
-        (make-instance 'cluster:code-command
-          :mnemonic "JNB"
-          :operands
-          (list
-           (find-instruction-label (second (cleavir-ir:successors instruction)))))))
+(defun make-cmp (instruction)
+  (make-instance 'cluster:code-command
+    :mnemonic "CMP"
+    :operands
+    (list
+     (translate-datum (first (cleavir-ir:inputs instruction)))
+     (translate-datum (second (cleavir-ir:inputs instruction))))))
 
-(defmethod translate-instruction
-    ((instruction cleavir-ir:signed-less-instruction))
-  (list (make-instance 'cluster:code-command
-          :mnemonic "CMP"
-          :operands
-          (list
-           (translate-datum (first (cleavir-ir:inputs instruction)))
-           (translate-datum (second (cleavir-ir:inputs instruction)))))
-        (make-instance 'cluster:code-command
-          :mnemonic "JNL"
-          :operands
-          (list
-           (find-instruction-label (second (cleavir-ir:successors instruction)))))))
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:unsigned-less-instruction) next)
+  (cons (make-cmp instruction)
+        (compute-branches instruction next "JNB" "JB")))
 
-(defmethod translate-instruction
-    ((instruction cleavir-ir:signed-not-greater-instruction))
-  (list (make-instance 'cluster:code-command
-          :mnemonic "CMP"
-          :operands
-          (list
-           (translate-datum (first (cleavir-ir:inputs instruction)))
-           (translate-datum (second (cleavir-ir:inputs instruction)))))
-        (make-instance 'cluster:code-command
-          :mnemonic "JG"
-          :operands
-          (list
-           (find-instruction-label (second (cleavir-ir:successors instruction)))))))
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:signed-less-instruction) next)
+  (cons (make-cmp instruction)
+        (compute-branches instruction next "JNL" "JL")))
 
-(defmethod translate-instruction
-    ((instruction cleavir-ir:equal-instruction))
-  (list (make-instance 'cluster:code-command
-          :mnemonic "CMP"
-          :operands
-          (list
-           (translate-datum (first (cleavir-ir:inputs instruction)))
-           (translate-datum (second (cleavir-ir:inputs instruction)))))
-        (make-instance 'cluster:code-command
-          :mnemonic "JNE"
-          :operands
-          (list
-           (find-instruction-label (second (cleavir-ir:successors instruction)))))))
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:signed-not-greater-instruction) next)
+  (cons (make-cmp instruction)
+        (compute-branches instruction next "JG" "JNG")))
 
-(defmethod translate-instruction
-    ((instruction cleavir-ir:eq-instruction))
-  (list (make-instance 'cluster:code-command
-          :mnemonic "CMP"
-          :operands
-          (list
-           (translate-datum (first (cleavir-ir:inputs instruction)))
-           (translate-datum (second (cleavir-ir:inputs instruction)))))
-        (make-instance 'cluster:code-command
-          :mnemonic "JNE"
-          :operands
-          (list
-           (find-instruction-label (second (cleavir-ir:successors instruction)))))))
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:equal-instruction) next)
+  (cons (make-cmp instruction)
+        (compute-branches instruction next "JNE" "JE")))
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:eq-instruction) next)
+  (cons (make-cmp instruction)
+        (compute-branches instruction next "JNE" "JE")))
