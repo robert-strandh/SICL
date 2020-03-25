@@ -43,6 +43,13 @@
 
 (defmethod process-instruction :before (client instruction)
   (declare (ignore client))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (when (and (= (length successors) 2)
+               (eq (first successors) (second successors)))
+      (setf (cleavir-ir:successors instruction)
+            (list (first successors)))
+      (setf (cleavir-ir:predecessors (first successors))
+            (remove-duplicates (cleavir-ir:predecessors (first successors))))))
   (loop for input in (cleavir-ir:inputs instruction)
         do (when (typep input 'cleavir-ir:constant-input)
              (let ((value (cleavir-ir:value input)))
