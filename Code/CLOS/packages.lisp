@@ -50,6 +50,8 @@
    #:instance-size
    #:variant-signature
    ;; Accessors for generic function metaobjects.
+   #:entry-point
+   #:environment
    #:code-object
    #:generic-function-name
    #:generic-function-argument-precedence-order
