@@ -134,6 +134,7 @@
     (cf "CLOS/class-prototype-defgeneric.lisp")
     (cf "CLOS/setf-class-prototype-defgeneric.lisp")
     (cf "CLOS/entry-point-defgenerics.lisp")
+    (cf "CLOS/environment-defgenerics.lisp")
     (cf "CLOS/dependents-defgeneric.lisp")
     (cf "CLOS/setf-dependents-defgeneric.lisp")
     (cf "CLOS/generic-function-name-defgeneric.lisp")
