@@ -31,6 +31,7 @@
     (ld "CLOS/class-prototype-defgeneric.fasl")
     (ld "CLOS/setf-class-prototype-defgeneric.fasl")
     (ld "CLOS/entry-point-defgenerics.fasl")
+    (ld "CLOS/environment-defgenerics.fasl")
     (ld "CLOS/dependents-defgeneric.fasl")
     (ld "CLOS/setf-dependents-defgeneric.fasl")
     (ld "CLOS/generic-function-name-defgeneric.fasl")

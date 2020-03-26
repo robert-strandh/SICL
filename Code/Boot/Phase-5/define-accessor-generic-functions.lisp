@@ -48,6 +48,7 @@
   (load-fasl "CLOS/class-prototype-defgeneric.fasl" e6)
   (load-fasl "CLOS/setf-class-prototype-defgeneric.fasl" e6)
   (load-fasl "CLOS/entry-point-defgenerics.fasl" e6)
+  (load-fasl "CLOS/environment-defgenerics.fasl" e6)
   (load-fasl "CLOS/dependents-defgeneric.fasl" e6)
   (load-fasl "CLOS/setf-dependents-defgeneric.fasl" e6)
   (load-fasl "CLOS/generic-function-name-defgeneric.fasl" e6)
