@@ -36,6 +36,6 @@
 ;;; Class FUNCALLABLE-STANDARD-OBJECT.
 
 (defclass funcallable-standard-object (standard-object function)
-  ((%entry-point :initarg :entry-point)
+  ((%entry-point :initarg :entry-point :accessor entry-point)
    (%environment :initform nil :initarg :environment))
   (:metaclass funcallable-standard-class))
