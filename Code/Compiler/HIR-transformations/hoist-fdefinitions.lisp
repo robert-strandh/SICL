@@ -25,25 +25,17 @@
 (defun transform-fdefinition-instruction
     (top-level-enter-instruction fdefinition-instruction table)
   (let ((input (first (cleavir-ir:inputs fdefinition-instruction)))
-               (successor (first (cleavir-ir:successors top-level-enter-instruction))))
-    (if (typep input 'cleavir-ir:lexical-location)
-        (let* ((assignment-instruction (first (cleavir-ir:defining-instructions input)))
-               (constant-input (first (cleavir-ir:inputs assignment-instruction)))
-               (function-name (cleavir-ir:value constant-input)))
-          (insert-find-function-cell function-name input successor)
-          (change-class assignment-instruction 'cleavir-ir:nop-instruction
-                        :inputs '()
-                        :outputs '())
-          (change-class fdefinition-instruction 'cleavir-ir:car-instruction))
-        (let ((function-name (cleavir-ir:value input)))
-          (if (null (gethash function-name table))
-              (let ((temp (cleavir-ast-to-hir:make-temp)))
-                (insert-find-function-cell function-name temp successor)
-                (change-class fdefinition-instruction 'cleavir-ir:car-instruction
-                              :inputs (list temp))
-                (setf (gethash function-name table) temp))
-              (change-class fdefinition-instruction 'cleavir-ir:car-instruction
-                            :inputs (list (gethash function-name table))))))))
+        (successor (first (cleavir-ir:successors top-level-enter-instruction))))
+    (assert (typep input 'cleavir-ir:constant-input))
+    (let ((function-name (cleavir-ir:value input)))
+      (if (null (gethash function-name table))
+          (let ((temp (cleavir-ast-to-hir:make-temp)))
+            (insert-find-function-cell function-name temp successor)
+            (change-class fdefinition-instruction 'cleavir-ir:car-instruction
+                          :inputs (list temp))
+            (setf (gethash function-name table) temp))
+          (change-class fdefinition-instruction 'cleavir-ir:car-instruction
+                        :inputs (list (gethash function-name table)))))))
 
 (defun find-fdefinition-instructions (top-level-enter-instruction)
   (let ((result '()))
