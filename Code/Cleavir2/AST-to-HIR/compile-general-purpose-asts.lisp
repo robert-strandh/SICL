@@ -596,9 +596,26 @@
 ;;;
 ;;; Compile a FDEFINITION-AST.
 
-(define-compile-functional-ast
-    cleavir-ast:fdefinition-ast cleavir-ir:fdefinition-instruction
-  (cleavir-ast:name-ast))
+(defmethod compile-ast (client (ast cleavir-ast:fdefinition-ast) context)
+  (let ((name-ast (cleavir-ast:name-ast ast)))
+    (if (typep name-ast 'cleavir-ast:constant-ast)
+        (make-instance 'cleavir-ir:fdefinition-instruction
+          :input (make-instance 'cleavir-ir:constant-input
+                   :value (cleavir-ast:value name-ast))
+          :outputs (results context)
+          :successors (successors context))
+        (let ((temp (make-temp)))
+          (compile-ast
+           client
+           name-ast
+           (clone-context
+            context
+            :result temp
+            :successor
+            (make-instance 'cleavir-ir:fdefinition-instruction
+              :input temp
+              :outputs (results context)
+              :successors (successors context))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
