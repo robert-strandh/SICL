@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-hir-transformations)
 
 (defclass top-level-enter-instruction (cleavir-ir:top-level-enter-instruction)
-  ((%constants :initform '() :accessor constants)))
+  ((%constants :initform '() :accessor constants)
+   (%function-names :initform '() :accessor function-names)))
 
 (defgeneric trivial-constant-p (constant))
 
