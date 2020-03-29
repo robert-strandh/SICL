@@ -18,7 +18,10 @@
                     #'sicl-hir-interpreter:enclose
                     #'cons
                     nil
-                    (sicl-hir-transformations:constants hir)))))
+                    (append (loop with names = (sicl-hir-transformations:function-names hir)
+                                  for name in names
+                                  collect (sicl-genv:function-cell name global-environment))
+                            (sicl-hir-transformations:constants hir))))))
 
 (defun import-function-from-host (name environment)
   (setf (sicl-genv:fdefinition name environment)
