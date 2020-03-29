@@ -28,6 +28,12 @@
         (successor (first (cleavir-ir:successors top-level-enter-instruction))))
     (assert (typep input 'cleavir-ir:constant-input))
     (let ((function-name (cleavir-ir:value input)))
+      (with-accessors ((function-names function-names))
+          top-level-enter-instruction
+        (let ((pos (position function-name function-names :test #'equal)))
+          (when (null pos)
+            (setf pos (length function-names))
+            (setf function-names (append function-names (list function-name))))))
       (if (null (gethash function-name table))
           (let ((temp (cleavir-ast-to-hir:make-temp)))
             (insert-find-function-cell function-name temp successor)
