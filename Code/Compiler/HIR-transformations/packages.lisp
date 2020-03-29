@@ -11,6 +11,7 @@
            #:eliminate-read-cell-instructions
            #:eliminate-write-cell-instructions
            #:constants
+           #:function-names
            #:top-level-enter-instruction
            #:hoist-constant-inputs
            #:eliminate-fixed-to-multiple-instructions
