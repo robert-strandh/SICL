@@ -29,10 +29,6 @@
                 sicl-run-time:*dynamic-environment*)))
     closure))
 
-(defun make-function-cell-finder (environment)
-  (lambda (name)
-    (sicl-genv:function-cell name environment)))
-
 (defun symbol-value-function (global-environment)
   (lambda (symbol)
     (loop for entry in sicl-run-time:*dynamic-environment*
