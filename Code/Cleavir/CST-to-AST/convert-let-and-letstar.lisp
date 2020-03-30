@@ -100,7 +100,8 @@
                                              :source origin))
                                         :source origin)
                 for binding-cst in (reverse binding-csts)
-                for declaration-csts in (reverse item-specific-dspecs)
+                for declaration-cst-groups in (reverse item-specific-dspecs)
+                for declaration-csts = (first declaration-cst-groups)
                 do (setf result
                          (cst:cons
                           (make-atom-cst 'let origin)

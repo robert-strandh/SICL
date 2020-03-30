@@ -259,7 +259,7 @@
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
   (augment-environment-with-variable (cst:name parameter)
-                                     idspecs
+                                     (first idspecs)
                                      environment
                                      environment))
 
@@ -280,7 +280,7 @@
 (defmethod new-environment-from-parameter
     ((parameter cst:aux-parameter) idspecs environment system)
   (augment-environment-with-variable (cst:name parameter)
-                                     idspecs
+                                     (first idspecs)
                                      environment
                                      environment))
 
@@ -465,11 +465,12 @@
                (cst:canonicalize-declaration-specifiers
                 system
                 (cleavir-env:declarations env)
-                declaration-specifiers)))
+                declaration-specifiers))
+             (itemized-lambda-list
+               (itemize-lambda-list parsed-lambda-list)))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers-by-parameter-group
-             (itemize-lambda-list parsed-lambda-list)
-             canonicalized-dspecs)
+             itemized-lambda-list canonicalized-dspecs)
           (multiple-value-bind (lexical-lambda-list entries)
               (lambda-list-from-parameter-groups (cst:children parsed-lambda-list))
             (let ((ast

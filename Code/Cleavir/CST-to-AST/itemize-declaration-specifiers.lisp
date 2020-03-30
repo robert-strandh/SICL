@@ -30,9 +30,9 @@
 ;;; single binding in a lambda list.  The second argument,
 ;;; CANONICAL-DSPECS, is a list of canonical declaration specifiers.
 ;;; This function returns a two values.  The first return value is a
-;;; list with the same length as VARIABLES.  Each element in that list
-;;; contains the elements in CANONICAL-DSPECS that apply to (all) the
-;;; variables in the corresponding item in VARIABLES.  The second
+;;; list with the same shape as VARIABLES.  For each variable-cst in
+;;; VARIABLES, this return value has a list of elements in
+;;; CANONICAL-DSPECS that apply to that variable.  The second
 ;;; return value is a list of the remaining declaration specifiers in
 ;;; CANONICAL-DSPECS i.e. the ones that do not apply to any element in
 ;;; VARIABLES.  A particular symbol S can not appear twice in an item
@@ -43,13 +43,13 @@
   (if (null variables)
       (values '() canonical-dspecs)
       (multiple-value-bind (itemized-dspecs remaining-dspecs)
-	  (itemize-declaration-specifiers (cdr variables) canonical-dspecs)
-	(let ((item-specific-dspecs '()))
+	  (itemize-declaration-specifiers (rest variables) canonical-dspecs)
+        (values
+         (cons
 	  (loop for var in (first variables)
-		do (multiple-value-bind (is-dspecs r-dspecs)
-		       (separate-declarations remaining-dspecs var)
-		     (setf item-specific-dspecs
-			   (append is-dspecs item-specific-dspecs))
-		     (setf remaining-dspecs r-dspecs)))
-	  (values (cons item-specific-dspecs itemized-dspecs)
-		  remaining-dspecs)))))
+		collect (multiple-value-bind (is-dspecs r-dspecs)
+                            (separate-declarations remaining-dspecs var)
+                          (setf remaining-dspecs r-dspecs)
+                          is-dspecs))
+          itemized-dspecs)
+         remaining-dspecs))))
