@@ -10,7 +10,6 @@
            #:*call-stack*
            #:enclose
            #:fill-environment
-           #:make-function-cell-finder
            #:interpret-instruction
            #:lexical-value
            #:input-value))
