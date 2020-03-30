@@ -512,7 +512,12 @@
                   '#:function-dynenv))
          (cleavir-ir:*dynamic-environment* dynenv)
          ;; Note the ENTER gets its own output as its dynamic environment.
-         (enter (cleavir-ir:make-enter-instruction ll dynenv :origin (cleavir-ast:origin ast)))
+         (enter (cleavir-ir:make-enter-instruction
+                 ll dynenv
+                 :name (cleavir-ast:name ast)
+                 :docstring (cleavir-ast:docstring ast)
+                 :original-lambda-list (cleavir-ast:original-lambda-list ast)
+                 :origin (cleavir-ast:origin ast)))
          (values (cleavir-ir:make-values-location))
          (return (cleavir-ir:make-return-instruction (list values)))
          (body-context (context values (list return) enter dynenv))
@@ -799,7 +804,12 @@
            (dynenv (cleavir-ir:make-lexical-location
                     '#:toplevel-unhoisted-function-dynenv))
            (cleavir-ir:*dynamic-environment* dynenv)
-	   (enter (cleavir-ir:make-enter-instruction ll dynenv :origin (cleavir-ast:origin ast)))
+	   (enter (cleavir-ir:make-enter-instruction
+                   ll dynenv
+                   :name (cleavir-ast:name ast)
+                   :docstring (cleavir-ast:docstring ast)
+                   :original-lambda-list (cleavir-ast:original-lambda-list ast)
+                   :origin (cleavir-ast:origin ast)))
 	   (values (cleavir-ir:make-values-location))
 	   (return (cleavir-ir:make-return-instruction (list values)))
 	   (body-context (context values (list return) enter dynenv))

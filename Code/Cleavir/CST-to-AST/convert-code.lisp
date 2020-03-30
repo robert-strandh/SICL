@@ -451,15 +451,13 @@
                 :source origin)))
 
 (defmethod convert-code (lambda-list-cst body-cst env system
-                         &key (block-name-cst nil) origin)
+                         &key (block-name-cst nil) origin name)
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list system lambda-list-cst :error-p nil)))
     (when (null parsed-lambda-list)
       (error 'malformed-lambda-list :cst lambda-list-cst))
     (multiple-value-bind (declaration-csts documentation forms-cst)
         (cst:separate-function-body body-cst)
-      ;; FIXME: Handle documentation
-      (declare (ignore documentation))
       (let* ((declaration-specifiers
                (loop for declaration-cst in declaration-csts
                      append (cdr (cst:listify declaration-cst))))
@@ -483,4 +481,7 @@
                      env
                      system)))
               (cleavir-ast:make-function-ast ast lexical-lambda-list
-                                             :origin origin))))))))
+                :name name
+                :original-lambda-list (cst:raw lambda-list-cst)
+                :docstring (when documentation (cst:raw documentation))
+                :origin origin))))))))

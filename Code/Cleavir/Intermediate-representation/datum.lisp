@@ -8,7 +8,9 @@
 
 (defclass datum ()
   ((%defining-instructions :initform '() :accessor defining-instructions)
-   (%using-instructions :initform '() :accessor using-instructions)))
+   (%using-instructions :initform '() :accessor using-instructions)
+   (%origin :initform (if (boundp '*origin*) *origin* nil)
+            :initarg :origin :accessor origin)))
 
 ;;; Replace a datum with another in the instruction graph.
 (defun replace-datum (new old)
