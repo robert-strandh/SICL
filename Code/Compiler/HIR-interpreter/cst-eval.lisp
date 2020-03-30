@@ -10,7 +10,6 @@
          (fun (top-level-hir-to-host-function client hir))
          (sicl-run-time:*dynamic-environment* '()))
     (funcall fun
-             (make-function-cell-finder global-environment)
              (apply #'vector
                     nil ; Ultimately, replace with code object.
                     #'enclose

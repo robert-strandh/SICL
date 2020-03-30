@@ -12,7 +12,6 @@
          (sicl-run-time:*dynamic-environment* '()))
     (sicl-hir-to-mir:hir-to-mir client hir2)
     (funcall fun
-             (sicl-hir-interpreter:make-function-cell-finder global-environment)
              (apply #'vector
                     nil ; Ultimately, replace with code object.
                     #'sicl-hir-interpreter:enclose

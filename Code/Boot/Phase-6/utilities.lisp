@@ -17,7 +17,6 @@
         (cluster:assemble (sicl-code-generation:generate-code hir2))
       (declare (ignore label-map))
       (funcall fun
-               (sicl-hir-interpreter:make-function-cell-finder global-environment)
                (apply #'vector
                       (funcall (sicl-genv:fdefinition 'make-instance sicl-boot:*e5*)
                                'sicl-compiler:code-object

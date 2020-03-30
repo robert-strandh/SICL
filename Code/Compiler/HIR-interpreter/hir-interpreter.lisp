@@ -25,7 +25,7 @@
         (interpret-hir client enter-instruction lexical-environment)))))
 
 (defun top-level-hir-to-host-function (client enter-instruction)
-  (lambda (function-cell-finder static-environment)
+  (lambda (static-environment)
     (let ((lexical-environment (make-hash-table :test #'eq))
           (static-environment-output
             (cleavir-ir:static-environment enter-instruction))
@@ -38,9 +38,5 @@
       (setf (lexical-value dynamic-environment-output lexical-environment)
             '())
       (setf (lexical-value 'dynamic-environment lexical-environment) '())
-      (setf (lexical-value 'arguments lexical-environment)
-            (vector function-cell-finder))
-      (setf (lexical-value 'function-cell-finder lexical-environment)
-            function-cell-finder)
       (catch 'return
         (interpret-hir client enter-instruction lexical-environment)))))
