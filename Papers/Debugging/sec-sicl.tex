@@ -24,8 +24,9 @@ undefined or unspecified behavior, such as:
 \begin{enumerate}
 \item Many times when a standard function is called with some argument
   that is not of the type indicated by the corresponding dictionary
-  entry, the behavior is undefined, allowing the implementation to
-  avoid potentially costly tests for exceptional situations.
+  entry in the \commonlisp{} standard document, the behavior is
+  undefined, allowing the implementation to avoid potentially costly
+  tests for exceptional situations.
 \item When a non-local transfer is attempted to an exit point that has
   been ``abandoned'', the standard does not require this situation to
   be detected, making it possible for the system to crash or (worse)
