@@ -224,7 +224,7 @@
   (cleavir-env:identity (cleavir-env:function-info environment name)))
 
 ;;; Convert a local function definition.
-(defun convert-local-function (definition-cst environment system)
+(defun convert-local-function (definition-cst operator environment system)
   ;; FIXME: The error message if this check fails needs improvement.
   (check-argument-count definition-cst 1 nil)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
@@ -236,17 +236,18 @@
                     body-cst
                     environment
                     system
+                    :name (list operator (cst:raw name-cst))
                     :block-name-cst block-name-cst
                     :origin origin))))
 
 ;;; Convert a CST representing a list of local function definitions.
-(defun convert-local-functions (definitions-cst environment system)
+(defun convert-local-functions (definitions-cst operator environment system)
   (loop for remaining = definitions-cst
           then (cst:rest remaining)
         until (cst:null remaining)
         collect (let* ((def-cst (cst:first remaining))
                        (fun (convert-local-function
-                             def-cst environment system))
+                             def-cst operator environment system))
                        ;; compute these after calling convert-local-function
                        ;; so that we know def-cst is actually a list.
                        (name-cst (cst:first def-cst))
@@ -284,7 +285,7 @@
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations
                 system (cleavir-env:declarations env) declaration-csts))
-             (defs (convert-local-functions definitions-cst env system))
+             (defs (convert-local-functions definitions-cst symbol env system))
              (new-env (augment-environment-from-fdefs env definitions-cst))
              (init-asts
                (compute-function-init-asts defs new-env))
@@ -315,7 +316,7 @@
                (cst:canonicalize-declarations
                 system (cleavir-env:declarations env) declaration-csts))
              (new-env (augment-environment-from-fdefs env definitions-cst))
-             (defs (convert-local-functions definitions-cst new-env system))
+             (defs (convert-local-functions definitions-cst symbol new-env system))
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations

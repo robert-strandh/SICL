@@ -385,11 +385,20 @@
 
 (defclass function-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
-   (%body-ast :initarg :body-ast :reader body-ast)))
+   (%body-ast :initarg :body-ast :reader body-ast)
+   ;; These three are intended for debugging/introspection.
+   (%name :initarg :name :initform nil :reader name)
+   (%docstring :initarg :docstring :initform nil :reader docstring)
+   (%original-lambda-list :initarg :original-lambda-list :initform nil
+                          :reader original-lambda-list)))
 
-(defun make-function-ast (body-ast lambda-list &key origin (policy *policy*))
+(defun make-function-ast (body-ast lambda-list
+                          &key name docstring original-lambda-list
+                            origin (policy *policy*))
   (make-instance 'function-ast
     :origin origin :policy policy
+    :name name :docstring docstring
+    :original-lambda-list original-lambda-list
     :body-ast body-ast
     :lambda-list lambda-list))
 
