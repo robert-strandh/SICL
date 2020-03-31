@@ -1,29 +1,20 @@
 (cl:in-package #:sicl-hir-interpreter)
 
-(defclass funcallable-standard-object (closer-mop:funcallable-standard-object)
-  ((%static-environment :initarg :static-environment :reader static-environment))
-  (:metaclass closer-mop:funcallable-standard-class))
-
-(defmethod closer-mop:validate-superclass
-    ((class funcallable-standard-object)
-     (superclass closer-mop:funcallable-standard-object))
-  t)
-
 (defun enclose (entry-point code-object &rest static-environment-values)
-  (let ((closure (make-instance 'funcallable-standard-object
-                   :static-environment
-                   (apply #'vector
-                    code-object
-                    #'enclose
-                    #'cons
-                    nil
-                    static-environment-values))))
+  (let* ((static-environment
+          (apply #'vector
+                 code-object
+                 #'enclose
+                 #'cons
+                 nil
+                 static-environment-values))
+         (closure (make-instance 'closer-mop:funcallable-standard-object)))
     (closer-mop:set-funcallable-instance-function
      closure
      (lambda (&rest args)
        (funcall entry-point
                 args
-                (static-environment closure)
+                static-environment
                 sicl-run-time:*dynamic-environment*)))
     closure))
 
