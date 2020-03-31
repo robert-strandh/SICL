@@ -1,8 +1,7 @@
 (cl:in-package #:sicl-hir-interpreter)
 
 (defclass funcallable-standard-object (closer-mop:funcallable-standard-object)
-  ((%entry-point :initarg :entry-point :reader entry-point)
-   (%static-environment :initarg :static-environment :reader static-environment))
+  ((%static-environment :initarg :static-environment :reader static-environment))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defmethod closer-mop:validate-superclass
@@ -12,7 +11,6 @@
 
 (defun enclose (entry-point code-object &rest static-environment-values)
   (let ((closure (make-instance 'funcallable-standard-object
-                   :entry-point entry-point
                    :static-environment
                    (apply #'vector
                     code-object
