@@ -450,6 +450,24 @@
       (cst:cons (make-atom-cst 'progn origin) forms-cst
                 :source origin)))
 
+;;; Given the entries and idspecs, compute and return an alist from LEXICAL-ASTs
+;;; to lists of declaration specifier CSTs for that lexical variable.
+(defun compute-bound-declarations (entries idspecs)
+  ;; NOTE: We use raw declaration specifiers so that ASTs can be serialized
+  ;; without CSTs having to be serializable, but we might want to decide
+  ;; otherwise later?
+  (loop for vargroup in entries for specgroup in idspecs
+        append (loop for variables in vargroup
+                     for specses in specgroup
+                     append (loop for variable
+                                    in (if (listp variables)
+                                           variables
+                                           (list variables))
+                                  for specs in specses
+                                  unless (null specs)
+                                    collect (cons variable
+                                                  (mapcar #'cst:raw specs))))))
+
 (defmethod convert-code (lambda-list-cst body-cst env system
                          &key (block-name-cst nil) origin name)
   (let ((parsed-lambda-list
@@ -480,9 +498,12 @@
                      entries
                      (make-body rdspecs (cst-for-body forms-cst block-name-cst origin))
                      env
-                     system)))
+                     system))
+                  (bound-declarations
+                    (compute-bound-declarations entries idspecs)))
               (cleavir-ast:make-function-ast ast lexical-lambda-list
                 :name name
                 :original-lambda-list (cst:raw lambda-list-cst)
                 :docstring (when documentation (cst:raw documentation))
+                :bound-declarations bound-declarations
                 :origin origin))))))))

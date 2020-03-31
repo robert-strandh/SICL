@@ -386,6 +386,11 @@
 (defclass function-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)
+   ;; An alist from lexical ASTs to lists of pertinent declaration specifiers.
+   ;; Since SPECIAL is otherwise handled, these are for optimization use only
+   ;; and may be discarded at will.
+   (%bound-declarations :initarg :bound-declarations :initform nil
+                        :reader bound-declarations)
    ;; These three are intended for debugging/introspection.
    (%name :initarg :name :initform nil :reader name)
    (%docstring :initarg :docstring :initform nil :reader docstring)
@@ -394,17 +399,22 @@
 
 (defun make-function-ast (body-ast lambda-list
                           &key name docstring original-lambda-list
+                            bound-declarations
                             origin (policy *policy*))
   (make-instance 'function-ast
     :origin origin :policy policy
     :name name :docstring docstring
     :original-lambda-list original-lambda-list
+    :bound-declarations bound-declarations
     :body-ast body-ast
     :lambda-list lambda-list))
 
 (cleavir-io:define-save-info function-ast
   (:lambda-list lambda-list)
-  (:body-ast body-ast))
+  (:body-ast body-ast)
+  (:name name) (:docstring docstring)
+  (:bound-declarations bound-declarations)
+  (:original-lambda-list original-lambda-list))
 
 (defmethod children ((ast function-ast))
   (list* (body-ast ast)
