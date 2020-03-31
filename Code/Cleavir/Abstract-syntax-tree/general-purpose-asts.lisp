@@ -392,7 +392,7 @@
    (%bound-declarations :initarg :bound-declarations :initform nil
                         :reader bound-declarations)
    ;; These three are intended for debugging/introspection.
-   (%name :initarg :name :initform nil :reader name)
+   (%name :initarg :name :initform nil :accessor name)
    (%docstring :initarg :docstring :initform nil :reader docstring)
    (%original-lambda-list :initarg :original-lambda-list :initform nil
                           :reader original-lambda-list)))
