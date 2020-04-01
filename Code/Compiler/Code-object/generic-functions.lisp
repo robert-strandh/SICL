@@ -7,3 +7,7 @@
 (defgeneric callee-saves-register-maps (code-object))
 
 (defgeneric callee-saves-stack-maps (code-object))
+
+(defgeneric constants (code-object))
+
+(defgeneric function-names (code-object))

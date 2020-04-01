@@ -8,4 +8,6 @@
     :reader callee-saves-register-maps)
    (%callee-saves-stack-maps
     :initarg :callee-saves-stack-maps
-    :reader callee-saves-stack-maps)))
+    :reader callee-saves-stack-maps)
+   (%constants :initarg :constants :reader constants)
+   (%function-names :initarg :function-names :reader function-names)))
