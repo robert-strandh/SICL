@@ -93,8 +93,9 @@
     (let ((location (first (cleavir-ir:outputs binding-assignment))))
       (when (and location (explicit-cell-p location))
         (let ((create (make-instance 'cleavir-ir:create-cell-instruction
-                                     :policy (cleavir-ir:policy binding-assignment)
-                                     :dynamic-environment (cleavir-ir:dynamic-environment binding-assignment))))
+                        :origin (cleavir-ir:origin binding-assignment)
+                        :policy (cleavir-ir:policy binding-assignment)
+                        :dynamic-environment (cleavir-ir:dynamic-environment binding-assignment))))
           (dolist (user (cleavir-ir:using-instructions location))
             (cleavir-hir-transformations:replace-inputs location location user))
           (dolist (definer (cleavir-ir:defining-instructions location))

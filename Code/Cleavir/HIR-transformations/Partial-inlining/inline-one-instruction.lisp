@@ -143,6 +143,7 @@
         ;; so the UNWIND-INSTRUCTION must be reduced to a LOCAL-UNWIND-INSTRUCTION.
         (let ((target (nth (cleavir-ir:unwind-index instruction)
                            (cleavir-ir:successors destination)))
+              (cleavir-ir:*origin* (cleavir-ir:origin instruction))
               (cleavir-ir:*policy* (cleavir-ir:policy instruction))
               (cleavir-ir:*dynamic-environment*
                 (translate-input (cleavir-ir:dynamic-environment instruction)
@@ -163,7 +164,8 @@
 
 ;;; See INLINE-ONE-INSTRUCTION method, below.
 (defmethod copy-instruction ((instruction cleavir-ir:return-instruction) mapping)
-  (let ((cleavir-ir:*policy* (cleavir-ir:policy instruction))
+  (let ((cleavir-ir:*origin* (cleavir-ir:origin instruction))
+        (cleavir-ir:*policy* (cleavir-ir:policy instruction))
         (cleavir-ir:*dynamic-environment*
           (translate-input
            (cleavir-ir:dynamic-environment instruction) mapping)))
@@ -240,7 +242,8 @@
          (alt-successors (rest (cleavir-ir:successors successor-instruction)))
          (new-closures (loop for succ in alt-successors
                              collect (cleavir-ir:new-temporary)))
-         (new-calls (loop with cleavir-ir:*policy* = (cleavir-ir:policy call-instruction)
+         (new-calls (loop with cleavir-ir:*origin* = (cleavir-ir:origin call-instruction)
+                          with cleavir-ir:*policy* = (cleavir-ir:policy call-instruction)
                           with cleavir-ir:*dynamic-environment*
                             = (cleavir-ir:dynamic-environment call-instruction)
                           for succ in alt-successors
@@ -252,7 +255,8 @@
                            (cons new-closure (rest (cleavir-ir:inputs call-instruction)))
                            (cleavir-ir:outputs call-instruction)
                            (first (cleavir-ir:successors call-instruction)))))
-         (new-enters (loop with cleavir-ir:*policy* = (cleavir-ir:policy enter-instruction)
+         (new-enters (loop with cleavir-ir:*origin* = (cleavir-ir:origin enter-instruction)
+                           with cleavir-ir:*policy* = (cleavir-ir:policy enter-instruction)
                            with cleavir-ir:*dynamic-environment*
                              = (cleavir-ir:dynamic-environment enter-instruction)
                            for succ in alt-successors
@@ -262,7 +266,8 @@
                             cleavir-ir:*dynamic-environment*
                             :successor succ
                             :origin (cleavir-ir:origin enter-instruction))))
-         (new-encloses (loop with cleavir-ir:*policy* = (cleavir-ir:policy enclose-instruction)
+         (new-encloses (loop with cleavir-ir:*origin* = (cleavir-ir:origin enclose-instruction)
+                             with cleavir-ir:*policy* = (cleavir-ir:policy enclose-instruction)
                              with cleavir-ir:*dynamic-environment*
                                = (cleavir-ir:dynamic-environment enclose-instruction)
                              for succ in alt-successors
