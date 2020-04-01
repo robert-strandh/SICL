@@ -10,4 +10,5 @@
     :initarg :callee-saves-stack-maps
     :reader callee-saves-stack-maps)
    (%constants :initarg :constants :reader constants)
-   (%function-names :initarg :function-names :reader function-names)))
+   (%function-names :initarg :function-names :reader function-names)
+   (%hir :initarg :hir :reader hir)))
