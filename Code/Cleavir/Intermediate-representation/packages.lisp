@@ -47,7 +47,7 @@
    #:constant-fdefinition-instruction #:make-constant-fdefinition-instruction
    #:constant-symbol-value-instruction #:make-constant-symbol-value-instruction
    #:enter-instruction #:make-enter-instruction
-   #:lambda-list #:closure-size #:docstring #:original-lambda-list
+   #:lambda-list #:bound-declarations #:closure-size #:docstring #:original-lambda-list
    #:static-environment #:dynamic-environment-output #:parameters
    #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
    #:nop-instruction #:make-nop-instruction

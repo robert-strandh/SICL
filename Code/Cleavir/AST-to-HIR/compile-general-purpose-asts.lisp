@@ -485,6 +485,10 @@
 		      (t
 		       (find-or-create-location item)))))
 
+(defun translate-bound-declarations (bound-declarations)
+  (loop for (lexical-ast . decls) in bound-declarations
+        collect (cons (find-or-create-location lexical-ast) decls)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function COMPILE-FUNCTION
@@ -508,6 +512,8 @@
 ;;; their final values.
 (defmethod compile-function ((ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
+         (bd (translate-bound-declarations
+              (cleavir-ast:bound-declarations ast)))
          (dynenv (cleavir-ir:make-lexical-location
                   '#:function-dynenv))
          (cleavir-ir:*dynamic-environment* dynenv)
@@ -517,6 +523,7 @@
                  :name (cleavir-ast:name ast)
                  :docstring (cleavir-ast:docstring ast)
                  :original-lambda-list (cleavir-ast:original-lambda-list ast)
+                 :bound-declarations bd
                  :origin (cleavir-ast:origin ast)))
          (values (cleavir-ir:make-values-location))
          (return (cleavir-ir:make-return-instruction (list values)))
@@ -801,11 +808,14 @@
         (*function-info* (make-hash-table :test #'eq))
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
+           (bd (translate-bound-declarations
+                (cleavir-ast:bound-declarations ast)))
            (dynenv (cleavir-ir:make-lexical-location
                     '#:toplevel-unhoisted-function-dynenv))
            (cleavir-ir:*dynamic-environment* dynenv)
 	   (enter (cleavir-ir:make-enter-instruction
                    ll dynenv
+                   :bound-declarations bd
                    :name (cleavir-ast:name ast)
                    :docstring (cleavir-ast:docstring ast)
                    :original-lambda-list (cleavir-ast:original-lambda-list ast)
