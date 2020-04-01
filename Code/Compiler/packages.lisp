@@ -12,4 +12,7 @@
            #:instructions
            #:frame-maps
            #:callee-saves-register-maps
-           #:callee-saves-stack-maps))
+           #:callee-saves-stack-maps
+           #:constants
+           #:function-names
+           #:hir))
