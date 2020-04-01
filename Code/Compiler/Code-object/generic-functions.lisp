@@ -11,3 +11,5 @@
 (defgeneric constants (code-object))
 
 (defgeneric function-names (code-object))
+
+(defgeneric hir (code-object))
