@@ -15,4 +15,5 @@
            #:callee-saves-stack-maps
            #:constants
            #:function-names
-           #:hir))
+           #:hir
+           #:compile-ast))
