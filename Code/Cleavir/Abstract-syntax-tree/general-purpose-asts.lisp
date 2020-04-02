@@ -724,6 +724,7 @@
     (when (null value)
       (setq value (make-load-time-value-ast
 		   `',(type-specifier ast) t
+                   :origin (cleavir-ast:origin ast)
 		   :policy (cleavir-ast:policy ast)))
       (reinitialize-instance
        ast

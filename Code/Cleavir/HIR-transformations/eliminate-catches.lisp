@@ -15,7 +15,8 @@
      initial-instruction)
     (dolist (catch death)
       ;; We replace each catch with an assignment (of the dynamic environment).
-      (let* ((cleavir-ir:*policy* (cleavir-ir:policy catch))
+      (let* ((cleavir-ir:*origin* (cleavir-ir:origin catch))
+             (cleavir-ir:*policy* (cleavir-ir:policy catch))
              (cleavir-ir:*dynamic-environment*
                (cleavir-ir:dynamic-environment catch))
              (asn (cleavir-ir:make-assignment-instruction

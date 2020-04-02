@@ -35,7 +35,8 @@
          (push instruction *destinies-worklist*)))
      enter)
     ;; Make appropriate assignments to do the ENTER's task.
-    (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
+    (loop with cleavir-ir:*origin* = (cleavir-ir:origin call)
+          with cleavir-ir:*policy* = (cleavir-ir:policy call)
           with cleavir-ir:*dynamic-environment* = call-dynenv
           for location in (cleavir-ir:parameters enter)
           for arg in (rest (cleavir-ir:inputs call))
@@ -55,7 +56,8 @@
             ;; (Similar to the unwind-instruction method on inline-one-instruction)
             do (let* ((target (nth (cleavir-ir:unwind-index unwind)
                                    (cleavir-ir:successors destination)))
-                      (new (let ((cleavir-ir:*policy* (cleavir-ir:policy unwind))
+                      (new (let ((cleavir-ir:*origin* (cleavir-ir:origin unwind))
+                                 (cleavir-ir:*policy* (cleavir-ir:policy unwind))
                                  (cleavir-ir:*dynamic-environment*
                                    (cleavir-ir:dynamic-environment unwind)))
                              (cleavir-ir:make-local-unwind-instruction target))))
@@ -66,7 +68,8 @@
           for return in returns
           for values = (first (cleavir-ir:inputs return))
           do (cleavir-ir:replace-datum caller-values values)
-             (let ((nop (let ((cleavir-ir:*policy* (cleavir-ir:policy return))
+             (let ((nop (let ((cleavir-ir:*origin* (cleavir-ir:origin return))
+                              (cleavir-ir:*policy* (cleavir-ir:policy return))
                               (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment return)))
                           (cleavir-ir:make-nop-instruction (list next)))))
                (cleavir-ir:bypass-instruction nop return))))
@@ -95,7 +98,8 @@
          ;; that inlined instructions have the policy of the source function,
          ;; rather than the call.
          (call-arguments
-           (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
+           (loop with cleavir-ir:*origin* = (cleavir-ir:origin call)
+                 with cleavir-ir:*policy* = (cleavir-ir:policy call)
                  with cleavir-ir:*dynamic-environment*
                    = (cleavir-ir:dynamic-environment call)
                  for location in initial-environment
@@ -119,7 +123,8 @@
          (fake-dynenv (cleavir-ir:new-temporary))
          (new-enter (cleavir-ir:clone-instruction enter
                       :dynamic-environment fake-dynenv))
-         (enc (let ((cleavir-ir:*policy* (cleavir-ir:policy call))
+         (enc (let ((cleavir-ir:*origin* (cleavir-ir:origin call))
+                    (cleavir-ir:*policy* (cleavir-ir:policy call))
                     (cleavir-ir:*dynamic-environment* dynenv))
                 (cleavir-ir:make-enclose-instruction function-temp call new-enter))))
     ;; Map the old inner dynenv to the outer dynenv.

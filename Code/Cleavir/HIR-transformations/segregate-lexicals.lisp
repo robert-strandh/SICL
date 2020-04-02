@@ -71,7 +71,8 @@
 (defun transmit-dynamic-location (enclose import instruction-owners)
   (let ((initializer (cleavir-ir:initializer enclose)))
     (unless initializer
-      (let ((cleavir-ir:*policy* (cleavir-ir:policy enclose))
+      (let ((cleavir-ir:*origin* (cleavir-ir:origin enclose))
+            (cleavir-ir:*policy* (cleavir-ir:policy enclose))
             (cleavir-ir:*dynamic-environment*
               (cleavir-ir:dynamic-environment enclose)))
         (setf initializer
@@ -92,6 +93,7 @@
 (defun add-fetch (enter dloc)
   ;; Finally, add a new FETCH-INSTRUCTION after ENTER.
   (let ((env-location (cleavir-ir:static-environment enter))
+        (cleavir-ir:*origin* (cleavir-ir:origin enter))
 	(cleavir-ir:*policy* (cleavir-ir:policy enter))
         (cleavir-ir:*dynamic-environment*
           (cleavir-ir:dynamic-environment enter))
@@ -133,7 +135,8 @@
   (unless read-only-location-p
     ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
     ;; the static lexical location to be eliminated.
-    (let ((cleavir-ir:*policy* (cleavir-ir:policy owner))
+    (let ((cleavir-ir:*origin* (cleavir-ir:origin owner))
+          (cleavir-ir:*policy* (cleavir-ir:policy owner))
           (cleavir-ir:*dynamic-environment*
             (cleavir-ir:dynamic-environment owner)))
       (cleavir-ir:insert-instruction-after
@@ -188,6 +191,7 @@
 ;;; in the inputs of I by D.
 (defun replace-inputs (sloc cloc instruction)
   (let ((d (cleavir-ir:new-temporary))
+        (cleavir-ir:*origin* (cleavir-ir:origin instruction))
 	(cleavir-ir:*policy* (cleavir-ir:policy instruction))
         (cleavir-ir:*dynamic-environment*
           (cleavir-ir:dynamic-environment instruction)))
@@ -205,6 +209,7 @@
 ;;; the value of D in CLOC.
 (defun replace-outputs (sloc cloc instruction)
   (let ((d (cleavir-ir:new-temporary))
+        (cleavir-ir:*origin* (cleavir-ir:origin instruction))
 	(cleavir-ir:*policy* (cleavir-ir:policy instruction))
         (cleavir-ir:*dynamic-environment*
           (cleavir-ir:dynamic-environment instruction)))

@@ -780,6 +780,7 @@
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq))
         (*function-info* (make-hash-table :test #'eq))
+        (cleavir-ir:*origin* (cleavir-ast:origin ast))
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
@@ -806,6 +807,7 @@
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq))
         (*function-info* (make-hash-table :test #'eq))
+        (cleavir-ir:*origin* (cleavir-ast:origin ast))
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (bd (translate-bound-declarations
