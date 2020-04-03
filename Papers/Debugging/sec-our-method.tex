@@ -69,7 +69,7 @@ particular location in the source code, this routine performs a query
 of at least one of two tables called the \emph{summary table} and the
 \emph{breakpoint table}.  Both these tables are managed by the
 debugger, in that actions on the part of the user may alter their
-contents.  The application consults these table, directly or
+contents.  The application consults these tables, directly or
 indirectly, to determine whether a breakpoint is present.
 
 The purpose of the summary table is to provide a quick test that
@@ -214,7 +214,13 @@ of one source form to another source form.
 \subsection{Debugger commands available to the user}
 
 We have an embryonic implementation of an interactive debugger, called
-\clordane{}.  We use the \mcclim{} library for writing graphic user
+\clordane{}.%
+\footnote{The name Clordane is a deliberate misspelling of
+  ``Chlordane'' which is a pesticide that was banned in most countries
+  in the 1980s.  The misspelling was designed to suggest the
+  \commonlisp{} language and to make answers by search engines less
+  cluttered.}
+We use the \mcclim{} library for writing graphic user
 interfaces as a basis for this tool.  Currently, \clordane{} can show
 the source code of an application (one source file at a time) and an
 indication of the place of a breakpoint.  The application being
