@@ -16,11 +16,11 @@ debugged, including the debuggger itself.
 
 Some FLOSS%
 \footnote{FLOSS stands for Free, Libre, Open-Source Software.}
-\commonlisp{} implementations suggest using this debugging
-technique, using some existing debugger such as GDB, in order to set
-breakpoints.  In particular, the \ccl{} documentation mentions that
-this technique is possible, and it is also the technique recommended
-for \ecl{}.
+\commonlisp{} implementations suggest using this debugging technique,
+using some existing debugger such as GDB, in order to set breakpoints.
+In particular, the \ccl{} \seesec{sec-previous-ccl} documentation
+mentions that this technique is possible, and it is also the technique
+recommended for \ecl{} \seesec{sec-previous-ecl}.
 
 \subsection{\sbcl{}}
 
@@ -47,6 +47,7 @@ optimization qualities, the compiler inserts code that signals
 conditions that are specific to the stepper.
 
 \subsection{\ccl{}}
+\label{sec-previous-ccl}
 
 The \ccl{} \commonlisp{} implementation%
 \footnote{https://ccl.clozure.com/}
@@ -61,6 +62,7 @@ original function to accomplish its task.
 Currently, \ccl{} does not have a working single stepper.
 
 \subsection{\ecl{}}
+\label{sec-previous-ecl}
 
 The \ecl{} \commonlisp{} implementation%
 \footnote{https://common-lisp.net/project/ecl/}
