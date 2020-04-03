@@ -128,9 +128,14 @@ implements.  The clever aspect of their mechanism is to have the
 signal handler start its action by uninstalling all breakpoints.
 Thus, even if a breakpoint exists in some system code that is also
 used by the debugger, once the debugger is entered, the breakpoint is
-no longer active.
+no longer active.  Had the breakpoints remained installed, issuing
+commands inside the debugger might have invoked some code with a
+breakpoint, thereby halting the execution of the debugger itself.
 
 This mechanism allows for instruction-level stepping in a way similar
-to what is possible in separate-process \unix{}-style debuggers, but
-crucially, it is also the mechanism used to build high-level tools
-such as source-level debuggers, steppers, etc.
+to what is possible in separate-process \unix{}-style debuggers.  Just
+as with \unix{}-style debugging, any instruction can be replaced by a
+different one that will trap to the debugger.  As a result, it is
+possible to execute one instruction at a time by simply trapping after
+each instruction.  Crucially, however, this mechanism is then used to
+build high-level tools such as source-level debuggers, steppers, etc.
