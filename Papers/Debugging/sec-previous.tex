@@ -71,7 +71,7 @@ The \texttt{trace} facility uses encapsulation.
 
 \subsection{\clasp{}}
 
-The \clasp{} commonlisp{} implementation%
+The \clasp{} \commonlisp{} implementation%
 \footnote{https://github.com/clasp-developers/clasp}
 does not have the concept of breakpoints, nor does it have a stepper.
 The \texttt{trace} facility uses encapsulation.
@@ -105,9 +105,9 @@ has the most complete and most sophisticated implementation of
 breakpoints of all the \commonlisp{} implementations we investigated.
 
 High-level debugging features are based on a low-level breakpoint
-mechanism described in a paper by Duane Rettig
-\cite{Rettig:Instruction-level-breakpoints}.  In many respects, the
-low-level mechanism is similar to the one used by \unix{}-style
+mechanism described in a paper by Duane
+Rettig~\cite{Rettig:Instruction-level-breakpoints}.  In many respects,
+the low-level mechanism is similar to the one used by \unix{}-style
 debugging, in that it replaces the ordinary machine instruction by one
 that will \emph{trap}, and thus cause the operating system to send a
 signal to the Lisp process.  However, their mechanism differs in a
