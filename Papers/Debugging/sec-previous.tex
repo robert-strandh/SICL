@@ -8,11 +8,11 @@ process and the application in another process.  For a breakpoint, the
 code of the application is modified by the debugger so that the
 application sends a signal to the debugger when the breakpoint has
 been reached.  For this purpose, the debugger maps the code pages of
-the application as \emph{copy on write} (or COW), so that instances of
-the same application that are not executed under the control of the
-debugger are not affected by the modified code.  In particular, with
-this technique any application can be debugged, including the
-debuggger itself.
+the application as \emph{copy on write} (or COW).  With this
+technique, instances of the same application that are not executed
+under the control of the debugger are not affected by the modified
+code.  In particular, with this technique any application can be
+debugged, including the debuggger itself.
 
 Some FLOSS \commonlisp{} implementations suggest using this debugging
 technique, using some existing debugger such as GDB, in order to set
