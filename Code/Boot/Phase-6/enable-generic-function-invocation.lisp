@@ -98,7 +98,10 @@
 
 (defun define-set-funcallable-instance-function (e6)
   (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e6)
-        #'closer-mop:set-funcallable-instance-function))
+        (lambda (funcallable-instance function)
+          (closer-mop:set-funcallable-instance-function
+           funcallable-instance
+           function))))
 
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e5 sicl-boot:e5)
