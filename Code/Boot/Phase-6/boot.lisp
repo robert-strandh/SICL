@@ -17,4 +17,5 @@
     (enable-defgeneric boot)
     (define-accessor-generic-functions boot)
     (enable-class-initialization boot)
-    (create-mop-classes boot)))
+    (create-mop-classes boot)
+    (load-fasl "CLOS/satiation.fasl" e6)))
