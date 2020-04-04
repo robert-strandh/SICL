@@ -2,10 +2,10 @@
 \label{sec-introduction}
 
 The \commonlisp{} standard \cite{ansi:common:lisp} contains very
-little information about method combinations.  The dictionary entry
-for the system class \texttt{method-combination} requires a
-\emph{method combination object} to be an \emph{indirect instance} of
-the system class named \texttt{method-combination}.  The standard
+little information about method combinations.  The dictionary entry in
+the standard for the system class \texttt{method-combination} requires
+a \emph{method combination object} to be an \emph{indirect instance}
+of the system class named \texttt{method-combination}.  The standard
 further requires such an object to contain information both about the
 \emph{type} of method combination and the \emph{arguments} used with
 that type.
@@ -61,7 +61,20 @@ contains a reference to the template as well as the values of the
 \emph{options} that this particular method combination type allows.
 To conform to the standard, we obviously maintain that method
 combination objects are instances of
-\texttt{standard-method-combination}.
+\texttt{standard-method-combination}.  This idea is illustrated in
+\refFig{fig-method-combinations}, which shows two method combination
+templates (\texttt{standard} and \texttt{and}) and two variants of the
+\texttt{and} method-combination template; one variant with the option
+\texttt{:most-specific-first} and another variant with the option
+\texttt{:most-specific-last}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-method-combinations.pdf_t}
+\end{center}
+\caption{\label{fig-method-combinations}
+Representation of method combinations.}
+\end{figure}
 
 A call to the macro \texttt{define-method-combination} results in a
 function that can be applied to a list of arguments which include at
