@@ -129,18 +129,19 @@ short-form definition is able to check the restriction.
 
 Throughout this paper, we assume that it is an error to attempt to
 create a generic function using a method-combination type that is not
-already defined.  Recall that the standard states that when a
+already created.  Recall that the standard states that when a
 \texttt{define-method-combination} form appears at the top level, the
 compiler must recognize the name of that type as valid in subsequent
 \texttt{defgeneric} forms, but that the resulting method-combination
 procedure is not executed until the \texttt{define-method-combination}
-form itself is executed.  In other words, the method-combination type
-may not have been defined when a \texttt{defgeneric} form using the
-name is encountered by the compiler.  However, our assumption is still
-valid, since the compiler also does not create the generic function
-when a \texttt{defgeneric} form appears at the top level.  In this
-paper, we do not address the mechanism by which the compile-time
-behavior required by the standard is implemented.
+form itself is executed.  In other words, since the method-combination
+type is not created at compile time, it may not exist when a
+\texttt{defgeneric} form using the name is encountered by the
+compiler.  However, our assumption is still valid, since the compiler
+also does not create the generic function when a \texttt{defgeneric}
+form appears at the top level.  In this paper, we do not address the
+mechanism by which the compile-time behavior required by the standard
+is implemented.
 
 There are several scenarios that are discussed in this paper:
 
