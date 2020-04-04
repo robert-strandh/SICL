@@ -139,9 +139,26 @@ type is not created at compile time, it may not exist when a
 \texttt{defgeneric} form using the name is encountered by the
 compiler.  However, our assumption is still valid, since the compiler
 also does not create the generic function when a \texttt{defgeneric}
-form appears at the top level.  In this paper, we do not address the
-mechanism by which the compile-time behavior required by the standard
-is implemented.
+form appears at the top level.
+
+For example, assume that some source file contains a
+\texttt{define-method-combination} form, defining a method combination
+type with a new name, followed by a \texttt{defgeneric} form that
+refers to that method combination type in the
+\texttt{:method-combination} option of the \texttt{:defgeneric} form.
+When the compiler encounters the \texttt{define-method-combination}
+form, it registers its name as being valid for use in subsequent
+\texttt{defgeneric} forms, but it does not \emph{create} the
+method-combination type.  Subsequently, when the compiler encounters
+the \texttt{defgeneric} form, it recognizes a valid name of a
+method-combination type, but since the compiler also does not create
+the generic function when the \texttt{defgeneric} form is encountered,
+there is no need for the method-combination type to have been created.
+When the compiled file is later loaded, the new method-combination
+type is first created.  Subsequently, the generic function is created,
+referring to an existing method-combination type.  In this paper, we
+do not address the mechanism by which the compile-time behavior
+required by the standard is implemented.
 
 There are several scenarios that are discussed in this paper:
 
