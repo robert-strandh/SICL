@@ -184,6 +184,64 @@ There are several scenarios that are discussed in this paper:
   deliberate decision.
 \end{enumerate}
 
+\noindent
+To illustrate these scenarios, we can imagine a restricted form of the
+\texttt{and} method combination that does not admit any
+\texttt{:around} methods.  This restriction means that the short form
+of \texttt{define-method-combination} can not be used.
+
+An example of the first scenario would be the following code:
+
+{\small\begin{verbatim}
+(define-method-combination simple-and
+    (&optional (order :most-specific-first))
+    (primary (and) :order order :required t)
+ ...)
+
+(defgeneric simple-and (...)
+  (:method-combination simple-and :msot-specific-first))
+\end{verbatim}}
+
+\noindent
+Here, the user has a typo in the second form.
+An example of the second scenario would be the following code:
+
+{\small\begin{verbatim}
+(define-method-combination simple-and
+    (&optional (order :msot-specific-first))
+    (primary (and) :order order :required t)
+ ...)
+
+(defgeneric simple-and (...)
+  (:method-combination simple-and :most-specific-first))
+\end{verbatim}}
+
+\noindent
+Here, the user has a typo in the first form.
+Finally, an example of the third form would be the following code:
+
+{\small\begin{verbatim}
+(define-method-combination simple-and
+    (&optional (order :most-specific-first))
+    (primary (and) :order order :required t)
+ ...)
+
+(defgeneric simple-and (...)
+  (:method-combination simple-and :most-specific-first))
+\end{verbatim}}
+
+\noindent
+Here, there are no mistakes, but the user later decides to disallow
+the option , so the first form is altered to become:
+
+{\small\begin{verbatim}
+(define-method-combination simple-and ()
+    (primary (and) :order :most-specific-first
+                   :required t)
+ ...)
+\end{verbatim}}
+
+\noindent
 In the first two scenarios, the ideal consequence would be that a
 warning is initially signaled, stating that the options supplied to
 the creation of the generic function are incompatible with the type of
