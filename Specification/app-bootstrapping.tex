@@ -10,7 +10,8 @@ integer.  An object of purity $p$ is an instance of a class of purity
 $p-1$.  An object of purity $0$ is a \emph{host object}.  An object of
 purity $1$ is a is a \emph{bridge object}.  An object of purity $2$ is
 an \emph{impure ersatz object}.  An object of purity $3$ or more is a
-\emph{pure ersatz object}.
+\emph{pure ersatz object}.  Each \emph{phase} of the bootstrapping
+procedure creates objects of one purity.
 
 Suppose we want to access some part of a generic function metaobject
 of purity $p$.  Perhaps we want to add methods to it, or set its
@@ -42,7 +43,11 @@ accomplish this restriction.  As a general principle, however, we want
 to minimize the exceptions to this rule, because these exceptions
 require specific bootstrapping code to be handled correctly.
 
+For classes of purity $p$ we want the the direct superclasses and its
+direct and effective slots to be objects of purity $p$ as well.
+
 \section{Object allocation}
+\label{sec-app-bootstrapping-object-allocation}
 
 Suppose we want to allocate an object of purity $p$.  To do so, we
 need to instantiate a class of purity $p-1$.  Instantiating a class
@@ -60,6 +65,16 @@ which is a generic function.  Assume for the moment that
 \texttt{make-instance} was given a class metaobject to instantiate.
 Then \texttt{make-instance} must also be of purity $p-2$.
 
+Another interesting aspect of \texttt{make-instance} is that, if it is
+given a symbol as opposed to a class metaobject, it must call
+\texttt{find-class}.  Now \texttt{find-class} is probably an ordinary
+function, and it must find a class metaobject of purity $p-1$.  If we
+assume that \texttt{find-class} has the same purity as
+\texttt{make-instance}, then we have a function of purity $p-2$ that
+must find a class metaobject of purity $p-1$.  This information may
+determine in which environment we decide to allocate functions and
+classes of different purity.
+
 \section{Object initialization}
 
 After \texttt{make-instance} has called \texttt{allocate-instance}, it
@@ -70,3 +85,57 @@ follows that \texttt{initialize-instance} is a generic function of
 purity $p-1$.  We therefore have a case where a generic function
 (i.e. \texttt{make-instance}) of purity $p-2$ calls a generic function
 of purity $p-1$.
+
+\section{Processing the \texttt{defclass} macro}
+
+The expansion of the \texttt{defclass} macro results in a call to
+\texttt{ensure-class} which is an ordinary function that immediately
+calls the generic function \texttt{ensure-class-using-class}.  The
+\textit{class} argument to \texttt{ensure-class-using-class} is either
+\texttt{nil} if the class does not exist, or the class metaobject to
+be reinitialized.  Thus, if the new or the existing class is an object
+of purity $p$, then \texttt{ensure-class} and
+\texttt{ensure-class-using-class} should be of purity $p-1$.
+The AMOP states that the \emph{direct-superclasses} argument to
+\texttt{defclass} becomes the value of the
+\texttt{:direct-superclasses} argument to \texttt{ensure-class} so
+there is no call to \texttt{find-class} involved here.
+
+The most interesting aspect of the \texttt{defclass} macro is the
+conversion of a slot specification to a \emph{canonicalized slot
+  specification}, and specifically the conversion of the
+\texttt{:initform} option to the value of the \texttt{:initfunction}
+option.  This conversion is done by \texttt{compile} that takes the
+initform wrapped in a \texttt{lambda} expression and turns it into a
+function.  So \texttt{compile} in this case, must build a function of
+purity $p$ since it is going to become part of a slot-definition
+metaobject of that purity.
+
+The \texttt{:metaclass} option to the \texttt{defclass} macro becomes
+the value of the \texttt{:metaclass} keyword argument to
+\texttt{ensure-class}, so no conversion is involved.
+
+The keyword argument \texttt{:direct-superclasses} passed to
+\texttt{ensure-class-using-class} may contain class names or class
+metaobjects.  If it contains a class name, it is converted to a class
+metaobject.  It must do so by calling \texttt{find-class} or something
+similar.  So preferably, \texttt{find-class} has purity $p-1$ as well,
+and it must find a class with purity $p$.  This behavior is consistent
+with the \texttt{find-class} we encountered in
+\refSec{sec-app-bootstrapping-object-allocation}.
+
+The keyword argument \texttt{:metaclass} passed to
+\texttt{ensure-class-using-class} may contain a class name or a class
+metaobject.  If it contains a class name, it is converted to a class
+metaobject.  It must do so by calling \texttt{find-class} or something
+similar.  In this case, \texttt{find-class} must find a class with
+purity $p-1$ which is in direct conflict with what it must do for the
+\texttt{:direct-superclasses} option.  We solve this problem in
+\sysname{} by using an indirection called \texttt{find-metaclass} that
+does what is needed.
+
+\section{Initialization of class metaobjects}
+
+In \sysname{}, class initialization is accomplished by an
+\texttt{:around} method on \texttt{shared-initialize}.  It calls an
+ordinary function to accomplish its task.
