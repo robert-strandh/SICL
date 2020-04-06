@@ -17,9 +17,13 @@ adapt existing \commonlisp{} implementations to support the kind of
 application debugging that we consider essential for good programmer
 productivity.
 
-Another main objective of the \sicl{} system is \emph{safety}.  There
-are many situations described in the \commonlisp{} standard that have
-undefined or unspecified behavior, such as:
+Another main objective of the \sicl{} system is \emph{safety}.  In
+this context, by this term we mean that the system must always be in a
+coherent internal state.  When a system becomes unsafe, it may
+\emph{crash}, or (worse) silently produce the wrong answer.
+
+There are many situations described in the \commonlisp{} standard that
+have undefined or unspecified behavior, such as:
 
 \begin{enumerate}
 \item Many times when a standard function is called with some argument
@@ -50,3 +54,10 @@ advantage of these situations to make the system unsafe for the
 purpose of better performance, even though we might have to work
 somewhat harder in order to maintain good performance in all
 situations.
+
+Many debugging techniques can make the system unsafe.  For example, if
+the debugger allows the user to arbitrarily change the value of a
+lexical variable, the new value might violate some assumption made by
+the compiler for the program point in question.  Such a violation is
+very likely to make the system unsafe.  The work described in this
+paper is designed to keep the system safe.
