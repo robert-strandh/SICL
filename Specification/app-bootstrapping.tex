@@ -146,4 +146,19 @@ does what is needed.
 
 In \sysname{}, class initialization is accomplished by an
 \texttt{:around} method on \texttt{shared-initialize}.  It calls an
-ordinary function to accomplish its task.
+ordinary function to accomplish its task.  If the class metaobject to
+be initialized has purity $p$, then \texttt{shared-initialize} has
+purity $p-1$.
+
+The \texttt{:direct-slots} argument is a list of canonicalized slot
+specifications.  Each element is converted to a direct slot definition
+metaobject.  This conversion is done in two steps.  First the generic
+function \texttt{direct-slot-definition-class} is called, passing the
+class metaobject as an argument.  Therefore
+\texttt{direct-slot-definition-class} is a generic function of purity
+$p-1$, just like \texttt{shared-initialize}.  Second,
+\texttt{make-instance} is called with the class returned by
+\texttt{direct-slot-definition-class}, and the canonicalized
+slot specification.  So, here \texttt{make-instance} is called on a
+class of purity $p$.  Therefore \texttt{make-instance} is of purity
+$p-1$.
