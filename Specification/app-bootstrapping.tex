@@ -24,27 +24,28 @@ functional, or the machinery for making them fully functional is fully
 functional, so that we can freely use generic functions of purity
 $p-1$ to access a generic function of purity $p$.
 
-More generally, we assume that the arguments to a generic function of
-purity $p$ are objects of purity $p+1$.  It follows that the
-\emph{specializers} of a generic function of purity $p$ are objects of
-purity $p$ as well, since they are typically the classes of the
-arguments.  Since the arguments have purity $p+1$, their classes are
-objects of purity $p$.  Furthermore we want the methods of a generic
-function of purity $p$ to be objects of purity $p$, and we want the
-method functions of those methods to be objects of purity $p$.  Idem
-for the \emph{method combination}, the \emph{effective method
-  functions}, and the \emph{discriminating function}.  It follows that
-the \emph{generic-function class} and the \emph{method class} of a
-generic function of purity $p$ are objects of purity $p-1$.
+In general we would like for the slots of an object of purity $p$ to
+contain objects of purity $p$, with the exception of meta-level
+information.
+
+For generic function metaobjects, this restriction implies that we
+want the methods of a generic function of purity $p$ to be objects of
+purity $p$, and we want the method functions of those methods to be
+objects of purity $p$.  Idem for the \emph{method combination}, the
+\emph{effective method functions}, and the \emph{discriminating
+  function}.  It follows that the \emph{generic-function class} and
+the \emph{method class} of a generic function of purity $p$ are
+objects of purity $p-1$.
+
+For classes, the restriction implies that the slot metaobjects, the
+superclasses, the subclasses, etc. of a class of purity $p$ should
+also be of purity $p$.
 
 In general, we would like for a function of purity $p$ to call other
 functions of purity $p$, but during bootstrapping we can not always
 accomplish this restriction.  As a general principle, however, we want
 to minimize the exceptions to this rule, because these exceptions
 require specific bootstrapping code to be handled correctly.
-
-For classes of purity $p$ we want the the direct superclasses and its
-direct and effective slots to be objects of purity $p$ as well.
 
 \section{Object creation}
 \label{sec-app-bootstrapping-object-allocation}
