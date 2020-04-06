@@ -46,24 +46,36 @@ require specific bootstrapping code to be handled correctly.
 For classes of purity $p$ we want the the direct superclasses and its
 direct and effective slots to be objects of purity $p$ as well.
 
-\section{Object allocation}
+\section{Object creation}
 \label{sec-app-bootstrapping-object-allocation}
 
-Suppose we want to allocate an object of purity $p$.  To do so, we
+An object is created by a call to \texttt{make-instance}.
+Suppose we want to create an object of purity $p$.  To do so, we
 need to instantiate a class of purity $p-1$.  Instantiating a class
-involves calling \texttt{allocate-instance}, which is a generic
-function.  Since \texttt{allocate-instance} is a generic function that
-takes an object of purity $p-1$ as an argument, it must be a generic
-function of purity $p-2$.  Furthermore, \texttt{allocate-instance}
-must call accessor generic functions to inspect the class metaobject
-in order to determine the \emph{unique number} of the class as well as
-its list of slot metaobjects, and information about the size of its
-instances.  All these accessors are objects of purity $p-2$ as well.
+involves calling \texttt{make-instance}, which is a generic
+function.  But \texttt{make-instance} must call other functions.  One
+such function \texttt{compute-defaulted-initargs} which
+computes the \emph{defaulted initialization arguments},
+given the class metaobject passed to \texttt{make-instance} and the
+initialization arguments passed to it.  The function doing this
+computation must inspect the class metaobject in that it must call the
+accessor \texttt{class-default-initargs}.  This latter function must
+therefore have purity $p-2$ since it takes an argument of purity
+$p-1$.  If we assume that \texttt{make-instance} and the function for
+computing the defaulted initialization arguments have the same purity,
+then \texttt{make-instance} has purity $p-2$ as well.  Now, values of
+keyword arguments passed to \texttt{make-instance} may be objects that
+will become part of the object being created, in which case, those
+values should have the same purity as that object, namely $p$.
 
-Now \texttt{allocate-instance} was called by \texttt{make-instance}
-which is a generic function.  Assume for the moment that
-\texttt{make-instance} was given a class metaobject to instantiate.
-Then \texttt{make-instance} must also be of purity $p-2$.
+Once the defaulted initialization arguments are computed, their
+validity must be checked.  This task is accomplished by the function
+\texttt{check-initargs-valid}.  This function call accessors on the
+class metaobject.  In addition, it must inspect methods on
+\texttt{allocate-instance}, \texttt{make-instance},
+\texttt{initialize-instance}, and \texttt{shared-initialize}.
+
+Next, allocate-instance must be called...
 
 Another interesting aspect of \texttt{make-instance} is that, if it is
 given a symbol as opposed to a class metaobject, it must call
