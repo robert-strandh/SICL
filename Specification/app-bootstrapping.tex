@@ -71,12 +71,19 @@ values should have the same purity as that object, namely $p$.
 
 Once the defaulted initialization arguments are computed, their
 validity must be checked.  This task is accomplished by the function
-\texttt{check-initargs-valid}.  This function call accessors on the
-class metaobject.  In addition, it must inspect methods on
-\texttt{allocate-instance}, \texttt{make-instance},
-\texttt{initialize-instance}, and \texttt{shared-initialize}.
+\texttt{check-initargs-valid}.
 
-Next, allocate-instance must be called...
+Once initialization arguments have been validated,
+\texttt{make-instance} calls \texttt{allocate-instance} in order to
+create the instance of the class.
+
+Finally, the new instance must be passed to
+\texttt{initialize-instance} for initialization.
+
+Object creation is illustrated in \refFig{fig-make-instance}.  As we
+can see, \texttt{make-instance} must call functions of two different
+purity values.  For that reason, \texttt{make-instance} must be
+handled specially during bootstrapping.
 
 Another interesting aspect of \texttt{make-instance} is that, if it is
 given a symbol as opposed to a class metaobject, it must call
@@ -96,16 +103,22 @@ classes of different purity.
 Object allocation.}
 \end{figure}
 
+\section{Checking the validity of initargs to \texttt{make-instance}}
+
+Once the defaulted initialization arguments are computed, their
+validity must be checked.  This task is accomplished by the function
+\texttt{check-initargs-valid}.  This function call accessors on the
+class metaobject.  In addition, it must inspect methods on
+\texttt{allocate-instance}, \texttt{make-instance},
+\texttt{initialize-instance}, and \texttt{shared-initialize}.
+These functions do not all have the same purity.  For that reason, we
+do not check the validity of initargs during bootstrapping.
+
 \section{Object initialization}
 
-After \texttt{make-instance} has called \texttt{allocate-instance}, it
-calls \texttt{initialize-instance}, giving it the newly allocated
-instance and some key/value pairs.  \texttt{initialize-instance} is
-thus a generic function that takes an object of purity $p$, and it
-follows that \texttt{initialize-instance} is a generic function of
-purity $p-1$.  We therefore have a case where a generic function
-(i.e. \texttt{make-instance}) of purity $p-2$ calls a generic function
-of purity $p-1$.
+Once an instance has been created, \texttt{initialize-instance} is
+called, and \texttt{initialize-instance} immediately calls
+\texttt{shared-initialize}.
 
 \section{Processing the \texttt{defclass} macro}
 
