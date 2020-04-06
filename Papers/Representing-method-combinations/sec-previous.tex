@@ -18,7 +18,7 @@ Portable Common Loops%
 \pcl{} for short, is a library that implements
 the functions defined in the book ``The Art of the Metaobject
 Protocol'' \cite{Kiczales:1991:AMP:574212}, and is meant as an add-on
-to pre-standard \commonlisp{} implementations, i.e. implementations
+to pre-standard \commonlisp{} implementations, i.e., implementations
 without \clos{}.
 
 Most \commonlisp{} implementations that exist today were initially
@@ -42,12 +42,12 @@ forms (long and short) of the macro
 \texttt{define\-method\--combination}.
 
 The class \texttt{standard-method-combination} contains slots for the
-method-combination type (i.e. a symbol), and the method-combination
+method-combination type (i.e., a symbol), and the method-combination
 options.
 
-The class \texttt{short-method-combination} adds two more slots,
-namely the operator and a Boolean that indicates whether the operator
-is the identity function when given a single argument.
+The class \texttt{short-method-combination} adds two more slots:
+namely, the operator and a Boolean that indicates whether the operator,
+when given a single argument, is the identity function.
 
 The short form of \texttt{define-method-combination} adds a method to
 the generic function \texttt{find-method-combination}.  The second
@@ -61,7 +61,7 @@ other words, a fresh method combination is created whenever
 whenever a generic function is created.  As a result, with a
 method-combination type defined by the short form, the method
 combination of a generic function using this type is not updated as a
-result of redefining that method-combination type.
+result of redefining that method-combination type, which is undesirable.
 
 Furthermore, \texttt{compute-effective-method} has a method
 specialized to the class \texttt{short-method-combination} that
@@ -88,7 +88,7 @@ applicable methods.
 Appendix B of \cite{verna.18.els} shows some very strange consequences
 of the use of the global hash table, combined with the fact that the
 effective-method caches of existing generic functions are not flushed
-when the method-combination type is redefined using the long form.  A
+when the method-combination type is redefined by the long form.  A
 generic function may well end up with some effective methods computed
 \emph{before} the redefinition and some computed \emph{after} it.
 Needless to say, this behavior is very undesirable.
@@ -99,7 +99,7 @@ acts as a container for method-combination types, encoded as
 reuse existing method combinations.  A new one is created whenever
 \texttt{find-method-combination} is called.  Finally, while the
 validity of the options is verified for the built-in method
-combination types, no such verification is made for custom
+combination types, no such verification is done for custom
 method-combination types defined by the long form of
 \texttt{define-method-combination}.
 
@@ -149,7 +149,7 @@ form, \sbcl{} will check that the options given to the
 \texttt{:method-combination} \texttt{defgeneric} option are valid.
 This verification is done by special-purpose code.  However, with a
 user-defined method combination using the long form, no verification
-is made.  It is only when an attempt is made to invoke the generic
+is done.  It is only when an attempt is made to invoke the generic
 function that the method-combination procedure is invoked, and the
 incompatible lambda lists are detected.  Furthermore, the error
 message is very general and can be difficult to decipher by the
@@ -196,7 +196,7 @@ implementation (\ccl{} for short) defines the class
 \end{itemize}
 
 The class \texttt{standard-method-combination} in \ccl{} thus does not
-play the role as a general instantiable subclass of
+play the role of a general instantiable subclass of
 \texttt{method-combination}.
 
 The generic function \texttt{compute-effective-method} has a method
@@ -224,7 +224,7 @@ elements:
   \texttt{define-method-combination}, and the method-combination
   procedure (called the \emph{expander function} in \ccl{}) if the
   info vector was created as a result of the long form.
-\item A list of \emph{instances}, i.e. method-combination objects that
+\item A list of \emph{instances}, i.e., method-combination objects that
   share the same info vector.
 \item A list of generic functions using method combinations of the
   type defined by the info vector.
@@ -239,7 +239,7 @@ When a long method-combination type is redefined using the short form
 of \texttt{define-method-combination}, every generic function having
 a method combination of that type is accessed, and the
 method-combination options are checked so that they are valid for the
-short method combination, i.e. either there are no explicit options or
+short method combination, i.e., either there are no explicit options or
 the options consist of a singleton list containing either
 \texttt{:most-specific-first} or \texttt{:most-specific-last}.  No
 analogous verification is made when a short method-combination type is
@@ -255,7 +255,8 @@ The \ecl{}%
 \footnote{https://common-lisp.net/project/ecl/}
 \commonlisp{} implementation defines the class
 \texttt{method-combination}, and method-combination metaobjects are
-direct instances of this class, which is not conforming.
+direct instances of this class.  Thus, in this respect, \ecl{} is not
+conforming.
 
 Unlike \pcl{}, \sbcl{}, and \ccl{}, \ecl{} does not define any
 subclasses of the instantiable class.  Method-combination types
@@ -265,7 +266,7 @@ The macro \texttt{define-method-combination} does not define a new
 method-combination class.  Instead it defines a method-combination
 procedure.  This procedure computes the effective method of a generic
 function.  The lambda list of the method-combination procedure
-consists of two required parameters, namely a generic function and a
+consists of two required parameters: namely, a generic function and a
 list of applicable methods, followed by the lambda list given to
 \texttt{define-method\-combination}.  For most built-in
 method-combination types, that lambda list will contain an optional
@@ -293,7 +294,7 @@ Incompatibilities between method-combination options given to
 \texttt{find-method-combination} and the lambda list of the
 method-combination procedure are detected when an effective method
 needs to be computed.  Because there is no specific class for method
-combinations defined by the short form, this is true also for
+combinations defined by the short form, this behavior is true also for
 method-combination types defined by the short form.
 
 Because the short form is rewritten into the long form, and the body

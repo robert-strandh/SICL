@@ -92,7 +92,7 @@ objects.  The lambda list typically contains \texttt{\&aux} lambda
 list keywords, with forms that check the validity of the options
 supplied, and signal an error whenever an invalid option combination
 is detected.  Thus, if either the lambda list is incompatible with the
-options given, or one of these \texttt{\&aux} forms detect an invalid
+options given, or one of these \texttt{\&aux} forms detects an invalid
 option combination, an error is signaled.  We handle this error, turn
 it into a warning, and return a method-combination instance with a
 method-combination procedure that signals an error whenever invoked.
@@ -127,7 +127,7 @@ resulting list of our analysis function.
 
 When a \texttt{define-method-combination} form is re-evaluated, we
 locate the corresponding method-combination template.  We then invoke
-the same analysis as before to every variant, i.e. to every existing
+the same analysis as before to every variant, i.e., to every existing
 method combination having this type name.  If an analysis fails, we
 then signal a warning containing all generic functions using the now
 invalid method-combination, and we set the method-combination
@@ -161,7 +161,7 @@ To illustrate where the remaining options end up in the long form,
 recall the following example from the dictionary entry for
 \texttt{define-method-combination}, where both the short form and the
 long form are used to define the built-in method-combination
-\texttt{and}.  We have only changed the layout of the code so that it
+\texttt{and}.  We have changed only the layout of the code so that it
 will fit on the page.
 
 \noindent

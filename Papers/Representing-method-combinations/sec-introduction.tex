@@ -82,7 +82,7 @@ least a generic function and a list of applicable methods.  This
 function becomes associated with the \emph{name} of the
 method-combination \emph{type} thus defined.  The standard briefly
 uses the term \emph{procedure} to refer to this resulting function.
-We adapt that convention in this paper, and refer to the resulting
+We adopt that convention in this paper, and refer to the resulting
 function as the \emph{method-combination procedure}.
 
 When a generic function is defined or redefined, it would be desirable
@@ -148,7 +148,7 @@ refers to that method combination type in the
 \texttt{:method-combination} option of the \texttt{:defgeneric} form.
 When the compiler encounters the \texttt{define-method-combination}
 form, it registers its name as being valid for use in subsequent
-\texttt{defgeneric} forms, but it does not \emph{create} the
+\texttt{defgeneric} forms, but the compiler does not \emph{create} the
 method-combination type.  Subsequently, when the compiler encounters
 the \texttt{defgeneric} form, it recognizes a valid name of a
 method-combination type, but since the compiler also does not create
