@@ -15,3 +15,5 @@
         (for-each-relevant-element (element index vectoroid start end from-end)
           (when (test item (key element))
             (return-from find element)))))))
+
+(seal-domain #'find '(t sequence))
