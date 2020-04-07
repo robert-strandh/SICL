@@ -4,10 +4,9 @@
   (:use #:closer-common-lisp)
 
   (:import-from
-   #:sealable-metaobjects
+   #:fast-generic-functions
    #:fast-generic-function
    #:seal-domain
-   #:sealed-domains
    #:method-properties
    #:inlineable
    #:no-primary-method)

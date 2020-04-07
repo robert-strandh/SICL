@@ -5,7 +5,7 @@
   :depends-on
   ("acclimation"
    "sicl-utilities"
-   "sealable-metaobjects")
+   "fast-generic-functions")
   :components
   ((:module "Generic"
     :components

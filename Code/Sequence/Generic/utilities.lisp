@@ -42,6 +42,7 @@
 (declaim (ftype (function (sequence array-length t t)
                           (values array-index array-length &optional))
                 canonicalize-start-and-end))
+(declaim (inline canonicalize-start-and-end))
 (defun canonicalize-start-and-end (sequence length start end)
   (declare (sequence sequence) (array-length length))
   (let ((start (typecase start
@@ -99,9 +100,17 @@
                ,@body))))))
 
 (defun class-subclasses (class)
-  (list* class
-         (mapcan #'class-subclasses
-                 (closer-mop:class-direct-subclasses class))))
+  (let ((table (make-hash-table)))
+    (labels
+        ((subclasses (class)
+           (unless (gethash class table)
+             (setf (gethash class table) t)
+             (cons
+              class
+              (mapcan
+               #'subclasses
+               (closer-mop:class-direct-subclasses class))))))
+      (subclasses class))))
 
 (defun sequence-class-element-type (sequence-class)
   (if (subtypep sequence-class '(not vector))
