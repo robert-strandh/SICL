@@ -5,7 +5,10 @@ must include a very feature-full debugger for application programs, and
 we firmly believe that the best way of accomplishing such an
 environment is to have the debugger execute in the same process as the
 application, but to have the application react to debugging operations
-only when executed under the control of the debugger.
+only when executed under the control of the debugger.  Here
+``debugging operations'' include the tracing of function calls, since
+that mechanism is based on the general breakpoint mechanism described
+in this paper.
 
 While it may seem like a valid objection that the application
 programmer, as a result of detecting a defect, must rerun the
@@ -15,7 +18,9 @@ think that there is usually no valid reason to run the application
 outside the debugger during the development phase.  The only
 exceptions we can think of would be applications with extreme
 performance requirements, or applications where response time is part
-of the specification.
+of the specification.  While our technique requires the programmer to
+\emph{execute} the application code from within the debugger,
+\emph{developing} the code can be done using any tool.
 
 The validity of the technique described in this paper has been
 somewhat verified, in that we have an embryonic implementation of an
