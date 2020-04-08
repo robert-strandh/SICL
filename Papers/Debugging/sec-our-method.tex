@@ -66,7 +66,13 @@ small routine is called immediately before and immediately after the
 execution corresponding to the evaluation of a form in the source
 code.  In order to determine whether a breakpoint is present at that
 particular location in the source code, this routine performs a query
-of at least one of two tables called the \emph{summary table} and the
+of a table managed by the debugger.  While the details of how this
+table is implemented might evolve, here we give one example of such an
+implementation, thereby arguing that performing a query is not overly
+expensive in terms of performance.
+
+As an example of implementation of this table, it might be split into
+two sub-tables called the \emph{summary table} and the
 \emph{breakpoint table}.  Both these tables are managed by the
 debugger, in that actions on the part of the user may alter their
 contents.  The application consults these tables, directly or
@@ -91,7 +97,12 @@ usual.
 If the entry in the summary table contains $1$, then there is a
 breakpoint at \emph{some} value of the program counter that, when
 taken modulo the size of the table, has a breakpoint present.  If this
-is the case, then the routine consults the breakpoint table.
+is the case, then the routine consults the breakpoint table.  In other
+words, the summary table acts as a Bloom filter
+\cite{10.1145:362686.362692}, in that false positives are possible,
+but false negatives are not.  The size of the table determines the
+probability of a false positive.
+
 The breakpoint table is a hash table in which the keys are values of
 the program counter%
 \footnote{In implementations where code can be moved by the garbage
