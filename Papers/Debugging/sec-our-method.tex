@@ -231,11 +231,13 @@ application.
 In particular, any assumptions made by the compiler about the
 structure or type of some lexical variable must be impossible to
 violate through the modification of the value of a lexical variable.
-Only allowing breakpoints immediately before and immediately after the
-evaluation of a form that is present in source code mostly solves this
-problem.  In addition, we must make sure that information about type
-and structure is not propagated by the compiler from the compilation
-of one source form to another source form.
+We obtain this property by making sure that the compiler does not
+propagate any information about the structure or type of lexical
+variables between program points that admit breakpoints.  Thus, any
+run-time manipulation that requires this structure or type to be known
+must be preceded by an explicit test, and the compiler does not
+generate code that admits a breakpoint between the test and the
+manipulation.
 
 \subsection{Debugger commands available to the user}
 
