@@ -55,11 +55,22 @@ harder for the user to understand what the program is doing:
   user to debug the code.
 \end{itemize}
 
+\noindent
 To avoid many of these inconveniences to the user,
 the debugging version of the function body is compiled in a way that
 makes the code somewhat slower, but much more friendly for the purpose
 of debugging.  Some of the optimization techniques cited above will
 not be performed at all, or only in a less ``aggressive'' form.
+Messages from the compiler such as when dead code is eliminated, are
+emitted based on the compilation of the normal version of the function
+body so that the maximum amount feedback is obtained.
+
+Notice that the existence of the two versions of the function body
+makes it usually unnecessary for the programmer to explicitly indicate
+values of the \texttt{debug} optimize quality.  In fact, forcing the
+programmer to set this value is often a major inconvenience, since it
+typically requires the programmer to choose between debugging
+convenience and execution speed.
 
 Furthermore, the debugging version of the code is compiled so that a
 small routine is called immediately before and immediately after the
