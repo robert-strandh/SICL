@@ -70,7 +70,11 @@ makes it usually unnecessary for the programmer to explicitly indicate
 values of the \texttt{debug} optimize quality.  In fact, forcing the
 programmer to set this value is often a major inconvenience, since it
 typically requires the programmer to choose between debugging
-convenience and execution speed.
+convenience and execution speed.  The \texttt{speed} and
+\texttt{compilation-speed} optimize qualities may influence
+compilation of the the normal version of the body, but not the
+debugging version.  The debugging version will in general be much
+faster to generate because of the absence of most optimization passes.
 
 Furthermore, the debugging version of the code is compiled so that a
 small routine is called immediately before and immediately after the
