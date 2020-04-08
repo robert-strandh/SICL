@@ -15,8 +15,10 @@ process.
 The main advantage of this organization is that communication between
 the debugger and the application is greatly simplified.  There is no
 need for a wire protocol to encode and decode data in the form of
-sequences of octets.  Instead, we can send data in the form of
-arbitrarily complex data structures between the two.
+sequences of octets, simply because with a single process, the address
+space is shared between the debugger and the application.  Instead, we
+can send data in the form of arbitrarily complex data structures
+between the two.
 
 \subsection{Difference compared to most FLOSS \commonlisp{} systems}
 
