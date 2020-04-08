@@ -195,8 +195,23 @@ Communication between user, application, and debugger.}
   is reached, the debugger displays the message to the user and sends
   a message to the application to continue execution.
 \item The user can also indicate that the execution of the application
-  should be \emph{stepped} in one of several different ways (in, out,
-  over, finish).  The debugger then sets one or more \emph{volatile
+  should be \emph{stepped} in one of several different ways:
+  \begin{itemize}
+  \item \emph{next}: Execution should stop at the next possible
+    program point.
+  \item \emph{in}: Execution should stop at the beginning of a
+    function being called.
+  \item \emph{out}: Evaluate the remaining sub-forms of the form
+    containing the current breakpoint, and stop execution immediately
+    after the evaluation of that form.
+  \item \emph{over}: When a breakpoint is reached that is located
+    immediately before a form is evaluated, evaluate the form and stop
+    execution immediately after this evaluation.
+  \item \emph{finish}:  Execution of the currently executing function
+    should terminate, and should stop in the calling function
+    immediately after the call.
+  \end{itemize}
+  The debugger then sets one or more \emph{volatile
     breakpoints}, i.e. breakpoints that will be removed once reached,
   at source locations corresponding to the type of stepping required.
   It then instructs the application to continue execution as usual.
