@@ -27,9 +27,11 @@ technique used by a good compiler, including:
 \item common sub-expression elimination,
 \item loop-invariant code motion,
 \item induction-variable optimization, 
-\item elimination of in-scope dead variables.
+\item elimination of in-scope dead variables, and
+\item tail-call optimization.
 \end{itemize}
 
+\noindent
 Some of these optimization techniques are essential for
 high-performance code, but many of them can make it significantly
 harder for the user to understand what the program is doing:
@@ -53,6 +55,10 @@ harder for the user to understand what the program is doing:
   variables in source code by others that are more beneficial for
   the performance of the computation, again making it harder for the
   user to debug the code.
+\item Tail-call optimization exploits the fact that the stack needs to
+  reflect only the \emph{future} of the computation, but the
+  \emph{past} can be omitted.  For the purpose of debugging, the past
+  of the computation provides essential information to the developer.
 \end{itemize}
 
 \noindent
