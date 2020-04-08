@@ -107,7 +107,7 @@ The breakpoint table is a hash table in which the keys are values of
 the program counter%
 \footnote{In implementations where code can be moved by the garbage
   collector, this table must be re-hashed after a collection.  The
-  tentative decision for SICL is to have all code at fixed locations.}
+  tentative decision for \sicl{} is to have all code at fixed locations.}
 and the values are objects that the debugger uses in order to
 determine information about the breakpoint in question.  When the
 routine finds that a breakpoint is present at the current source
