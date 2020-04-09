@@ -33,6 +33,8 @@
     cleavir-ir:unsigned-less-instruction
     cleavir-ir:unsigned-not-greater-instruction
     cleavir-ir:negate-instruction
+    cleavir-ir:fixnump-instruction
+    cleavir-ir:consp-instruction
     ;; FIXME: these instructions should be processed
     cleavir-ir:fixnum-divide-instruction))
 
