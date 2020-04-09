@@ -61,9 +61,9 @@
 
 ;;; A STATE of the automaton is either a FINAL state or an INTERNAL
 ;;; state.  A final state has no transitions associated with it, and
-;;; instead it has a ACTION.  Final states with identical (EQ) actions
-;;; are considered equivalent.  An internal state has a list of
-;;; transitions associated with it.  During construction of the
+;;; instead it has an ACTION.  Final states with identical (EQ)
+;;; actions are considered equivalent.  An internal state has a list
+;;; of transitions associated with it.  During construction of the
 ;;; automaton, some internal states may have an empty list of
 ;;; transitions, but in the final automaton, every internal state has
 ;;; a non-empty list of transitions associated with it.  There can
@@ -311,13 +311,13 @@
 ;;;     state is represented as a CONS of the NAME and the ACTION of
 ;;;     the state.
 ;;;
+;;;   * The information of a transition is represented as a CONS of
+;;;     the LABEL of the transition and the NAME of the TARGET STATE
+;;;     of the transition.
+;;;
 ;;;   * If the state is an internal state, then the information of the
 ;;;     state is represented as a CONS of the NAME of the state and a
 ;;;     list of information for each transition of the state.
-;;;
-;;;  * The information of a transition is represented as a CONS of the
-;;;    LABEL of the transition and the NAME of the TARGET STATE of the
-;;;    transition.
 
 (defun state-information (state)
   (cons (state-name state)
