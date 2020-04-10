@@ -32,8 +32,8 @@ For example, in \sbcl{}, the user can choose to
 \emph{encapsulation}, meaning that the function is not modified, and
 instead wrapped in a small routine that then replaces the function as
 associated with the function \emph{name}.  The function being traced
-is not modified.  The other way is by means of a breakpoint, meaning
-that the code of the function being traced \emph{is} modified.
+is not modified.  The other way is by means of a breakpoint; that is,
+the code of the function being traced \emph{is} modified.
 
 However, in both cases, every caller of the function being traced is
 affected, barring a caller that is in possession of the function
