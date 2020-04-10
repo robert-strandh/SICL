@@ -67,7 +67,7 @@ the debugging version of the function body is compiled in a way that
 makes the code somewhat slower, but much more friendly for the purpose
 of debugging.  Some of the optimization techniques cited above will
 not be performed at all, or only in a less ``aggressive'' form.
-Messages from the compiler such as when dead code is eliminated, are
+Messages from the compiler (such as when dead code is eliminated) are
 emitted based on the compilation of the normal version of the function
 body so that the maximum amount feedback is obtained.
 
@@ -218,22 +218,22 @@ Communication between user, application, and debugger.}
 \item The user can also indicate that the execution of the application
   should be \emph{stepped} in one of several different ways:
   \begin{itemize}
-  \item \emph{next}: Execution should stop at the next possible
+  \item \emph{next}: Execution stops at the next possible
     program point.
-  \item \emph{in}: Execution should stop at the beginning of a
+  \item \emph{in}: Execution stops at the beginning of a
     function being called.
-  \item \emph{out}: Evaluate the remaining sub-forms of the form
-    containing the current breakpoint, and stop execution immediately
+  \item \emph{out}: The remaining sub-forms of the form containing the
+    current breakpoint are evaluated, and execution stops immediately
     after the evaluation of that form.
   \item \emph{over}: When a breakpoint is reached that is located
-    immediately before a form is evaluated, evaluate the form and stop
-    execution immediately after this evaluation.
+    immediately before a form is evaluated, the form is evaluated and
+    execution stops immediately after this evaluation.
   \item \emph{finish}:  Execution of the currently executing function
-    should terminate, and should stop in the calling function
+    terminates, and stops in the calling function
     immediately after the call.
   \end{itemize}
   The debugger then sets one or more \emph{volatile
-    breakpoints}, i.e. breakpoints that will be removed once reached,
+    breakpoints} (i.e., breakpoints that will be removed once reached)
   at source locations corresponding to the type of stepping required.
   It then instructs the application to continue execution as usual.
 \end{itemize}
@@ -275,7 +275,7 @@ the source code of an application (one source file at a time) and an
 indication of the place of a breakpoint.  The application being
 debugged is then compiled with the \sicl{} compiler, generating
 high-level intermediate representation (HIR).  The HIR code is then
-interpreted using a small program running in a host \commonlisp{}
+interpreted by a small program running in a host \commonlisp{}
 implementation.
 
 The communication protocol described in
@@ -297,8 +297,9 @@ featured debugger:
     variables, and then continue the execution. 
   \end{itemize}
   It should be possible to make the action conditional, based on some
-  arbitrary expression to be evaluated in the debugger thread, and
-  which can contain references to live variables in the application.
+  arbitrary expression to be evaluated in the debugger thread.  This
+  expression can contain references to live variables in the
+  application.
 \item When the application is stopped, the user
   should be able to examine live variables, and (in some cases, with
   restrictions) modify their values.
