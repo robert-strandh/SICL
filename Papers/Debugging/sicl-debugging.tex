@@ -43,7 +43,7 @@ Furthermore, even debugging tools such as tracing or manually calling
 \texttt{break} are typically very limited in that they do not allow
 the programmer to trace or break in important system functions such as
 \texttt{make-instance} or \texttt{shared-initialize}, simply because
-these tools impact all callers including those of the system itself
+these tools impact all callers, including those of the system itself,
 such as the compiler.
 
 In this paper, we suggest a technique that solves most of these
@@ -52,7 +52,7 @@ or more \emph{application threads}, with all these threads running in
 the same image.  Tracing and setting breakpoints have an effect only
 in the debugged thread so that system code running in other threads is
 not impacted.  We discuss several advantages of this technique, and in
-particular how it can make debugging \emph{omnipresent}, i.e. not
+particular how it can make debugging \emph{omnipresent}, i.e., not
 requiring recompilation to get its benefits.  We describe how to
 achieve this advantage while keeping the \emph{overhead} low for
 threads that are not being debugged.
