@@ -21,4 +21,5 @@
    (:file "hoist-constant-inputs")
    (:file "eliminate-fixed-to-multiple")
    (:file "eliminate-multiple-to-fixed")
-   (:file "eliminate-append-values")))
+   (:file "eliminate-append-values")
+   (:file "eliminate-typeq")))
