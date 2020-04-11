@@ -67,7 +67,6 @@
    #:short-float-p-instruction
    #:single-float-p-instruction
    #:standard-object-p-instruction
-   #:standard-object-p-instruction
    #:phi-instruction
    #:use-instruction
    #:aref-instruction #:aset-instruction
