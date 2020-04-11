@@ -292,6 +292,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction SHORT-FLOAT-P-INSTRUCTION.
+;;;
+;;; This instruction is used to test whether its input is a
+;;; SHORT-FLOAT.  If that is the case, then the first output is
+;;; chosen.  Otherwise, the second output is chosen.
+;;;
+;;; This instruction can be used by clients that represent short
+;;; floats as immediate objects.
+
+(defclass short-float-p-instruction (instruction multiple-successors-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction STANDARD-OBJECT-P-INSTRUCTION.
 ;;;
 ;;; This instruction is used to test whether its input is an instance
