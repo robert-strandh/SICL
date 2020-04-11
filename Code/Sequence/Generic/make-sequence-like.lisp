@@ -14,7 +14,9 @@
            (error "Length mismatch in ~S." 'make-sequence-like))
          (let ((result (make-list length)))
            (replace result initial-contents)
-           result))))
+           result))
+        (t
+         (make-list (list-length list)))))
 
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod make-sequence-like
