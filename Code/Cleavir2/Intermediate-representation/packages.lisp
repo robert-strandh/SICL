@@ -64,6 +64,9 @@
    #:consp-instruction
    #:fixnump-instruction
    #:characterp-instruction
+   #:short-float-p-instruction
+   #:single-float-p-instruction
+   #:standard-object-p-instruction
    #:standard-object-p-instruction
    #:phi-instruction
    #:use-instruction
