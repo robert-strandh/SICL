@@ -11,6 +11,7 @@
    (:file "translate-data")
    (:file "translate-instruction")
    (:file "integer-arithmetic")
+   (:file "tag-test")
    (:file "memory")
    (:file "stack")
    (:file "generate-code")))
