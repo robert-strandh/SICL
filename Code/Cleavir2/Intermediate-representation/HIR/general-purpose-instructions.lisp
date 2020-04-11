@@ -306,6 +306,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction SINGLE-FLOAT-P-INSTRUCTION.
+;;;
+;;; This instruction is used to test whether its input is a
+;;; SINGLE-FLOAT.  If that is the case, then the first output is
+;;; chosen.  Otherwise, the second output is chosen.
+;;;
+;;; This instruction can be used by clients that represent single
+;;; floats as immediate objects.
+
+(defclass single-float-p-instruction (instruction multiple-successors-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction STANDARD-OBJECT-P-INSTRUCTION.
 ;;;
 ;;; This instruction is used to test whether its input is an instance
