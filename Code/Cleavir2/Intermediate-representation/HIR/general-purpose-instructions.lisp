@@ -322,6 +322,20 @@
 ;;;
 ;;; Instruction STANDARD-OBJECT-P-INSTRUCTION.
 ;;;
+;;; This instruction is used to test whether its input is a
+;;; STANDARD-OBJECT.  If that is the case, then the first output is
+;;; chosen.  Otherwise, the second output is chosen.
+;;;
+;;; This instruction can be used by clients that have unique tag bits
+;;; for representing standard objects.
+
+(defclass standard-object-p-instruction (instruction multiple-successors-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction STANDARD-OBJECT-P-INSTRUCTION.
+;;;
 ;;; This instruction is used to test whether its input is an instance
 ;;; of STANDARD-OBJECT.  If that is the case, then the first output is
 ;;; chosen.  Otherwise, the second output is chosen.
