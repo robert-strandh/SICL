@@ -81,12 +81,12 @@
      :mnemonic "AND"
      :operands
      (list (translate-datum (first (cleavir-ir:inputs instruction)))
-           (make-instance 'cluster:immediate-operand :value #b11111)))
+           (make-instance 'cluster:immediate-operand :value #b111)))
    (make-instance 'cluster:code-command
      :mnemonic "CMP"
      :operands
      (list (translate-datum (first (cleavir-ir:inputs instruction)))
-           (make-instance 'cluster:immediate-operand :value #b10011)))))
+           (make-instance 'cluster:immediate-operand :value #b101)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:standard-object-p-instruction) next)
