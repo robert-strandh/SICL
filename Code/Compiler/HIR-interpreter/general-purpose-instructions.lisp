@@ -80,6 +80,16 @@
 
 (defmethod interpret-instruction
     (client
+     (instruction cleavir-ir:single-float-p-instruction)
+     lexical-environment)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (successors (cleavir-ir:successors instruction)))
+    (if (typep (input-value input lexical-environment) 'single-float)
+        (first successors)
+        (second successors))))
+
+(defmethod interpret-instruction
+    (client
      (instruction cleavir-ir:standard-object-p-instruction)
      lexical-environment)
   (let* ((input (first (cleavir-ir:inputs instruction)))
@@ -87,6 +97,7 @@
          (value (input-value input lexical-environment)))
     (if (or (characterp value)
             (typep value 'fixnum)
+            (typep value 'single-float)
             (consp value))
         (second successors)
         (first successors))))
