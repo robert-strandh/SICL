@@ -16,6 +16,7 @@
    (:file "assignment")
    (:file "arguments")
    (:file "integer-arithmetic")
+   (:file "tag-test")
    (:file "funcall")
    (:file "catch")
    (:file "bind")
