@@ -7,6 +7,8 @@
                                (slot-value object 'sicl-boot-phase-3::%class))
                               ((consp object)
                                (sicl-genv:find-class 'cons e6))
+                              ((null object)
+                               (sicl-genv:find-class 'null e6))
                               ((symbolp object)
                                (sicl-genv:find-class 'symbol e6))
                               ((integerp object)

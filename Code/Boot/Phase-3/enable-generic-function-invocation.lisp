@@ -92,6 +92,8 @@
                                  (slot-value object '%class))
                                 ((consp object)
                                  (sicl-genv:find-class 'cons e3))
+                                ((null object)
+                                 (sicl-genv:find-class 'null e3))
                                 ((symbolp object)
                                  (sicl-genv:find-class 'symbol e3))
                                 ((integerp object)
