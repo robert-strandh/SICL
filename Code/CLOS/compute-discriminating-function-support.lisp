@@ -400,11 +400,12 @@
 (defun default-discriminating-function (generic-function arguments profile)
   (let* ((required-argument-count (length profile))
          (required-arguments (subseq arguments 0 required-argument-count))
-         (stamps (loop for argument in required-arguments
-                       for p in profile
-                       when p
-                         collect (stamp argument)))
-         (entry (car (member stamps (call-history generic-function)
+         (classes (mapcar #'class-of required-arguments))
+         (class-numbers (loop for class in classes
+                              for p in profile
+                              when p
+                                collect (unique-number class)))
+         (entry (car (member class-numbers (call-history generic-function)
                              :key #'class-number-cache :test #'equal))))
     (unless (null entry)
       (compute-and-install-discriminating-function generic-function)
@@ -413,14 +414,13 @@
       ;; There should never be a valid entry, because it would
       ;; then have been found by the TAGBODY preceding this code.
     ;; (error "entry found"))
-    (let ((classes (mapcar #'class-of required-arguments))
-          (method-combination
+    (let ((method-combination
             (generic-function-method-combination generic-function)))
       (multiple-value-bind (applicable-methods ok)
           (compute-applicable-methods-using-classes generic-function classes)
         (when ok
           (let* ((effective-method (add-call-cache generic-function
-                                                   stamps
+                                                   class-numbers
                                                    classes
                                                    applicable-methods))
                  (effective-method-function (compile nil effective-method)))
