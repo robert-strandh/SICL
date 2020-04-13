@@ -24,7 +24,6 @@
     ;; methods to forms containing APPLY that call those methods.
     (let ((dico '()))
       (loop for call-cache in call-history
-            for class-number-cache = (class-number-cache call-cache)
             for effective-method = (effective-method-cache call-cache)
             do (when (null (assoc effective-method dico :test #'eq))
                  (push (cons effective-method
