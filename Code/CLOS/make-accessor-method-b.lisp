@@ -42,4 +42,3 @@
   (lambda (arguments next-methods)
     (declare (ignore next-methods))
     (setf (slot-value (cadr arguments) slot-name) (car arguments))))
-
