@@ -46,7 +46,7 @@
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" e5)
   (import-functions-from-host
    '(sicl-clos::add-path
-     sicl-clos::compute-discriminating-tagbody
+     floor = /=
      sicl-clos::extract-transition-information
      sicl-clos::make-automaton)
    e5)
@@ -59,6 +59,7 @@
   ;; ASSOC is used by COMPUTE-DISCRIMINATING-FUNCTION in order to
   ;; build a dictionary mapping effective-method functions to forms.
   (import-function-from-host 'assoc e5)
+  (load-fasl "CLOS/discriminating-tagbody.fasl" e5)
   (load-fasl "CLOS/compute-discriminating-function-support-c.fasl" e5)
   (load-fasl "CLOS/compute-discriminating-function-defmethods.fasl" e5))
 
