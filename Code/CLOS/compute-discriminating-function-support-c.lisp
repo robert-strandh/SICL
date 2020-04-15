@@ -34,10 +34,13 @@
       ;; history.
       (let ((automaton (make-automaton (1+ active-arg-count))))
         (loop for call-cache in call-history
-              for class-number-cache = (class-number-cache call-cache)
+              for class-cache = (class-cache call-cache)
+              for active-classes = (loop for class in class-cache
+                                         for x in specializer-profile
+                                         when x collect class)
               for effective-method = (effective-method-cache call-cache)
               for action = (cdr (assoc effective-method dico :test #'eq))
-              do (add-path automaton class-number-cache action))
+              do (add-path automaton active-classes action))
         (let* ((info (extract-transition-information automaton))
                (tagbody (compute-discriminating-tagbody info class-number-vars)))
           `(lambda (&rest arguments)

@@ -50,7 +50,10 @@
 ;;; grouping together transfers with adjacent labels that have the
 ;;; same target.
 (defun make-transfer-groups (transfers)
-  (loop with trs = (sort (copy-list transfers) #'< :key #'transfer-label)
+  (loop with trcs = (loop for trc in transfers
+                          collect (make-transfer (unique-number (transfer-label trc))
+                                                 (transfer-target trc)))
+        with trs = (sort trcs #'< :key #'transfer-label)
         with first = (car trs)
         with rest = (cdr trs)
         with result = (list (make-transfer-group
