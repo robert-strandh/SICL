@@ -200,6 +200,7 @@
     (cf "CLOS/compute-discriminating-function-defgenerics.lisp")
     (cf "CLOS/compute-discriminating-function-support.lisp")
     (cf "CLOS/compute-discriminating-function-support-c.lisp")
+    (cf "CLOS/discriminating-tagbody.lisp")
     (cf "CLOS/compute-discriminating-function-defmethods.lisp")
     (cf "CLOS/standard-instance-access.lisp")
     (cf "CLOS/invalidate-discriminating-function.lisp")
