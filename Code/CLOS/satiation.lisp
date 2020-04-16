@@ -47,12 +47,11 @@
           for relevant-classes = (loop for class in combination
                                        for flag in profile
                                        when flag collect class)
-          for numbers = (mapcar #'unique-number relevant-classes)
-          do (unless (member numbers (call-history generic-function)
-                             :key #'class-number-cache :test #'equal)
+          do (unless (member relevant-classes (call-history generic-function)
+                             :key #'class-cache :test #'equal)
                (add-call-cache generic-function
-                               numbers
                                combination
+                               relevant-classes
                                methods)))))
 
 (defun load-call-history (generic-function)
