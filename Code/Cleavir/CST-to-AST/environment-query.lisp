@@ -23,11 +23,13 @@
 		 (setq result (cleavir-env:function-info environment new-function-name)))))
     result))
 
-(defun tag-info (environment tag-name)
-  (let ((result (cleavir-env:tag-info environment tag-name)))
+(defun tag-info (environment tag-name-cst)
+  (let* ((tag-name (cst:raw tag-name-cst))
+         (result (cleavir-env:tag-info environment tag-name)))
     (loop while (null result)
 	  do (restart-case (error 'cleavir-env:no-tag-info
-				  :name tag-name)
+				  :name tag-name
+                                  :origin (cst:source tag-name-cst))
 	       (substitute (new-tag-name)
 		 :report (lambda (stream)
 			   (format stream "Substitute a different name."))

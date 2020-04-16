@@ -383,7 +383,7 @@
   (check-argument-count cst 1 1)
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
-    (let ((info (tag-info env (cst:raw tag-cst))))
+    (let ((info (tag-info env tag-cst)))
       (cleavir-ast:make-go-ast
        (cleavir-env:identity info)
        :origin origin))))
