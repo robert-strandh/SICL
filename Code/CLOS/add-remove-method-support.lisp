@@ -94,7 +94,7 @@
   (setf (call-history generic-function)
         (loop with profile = (specializer-profile generic-function)
               for cache in (call-history generic-function)
-              for class-cache = (class-cache cache)
+              for class-cache = (relevant-classes cache)
               unless (applicable class-cache profile method)
                 collect cache))
   ;; Invalidate the current discriminating function so that it will be
@@ -126,7 +126,7 @@
   (setf (call-history generic-function)
         (loop with profile = (specializer-profile generic-function)
               for cache in (call-history generic-function)
-              for class-cache = (class-cache cache)
+              for class-cache = (relevant-classes cache)
               unless (applicable class-cache profile method)
                 collect cache))
   ;; Remove METHOD from the methods of GENERIC-FUNCTION.

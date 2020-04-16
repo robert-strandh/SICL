@@ -115,23 +115,19 @@
 ;;;      representing the call cache.
 
 (defun make-call-cache
-    (class-cache class-number-cache applicable-method-cache effective-method-cache)
-  (list* class-cache
-         class-number-cache
+    (relevant-classes applicable-method-cache effective-method-cache)
+  (list* relevant-classes
          effective-method-cache
          applicable-method-cache))
 
-(defun class-cache (call-cache)
+(defun relevant-classes (call-cache)
   (car call-cache))
 
-(defun class-number-cache (call-cache)
+(defun effective-method-cache (call-cache)
   (cadr call-cache))
 
-(defun effective-method-cache (call-cache)
-  (caddr call-cache))
-
 (defun applicable-method-cache (call-cache)
-  (cdddr call-cache))
+  (cddr call-cache))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -353,7 +349,7 @@
 ;;; COMPUTE-EFFECTIVE-METHOD.  Either way, we return the effective
 ;;; method of the new call cache.
 (defun add-call-cache
-    (generic-function class-numbers classes applicable-methods)
+    (generic-function classes relevant-classes applicable-methods)
   (let* ((call-history (call-history generic-function))
          (call-cache (car (member applicable-methods call-history
                                   :key #'applicable-method-cache
@@ -371,8 +367,7 @@
                (effective-method-function (compile nil effective-method)))
           ;; Add a new call cache to the call history.
           (setf (call-history generic-function)
-                (cons (make-call-cache classes
-                                       class-numbers
+                (cons (make-call-cache relevant-classes
                                        applicable-methods
                                        effective-method-function)
                       call-history))
@@ -383,8 +378,7 @@
         (let ((applicable-methods (applicable-method-cache call-cache))
               (effective-method-function (effective-method-cache call-cache)))
           (setf (call-history generic-function)
-                (cons (make-call-cache classes
-                                       class-numbers
+                (cons (make-call-cache relevant-classes
                                        applicable-methods
                                        effective-method-function)
                       call-history))
@@ -401,12 +395,12 @@
   (let* ((required-argument-count (length profile))
          (required-arguments (subseq arguments 0 required-argument-count))
          (classes (mapcar #'class-of required-arguments))
-         (class-numbers (loop for class in classes
-                              for p in profile
-                              when p
-                                collect (unique-number class)))
-         (entry (car (member class-numbers (call-history generic-function)
-                             :key #'class-number-cache :test #'equal))))
+         (relevant-classes (loop for class in classes
+                                 for p in profile
+                                 when p
+                                   collect class))
+         (entry (car (member relevant-classes (call-history generic-function)
+                             :key #'relevant-classes :test #'equal))))
     (unless (null entry)
       (compute-and-install-discriminating-function generic-function)
       (return-from default-discriminating-function
@@ -420,8 +414,8 @@
           (compute-applicable-methods-using-classes generic-function classes)
         (when ok
           (let* ((effective-method (add-call-cache generic-function
-                                                   class-numbers
                                                    classes
+                                                   relevant-classes
                                                    applicable-methods))
                  (effective-method-function (compile nil effective-method)))
             (set-funcallable-instance-function

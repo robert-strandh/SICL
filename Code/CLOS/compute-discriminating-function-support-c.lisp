@@ -34,10 +34,7 @@
       ;; history.
       (let ((automaton (make-automaton (1+ active-arg-count))))
         (loop for call-cache in call-history
-              for class-cache = (class-cache call-cache)
-              for active-classes = (loop for class in class-cache
-                                         for x in specializer-profile
-                                         when x collect class)
+              for active-classes = (relevant-classes call-cache)
               for effective-method = (effective-method-cache call-cache)
               for action = (cdr (assoc effective-method dico :test #'eq))
               do (add-path automaton active-classes action))
