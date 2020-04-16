@@ -120,7 +120,7 @@
          effective-method-cache
          applicable-method-cache))
 
-(defun relevant-classes (call-cache)
+(defun class-cache (call-cache)
   (car call-cache))
 
 (defun effective-method-cache (call-cache)
@@ -400,7 +400,7 @@
                                  when p
                                    collect class))
          (entry (car (member relevant-classes (call-history generic-function)
-                             :key #'relevant-classes :test #'equal))))
+                             :key #'class-cache :test #'equal))))
     (unless (null entry)
       (compute-and-install-discriminating-function generic-function)
       (return-from default-discriminating-function
