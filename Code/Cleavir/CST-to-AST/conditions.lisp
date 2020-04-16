@@ -125,6 +125,16 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when a case in CLEAVIR-PRIMOP:CASE is
+;;; not a proper list.
+(define-condition case-must-be-proper-list
+    (compilation-program-error)
+  ())
+
+(define-condition case-keys-must-be-proper-list
+    (compilation-program-error)
+  ())
+
 ;;; This condition is signaled when the first argument to EVAL-WHEN
 ;;; contains an invalid situation.
 (define-condition invalid-eval-when-situation
@@ -283,6 +293,11 @@
 
 ;;; This condition is signaled when a lambda list is malformed.
 (define-condition malformed-lambda-list (compilation-program-error)
+  ())
+
+;;; This condition is isgnaled when a CLEAVIR-PRIMOP:CASE form
+;;; lacks a default case.
+(define-condition default-case-missing (compilation-program-error)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -54,7 +54,8 @@
 ;;;
 ;;; This primitive operation can be used to compile CL:CASE
 ;;; efficiently. It has the same syntax as CL:CASE, except
-;;; that the T/OTHERWISE case is not optional.
+;;; that the T/OTHERWISE case is not optional, and the keys
+;;; must be actual lists rather than designators thereof.
 ;;; Note that the keys are passed pretty directly to the
 ;;; backend past HIR level. Implementations using this
 ;;; operation should ensure that only keys it is prepared
@@ -69,17 +70,14 @@
     (let* ((all-cases (cst:listify case-csts))
            (cases (butlast all-cases))
            (default (first (last all-cases))))
-      ;; FIXME: Not actually a form.
-      (check-cst-proper-list default 'form-must-be-proper-list)
-      (unless (typep (cst:raw default)
-                     '(cons (member t otherwise)))
-        ;; FIXME: Actual error
-        (error "Bad CLEAVIR-PRIMOP:CASE syntax"))
+      (check-cst-proper-list default 'case-must-be-proper-list)
+      (unless (member (cst:raw (cst:first default)) '(t otherwise))
+        (error 'default-case-missing :cst cst))
       (loop for case in cases
             ;; FIXME: Also not actually forms.
-            do (check-cst-proper-list case 'form-must-be-proper-list)
+            do (check-cst-proper-list case 'case-must-be-proper-list)
                (check-cst-proper-list (cst:first case)
-                                      'form-must-be-proper-list)
+                                      'case-keys-must-be-proper-list)
             collect (cst:raw (cst:first case)) into comparees
             collect (cst:rest case) into dests
             finally (return
