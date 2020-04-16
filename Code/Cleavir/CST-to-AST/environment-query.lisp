@@ -1,10 +1,12 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defun function-info (environment function-name)
-  (let ((result (cleavir-env:function-info environment function-name)))
+(defun function-info (environment function-name-cst)
+  (let* ((function-name (cst:raw function-name-cst))
+         (result (cleavir-env:function-info environment function-name)))
     (loop while (null result)
 	  do (restart-case (error 'cleavir-env:no-function-info
-				  :name function-name)
+				  :name function-name
+                                  :origin (cst:source function-name-cst))
 	       (consider-global ()
 		 :report (lambda (stream)
 			   (format stream
