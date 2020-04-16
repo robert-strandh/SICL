@@ -123,18 +123,20 @@
                ,(compute-test-tree var default left open-inf-p open-p)
                ,(compute-test-tree var default right nil open-sup-p))))))
 
-;;; VAR is the name of a variable containing the unique number of a
-;;; class.  TRANSFERS is a list of transfers (recall that a transfer
-;;; is a CONS cell of a label (i.e. the unique name of a class) and
-;;; the name of a TAGBODY tag).  We generate a tree of nested IF
-;;; forms, testing VAR against the labels and generating a GO to the
-;;; corresponding TAGBODY tag.  DEFAULT is a symbol indicating a
-;;; default TAGBODY tag to transfer control to if the value of VAR is
-;;; not any of the labels in TRANSFERS.
-(defun test-tree-from-transfers (var default transfers)
+;;; ARGUMENT-VAR is the name of a variable containing an argument.
+;;; TRANSFERS is a list of transfers (recall that a transfer is a CONS
+;;; cell of a label (i.e. the unique name of a class) and the name of
+;;; a TAGBODY tag).  We generate a tree of nested IF forms, testing
+;;; VAR against the labels and generating a GO to the corresponding
+;;; TAGBODY tag.  DEFAULT is a symbol indicating a default TAGBODY tag
+;;; to transfer control to if the value of VAR is not any of the
+;;; labels in TRANSFERS.
+(defun test-tree-from-transfers (argument-var default transfers)
   (let ((transfer-groups (make-transfer-groups transfers)))
     ;; T and T might not be optimal for the last two arguments.
-    (compute-test-tree var default transfer-groups t t)))
+    (let ((stamp-var (gensym)))
+      `(let ((,stamp-var (stamp ,argument-var)))
+         ,(compute-test-tree stamp-var default transfer-groups t t)))))
 
 (defun test-trees-from-internal-layer-info (var default layer-info)
   (loop for state-info in layer-info
@@ -148,15 +150,14 @@
 ;;; Create a TAGBODY form that implements the initial part of a
 ;;; discriminating function.  TRANSITION-INFO is the transition
 ;;; information extracted from a discriminating automaton.
-;;; CLASS-NUMBER-VARS is a list of variables containing the class
-;;; numbers of the specialized required arguments to the generic
-;;; function.
-(defun compute-discriminating-tagbody (transition-info class-number-vars)
+;;; ARGUMENT-VARS is a list of variables containing the specialized
+;;; required arguments to the generic function.
+(defun compute-discriminating-tagbody (transition-info argument-vars)
   (let ((default (gensym)))
     `(tagbody
         ,@(append
            (loop for layer-info in (butlast transition-info)
-                 for var in class-number-vars
+                 for var in argument-vars
                  append (test-trees-from-internal-layer-info
                          var default layer-info))
            (actions-from-final-layer-info (car (last transition-info))))

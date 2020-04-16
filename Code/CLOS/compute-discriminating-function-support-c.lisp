@@ -6,7 +6,7 @@
          ;; we might want to define it as a generic function.
          (active-arg-count (loop for x in specializer-profile
                                  count x))
-         (class-number-vars (loop for x in specializer-profile
+         (argument-vars (loop for x in specializer-profile
                                   when x collect (gensym)))
          (call-history (call-history generic-function)))
     ;; Check for the special case when the call history is empty.  In
@@ -39,15 +39,15 @@
               for action = (cdr (assoc effective-method dico :test #'eq))
               do (add-path automaton active-classes action))
         (let* ((info (extract-transition-information automaton))
-               (tagbody (compute-discriminating-tagbody info class-number-vars)))
+               (tagbody (compute-discriminating-tagbody info argument-vars)))
           `(lambda (&rest arguments)
              (block b
                (let ,(loop with i = 0
                            for x in specializer-profile
                            for j from 0
                            when x
-                             collect `(,(nth i class-number-vars)
-                                       (stamp (nth ,j arguments)))
+                             collect `(,(nth i argument-vars)
+                                       (nth ,j arguments))
                              and do (incf i))
                  ,tagbody
                  (default-discriminating-function
