@@ -2,16 +2,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Call profile.
+;;; Class cache.
 ;;;
-;;; A CALL PROFILE of a particular call to a generic function is a
-;;; list of classes of the required arguments passed to the generic
-;;; function in that call.  The call profile has the same order as the
-;;; required parameters of the generic function, independently of the
-;;; argument precedence order of the function.  The call profile is
-;;; what is passed to COMPUTE-APPLICABLE-METHODS-USING-CLASSES in
-;;; order to determine whether a list of applicable methods can be
-;;; computed, using only the classes of the required arguments.
+;;; A CLASS CACHE of a particular call to a generic function is a list
+;;; of classes of the specialized required arguments passed to the
+;;; generic function in that call.  The call class cache the same
+;;; order as the required parameters of the generic function,
+;;; independently of the argument precedence order of the function.
+;;; The class cache (together with the class T for unspecialized
+;;; arguments) is what is passed to
+;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES in order to determine
+;;; whether a list of applicable methods can be computed, using only
+;;; the classes of the required arguments.
+;;;
+;;; For a particular call to a generic function, if the classes of the
+;;; specialized required arguments correspond to the classes in a
+;;; class cache, then we have already at some point determined a list
+;;; of applicable methods for that call, so we do not have to compute
+;;; it again.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -35,36 +43,11 @@
 ;;; removed from the generic function.  When a method is added, each
 ;;; specializer of that method which is not the class named T causes
 ;;; the corresponding element of the specializer profile to be set to
-;;; T.  When a method is removed, the specializer profile is initially
-;;; set to a list of a NIL elements.  Then the list of methods of the
-;;; generic function is traversed and the specializer profile is
-;;; updated as if each method were just added to the generic function.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class number cache.
-;;;
-;;; A CLASS NUMBER CACHE of a particular call to a generic function is
-;;; a list of unique numbers of classes of specialized required
-;;; arguments passed in that call.  These classes (together with the
-;;; classes of the other required arguments) were passed to
-;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES, at some point, and that
-;;; function was able to compute an applicable method using only those
-;;; classes, which is why we have a corresponding class number cache
-;;; available.  The length of a class number cache is that of the
-;;; number of required arguments that are specialized, or
-;;; equivalently, the number of entries equal to T in the specializer
-;;; profile of the generic function.  The list is ordered from left to
-;;; right, i.e., the first element of the list corresponds to the
-;;; leftmost specialized required argument, etc.  In other words, the
-;;; order of the elements in the class number cache is independent of
-;;; the argument precedence order of the generic function.
-;;;
-;;; For a particular call to a generic function, if the unique numbers
-;;; of the classes of the specialized required arguments correspond to
-;;; the unique numbers of the classes in a class number cache, then we
-;;; have already at some point determined a list of applicable methods
-;;; for that call, so we do not have to compute it again.
+;;; T.  In this case, the call cache is discarded.  When a method is
+;;; removed, the specializer profile is initially set to a list of a
+;;; NIL elements.  Then the list of methods of the generic function is
+;;; traversed and the specializer profile is updated as if each method
+;;; were just added to the generic function.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -91,25 +74,19 @@
 ;;;
 ;;; A CALL CACHE represents information about a particular call to a
 ;;; generic function.  It is represented as a proper list with at
-;;; least 3 CONS cells in it, and it conceptually contains 4 items:
+;;; least 2 CONS cells in it, and it conceptually contains 3 items:
 ;;;
 ;;;   1. A class cache containing a list of class metaobjects, one for
 ;;;      each specialized required parameter, corresponding to the
 ;;;      classes of the arguments of the call.  This item is located
 ;;;      in the CAR of the list representing the call cache.
 ;;;
-;;;   2. A class number cache containing a list of class number, one
-;;;      for each specialized required parameter, corresponding to the
-;;;      class numbers of the classes in the class cache.  This item
-;;;      is located in the CADR of the list representing the call
-;;;      cache.
-;;;
-;;;   3. An effective method cache, containing the effective method
+;;;   2. An effective method cache, containing the effective method
 ;;;      function to invoke for calls with corresponding to the
 ;;;      classes in the class cache.  This item is located in the
 ;;;      CADDR of the list representing the call history entry.
 ;;;
-;;;   4. An applicable method cache, containing a list of the
+;;;   3. An applicable method cache, containing a list of the
 ;;;      applicable methods that make up the effective method for this
 ;;;      call.  This item is located in the CDDDR of the list
 ;;;      representing the call cache.
