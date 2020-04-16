@@ -9,6 +9,57 @@
   (funcall (coerce *macroexpand-hook* 'function)
            expander form env))
 
+(defun find-source-cst-1 (cst form)
+  (let ((seen (make-hash-table :test #'eq)))
+    (labels ((aux (cst)
+               (unless (gethash cst seen)
+                 (setf (gethash cst seen) t)
+                 (when (eq (cst:raw cst) form)
+                   (return-from find-source-cst-1 cst))
+                 ;; We don't search through atoms.
+                 (when (typep cst 'cst:cons-cst)
+                   (aux (cst:first cst))
+                   (aux (cst:rest cst)))
+                 nil)))
+      (aux cst))))
+
+(defun find-source-cst (cst &rest forms)
+  (if (null forms)
+      cst
+      (or (find-source-cst-1 cst (first forms))
+          (apply #'find-source-cst cst (rest forms)))))
+
+;;; This is a helper operator to get more accurate errors from
+;;; macroexpansion functions. Cleavir wraps such errors in
+;;; other conditions that include the CST, which has source
+;;; information, using with-encapsulated-conditions. This
+;;; operator can be used to specify which CST should be
+;;; included in that encapsulation condition.
+;;; The "current CST" is initially bound to the whole macro form's
+;;; CST by Cleavir. In a with-current-source-form, it will be
+;;; rebound to the CST corresponding to the first of the FORMS
+;;; that can be located in the current CST, or to the current CST
+;;; again if none can be found. Then, when an error is signaled
+;;; and Cleavir encapsulates it, it uses the current CST.
+;;; This is useful for macros like COND and SETF. For example,
+;;; (with-current-source-form (place) (get-setf-expansion place))
+;;; means that if the place is malformed etc., the error location
+;;; is localized to the place, not the entire SETF form.
+;;; If WITH-CURRENT-SOURCE-FORM is executed in some context other
+;;; than a macroexpander in Cleavir, no special processing is done.
+(defmacro with-current-source-form ((&rest forms) &body body)
+  (let ((thunkg (gensym)))
+    ;; progn to treat DECLARE correctly
+    `(flet ((,thunkg () (progn ,@body)))
+       (if (boundp '*current-cst*)
+           ;; in macroexpander in CST-to-AST
+           (let ((*current-cst*
+                   (find-source-cst *current-cst* ,@forms)))
+             (,thunkg))
+           ;; outside CST-to-AST: do nothing special
+           ;; out of paranoia, evaluate forms for side effects
+           (progn ,@forms (,thunkg))))))
+
 (defun expand-macro (expander cst env)
   (with-encapsulated-conditions
       (cst macroexpansion-error
