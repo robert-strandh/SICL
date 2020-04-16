@@ -189,6 +189,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a BRANCH-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:branch-ast) context)
+  (let ((branches (loop for ast in (cleavir-ast:branch-asts ast)
+                        collect (compile-ast ast context)))
+        (default (compile-ast (cleavir-ast:default-ast ast) context)))
+    (compile-ast (cleavir-ast:test-ast ast)
+                 (clone-context
+                  context
+                  :results nil
+                  :successors (append branches (list default))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a PROGN-AST.
 ;;;
 ;;; The last sub-ast is compiled in the same context as the progn-ast
@@ -1019,6 +1033,25 @@
                                             (cleavir-ir:make-eq-instruction
                                              (list temp1 temp2)
                                              successors))))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a CASE-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:case-ast) context)
+  (let ((arg-ast (cleavir-ast:arg-ast ast))
+        (comparees (cleavir-ast:comparees ast))
+        (temp (cleavir-ir:new-temporary)))
+    (assert-context ast context 0 (1+ (length comparees)))
+    (compile-ast
+     arg-ast
+     (clone-context
+      context
+      :results (list temp)
+      :successors (list (cleavir-ir:make-case-instruction
+                         temp
+                         comparees
+                         (successors context)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -68,6 +68,7 @@
    #:unwind-instruction #:make-unwind-instruction #:destination #:unwind-index
    #:local-unwind-instruction #:make-local-unwind-instruction
    #:eq-instruction #:make-eq-instruction
+   #:case-instruction #:make-case-instruction #:comparees
    #:consp-instruction #:make-consp-instruction
    #:fixnump-instruction #:make-fixnump-instruction
    #:characterp-instruction #:make-characterp-instruction
