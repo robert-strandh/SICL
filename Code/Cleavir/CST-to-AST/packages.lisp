@@ -72,6 +72,8 @@
            #:compiler-macro-expansion-warning
            #:compiler-macro-expansion-style-warning
            #:eval-error #:eval-warning #:eval-style-warning
+           ;; Miscellaneous helper.
+           #:with-current-source-form
            ;; Condition readers.
            #:cst
            #:original-condition

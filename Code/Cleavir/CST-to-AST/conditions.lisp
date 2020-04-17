@@ -289,6 +289,12 @@
 ;;;
 ;;; Encapsulation conditions.
 
+;;; This variable is bound to the CST that will attached to
+;;; encapsulated conditions. It's a dynamic variable because
+;;; a macroexpander may want to bind it; see
+;;; WITH-CURRENT-SOURCE-FORM in utilities.lisp.
+(defvar *current-cst*)
+
 ;;; These two functions create condition handlers.
 ;;; The handlers take the condition they are given, and signal
 ;;; a new condition that encapsulates but also has source
@@ -296,12 +302,12 @@
 ;;; They also allow higher level handlers to use the
 ;;; SIGNAL-ORIGINAL-CONDITION restart to allow the original
 ;;; condition to propagate instead.
-(defun warning-encapsulator (cst condition-type)
+(defun warning-encapsulator (condition-type)
   (lambda (condition)
     (let ((muffle t))
       (restart-case
           (warn condition-type
-                :cst cst
+                :cst *current-cst*
                 :condition condition)
         (signal-original-condition ()
           :report "Let the originally signaled condition propagate."
@@ -309,11 +315,11 @@
       (when muffle
         (muffle-warning condition)))))
 
-(defun error-encapsulator (cst condition-type)
+(defun error-encapsulator (condition-type)
   (lambda (condition)
     (restart-case
         (error condition-type
-               :cst cst
+               :cst *current-cst*
                :condition condition)
       (signal-original-condition ()
         :report "Let the originally signaled condition propagate."))))
@@ -322,15 +328,14 @@
 ;;; caught conditions in the given classes.
 (defmacro with-encapsulated-conditions
     ((cst error-type warning-type style-warning-type) &body body)
-  (let ((cstg (gensym "CST")))
-    `(let ((,cstg ,cst))
-       (handler-bind
-           ((style-warning
-              (warning-encapsulator ,cstg ',style-warning-type))
-            ((and warning (not style-warning))
-              (warning-encapsulator ,cstg ',warning-type))
-            (error (error-encapsulator ,cstg ',error-type)))
-         ,@body))))
+  `(let ((*current-cst* ,cst))
+     (handler-bind
+         ((style-warning
+            (warning-encapsulator ',style-warning-type))
+          ((and warning (not style-warning))
+            (warning-encapsulator ',warning-type))
+          (error (error-encapsulator ',error-type)))
+       ,@body)))
 
 ;;; This condition is signaled when a macroexpander signals
 ;;; an error.

@@ -383,7 +383,7 @@
   (check-argument-count cst 1 1)
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
-    (let ((info (tag-info env (cst:raw tag-cst))))
+    (let ((info (tag-info env tag-cst)))
       (cleavir-ast:make-go-ast
        (cleavir-env:identity info)
        :origin origin))))
@@ -531,7 +531,7 @@
 ;;;
 
 (defun convert-named-function (name-cst environment system)
-  (let ((info (function-info environment (cst:raw name-cst))))
+  (let ((info (function-info environment name-cst)))
     (convert-function-reference name-cst info environment system)))
 
 (defun convert-lambda-function (lambda-form-cst env system)
