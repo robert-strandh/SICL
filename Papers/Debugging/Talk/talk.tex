@@ -127,6 +127,16 @@ program giving the wrong answer as a result of incorrect programming.
 \frametitle{Debugging in FLOSS \commonlisp{} implementations}
 Inferior or non-existing debugging support.
 \vskip 0.25cm
+The \texttt{trace} facility of most implementations uses
+\emph{encapsulation}.
+\vskip 0.25cm
+Many implementations do not have a working \texttt{step} facility.
+\vskip 0.25cm
+ECL accomplishes stepping with a special instruction type in the
+bytecode virtual machine.
+\vskip 0.25cm
+SBCL has breakpoints, but they are used only for the \texttt{trace}
+facility. 
 
 }
 
