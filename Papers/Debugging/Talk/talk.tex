@@ -155,6 +155,20 @@ location.
 }
 
 \frame{
+\frametitle{Same-process debugging}
+Has many advantages in the context of \commonlisp{}.
+\vskip 0.25cm
+Introduces several problems that must be solved.
+\vskip 0.25cm
+Setting a breakpoint in a function used by the evaluator or the
+debugger may render the system useless.
+\vskip 0.25cm
+Unsafe operations may crash the system or, worse, silently give the
+wrong answer.
+
+}
+
+\frame{
 \frametitle{Debugging in FLOSS \commonlisp{} implementations}
 Inferior or non-existing debugging support.
 \vskip 0.25cm
