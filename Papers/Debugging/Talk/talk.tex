@@ -136,8 +136,22 @@ ECL accomplishes stepping with a special instruction type in the
 bytecode virtual machine.
 \vskip 0.25cm
 SBCL has breakpoints, but they are used only for the \texttt{trace}
-facility. 
+facility.  Stepping is accomplished using the condition system, and
+only when the \texttt{debug} quality is sufficiently high.
 
+}
+
+\frame{
+\frametitle{Debugging in LispWorks}
+Breakpoints can be set from the editor or the stepper.
+\vskip 0.25cm
+The first time a breakpoint is set, the source code of the defining
+form is re-evaluated with additional annotations for the stepper.
+\vskip 0.25cm
+If a breakpoint is encountered, the stepper is automatically invoked
+if it is not invoked already.
+\vskip 0.25cm
+The \texttt{trace} facility uses encapsulation.
 }
 
 \frame{
