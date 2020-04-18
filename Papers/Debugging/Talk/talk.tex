@@ -123,6 +123,22 @@ We do \emph{not} include in the definition any protection against the
 program giving the wrong answer as a result of incorrect programming.
 }
 
+
+\frame{
+\frametitle{Process-based debugging}
+The debugger and the application execute in separate processes with
+separate address spaces.
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-process-based-debugging.pdf_t}
+\end{center}
+\end{figure}
+Used in UNIX-like systems.
+
+Also recommended for CCL and ECL.
+}
+
 \frame{
 \frametitle{Debugging in FLOSS \commonlisp{} implementations}
 Inferior or non-existing debugging support.
@@ -166,21 +182,6 @@ debugger first \emph{uninstalls} all breakpoints.
 \vskip 0.25cm
 This low-level mechanism is used for stepping, source-level debugging,
 tracing, etc.
-}
-
-\frame{
-\frametitle{Process-based debugging}
-The debugger and the application execute in separate processes with
-separate address spaces.
-\vskip 0.25cm
-\begin{figure}
-\begin{center}
-\inputfig{fig-process-based-debugging.pdf_t}
-\end{center}
-\end{figure}
-Used in UNIX-like systems.
-
-Also recommended for CCL and ECL.
 }
 
 \frame{
