@@ -140,6 +140,21 @@ Also recommended for CCL and ECL.
 }
 
 \frame{
+\frametitle{Process-based debugging}
+The instructions of the application are modified by the debugger
+(using copy-on-write pages).
+\vskip 0.25cm
+Does not require any collaboration from the application.
+\vskip 0.25cm
+Additional debugging information is needed for source-level
+debugging.
+\vskip 0.25cm
+Inherently \emph{unsafe}.  The debugger can alter any memory
+location.
+\vskip 0.25cm
+}
+
+\frame{
 \frametitle{Debugging in FLOSS \commonlisp{} implementations}
 Inferior or non-existing debugging support.
 \vskip 0.25cm
