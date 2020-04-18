@@ -155,6 +155,20 @@ The \texttt{trace} facility uses encapsulation.
 }
 
 \frame{
+\frametitle{Debugging in Allegro}
+The most complete system of them all.
+\vskip 0.25cm
+Breakpoints alter native code, in a way similar to process-based
+debugging.
+\vskip 0.25cm
+To avoid an unusable system, when a breakpoint is encountered, the
+debugger first \emph{uninstalls} all breakpoints.
+\vskip 0.25cm
+This low-level mechanism is used for stepping, source-level debugging,
+tracing, etc.
+}
+
+\frame{
 \frametitle{Process-based debugging}
 The debugger and the application execute in separate processes with
 separate address spaces.
