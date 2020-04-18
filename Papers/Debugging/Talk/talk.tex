@@ -216,10 +216,33 @@ The mechanism is inherently unsafe (with our definition of safety).
 }
 
 \frame{
-\frametitle{Title}
-Stuff
+\frametitle{Our technique}
+The compiler always includes two versions of each function body:
 \vskip 0.25cm
-More stuff
+\begin{itemize}
+\item One version containing ``normal'', optimized code.
+\item One version containing debugging code.
+\end{itemize}
+\vskip 0.25cm
+This idea is due to Michael Raskin.
+\vskip 0.25cm
+The debugging version contains code for collaboration with the
+\emph{debugger}.
+}
+
+\frame{
+\frametitle{Our technique}
+The two different versions are accessible through different
+\emph{entry points} to the function:
+\vskip 0.25cm
+\begin{itemize}
+\item A function call in the normal version invokes the normal entry
+  point of the callee.
+\item A function call in the debugging version invokes the debugging
+  entry point of the callee.
+\end{itemize}
+\vskip 0.25cm
+This idea is due to Frode Fjeld.
 }
 
 \frame{
