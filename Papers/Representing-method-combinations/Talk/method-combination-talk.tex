@@ -125,6 +125,16 @@ In \commonlisp{} a generic function is an instance of a subclass of
 }
 
 \frame{
+\frametitle{Generic-function invocation}
+In traditional languages: \texttt{<arg1>.gf(<arg2>, ...)}
+\vskip 0.25cm
+In \commonlisp{} \texttt{(gf <arg1> <arg2> ...)}
+\vskip 0.25cm
+Because of subclassing, an invocation may result in several methods
+being \emph{applicable}
+}
+
+\frame{
 \frametitle{\texttt{compute-effective-method}}
 This generic function has three parameters:
 \begin{enumerate}
