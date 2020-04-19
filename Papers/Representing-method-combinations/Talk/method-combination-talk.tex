@@ -131,6 +131,20 @@ order.
 
 
 \frame{
+\frametitle{Role of the method-combination metaobject}
+In \texttt{compute-effective-method}, the method-combination
+metaobject designates a \emph{method-combination procedure}.
+\vskip 0.25cm
+This procedure can be implemented in different ways:
+\begin{itemize}
+\item As a method on \texttt{compute-effective-method}, specialized to
+  some method-combination class.
+\item As a function stored in the method-combination object.
+\item Any other way that will accomplish the task.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Title}
 Stuff
 \vskip 0.25cm
