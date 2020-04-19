@@ -135,6 +135,18 @@ being \emph{applicable}
 }
 
 \frame{
+\frametitle{Traditional generic-function invocation}
+In traditional languages, only the most specific applicable method is
+invoked.
+\vskip 0.25cm
+Invoking less specific methods requires an explicit call, such as
+\texttt{super(...)}.
+\vskip 0.25cm
+Explicit code is required to combine the results of the different
+applicable methods being called.
+}
+
+\frame{
 \frametitle{\texttt{compute-effective-method}}
 This generic function has three parameters:
 \begin{enumerate}
