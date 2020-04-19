@@ -112,6 +112,25 @@ Several objectives:
 }
 
 \frame{
+\frametitle{\texttt{compute-effective-method}}
+This generic function has three parameters:
+\begin{enumerate}
+\item A generic-function metaobject
+\item A method-combination metaobject
+\item A list of method metaobjects
+\end{enumerate}
+\vskip 0.25cm
+It returns an \emph{effective method} which is a lambda expression.
+\vskip 0.25cm
+This expression is compiled to create an \emph{effective method function}.
+\vskip 0.25cm
+When applied to the arguments of the invocation of the generic
+function, the effective method function calls the methods in the right
+order.
+}
+
+
+\frame{
 \frametitle{Title}
 Stuff
 \vskip 0.25cm
