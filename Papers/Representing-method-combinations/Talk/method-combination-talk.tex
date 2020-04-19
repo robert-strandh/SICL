@@ -147,6 +147,23 @@ applicable methods being called.
 }
 
 \frame{
+\frametitle{Generic-function invocation in \commonlisp{}}
+The applicable methods are \emph{combined} in some way.
+\vskip 0.25cm
+The combination is expressed as a lambda expression called the
+\emph{effective method}.
+\vskip 0.25cm
+The effective method contains calls to the individual methods.
+\vskip 0.25cm
+The compiler is called in order to turn the effective method into an
+\emph{effective method function}.
+\vskip 0.25cm
+When applied to the arguments of the invocation of the generic
+function, the effective method function calls the methods in the right
+order.
+}
+
+\frame{
 \frametitle{\texttt{compute-effective-method}}
 This generic function has three parameters:
 \begin{enumerate}
