@@ -112,6 +112,19 @@ Several objectives:
 }
 
 \frame{
+\frametitle{Generic function}
+A feature of object-oriented programming languages.
+\vskip 0.25cm
+Can be thought of as a collection of \emph{methods} sharing the same
+name.
+\vskip 0.25cm
+In traditional languages, a generic function is not a first-class object.
+\vskip 0.25cm
+In \commonlisp{} a generic function is an instance of a subclass of
+\texttt{function}, so it is a first-class object.
+}
+
+\frame{
 \frametitle{\texttt{compute-effective-method}}
 This generic function has three parameters:
 \begin{enumerate}
@@ -120,13 +133,7 @@ This generic function has three parameters:
 \item A list of method metaobjects
 \end{enumerate}
 \vskip 0.25cm
-It returns an \emph{effective method} which is a lambda expression.
-\vskip 0.25cm
-This expression is compiled to create an \emph{effective method function}.
-\vskip 0.25cm
-When applied to the arguments of the invocation of the generic
-function, the effective method function calls the methods in the right
-order.
+A call to this generic function returns an an effective method.
 }
 
 
