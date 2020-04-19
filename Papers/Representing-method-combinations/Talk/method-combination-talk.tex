@@ -201,6 +201,22 @@ A method-combination metaobject contains information about its
 \emph{type} and the \emph{arguments} used with that type
 }
 
+\frame[containsverbatim]{
+\frametitle{Example use of method combinations}
+\begin{verbatim}
+(defgeneric foo (x)
+  (:method-combination and :most-specific-last))
+\end{verbatim}
+\vskip 0.25cm
+Here, \texttt{and} is the name of a method-combination \emph{type} and
+\texttt{:most-specific-last} is an \emph{argument} that this
+particular type accepts.
+\vskip 0.25cm
+The applicable methods are combined with the \texttt{and} standard
+operator, and the arguments to the operator are the applicable methods
+in the order of the least specific to most specific.
+}
+
 \frame{
 \frametitle{Title}
 Stuff
