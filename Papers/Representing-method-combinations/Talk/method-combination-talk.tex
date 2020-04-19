@@ -1,5 +1,5 @@
 \documentclass{beamer}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \beamertemplateshadingbackground{red!10}{blue!10}
 %\usepackage{fancybox}
 \usepackage{epsfig}
@@ -85,7 +85,7 @@ LaBRI, University of Bordeaux
 \resizebox{1.5cm}{!}{\includegraphics{labri-logo.pdf}}
 \titlepage
 \vfill
-\small{European Lisp Symposium, Z�rich, Switzerland \hfill ELS2020}
+\small{European Lisp Symposium, Zürich, Switzerland \hfill ELS2020}
 }
 
 \setbeamertemplate{footline}{
@@ -131,7 +131,7 @@ In traditional languages: \texttt{<arg1>.gf(<arg2>, ...)}
 In \commonlisp{} \texttt{(gf <arg1> <arg2> ...)}
 \vskip 0.25cm
 Because of subclassing, an invocation may result in several methods
-being \emph{applicable}
+being \emph{applicable}.
 }
 
 \frame{
@@ -198,7 +198,7 @@ Method-combination metaobjects must be \emph{indirect instances} of this
 class.
 \vskip 0.25cm
 A method-combination metaobject contains information about its
-\emph{type} and the \emph{arguments} used with that type
+\emph{type} and the \emph{arguments} used with that type.
 }
 
 \frame[containsverbatim]{
@@ -218,39 +218,188 @@ in the order of the least specific to most specific.
 }
 
 \frame{
-\frametitle{Title}
-Stuff
+\frametitle{\texttt{define-method-combination}}
+This operator defines a method-combination \emph{type}
 \vskip 0.25cm
-More stuff
+It has two \emph{versions}: the \emph{short} version and the
+\emph{long} version.
+}
+
+\frame{
+\frametitle{\texttt{define-method-combination} (short version)}
+\texttt{(define-method-combination} \emph{name} \emph{options}\texttt{)}
+\vskip 0.25cm
+Options are unimportant for this presentation.
+\vskip 0.25cm
+The short version defines a method-combination type that accepts an
+\emph{optional argument} that can be \texttt{:most-specific-first} or
+\texttt{:most-specific-last}.
+\vskip 0.25cm
+If no argument is given, it defaults to \texttt{:most-specific-first}.
 }
 
 \frame[containsverbatim]{
-\frametitle{A protocol for first-class global environments}
+\frametitle{\texttt{define-method-combination} (long version)}
+\texttt{(define-method-combination} \emph{name} \emph{lambda-list}
+... \emph{body} \texttt{)}
+\vskip 0.25cm
+The ... represent information that is not important to this
+presentation.
+\vskip 0.25cm
+The \emph{lambda-list} is an ordinary lambda list that specifies what
+\emph{arguments} can be given after \texttt{:method-combination}.
+}
+
+\frame{
+\frametitle{Scenarios}
+\begin{enumerate}
+\item The user defines a method-combination type using
+  \texttt{define-method-combination}, then uses that type in a
+  \texttt{defgeneric} form, but makes a mistake in the arguments.
+\item The user defines a method-combination type using the long
+  version of \texttt{define-method-combination}, but makes a mistake
+  in the lambda list.  Then uses \texttt{defgeneric} with the intended
+  arguments.
+\item The user defines a method-combination type using the long
+  version of \texttt{define-method-combination}, then uses
+  \texttt{defgeneric} with acceptable arguments.  Later, the user
+  modifies the lambda list and redefines the method-combination type.
+\end{enumerate}
+
+}
+
+\frame{
+\frametitle{\texttt{find-method-combination}}
+This generic function is called with the name of a method-combination
+type and the arguments supplied in the \texttt{defgeneric} form.
+\vskip 0.25cm
+It return a method-combination metaobject.
+}
+
+\frame{
+\frametitle{Previous work}
+We investigated several FLOSS implementations:
+\begin{itemize}
+\item Portable Common Loops (PCL).  A mostly portable library used for
+  adding CLOS to a pre-ANSI \commonlisp{} implementation.
+\item Steel Bank Common Lisp (SBCL)
+\item Clozure Common Lisp (CCL)
+\item Embedded Common Lisp (ECL)
+\item Clasp
+\end{itemize}
+\vskip 0.25cm
+Many of them fail several scenarios.
+\vskip 0.25cm
+All of them sometimes fail to verify the validity of method-combination
+arguments early.  Instead, these are sometimes verified when
+\texttt{compute-effective-method} is called, resulting in cryptic
+error messages.
+\vskip 0.25cm
+Details in the paper.
+}
+
+\frame{
+\frametitle{Our technique}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-method-combinations.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Our technique}
+In this presentation, we cover only our technique for reporting
+incorrect method-combination arguments early.
+\vskip 0.25cm
+Refer to the paper for the way we handle the other scenarios.
+}
+
+\frame[containsverbatim]{
+\frametitle{Our technique}
+Recall the long version of \texttt{define-method-combination}:
+\texttt{(define-method-combination} \emph{name} \emph{lambda-list}
+... \emph{body} \texttt{)}
+\vskip 0.25cm
+The \emph{lambda-list} is an ordinary lambda list that specifies what
+\emph{arguments} can be given after \texttt{:method-combination}.
+\vskip 0.25cm
+We translate the short version to the long version.
+\vskip 0.25cm
+We analyze the \emph{lambda-list} of the long version and extract all the
+parameters (say v1, ..., vn) that can be used in the \emph{body}.
+}
+
+\frame{
+\frametitle{Our technique}
+We construct a lambda expression as follows:
+\vskip 0.25cm
+\texttt{(lambda (...) (list v1 ... vn))}
+\vskip 0.25cm
+where (...) is the original lambda list.
+\vskip 0.25cm
+We compile the lambda expression to obtain a function.
+\vskip 0.25cm
+When this function is applied to the method-combination arguments
+returns a list of objects that can be used to identify a particular
+method-combination metaobject of a particular type.
+}
+
+\frame[containsverbatim]{
+\frametitle{Our technique}
+In our \texttt{define-method-combination} forms, we include
+\texttt{\&aux} parameters with expressions that verify the arguments.
+\vskip 0.25cm
+Example of long version for method-combination type \texttt{and}:
+\vskip 0.25cm
 \begin{verbatim}
-(cl:in-package #:sicl-genv)
-
-(defgeneric fboundp (function-name environment))
-
-(defgeneric fmakunbound (function-name environment))
+(define-method-combination and
+    (&optional (order :most-specific-first)
+     &aux (ignore (unless (member order
+                                  '(:most-specific-first
+                                    :most-specific-last))
+                    (error ...))))
+ ...)
 \end{verbatim}
 
 }
 
 \frame{
-\frametitle{Future work}
-
+\frametitle{Our technique}
+When our constructed function is applied to some incorrect
+method-combination arguments:
 \begin{itemize}
-\item stuff
-\item stuff
-\item stuff
+\item It may fail because the arguments are incompatible with the
+  parameters of the lambda list.
+\item It may fail because one or more \texttt{\&aux} initialization
+  forms call \texttt{error}
 \end{itemize}
+\vskip 0.25cm
+In both cases, we handle the error and report incorrect arguments.
+}
+
+
+\frame{
+\frametitle{Future work}
+The technique described here has been only partially incorporated into
+SICL.  We are working on finishing this incorporation.
+\vskip 0.25cm
+Our technique could benefit from some \emph{weak} data structure to
+avoid memory leaks due to generic-function metaobjects being stored in
+our data structure.  SICL does not yet have any such data structure.
+We plan to add it.
+\vskip 0.25cm
+\vskip 0.25cm
+\vskip 0.25cm
 
 }
 
 \frame{
   \frametitle{Acknowledgments}
 
-We would like to thank ...
+We would like to thank Yan Gajdoš and Cyrus Harmon for providing
+valuable feedback on early versions of this paper.
 }
 
 \frame{
