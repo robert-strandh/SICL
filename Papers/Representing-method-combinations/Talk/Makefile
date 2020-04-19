@@ -1,4 +1,4 @@
-NAME=talk
+NAME=method-combination-talk
 LATEX=pdflatex
 TEXFILES=$(NAME).tex $(shell ./tex-dependencies $(NAME).tex)
 PSTEX_T=$(shell ./strip-dependence inputfig $(TEXFILES))
