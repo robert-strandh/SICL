@@ -213,8 +213,9 @@ Here, \texttt{and} is the name of a method-combination \emph{type} and
 particular type accepts.
 \vskip 0.25cm
 The applicable methods are combined with the \texttt{and} standard
-operator, and the arguments to the operator are the applicable methods
-in the order of the least specific to most specific.
+operator, and the arguments to the operator are the return values of
+the invocations of the applicable methods in the order of the least
+specific to most specific.
 }
 
 \frame{
@@ -268,13 +269,13 @@ The \emph{lambda-list} is an ordinary lambda list that specifies what
 
 }
 
-\frame{
-\frametitle{\texttt{find-method-combination}}
-This generic function is called with the name of a method-combination
-type and the arguments supplied in the \texttt{defgeneric} form.
-\vskip 0.25cm
-It return a method-combination metaobject.
-}
+%% \frame{
+%% \frametitle{\texttt{find-method-combination}}
+%% This generic function is called with the name of a method-combination
+%% type and the arguments supplied in the \texttt{defgeneric} form.
+%% \vskip 0.25cm
+%% It returns a method-combination metaobject.
+%% }
 
 \frame{
 \frametitle{Previous work}
@@ -291,7 +292,7 @@ We investigated several FLOSS implementations:
 Many of them fail several scenarios.
 \vskip 0.25cm
 All of them sometimes fail to verify the validity of method-combination
-arguments early.  Instead, these are sometimes verified when
+arguments early.  Instead, the arguments are sometimes verified when
 \texttt{compute-effective-method} is called, resulting in cryptic
 error messages.
 \vskip 0.25cm
@@ -341,9 +342,11 @@ where (...) is the original lambda list.
 \vskip 0.25cm
 We compile the lambda expression to obtain a function.
 \vskip 0.25cm
-When this function is applied to the method-combination arguments
+When this function is applied to the method-combination arguments, it
 returns a list of objects that can be used to identify a particular
-method-combination metaobject of a particular type.
+method-combination metaobject of a given type.
+\vskip 0.25cm
+This list is used for recycling existing method-combination metaobjects.
 }
 
 \frame[containsverbatim]{
@@ -373,7 +376,7 @@ method-combination arguments:
 \item It may fail because the arguments are incompatible with the
   parameters of the lambda list.
 \item It may fail because one or more \texttt{\&aux} initialization
-  forms call \texttt{error}
+  forms call \texttt{error}.
 \end{itemize}
 \vskip 0.25cm
 In both cases, we handle the error and report incorrect arguments.
