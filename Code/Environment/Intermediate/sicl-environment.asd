@@ -31,7 +31,7 @@
 
 (defsystem :sicl-environment
   :depends-on (:sicl-global-environment
-	       :cleavir-environment)
+	       :trucler)
   :serial t
   :components
   ((:file "packages")
