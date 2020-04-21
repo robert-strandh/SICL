@@ -12,7 +12,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "client")
    (:file "environment")
    (:file "boot-class")
-   (:file "client")
    (:file "utilities")))
