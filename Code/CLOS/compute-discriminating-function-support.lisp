@@ -253,6 +253,12 @@
 ;;; method or a standard writer method, it replaces it with a method
 ;;; that does a direct instance access according to the relevant class
 ;;; in CLASSES.  Otherwise, it returns the METHOD argument unchanged.
+;;;
+;;; We call the function FIND-ACCESSOR-METHOD-CLASS.  In the final
+;;; system, this function just trampolines to FIND-CLASS.  However,
+;;; during bootstrapping, we need to look for those classes in a
+;;; different environment, so we have a temporary definition of
+;;; FIND-ACCESSOR-METHOD-CLASS during bootstrapping.
 (defun maybe-replace-method (method classes)
   (let ((method-class (class-of method)))
     (flet ((slot-location (direct-slot class)
@@ -262,7 +268,8 @@
                                           :key #'slot-definition-name
                                           :test #'eq)))
                (slot-definition-location effective-slot))))
-      (cond ((eq method-class (find-class 'standard-reader-method))
+      (cond ((eq method-class
+                 (find-accessor-method-class 'standard-reader-method))
              (let* ((direct-slot (accessor-method-slot-definition method))
                     (location (slot-location direct-slot (car classes)))
                     (lambda-expression
@@ -272,14 +279,15 @@
                               `(car ',location)
                               `(standard-instance-access
                                 (car arguments) ,location)))))
-               (make-instance (find-class 'standard-reader-method)
+               (make-instance
+                   (find-accessor-method-class 'standard-reader-method)
                  :qualifiers '()
                  :specializers (method-specializers method)
                  :lambda-list (method-lambda-list method)
                  :slot-definition direct-slot
                  :documentation nil
                  :function (compile nil lambda-expression))))
-            ((eq method-class (find-class 'standard-writer-method))
+            ((eq method-class (find-accessor-method-class 'standard-writer-method))
              (let* ((direct-slot (accessor-method-slot-definition method))
                     (location (slot-location direct-slot (cadr classes)))
                     (lambda-expression
@@ -291,7 +299,8 @@
                               `(setf (standard-instance-access
                                       (cadr arguments) ,location)
                                      (car arguments))))))
-               (make-instance (find-class 'standard-writer-method)
+               (make-instance
+                   (find-accessor-method-class 'standard-writer-method)
                  :qualifiers '()
                  :specializers (method-specializers method)
                  :lambda-list (method-lambda-list method)

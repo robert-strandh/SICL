@@ -85,11 +85,13 @@
   (load-fasl "CLOS/no-applicable-method-defgenerics.fasl" e5)
   (load-fasl "CLOS/no-applicable-method.fasl" e5))
 
-(defun define-find-class (e4 e5)
-  ;; We may regret having defined FIND-CLASS this way in E5.
-  (setf (sicl-genv:fdefinition 'find-class e5)
+(defun define-find-accessor-method-class (e4 e5)
+  (setf (sicl-genv:fdefinition 'sicl-clos::find-accessor-method-class e5)
         (lambda (class-name &optional error-p)
           (declare (ignore error-p))
+          (assert (member class-name
+                          '(sicl-clos:standard-reader-method
+                            sicl-clos:standard-writer-method)))
           (sicl-genv:find-class class-name e4))))
 
 (defun define-classp (e5)
@@ -131,6 +133,6 @@
     (define-compile e4 e5)
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e5)
     (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e5)
-    (define-find-class e4 e5)
+    (define-find-accessor-method-class e4 e5)
     (define-compute-discriminating-function e5)
     (import-functions-from-host '(apply endp cons eq coerce) e5)))

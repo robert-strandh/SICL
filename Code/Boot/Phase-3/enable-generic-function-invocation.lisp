@@ -77,10 +77,13 @@
   (load-fasl "CLOS/no-applicable-method-defgenerics.fasl" e3)
   (load-fasl "CLOS/no-applicable-method.fasl" e3))
 
-(defun define-find-class (e2 e3)
-  (setf (sicl-genv:fdefinition 'find-class e3)
-        (lambda (name)
-          (sicl-genv:find-class name e2))))
+(defun define-find-accessor-method-class (e2 e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos::find-accessor-method-class e3)
+        (lambda (class-name)
+          (assert (member class-name
+                          '(sicl-clos:standard-reader-method
+                            sicl-clos:standard-writer-method)))
+          (sicl-genv:find-class class-name e2))))
 
 (defun define-classp (e3)
   (load-fasl "CLOS/classp-defgeneric.fasl" e3)
@@ -135,7 +138,7 @@
     (load-fasl "Cons/cxr.fasl" e2)
     (define-classp e3)
     (define-class-of e3)
-    (define-find-class e2 e3)
+    (define-find-accessor-method-class e2 e3)
     (define-set-funcallable-instance-function e3)
     (import-functions-from-host
      '((setf sicl-genv:fdefinition)
