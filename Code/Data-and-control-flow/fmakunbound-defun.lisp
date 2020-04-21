@@ -3,4 +3,4 @@
 (defun fmakunbound (function-name)
   (sicl-global-environment:fmakunbound
    function-name
-   sicl-global-environment:*global-environment*))
+   (sicl-global-environment:global-environment)))
