@@ -98,6 +98,7 @@
    #:typep
    #:typep-compound
    #:subtypep
+   #:client
    ))
 
 (defpackage #:sicl-standard-environment-functions
