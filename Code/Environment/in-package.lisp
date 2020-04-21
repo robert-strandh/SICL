@@ -8,4 +8,4 @@
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setq *package*
 	   (find-package ',string-designator
-			 *global-environment*))))
+			 (global-environment)))))
