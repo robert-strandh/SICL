@@ -88,7 +88,6 @@
    #:find-method-combination-template
    ;; This special variable is deprecated, it should replaced by the
    ;; constant variable +global-environment+
-   #:*global-environment*
    #:+global-environment+
    #:global-environment
    #:declaration

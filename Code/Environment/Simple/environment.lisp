@@ -98,8 +98,6 @@
    (%policy
     :reader sicl-global-environment:policy)))
 
-(cl:defvar *global-environment*)
-
 ;;; We do not use backquotes in this function, because we sometimes
 ;;; need to read and compile this code in the host during
 ;;; bootstrapping, but have the result be used by the extrinsic
