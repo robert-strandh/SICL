@@ -96,7 +96,8 @@
     :accessor sicl-global-environment:optimize-quality-values)
    ;; A compilation policy.
    (%policy
-    :reader sicl-global-environment:policy)))
+    :reader sicl-global-environment:policy)
+   (%client :initarg :client :reader sicl-global-environment:client)))
 
 ;;; We do not use backquotes in this function, because we sometimes
 ;;; need to read and compile this code in the host during
