@@ -31,7 +31,7 @@
 
 (defsystem :sicl-environment
   :depends-on (:sicl-global-environment
-	       :trucler)
+	       :trucler-reference)
   :serial t
   :components
   ((:file "packages")
