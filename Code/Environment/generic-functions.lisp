@@ -840,3 +840,12 @@
 ;;; known.
 
 (defgeneric subtypep (type-specifier-1 type-specifier-2 environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function CLIENT.
+;;;
+;;; This function returns a CLIENT object that can be used as an
+;;; argument to evaluators.
+
+(defgeneric client (environment))
