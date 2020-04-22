@@ -101,8 +101,6 @@
     (import-function-from-host 'funcall e6)
     (import-function-from-host '(setf sicl-genv:function-lambda-list) e6)
     (import-function-from-host '(setf sicl-genv:function-type) e6)
-    (setf (sicl-genv:fdefinition 'sicl-genv:global-environment e6)
-          (constantly e6))
     (enable-defgeneric boot)
     (load-fasl "CLOS/invalidate-discriminating-function.fasl" e5)
     (enable-generic-function-initialization boot)

@@ -3,8 +3,6 @@
 (defun fill-environment (client environment)
   (import-from-host environment)
   (sicl-hir-interpreter:fill-environment environment)
-  (setf (sicl-genv:fdefinition 'sicl-genv:global-environment environment)
-        (constantly environment))
   (define-defmacro environment)
   (define-backquote-macros environment)
   (define-setf-macro-function environment)

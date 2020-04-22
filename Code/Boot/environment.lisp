@@ -4,5 +4,13 @@
   ()
   (:default-initargs :client (make-instance 'client)))
 
+(defmethod initialize-instance :after ((env environment) &key)
+  (setf (sicl-genv:fdefinition 'sicl-genv:global-environment env)
+        (lambda (&optional lexical-environment)
+          (if (null lexical-environment)
+              env
+              (trucler:global-environment
+               (sicl-genv:client env) lexical-environment)))))
+
 (defmethod trucler-reference:global-environment ((environment environment))
   environment)
