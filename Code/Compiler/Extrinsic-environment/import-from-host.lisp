@@ -16,9 +16,6 @@
     (setf sicl-genv:function-type)
     (setf sicl-genv:function-lambda-list)
     (setf sicl-genv:fdefinition)
-    cleavir-environment:global-environment
-    cleavir-environment:symbol-macro-expansion
-    cleavir-environment:macro-function
     cleavir-code-utilities:parse-macro
     cleavir-code-utilities:parse-deftype
     cleavir-code-utilities:separate-ordinary-body
