@@ -3,14 +3,14 @@
 (defgeneric typep-atomic (object type environment))
 
 (defmethod typep-atomic (object type environment)
-  (let* ((global-env (sicl-genv:global-environment environment))
-	 (expander (sicl-genv:type-expander type global-env))
-	 (type-class (sicl-environment:find-class type environment))
+  (let* ((global-environment (sicl-genv:global-environment environment))
+	 (expander (sicl-genv:type-expander type global-environment))
+	 (type-class (sicl-genv:find-class type global-environment))
 	 (object-class (class-of object)))
     (cond ((not (null expander))
 	   ;; We found an expander.  Expand the type call TYPEP
 	   ;; recursively with the expanded type.
-	   (generic-typep object (funcall expander type) environment))
+	   (generic-typep object (funcall expander type) global-environment))
 	  ((not (null type-class))
 	   ;; The type specifier is the name of a class.  Then return
 	   ;; true if and only if the class of the object is a

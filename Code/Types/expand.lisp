@@ -11,13 +11,13 @@
 ;;; Methods on EXPAND-ATOMIC.
 
 (defmethod expand-atomic (type environment)
-  (let* ((global-env (sicl-genv:global-environment environment))
-	 (expander (sicl-genv:type-expander type global-env))
-	 (type-class (sicl-environment:find-class type environment)))
+  (let* ((global-environment (sicl-genv:global-environment environment))
+	 (expander (sicl-genv:type-expander type global-environment))
+	 (type-class (sicl-genv:find-class type global-environment)))
     (cond ((not (null expander))
 	   ;; We found an expander.  Expand the type call TYPEP
 	   ;; recursively with the expanded type.
-	   (expand-type-descriptor (funcall expander type) environment))
+	   (expand-type-descriptor (funcall expander type) global-environment))
 	  ((not (null type-class))
 	   type)
 	  (t
