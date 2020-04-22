@@ -167,10 +167,8 @@
 ;;; Function COMPILER-MACRO-FUNCTION.
 
 (defun compiler-macro-function (name &optional environment)
-  (let ((info (cleavir-env:function-info environment name)))
-    (if (null info)
-	nil
-	(cleavir-env:compiler-macro info))))
+  (sicl-genv:compiler-macro-function
+   name (sicl-genv:global-environment environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -178,10 +176,8 @@
 
 (defun (setf compiler-macro-function)
     (new-definition name &optional environment)
-  (when (null environment)
-    (setf environment
-	  (load-time-value (sicl-genv:global-environment))))
-  (setf (sicl-genv:compiler-macro-function name environment)
+  (setf (sicl-genv:compiler-macro-function
+         name (sicl-genv:global-environment environment))
 	new-definition))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -189,10 +185,8 @@
 ;;; Function GET-SETF-EXPANSION.
 
 (defun get-setf-expansion
-    (place
-     &optional
-       (environment (load-time-value (sicl-genv:global-environment))))
-  (let ((global-environment (cleavir-env:global-environment environment)))
+    (place &optional environment)
+  (let ((global-environment (sicl-genv:global-envrionment environment)))
     (if (symbolp place)
 	(let ((temp (gensym)))
 	  (values '() '() `(,temp) `(setq ,place ,temp) place))
