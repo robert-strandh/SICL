@@ -38,7 +38,7 @@
 ;;;                     <storing-formn>))) ...))))
 
 (defun shiftf-expander (environment arguments)
-  (let* ((global-environment (cleavir-env:global-environment environment))
+  (let* ((global-environment (sicl-genv:global-environment environment))
          (places (butlast arguments))
 	 (new-value-form (first (last arguments)))
 	 (setf-expansions

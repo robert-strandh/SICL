@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
 (defun psetf-expander (environment pairs)
-  (let* ((global-environment (cleavir-env:global-environment environment))
+  (let* ((global-environment (sicl-genv:global-environment environment))
          (setf-expansions
            ;; Collect the SETF-EXPANSION of each place as a list of the
            ;; values returned by GET-SETF-EXPANSION. 
