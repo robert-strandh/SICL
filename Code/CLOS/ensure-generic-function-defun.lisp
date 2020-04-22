@@ -9,16 +9,17 @@
 (defun ensure-generic-function
     (name
      &rest keys
-     &key (environment (sicl-genv:global-environment))
+     &key environment
      &allow-other-keys)
-  (let ((generic-function
-          (if (sicl-genv:fboundp name environment)
-              (let ((fun (sicl-genv:fdefinition name environment)))
-                (if (typep fun 'generic-function)
-                    fun
-                    (error 'type-error
-                           :datum fun
-                           :expected-type '(or null generic-function))))
-              nil)))
+  (let* ((global-environment (sicl-genv:global-environment environment))
+         (generic-function
+           (if (sicl-genv:fboundp name global-environment)
+               (let ((fun (sicl-genv:fdefinition name global-environment)))
+                 (if (typep fun 'generic-function)
+                     fun
+                     (error 'type-error
+                            :datum fun
+                            :expected-type '(or null generic-function))))
+               nil)))
     (apply #'ensure-generic-function-using-class
            generic-function name keys)))
