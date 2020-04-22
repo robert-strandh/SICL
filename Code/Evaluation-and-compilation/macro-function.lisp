@@ -1,10 +1,9 @@
 (cl:in-package #:sicl-evaluation-and-compilation)
 
-(defun macro-function (symbol &optional environment)
-  (cleavir-env:macro-function
-   symbol
-   (or environment
-       (load-time-value (sicl-genv:global-environment)))))
+(defun macro-function
+    (symbol &optional (environment (sicl-genv:global-environment)))
+  (trucler:macro-function symbol environment))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -15,11 +14,7 @@
 ;;; that the environment is considered to be a first-class global
 ;;; environment.
 
-(defun (setf macro-function) (new-function symbol &optional environment)
-  (declare (type symbol symbol)
-	   (type function new-function))
-  (when (null environment)
-    (setf environment
-	  (load-time-value (sicl-genv:global-environment))))
+(defun (setf macro-function)
+    (new-function symbol &optional (environment (sicl-genv:global-environment)))
   (setf (sicl-genv:macro-function symbol environment)
 	new-function))
