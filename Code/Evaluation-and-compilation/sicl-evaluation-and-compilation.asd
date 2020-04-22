@@ -9,8 +9,7 @@
 ;;; definitions are directly related to the environment.
 
 (defsystem :sicl-evaluation-and-compilation
-  :depends-on (:acclimation
-               :sicl-environment)
+  :depends-on (:acclimation)
   :serial t
   :components
   ((:file "packages")

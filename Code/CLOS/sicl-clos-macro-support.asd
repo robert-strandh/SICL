@@ -2,7 +2,6 @@
 
 (defsystem :sicl-clos-macro-support
   :depends-on (:sicl-global-environment
-               :sicl-environment
                :sicl-clos-package)
   :serial t
   :components

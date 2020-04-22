@@ -81,7 +81,6 @@
   :depends-on (:concrete-syntax-tree
                :trivial-gray-streams
                :sicl-simple-environment
-               :sicl-environment
                :sicl-loop-support
                :sicl-arithmetic
                :sicl-cons-support
