@@ -11,7 +11,7 @@
 ;;; Methods on EXPAND-ATOMIC.
 
 (defmethod expand-atomic (type environment)
-  (let* ((global-env (cleavir-env:global-environment environment))
+  (let* ((global-env (sicl-genv:global-environment environment))
 	 (expander (sicl-genv:type-expander type global-env))
 	 (type-class (sicl-environment:find-class type environment)))
     (cond ((not (null expander))

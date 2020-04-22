@@ -3,7 +3,7 @@
 (defgeneric typep-atomic (object type environment))
 
 (defmethod typep-atomic (object type environment)
-  (let* ((global-env (cleavir-env:global-environment environment))
+  (let* ((global-env (sicl-genv:global-environment environment))
 	 (expander (sicl-genv:type-expander type global-env))
 	 (type-class (sicl-environment:find-class type environment))
 	 (object-class (class-of object)))
