@@ -3,7 +3,7 @@
 (defun defun-expander (environment name lambda-list body)
   (multiple-value-bind (declarations documentation forms)
       (cleavir-code-utilities:separate-function-body body)
-    (let ((global-env (cleavir-env:global-environment environment))
+    (let ((global-env (sicl-genv:global-environment environment))
 	  (arg-type
 	    (cleavir-code-utilities:lambda-list-type-specifier lambda-list)))
       `(progn
