@@ -6,8 +6,10 @@
 ;;; microsecond calls SICL-GENV:GLOBAL-ENVIRONMENT, so that function
 ;;; must be defined in the host.  For that reason, we define it here.
 (defun sicl-genv:global-environment (&optional environment)
-  (assert (typep environment 'environment))
-  environment)
+  (if (null environment)
+      sicl-boot:*e0*
+      (trucler:global-environment
+       (sicl-genv:client sicl-boot:*e0*) environment)))
 
 (defun boot (boot)
   (format *trace-output* "Start phase 0~%")
