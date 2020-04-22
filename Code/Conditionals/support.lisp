@@ -243,7 +243,7 @@
 ;;; even though the HyperSpec allows such multiple evaluation.
 (defun ccase-expander (keyplace clauses env)
   (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
-      (let ((global-environment (cleavir-env:global-environment env)))
+      (let ((global-environment (sicl-genv:global-environment env)))
         (sicl-genv:get-setf-expansion keyplace global-environment))
     (let* ((label (gensym))
            (keys (collect-e/ccase-keys clauses 'ccase))
@@ -352,7 +352,7 @@
 ;;; STORE-VALUE restart.
 (defun ctypecase-expander (keyplace clauses env)
   (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
-      (let ((global-environment (cleavir-env:global-environment env)))
+      (let ((global-environment (sicl-genv:global-environment env)))
         (sicl-genv:get-setf-expansion keyplace global-environment))
     (let* ((label (gensym))
            (keys (collect-e/ctypecase-keys clauses))

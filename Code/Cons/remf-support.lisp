@@ -2,7 +2,7 @@
 
 (defun remf-expander (env place indicator)
   (multiple-value-bind (vars vals store-vars writer-form reader-form)
-      (let ((global-environment (cleavir-env:global-environment env)))
+      (let ((global-environment (sicl-genv:global-environment env)))
         (sicl-genv:get-setf-expansion place global-environment))
     (let ((indicator-var (gensym)))
       `(let* (,@(if (null vars)
