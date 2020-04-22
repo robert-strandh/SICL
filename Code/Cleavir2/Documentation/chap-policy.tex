@@ -40,8 +40,7 @@ Given the \texttt{cdr} of an \texttt{optimize} declaration specifier,
 return a normalized copy, and check for the well-formedness of the
 specifier. Normalization means including default values explicitly.
 This function will additionally reject specifiers with unknown
-optimize qualities or with invalid values for optimize qualities,
-as determined from \texttt{cleavir-env:optimize-qualities}.
+optimize qualities or with invalid values for optimize qualities.
 
 \Defun {optimize-value} {optimize quality}
 
@@ -74,8 +73,7 @@ the next method is called.
 \Defgeneric {policy-qualities} {environment}
 
 This generic function returns information about the policy qualities
-defined in \texttt{environment}. This information is in the same
-format used by \texttt{cleavir-env:optimize-qualities}: it is a
+defined in \texttt{environment}.  It is a
 proper list, each element of which is a three-element list. The first
 element is the name of a policy quality, the second a type specifier
 for the type of values allowed for the quality, and the third the
