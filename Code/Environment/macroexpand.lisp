@@ -2,20 +2,6 @@
 
 ;;;; Macro expansion.
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Method on CLEAVIR-ENV:MACRO-FUNCTION.
-;;;
-;;; If we want to use the augmentation environments provided by
-;;; Cleavir, we must supply a method on this generic function,
-;;; specialized to our global environment.
-;;;
-;;; In this case, the method simply calls the generic function that is
-;;; part of our environment protocol.
-
-(defmethod cleavir-env:macro-function (symbol (env environment))
-  (macro-function symbol env))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function MACROEXPAND.
