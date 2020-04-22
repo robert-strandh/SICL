@@ -180,14 +180,6 @@
 ;;;
 ;;; SICL Global Environment Methods
 
-(defmethod (setf sicl-genv:function-type)
-    (value function-name (env trucler-reference:environment))
-  (setf
-   (sicl-genv:function-type
-    function-name
-    (trucler:global-environment (make-instance 'trucler-reference:client) env))
-   value))
-
 (defmethod (setf sicl-genv:special-variable)
     (value symbol (env trucler-reference:environment) initialize-p)
   (setf
