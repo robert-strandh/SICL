@@ -73,6 +73,7 @@
                       (setf sicl-genv:function-lambda-list)
                       (setf sicl-genv:special-variable)
                       (setf sicl-genv:constant-variable)
+                      (setf sicl-genv:type-expander)
                       sicl-genv:get-setf-expansion)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
