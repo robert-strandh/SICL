@@ -246,6 +246,7 @@
     (cf "CLOS/default-superclasses-defgeneric.lisp")
     (cf "CLOS/default-superclasses-defmethods.lisp")
     (cf "CLOS/reinitialize-instance-defgenerics.lisp")
+    (cf "CLOS/ensure-class.lisp")
     (cf "CLOS/ensure-class-using-class-support.lisp")
     (cf "CLOS/ensure-class-using-class-defgenerics.lisp")
     (cf "CLOS/ensure-class-using-class-defmethods.lisp")
