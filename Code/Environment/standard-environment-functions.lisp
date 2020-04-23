@@ -206,12 +206,9 @@
 ;;;
 ;;; Function FIND-CLASS.
 
-(defun find-class
-    (symbol
-     &optional
-       (errorp t)
-       (environment (load-time-value (sicl-genv:global-environment))))
-  (let ((class (sicl-genv:find-class symbol environment)))
+(defun find-class (symbol &optional (errorp t) environment)
+  (let* ((global-environment (sicl-genv:global environment environment))
+         (class (sicl-genv:find-class symbol global-environment)))
     (if (and (null class) errorp)
 	(error 'no-such-class symbol)
 	class)))
@@ -220,12 +217,8 @@
 ;;;
 ;;; Function (SETF FIND-CLASS).
 
-(defun (setf find-class)
-    (new-class
-     symbol
-     &optional
-       errorp
-       (environment (load-time-value (sicl-genv:global-environment))))
+(defun (setf find-class) (new-class symbol &optional errorp environment)
   (declare (ignore errorp))
-  (setf (sicl-genv:find-class symbol environment)
-	new-class))
+  (let ((global-environment (sicl-genv:global environment environment)))
+    (setf (sicl-genv:find-class symbol global-environment)
+          new-class)))
