@@ -68,13 +68,12 @@
   (setf (sicl-genv:fdefinition 'sicl-clos::find-superclass-or-nil e4)
         (lambda (name)
           (sicl-genv:find-class name e4)))
-  ;; Uncomment this code once we have the class NULL.
-  ;; (load-fasl "CLOS/ensure-class-using-class-defgenerics.fasl" e4)
-  ;; (load-fasl "CLOS/ensure-class-using-class-defmethods.fasl" e4)
+  (load-fasl "CLOS/ensure-class-using-class-defgenerics.fasl" e4)
+  (load-fasl "CLOS/ensure-class-using-class-defmethods.fasl" e4)
   (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e4)
         (lambda (&rest arguments)
           (apply (sicl-genv:fdefinition
-                  'sicl-clos::ensure-class-using-class-null e4)
+                  'sicl-clos::ensure-class-using-class e4)
                  nil arguments))))
 
 (defun enable-class-initialization (boot)
