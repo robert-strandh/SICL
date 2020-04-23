@@ -21,11 +21,10 @@
 	(t
 	 (error "Invalid place ~s" place))))
 
-;;; FIXME: Trucler should not be involved here at all.  We should make
-;;; sure that this function is always called with a global environment
-;;; instance.
+;;; FIXME: We should make sure that this function is always called
+;;; with a global environment instance.
 (defun get-setf-expansion (place environment)
-  (let* ((global-environment (trucler-reference:global-environment environment))
+  (let* ((global-environment (global-environment environment))
 	 (expanded-place (expand-place place environment))
 	 (expander (if (symbolp expanded-place)
 		       (default-setf-expander global-environment)
