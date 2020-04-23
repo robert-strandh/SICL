@@ -35,8 +35,6 @@
     (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e6)
           (sicl-genv:fdefinition 'sicl-clos::method-function e5))
     (load-fasl "CLOS/ensure-method.fasl" e5)
-    (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method e6)
-          (sicl-genv:fdefinition 'sicl-clos::ensure-method e5))
     (define-create-method-lambda e6)
     (import-functions-from-host
      '(mapcar subseq 1+ elt position-if
@@ -46,4 +44,4 @@
        cleavir-code-utilities:required)
      e6)
     (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method-on-generic-function e6)
-          (sicl-genv:fdefinition 'sicl-clos::ensure-method e6))))
+          (sicl-genv:fdefinition 'sicl-clos::ensure-method e5))))
