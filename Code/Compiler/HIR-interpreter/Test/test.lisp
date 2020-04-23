@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-hir-interpreter-test)
 
-(defmethod trucler-reference:global-environment
-    ((environment sicl-extrinsic-environment:environment))
-  environment)
-
 (defun make-environment ()
   (let ((environment
           (make-instance 'sicl-extrinsic-environment:environment)))
