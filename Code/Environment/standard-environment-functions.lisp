@@ -188,7 +188,7 @@
 ;;; expander for it.
 (defun get-setf-expansion
     (place &optional environment)
-  (let ((global-environment (sicl-genv:global-envrionment environment)))
+  (let ((global-environment (sicl-genv:global-environment environment)))
     (if (symbolp place)
 	(let ((temp (gensym)))
 	  (values '() '() `(,temp) `(setq ,place ,temp) place))
@@ -209,7 +209,7 @@
 ;;; Function FIND-CLASS.
 
 (defun find-class (symbol &optional (errorp t) environment)
-  (let* ((global-environment (sicl-genv:global environment environment))
+  (let* ((global-environment (sicl-genv:global-environment environment))
          (class (sicl-genv:find-class symbol global-environment)))
     (if (and (null class) errorp)
 	(error 'no-such-class symbol)
@@ -221,6 +221,6 @@
 
 (defun (setf find-class) (new-class symbol &optional errorp environment)
   (declare (ignore errorp))
-  (let ((global-environment (sicl-genv:global environment environment)))
+  (let ((global-environment (sicl-genv:global-environment environment)))
     (setf (sicl-genv:find-class symbol global-environment)
           new-class)))
