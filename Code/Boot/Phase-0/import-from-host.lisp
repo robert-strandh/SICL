@@ -67,7 +67,7 @@
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
-(defun import-sicl-envrionment-functions (environment)
+(defun import-sicl-environment-functions (environment)
   (loop for name in '((setf sicl-genv:fdefinition)
                       (setf sicl-genv:function-type)
                       (setf sicl-genv:function-lambda-list)
@@ -112,7 +112,7 @@
   (define-cleavir-primops environment)
   (import-from-cleavir-code-utilities environment)
   (import-macro-expanders environment)
-  (import-sicl-envrionment-functions environment)
+  (import-sicl-environment-functions environment)
   (import-from-trucler environment)
   (import-from-closer-mop environment)
   (import-from-sicl-clos environment))
