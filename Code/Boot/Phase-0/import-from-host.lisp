@@ -80,8 +80,7 @@
 (defun import-from-trucler (environment)
   (loop for name in '(trucler:global-environment
                       trucler:symbol-macro-expansion
-                      trucler:macro-function
-                      trucler-reference:global-environment)
+                      trucler:macro-function)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
