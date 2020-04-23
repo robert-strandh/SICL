@@ -70,11 +70,10 @@
           (sicl-genv:find-class name e4)))
   (load-fasl "CLOS/ensure-class-using-class-defgenerics.fasl" e4)
   (load-fasl "CLOS/ensure-class-using-class-defmethods.fasl" e4)
-  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e4)
-        (lambda (&rest arguments)
-          (apply (sicl-genv:fdefinition
-                  'sicl-clos::ensure-class-using-class e4)
-                 nil arguments))))
+  (import-function-from-host '(setf sicl-genv:type-expander) e4)
+  (import-function-from-host '(setf sicl-genv:find-class) e4)
+  (load-fasl "Environment/standard-environment-functions.fasl" e4)
+  (load-fasl "CLOS/ensure-class.fasl" e4))
 
 (defun enable-class-initialization (boot)
   (with-accessors ((e3 sicl-boot:e3)
