@@ -175,24 +175,3 @@
     (if (null expander)
         name
         expansion)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; SICL Global Environment Methods
-
-(defmethod (setf sicl-genv:special-variable)
-    (value symbol (env trucler-reference:environment) initialize-p)
-  (setf
-   (sicl-genv:special-variable
-    symbol
-    (trucler:global-environment (make-instance 'trucler-reference:client) env)
-    initialize-p)
-   value))
-
-(defmethod (setf sicl-genv:constant-variable)
-    (value symbol (env trucler-reference:environment))
-  (setf
-   (sicl-genv:constant-variable
-    symbol
-    (trucler:global-environment (make-instance 'trucler-reference:client) env))
-   value))
