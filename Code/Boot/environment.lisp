@@ -11,6 +11,3 @@
               env
               (trucler:global-environment
                (sicl-genv:client env) lexical-environment)))))
-
-(defmethod trucler-reference:global-environment ((environment environment))
-  environment)
