@@ -184,6 +184,8 @@
 ;;;
 ;;; Function GET-SETF-EXPANSION.
 
+;;; FIXME: This function should macroexpand the place if there is not
+;;; expander for it.
 (defun get-setf-expansion
     (place &optional environment)
   (let ((global-environment (sicl-genv:global-envrionment environment)))
