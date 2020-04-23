@@ -1,0 +1,446 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\beamertemplateshadingbackground{red!10}{blue!10}
+%\usepackage{fancybox}
+\usepackage{epsfig}
+\usepackage{verbatim}
+\usepackage{url}
+%\usepackage{graphics}
+%\usepackage{xcolor}
+\usepackage{fancybox}
+\usepackage{moreverb}
+%\usepackage[all]{xy}
+\usepackage{listings}
+\usepackage{filecontents}
+\usepackage{graphicx}
+
+\lstset{
+  language=Lisp,
+  basicstyle=\scriptsize\ttfamily,
+  keywordstyle={},
+  commentstyle={},
+  stringstyle={}}
+
+\def\inputfig#1{\input #1}
+\def\inputeps#1{\includegraphics{#1}}
+\def\inputtex#1{\input #1}
+
+\inputtex{logos.tex}
+
+%\definecolor{ORANGE}{named}{Orange}
+
+\definecolor{GREEN}{rgb}{0,0.8,0}
+\definecolor{YELLOW}{rgb}{1,1,0}
+\definecolor{ORANGE}{rgb}{1,0.647,0}
+\definecolor{PURPLE}{rgb}{0.627,0.126,0.941}
+\definecolor{PURPLE}{named}{purple}
+\definecolor{PINK}{rgb}{1,0.412,0.706}
+\definecolor{WHEAT}{rgb}{1,0.8,0.6}
+\definecolor{BLUE}{rgb}{0,0,1}
+\definecolor{GRAY}{named}{gray}
+\definecolor{CYAN}{named}{cyan}
+
+\newcommand{\orchid}[1]{\textcolor{Orchid}{#1}}
+\newcommand{\defun}[1]{\orchid{#1}}
+
+\newcommand{\BROWN}[1]{\textcolor{BROWN}{#1}}
+\newcommand{\RED}[1]{\textcolor{red}{#1}}
+\newcommand{\YELLOW}[1]{\textcolor{YELLOW}{#1}}
+\newcommand{\PINK}[1]{\textcolor{PINK}{#1}}
+\newcommand{\WHEAT}[1]{\textcolor{wheat}{#1}}
+\newcommand{\GREEN}[1]{\textcolor{GREEN}{#1}}
+\newcommand{\PURPLE}[1]{\textcolor{PURPLE}{#1}}
+\newcommand{\BLACK}[1]{\textcolor{black}{#1}}
+\newcommand{\WHITE}[1]{\textcolor{WHITE}{#1}}
+\newcommand{\MAGENTA}[1]{\textcolor{MAGENTA}{#1}}
+\newcommand{\ORANGE}[1]{\textcolor{ORANGE}{#1}}
+\newcommand{\BLUE}[1]{\textcolor{BLUE}{#1}}
+\newcommand{\GRAY}[1]{\textcolor{gray}{#1}}
+\newcommand{\CYAN}[1]{\textcolor{cyan }{#1}}
+
+\newcommand{\reference}[2]{\textcolor{PINK}{[#1~#2]}}
+%\newcommand{\vect}[1]{\stackrel{\rightarrow}{#1}}
+
+% Use some nice templates
+\beamertemplatetransparentcovereddynamic
+
+\newcommand{\A}{{\mathbb A}}
+\newcommand{\degr}{\mathrm{deg}}
+
+\title{Omnipresent and low-overhead application debugging}
+
+\author{Robert Strandh}
+\institute{
+LaBRI, University of Bordeaux
+}
+\date{April, 2020}
+
+%\inputtex{macros.tex}
+
+
+\begin{document}
+\frame{
+\resizebox{3cm}{!}{\includegraphics{Logobx.pdf}}
+\hfill
+\resizebox{1.5cm}{!}{\includegraphics{labri-logo.pdf}}
+\titlepage
+\vfill
+\small{European Lisp Symposium, Zürich, Switzerland \hfill ELS2020}
+}
+
+\setbeamertemplate{footline}{
+\vspace{-1em}
+\hspace*{1ex}{~} \GRAY{\insertframenumber/\inserttotalframenumber}
+}
+
+\frame{
+\frametitle{Context: The \sicl{} project}
+
+https://github.com/robert-strandh/SICL
+
+Several objectives:
+
+\begin{itemize}
+\item Create high-quality \emph{modules} for implementors of
+  \commonlisp{} systems.
+\item Improve existing techniques with respect to algorithms and data
+  structures where possible.
+\item Improve readability and maintainability of code.
+\item Improve documentation.
+\item Ultimately, create a new implementation based on these modules.
+\item Provide excellent debugging facilities.
+\item Keep system \emph{safe}.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Definition of ``safety''}
+For the purpose of this work, we consider a system to be \emph{safe}
+if and only if, there is no manipulation that a user can do that
+violates the internal consistency of the system.
+\vskip 0.25cm
+We do \emph{not} include in the definition any protection against the
+program giving the wrong answer as a result of incorrect programming.
+}
+
+\frame{
+\frametitle{Definition of ``application debugging''}
+The technique described here is meant for debugging ``application
+code'', as opposed to ``system code''.
+\vskip 0.25cm
+It is not meant for debugging system components such as the compiler.
+\vskip 0.25cm
+It assumes that the compiler generates code that corresponds to the
+semantics of the source code.
+}
+
+\frame{
+\frametitle{Traditional approach: Process-based debugging}
+The debugger and the application execute in separate processes with
+separate address spaces.
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-process-based-debugging.pdf_t}
+\end{center}
+\end{figure}
+Used in UNIX-like systems.
+
+Also recommended for CCL and ECL.
+}
+
+\frame{
+\frametitle{Traditional approach: Process-based debugging}
+The instructions of the application are modified by the debugger
+(using copy-on-write pages).
+\vskip 0.25cm
+Does not require any collaboration from the application.
+\vskip 0.25cm
+Additional debugging information is needed for source-level
+debugging.
+\vskip 0.25cm
+Inherently \emph{unsafe}.  The debugger can alter any memory
+location.
+\vskip 0.25cm
+}
+
+\frame{
+\frametitle{Same-process debugging}
+Has many advantages in the context of \commonlisp{}.
+\vskip 0.25cm
+Introduces several problems that must be solved.
+\vskip 0.25cm
+Setting a breakpoint in a function used by the evaluator or the
+debugger may render the system useless.
+\vskip 0.25cm
+Unsafe operations may crash the system or, worse, silently give the
+wrong answer.
+
+}
+
+\frame{
+\frametitle{Debugging in FLOSS \commonlisp{} implementations}
+Inferior or non-existing debugging support.
+\vskip 0.25cm
+The \texttt{trace} facility of most implementations uses
+\emph{encapsulation}.
+\vskip 0.25cm
+Many implementations do not have a working \texttt{step} facility.
+\vskip 0.25cm
+ECL accomplishes stepping with a special instruction type in the
+bytecode virtual machine.
+\vskip 0.25cm
+SBCL has breakpoints, but they are used only for the \texttt{trace}
+facility.  Stepping is accomplished using the condition system, and
+only when the \texttt{debug} quality is sufficiently high.
+
+}
+
+\frame{
+\frametitle{Debugging in LispWorks}
+Breakpoints can be set from the editor or the stepper.
+\vskip 0.25cm
+The first time a breakpoint is set, the source code of the defining
+form is re-evaluated with additional annotations for the stepper.
+\vskip 0.25cm
+If a breakpoint is encountered, the stepper is automatically invoked
+if it is not invoked already.
+\vskip 0.25cm
+Setting a breakpoint requires source code, so no breakpoints possible
+in system code.
+\vskip 0.25cm
+The \texttt{trace} facility uses encapsulation.
+}
+
+\frame{
+\frametitle{Debugging in Allegro}
+The most complete system of them all.
+\vskip 0.25cm
+Breakpoints alter native code, in a way similar to process-based
+debugging.
+\vskip 0.25cm
+To avoid an unusable system, when a breakpoint is encountered, the
+debugger first \emph{uninstalls} all breakpoints.
+\vskip 0.25cm
+This low-level mechanism is used for stepping, source-level debugging,
+tracing, etc.
+\vskip 0.25cm
+The mechanism is inherently unsafe (with our definition of safety).
+}
+
+\frame{
+\frametitle{Our technique}
+The compiler always includes two versions of each function body:
+\vskip 0.25cm
+\begin{itemize}
+\item One version containing ``normal'', optimized code.
+\item One version containing debugging code.
+\end{itemize}
+\vskip 0.25cm
+This idea is due to Michael Raskin.
+\vskip 0.25cm
+The debugging version contains code for collaboration with the
+\emph{debugger}.
+}
+
+\frame{
+\frametitle{Our technique}
+The two different versions are accessible through different
+\emph{entry points} to the function:
+\vskip 0.25cm
+\begin{itemize}
+\item A function call in the normal version invokes the normal entry
+  point of the callee.
+\item A function call in the debugging version invokes the debugging
+  entry point of the callee.
+\end{itemize}
+\vskip 0.25cm
+Therefore, debugging does not have any overhead in normal code.
+\vskip 0.25cm
+This idea is due to Frode Fjeld.
+}
+
+\frame{
+\frametitle{Our technique}
+The debugger and the application run in the same process, but in
+different \emph{threads}.
+\vskip 0.25cm
+When the application is invoked from the debugger, the debugging entry
+point is called.
+\vskip 0.25cm
+This technique makes it possible to set breakpoints in system code,
+and even in debugger code.
+}
+
+\frame{
+\frametitle{Our technique, breakpoints}
+In the debugging version of a function, the compiler inserts a test
+immediately before and immediately after the evaluation of each form.
+\vskip 0.25cm
+This test consults a table indexed with values of the program counter.
+\vskip 0.25cm
+The table indicates whether there is a breakpoint at this location.
+\vskip 0.25cm
+This table is managed by the debugger.
+\vskip 0.25cm
+A shared \emph{queue} is provided for communication.
+}
+
+\frame{
+\frametitle{Our technique, breakpoints}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-thread-based-debugging-1.pdf_t}
+\end{center}
+\end{figure}
+The user sets breakpoints using debugger commands.
+}
+
+\frame{
+\frametitle{Our technique, breakpoints}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-thread-based-debugging-2.pdf_t}
+\end{center}
+\end{figure}
+The application consults table before/after each form.
+}
+
+\frame{
+\frametitle{Our technique, breakpoints}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-thread-based-debugging-3.pdf_t}
+\end{center}
+\end{figure}
+At a breakpoint, the application first informs the debugger.
+}
+
+
+\frame{
+\frametitle{Our technique, breakpoints}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-thread-based-debugging-4.pdf_t}
+\end{center}
+\end{figure}
+It then blocks from reading from the empty queue.
+}
+
+\frame{
+\frametitle{Our technique, breakpoints}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-thread-based-debugging-5.pdf_t}
+\end{center}
+\end{figure}
+The user examines data and sets/clears breakpoints.
+}
+
+\frame{
+\frametitle{Our technique, breakpoints}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-thread-based-debugging-6.pdf_t}
+\end{center}
+\end{figure}
+The debugger writes to the queue, unblocking the application.
+}
+
+\frame{
+\frametitle{Our technique, stepping}
+Stepping is accomplished by temporary breakpoints inserted by the debugger.
+\vskip 0.25cm
+The user can choose different places to step to
+\begin{itemize}
+\item In to an expression.
+\item Out of an expression.
+\item Over an expression.
+\item Into a function being called.
+\item Out of the current function being invoked.
+\end{itemize}
+\vskip 0.25cm
+The debugger removes the breakpoint from the table, once encountered.
+}
+
+\frame{
+\frametitle{Our technique, tracing}
+Tracing inserts a breakpoint, marked as a trace point.
+\vskip 0.25cm
+When a trace point is encountered, the debugger prints
+a message, and then immediately unblocks the application.
+}
+
+\frame{
+\frametitle{Our technique, benefits}
+Safety.  The debugger does not alter the application code.
+\vskip 0.25cm
+No wire protocol.  Simplified communication.
+\vskip 0.25cm
+No disadvantages due to encapsulation for tracing.
+\vskip 0.25cm
+No need to recompile with a higher \texttt{debug} value in order to
+debug the application.
+\vskip 0.25cm
+The full-speed version is used by other threads, so no performance
+degradation in those threads.
+}
+
+\frame{
+\frametitle{Our technique, disadvantages}
+Code size will more than double.
+\vskip 0.25cm
+Incompatibility with existing \commonlisp{} implementations.
+}
+\frame{
+\frametitle{Our technique, current state}
+Embryonic implementation of the communication protocol.
+\vskip 0.25cm
+Embryonic CLIM-based debugger called Clordane.
+}
+
+
+\frame{
+\frametitle{Future work}
+Modify the SICL compiler to generate two versions of every function
+body.
+\vskip 0.25cm
+Try using the portable library for adding debugging annotations to
+arbitrary code, written by Michael Raskin for implementing/testing
+communication between the debugger and the application.
+\vskip 0.25cm
+Implement the rest of Clordane.
+}
+
+\frame{
+  \frametitle{Acknowledgments}
+We would like to thank the following people for providing information
+about breakpoints, tracing, and stepping in various \commonlisp{}
+implementations: Martin Simmons (LispWorks), Michał ``phoe'' Herda
+(CCL), Alex Wood (Clasp), Daniel Kochmański (ECL), Duane Rettig
+(Allegro).
+\vskip 0.25cm
+We would like to thank Frode Fjeld for giving feedback on early
+versions of this paper, and for suggesting the use of multiple entry
+points for each function.
+\vskip 0.25cm
+We would like to thank Michael Raskin for suggesting that two versions
+of each function should be provided, thereby making it unnecessary for
+the programmer to choose the level of debugging.
+}
+
+\frame{
+\frametitle{Thank you}
+}
+
+%% \frame{\tableofcontents}
+%% \bibliography{references}
+%% \bibliographystyle{alpha}
+
+\end{document}
