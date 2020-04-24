@@ -108,6 +108,8 @@
                            (if (sicl-genv:fboundp ',function-name ,env1)
                                (sicl-genv:fdefinition ',function-name ,env1)
                                nil)))
+       ,@(loop for function-name in function-names
+               collect `(sicl-genv:fmakunbound ',function-name ,env1))
        ,@body
        ,@(loop for function-name in function-names
                collect `(setf (sicl-genv:fdefinition ',function-name ,env2)
