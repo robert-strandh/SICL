@@ -12,4 +12,5 @@
            #:import-package-from-host
            #:import-class-from-host
            #:tie-code-object
-           #:load-fasl))
+           #:load-fasl
+           #:with-straddled-function-definition))
