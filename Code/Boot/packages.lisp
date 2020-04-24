@@ -13,4 +13,4 @@
            #:import-class-from-host
            #:tie-code-object
            #:load-fasl
-           #:with-straddled-function-definition))
+           #:with-straddled-function-definitions))

@@ -34,8 +34,8 @@
     (import-functions-from-host '(copy-list) e6)
     (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e6)
           (sicl-genv:fdefinition 'sicl-clos::method-function e5))
-    (sicl-boot:with-straddled-function-definition
-        (sicl-clos::ensure-method e5 e6)
+    (sicl-boot:with-straddled-function-definitions
+        ((sicl-clos::ensure-method) e5 e6)
       (load-fasl "CLOS/ensure-method.fasl" e5))
     (define-create-method-lambda e6)
     (import-functions-from-host

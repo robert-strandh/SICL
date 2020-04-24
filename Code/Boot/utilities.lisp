@@ -78,17 +78,43 @@
   (setf (sicl-genv:find-class name environment)
         (find-class name)))
 
-(defmacro with-straddled-function-definition
-    ((function-name env1 env2) &body body)
-  (let ((name-temp (gensym))
-        (local-function-temp (gensym)))
-    `(flet ((,local-function-temp ()
-              ,@body
-              (setf (sicl-genv:fdefinition ',function-name ,env2)
-                    (sicl-genv:fdefinition ',function-name ,env1))))
-       (if (sicl-genv:fboundp ',function-name ,env1)
-           (let ((,name-temp (sicl-genv:fdefinition ',function-name ,env1)))
-             (,local-function-temp)
-             (setf (sicl-genv:fdefinition ',function-name ,env1) ,name-temp))
-           (progn (,local-function-temp)
-                  (sicl-genv:fmakunbound ',function-name ,env1))))))
+;;; During bootstrapping, it is common that some function needs to be
+;;; present in some environment En, but present in a different
+;;; environment En-1.  We call such a function a "straddled function".
+;;; If bootstrapping involved only two different environments, we
+;;; could load the definition of the function in En-1, and then copy
+;;; it over to En.  But, since we have several consecutive
+;;; environments during bootstrapping, it is possible that the
+;;; definition of the function already exists in En-1 and that we need
+;;; to preserve it that way.  In that case, we can not simply load the
+;;; definition into En-1.  We must first save the existing definition
+;;; (if there is one) and restore it after the new one has been copied
+;;; over to En.  This macro addresses that problem.
+;;;
+;;; FUNCTION-NAMES is a list of function names that need to be saved
+;;; from ENV1 before the BODY is executed and restored afterward.  It
+;;; is assumed that the BODY defines the names in FUNCTION-NAMES in
+;;; ENV1.  So after the BODY has been evaluated, we copy the function
+;;; definitions of the names in FUNCTION-NAMES from ENV1 to ENV2.  If
+;;; some name was not defined in ENV1, we obviously do not attempt to
+;;; save the definition.  Instead, after the definition has been
+;;; copied, we make the name unbound in ENV1.
+(defmacro with-straddled-function-definitions
+    ((function-names env1 env2) &body body)
+  (let ((name-temps (loop for name in function-names collect (gensym))))
+    `(let ,(loop for function-name in function-names
+                 for name-temp in name-temps
+                 collect `(,name-temp
+                           (if (sicl-genv:fboundp ',function-name ,env1)
+                               (sicl-genv:fdefinition ',function-name ,env1)
+                               nil)))
+       ,@body
+       ,@(loop for function-name in function-names
+               collect `(setf (sicl-genv:fdefinition ',function-name ,env2)
+                              (sicl-genv:fdefinition ',function-name ,env1)))
+       ,@(loop for function-name in function-names
+               for name-temp in name-temps
+               collect `(if (null ,name-temp)
+                            (sicl-genv:fmakunbound ',function-name ,env1)
+                            (setf (sicl-genv:fdefinition ',function-name ,env1)
+                                  ,name-temp))))))
