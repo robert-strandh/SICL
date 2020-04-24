@@ -34,7 +34,9 @@
     (import-functions-from-host '(copy-list) e6)
     (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e6)
           (sicl-genv:fdefinition 'sicl-clos::method-function e5))
-    (load-fasl "CLOS/ensure-method.fasl" e5)
+    (sicl-boot:with-straddled-function-definition
+        (sicl-clos::ensure-method e5 e6)
+      (load-fasl "CLOS/ensure-method.fasl" e5))
     (define-create-method-lambda e6)
     (import-functions-from-host
      '(mapcar subseq 1+ elt position-if
@@ -42,6 +44,4 @@
        cleavir-code-utilities:parse-specialized-lambda-list
        cleavir-code-utilities:separate-function-body
        cleavir-code-utilities:required)
-     e6)
-    (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method-on-generic-function e6)
-          (sicl-genv:fdefinition 'sicl-clos::ensure-method e5))))
+     e6)))

@@ -64,6 +64,6 @@
       (setf (sicl-genv:fdefinition 'sicl-clos::add-method-to-generic-function e2)
             (sicl-genv:fdefinition 'sicl-clos::add-method e2))
       (define-make-specializer-in-e2 e2)
-      (ld "CLOS/ensure-method.fasl" e2)
-      (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method-on-generic-function e3)
-            (sicl-genv:fdefinition 'sicl-clos::ensure-method e2)))))
+      (sicl-boot:with-straddled-function-definition
+          (sicl-clos::ensure-method e2 e3)
+        (ld "CLOS/ensure-method.fasl" e2)))))
