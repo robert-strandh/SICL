@@ -24,14 +24,6 @@
 ;;; environment itself.  The function ENSURE-METHOD uses the
 ;;; environment argument to take symbols naming specializers and to
 ;;; look up the corresponding classes.
-;;;
-;;; During bootstrapping, the expansion of this macro needs to call
-;;; ENSURE-METHOD in a different environment from the one in which the
-;;; DEFMACRO form was evaluated.  For that reason, we use an
-;;; indirection called ENSURE-METHOD-ON-GENERIC-FUNCTION.  In the
-;;; final system, this function simply trampolines to ENSURE-METHOD in
-;;; the same environment, but during bootstrapping, it trampolines to
-;;; ENSURE-METHOD in the preceding environment.
 
 (defun parse-defmethod (all-but-name)
   (let* ((lambda-list-position (position-if #'listp all-but-name))
