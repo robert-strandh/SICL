@@ -25,5 +25,5 @@
     (loop while (remf remaining-keys :specializers))
     (let ((method (make-method-for-generic-function
                    generic-function specs remaining-keys)))
-      (add-method-to-generic-function generic-function method)
+      (add-method generic-function method)
       method)))

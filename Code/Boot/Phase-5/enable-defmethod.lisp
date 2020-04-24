@@ -28,8 +28,6 @@
           #'sicl-clos::make-method-lambda-default)
     (define-make-specializer e4)
     (load-fasl "CLOS/make-method-for-generic-function.fasl" e4)
-    (setf (sicl-genv:fdefinition 'sicl-clos::add-method-to-generic-function e4)
-          (sicl-genv:fdefinition 'sicl-clos::add-method e4))
     (import-functions-from-host '(copy-list) e5)
     (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e5)
           (sicl-genv:fdefinition 'sicl-clos::method-function e4))
