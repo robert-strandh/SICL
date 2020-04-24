@@ -77,3 +77,18 @@
 (defun import-class-from-host (name environment)
   (setf (sicl-genv:find-class name environment)
         (find-class name)))
+
+(defmacro with-straddled-function-definition
+    ((function-name env1 env2) &body body)
+  (let ((name-temp (gensym))
+        (local-function-temp (gensym)))
+    `(flet ((,local-function-temp ()
+              ,@body
+              (setf (sicl-genv:fdefinition ',function-name ,env2)
+                    (sicl-genv:fdefinition ',function-name ,env1))))
+       (if (sicl-genv:fboundp ',function-name ,env1)
+           (let ((,name-temp (sicl-genv:fdefinition ',function-name ,env1)))
+             (,local-function-temp)
+             (setf (sicl-genv:fdefinition ',function-name ,env1) ,name-temp))
+           (progn (,local-function-temp)
+                  (sicl-genv:fmakunbound ',function-name ,env1))))))
