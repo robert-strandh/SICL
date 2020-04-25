@@ -40,8 +40,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "conditions")
-   (:file "condition-reporters-english")
    (:file "generic-functions")
    (:file "typep-methods")
    (:file "trucler-methods")
