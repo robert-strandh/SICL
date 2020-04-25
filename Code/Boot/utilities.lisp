@@ -79,10 +79,10 @@
         (find-class name)))
 
 ;;; During bootstrapping, it is common that some function needs to be
-;;; present in some environment En, but present in a different
+;;; present in some environment En, but tied to a different
 ;;; environment En-1.  We call such a function a "straddled function".
 ;;; If bootstrapping involved only two different environments, we
-;;; could load the definition of the function in En-1, and then copy
+;;; could load the definition of the function into En-1, and then copy
 ;;; it over to En.  But, since we have several consecutive
 ;;; environments during bootstrapping, it is possible that the
 ;;; definition of the function already exists in En-1 and that we need
