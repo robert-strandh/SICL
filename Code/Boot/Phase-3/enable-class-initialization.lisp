@@ -103,7 +103,9 @@
     (define-direct-slot-definition-class e2 e3)
     (define-add-remove-direct-subclass e3)
     (define-reader/writer-method-class e2 e3)
-    (import-functions-from-host '(adjoin set-exclusive-or) e3)
+    (import-functions-from-host
+     '(adjoin set-exclusive-or sicl-genv:find-class)
+     e3)
     (define-add-remove-direct-method e3)
     (define-dependent-protocol e3)
     (define-add-remove-method e3)
