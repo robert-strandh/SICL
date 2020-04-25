@@ -284,4 +284,5 @@
     (cf "Character/character-defclass.lisp")
     (cf "Compiler/Code-object/generic-functions.lisp")
     (cf "Compiler/Code-object/code-object-defclass.lisp")
+    (cf "Environment/find-class-defun.lisp")
     (cf "Environment/standard-environment-functions.lisp")))

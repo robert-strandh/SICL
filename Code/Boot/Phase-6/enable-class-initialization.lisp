@@ -70,6 +70,7 @@
   (load-fasl "CLOS/ensure-class-using-class-defmethods.fasl" e6)
   (import-function-from-host '(setf sicl-genv:type-expander) e6)
   (import-function-from-host '(setf sicl-genv:find-class) e6)
+  (load-fasl "Environment/find-class-defun.fasl" e6)
   (load-fasl "Environment/standard-environment-functions.fasl" e6)
   (load-fasl "CLOS/ensure-class.fasl" e6))
 
