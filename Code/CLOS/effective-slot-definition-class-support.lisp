@@ -2,4 +2,4 @@
 
 (defun effective-slot-definition-class-default (class &rest initargs)
   (declare (ignore class initargs))
-  *standard-effective-slot-definition*)
+  (find-class 'standard-effective-slot-definition))
