@@ -117,4 +117,5 @@
     (import-function-from-host 'sicl-genv:typep e3)
     (load-fasl "CLOS/class-initialization-support.fasl" e3)
     (load-fasl "CLOS/class-initialization-defmethods.fasl" e3)
+    (load-fasl "Environment/find-class-defun.fasl" e3)
     (define-ensure-class e2 e3)))
