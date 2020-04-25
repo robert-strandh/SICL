@@ -26,14 +26,13 @@
   (load-fasl "CLOS/add-remove-direct-method-defmethods.fasl" e5))
 
 (defun define-reader/writer-method-class (e4 e5)
-  (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class e5)
-        (lambda (&rest arguments)
-          (declare (ignore arguments))
-          (sicl-genv:find-class 'sicl-clos:standard-reader-method e4)))
-  (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class e5)
-        (lambda (&rest arguments)
-          (declare (ignore arguments))
-          (sicl-genv:find-class 'sicl-clos:standard-writer-method e4))))
+  (sicl-boot:with-straddled-function-definitions
+      ((sicl-clos::reader-method-class-default
+        sicl-clos::writer-method-class-default )
+       e4 e5)
+    (load-fasl "CLOS/reader-writer-method-class-support.fasl" e4))
+  (load-fasl "CLOS/reader-writer-method-class-defgenerics.fasl" e5)
+  (load-fasl "CLOS/reader-writer-method-class-defmethods.fasl" e5))
 
 (defun define-direct-slot-definition-class (e4 e5)
   (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class e5)
