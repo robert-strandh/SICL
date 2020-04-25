@@ -35,10 +35,12 @@
   (load-fasl "CLOS/reader-writer-method-class-defmethods.fasl" e6))
 
 (defun define-direct-slot-definition-class (e5 e6)
-  (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class e6)
-        (lambda (&rest arguments)
-          (declare (ignore arguments))
-          (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e5))))
+  (sicl-boot:with-straddled-function-definitions
+      ((sicl-clos::direct-slot-definition-class-default)
+       e5 e6)
+    (load-fasl "CLOS/direct-slot-definition-class-support.fasl" e5))
+  (load-fasl "CLOS/direct-slot-definition-class-defgeneric.fasl" e6)
+  (load-fasl "CLOS/direct-slot-definition-class-defmethods.fasl" e6))
 
 (defun define-find-or-create-generic-function (e6 e7)
   (setf (sicl-genv:fdefinition 'sicl-clos::find-or-create-generic-function e6)
