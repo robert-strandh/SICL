@@ -87,6 +87,7 @@
                :sicl-clos-support
                :sicl-type-support
                :sicl-conditions
+               :sicl-environment-support
                :closer-mop
                :cleavir2-cst-to-ast
                :cleavir2-ast-transformations
