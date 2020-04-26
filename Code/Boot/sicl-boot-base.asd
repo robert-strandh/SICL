@@ -8,7 +8,8 @@
                #:sicl-mir-to-lir
                #:sicl-code-generation
                #:sicl-code-object
-               #:sicl-ast-compiler)
+               #:sicl-ast-compiler
+               #:sicl-method-combination-support)
   :serial t
   :components
   ((:file "packages")
