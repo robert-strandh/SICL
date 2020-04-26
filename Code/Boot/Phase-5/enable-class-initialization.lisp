@@ -60,12 +60,6 @@
 
 (defun define-ensure-class (e5)
   (load-fasl "CLOS/ensure-class-using-class-support.fasl" e5)
-  ;; When we loaded the support code, we defined
-  ;; FIND-SUPERCLASS-OR-NIL to call FIND-CLASS, but that's wrong
-  ;; during bootstrapping, so we redifine it here.
-  (setf (sicl-genv:fdefinition 'sicl-clos::find-superclass-or-nil e5)
-        (lambda (name)
-          (sicl-genv:find-class name e5)))
   (load-fasl "CLOS/ensure-class-using-class-defgenerics.fasl" e5)
   (load-fasl "CLOS/ensure-class-using-class-defmethods.fasl" e5)
   (import-function-from-host '(setf sicl-genv:type-expander) e5)
@@ -90,9 +84,6 @@
     (define-add-remove-method e5)
     (load-fasl "CLOS/add-accessor-method.fasl" e5)
     (define-find-or-create-generic-function e5 e6)
-    (setf (sicl-genv:fdefinition 'sicl-clos::find-superclass e5)
-          (lambda (name)
-            (sicl-genv:find-class name e5)))
     (load-fasl "CLOS/default-superclasses-defgeneric.fasl" e5)
     (load-fasl "CLOS/default-superclasses-defmethods.fasl" e5)
     (load-fasl "CLOS/class-initialization-support.fasl" e5)

@@ -28,14 +28,11 @@
 ;;; ENSURE-CLASS defaults them to the same values that DEFCLASS
 ;;; requires.
 
-(defun find-superclass-or-nil (name)
-  (find-class name nil))
-
 (defun process-direct-superclass (direct-superclass-or-name)
   (cond ((typep direct-superclass-or-name 'class)
          direct-superclass-or-name)
         ((symbolp direct-superclass-or-name)
-         (let ((class (find-superclass-or-nil direct-superclass-or-name)))
+         (let ((class (find-class direct-superclass-or-name nil)))
            (if (null class)
                (setf (find-class direct-superclass-or-name)
                      (make-instance 'forward-referenced-class
