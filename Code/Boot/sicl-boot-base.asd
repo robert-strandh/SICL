@@ -15,4 +15,5 @@
    (:file "client")
    (:file "environment")
    (:file "boot-class")
-   (:file "utilities")))
+   (:file "utilities")
+   (:file "enable-defgeneric")))
