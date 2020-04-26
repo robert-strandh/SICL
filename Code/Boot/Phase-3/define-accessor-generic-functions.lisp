@@ -97,7 +97,7 @@
                    (e3 sicl-boot:e3)
                    (e4 sicl-boot:e4))
       boot
-    (enable-defgeneric boot)
+    (enable-defgeneric e2 e3 e4)
     (import-function-from-host 'shared-initialize e3)
     (load-fasl "CLOS/invalidate-discriminating-function.fasl" e3)
     (enable-generic-function-initialization boot)
