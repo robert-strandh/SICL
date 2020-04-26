@@ -16,7 +16,6 @@
    (:file "enable-method-combinations")
    (:file "define-method-on-method-function")
    (:file "enable-generic-function-invocation")
-   (:file "enable-defgeneric")
    (:file "define-accessor-generic-functions")
    (:file "enable-class-initialization")
    (:file "create-mop-classes")
