@@ -4,8 +4,7 @@
   (with-accessors ((ea sicl-boot:e5))
       boot
     (import-functions-from-host
-     '(cleavir-code-utilities:proper-list-p
-       atom eq not cdr cadr cddr caddr cdddr (setf cdr) rplacd
+     '(atom eq not cdr cadr cddr caddr cdddr (setf cdr) rplacd
        + member symbolp functionp)
      ea)
     (load-fasl "CLOS/t-defclass.fasl" ea)
