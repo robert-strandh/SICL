@@ -93,7 +93,8 @@
     (ld "Compiler/Code-object/generic-functions.fasl")))
 
 (defun define-accessor-generic-functions (boot)
-  (with-accessors ((e3 sicl-boot:e3)
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)
                    (e4 sicl-boot:e4))
       boot
     (enable-defgeneric boot)

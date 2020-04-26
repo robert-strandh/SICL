@@ -91,15 +91,14 @@
   (load-fasl "Compiler/Code-object/generic-functions.fasl" e5))
 
 (defun define-accessor-generic-functions (boot)
-  (with-accessors ((e4 sicl-boot:e4)
+  (with-accessors ((e3 sicl-boot:e3)
+                   (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
     (import-functions-from-host
      '(cdr)
      e4)
-    (import-functions-from-host
-     '(listp)
-     (sicl-boot:e3 boot))
+    (import-functions-from-host '(listp) e3)
     (sicl-hir-interpreter:fill-environment e5)
     (import-function-from-host 'funcall e5)
     (import-function-from-host '(setf sicl-genv:function-lambda-list) e5)
