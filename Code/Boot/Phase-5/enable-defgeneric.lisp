@@ -1,20 +1,20 @@
 (cl:in-package #:sicl-boot-phase-5)
 
 (defun enable-defgeneric (boot)
-  (with-accessors ((e4 sicl-boot:e4)
-                   (e5 sicl-boot:e5)
-                   (e6 sicl-boot:e6))
+  (with-accessors ((ea sicl-boot:e4)
+                   (eb sicl-boot:e5)
+                   (ec sicl-boot:e6))
       boot
     (let* ((gf-class-name 'standard-generic-function)
-           (gf-class (sicl-genv:find-class gf-class-name e4))
+           (gf-class (sicl-genv:find-class gf-class-name ea))
            (method-class-name 'standard-method)
-           (method-class (sicl-genv:find-class method-class-name e4))
-           (make-instance (sicl-genv:fdefinition 'make-instance e5))
+           (method-class (sicl-genv:find-class method-class-name ea))
+           (make-instance (sicl-genv:fdefinition 'make-instance eb))
            (method-combination
              (funcall (sicl-genv:fdefinition
-                       'sicl-method-combination:find-method-combination e5)
-                      'standard '() e5)))
-      (setf (sicl-genv:fdefinition 'ensure-generic-function e6)
+                       'sicl-method-combination:find-method-combination eb)
+                      'standard '() eb)))
+      (setf (sicl-genv:fdefinition 'ensure-generic-function ec)
             (lambda (function-name &rest arguments
                      &key environment
                      &allow-other-keys)
