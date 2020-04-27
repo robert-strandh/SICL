@@ -16,11 +16,17 @@
      '(cleavir-code-utilities:parse-generic-function-lambda-list
        cleavir-code-utilities:required
        cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd
+       copy-list
        atom eq not member symbolp functionp stringp
        make-list set-difference remove find-if adjoin remove
        (setf sicl-genv:type-expander) (setf sicl-genv:find-class)
        sicl-genv:typep (setf sicl-genv:special-variable)
        equal set-exclusive-or sicl-genv:find-class
+       mapcar subseq 1+ elt position-if
+       sicl-genv:fdefinition sicl-genv:fboundp
+       cleavir-code-utilities:parse-specialized-lambda-list
+       cleavir-code-utilities:separate-function-body
+       cleavir-code-utilities:required
        +)
      e6)
     (import-functions-from-host
