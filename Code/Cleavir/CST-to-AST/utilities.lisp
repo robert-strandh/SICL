@@ -9,6 +9,13 @@
   (funcall (coerce *macroexpand-hook* 'function)
            expander form env))
 
+;;; This variable is bound to a list of forms that will be
+;;; searched for in the CST so that a source position can
+;;; be found.
+;;; It's a dynamic variable because a macroexpander may
+;;; want to bind it; see WITH-CURRENT-SOURCE-FORM.
+(defvar *current-source-forms*)
+
 (defun find-source-cst-1 (cst form)
   (let ((seen (make-hash-table :test #'eq)))
     (labels ((aux (cst)
@@ -23,11 +30,13 @@
                  nil)))
       (aux cst))))
 
-(defun find-source-cst (cst &rest forms)
+;;; Used in the encapsulators in conditions.lisp.
+(defun find-source-cst (cst
+                        &optional (forms *current-source-forms*))
   (if (null forms)
       cst
       (or (find-source-cst-1 cst (first forms))
-          (apply #'find-source-cst cst (rest forms)))))
+          (find-source-cst cst (rest forms)))))
 
 ;;; This is a helper operator to get more accurate errors from
 ;;; macroexpansion functions. Cleavir wraps such errors in
@@ -48,17 +57,17 @@
 ;;; If WITH-CURRENT-SOURCE-FORM is executed in some context other
 ;;; than a macroexpander in Cleavir, no special processing is done.
 (defmacro with-current-source-form ((&rest forms) &body body)
-  (let ((thunkg (gensym)))
-    ;; progn to treat DECLARE correctly
+  ;; This circuitious expansion is to ensure that code using this
+  ;; macro can be loaded even if the compiler has not been yet,
+  ;; for bootstrapping purposes or otherwise.
+  (let ((thunkg (gensym "THUNK")))
+    ;; progn to ensure DECLARE doesn't work
     `(flet ((,thunkg () (progn ,@body)))
-       (if (boundp '*current-cst*)
-           ;; in macroexpander in CST-to-AST
-           (let ((*current-cst*
-                   (find-source-cst *current-cst* ,@forms)))
+       (if (boundp '*current-source-forms*)
+           (let ((*current-source-forms*
+                  (list* ,@forms *current-source-forms*)))
              (,thunkg))
-           ;; outside CST-to-AST: do nothing special
-           ;; out of paranoia, evaluate forms for side effects
-           (progn ,@forms (,thunkg))))))
+           (,thunkg)))))
 
 (defun expand-macro (expander cst env)
   (with-encapsulated-conditions
