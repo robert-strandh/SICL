@@ -6,7 +6,11 @@
                    (e7 sicl-boot:e7))
       boot
     (import-functions-from-host
-     '(listp)
+     '(listp sort every
+       mapc 1+ 1- subseq butlast position identity nthcdr equal
+       find-if-not mapcar remove-duplicates union reduce count last
+       copy-list
+       remove-if-not reverse find (setf sicl-genv:constant-variable))
      e5)
     (import-functions-from-host
      '(cleavir-code-utilities:parse-generic-function-lambda-list
