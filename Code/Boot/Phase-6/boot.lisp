@@ -6,7 +6,7 @@
                    (e6 sicl-boot:e6))
       boot
     (change-class e6 'environment)
-    (import-function-from-host 'cons e6)
+    (import-from-host boot)
     (enable-class-finalization boot)
     (finalize-all-classes boot)
     (enable-defmethod boot)
