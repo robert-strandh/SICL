@@ -24,13 +24,16 @@
        sicl-genv:find-class
        sicl-genv:fdefinition
        sicl-genv:fboundp
+       sicl-clos::add-path
+       sicl-clos::extract-transition-information
+       sicl-clos::make-automaton
        cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd
-       copy-list
+       copy-list list*
        atom eq not member symbolp functionp stringp
-       make-list set-difference remove find-if adjoin remove
-       equal set-exclusive-or
-       mapcar subseq 1+ elt position-if
-       +)
+       make-list set-difference remove find find-if adjoin remove
+       eql equal set-exclusive-or
+       sort mapcar subseq 1+ elt position position-if
+       + 1+ floor = /=)
      e6)
     (import-functions-from-host
      '(funcall

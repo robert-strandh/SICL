@@ -8,7 +8,6 @@
 ;;; SUB-SPECIALIZER-P is called by COMPUTE-APPLICABLE-METHODS
 ;;; (indirectly) to determine which is two methods is more specific.
 (defun define-sub-specializer-p (environment)
-  (import-function-from-host 'position environment)
   (load-fasl "CLOS/sub-specializer-p.fasl" environment))
 
 ;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
@@ -18,7 +17,6 @@
 ;;; the object of an EQL specializer to an argument passed to a
 ;;; generic function.
 (defun define-compute-applicable-methods (e6)
-  (import-functions-from-host '(sort mapcar eql) e6)
   (load-fasl "CLOS/compute-applicable-methods-support.fasl" e6)
   (load-fasl "CLOS/compute-applicable-methods-defgenerics.fasl" e6)
   (load-fasl "CLOS/compute-applicable-methods-defmethods.fasl" e6))
@@ -35,13 +33,6 @@
 (defun define-compute-discriminating-function (e6)
   (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" e6)
   (define-stamp)
-  ;; LIST* is called in order to make a call cache.  CAR, CADR,
-  ;; CADDR and CDDDR are used as accessors for the call cache.  FIND
-  ;; is used to search a list of effictive-slot metaobjects to find
-  ;; one with a particular name.  SUBSEQ is used to extract the
-  ;; required arguments from a list of all the arguments to a
-  ;; generic function.
-  (import-functions-from-host '(find subseq list*) e6)
   (load-fasl "Cons/accessor-defuns.fasl" e6)
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" e6)
   (import-functions-from-host
