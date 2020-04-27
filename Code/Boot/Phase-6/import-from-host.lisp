@@ -19,7 +19,8 @@
        atom eq not member symbolp functionp stringp
        make-list set-difference remove find-if adjoin remove
        (setf sicl-genv:type-expander) (setf sicl-genv:find-class)
-       (sicl-genv:typep) (setf sicl-genv:special-variable)
+       sicl-genv:typep (setf sicl-genv:special-variable)
+       equal set-exclusive-or sicl-genv:find-class
        +)
      e6)
     (import-functions-from-host
