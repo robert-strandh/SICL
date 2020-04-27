@@ -6,5 +6,7 @@
                    (e7 sicl-boot:e7))
       boot
     (import-functions-from-host
-     '(cons)
+     '(cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd
+       atom eq not member symbolp functionp
+       +)
      e6)))
