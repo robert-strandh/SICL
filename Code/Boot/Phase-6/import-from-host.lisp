@@ -17,7 +17,9 @@
        cleavir-code-utilities:required
        cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd
        atom eq not member symbolp functionp stringp
-       make-list set-difference
+       make-list set-difference remove find-if adjoin remove
+       (setf sicl-genv:type-expander) (setf sicl-genv:find-class)
+       (sicl-genv:typep) (setf sicl-genv:special-variable)
        +)
      e6)
     (import-functions-from-host

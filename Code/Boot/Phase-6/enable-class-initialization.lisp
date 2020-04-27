@@ -1,26 +1,26 @@
 (cl:in-package #:sicl-boot-phase-6)
 
 (defun define-add-remove-direct-subclass (e6)
-  ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
-  ;; class from the list of subclasses of some class.
-  (import-function-from-host 'remove e6)
+  ;; ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
+  ;; ;; class from the list of subclasses of some class.
+  ;; (import-function-from-host 'remove e6)
   (load-fasl "CLOS/add-remove-direct-subclass-support.fasl" e6)
   (load-fasl "CLOS/add-remove-direct-subclass-defgenerics.fasl" e6)
   (load-fasl "CLOS/add-remove-direct-subclass-defmethods.fasl" e6))
 
 (defun define-add-remove-method (e6)
   (load-fasl "CLOS/add-remove-method-defgenerics.fasl" e6)
-  ;; FIND-IF is called by ADD-METHOD in order to find and existing
-  ;; method with the same specializers and the same qualifiers, so
-  ;; that that existing method can be removed first.
-  (import-function-from-host 'find-if e6)
+  ;; ;; FIND-IF is called by ADD-METHOD in order to find and existing
+  ;; ;; method with the same specializers and the same qualifiers, so
+  ;; ;; that that existing method can be removed first.
+  ;; (import-function-from-host 'find-if e6)
   (load-fasl "CLOS/add-remove-method-support.fasl" e6)
   (load-fasl "CLOS/add-remove-method-defmethods.fasl" e6))
 
 (defun define-add-remove-direct-method (e6)
-  ;; ADJOIN is called by ADD-DIRECT-METHOD.
-  ;; REMOVE is called by REMOVE-DIRECT-METHOD.
-  (import-functions-from-host '(adjoin remove) e6)
+  ;; ;; ADJOIN is called by ADD-DIRECT-METHOD.
+  ;; ;; REMOVE is called by REMOVE-DIRECT-METHOD.
+  ;; (import-functions-from-host '(adjoin remove) e6)
   (load-fasl "CLOS/add-remove-direct-method-defgenerics.fasl" e6)
   (load-fasl "CLOS/add-remove-direct-method-support.fasl" e6)
   (load-fasl "CLOS/add-remove-direct-method-defmethods.fasl" e6))
@@ -62,8 +62,8 @@
   (load-fasl "CLOS/ensure-class-using-class-support.fasl" e6)
   (load-fasl "CLOS/ensure-class-using-class-defgenerics.fasl" e6)
   (load-fasl "CLOS/ensure-class-using-class-defmethods.fasl" e6)
-  (import-function-from-host '(setf sicl-genv:type-expander) e6)
-  (import-function-from-host '(setf sicl-genv:find-class) e6)
+  ;; (import-function-from-host '(setf sicl-genv:type-expander) e6)
+  ;; (import-function-from-host '(setf sicl-genv:find-class) e6)
   (load-fasl "Environment/find-class-defun.fasl" e6)
   (load-fasl "Environment/standard-environment-functions.fasl" e6)
   (load-fasl "CLOS/ensure-class.fasl" e6))
@@ -73,7 +73,7 @@
                    (e6 sicl-boot:e6)
                    (e7 sicl-boot:e7))
       boot
-    (import-functions-from-host '(sicl-genv:typep) e6)
+    ;; (import-functions-from-host '(sicl-genv:typep) e6)
     (setf (sicl-genv:fdefinition 'typep e6)
           (lambda (object type)
             (sicl-genv:typep object type e6)))
@@ -90,10 +90,10 @@
     (load-fasl "CLOS/class-initialization-defmethods.fasl" e6)
     (load-fasl "CLOS/reinitialize-instance-defgenerics.fasl" e6)
     (define-ensure-class e6)
-    (import-function-from-host '(setf sicl-genv:special-variable) e6)
-    (import-functions-from-host
-     '(equal set-exclusive-or sicl-genv:find-class)
-     e6)
+    ;; (import-function-from-host '(setf sicl-genv:special-variable) e6)
+    ;; (import-functions-from-host
+    ;;  '(equal set-exclusive-or sicl-genv:find-class)
+    ;;  e6)
     ;; FIXME: load files containing the definition instead.
     (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method e6)
           (constantly nil))
