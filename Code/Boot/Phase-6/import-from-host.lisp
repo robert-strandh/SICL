@@ -6,10 +6,18 @@
                    (e7 sicl-boot:e7))
       boot
     (import-functions-from-host
+     '(listp)
+     e5)
+    (import-functions-from-host
      '(cleavir-code-utilities:parse-generic-function-lambda-list
        cleavir-code-utilities:required
        cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd
        atom eq not member symbolp functionp stringp
        make-list set-difference
        +)
-     e6)))
+     e6)
+    (import-functions-from-host
+     '(funcall
+       (setf sicl-genv:function-lambda-list)
+       (setf sicl-genv:function-type))
+     e7)))
