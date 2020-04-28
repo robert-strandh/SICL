@@ -35,21 +35,6 @@
   (define-stamp)
   (load-fasl "Cons/accessor-defuns.fasl" e6)
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" e6)
-  (import-functions-from-host
-   '(sicl-clos::add-path
-     floor = /=
-     sicl-clos::extract-transition-information
-     sicl-clos::make-automaton)
-   e6)
-  ;; 1+ is called by COMPUTE-DISCRIMINATING-FUNCTION to compute an
-  ;; argument for MAKE-AUTOMATON..
-  (import-function-from-host '1+ e6)
-  ;; NTH is called by COMPUTE-DISCRIMINATING-FUNCTION in order to
-  ;; traverse the parameters that are specialized upon.
-  (import-function-from-host 'nth e6)
-  ;; ASSOC is used by COMPUTE-DISCRIMINATING-FUNCTION in order to
-  ;; build a dictionary mapping effective-method functions to forms.
-  (import-function-from-host 'assoc e6)
   (load-fasl "CLOS/discriminating-tagbody.fasl" e6)
   (load-fasl "CLOS/compute-discriminating-function-support-c.fasl" e6)
   (load-fasl "CLOS/compute-discriminating-function-defmethods.fasl" e6))
@@ -108,13 +93,6 @@
     (define-no-applicable-method e6)
     (define-general-instance-access boot)
     (define-set-funcallable-instance-function e6)
-    (import-functions-from-host
-     '((setf sicl-genv:fdefinition)
-       (setf sicl-genv:macro-function)
-       sicl-genv:macro-function
-       sicl-genv:get-setf-expansion
-       consp = first)
-     e6)
     (do-symbols (symbol (find-package '#:common-lisp))
       (when (special-operator-p symbol)
         (setf (sicl-genv:special-operator symbol e6) t)))
@@ -130,5 +108,4 @@
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e6)
     (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e6)
     (define-find-accessor-method-class e5 e6)
-    (define-compute-discriminating-function e6)
-    (import-functions-from-host '(apply endp cons eq coerce) e6)))
+    (define-compute-discriminating-function e6)))

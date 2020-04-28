@@ -26,20 +26,6 @@
     ;; The function CLASS-OF is called by SHARED-INITIALIZE in order
     ;; to get the slot-definition metaobjects.
     (define-class-of e6)
-    ;; The support code for SHARED-INITIALIZE in phase 6 will need to
-    ;; access various slots of class metaobjects and slot-definition
-    ;; metaobjects.  Since we are initializing objects in E6, the
-    ;; class metaobjects for these objects are located in E5.
-    ;; Therefor, it is handy to load the support code for
-    ;; SHARED-INITIALIZE into E5.  Notice, however, that we do not
-    ;; want to define SHARED-INITIALIZE itself in E5 because we
-    ;; already have a definition for it there (imported from the
-    ;; host), and we do want to call SHARED-INITIALIZE from functions
-    ;; in E6.
-    ;;
-    ;; GET-PROPERTIES is called by SHARED-INITIALIZE to get the
-    ;; INITARGs of the slot-definition metaobject.
-    (import-functions-from-host '(get-properties) e5)
     (setf (sicl-genv:special-variable 'sicl-clos:+unbound-slot-value+ e5 t)
           10000000)
     (load-fasl "CLOS/slot-bound-using-index.fasl" e5)
@@ -52,7 +38,6 @@
     ;; objects.
     (load-fasl "CLOS/slot-value-etc-support.fasl" e5)
     (load-fasl "CLOS/slot-value-etc-defuns.fasl" e5)
-    (import-function-from-host '(setf sicl-genv:constant-variable) e5)
     (load-fasl "CLOS/instance-slots-offset-defconstant.fasl" e5)
     (load-fasl "CLOS/shared-initialize-support.fasl" e5)
     ;; Instead of loading the file containing the definition of
@@ -69,14 +54,6 @@
                       'sicl-clos::shared-initialize-default-using-class-and-slots
                       e5)
                      instance slot-names class slots initargs))))
-    (import-functions-from-host
-     '(list append length consp error member
-       cleavir-code-utilities:proper-list-p
-       (setf sicl-genv:fdefinition))
-     e6)
-    (import-functions-from-host
-     '(atom cddr (setf cdr) <)
-     e5)
     (load-fasl "CLOS/shared-initialize-defgenerics.fasl" e6)
     (load-fasl "CLOS/shared-initialize-defmethods.fasl" e6)
     (load-fasl "CLOS/initialize-instance-support.fasl" e6)
