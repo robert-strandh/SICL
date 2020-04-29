@@ -7,6 +7,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "import-from-host")
    (:file "utilities")
    (:file "enable-class-finalization")
    (:file "finalize-all-classes")
