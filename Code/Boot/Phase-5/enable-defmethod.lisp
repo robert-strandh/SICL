@@ -28,17 +28,9 @@
           #'sicl-clos::make-method-lambda-default)
     (define-make-specializer e4)
     (load-fasl "CLOS/make-method-for-generic-function.fasl" e4)
-    (import-functions-from-host '(copy-list) e5)
     (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e5)
           (sicl-genv:fdefinition 'sicl-clos::method-function e4))
     (sicl-boot:with-straddled-function-definitions
         ((sicl-clos::ensure-method) e4 e5)
       (load-fasl "CLOS/ensure-method.fasl" e4))
-    (define-create-method-lambda e5)
-    (import-functions-from-host
-     '(mapcar subseq 1+ elt position-if
-       sicl-genv:fdefinition sicl-genv:fboundp
-       cleavir-code-utilities:parse-specialized-lambda-list
-       cleavir-code-utilities:separate-function-body
-       cleavir-code-utilities:required)
-     e5)))
+    (define-create-method-lambda e5)))

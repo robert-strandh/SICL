@@ -8,7 +8,6 @@
 ;;; SUB-SPECIALIZER-P is called by COMPUTE-APPLICABLE-METHODS
 ;;; (indirectly) to determine which is two methods is more specific.
 (defun define-sub-specializer-p (environment)
-  (import-function-from-host 'position environment)
   (load-fasl "CLOS/sub-specializer-p.fasl" environment))
 
 ;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
@@ -18,7 +17,6 @@
 ;;; the object of an EQL specializer to an argument passed to a
 ;;; generic function.
 (defun define-compute-applicable-methods (e5)
-  (import-functions-from-host '(sort mapcar eql) e5)
   (load-fasl "CLOS/compute-applicable-methods-support.fasl" e5)
   (load-fasl "CLOS/compute-applicable-methods-defgenerics.fasl" e5)
   (load-fasl "CLOS/compute-applicable-methods-defmethods.fasl" e5))
@@ -35,30 +33,8 @@
 (defun define-compute-discriminating-function (e5)
   (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" e5)
   (define-stamp)
-  ;; LIST* is called in order to make a call cache.  CAR, CADR,
-  ;; CADDR and CDDDR are used as accessors for the call cache.  FIND
-  ;; is used to search a list of effictive-slot metaobjects to find
-  ;; one with a particular name.  SUBSEQ is used to extract the
-  ;; required arguments from a list of all the arguments to a
-  ;; generic function.
-  (import-functions-from-host '(find subseq list*) e5)
   (load-fasl "Cons/accessor-defuns.fasl" e5)
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" e5)
-  (import-functions-from-host
-   '(sicl-clos::add-path
-     floor = /=
-     sicl-clos::extract-transition-information
-     sicl-clos::make-automaton)
-   e5)
-  ;; 1+ is called by COMPUTE-DISCRIMINATING-FUNCTION to compute an
-  ;; argument for MAKE-AUTOMATON..
-  (import-function-from-host '1+ e5)
-  ;; NTH is called by COMPUTE-DISCRIMINATING-FUNCTION in order to
-  ;; traverse the parameters that are specialized upon.
-  (import-function-from-host 'nth e5)
-  ;; ASSOC is used by COMPUTE-DISCRIMINATING-FUNCTION in order to
-  ;; build a dictionary mapping effective-method functions to forms.
-  (import-function-from-host 'assoc e5)
   (load-fasl "CLOS/discriminating-tagbody.fasl" e5)
   (load-fasl "CLOS/compute-discriminating-function-support-c.fasl" e5)
   (load-fasl "CLOS/compute-discriminating-function-defmethods.fasl" e5))
@@ -112,13 +88,6 @@
     (define-no-applicable-method e5)
     (define-general-instance-access boot)
     (define-set-funcallable-instance-function e5)
-    (import-functions-from-host
-     '((setf sicl-genv:fdefinition)
-       (setf sicl-genv:macro-function)
-       sicl-genv:macro-function
-       sicl-genv:get-setf-expansion
-       consp = first)
-     e5)
     (do-symbols (symbol (find-package '#:common-lisp))
       (when (special-operator-p symbol)
         (setf (sicl-genv:special-operator symbol e5) t)))
@@ -134,5 +103,4 @@
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e5)
     (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e5)
     (define-find-accessor-method-class e4 e5)
-    (define-compute-discriminating-function e5)
-    (import-functions-from-host '(apply endp cons eq coerce) e5)))
+    (define-compute-discriminating-function e5)))

@@ -1,26 +1,16 @@
 (cl:in-package #:sicl-boot-phase-5)
 
 (defun define-add-remove-direct-subclass (e5)
-  ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
-  ;; class from the list of subclasses of some class.
-  (import-function-from-host 'remove e5)
   (load-fasl "CLOS/add-remove-direct-subclass-support.fasl" e5)
   (load-fasl "CLOS/add-remove-direct-subclass-defgenerics.fasl" e5)
   (load-fasl "CLOS/add-remove-direct-subclass-defmethods.fasl" e5))
 
 (defun define-add-remove-method (e5)
   (load-fasl "CLOS/add-remove-method-defgenerics.fasl" e5)
-  ;; FIND-IF is called by ADD-METHOD in order to find and existing
-  ;; method with the same specializers and the same qualifiers, so
-  ;; that that existing method can be removed first.
-  (import-function-from-host 'find-if e5)
   (load-fasl "CLOS/add-remove-method-support.fasl" e5)
   (load-fasl "CLOS/add-remove-method-defmethods.fasl" e5))
 
 (defun define-add-remove-direct-method (e5)
-  ;; ADJOIN is called by ADD-DIRECT-METHOD.
-  ;; REMOVE is called by REMOVE-DIRECT-METHOD.
-  (import-functions-from-host '(adjoin remove) e5)
   (load-fasl "CLOS/add-remove-direct-method-defgenerics.fasl" e5)
   (load-fasl "CLOS/add-remove-direct-method-support.fasl" e5)
   (load-fasl "CLOS/add-remove-direct-method-defmethods.fasl" e5))
@@ -62,8 +52,6 @@
   (load-fasl "CLOS/ensure-class-using-class-support.fasl" e5)
   (load-fasl "CLOS/ensure-class-using-class-defgenerics.fasl" e5)
   (load-fasl "CLOS/ensure-class-using-class-defmethods.fasl" e5)
-  (import-function-from-host '(setf sicl-genv:type-expander) e5)
-  (import-function-from-host '(setf sicl-genv:find-class) e5)
   (load-fasl "Environment/find-class-defun.fasl" e5)
   (load-fasl "Environment/standard-environment-functions.fasl" e5)
   (load-fasl "CLOS/ensure-class.fasl" e5))
@@ -73,7 +61,6 @@
                    (e5 sicl-boot:e5)
                    (e6 sicl-boot:e6))
       boot
-    (import-functions-from-host '(sicl-genv:typep) e5)
     (setf (sicl-genv:fdefinition 'typep e5)
           (lambda (object type)
             (sicl-genv:typep object type e5)))
@@ -90,10 +77,6 @@
     (load-fasl "CLOS/class-initialization-defmethods.fasl" e5)
     (load-fasl "CLOS/reinitialize-instance-defgenerics.fasl" e5)
     (define-ensure-class e5)
-    (import-function-from-host '(setf sicl-genv:special-variable) e5)
-    (import-functions-from-host
-     '(equal set-exclusive-or sicl-genv:find-class)
-     e5)
     ;; FIXME: load files containing the definition instead.
     (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method e5)
           (constantly nil))

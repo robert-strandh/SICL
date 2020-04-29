@@ -35,10 +35,6 @@
     ;; already have a definition for it there (imported from the
     ;; host), and we do want to call SHARED-INITIALIZE from functions
     ;; in E5.
-    ;;
-    ;; GET-PROPERTIES is called by SHARED-INITIALIZE to get the
-    ;; INITARGs of the slot-definition metaobject.
-    (import-functions-from-host '(get-properties) e4)
     (setf (sicl-genv:special-variable 'sicl-clos:+unbound-slot-value+ e4 t)
           10000000)
     (load-fasl "CLOS/slot-bound-using-index.fasl" e4)
@@ -51,7 +47,6 @@
     ;; objects.
     (load-fasl "CLOS/slot-value-etc-support.fasl" e4)
     (load-fasl "CLOS/slot-value-etc-defuns.fasl" e4)
-    (import-function-from-host '(setf sicl-genv:constant-variable) e4)
     (load-fasl "CLOS/instance-slots-offset-defconstant.fasl" e4)
     (load-fasl "CLOS/shared-initialize-support.fasl" e4)
     ;; Instead of loading the file containing the definition of
@@ -68,14 +63,6 @@
                       'sicl-clos::shared-initialize-default-using-class-and-slots
                       e4)
                      instance slot-names class slots initargs))))
-    (import-functions-from-host
-     '(list append length consp error member
-       cleavir-code-utilities:proper-list-p
-       (setf sicl-genv:fdefinition))
-     e5)
-    (import-functions-from-host
-     '(atom cddr (setf cdr) <)
-     e4)
     (load-fasl "CLOS/shared-initialize-defgenerics.fasl" e5)
     (load-fasl "CLOS/shared-initialize-defmethods.fasl" e5)
     (load-fasl "CLOS/initialize-instance-support.fasl" e5)
