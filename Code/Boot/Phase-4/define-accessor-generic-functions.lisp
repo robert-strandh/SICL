@@ -2,20 +2,6 @@
 
 (defun enable-generic-function-initialization (boot)
   (with-accessors ((e4 sicl-boot:e4)) boot
-    (import-functions-from-host
-     '(cleavir-code-utilities:parse-generic-function-lambda-list
-       cleavir-code-utilities:required)
-     e4)
-    ;; MAKE-LIST is called from the :AROUND method on
-    ;; SHARED-INITIALIZE specialized to GENERIC-FUNCTION.
-    (import-function-from-host 'make-list e4)
-    ;; SET-DIFFERENCE is called by the generic-function initialization
-    ;; protocol to verify that the argument precedence order is a
-    ;; permutation of the required arguments.
-    (import-function-from-host 'set-difference e4)
-    ;; STRINGP is called by the generic-function initialization
-    ;; protocol to verify that the documentation is a string.
-    (import-function-from-host 'stringp e4)
     (load-fasl "CLOS/generic-function-initialization-support.fasl" e4)
     (load-fasl "CLOS/generic-function-initialization-defmethods.fasl" e4)))
 
@@ -95,14 +81,7 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (import-functions-from-host
-     '(cdr)
-     e4)
-    (import-functions-from-host '(listp) e3)
     (sicl-hir-interpreter:fill-environment e5)
-    (import-function-from-host 'funcall e5)
-    (import-function-from-host '(setf sicl-genv:function-lambda-list) e5)
-    (import-function-from-host '(setf sicl-genv:function-type) e5)
     (sicl-boot:enable-defgeneric e3 e4 e5)
     (load-fasl "CLOS/invalidate-discriminating-function.fasl" e4)
     (enable-generic-function-initialization boot)

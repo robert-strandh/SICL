@@ -5,7 +5,6 @@
   (let* ((e3 (sicl-boot:e3 boot))
          (finalization-function
            (sicl-genv:fdefinition 'sicl-clos:finalize-inheritance e3)))
-    (import-function-from-host 'not e3)
     (do-all-symbols (var)
       (let ((class (sicl-genv:find-class var e3)))
         (unless (null class)

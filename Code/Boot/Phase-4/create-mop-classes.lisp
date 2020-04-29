@@ -3,10 +3,6 @@
 (defun create-mop-classes (boot)
   (with-accessors ((ea sicl-boot:e4))
       boot
-    (import-functions-from-host
-     '(atom eq not cdr cadr cddr caddr cdddr (setf cdr) rplacd
-       + member symbolp functionp)
-     ea)
     (load-fasl "CLOS/t-defclass.fasl" ea)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* ea t)
           (sicl-genv:find-class 't ea))
