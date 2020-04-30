@@ -17,4 +17,5 @@
    (:file "environment")
    (:file "boot-class")
    (:file "utilities")
-   (:file "enable-defgeneric")))
+   (:file "enable-defgeneric")
+   (:file "enable-method-combinations")))
