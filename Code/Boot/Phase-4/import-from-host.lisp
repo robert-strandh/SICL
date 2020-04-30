@@ -5,6 +5,7 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
+    (sicl-hir-interpreter:fill-environment e5)
     (import-functions-from-host
      '((setf sicl-genv:constant-variable)
        sicl-conditionals:cond-expander

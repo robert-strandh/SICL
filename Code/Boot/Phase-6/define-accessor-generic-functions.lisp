@@ -76,7 +76,6 @@
   (load-fasl "Compiler/Code-object/generic-functions.fasl" ea))
 
 (defun define-accessor-generic-functions (ea eb ec)
-  (sicl-hir-interpreter:fill-environment ec)
   (sicl-boot:enable-defgeneric ea eb ec)
   (load-fasl "CLOS/invalidate-discriminating-function.fasl" eb)
   (enable-generic-function-initialization eb)
