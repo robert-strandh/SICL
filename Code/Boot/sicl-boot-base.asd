@@ -19,4 +19,5 @@
    (:file "utilities")
    (:file "enable-defgeneric")
    (:file "enable-method-combinations")
-   (:file "create-mop-classes")))
+   (:file "create-mop-classes")
+   (:file "define-accessor-generic-functions")))
