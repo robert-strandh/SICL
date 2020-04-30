@@ -17,4 +17,4 @@
     (enable-generic-function-invocation boot)
     (define-accessor-generic-functions boot)
     (enable-class-initialization boot)
-    (create-mop-classes e4)))
+    (sicl-boot:create-mop-classes #'load-fasl e4)))
