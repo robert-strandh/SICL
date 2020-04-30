@@ -15,6 +15,5 @@
    (:file "enable-defmethod")
    (:file "define-method-on-method-function")
    (:file "enable-generic-function-invocation")
-   (:file "define-accessor-generic-functions")
    (:file "enable-class-initialization")
    (:file "boot")))

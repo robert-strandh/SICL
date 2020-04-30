@@ -15,6 +15,5 @@
    (:file "enable-allocate-instance")
    (:file "enable-object-initialization")
    (:file "enable-generic-function-invocation")
-   (:file "define-accessor-generic-functions")
    (:file "enable-class-initialization")
    (:file "boot")))
