@@ -16,7 +16,7 @@
     (load-fasl "Conditionals/macros.fasl" e5)
     (sicl-boot:enable-method-combinations #'load-fasl e5 e6)
     (enable-generic-function-invocation boot)
-    (define-accessor-generic-functions e5 e6 e7)
+    (sicl-boot:define-accessor-generic-functions #'load-fasl e5 e6 e7)
     (enable-class-initialization boot)
     (sicl-boot:create-mop-classes #'load-fasl e6)
     (load-fasl "CLOS/satiation.fasl" e6)))
