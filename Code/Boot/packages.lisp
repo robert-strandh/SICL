@@ -16,4 +16,5 @@
            #:with-straddled-function-definitions
            #:enable-defgeneric
            #:enable-method-combinations
-           #:create-mop-classes))
+           #:create-mop-classes
+           #:define-accessor-generic-functions))
