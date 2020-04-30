@@ -7,7 +7,6 @@
     (load-fasl "Method-combination/make-method-combination-defun.fasl" e4)
     (load-fasl "Method-combination/find-method-combination.fasl" e4)
     (load-fasl "Method-combination/method-combination-template-defclass.fasl" e3)
-    (load-fasl "Conditionals/macros.fasl" e3)
     (load-fasl "CLOS/standard-method-combination.fasl" e4)
     (load-fasl "CLOS/find-method-combination-defgenerics.fasl" e4)
     (load-fasl "CLOS/find-method-combination-defmethods.fasl" e4)))

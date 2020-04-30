@@ -12,6 +12,7 @@
     (enable-defmethod boot)
     (enable-allocate-instance e3)
     (enable-object-initialization boot)
+    (load-fasl "Conditionals/macros.fasl" e3)
     (enable-method-combinations boot)
     (enable-generic-function-invocation boot)
     (define-accessor-generic-functions boot)
