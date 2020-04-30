@@ -3,7 +3,8 @@
 (defun boot (boot)
   (format *trace-output* "Start of phase 5~%")
   (with-accessors ((e4 sicl-boot:e4)
-                   (e5 sicl-boot:e5))
+                   (e5 sicl-boot:e5)
+                   (e6 sicl-boot:e6))
       boot
     (change-class e5 'environment)
     (import-from-host boot)
