@@ -14,4 +14,5 @@
            #:tie-code-object
            #:load-fasl
            #:with-straddled-function-definitions
-           #:enable-defgeneric))
+           #:enable-defgeneric
+           #:enable-method-combinations))
