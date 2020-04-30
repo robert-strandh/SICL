@@ -12,6 +12,6 @@
     (enable-defmethod boot)
     (define-method-on-method-function e3)
     (enable-generic-function-invocation boot)
-    (define-accessor-generic-functions boot)
+    (define-accessor-generic-functions e2 e3 e4)
     (enable-class-initialization boot)
     (sicl-boot:create-mop-classes #'load-fasl e3)))

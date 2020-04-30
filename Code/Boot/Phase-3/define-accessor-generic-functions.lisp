@@ -75,12 +75,8 @@
   (load-fasl "Package-and-symbol/symbol-package-defgeneric.fasl" ea)
   (load-fasl "Compiler/Code-object/generic-functions.fasl" ea))
 
-(defun define-accessor-generic-functions (boot)
-  (with-accessors ((e2 sicl-boot:e2)
-                   (e3 sicl-boot:e3)
-                   (e4 sicl-boot:e4))
-      boot
-    (sicl-boot:enable-defgeneric e2 e3 e4)
-    (load-fasl "CLOS/invalidate-discriminating-function.fasl" e3)
-    (enable-generic-function-initialization e3)
-    (load-accessor-defgenerics e4)))
+(defun define-accessor-generic-functions (ea eb ec)
+  (sicl-boot:enable-defgeneric ea eb ec)
+  (load-fasl "CLOS/invalidate-discriminating-function.fasl" eb)
+  (enable-generic-function-initialization eb)
+  (load-accessor-defgenerics ec))
