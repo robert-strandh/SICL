@@ -1,9 +1,8 @@
 (cl:in-package #:sicl-boot-phase-3)
 
-(defun enable-generic-function-initialization (boot)
-  (with-accessors ((e3 sicl-boot:e3)) boot
-    (load-fasl "CLOS/generic-function-initialization-support.fasl" e3)
-    (load-fasl "CLOS/generic-function-initialization-defmethods.fasl" e3)))
+(defun enable-generic-function-initialization (ea)
+  (load-fasl "CLOS/generic-function-initialization-support.fasl" ea)
+  (load-fasl "CLOS/generic-function-initialization-defmethods.fasl" ea))
 
 (defun load-accessor-defgenerics (ea)
   (load-fasl "CLOS/specializer-direct-generic-functions-defgeneric.fasl" ea)
@@ -83,5 +82,5 @@
       boot
     (sicl-boot:enable-defgeneric e2 e3 e4)
     (load-fasl "CLOS/invalidate-discriminating-function.fasl" e3)
-    (enable-generic-function-initialization boot)
+    (enable-generic-function-initialization e3)
     (load-accessor-defgenerics e4)))
