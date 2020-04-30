@@ -119,7 +119,7 @@
             (error "(setf slot-value) called")))
     (define-sub-specializer-p e3)
     (define-compute-applicable-methods e3)
-    (enable-method-combinations boot)
+    (enable-method-combinations e2 e3)
     (define-compute-effective-method e3)
     (define-no-applicable-method e3)
     (define-compile e3)
