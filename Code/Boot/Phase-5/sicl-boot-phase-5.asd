@@ -17,5 +17,4 @@
    (:file "enable-generic-function-invocation")
    (:file "define-accessor-generic-functions")
    (:file "enable-class-initialization")
-   (:file "create-mop-classes")
    (:file "boot")))
