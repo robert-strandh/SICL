@@ -15,4 +15,5 @@
            #:load-fasl
            #:with-straddled-function-definitions
            #:enable-defgeneric
-           #:enable-method-combinations))
+           #:enable-method-combinations
+           #:create-mop-classes))
