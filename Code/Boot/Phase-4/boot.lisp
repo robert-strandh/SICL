@@ -13,7 +13,7 @@
     (enable-allocate-instance e3)
     (enable-object-initialization boot)
     (load-fasl "Conditionals/macros.fasl" e3)
-    (enable-method-combinations e3 e4)
+    (sicl-boot:enable-method-combinations #'load-fasl e3 e4)
     (enable-generic-function-invocation boot)
     (define-accessor-generic-functions boot)
     (enable-class-initialization boot)
