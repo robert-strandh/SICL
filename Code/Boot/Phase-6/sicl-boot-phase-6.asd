@@ -14,7 +14,6 @@
    (:file "enable-defmethod")
    (:file "enable-allocate-instance")
    (:file "enable-object-initialization")
-   (:file "enable-method-combinations")
    (:file "enable-generic-function-invocation")
    (:file "define-accessor-generic-functions")
    (:file "enable-class-initialization")
