@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-phase-3)
 
 (defun create-mop-classes (boot)
-  (with-accessors ((e2 sicl-boot:e2) (ea sicl-boot:e3))
+  (with-accessors ((ea sicl-boot:e3))
       boot
     (load-fasl "CLOS/t-defclass.fasl" ea)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* ea t)
