@@ -7,11 +7,55 @@
       boot
     (sicl-hir-interpreter:fill-environment e4)
     (import-functions-from-host
-     '()
+     '(cleavir-code-utilities:separate-function-body
+       cleavir-code-utilities:required
+       cleavir-code-utilities:parse-specialized-lambda-list
+       cleavir-code-utilities:proper-list-p
+       sicl-genv:typep
+       sicl-genv:fboundp
+       sicl-genv:fdefinition
+       (setf sicl-genv:fdefinition)
+       (setf sicl-genv:function-type)
+       (setf sicl-genv:function-lambda-list)
+       endp null consp atom eq not (setf cdr) apply
+       append
+       mapcar
+       subseq
+       elt
+       position-if
+       sicl-genv:find-class
+       1+ add-method copy-list
+       +)
      e2)
     (import-functions-from-host
-     '((setf sicl-genv:special-variable)
-       list null append)
+     '(cleavir-code-utilities:parse-generic-function-lambda-list
+       cleavir-code-utilities:required
+       cleavir-code-utilities:proper-list-p
+       (setf sicl-genv:special-variable)
+       sicl-genv:find-class
+       sicl-genv:typep
+       (setf sicl-genv:fdefinition)
+       (setf sicl-genv:macro-function)
+       sicl-genv:macro-function
+       sicl-genv:get-setf-expansion
+       sicl-genv:find-method-combination-template
+       (setf sicl-genv:find-method-combination-template)
+       sicl-loop::list-car sicl-loop::list-cdr
+       reverse
+       rplacd + member not symbolp functionp stringp
+       consp = first
+       shared-initialize
+       make-list set-difference set-exclusive-or
+       remove find-if adjoin
+       sicl-clos::make-automaton
+       sicl-clos::add-path
+       sicl-clos::extract-transition-information
+       floor = /=
+       find subseq list*
+       position sort mapcar eql equal
+       1+ nth assoc
+       apply endp cons eq coerce
+       list null append length cdr)
      e3)
     (import-functions-from-host
      '(funcall

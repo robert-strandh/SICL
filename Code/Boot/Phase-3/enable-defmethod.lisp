@@ -28,36 +28,12 @@
     (define-find-specializer-class-t-in-e3 e2 e3)
     (setf (sicl-genv:fdefinition 'ensure-generic-function e2)
           (sicl-genv:fdefinition 'ensure-generic-function e3))
-    (import-functions-from-host
-     '(mapcar
-       subseq
-       elt
-       position-if
-       sicl-genv:find-class
-       ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol
-       ;; was not given, then an instance of SPECIALIZER was.
-       sicl-genv:typep
-       sicl-genv:fboundp
-       sicl-genv:fdefinition
-       cleavir-code-utilities:separate-function-body
-       cleavir-code-utilities:required
-       cleavir-code-utilities:parse-specialized-lambda-list)
-     e2)
     (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype e2)
           #'closer-mop:class-prototype)
     (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class e2)
           #'closer-mop:generic-function-method-class)
-    ;; 1+ is called by PARSE-METHOD to obtain an interval designator
-    ;; for SUBSEQ in order to parse the method body.
-    (import-functions-from-host '(1+ add-method copy-list) e2)
     (flet ((ld (name environment)
              (load-fasl name environment)))
-      (import-functions-from-host
-       '((setf sicl-genv:fdefinition)
-         (setf sicl-genv:function-type)
-         (setf sicl-genv:function-lambda-list))
-       e2)
-      (import-function-from-host 'append e2)
       (ld "CLOS/make-method-for-generic-function.fasl" e2)
       (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e3)
             (sicl-genv:fdefinition 'sicl-clos::method-function e3))
