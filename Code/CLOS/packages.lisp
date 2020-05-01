@@ -121,7 +121,6 @@
    #:ensure-method
    #:default-superclasses
    #:allocate-general-instance
-   #:general-instance-p
    #:add-direct-method
    #:remove-direct-method
    ;; SICL-specific macro
