@@ -112,27 +112,25 @@
                (closer-mop:class-direct-subclasses class))))))
       (subclasses class))))
 
+(defmacro replicate-for-each-relevant-vectoroid (symbol &body body)
+  `(progn
+     ,@(loop for class in (class-subclasses (find-class 'vector))
+             unless (subtypep class '(array nil))
+               append (subst class symbol body))))
+
 (defun sequence-class-element-type (sequence-class)
   (if (subtypep sequence-class '(not vector))
       't
       (let ((direct-subclasses (closer-mop:class-direct-subclasses sequence-class)))
         (if (null direct-subclasses)
-            (array-element-type
-             (coerce nil sequence-class))
+            (array-element-type (coerce nil sequence-class))
             `(or ,@(mapcar #'sequence-class-element-type direct-subclasses))))))
-
-(defmacro replicate-for-each-relevant-vectoroid (symbol &body body)
-  `(progn
-     ,@(loop for class in (list* (find-class 'sequence)
-                                 (class-subclasses (find-class 'vector)))
-             unless (subtypep class '(array nil))
-               append (subst class symbol body))))
 
 ;;; A vectoroid is compatible with another vectoroid, if elements of the
 ;;; former can be stored in the latter, i.e., when the intersection of both
 ;;; element types is non-empty.
 (defmacro replicate-for-all-compatible-vectoroids (symbol-1 symbol-2 &body body)
-  (let ((vectoroid-classes (list* (find-class 'sequence) (class-subclasses (find-class 'vector))))
+  (let ((vectoroid-classes (class-subclasses (find-class 'vector)))
         (forms '()))
     (loop for class-1 in vectoroid-classes do
       (loop for class-2 in vectoroid-classes do
