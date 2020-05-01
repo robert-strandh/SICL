@@ -18,7 +18,7 @@
 (defun define-reader/writer-method-class (e2 e3)
   (sicl-boot:with-straddled-function-definitions
       ((sicl-clos::reader-method-class-default
-        sicl-clos::writer-method-class-default )
+        sicl-clos::writer-method-class-default)
        e2 e3)
     (load-fasl "CLOS/reader-writer-method-class-support.fasl" e2))
   (load-fasl "CLOS/reader-writer-method-class-defgenerics.fasl" e3)
