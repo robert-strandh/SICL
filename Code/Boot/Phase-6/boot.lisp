@@ -18,7 +18,7 @@
     (sicl-boot:enable-method-combinations #'load-fasl e5 e6)
     (define-stamp e6)
     (define-compile e5 e6)
-    (enable-generic-function-invocation boot)
+    (sicl-boot:enable-generic-function-invocation #'load-fasl e5 e6)
     (sicl-boot:define-accessor-generic-functions #'load-fasl e5 e6 e7)
     (enable-class-initialization boot)
     (sicl-boot:create-mop-classes #'load-fasl e6)
