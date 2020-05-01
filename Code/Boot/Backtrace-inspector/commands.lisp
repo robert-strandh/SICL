@@ -15,3 +15,15 @@
      :documentation "Show Source")
     (object)
   (list object))
+
+(define-inspector-command (com-inspect-argument :name t)
+    ((argument 'argument))
+  (sicl-boot-inspector:inspect argument))
+
+(clim:define-presentation-to-command-translator inspect-argument
+    (argument
+     com-inspect-argument
+     inspector
+     :documentation "Inspect Argument")
+    (object)
+  (list object))
