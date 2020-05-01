@@ -34,7 +34,8 @@
 
 (defun define-find-accessor-method-class (e2 e3)
   (setf (sicl-genv:fdefinition 'sicl-clos::find-accessor-method-class e3)
-        (lambda (class-name)
+        (lambda (class-name &optional error-p)
+          (declare (ignore error-p))
           (assert (member class-name
                           '(sicl-clos:standard-reader-method
                             sicl-clos:standard-writer-method)))
@@ -46,18 +47,19 @@
 
 (defun define-set-funcallable-instance-function (e3)
   (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e3)
-        #'closer-mop:set-funcallable-instance-function))
+        (lambda (funcallable-instance function)
+          (closer-mop:set-funcallable-instance-function
+           funcallable-instance
+           function))))
 
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3)) boot
-    (setf (sicl-genv:fdefinition 'typep e3)
-          (lambda (object type-specifier)
-            (sicl-genv:typep object type-specifier e3)))
-    (load-fasl "Cons/accessor-defuns.fasl" e2)
-    (load-fasl "Cons/cxr.fasl" e2)
     (define-classp e3)
-    (define-find-accessor-method-class e2 e3)
+    (define-sub-specializer-p e3)
+    (define-compute-applicable-methods e3)
+    (define-compute-effective-method e3)
+    (define-no-applicable-method e3)
     (define-set-funcallable-instance-function e3)
     (do-symbols (symbol (find-package '#:common-lisp))
       (when (special-operator-p symbol)
@@ -70,12 +72,7 @@
           (lambda (&rest args)
             (declare (ignore args))
             (error "(setf slot-value) called")))
-    (define-sub-specializer-p e3)
-    (define-compute-applicable-methods e3)
-    (sicl-boot:enable-method-combinations #'load-fasl e2 e3)
-    (define-compute-effective-method e3)
-    (define-no-applicable-method e3)
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e3)
     (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e3)
-    (define-compute-discriminating-function e3)
-    (load-fasl "CLOS/standard-instance-access.fasl" e3)))
+    (define-find-accessor-method-class e2 e3)
+    (define-compute-discriminating-function e3)))
