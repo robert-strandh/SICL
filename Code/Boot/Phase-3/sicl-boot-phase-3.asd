@@ -17,6 +17,5 @@
    (:file "define-stamp")
    (:file "define-compile")
    (:file "define-class-of")
-   (:file "enable-generic-function-invocation")
    (:file "enable-class-initialization")
    (:file "boot")))
