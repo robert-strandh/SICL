@@ -98,7 +98,6 @@
     (sicl-boot:enable-method-combinations #'load-fasl e2 e3)
     (define-compute-effective-method e3)
     (define-no-applicable-method e3)
-    (define-compile e3)
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e3)
     (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e3)
     (define-compute-discriminating-function e3)

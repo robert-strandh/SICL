@@ -12,6 +12,7 @@
     (enable-defmethod boot)
     (define-method-on-method-function e3)
     (define-stamp e3)
+    (define-compile e3)
     (enable-generic-function-invocation boot)
     (sicl-boot:define-accessor-generic-functions #'load-fasl e2 e3 e4)
     (enable-class-initialization boot)

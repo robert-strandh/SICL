@@ -87,7 +87,6 @@
           (lambda (&rest args)
             (declare (ignore args))
             (error "(setf slot-value) called")))
-    (define-compile e4 e5)
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e5)
     (load-fasl "Data-and-control-flow/setf-defmacro.fasl" e5)
     (define-find-accessor-method-class e4 e5)
