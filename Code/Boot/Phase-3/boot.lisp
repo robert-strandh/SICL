@@ -20,7 +20,7 @@
     (setf (sicl-genv:fdefinition 'typep e3)
           (lambda (object type-specifier)
             (sicl-genv:typep object type-specifier e3)))
-    (enable-generic-function-invocation boot)
+    (sicl-boot:enable-generic-function-invocation #'load-fasl e2 e3)
     (load-fasl "CLOS/standard-instance-access.fasl" e3)
     (sicl-boot:define-accessor-generic-functions #'load-fasl e2 e3 e4)
     (enable-class-initialization boot)
