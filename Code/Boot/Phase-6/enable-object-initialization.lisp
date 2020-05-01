@@ -4,9 +4,6 @@
   (with-accessors ((e5 sicl-boot:e5)
                    (e6 sicl-boot:e6))
       boot
-    ;; The function CLASS-OF is called by SHARED-INITIALIZE in order
-    ;; to get the slot-definition metaobjects.
-    (define-class-of e6)
     (setf (sicl-genv:special-variable 'sicl-clos:+unbound-slot-value+ e5 t)
           10000000)
     (load-fasl "CLOS/slot-bound-using-index.fasl" e5)

@@ -60,7 +60,6 @@
     (load-fasl "Cons/accessor-defuns.fasl" e2)
     (load-fasl "Cons/cxr.fasl" e2)
     (define-classp e3)
-    (define-class-of e3)
     (define-find-accessor-method-class e2 e3)
     (define-set-funcallable-instance-function e3)
     (do-symbols (symbol (find-package '#:common-lisp))

@@ -3,7 +3,6 @@
 (defun enable-object-initialization (boot)
   (with-accessors ((e3 sicl-boot:e3)
                    (e4 sicl-boot:e4)) boot
-    (define-class-of e4)
     ;; The support code for SHARED-INITIALIZE in phase 3 will need to
     ;; access various slots of class metaobjects and slot-definition
     ;; metaobjects.  Since we are initializing objects in E4, the
