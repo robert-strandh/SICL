@@ -1,0 +1,10 @@
+(cl:in-package #:sicl-boot-phase-3)
+
+(defun define-compile (e3)
+  (setf (sicl-genv:fdefinition 'compile e3)
+        (lambda (name &optional definition)
+          (assert (null name))
+          (assert (not (null definition)))
+          (let* ((cst (cst:cst-from-expression definition))
+                 (client (make-instance 'sicl-boot:client)))
+            (sicl-hir-interpreter:cst-eval client cst e3)))))

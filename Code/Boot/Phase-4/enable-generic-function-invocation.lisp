@@ -36,18 +36,10 @@
 
 (defun define-general-instance-access (boot)
   (with-accessors ((e3 sicl-boot:e3)
-                   (e4 sicl-boot:e4)) boot
+                   (e4 sicl-boot:e4))
+      boot
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e4)
           (sicl-genv:fdefinition 'sicl-clos::general-instance-p e3))))
-
-(defun define-compile (e4)
-  (setf (sicl-genv:fdefinition 'compile e4)
-        (lambda (name &optional definition)
-          (assert (null name))
-          (assert (not (null definition)))
-          (let* ((cst (cst:cst-from-expression definition))
-                 (client (make-instance 'sicl-boot:client)))
-            (sicl-hir-interpreter:cst-eval client cst e4)))))
 
 (defun define-no-applicable-method (e4)
   (load-fasl "CLOS/no-applicable-method-defgenerics.fasl" e4)
@@ -72,7 +64,8 @@
 
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e3 sicl-boot:e3)
-                   (e4 sicl-boot:e4)) boot
+                   (e4 sicl-boot:e4))
+      boot
     (define-classp e4)
     (define-sub-specializer-p e4)
     (define-compute-applicable-methods e4)

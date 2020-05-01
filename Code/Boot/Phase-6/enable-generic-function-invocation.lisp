@@ -41,18 +41,6 @@
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e6)
           (sicl-genv:fdefinition 'sicl-clos::general-instance-p e5))))
 
-(defun define-compile (e5 e6)
-  (setf (sicl-genv:fdefinition 'compile e6)
-        (lambda (name &optional definition)
-          (assert (null name))
-          (assert (not (null definition)))
-          (let* ((cst (cst:cst-from-expression definition))
-                 (client (make-instance 'sicl-boot:client))
-                 (ast (let ((cleavir-cst-to-ast::*origin* nil))
-                        (cleavir-cst-to-ast:cst-to-ast client cst e6)))
-                 (code-object (sicl-compiler:compile-ast client ast)))
-            (sicl-boot:tie-code-object client code-object e6 e5)))))
-
 (defun define-no-applicable-method (e6)
   (load-fasl "CLOS/no-applicable-method-defgenerics.fasl" e6)
   (load-fasl "CLOS/no-applicable-method.fasl" e6))

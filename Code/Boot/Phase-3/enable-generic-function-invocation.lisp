@@ -67,15 +67,6 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e3)
         #'closer-mop:set-funcallable-instance-function))
 
-(defun define-compile (e3)
-  (setf (sicl-genv:fdefinition 'compile e3)
-        (lambda (name &optional definition)
-          (assert (null name))
-          (assert (not (null definition)))
-          (let* ((cst (cst:cst-from-expression definition))
-                 (client (make-instance 'sicl-boot:client)))
-            (sicl-hir-interpreter:cst-eval client cst e3)))))
-
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3)) boot
