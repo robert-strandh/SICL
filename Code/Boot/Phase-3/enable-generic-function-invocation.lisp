@@ -37,7 +37,6 @@
   (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" e3)
   (define-stamp e3)
   (load-fasl "Cons/accessor-defuns.fasl" e3)
-  (load-fasl "Cons/cxr.fasl" e3)
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" e3)
   (load-fasl "CLOS/discriminating-tagbody.fasl" e3)
   (load-fasl "CLOS/compute-discriminating-function-support-c.fasl" e3)
