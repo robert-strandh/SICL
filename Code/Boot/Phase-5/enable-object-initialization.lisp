@@ -1,24 +1,5 @@
 (cl:in-package #:sicl-boot-phase-5)
 
-(defun define-class-of (e5)
-  (setf (sicl-genv:fdefinition 'class-of e5)
-        (lambda (object)
-          (let ((result (cond ((typep object 'sicl-boot-phase-3::header)
-                               (slot-value object 'sicl-boot-phase-3::%class))
-                              ((consp object)
-                               (sicl-genv:find-class 'cons e5))
-                              ((null object)
-                               (sicl-genv:find-class 'null e5))
-                              ((symbolp object)
-                               (sicl-genv:find-class 'symbol e5))
-                              ((integerp object)
-                               (sicl-genv:find-class 'fixnum e5))
-                              ((streamp object)
-                               (sicl-genv:find-class 't e5))
-                              (t
-                               (class-of object)))))
-            result))))
-
 (defun enable-object-initialization (boot)
   (with-accessors ((e4 sicl-boot:e4)
                    (e5 sicl-boot:e5)) boot

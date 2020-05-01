@@ -13,6 +13,7 @@
    (:file "finalize-all-classes")
    (:file "enable-defmethod")
    (:file "enable-allocate-instance")
+   (:file "define-class-of")
    (:file "enable-object-initialization")
    (:file "define-stamp")
    (:file "define-compile")
