@@ -28,7 +28,6 @@
 
 (defun define-compute-discriminating-function (e4)
   (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" e4)
-  (define-stamp e4)
   (load-fasl "Cons/accessor-defuns.fasl" e4)
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" e4)
   (load-fasl "CLOS/discriminating-tagbody.fasl" e4)
