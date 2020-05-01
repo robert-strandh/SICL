@@ -51,9 +51,6 @@
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3)) boot
-    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e3)
-          (lambda (object)
-            (typep object 'header)))
     (setf (sicl-genv:fdefinition 'typep e3)
           (lambda (object type-specifier)
             (sicl-genv:typep object type-specifier e3)))

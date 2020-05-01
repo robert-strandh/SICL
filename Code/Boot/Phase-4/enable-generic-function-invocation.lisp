@@ -28,13 +28,6 @@
   (load-fasl "CLOS/compute-discriminating-function-support-c.fasl" e4)
   (load-fasl "CLOS/compute-discriminating-function-defmethods.fasl" e4))
 
-(defun define-general-instance-access (boot)
-  (with-accessors ((e3 sicl-boot:e3)
-                   (e4 sicl-boot:e4))
-      boot
-    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e4)
-          (sicl-genv:fdefinition 'sicl-clos::general-instance-p e3))))
-
 (defun define-no-applicable-method (e4)
   (load-fasl "CLOS/no-applicable-method-defgenerics.fasl" e4)
   (load-fasl "CLOS/no-applicable-method.fasl" e4))
@@ -68,7 +61,6 @@
     (define-compute-applicable-methods e4)
     (define-compute-effective-method e4)
     (define-no-applicable-method e4)
-    (define-general-instance-access boot)
     (define-set-funcallable-instance-function e4)
     (do-symbols (symbol (find-package '#:common-lisp))
       (when (special-operator-p symbol)
