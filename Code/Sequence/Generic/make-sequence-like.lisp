@@ -14,7 +14,11 @@
            (error "Length mismatch in ~S." 'make-sequence-like))
          (let ((result (make-list length)))
            (replace result initial-contents)
-           result))))
+           result))
+        (t
+         (make-list (list-length list)))))
+
+(seal-domain #'make-sequence-like '(list t))
 
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod make-sequence-like
@@ -33,4 +37,4 @@
           (t
            (make-array length :element-type (array-element-type vectoroid))))))
 
-(seal-domain #'make-sequence-like '(sequence t))
+(seal-domain #'make-sequence-like '(vector t))

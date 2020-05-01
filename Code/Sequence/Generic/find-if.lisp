@@ -8,6 +8,8 @@
           (when (predicate (key element))
             (return-from find-if element)))))))
 
+(seal-domain #'find-if '(t list))
+
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod find-if (predicate (vectoroid #1#) &key from-end (start 0) end key)
     (with-predicate (predicate predicate)
@@ -15,3 +17,5 @@
         (for-each-relevant-element (element index vectoroid start end from-end)
           (when (predicate (key element))
             (return-from find-if element)))))))
+
+(seal-domain #'find-if '(t vector))

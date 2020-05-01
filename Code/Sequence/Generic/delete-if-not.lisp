@@ -7,6 +7,8 @@
        (lambda (x) (not (predicate (key x))))
        list from-end start end count))))
 
+(seal-domain #'delete-if-not '(t list))
+
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod delete-if-not (test (vectoroid #1#) &key from-end (start 0) end count key)
     (with-predicate (predicate test)
@@ -14,3 +16,5 @@
         (delete-in-vector
          (lambda (x) (not (predicate (key x))))
          vectoroid from-end start end count)))))
+
+(seal-domain #'delete-if-not '(t vector))

@@ -9,6 +9,8 @@
             (incf count)))))
     count))
 
+(seal-domain #'count '(t list))
+
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod count (item (vectoroid #1#) &key from-end (start 0) end key test test-not)
     (let ((count 0))
@@ -19,4 +21,4 @@
               (incf count)))))
       count)))
 
-(seal-domain #'count '(t sequence))
+(seal-domain #'count '(t vector))

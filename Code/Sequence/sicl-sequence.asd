@@ -29,6 +29,7 @@
      (:file "for-each-relevant-element")
      (:file "make-sequence-reader")
      (:file "make-sequence-writer")
+     (:file "apply-to-sequence-iterators")
 
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the remaining functions.
@@ -50,6 +51,9 @@
      (:file "nsubstitute")
      (:file "nsubstitute-if")
      (:file "nsubstitute-if-not")
+     (:file "position-if")
+     (:file "position-if-not")
+     (:file "position")
      (:file "reduce")
      (:file "remove-duplicates")
      (:file "remove-if")

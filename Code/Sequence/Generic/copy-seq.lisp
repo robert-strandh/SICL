@@ -10,8 +10,10 @@
          (result))
       (collect (car rest)))))
 
+(seal-domain #'copy-seq '(list))
+
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod copy-seq ((vector #1#))
     (make-sequence-like vector (length vector) :initial-contents vector)))
 
-(seal-domain #'copy-seq '(sequence))
+(seal-domain #'copy-seq '(vector))

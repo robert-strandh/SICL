@@ -7,11 +7,13 @@
     (let* ((n (length sequences))
            (function (function-designator-function function))
            (writer (make-sequence-writer list 0 nil nil #'terminate))
-           (readers (make-array n :element-type 'function :initial-element #'values)))
+           (readers (make-array n)))
       (loop for index below n and sequence in sequences do
         (setf (aref readers index)
               (make-sequence-reader sequence 0 nil nil #'terminate)))
       (apply-to-sequence-iterators writer function readers))))
+
+(seal-domain #'map-into '(list t))
 
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod map-into ((vector #1#) function &rest sequences)
@@ -25,8 +27,10 @@
       (let* ((n (length sequences))
              (function (function-designator-function function))
              (writer (make-sequence-writer vector 0 nil nil #'terminate))
-             (readers (make-array n :element-type 'function :initial-element #'values)))
+             (readers (make-array n)))
         (loop for index below n and sequence in sequences do
           (setf (aref readers index)
                 (make-sequence-reader sequence 0 nil nil #'terminate)))
         (apply-to-sequence-iterators writer function readers)))))
+
+(seal-domain #'map-into '(vector t))
