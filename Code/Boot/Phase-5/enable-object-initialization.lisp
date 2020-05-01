@@ -46,5 +46,4 @@
     (load-fasl "CLOS/initialize-instance-support.fasl" e5)
     (load-fasl "CLOS/initialize-instance-defgenerics.fasl" e5)
     (load-fasl "CLOS/initialize-instance-defmethods.fasl" e5)
-    (load-fasl "CLOS/make-instance-support.fasl" e4)
     (sicl-boot:define-make-instance e4 e5)))
