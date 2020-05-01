@@ -10,22 +10,17 @@
 
 ;;; FIXME: check validity also for generic functions
 
-(defun initarg-in-list-p (initarg list)
-  (loop for indicator in list by #'cddr
-        when (eq initarg indicator)
-          return t))
-
 (defun make-instance-default (class initialize-instance &rest initargs)
   (unless (class-finalized-p class)
     (finalize-inheritance class))
   ;; FIXME: check shape of initargs (proper, length is even, etc.).
   (let ((defaulted-initargs initargs))
-    (loop for default-initarg in (class-default-initargs class)
-          do (unless (initarg-in-list-p (car default-initarg) initargs)
+    (loop with default = (load-time-value (list nil))
+          for (name form thunk) in (class-default-initargs class)
+          do (when (eq (getf initargs name default) default)
                (setf defaulted-initargs
                      (append defaulted-initargs
-                             (list (first default-initarg)
-                                   (funcall (third default-initarg)))))))
+                             (list name (funcall thunk))))))
     (let ((instance (apply #'allocate-instance class defaulted-initargs)))
       (apply initialize-instance instance defaulted-initargs)
       instance)))
