@@ -10,12 +10,6 @@
 (defun define-sub-specializer-p (environment)
   (load-fasl "CLOS/sub-specializer-p.fasl" environment))
 
-;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
-;;; get the class of each of the arguments passed to a generic
-;;; function.  It calls SORT to sort the applicable methods in order
-;;; from most specific to least specific.  EQL is called to compare
-;;; the object of an EQL specializer to an argument passed to a
-;;; generic function.
 (defun define-compute-applicable-methods (e5)
   (load-fasl "CLOS/compute-applicable-methods-support.fasl" e5)
   (load-fasl "CLOS/compute-applicable-methods-defgenerics.fasl" e5)
