@@ -13,6 +13,8 @@
               (make-sequence-reader sequence 0 nil nil #'terminate)))
       (apply-to-sequence-iterators writer function readers))))
 
+(seal-domain #'map-into '(list t))
+
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod map-into ((vector #1#) function &rest sequences)
     (when (adjustable-array-p vector)
@@ -30,3 +32,5 @@
           (setf (aref readers index)
                 (make-sequence-reader sequence 0 nil nil #'terminate)))
         (apply-to-sequence-iterators writer function readers)))))
+
+(seal-domain #'map-into '(vector t))

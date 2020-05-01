@@ -18,6 +18,8 @@
         (t
          (make-list (list-length list)))))
 
+(seal-domain #'make-sequence-like '(list t))
+
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod make-sequence-like
     ((vectoroid #1#) length &key (initial-element nil initial-element-p)
@@ -35,4 +37,4 @@
           (t
            (make-array length :element-type (array-element-type vectoroid))))))
 
-(seal-domain #'make-sequence-like '(sequence t))
+(seal-domain #'make-sequence-like '(vector t))
