@@ -36,7 +36,8 @@
 
 (defun define-general-instance-access (boot)
   (with-accessors ((e4 sicl-boot:e4)
-                   (e5 sicl-boot:e5)) boot
+                   (e5 sicl-boot:e5))
+      boot
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e5)
           (sicl-genv:fdefinition 'sicl-clos::general-instance-p e4))))
 
@@ -71,11 +72,15 @@
 
 (defun define-set-funcallable-instance-function (e5)
   (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e5)
-        #'closer-mop:set-funcallable-instance-function))
+        (lambda (funcallable-instance function)
+          (closer-mop:set-funcallable-instance-function
+           funcallable-instance
+           function))))
 
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e4 sicl-boot:e4)
-                   (e5 sicl-boot:e5)) boot
+                   (e5 sicl-boot:e5))
+      boot
     (define-classp e5)
     (define-sub-specializer-p e5)
     (define-compute-applicable-methods e5)
