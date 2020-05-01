@@ -26,10 +26,6 @@
   (load-fasl "CLOS/compute-effective-method-support.fasl" e4)
   (load-fasl "CLOS/compute-effective-method-defmethods.fasl" e4))
 
-(defun define-stamp (e4)
-  (setf (sicl-genv:fdefinition 'sicl-clos::stamp e4)
-        (sicl-genv:fdefinition 'sicl-clos::stamp sicl-boot:*e3*)))
-
 (defun define-compute-discriminating-function (e4)
   (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" e4)
   (define-stamp e4)
