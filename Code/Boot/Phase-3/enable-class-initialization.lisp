@@ -16,20 +16,21 @@
   (load-fasl "CLOS/add-remove-direct-method-defmethods.fasl" e3))
 
 (defun define-reader/writer-method-class (e2 e3)
-  (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class e3)
-        (lambda (&rest arguments)
-          (declare (ignore arguments))
-          (sicl-genv:find-class 'sicl-clos:standard-reader-method e2)))
-  (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class e3)
-        (lambda (&rest arguments)
-          (declare (ignore arguments))
-          (sicl-genv:find-class 'sicl-clos:standard-writer-method e2))))
+  (sicl-boot:with-straddled-function-definitions
+      ((sicl-clos::reader-method-class-default
+        sicl-clos::writer-method-class-default )
+       e2 e3)
+    (load-fasl "CLOS/reader-writer-method-class-support.fasl" e2))
+  (load-fasl "CLOS/reader-writer-method-class-defgenerics.fasl" e3)
+  (load-fasl "CLOS/reader-writer-method-class-defmethods.fasl" e3))
 
 (defun define-direct-slot-definition-class (e2 e3)
-  (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class e3)
-        (lambda (&rest arguments)
-          (declare (ignore arguments))
-          (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e2))))
+  (sicl-boot:with-straddled-function-definitions
+      ((sicl-clos::direct-slot-definition-class-default)
+       e2 e3)
+    (load-fasl "CLOS/direct-slot-definition-class-support.fasl" e2))
+  (load-fasl "CLOS/direct-slot-definition-class-defgeneric.fasl" e3)
+  (load-fasl "CLOS/direct-slot-definition-class-defmethods.fasl" e3))
 
 (defun define-find-or-create-generic-function (e3 e4)
   (setf (sicl-genv:fdefinition 'sicl-clos::find-or-create-generic-function e3)
@@ -89,6 +90,8 @@
     (define-validate-superclass e3)
     (define-direct-slot-definition-class e2 e3)
     (define-add-remove-direct-subclass e3)
+    (load-fasl "Environment/find-class-defun.fasl" e2)
+    (load-fasl "Environment/find-class-defun.fasl" e3)
     (define-reader/writer-method-class e2 e3)
     (define-add-remove-direct-method e3)
     (define-dependent-protocol e3)
@@ -100,5 +103,4 @@
           (lambda (class) (declare (ignore class)) '()))
     (load-fasl "CLOS/class-initialization-support.fasl" e3)
     (load-fasl "CLOS/class-initialization-defmethods.fasl" e3)
-    (load-fasl "Environment/find-class-defun.fasl" e3)
     (define-ensure-class e2 e3)))
