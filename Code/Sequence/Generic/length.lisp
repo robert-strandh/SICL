@@ -11,9 +11,11 @@
                  (len (cdr rest) (1+ counter)))))
     (len list 0)))
 
+(seal-domain #'length '(list))
+
 (replicate-for-each-relevant-vectoroid #1=#:vector
   (defmethod length ((vector #1#))
     (declare (method-properties inlineable))
     (cl:length vector)))
 
-(seal-domain #'length '(sequence))
+(seal-domain #'length '(vector))

@@ -50,6 +50,8 @@
                         :in-sequence list
                         :expected-type `(integer ,start ,(1- index)))))))))
 
+(seal-domain #'make-sequence-writer '(list t t t t))
+
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
   (defmethod make-sequence-writer ((vector #1#) start end from-end terminate)
     (declare (method-properties inlineable))
@@ -80,4 +82,4 @@
                            (i (decf index)))
                        (values v i))))))))))
 
-(seal-domain #'make-sequence-writer '(sequence t t t t))
+(seal-domain #'make-sequence-writer '(vector t t t t))

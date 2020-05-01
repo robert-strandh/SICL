@@ -5,10 +5,12 @@
     (setf (car cons) item))
   list)
 
+(seal-domain #'fill '(list t))
+
 (replicate-for-each-relevant-vectoroid #1=#:vectoriod
   (defmethod fill ((vectoroid #1#) item &key (start 0) end)
     (for-each-relevant-element (element index vectoroid start end)
       (setf element item))
     vectoroid))
 
-(seal-domain #'fill '(sequence t))
+(seal-domain #'fill '(vector t))
