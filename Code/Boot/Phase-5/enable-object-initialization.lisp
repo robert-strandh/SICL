@@ -47,13 +47,4 @@
     (load-fasl "CLOS/initialize-instance-defgenerics.fasl" e5)
     (load-fasl "CLOS/initialize-instance-defmethods.fasl" e5)
     (load-fasl "CLOS/make-instance-support.fasl" e4)
-    (setf (sicl-genv:fdefinition 'make-instance e5)
-          (lambda (class &rest initargs)
-            (let ((class-metaobject
-                    (if (symbolp class)
-                        (sicl-genv:find-class class e4)
-                        class)))
-              (apply (sicl-genv:fdefinition 'sicl-clos::make-instance-default e4)
-                     class-metaobject
-                     (sicl-genv:fdefinition 'initialize-instance e5)
-                     initargs))))))
+    (sicl-boot:define-make-instance e4 e5)))
