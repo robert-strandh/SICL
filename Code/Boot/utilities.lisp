@@ -87,36 +87,29 @@
 ;;; environments during bootstrapping, it is possible that the
 ;;; definition of the function already exists in En-1 and that we need
 ;;; to preserve it that way.  In that case, we can not simply load the
-;;; definition into En-1.  We must first save the existing definition
-;;; (if there is one) and restore it after the new one has been copied
-;;; over to En.  This macro addresses that problem.
-;;;
-;;; FUNCTION-NAMES is a list of function names that need to be saved
-;;; from ENV1 before the BODY is executed and restored afterward.  It
-;;; is assumed that the BODY defines the names in FUNCTION-NAMES in
-;;; ENV1.  So after the BODY has been evaluated, we copy the function
-;;; definitions of the names in FUNCTION-NAMES from ENV1 to ENV2.  If
-;;; some name was not defined in ENV1, we obviously do not attempt to
-;;; save the definition.  Instead, after the definition has been
-;;; copied, we make the name unbound in ENV1.
+;;; definition into En-1.  We solve this problem by intercepting any
+;;; attempts to set the FDEFINITION of one of a list of function names.
+
+;;; FUNCTION-NAMES is a list of function names need to be prevented
+;;; from causing a SETF of FDEFINITION during the execution of BODY.
+
+(defparameter *intercepted-function-names* '())
+
+(defparameter *intercepted-functions* '())
+
+(defmethod (setf sicl-genv:fdefinition) :around
+    (new-definition function-name (environment environment))
+  (if (member function-name *intercepted-function-names* :test #'equal)
+      (setf *intercepted-functions*
+            (append *intercepted-functions* (list new-definition)))
+      (call-next-method)))
+
 (defmacro with-straddled-function-definitions
-    ((function-names env1 env2) &body body)
-  (let ((name-temps (loop for name in function-names collect (gensym))))
-    `(let ,(loop for function-name in function-names
-                 for name-temp in name-temps
-                 collect `(,name-temp
-                           (if (sicl-genv:fboundp ',function-name ,env1)
-                               (sicl-genv:fdefinition ',function-name ,env1)
-                               nil)))
-       ,@(loop for function-name in function-names
-               collect `(sicl-genv:fmakunbound ',function-name ,env1))
-       ,@body
-       ,@(loop for function-name in function-names
-               collect `(setf (sicl-genv:fdefinition ',function-name ,env2)
-                              (sicl-genv:fdefinition ',function-name ,env1)))
-       ,@(loop for function-name in function-names
-               for name-temp in name-temps
-               collect `(if (null ,name-temp)
-                            (sicl-genv:fmakunbound ',function-name ,env1)
-                            (setf (sicl-genv:fdefinition ',function-name ,env1)
-                                  ,name-temp))))))
+    ((function-names env) &body body)
+  `(let ((*intercepted-function-names* ',function-names)
+         (*intercepted-functions* '()))
+     ,@body
+     (setf *intercepted-function-names* '())
+     (loop for name in ',function-names
+           for function in *intercepted-functions*
+           do (setf (sicl-genv:fdefinition name ,env) function))))
