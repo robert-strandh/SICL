@@ -19,7 +19,7 @@
   (sicl-boot:with-straddled-function-definitions
       ((sicl-clos::reader-method-class-default
         sicl-clos::writer-method-class-default)
-       e4 e5)
+       e5)
     (load-fasl "CLOS/reader-writer-method-class-support.fasl" e4))
   (load-fasl "CLOS/reader-writer-method-class-defgenerics.fasl" e5)
   (load-fasl "CLOS/reader-writer-method-class-defmethods.fasl" e5))
@@ -27,7 +27,7 @@
 (defun define-direct-slot-definition-class (e4 e5)
   (sicl-boot:with-straddled-function-definitions
       ((sicl-clos::direct-slot-definition-class-default)
-       e4 e5)
+       e5)
     (load-fasl "CLOS/direct-slot-definition-class-support.fasl" e4))
   (load-fasl "CLOS/direct-slot-definition-class-defgeneric.fasl" e5)
   (load-fasl "CLOS/direct-slot-definition-class-defmethods.fasl" e5))

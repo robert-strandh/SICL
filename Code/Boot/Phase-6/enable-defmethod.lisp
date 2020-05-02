@@ -32,6 +32,6 @@
     (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e6)
           (sicl-genv:fdefinition 'sicl-clos::method-function e5))
     (sicl-boot:with-straddled-function-definitions
-        ((sicl-clos::ensure-method) e5 e6)
+        ((sicl-clos::ensure-method) e6)
       (load-fasl "CLOS/ensure-method.fasl" e5))
     (define-create-method-lambda e6)))

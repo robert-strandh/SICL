@@ -13,7 +13,7 @@
       boot
     (sicl-boot:with-straddled-function-definitions
         ((sicl-clos::effective-slot-definition-class-default)
-         e4 e5)
+         e5)
       (load-fasl "CLOS/effective-slot-definition-class-support.fasl" e4))
     (load-fasl "CLOS/effective-slot-definition-class-defgeneric.fasl" e5)
     (load-fasl "CLOS/effective-slot-definition-class-defmethods.fasl" e5)))
