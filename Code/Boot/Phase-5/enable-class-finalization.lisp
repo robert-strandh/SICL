@@ -15,8 +15,6 @@
   (with-accessors ((e4 sicl-boot:e4)) boot
     (load-fasl "CLOS/class-finalization-defgenerics.fasl" e4)
     (load-fasl "CLOS/class-finalization-support.fasl" e4)
-    ;; FIXME: Temporary import.
-    (import-function-from-host 'error (sicl-boot:e3 boot))
     (load-fasl "CLOS/class-finalization-defmethods.fasl" e4)))
 
 (defun enable-class-finalization (boot)
