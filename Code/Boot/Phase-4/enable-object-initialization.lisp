@@ -20,21 +20,10 @@
     (load-fasl "CLOS/slot-value-etc-support.fasl" e3)
     (load-fasl "CLOS/slot-value-etc-defmethods.fasl" e3)
     (load-fasl "CLOS/instance-slots-offset-defconstant.fasl" e3)
-    (load-fasl "CLOS/shared-initialize-support.fasl" e3)
-    ;; Instead of loading the file containing the definition of
-    ;; SHARED-INITIALIZE-DEFAULT, we define our own version here
-    ;; so that we can have it call the main workhorse function
-    ;; SHARED-INITIALIZE-DEFAULT-USING-CLASS-AND-SLOTS in E3.
-    (setf (sicl-genv:fdefinition 'sicl-clos::shared-initialize-default e4)
-          (lambda (instance slot-names &rest initargs)
-            (let* ((class-of (sicl-genv:fdefinition 'class-of e4))
-                   (class (funcall class-of instance))
-                   (class-slots (sicl-genv:fdefinition 'sicl-clos:class-slots e3))
-                   (slots (funcall class-slots class)))
-              (apply (sicl-genv:fdefinition
-                      'sicl-clos::shared-initialize-default-using-class-and-slots
-                      e3)
-                     instance slot-names class slots initargs))))
+    (sicl-boot:with-straddled-function-definitions
+        ((sicl-clos::shared-initialize-default-using-class)
+         e4)
+      (load-fasl "CLOS/shared-initialize-support.fasl" e3))
     (load-fasl "CLOS/shared-initialize-defgenerics.fasl" e4)
     (load-fasl "CLOS/shared-initialize-defmethods.fasl" e4)
     (load-fasl "CLOS/initialize-instance-support.fasl" e4)
