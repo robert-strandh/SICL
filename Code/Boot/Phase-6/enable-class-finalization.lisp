@@ -1,12 +1,5 @@
 (cl:in-package #:sicl-boot-phase-6)
 
-;;; In phase 6, the purpose of class finalization is to finalize the
-;;; ersatz classes in E5, so that we can create ersatz generic
-;;; functions in E7, and ersatz classes in E6.  In other words, we are
-;;; using accessors that operate on the ersatz classes in E5, and
-;;; those accessors are found in E5 as well.  For that reason, most of
-;;; the code in this file refers to E5.
-
 (defun define-effective-slot-definition-class (boot)
   (with-accessors ((e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
