@@ -8,7 +8,7 @@
                  `(let ,(loop for gensym in gensyms
                               for index from 0
                               collect
-                              `(,gensym (svref readers ,index)))
+                              `(,gensym (the function (svref readers ,index))))
                     (loop
                       (funcall
                        writer

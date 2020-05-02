@@ -46,6 +46,7 @@
      (:file "find-if")
      (:file "find-if-not")
      (:file "map-into")
+     (:file "map")
      (:file "mismatch")
      (:file "nreverse")
      (:file "nsubstitute")

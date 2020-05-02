@@ -19,6 +19,7 @@
     #:fill
     #:subseq
     #:map-into
+    #:map
     #:reduce
     #:count
     #:count-if
