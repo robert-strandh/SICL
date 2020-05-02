@@ -22,4 +22,5 @@
    (:file "create-mop-classes")
    (:file "define-accessor-generic-functions")
    (:file "enable-generic-function-invocation")
-   (:file "define-make-instance")))
+   (:file "define-make-instance")
+   (:file "enable-class-finalization")))
