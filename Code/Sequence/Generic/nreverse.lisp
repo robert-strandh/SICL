@@ -11,8 +11,8 @@
   (defmethod nreverse ((vectoroid #1#))
     (let ((n (length vectoroid)))
       (loop for index below (floor n 2) do
-        (rotatef (aref vectoroid index)
-                 (aref vectoroid (- n index 1)))))
+        (rotatef (elt vectoroid index)
+                 (elt vectoroid (- n index 1)))))
     vectoroid))
 
 (seal-domain #'nreverse '(vector))

@@ -13,42 +13,30 @@
           (lambda (new-value)
             (cond ((= index limit)
                    (funcall terminate (- index start)))
-                  ((consp rest)
+                  ((endp rest)
+                   (unless (null end)
+                     (error 'invalid-end-index
+                            :datum index
+                            :in-sequence list
+                            :expected-type `(integer ,start ,(1- index))))
+                   (funcall terminate (- index start)))
+                  (t
                    (let ((v (shiftf (first rest) new-value))
                          (i index))
                      (setf rest (cdr rest))
                      (incf index)
-                     (values v i)))
-                  ((not (null rest))
-                   (error 'must-be-proper-list
-                          :datum list))
-                  ((null end)
-                   (funcall terminate (- index start)))
-                  (t
-                   (error 'invalid-end-index
-                          :datum index
-                          :in-sequence list
-                          :expected-type `(integer ,start ,(1- index))))))))
+                     (values v i)))))))
       ;; Backward iteration.
-      (let* ((rest (cl:nreverse (cl:subseq list start end)))
+      (let* ((rest (nreverse (subseq list start end)))
              (index (length rest)))
         (declare (array-length index))
         (lambda (new-value)
-          (cond ((= index start)
-                 (funcall terminate (- end index)))
-                ((consp rest)
-                 (let ((v (shiftf (first rest) new-value))
-                       (i (decf index)))
-                   (setf rest (cdr rest))
-                   (values v i)))
-                ((not (null rest))
-                 (error 'must-be-proper-list
-                        :datum list))
-                (t
-                 (error 'invalid-end-index
-                        :datum index
-                        :in-sequence list
-                        :expected-type `(integer ,start ,(1- index)))))))))
+          (if (= index start)
+              (funcall terminate (- end index))
+              (let ((v (shiftf (first rest) new-value))
+                    (i (decf index)))
+                (setf rest (cdr rest))
+                (values v i)))))))
 
 (seal-domain #'make-sequence-writer '(list t t t t))
 
@@ -67,7 +55,7 @@
               (cond ((= index end)
                      (funcall terminate (- index start)))
                     (t
-                     (let ((v (shiftf (aref vector index) new-value))
+                     (let ((v (shiftf (elt vector index) new-value))
                            (i index))
                        (incf index)
                        (values v i))))))
@@ -78,7 +66,7 @@
               (cond ((= index start)
                      (funcall terminate (- end index)))
                     (t
-                     (let ((v (shiftf (aref vector index) new-value))
+                     (let ((v (shiftf (elt vector index) new-value))
                            (i (decf index)))
                        (values v i))))))))))
 

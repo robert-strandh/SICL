@@ -12,8 +12,8 @@
     (let* ((n (length vectoroid))
            (result (make-array n :element-type (array-element-type vectoroid))))
       (loop for index below n do
-        (setf (aref result index)
-              (aref vectoroid (- n index 1))))
+        (setf (elt result index)
+              (elt vectoroid (- n index 1))))
       result)))
 
 (seal-domain #'reverse '(vector))

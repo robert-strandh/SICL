@@ -9,7 +9,7 @@
            (writer (make-sequence-writer list 0 nil nil #'terminate))
            (readers (make-array n)))
       (loop for index below n and sequence in sequences do
-        (setf (aref readers index)
+        (setf (elt readers index)
               (make-sequence-reader sequence 0 nil nil #'terminate)))
       (apply-to-sequence-iterators writer function readers))))
 
@@ -29,7 +29,7 @@
              (writer (make-sequence-writer vector 0 nil nil #'terminate))
              (readers (make-array n)))
         (loop for index below n and sequence in sequences do
-          (setf (aref readers index)
+          (setf (elt readers index)
                 (make-sequence-reader sequence 0 nil nil #'terminate)))
         (apply-to-sequence-iterators writer function readers)))))
 
