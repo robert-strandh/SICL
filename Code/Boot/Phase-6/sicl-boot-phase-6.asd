@@ -9,7 +9,6 @@
    (:file "environment")
    (:file "utilities")
    (:file "import-from-host")
-   (:file "enable-class-finalization")
    (:file "finalize-all-classes")
    (:file "enable-defmethod")
    (:file "enable-allocate-instance")
