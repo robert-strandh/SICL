@@ -2,13 +2,14 @@
 
 (defun boot (boot)
   (format *trace-output* "Start of phase 6~%")
-  (with-accessors ((e5 sicl-boot:e5)
+  (with-accessors ((e4 sicl-boot:e4)
+                   (e5 sicl-boot:e5)
                    (e6 sicl-boot:e6)
                    (e7 sicl-boot:e7))
       boot
     (change-class e6 'environment)
     (import-from-host boot)
-    (enable-class-finalization boot)
+    (enable-class-finalization e4 e5)
     (finalize-all-classes boot)
     (enable-defmethod boot)
     (enable-allocate-instance e5)
