@@ -240,7 +240,6 @@
     (cf "CLOS/slot-value-etc-defmethods.lisp")
     (cf "CLOS/instance-slots-offset-defconstant.lisp")
     (cf "CLOS/shared-initialize-support.lisp")
-    (cf "CLOS/shared-initialize-default-defun.lisp")
     (cf "CLOS/shared-initialize-defgenerics.lisp")
     (cf "CLOS/shared-initialize-defmethods.lisp")
     (cf "CLOS/initialize-instance-support.lisp")
