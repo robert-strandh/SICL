@@ -4,12 +4,10 @@
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3))
       boot
-    (setf (sicl-genv:fdefinition
-           'sicl-clos::effective-slot-definition-class-default e3)
-          (lambda (class &rest initargs)
-            (declare (ignore class initargs))
-            (sicl-genv:find-class
-             'sicl-clos:standard-effective-slot-definition e2)))
+    (sicl-boot:with-straddled-function-definitions
+        ((sicl-clos::effective-slot-definition-class-default)
+         e3)
+      (load-fasl "CLOS/effective-slot-definition-class-support.fasl" e2))
     (load-fasl "CLOS/effective-slot-definition-class-defgeneric.fasl" e3)
     (load-fasl "CLOS/effective-slot-definition-class-defmethods.fasl" e3)))
 
