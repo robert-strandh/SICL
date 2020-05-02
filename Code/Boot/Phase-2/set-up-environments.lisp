@@ -4,11 +4,13 @@
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3))
       boot
-    (sicl-boot:import-function-from-host 'funcall e2)
-    (sicl-boot:import-function-from-host 'cons e2)
-    (sicl-boot:import-function-from-host 'funcall e3)
-    (sicl-boot:import-function-from-host '(setf sicl-genv:function-lambda-list) e3)
-    (sicl-boot:import-function-from-host '(setf sicl-genv:function-type) e3)
     (sicl-hir-interpreter:fill-environment e2)
     (sicl-hir-interpreter:fill-environment e3)
-    (sicl-boot:import-function-from-host 'list e2)))
+    (sicl-boot:import-functions-from-host
+     '(funcall cons list error)
+     e2)
+    (sicl-boot:import-functions-from-host
+     '((setf sicl-genv:function-lambda-list)
+       (setf sicl-genv:function-type)
+       funcall)
+     e3)))
