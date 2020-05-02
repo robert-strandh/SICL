@@ -39,5 +39,5 @@
             (sicl-genv:fdefinition 'sicl-clos::method-function e3))
       (define-make-specializer-in-e2 e2)
       (sicl-boot:with-straddled-function-definitions
-          ((sicl-clos::ensure-method) e2 e3)
+          ((sicl-clos::ensure-method) e3)
         (ld "CLOS/ensure-method.fasl" e2)))))
