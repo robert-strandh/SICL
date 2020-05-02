@@ -8,9 +8,13 @@
                  `(let ,(loop for gensym in gensyms
                               for index from 0
                               collect
-                              `(,gensym (aref readers ,index)))
+                              `(,gensym (svref readers ,index)))
                     (loop
-                      (funcall writer (funcall function ,@gensyms)))))))
+                      (funcall
+                       writer
+                       (funcall
+                        function
+                        ,@(loop for gensym in gensyms collect `(funcall ,gensym)))))))))
     (let ((n (length readers)))
       (case n
         (0 (loop-apply-n 0))
@@ -27,5 +31,5 @@
          (loop
            (let ((args '()))
              (loop for index from (1- n) downto 0 do
-               (push (funcall (aref readers index)) args))
+               (push (funcall (elt readers index)) args))
              (funcall writer (apply function args)))))))))
