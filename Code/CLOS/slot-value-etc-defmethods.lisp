@@ -41,7 +41,7 @@
 
 (defmethod (setf slot-value-using-class)
     (new-value
-   (class standard-class)
+     (class standard-class)
      object
    (slot standard-effective-slot-definition))
   (setf (slot-value-using-class-default class object slot) new-value))
