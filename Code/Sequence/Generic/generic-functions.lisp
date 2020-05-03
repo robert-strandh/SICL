@@ -28,10 +28,6 @@
     (sequence start &optional end)
   (:generic-function-class sequence-function))
 
-(defgeneric map-into
-    (result-sequence function &rest sequences)
-  (:generic-function-class sequence-function))
-
 (defgeneric reduce
     (function sequence &key key from-end start end initial-value)
   (:generic-function-class sequence-function))

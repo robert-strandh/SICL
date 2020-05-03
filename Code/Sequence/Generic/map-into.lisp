@@ -1,36 +1,36 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod map-into ((list list) function &rest sequences)
-  (flet ((terminate (n)
-           (declare (ignore n))
-           (return-from map-into list)))
-    (let* ((n (length sequences))
-           (function (function-designator-function function))
-           (writer (make-sequence-writer list 0 nil nil #'terminate))
-           (readers (make-array n)))
-      (loop for index below n and sequence in sequences do
-        (setf (elt readers index)
-              (make-sequence-reader sequence 0 nil nil #'terminate)))
-      (apply-to-sequence-iterators writer function readers))))
+(defun map-into (result-sequence function &rest sequences)
+  (symbol-macrolet ((terminate
+                      (lambda (n)
+                        (when (adjustable-array-p result-sequence)
+                          (setf (fill-pointer result-sequence) n))
+                        (return-from map-into result-sequence))))
+    (when (adjustable-array-p result-sequence)
+      (setf (fill-pointer result-sequence)
+            (array-total-size result-sequence)))
+    (apply
+     #'map-over-iterators
+     (make-sequence-writer result-sequence 0 nil nil terminate)
+     (function-designator-function function)
+     (loop for sequence in sequences
+           collect
+           (make-sequence-reader sequence 0 nil nil terminate)))))
 
-(seal-domain #'map-into '(list t))
-
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod map-into ((vector #1#) function &rest sequences)
-    (when (adjustable-array-p vector)
-      (setf (fill-pointer vector)
-            (array-total-size vector)))
-    (flet ((terminate (n)
-             (when (adjustable-array-p vector)
-               (setf (fill-pointer vector) n))
-             (return-from map-into vector)))
-      (let* ((n (length sequences))
-             (function (function-designator-function function))
-             (writer (make-sequence-writer vector 0 nil nil #'terminate))
-             (readers (make-array n)))
-        (loop for index below n and sequence in sequences do
-          (setf (elt readers index)
-                (make-sequence-reader sequence 0 nil nil #'terminate)))
-        (apply-to-sequence-iterators writer function readers)))))
-
-(seal-domain #'map-into '(vector t))
+(define-compiler-macro map-into (result-sequence function &rest sequences)
+  (sicl-utilities:with-gensyms (map-into)
+    (sicl-utilities:once-only (result-sequence)
+      (let ((terminate `(lambda (n)
+                          (when (adjustable-array-p ,result-sequence)
+                            (setf (fill-pointer ,result-sequence) n))
+                          (return-from ,map-into ,result-sequence))))
+        `(block ,map-into
+           (when (adjustable-array-p ,result-sequence)
+             (setf (fill-pointer ,result-sequence)
+                   (array-total-size ,result-sequence)))
+           (map-over-iterators
+            (make-sequence-writer ,result-sequence 0 nil nil ,terminate)
+            (function-designator-function ,function)
+            ,@(loop for sequence in sequences
+                    collect
+                    `(make-sequence-reader ,sequence 0 nil nil ,terminate))))))))

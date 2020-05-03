@@ -31,7 +31,6 @@
      (:file "make-sequence-reader")
      (:file "make-sequence-writer")
      (:file "length-of-shortest-sequence")
-     (:file "apply-to-sequence-iterators")
 
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the remaining functions.
