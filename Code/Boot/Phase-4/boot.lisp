@@ -11,7 +11,7 @@
     (import-from-host boot)
     (sicl-boot:enable-class-finalization #'load-fasl e2 e3)
     (finalize-all-classes boot)
-    (enable-defmethod boot)
+    (sicl-boot:enable-defmethod #'load-fasl e3 e4)
     (enable-allocate-instance e3)
     (define-class-of e4)
     (enable-object-initialization boot)
