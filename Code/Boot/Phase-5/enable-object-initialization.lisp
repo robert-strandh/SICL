@@ -2,29 +2,13 @@
 
 (defun enable-object-initialization (boot)
   (with-accessors ((e4 sicl-boot:e4)
-                   (e5 sicl-boot:e5)) boot
-    ;; The support code for SHARED-INITIALIZE in phase 5 will need to
-    ;; access various slots of class metaobjects and slot-definition
-    ;; metaobjects.  Since we are initializing objects in E5, the
-    ;; class metaobjects for these objects are located in E4.
-    ;; Therefor, it is handy to load the support code for
-    ;; SHARED-INITIALIZE into E4.  Notice, however, that we do not
-    ;; want to define SHARED-INITIALIZE itself in E4 because we
-    ;; already have a definition for it there (imported from the
-    ;; host), and we do want to call SHARED-INITIALIZE from functions
-    ;; in E5.
+                   (e5 sicl-boot:e5))
+      boot
     (setf (sicl-genv:special-variable 'sicl-clos:+unbound-slot-value+ e4 t)
           10000000)
     (load-fasl "CLOS/slot-bound-using-index.fasl" e4)
     (load-fasl "CLOS/standard-instance-access.fasl" e4)
-    ;; We use the non-generic version of (SETF
-    ;; SLOT-VALUE-USING-CLASS), because the generic function takes an
-    ;; object as its second argument and the class of that object as
-    ;; its first argument.  Therefore the two arguments clash.  They
-    ;; can't both be bridge objects, and they can't both be ersatz
-    ;; objects.
     (load-fasl "CLOS/slot-value-etc-support.fasl" e4)
-    (load-fasl "CLOS/slot-value-etc-defuns.fasl" e4)
     (load-fasl "CLOS/instance-slots-offset-defconstant.fasl" e4)
     (sicl-boot:with-straddled-function-definitions
         ((sicl-clos::shared-initialize-default-using-class)
