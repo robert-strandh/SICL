@@ -50,35 +50,56 @@
 ;;; reader.  By inlining these calls into the call site, we can often avoid
 ;;; the costly dispatch of MAKE-SEQUENCE-READER.
 (define-compiler-macro map (result-type function sequence &rest more-sequences)
-  (when (constantp result-type)
-    (setf result-type (simplify-sequence-type-specifier (eval result-type))))
-  (case result-type
-    ((nil)
-     (sicl-utilities:with-gensyms (map)
-       `(block ,map
-          (map-nil-over-iterators
-           (function-designator-function ,function)
-           ,@(loop for sequence in (list* sequence more-sequences)
-                   collect
-                   `(make-sequence-reader
-                     ,sequence
-                     0 nil nil
-                     (lambda (n)
-                       (declare (ignore n))
-                       (return-from ,map nil))))))))
-    ((list)
-     (sicl-utilities:with-gensyms (map result collect)
-       `(block ,map
-          (sicl-utilities:with-collectors ((,result ,collect))
-            (map-over-iterators
-             (lambda (elt)
-               (,collect elt))
+  (multiple-value-bind (type-form type)
+      (if (constantp result-type)
+          (let ((value (eval result-type)))
+            (values `',value value))
+          (values result-type t))
+    (case type
+      ((nil)
+       (sicl-utilities:with-gensyms (map)
+         `(block ,map
+            (map-nil-over-iterators
              (function-designator-function ,function)
              ,@(loop for sequence in (list* sequence more-sequences)
                      collect
                      `(make-sequence-reader
                        ,sequence
                        0 nil nil
-                       (lambda (n) (return-from ,map (,result))))))))))
-    (otherwise
-     (break "TODO"))))
+                       (lambda (n)
+                         (declare (ignore n))
+                         (return-from ,map nil))))))))
+      ((list)
+       (sicl-utilities:with-gensyms (map result collect)
+         `(block ,map
+            (sicl-utilities:with-collectors ((,result ,collect))
+              (map-over-iterators
+               (lambda (elt)
+                 (,collect elt))
+               (function-designator-function ,function)
+               ,@(loop for sequence in (list* sequence more-sequences)
+                       collect
+                       `(make-sequence-reader
+                         ,sequence
+                         0 nil nil
+                         (lambda (n)
+                           (declare (ignore n))
+                           (return-from ,map (,result))))))))))
+      (otherwise
+       (sicl-utilities:with-gensyms (map result)
+         `(let ((,result
+                  (make-sequence
+                   ,type-form
+                   (length-of-shortest-sequence sequence ,@more-sequences))))
+            (block ,map
+              (map-over-iterators
+               (make-sequence-writer ,result 0 nil nil (lambda (n) (declare (ignore n))))
+               (function-designator-function ,function)
+               ,@(loop for sequence in (list* sequence more-sequences)
+                       collect
+                       `(make-sequence-reader
+                         ,sequence
+                         0 nil nil
+                         (lambda (n)
+                           (declare (ignore n))
+                           (return-from ,map ,result))))))))))))
