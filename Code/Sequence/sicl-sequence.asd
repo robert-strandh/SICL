@@ -15,6 +15,7 @@
      (:file "utilities")
      (:file "conditions")
      (:file "condition-reporters-en")
+     (:file "simplify-sequence-type-specifier")
 
      ;; Firstly, load the a few elementary sequence functions and seal
      ;; them.  This way, the subsequent definitions can already use
@@ -29,6 +30,7 @@
      (:file "for-each-relevant-element")
      (:file "make-sequence-reader")
      (:file "make-sequence-writer")
+     (:file "length-of-shortest-sequence")
      (:file "apply-to-sequence-iterators")
 
      ;; Now that all utilities and elementary sequence functions have been
@@ -45,6 +47,7 @@
      (:file "find")
      (:file "find-if")
      (:file "find-if-not")
+     (:file "map-aux")
      (:file "map-into")
      (:file "map")
      (:file "mismatch")

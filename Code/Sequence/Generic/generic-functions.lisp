@@ -28,10 +28,6 @@
     (sequence start &optional end)
   (:generic-function-class sequence-function))
 
-(defgeneric map
-    (result-type function sequence &rest more-sequences)
-  (:generic-function-class sequence-function))
-
 (defgeneric map-into
     (result-sequence function &rest sequences)
   (:generic-function-class sequence-function))

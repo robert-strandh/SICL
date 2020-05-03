@@ -44,6 +44,7 @@
   (defmethod make-sequence-reader ((vector #1#) start end from-end terminate)
     (declare (method-properties inlineable))
     (declare (function terminate))
+    (declare (type #1# vector))
     (multiple-value-bind (start end)
         (canonicalize-start-and-end vector (length vector) start end)
       (declare (optimize (speed 3) (safety 0)))

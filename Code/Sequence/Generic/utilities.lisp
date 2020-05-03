@@ -191,5 +191,11 @@
        rest)
     (declare (fixnum index))))
 
-(defmacro seal (function-name)
-  `(sealable-metaobjects:seal-generic-function #',function-name))
+(defun enumerate-symbol (symbol n)
+  (intern
+   (concatenate
+    'string
+    (symbol-name symbol)
+    "-"
+    (format nil "~S" n))
+   (symbol-package symbol)))
