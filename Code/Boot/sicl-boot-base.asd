@@ -24,4 +24,5 @@
    (:file "enable-generic-function-invocation")
    (:file "define-make-instance")
    (:file "enable-class-finalization")
-   (:file "enable-defmethod")))
+   (:file "enable-defmethod")
+   (:file "enable-object-initialization")))
