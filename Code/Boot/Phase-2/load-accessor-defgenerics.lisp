@@ -70,4 +70,5 @@
     (ld "CLOS/variant-signature-defgeneric.fasl")
     (ld "CLOS/template-defgeneric.fasl")
     (ld "Package-and-symbol/symbol-name-defgeneric.fasl")
-    (ld "Package-and-symbol/symbol-package-defgeneric.fasl")))
+    (ld "Package-and-symbol/symbol-package-defgeneric.fasl")
+    (ld "Compiler/Code-object/generic-functions.fasl")))
