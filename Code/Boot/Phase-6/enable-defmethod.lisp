@@ -1,11 +1,5 @@
 (cl:in-package #:sicl-boot-phase-6)
 
-(defun define-find-specializer-class-t-in-e6 (e6)
-  (setf (sicl-genv:fdefinition 'sicl-clos::find-specializer-class-t e6)
-        (lambda () (sicl-genv:find-class 't e6))))
-
-;;; The specializers of the generic functions in E6 are the classes of
-;;; the instances in E6, so they are the classes in E5.
 (defun define-make-specializer (e5)
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e5)
         (lambda (specializer)
@@ -24,7 +18,6 @@
   (with-accessors ((e5 sicl-boot:e5)
                    (e6 sicl-boot:e6))
       boot
-    (define-find-specializer-class-t-in-e6 e6)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e6)
           #'sicl-clos::make-method-lambda-default)
     (define-make-specializer e5)

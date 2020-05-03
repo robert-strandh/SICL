@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-boot-phase-5)
 
-(defun define-find-specializer-class-t-in-e5 (e5)
-  (setf (sicl-genv:fdefinition 'sicl-clos::find-specializer-class-t e5)
-        (lambda () (sicl-genv:find-class 't e5))))
-
 (defun define-make-specializer (e4)
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e4)
         (lambda (specializer)
@@ -22,7 +18,6 @@
   (with-accessors ((e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (define-find-specializer-class-t-in-e5 e5)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e5)
           #'sicl-clos::make-method-lambda-default)
     (define-make-specializer e4)

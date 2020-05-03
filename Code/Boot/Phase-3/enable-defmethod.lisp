@@ -1,14 +1,5 @@
 (cl:in-package #:sicl-boot-phase-3)
 
-;;; We already know how to execute a DEFGENERIC form in E3.  Now we
-;;; need to know how to use DEFMETHOD to define methods on the generic
-;;; functions we create with DEFGENERIC.  That is the purpose of this
-;;; function.
-
-(defun define-find-specializer-class-t-in-e3 (e2 e3)
-  (setf (sicl-genv:fdefinition 'sicl-clos::find-specializer-class-t e3)
-        (lambda () (sicl-genv:find-class 't e2))))
-
 (defun define-make-specializer-in-e2 (e2)
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e2)
         (lambda (specializer)
@@ -26,7 +17,6 @@
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3))
       boot
-    (define-find-specializer-class-t-in-e3 e2 e3)
     (setf (sicl-genv:fdefinition 'ensure-generic-function e2)
           (sicl-genv:fdefinition 'ensure-generic-function e3))
     (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype e2)
