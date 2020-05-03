@@ -12,4 +12,6 @@
               (null (cddr spec)))
          (destructuring-bind (symbol string) spec
              (check-type symbol symbol)
-           `(,symbol (gensym (string ',string)))))))
+           `(,symbol (gensym (string ',string)))))
+        (t
+         (error "Malformed with-gensyms spec: ~S" spec))))
