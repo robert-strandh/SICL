@@ -14,7 +14,7 @@
     (sicl-boot:enable-defmethod #'load-fasl e3 e4)
     (enable-allocate-instance e3)
     (define-class-of e4)
-    (enable-object-initialization e3 e4)
+    (sicl-boot:enable-object-initialization #'load-fasl e3 e4)
     (load-fasl "Conditionals/macros.fasl" e3)
     (sicl-boot:enable-method-combinations #'load-fasl e3 e4)
     (define-stamp e4)
