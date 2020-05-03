@@ -23,4 +23,5 @@
    (:file "define-accessor-generic-functions")
    (:file "enable-generic-function-invocation")
    (:file "define-make-instance")
-   (:file "enable-class-finalization")))
+   (:file "enable-class-finalization")
+   (:file "enable-defmethod")))
