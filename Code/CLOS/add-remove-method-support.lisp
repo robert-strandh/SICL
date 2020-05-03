@@ -12,7 +12,7 @@
 
 (defun compute-specializer-profile (existing-profile specializers)
   (loop with environment = (sicl-genv:global-environment)
-        with class-t = (find-specializer-class-t)
+        with class-t = (find-class 't)
         for specializer in specializers
         for p in existing-profile
         collect (if (eq specializer class-t) p t)))
@@ -48,7 +48,7 @@
 
 (defun applicable (class-cache profile method)
   (let* ((env (sicl-genv:global-environment))
-         (class-t (find-specializer-class-t))
+         (class-t (find-class 't))
          (classes (loop with remaining = class-cache
                         for p in profile
                         collect (if p (pop remaining) class-t))))
