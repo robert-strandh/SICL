@@ -1,0 +1,289 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\beamertemplateshadingbackground{red!10}{blue!10}
+%\usepackage{fancybox}
+\usepackage{epsfig}
+\usepackage{verbatim}
+\usepackage{url}
+%\usepackage{graphics}
+%\usepackage{xcolor}
+\usepackage{fancybox}
+\usepackage{moreverb}
+%\usepackage[all]{xy}
+\usepackage{listings}
+\usepackage{filecontents}
+\usepackage{graphicx}
+
+\lstset{
+  language=Lisp,
+  basicstyle=\scriptsize\ttfamily,
+  keywordstyle={},
+  commentstyle={},
+  stringstyle={}}
+
+\def\inputfig#1{\input #1}
+\def\inputeps#1{\includegraphics{#1}}
+\def\inputtex#1{\input #1}
+
+\inputtex{logos.tex}
+
+%\definecolor{ORANGE}{named}{Orange}
+
+\definecolor{GREEN}{rgb}{0,0.8,0}
+\definecolor{YELLOW}{rgb}{1,1,0}
+\definecolor{ORANGE}{rgb}{1,0.647,0}
+\definecolor{PURPLE}{rgb}{0.627,0.126,0.941}
+\definecolor{PURPLE}{named}{purple}
+\definecolor{PINK}{rgb}{1,0.412,0.706}
+\definecolor{WHEAT}{rgb}{1,0.8,0.6}
+\definecolor{BLUE}{rgb}{0,0,1}
+\definecolor{GRAY}{named}{gray}
+\definecolor{CYAN}{named}{cyan}
+
+\newcommand{\orchid}[1]{\textcolor{Orchid}{#1}}
+\newcommand{\defun}[1]{\orchid{#1}}
+
+\newcommand{\BROWN}[1]{\textcolor{BROWN}{#1}}
+\newcommand{\RED}[1]{\textcolor{red}{#1}}
+\newcommand{\YELLOW}[1]{\textcolor{YELLOW}{#1}}
+\newcommand{\PINK}[1]{\textcolor{PINK}{#1}}
+\newcommand{\WHEAT}[1]{\textcolor{wheat}{#1}}
+\newcommand{\GREEN}[1]{\textcolor{GREEN}{#1}}
+\newcommand{\PURPLE}[1]{\textcolor{PURPLE}{#1}}
+\newcommand{\BLACK}[1]{\textcolor{black}{#1}}
+\newcommand{\WHITE}[1]{\textcolor{WHITE}{#1}}
+\newcommand{\MAGENTA}[1]{\textcolor{MAGENTA}{#1}}
+\newcommand{\ORANGE}[1]{\textcolor{ORANGE}{#1}}
+\newcommand{\BLUE}[1]{\textcolor{BLUE}{#1}}
+\newcommand{\GRAY}[1]{\textcolor{gray}{#1}}
+\newcommand{\CYAN}[1]{\textcolor{cyan }{#1}}
+
+\newcommand{\reference}[2]{\textcolor{PINK}{[#1~#2]}}
+%\newcommand{\vect}[1]{\stackrel{\rightarrow}{#1}}
+
+% Use some nice templates
+\beamertemplatetransparentcovereddynamic
+
+\newcommand{\A}{{\mathbb A}}
+\newcommand{\degr}{\mathrm{deg}}
+
+\title{First-class global-environments (run-time)}
+
+\author{Robert Strandh}
+\institute{
+}
+\date{May, 2020}
+
+%\inputtex{macros.tex}
+
+\begin{document}
+\frame{
+\titlepage
+}
+
+\setbeamertemplate{footline}{
+\vspace{-1em}
+\hspace*{1ex}{~} \GRAY{\insertframenumber/\inserttotalframenumber}
+}
+
+\frame{
+\frametitle{Environment}
+\vskip 0.25cm
+An environment is a mapping from \emph{names} to \emph{objects}.
+Example:
+\vskip 0.25cm
+\begin{itemize}
+\item Strings to package objects.
+\item Function names to functions.
+\item Symbols to macro functions.
+\item Symbols to method combination metaobjects.
+\item etc.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Two kinds of environments}
+\vskip 0.25cm
+There are two basic types of environments:
+\begin{itemize}
+\item Lexical environments.  Used during compilation.  Passed to macro
+  functions.
+\item Global environments, Also known as ``null lexical
+  environments''.  When \texttt{nil} is passed to a macro function,
+  the global environment is designated.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Global environment(s)}
+\vskip 0.25cm
+In a typical \commonlisp{} implementation, there is a single global
+environment, and it is \emph{spread out}:
+\begin{itemize}
+\item Symbols typically contain a \emph{function slot} accessible
+  through \texttt{symbol-function}.  However, functions named
+  \texttt{(setf} \textit{symbol}\texttt{)} are typically stored
+  elsewhere.
+\item Symbols typically contain a \emph{value slot} accessible through
+  \texttt{symbol-value} (unless locally bound).
+\item The rest of the environment is contained in various data
+  structures accessible through special variables.  
+\end{itemize}
+}
+
+\frame{
+\frametitle{Global environments in the \commonlisp{} standard}
+\vskip 0.25cm
+The \commonlisp{} standard recognizes multiple simultaneous global
+environments \emph{during compilation}:
+\vskip 0.25cm
+\begin{itemize}
+\item The \emph{startup environment}, from which the compiler was
+  invoked.
+\item The \emph{compilation environment}, holding definitions used
+  internally by the compiler.  This is the environment passed to macro
+  functions.
+\item The \emph{evaluation environment}, for compile-time evaluation.
+\end{itemize}
+\vskip 0.25cm
+Some traces of multiple global environments can also be found
+elsewhere in the standard, for instance in \texttt{find-class}:
+``distinguish between compile-time and run-time environments''.
+(Notice that there are no lexical classes in \commonlisp{}).
+}
+
+\frame{
+\frametitle{Global environments in the \commonlisp{} standard}
+\vskip 0.25cm
+Luckily (for all existing implementations), the standard allows for
+all the global environments to be one and the same.
+}
+
+\frame{
+\frametitle{First-class global environments}
+\vskip 0.25cm
+A \emph{first-class global environment} is a \emph{standard object}
+that contains all the mappings required by a \commonlisp{} global
+environment.
+\vskip 0.25cm
+Motivation:
+\vskip 0.25cm
+\begin{itemize}
+\item Sandboxing (the topic of this presentation).
+\item Multiple global environments during compilation as recognized by
+  the standard.
+\item Bootstrapping \sicl{} on a host \commonlisp{} implementation
+  without using tricks such as package renaming (used by SBCL).
+\end{itemize}
+}
+
+\frame{
+\frametitle{Sandboxing}
+\vskip 0.25cm
+Use cases (roughly in order of importance):
+\vskip 0.25cm
+\begin{enumerate}
+\item Isolate parts (such as the internals of the compiler) of a
+  \commonlisp{} system from a regular user.
+\item Allow for multiple versions of a system to be simultaneously
+  present in a single \commonlisp{} image.
+\item Expose a subset of \commonlisp{}.
+\end{enumerate}
+\vskip 0.25cm
+Case 1 is essential for a \emph{safe} system.
+}
+
+\frame{
+\frametitle{First-class global environments elsewhere}
+\vskip 0.25cm
+It is not hard to design a first-class global environment protocol.
+It has been done (but not for \commonlisp{}).
+\vskip 0.25cm
+But it is hard to make it \emph{fast enough} at run-time.  Most
+proposals require a hash-table lookup for each function call.
+\vskip 0.25cm
+My paper published in ELS 2015.
+\vskip 0.25cm
+Also available here:
+http://metamodular.com/SICL/environments.pdf
+}
+
+\frame{
+\frametitle{Environments have \emph{function cells}}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-44.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Code example}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-45.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Compile the code, creating a function template}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-46.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Tie function template to environment 1}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-47.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Add definition of \texttt{FOO} in environment 1}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-48.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Add function definition \texttt{BAR} in environment 1}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-49.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Add definition of \texttt{BAZ} in environment 2}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-50.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Thank you}
+}
+
+%% \frame{\tableofcontents}
+%% \bibliography{references}
+%% \bibliographystyle{alpha}
+
+\end{document}
