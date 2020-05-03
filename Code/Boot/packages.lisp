@@ -20,4 +20,5 @@
            #:define-accessor-generic-functions
            #:enable-generic-function-invocation
            #:define-make-instance
-           #:enable-class-finalization))
+           #:enable-class-finalization
+           #:enable-defmethod))
