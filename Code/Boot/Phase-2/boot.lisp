@@ -8,4 +8,5 @@
     (enable-defgeneric e3)
     (load-accessor-defgenerics e3)
     (enable-defclass boot)
-    (load-mop-defclasses boot)))
+    (sicl-boot:create-mop-classes #'sicl-boot:load-fasl e2)))
+    ;; (load-mop-defclasses boot)))
