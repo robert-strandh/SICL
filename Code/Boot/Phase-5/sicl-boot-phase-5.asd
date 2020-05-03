@@ -12,7 +12,6 @@
    (:file "finalize-all-classes")
    (:file "enable-allocate-instance")
    (:file "define-class-of")
-   (:file "enable-object-initialization")
    (:file "define-stamp")
    (:file "define-compile")
    (:file "enable-class-initialization")
