@@ -24,7 +24,8 @@
 
 (defun enable-defmethod (boot)
   (with-accessors ((e2 sicl-boot:e2)
-                   (e3 sicl-boot:e3)) boot
+                   (e3 sicl-boot:e3))
+      boot
     (define-find-specializer-class-t-in-e3 e2 e3)
     (setf (sicl-genv:fdefinition 'ensure-generic-function e2)
           (sicl-genv:fdefinition 'ensure-generic-function e3))

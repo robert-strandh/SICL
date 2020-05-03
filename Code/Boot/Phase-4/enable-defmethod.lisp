@@ -4,8 +4,6 @@
   (setf (sicl-genv:fdefinition 'sicl-clos::find-specializer-class-t e4)
         (lambda () (sicl-genv:find-class 't e4))))
 
-;;; The specializers of the generic functions in E4 are the classes of
-;;; the instances in E4, so they are the classes in E3.
 (defun define-make-specializer (e3)
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e3)
         (lambda (specializer)
@@ -22,7 +20,8 @@
 
 (defun enable-defmethod (boot)
   (with-accessors ((e3 sicl-boot:e3)
-                   (e4 sicl-boot:e4)) boot
+                   (e4 sicl-boot:e4))
+      boot
     (define-find-specializer-class-t-in-e4 e4)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e4)
           #'sicl-clos::make-method-lambda-default)
