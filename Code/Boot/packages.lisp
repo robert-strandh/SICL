@@ -22,4 +22,5 @@
            #:load-accessor-defgenerics
            #:define-make-instance
            #:enable-class-finalization
-           #:enable-defmethod))
+           #:enable-defmethod
+           #:enable-object-initialization))
