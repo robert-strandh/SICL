@@ -9,7 +9,6 @@
    (:file "environment")
    (:file "import-from-host")
    (:file "utilities")
-   (:file "enable-allocate-instance")
    (:file "define-stamp")
    (:file "define-compile")
    (:file "boot")))
