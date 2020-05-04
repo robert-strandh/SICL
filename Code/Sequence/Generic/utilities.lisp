@@ -145,6 +145,15 @@
             (array-element-type (coerce nil sequence-class))
             `(or ,@(mapcar #'sequence-class-element-type direct-subclasses))))))
 
+;;; This function is used to simplify a constant first argument of MAP or
+;;; MAKE-SEQUENCE at compile time.
+(defun simplify-sequence-type-specifier (type-specifier)
+  (if (subtypep type-specifier '(not sequence))
+      type-specifier
+      (loop for class in (class-subclasses (find-class 'sequence)) do
+        (when (subtypep type-specifier class)
+          (return (class-name class))))))
+
 (declaim (inline shrink-vector))
 (defun shrink-vector (vector new-length)
   (declare (vector vector))

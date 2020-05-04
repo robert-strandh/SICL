@@ -15,7 +15,6 @@
      (:file "utilities")
      (:file "conditions")
      (:file "condition-reporters-en")
-     (:file "simplify-sequence-type-specifier")
 
      ;; Firstly, load the a few elementary sequence functions and seal
      ;; them.  This way, the subsequent definitions can already use
@@ -23,8 +22,8 @@
      (:file "length")
      (:file "elt")
      (:file "adjust-sequence")
-     (:file "make-sequence-like")
      (:file "make-sequence")
+     (:file "make-sequence-like")
 
      ;; Secondly, load several high-level utilities for working with sequences.
      (:file "for-each-relevant-cons")
