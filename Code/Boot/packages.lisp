@@ -23,4 +23,5 @@
            #:define-make-instance
            #:enable-class-finalization
            #:enable-defmethod
-           #:enable-object-initialization))
+           #:enable-object-initialization
+           #:enable-class-initialization))
