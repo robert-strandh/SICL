@@ -149,9 +149,10 @@
 (defun simplify-sequence-type-specifier (type-specifier)
   (if (subtypep type-specifier '(not sequence))
       type-specifier
-      (loop for class in (class-subclasses (find-class 'sequence)) do
-        (when (subtypep type-specifier class)
-          (return (class-name class))))))
+      (dolist (class (class-subclasses (find-class 'sequence)) type-specifier)
+        (when (and (subtypep type-specifier class)
+                   (subtypep class type-specifier))
+          (return-from simplify-sequence-type-specifier (class-name class))))))
 
 (declaim (inline shrink-vector))
 (defun shrink-vector (vector new-length)

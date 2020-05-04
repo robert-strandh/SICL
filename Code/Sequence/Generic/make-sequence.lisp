@@ -37,25 +37,33 @@
        (call make-sequence/vector 'character length))
       ((base-string simple-base-string)
        (call make-sequence/vector 'base-char length))
+      ;; Now for the slow path.
       (otherwise
-       (cond
-         ((subtypep result-type '(not sequence))
-          (error "Not a sequence type specifier: ~S" result-type))
-         ((subtypep result-type 'list)
-          (if (subtypep result-type 'null)
-              (make-sequence/null length)
-              (call make-sequence/list length)))
-         ((subtypep result-type 'vector)
-          (let ((vector-class (or (find result-type *vector-classes* :test #'subtypep)
-                                  (find-class 'vector))))
-            (let ((element-type (array-element-type (class-prototype vector-class))))
-              (call make-sequence/vector element-type length))))
-         (t
-          (let ((class (and (symbolp result-type)
-                            (find-class result-type nil))))
-            (if (not class)
-                (error "Not a sequence type specifier: ~S" result-type)
-                (call make-sequence-like (class-prototype class) length)))))))))
+       (let ((sequence
+               (cond
+                 ((subtypep result-type '(not sequence))
+                  (error "Not a sequence type specifier: ~S"
+                         result-type))
+                 ((subtypep result-type 'list)
+                  (if (subtypep result-type 'null)
+                      (make-sequence/null length)
+                      (call make-sequence/list length)))
+                 ((subtypep result-type 'vector)
+                  (let ((vector-class (or (find result-type *vector-classes* :test #'subtypep)
+                                          (find-class 'vector))))
+                    (let ((element-type (array-element-type (class-prototype vector-class))))
+                      (call make-sequence/vector element-type length))))
+                 (t
+                  (let ((class (and (symbolp result-type)
+                                    (find-class result-type nil))))
+                    (if (not class)
+                        (error "Not a recognizable sequence type specifier: ~S"
+                               result-type)
+                        (call make-sequence-like (class-prototype class) length)))))))
+         (unless (typep sequence result-type)
+           (error "Cannot create a sequence of type ~S and length ~S."
+                  result-type length))
+         sequence)))))
 
 (define-compiler-macro make-sequence (&whole form result-type length &rest rest &environment env)
   (unless (and (constantp result-type)

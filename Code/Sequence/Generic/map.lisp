@@ -47,7 +47,7 @@
 (define-compiler-macro map (result-type function sequence &rest more-sequences)
   (multiple-value-bind (type-form type)
       (if (constantp result-type)
-          (let ((value (eval result-type)))
+          (let ((value (simplify-sequence-type-specifier (eval result-type))))
             (values `',value value))
           (values result-type '*))
     (case type
@@ -64,7 +64,7 @@
                        (lambda (n)
                          (declare (ignore n))
                          (return-from ,map nil))))))))
-      ((list)
+      ((list cons)
        (sicl-utilities:with-gensyms (map result collect)
          `(block ,map
             (sicl-utilities:with-collectors ((,result ,collect))
