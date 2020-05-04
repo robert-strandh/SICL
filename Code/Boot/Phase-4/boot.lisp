@@ -22,5 +22,5 @@
     (sicl-boot:enable-generic-function-invocation #'load-fasl e3 e4)
     (load-fasl "CLOS/standard-instance-access.fasl" e4)
     (sicl-boot:define-accessor-generic-functions #'load-fasl e3 e4 e5)
-    (enable-class-initialization e3 e4 e5)
+    (sicl-boot:enable-class-initialization #'load-fasl e3 e4 e5)
     (sicl-boot:create-mop-classes #'load-fasl e4)))

@@ -21,6 +21,6 @@
     (define-compile e5 e6)
     (sicl-boot:enable-generic-function-invocation #'load-fasl e5 e6)
     (sicl-boot:define-accessor-generic-functions #'load-fasl e5 e6 e7)
-    (enable-class-initialization e5 e6 e7)
+    (sicl-boot:enable-class-initialization #'load-fasl e5 e6 e7)
     (sicl-boot:create-mop-classes #'load-fasl e6)
     (load-fasl "CLOS/satiation.fasl" e6)))
