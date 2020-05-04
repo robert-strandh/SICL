@@ -44,11 +44,6 @@
                 collect
                 (make-sequence-reader sequence 0 nil nil #'terminate))))))))
 
-;;; We perform two important compile time optimizations.  The first one is
-;;; that we attempt to simplify the specified RESULT-TYPE.  The second one
-;;; is that we replace every input sequence by its corresponding sequence
-;;; reader.  By inlining these calls into the call site, we can often avoid
-;;; the costly dispatch of MAKE-SEQUENCE-READER.
 (define-compiler-macro map (result-type function sequence &rest more-sequences)
   (multiple-value-bind (type-form type)
       (if (constantp result-type)

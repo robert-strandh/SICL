@@ -130,18 +130,18 @@
 ;;; former can be stored in the latter, i.e., when the intersection of both
 ;;; element types is non-empty.
 (defmacro replicate-for-all-compatible-vectoroids (symbol-1 symbol-2 &body body)
-  (let ((vectoroid-classes (class-subclasses (find-class 'vector)))
-        (forms '()))
-    (loop for class-1 in vectoroid-classes do
-      (loop for class-2 in vectoroid-classes do
-        (let ((element-type-1 (sequence-class-element-type class-1))
-              (element-type-2 (sequence-class-element-type class-2)))
-          (unless (subtypep element-type-1 nil)
-            (unless (subtypep element-type-2 nil)
-              (unless (subtypep `(and ,element-type-1 ,element-type-2) nil)
-                (push (subst class-2 symbol-2 (subst class-1 symbol-1 `(progn ,@body)))
-                      forms)))))))
-    `(progn ,@(cl:reverse forms))))
+  (let ((vectoroid-classes (class-subclasses (find-class 'vector))))
+    (sicl-utilities:with-collectors ((forms collect-form))
+      (loop for class-1 in vectoroid-classes do
+        (loop for class-2 in vectoroid-classes do
+          (let ((element-type-1 (sequence-class-element-type class-1))
+                (element-type-2 (sequence-class-element-type class-2)))
+            (unless (subtypep element-type-1 nil)
+              (unless (subtypep element-type-2 nil)
+                (unless (subtypep `(and ,element-type-1 ,element-type-2) nil)
+                  (collect-form
+                   (subst class-2 symbol-2 (subst class-1 symbol-1 `(progn ,@body))))))))))
+      `(progn ,@(forms)))))
 
 (declaim (inline shrink-vector))
 (defun shrink-vector (vector new-length)
