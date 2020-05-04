@@ -1,12 +1,11 @@
 (cl:in-package #:sicl-boot-phase-6)
 
-(defun finalize-all-classes (boot)
+(defun finalize-all-classes (ea)
   (format *trace-output* "Finalizing all classes.~%")
-  (let* ((e5 (sicl-boot:e5 boot))
-         (finalization-function
-           (sicl-genv:fdefinition 'sicl-clos:finalize-inheritance e5)))
+  (let* ((finalization-function
+           (sicl-genv:fdefinition 'sicl-clos:finalize-inheritance ea)))
     (do-all-symbols (var)
-      (let ((class (sicl-genv:find-class var e5)))
+      (let ((class (sicl-genv:find-class var ea)))
         (unless (null class)
           (funcall finalization-function class)))))
   (format *trace-output* "Done finalizing all classes.~%"))
