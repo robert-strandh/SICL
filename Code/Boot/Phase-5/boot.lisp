@@ -10,7 +10,7 @@
     (change-class e5 'environment)
     (import-from-host boot)
     (sicl-boot:enable-class-finalization #'load-fasl e3 e4)
-    (finalize-all-classes e4)
+    (sicl-boot:finalize-all-classes e4)
     (sicl-boot:enable-defmethod #'load-fasl e4 e5)
     (enable-allocate-instance e4)
     (define-class-of e5)
