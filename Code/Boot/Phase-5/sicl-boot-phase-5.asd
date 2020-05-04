@@ -9,7 +9,6 @@
    (:file "environment")
    (:file "utilities")
    (:file "import-from-host")
-   (:file "finalize-all-classes")
    (:file "enable-allocate-instance")
    (:file "define-class-of")
    (:file "define-stamp")
