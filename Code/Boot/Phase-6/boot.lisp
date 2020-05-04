@@ -13,7 +13,7 @@
     (sicl-boot:finalize-all-classes e5)
     (sicl-boot:enable-defmethod #'load-fasl e5 e6)
     (enable-allocate-instance e5)
-    (define-class-of e6)
+    (sicl-boot:define-class-of e6)
     (sicl-boot:enable-object-initialization #'load-fasl e5 e6)
     (load-fasl "Conditionals/macros.fasl" e5)
     (sicl-boot:enable-method-combinations #'load-fasl e5 e6)

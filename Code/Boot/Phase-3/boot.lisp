@@ -16,7 +16,7 @@
     (sicl-boot:enable-method-combinations #'load-fasl e2 e3)
     (define-stamp e3)
     (define-compile e3)
-    (define-class-of e3)
+    (sicl-boot:define-class-of e3)
     (setf (sicl-genv:fdefinition 'typep e3)
           (lambda (object type-specifier)
             (sicl-genv:typep object type-specifier e3)))
