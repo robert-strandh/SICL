@@ -72,24 +72,23 @@
     (values start end)))
 
 (defmacro with-predicate ((name predicate) &body body)
-  (let ((f (gensym)))
+  (sicl-utilities:with-gensyms (f)
     `(let ((,f (function-designator-function ,predicate)))
        (flet ((,name (x) (funcall ,f x)))
          ,@body))))
 
 (defmacro with-key-function ((name key) &body body)
-  (let ((f (gensym)))
+  (sicl-utilities:with-gensyms (f)
     (sicl-utilities:once-only (key)
       `(if (null ,key)
            (flet ((,name (x) x))
              ,@body)
-          (let ((,f (function-designator-function ,key)))
-            (flet ((,name (x) (funcall ,f x)))
-              ,@body))))))
+           (let ((,f (function-designator-function ,key)))
+             (flet ((,name (x) (funcall ,f x)))
+               ,@body))))))
 
 (defmacro with-test-function ((name test test-not) &body body)
-  (let ((f (gensym))
-        (complementp (gensym)))
+  (sicl-utilities:with-gensyms (f complementp)
     (sicl-utilities:once-only (test test-not)
       `(multiple-value-bind (,f ,complementp)
            (canonicalize-test-and-test-not ,test ,test-not)
@@ -100,7 +99,7 @@
                ,@body))))))
 
 ;; Note: Some macros rely on the fact that CLASS-SUBCLASSES sorts its
-;; entries most-specific-last.
+;; entries most-specific-first.
 (defun class-subclasses (class)
   (let ((table (make-hash-table))
         (subclasses '()))
@@ -208,5 +207,5 @@
     'string
     (symbol-name symbol)
     "-"
-    (format nil "~S" n))
+    (format nil "~D" n))
    (symbol-package symbol)))
