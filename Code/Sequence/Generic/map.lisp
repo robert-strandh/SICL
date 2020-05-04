@@ -49,7 +49,7 @@
       (if (constantp result-type)
           (let ((value (eval result-type)))
             (values `',value value))
-          (values result-type t))
+          (values result-type '*))
     (case type
       ((nil)
        (sicl-utilities:with-gensyms (map)

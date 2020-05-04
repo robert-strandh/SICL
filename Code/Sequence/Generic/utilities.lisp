@@ -99,24 +99,43 @@
              (flet ((,name (a b) (funcall ,f a b)))
                ,@body))))))
 
+;; Note: Some macros rely on the fact that CLASS-SUBCLASSES sorts its
+;; entries most-specific-last.
 (defun class-subclasses (class)
-  (let ((table (make-hash-table)))
+  (let ((table (make-hash-table))
+        (subclasses '()))
     (labels
-        ((subclasses (class)
+        ((push-subclasses (class)
            (unless (gethash class table)
              (setf (gethash class table) t)
-             (cons
-              class
-              (mapcan
-               #'subclasses
-               (closer-mop:class-direct-subclasses class))))))
-      (subclasses class))))
+             (push class subclasses)
+             (mapc #'push-subclasses (closer-mop:class-direct-subclasses class)))))
+      (push-subclasses class)
+      subclasses)))
+
+(defparameter *vector-classes* (class-subclasses (find-class 'vector)))
 
 (defmacro replicate-for-each-relevant-vectoroid (symbol &body body)
   `(progn
-     ,@(loop for class in (class-subclasses (find-class 'vector))
+     ,@(loop for class in *vector-classes*
              unless (subtypep class '(array nil))
                append (subst class symbol body))))
+
+;;; A vectoroid is compatible with another vectoroid, if elements of the
+;;; former can be stored in the latter, i.e., when the intersection of both
+;;; element types is non-empty.
+(defmacro replicate-for-all-compatible-vectoroids (symbol-1 symbol-2 &body body)
+  (sicl-utilities:with-collectors ((forms collect-form))
+    (loop for class-1 in *vector-classes* do
+      (loop for class-2 in *vector-classes* do
+        (let ((element-type-1 (sequence-class-element-type class-1))
+              (element-type-2 (sequence-class-element-type class-2)))
+          (unless (subtypep element-type-1 nil)
+            (unless (subtypep element-type-2 nil)
+              (unless (subtypep `(and ,element-type-1 ,element-type-2) nil)
+                (collect-form
+                 (subst class-2 symbol-2 (subst class-1 symbol-1 `(progn ,@body))))))))))
+    `(progn ,@(forms))))
 
 (defun sequence-class-element-type (sequence-class)
   (if (subtypep sequence-class '(not vector))
@@ -125,23 +144,6 @@
         (if (null direct-subclasses)
             (array-element-type (coerce nil sequence-class))
             `(or ,@(mapcar #'sequence-class-element-type direct-subclasses))))))
-
-;;; A vectoroid is compatible with another vectoroid, if elements of the
-;;; former can be stored in the latter, i.e., when the intersection of both
-;;; element types is non-empty.
-(defmacro replicate-for-all-compatible-vectoroids (symbol-1 symbol-2 &body body)
-  (let ((vectoroid-classes (class-subclasses (find-class 'vector))))
-    (sicl-utilities:with-collectors ((forms collect-form))
-      (loop for class-1 in vectoroid-classes do
-        (loop for class-2 in vectoroid-classes do
-          (let ((element-type-1 (sequence-class-element-type class-1))
-                (element-type-2 (sequence-class-element-type class-2)))
-            (unless (subtypep element-type-1 nil)
-              (unless (subtypep element-type-2 nil)
-                (unless (subtypep `(and ,element-type-1 ,element-type-2) nil)
-                  (collect-form
-                   (subst class-2 symbol-2 (subst class-1 symbol-1 `(progn ,@body))))))))))
-      `(progn ,@(forms)))))
 
 (declaim (inline shrink-vector))
 (defun shrink-vector (vector new-length)
