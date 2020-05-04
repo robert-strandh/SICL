@@ -28,4 +28,5 @@
    (:file "enable-object-initialization")
    (:file "enable-class-initialization")
    (:file "finalize-all-classes")
-   (:file "header")))
+   (:file "header")
+   (:file "define-class-of")))
