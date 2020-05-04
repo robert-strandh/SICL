@@ -29,4 +29,5 @@
    (:file "enable-class-initialization")
    (:file "finalize-all-classes")
    (:file "header")
-   (:file "define-class-of")))
+   (:file "define-class-of")
+   (:file "enable-allocate-instance")))
