@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-sequence)
 
 (defmacro for-each-relevant-element
-    ((element-var index-var sequence start end &optional (from-end nil from-end-p)) &body body)
+    ((element-var index-var sequence start end &optional (from-end nil)) &body body)
   (let* ((sequence-var (gensym))
          (start-var (gensym))
          (end-var (gensym))
@@ -14,9 +14,9 @@
                   do (symbol-macrolet ((,element-var (elt ,sequence-var ,index-var)))
                        ,@body)))
          (loop-over-body
-           (if (not from-end-p)
-               forward
-               `(if ,from-end ,backward ,forward))))
+           (cond ((eql from-end nil) forward)
+                 ((eql from-end t) backward)
+                 (t `(if ,from-end ,backward ,forward)))))
     `(let ((,sequence-var ,sequence))
        (multiple-value-bind (,start-var ,end-var)
            (canonicalize-start-and-end ,sequence-var (length ,sequence-var) ,start ,end)
