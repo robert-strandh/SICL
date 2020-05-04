@@ -17,6 +17,7 @@
    (#:copy-seq
     #:elt
     #:fill
+    #:make-sequence
     #:subseq
     #:map-into
     #:map

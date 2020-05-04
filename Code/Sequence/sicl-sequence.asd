@@ -24,6 +24,7 @@
      (:file "elt")
      (:file "adjust-sequence")
      (:file "make-sequence-like")
+     (:file "make-sequence")
 
      ;; Secondly, load several high-level utilities for working with sequences.
      (:file "for-each-relevant-cons")

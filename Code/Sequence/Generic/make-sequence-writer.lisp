@@ -23,19 +23,20 @@
                   (t
                    (let ((v (shiftf (first rest) new-value))
                          (i index))
-                     (setf rest (cdr rest))
+                     (pop rest)
                      (incf index)
                      (values v i)))))))
       ;; Backward iteration.
       (let* ((rest (nreverse (subseq list start end)))
-             (index (length rest)))
-        (declare (array-length index))
+             (end (+ start (length rest)))
+             (index end))
+        (declare (array-length end index))
         (lambda (new-value)
           (if (= index start)
-              (funcall terminate (- end index))
+              (funcall terminate (- end start))
               (let ((v (shiftf (first rest) new-value))
                     (i (decf index)))
-                (setf rest (cdr rest))
+                (pop rest)
                 (values v i)))))))
 
 (seal-domain #'make-sequence-writer '(list t t t t))
@@ -67,8 +68,6 @@
               (cond ((= index start)
                      (funcall terminate (- end index)))
                     (t
-                     (let ((v (shiftf (elt vector index) new-value))
-                           (i (decf index)))
-                       (values v i))))))))))
+                     (values (shiftf (elt vector (decf index)) new-value) index)))))))))
 
 (seal-domain #'make-sequence-writer '(vector t t t t))

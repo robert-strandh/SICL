@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod position (item (list list) &key from-end test test-not start end key)
+(defmethod position (item (list list) &key from-end test test-not (start 0) end key)
   (with-test-function (test test test-not)
     (with-key-function (key key)
       (for-each-relevant-cons (cons index list start end from-end)
