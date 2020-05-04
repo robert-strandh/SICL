@@ -5,20 +5,20 @@
                    (e6 sicl-boot:e6)
                    (e7 sicl-boot:e7))
       boot
-  (sicl-hir-interpreter:fill-environment e7)
+    (sicl-hir-interpreter:fill-environment e7)
     (import-functions-from-host
      '((setf sicl-genv:constant-variable)
        sicl-conditionals:cond-expander
        sicl-conditionals:and-expander
        listp sort every
        mapc 1+ 1- subseq butlast position identity nthcdr equal
-       find-if-not mapcar remove-duplicates union reduce count last
+       find-if-not remove-duplicates union reduce count last
        copy-list
        gensym values rest second error
        get-properties
        atom cddr (setf cdr) <
        not
-       remove-if-not reverse find (setf sicl-genv:constant-variable))
+       remove-if-not reverse find)
      e5)
     (import-functions-from-host
      '(cleavir-code-utilities:parse-generic-function-lambda-list
@@ -31,7 +31,6 @@
        sicl-genv:typep
        (setf sicl-genv:special-variable)
        sicl-genv:find-class
-       sicl-genv:fdefinition
        (setf sicl-genv:fdefinition)
        sicl-genv:macro-function
        (setf sicl-genv:macro-function)
@@ -44,15 +43,14 @@
        sicl-clos::extract-transition-information
        sicl-clos::make-automaton
        sicl-loop::list-car sicl-loop::list-cdr
-       cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd first
+       cons cdr cadr cddr caddr cdddr (setf cdr) rplacd first
        nth assoc reverse
        copy-list list list* append length
        null atom eq not member symbolp functionp stringp consp
-       make-list set-difference remove find find-if adjoin remove
+       make-list set-difference remove find find-if adjoin
        eql equal set-exclusive-or
-       sort mapcar subseq 1+ elt position position-if
+       sort mapcar subseq elt position position-if
        apply endp coerce
-       error
        + 1+ floor = /=)
      e6)
     (import-functions-from-host

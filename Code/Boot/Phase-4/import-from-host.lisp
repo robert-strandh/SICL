@@ -12,7 +12,6 @@
        sicl-conditionals:and-expander
        listp sort every
        mapc 1+ 1- subseq butlast position identity nthcdr equal
-       mapcar
        find-if-not remove-duplicates union reduce count last
        copy-list
        gensym values rest second error
@@ -32,7 +31,6 @@
        sicl-genv:typep
        (setf sicl-genv:special-variable)
        sicl-genv:find-class
-       sicl-genv:fdefinition
        (setf sicl-genv:fdefinition)
        sicl-genv:macro-function
        (setf sicl-genv:macro-function)

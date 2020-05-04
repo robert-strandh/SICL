@@ -5,7 +5,7 @@
                    (e5 sicl-boot:e5)
                    (e6 sicl-boot:e6))
       boot
-  (sicl-hir-interpreter:fill-environment e6)
+    (sicl-hir-interpreter:fill-environment e6)
     (import-functions-from-host
      '((setf sicl-genv:constant-variable)
        sicl-conditionals:cond-expander
@@ -51,7 +51,6 @@
        eql equal set-exclusive-or
        sort mapcar subseq elt position position-if
        apply endp coerce
-       error
        + 1+ floor = /=)
      e5)
     (import-functions-from-host
