@@ -12,7 +12,7 @@
             (sicl-hir-interpreter:input-value index-input lexical-environment))
           (output (first (cleavir-ir:outputs instruction))))
       (setf (sicl-hir-interpreter:lexical-value output lexical-environment)
-            (aref (slot-value object '%rack) index))))
+            (aref (slot-value object 'sicl-boot::%rack) index))))
   (first (cleavir-ir:successors instruction)))
 
 
@@ -28,5 +28,5 @@
             (sicl-hir-interpreter:input-value index-input lexical-environment))
           (value
             (sicl-hir-interpreter:input-value value-input lexical-environment)))
-      (setf (aref (slot-value object '%rack) index) value)))
+      (setf (aref (slot-value object 'sicl-boot::%rack) index) value)))
   (first (cleavir-ir:successors instruction)))

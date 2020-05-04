@@ -27,4 +27,5 @@
    (:file "enable-defmethod")
    (:file "enable-object-initialization")
    (:file "enable-class-initialization")
-   (:file "finalize-all-classes")))
+   (:file "finalize-all-classes")
+   (:file "header")))

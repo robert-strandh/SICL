@@ -10,5 +10,6 @@
                   ((consp object) (unique-number 'cons))
                   ((null object) (unique-number 'null))
                   ((symbolp object) (unique-number 'symbol))
-                  ((typep object 'header) (aref (slot-value object '%rack) 0))
+                  ((typep object 'sicl-boot::header)
+                   (aref (slot-value object 'sicl-boot::%rack) 0))
                   (t (error "Can't deal with object ~s" object)))))))

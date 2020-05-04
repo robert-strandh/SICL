@@ -4,7 +4,7 @@
   (slot-value object 'sicl-boot-phase-3::%class))
 
 (defun rack-of-object (object)
-  (slot-value object 'sicl-boot-phase-3::%rack))
+  (slot-value object 'sicl-boot::%rack))
 
 (defclass ersatz-instance-slot-place
     (clouseau:key-value-place clouseau:read-only-place)

@@ -3,7 +3,7 @@
 (defun enable-allocate-instance (e4)
   (setf (sicl-genv:fdefinition 'sicl-clos::allocate-general-instance e4)
         (lambda (class size)
-          (make-instance 'sicl-boot-phase-3::header
+          (make-instance 'sicl-boot::header
             :class class
             :rack (make-array size :initial-element 10000000))))
   (load-fasl "CLOS/stamp-offset-defconstant.fasl" e4)

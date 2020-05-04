@@ -9,7 +9,6 @@
    (:file "environment")
    (:file "utilities")
    (:file "set-up-environments")
-   (:file "header")
    (:file "HIR-interpreter-configuration")
    (:file "define-make-instance")
    (:file "enable-defmethod")

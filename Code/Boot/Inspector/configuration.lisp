@@ -15,12 +15,12 @@
         (t (format stream "FUNCTION"))))
 
 (defun object-purity (object)
-  (if (typep object 'sicl-boot-phase-3::header)
-      (let ((class-of-object (slot-value object 'sicl-boot-phase-3::%class)))
-        (if (typep class-of-object 'sicl-boot-phase-3::header)
+  (if (typep object 'sicl-boot::header)
+      (let ((class-of-object (slot-value object 'sicl-boot::%class)))
+        (if (typep class-of-object 'sicl-boot::header)
             (let ((class-of-class-of-object
-                    (slot-value class-of-object 'sicl-boot-phase-3::%class)))
-              (if (typep class-of-class-of-object 'sicl-boot-phase-3::header)
+                    (slot-value class-of-object 'sicl-boot::%class)))
+              (if (typep class-of-class-of-object 'sicl-boot::header)
                   4
                   3))
             2))
@@ -49,21 +49,21 @@
          ,@body))))
 
 (defun class-of-object (object)
-  (slot-value object 'sicl-boot-phase-3::%class))
+  (slot-value object 'sicl-boot::%class))
 
 (defun rack-of-object (object)
-  (slot-value object 'sicl-boot-phase-3::%rack))
+  (slot-value object 'sicl-boot::%rack))
 
 (defun class-name-of-object (object)
   (let ((class-of-object (class-of-object object)))
-    (if (typep class-of-object 'sicl-boot-phase-3::header)
+    (if (typep class-of-object 'sicl-boot::header)
         (funcall (sicl-genv:fdefinition 'class-name (sicl-boot::e4 *boot*))
                  class-of-object)
         (funcall (sicl-genv:fdefinition 'class-name (sicl-boot::e3 *boot*))
                  class-of-object))))
 
 (defmethod clouseau:inspect-object-using-state
-    ((object sicl-boot-phase-3::header)
+    ((object sicl-boot::header)
      (state clouseau:inspected-object)
      (style (eql :collapsed))
      (stream t))
@@ -74,7 +74,7 @@
       (format stream " ~a" (aref (rack-of-object object) 5)))))
 
 (defmethod clouseau:inspect-object-using-state
-    ((object sicl-boot-phase-3::header)
+    ((object sicl-boot::header)
      (state clouseau:inspected-object)
      (style (eql :expanded-header))
      (stream t))
@@ -161,7 +161,7 @@
     (format stream "Impure object")))
 
 (defmethod clouseau:inspect-object-using-state
-    ((object sicl-boot-phase-3::header)
+    ((object sicl-boot::header)
      (state clouseau:inspected-object)
      (style (eql :expanded-body))
      (stream t))

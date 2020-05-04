@@ -188,7 +188,7 @@
 (defgeneric object-state-class-with-class-and-metaclass (object class metaclass))
 
 (defmethod clouseau:object-state-class
-    ((object sicl-boot-phase-3::header)
+    ((object sicl-boot::header)
      (place t))
   (object-state-class-with-class object (class-of-object object)))
 
@@ -213,7 +213,7 @@
     (t 'inspected-impure-object)))
     
 ;;; This method is applicable for all pure objects.
-(defmethod object-state-class-with-class (object (class sicl-boot-phase-3::header))
+(defmethod object-state-class-with-class (object (class sicl-boot::header))
   (object-state-class-with-class-and-metaclass object class (class-of-object class)))
 
 ;;; This method is applicable for pure objects, so the class is found
@@ -239,7 +239,7 @@
 ;;; This method is applicable for very pure objects, so the class is
 ;;; found in E5.
 (defmethod object-state-class-with-class-and-metaclass
-    (object class (metaclass sicl-boot-phase-3::header))
+    (object class (metaclass sicl-boot::header))
   (declare (ignore object))
   (case (funcall (sicl-genv:fdefinition 'class-name (sicl-boot::e5 *boot*)) class)
     (sicl-clos:eql-specializer 'inspected-very-pure-eql-specializer)
