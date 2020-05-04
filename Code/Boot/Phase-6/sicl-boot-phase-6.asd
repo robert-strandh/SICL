@@ -14,5 +14,4 @@
    (:file "define-class-of")
    (:file "define-stamp")
    (:file "define-compile")
-   (:file "enable-class-initialization")
    (:file "boot")))
