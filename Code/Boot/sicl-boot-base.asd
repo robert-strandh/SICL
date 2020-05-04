@@ -25,4 +25,5 @@
    (:file "define-make-instance")
    (:file "enable-class-finalization")
    (:file "enable-defmethod")
-   (:file "enable-object-initialization")))
+   (:file "enable-object-initialization")
+   (:file "enable-class-initialization")))
