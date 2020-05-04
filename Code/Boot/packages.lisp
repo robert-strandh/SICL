@@ -24,4 +24,5 @@
            #:enable-class-finalization
            #:enable-defmethod
            #:enable-object-initialization
-           #:enable-class-initialization))
+           #:enable-class-initialization
+           #:finalize-all-classes))
