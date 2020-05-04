@@ -82,19 +82,24 @@
                            (return-from ,map (,result))))))))))
       (otherwise
        (sicl-utilities:with-gensyms (map result)
-         `(let ((,result
-                  (make-sequence
-                   ,type-form
-                   (length-of-shortest-sequence sequence ,@more-sequences))))
-            (block ,map
-              (map-over-iterators
-               (make-sequence-writer ,result 0 nil nil (lambda (n) (declare (ignore n))))
-               (function-designator-function ,function)
-               ,@(loop for sequence in (list* sequence more-sequences)
-                       collect
-                       `(make-sequence-reader
-                         ,sequence
-                         0 nil nil
-                         (lambda (n)
-                           (declare (ignore n))
-                           (return-from ,map ,result))))))))))))
+         (let* ((sequences (list* sequence more-sequences))
+                (gensyms (loop repeat (length sequences) collect (gensym))))
+           `(let ,(loop for sequence in sequences
+                        for gensym in gensyms
+                        collect `(,gensym ,sequence))
+              (let ((,result
+                      (make-sequence
+                       ,type-form
+                       (length-of-shortest-sequence ,@gensyms))))
+                (block ,map
+                  (map-over-iterators
+                   (make-sequence-writer ,result 0 nil nil (lambda (n) (declare (ignore n))))
+                   (function-designator-function ,function)
+                   ,@(loop for gensym in gensyms
+                           collect
+                           `(make-sequence-reader
+                             ,gensym
+                             0 nil nil
+                             (lambda (n)
+                               (declare (ignore n))
+                               (return-from ,map ,result))))))))))))))

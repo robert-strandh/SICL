@@ -50,9 +50,8 @@
               (declare (function function ,@readers))
               (loop
                 (funcall
-                 (funcall
-                  function
-                  ,@(loop for reader in readers collect `(funcall ,reader)))))))))
+                 function
+                 ,@(loop for reader in readers collect `(funcall ,reader))))))))
      (define-map-nil-over-iterators (n)
        `(progn
           ,@(loop for index below n
