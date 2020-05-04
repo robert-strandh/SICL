@@ -10,7 +10,6 @@
    (:file "import-from-host")
    (:file "utilities")
    (:file "enable-allocate-instance")
-   (:file "define-class-of")
    (:file "define-stamp")
    (:file "define-compile")
    (:file "boot")))
