@@ -26,4 +26,5 @@
            #:enable-object-initialization
            #:enable-class-initialization
            #:finalize-all-classes
-           #:define-class-of))
+           #:define-class-of
+           #:enable-allocate-instance))
