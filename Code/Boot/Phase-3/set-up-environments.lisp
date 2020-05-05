@@ -15,8 +15,8 @@
        sicl-genv:fboundp
        sicl-genv:fdefinition
        (setf sicl-genv:fdefinition)
-       (setf sicl-genv:function-type)
        (setf sicl-genv:function-lambda-list)
+       (setf sicl-genv:function-type)
        endp null consp atom eq not (setf cdr) apply
        append
        mapcar
@@ -54,7 +54,7 @@
        floor = /=
        find subseq list*
        position sort mapcar eql equal
-       1+ nth assoc
+       nth assoc
        apply endp cons eq coerce
        list null append length cdr)
      e3)

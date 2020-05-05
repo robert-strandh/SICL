@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-boot-phase-1)
 
 (defun import-from-host (boot)
-  (with-accessors ((e1 sicl-boot:e1)) boot
+  (with-accessors ((e1 sicl-boot:e1))
+      boot
     ;; Import class T so that it can be found when we need to create
     ;; the class T as a specializer for unspecialized method parameters.
     (setf (sicl-genv:find-class 't e1)
