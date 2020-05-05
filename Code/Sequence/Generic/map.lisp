@@ -37,7 +37,7 @@
                 (return-from map result-sequence)))
          (apply
           #'map-over-iterators
-          (make-sequence-writer result-sequence 0 nil nil #'identity)
+          (make-sequence-writer result-sequence 0 nil nil #'terminate)
           (function-designator-function function)
           (make-sequence-reader sequence 0 nil nil #'terminate)
           (loop for sequence in more-sequences
