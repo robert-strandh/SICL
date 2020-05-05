@@ -28,16 +28,13 @@
 
 (declaim (inline canonicalize-count))
 (defun canonicalize-count (count)
-  (cond ((null count)
-         most-positive-fixnum)
+  (cond ((null count) (- array-total-size-limit 2))
         ((not (integerp count))
          (error 'type-error
                 :datum count
                 :expected-type '(or null integer)))
-        ((not (plusp count))
-         0)
-        (t
-         (min count most-positive-fixnum))))
+        ((minusp count) 0)
+        (t (min count (- array-total-size-limit 2)))))
 
 (declaim (ftype (function (sequence array-length t t)
                           (values array-index array-length &optional))
@@ -97,6 +94,11 @@
                ,@body)
              (flet ((,name (a b) (funcall ,f a b)))
                ,@body))))))
+
+(defmacro with-count ((name count) &body body)
+  `(let ((,name (canonicalize-count ,count)))
+     (declare (array-index count))
+     ,@body))
 
 ;; Note: Some macros rely on the fact that CLASS-SUBCLASSES sorts its
 ;; entries most-specific-first.
