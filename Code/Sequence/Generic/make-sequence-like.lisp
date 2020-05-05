@@ -1,8 +1,9 @@
 (cl:in-package #:sicl-sequence)
 
-(defmethod make-sequence-like
-    ((list list) length &key (initial-element nil initial-element-p)
-                             (initial-contents nil initial-contents-p))
+(defmethod make-sequence-like ((list list) length
+                               &key
+                                 (initial-element nil initial-element-p)
+                                 (initial-contents nil initial-contents-p))
   (declare (method-properties inlineable))
   (cond ((and initial-element-p initial-contents-p)
          (error "Both ~S and ~S supplied to ~D."
@@ -21,9 +22,10 @@
 (seal-domain #'make-sequence-like '(list t))
 
 (replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod make-sequence-like
-    ((vectoroid #1#) length &key (initial-element nil initial-element-p)
-                                 (initial-contents nil initial-contents-p))
+  (defmethod make-sequence-like ((vectoroid #1#) length
+                                 &key
+                                   (initial-element nil initial-element-p)
+                                   (initial-contents nil initial-contents-p))
     (declare (method-properties inlineable))
     (cond ((and initial-element-p initial-contents-p)
            (error "Both ~S and ~S supplied to ~D."

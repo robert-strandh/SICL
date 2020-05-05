@@ -47,7 +47,7 @@
 (define-compiler-macro map (result-type function sequence &rest more-sequences)
   (multiple-value-bind (type-form type)
       (if (constantp result-type)
-          (let ((value (eval result-type)))
+          (let ((value (simplify-sequence-type-specifier (eval result-type))))
             (values `',value value))
           (values result-type '*))
     (case type
@@ -64,7 +64,7 @@
                        (lambda (n)
                          (declare (ignore n))
                          (return-from ,map nil))))))))
-      ((list)
+      ((list cons)
        (sicl-utilities:with-gensyms (map result collect)
          `(block ,map
             (sicl-utilities:with-collectors ((,result ,collect))
@@ -82,19 +82,24 @@
                            (return-from ,map (,result))))))))))
       (otherwise
        (sicl-utilities:with-gensyms (map result)
-         `(let ((,result
-                  (make-sequence
-                   ,type-form
-                   (length-of-shortest-sequence sequence ,@more-sequences))))
-            (block ,map
-              (map-over-iterators
-               (make-sequence-writer ,result 0 nil nil (lambda (n) (declare (ignore n))))
-               (function-designator-function ,function)
-               ,@(loop for sequence in (list* sequence more-sequences)
-                       collect
-                       `(make-sequence-reader
-                         ,sequence
-                         0 nil nil
-                         (lambda (n)
-                           (declare (ignore n))
-                           (return-from ,map ,result))))))))))))
+         (let* ((sequences (list* sequence more-sequences))
+                (gensyms (loop repeat (length sequences) collect (gensym))))
+           `(let ,(loop for sequence in sequences
+                        for gensym in gensyms
+                        collect `(,gensym ,sequence))
+              (let ((,result
+                      (make-sequence
+                       ,type-form
+                       (length-of-shortest-sequence ,@gensyms))))
+                (block ,map
+                  (map-over-iterators
+                   (make-sequence-writer ,result 0 nil nil (lambda (n) (declare (ignore n))))
+                   (function-designator-function ,function)
+                   ,@(loop for gensym in gensyms
+                           collect
+                           `(make-sequence-reader
+                             ,gensym
+                             0 nil nil
+                             (lambda (n)
+                               (declare (ignore n))
+                               (return-from ,map ,result))))))))))))))
