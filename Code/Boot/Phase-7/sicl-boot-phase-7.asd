@@ -4,4 +4,5 @@
   :depends-on (#:sicl-boot-base)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "boot")))
