@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-boot-phase-7
+(defpackage #:sicl-boot-phase-8
   (:use #:common-lisp)
   (:import-from #:sicl-boot
                 #:load-fasl
