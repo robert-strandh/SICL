@@ -38,13 +38,3 @@
 (defun allocate-instance-regular-class (class &rest initargs)
   (declare (ignore initargs))
   (allocate-instance-common class 2))
-
-;;; This function implements the action of method on
-;;; ALLOCATE-INSTANCE, specialized to BUILT-IN-CLASS.  Every instance
-;;; of a built-in class has one initial cell (the STAMP) in the rack.
-;;; This cell is not counted among the slots, because it is accessed
-;;; directly, using offsets.  For that reason, we must allocate more
-;;; slot storage than there are slots with :INSTANCE allocation.
-(defun allocate-instance-built-in-class (class &rest initargs)
-  (declare (ignore initargs))
-  (allocate-instance-common class 2))
