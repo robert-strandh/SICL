@@ -6,7 +6,7 @@
   (funcall load-fasl "CLOS/slot-bound-using-index.fasl" ea)
   (funcall load-fasl "CLOS/slot-value-etc-support.fasl" ea)
   (funcall load-fasl "CLOS/instance-slots-offset-defconstant.fasl" ea)
-  (sicl-boot:with-straddled-function-definitions
+  (with-straddled-function-definitions
       ((sicl-clos::shared-initialize-default-using-class)
        eb)
     (funcall load-fasl "CLOS/shared-initialize-support.fasl" ea))

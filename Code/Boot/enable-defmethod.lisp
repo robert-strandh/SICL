@@ -21,7 +21,7 @@
   (funcall load-fasl "CLOS/make-method-for-generic-function.fasl" ea)
   (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method eb)
         (sicl-genv:fdefinition 'sicl-clos::method-function ea))
-  (sicl-boot:with-straddled-function-definitions
+  (with-straddled-function-definitions
       ((sicl-clos::ensure-method) eb)
     (funcall load-fasl "CLOS/ensure-method.fasl" ea))
   (define-create-method-lambda eb))

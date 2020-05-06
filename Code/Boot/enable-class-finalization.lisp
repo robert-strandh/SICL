@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot)
 
 (defun define-effective-slot-definition-class (load-fasl ea eb)
-  (sicl-boot:with-straddled-function-definitions
+  (with-straddled-function-definitions
       ((sicl-clos::effective-slot-definition-class-default)
        eb)
     (funcall load-fasl "CLOS/effective-slot-definition-class-support.fasl" ea))

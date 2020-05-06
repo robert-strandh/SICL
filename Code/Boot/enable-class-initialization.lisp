@@ -16,7 +16,7 @@
   (funcall load-fasl "CLOS/add-remove-direct-method-defmethods.fasl" eb))
 
 (defun define-reader/writer-method-class (load-fasl ea eb)
-  (sicl-boot:with-straddled-function-definitions
+  (with-straddled-function-definitions
       ((sicl-clos::reader-method-class-default
         sicl-clos::writer-method-class-default)
        eb)
@@ -25,7 +25,7 @@
   (funcall load-fasl "CLOS/reader-writer-method-class-defmethods.fasl" eb))
 
 (defun define-direct-slot-definition-class (load-fasl ea eb)
-  (sicl-boot:with-straddled-function-definitions
+  (with-straddled-function-definitions
       ((sicl-clos::direct-slot-definition-class-default)
        eb)
     (funcall load-fasl "CLOS/direct-slot-definition-class-support.fasl" ea))
