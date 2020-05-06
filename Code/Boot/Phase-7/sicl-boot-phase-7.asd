@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "patch-classes")
    (:file "patch-generic-functions")
+   (:file "move-functions")
    (:file "boot")))
