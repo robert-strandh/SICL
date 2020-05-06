@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "patch-classes")
+   (:file "patch-generic-functions")
    (:file "boot")))
