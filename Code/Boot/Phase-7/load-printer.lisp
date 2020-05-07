@@ -1,6 +1,9 @@
 (cl:in-package #:sicl-boot-phase-7)
 
 (defun load-printer (e5)
+  (sicl-boot:import-function-from-host
+   'sicl-printer::print-symbol
+   e5)
   (load-fasl "Printer/print-object-defgeneric.fasl" e5)
   (load-fasl "Printer/print-object-defmethod-t.fasl" e5)
   (load-fasl "Printer/print-object-defmethod-integer.fasl" e5)
