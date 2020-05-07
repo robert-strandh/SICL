@@ -10,7 +10,7 @@
 
 ;;; FIXME: check validity also for generic functions
 
-(defun make-instance-default (class initialize-instance &rest initargs)
+(defun make-instance-default (class &rest initargs)
   (unless (class-finalized-p class)
     (finalize-inheritance class))
   ;; FIXME: check shape of initargs (proper, length is even, etc.).
@@ -22,5 +22,5 @@
                      (append defaulted-initargs
                              (list name (funcall thunk))))))
     (let ((instance (apply #'allocate-instance class defaulted-initargs)))
-      (apply initialize-instance instance defaulted-initargs)
+      (apply #'initialize-instance instance defaulted-initargs)
       instance)))
