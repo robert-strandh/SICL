@@ -24,4 +24,4 @@
 ;;; possible to call (MAKE-INSTANCE 'SYMBOL) in SBCL.  It does not
 ;;; complain in MAKE-INSTANCE, but in ALLOCATE-INSTANCE.
 (defmethod make-instance ((class regular-class) &rest initargs)
-  (apply #'make-instance-default class #'initialize-instance initargs))
+  (apply #'make-instance-default class initargs))
