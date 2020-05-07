@@ -6,6 +6,7 @@
                    (e5 sicl-boot:e5)
                    (e6 sicl-boot:e6))
       boot
+    (load-printer e5)
     (load-make-instance e5)
     (satiate-generic-functions e3 e4 e5)
     (patch-classes e4 e5)
