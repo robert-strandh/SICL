@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "load-make-instance")
    (:file "satiate-generic-functions")
    (:file "patch-classes")
    (:file "patch-generic-functions")
