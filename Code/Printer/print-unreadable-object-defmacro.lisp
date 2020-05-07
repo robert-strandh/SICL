@@ -13,7 +13,7 @@
            (,identity-var ,identity))
        (format stream "#<")
        (when ,type-var
-         (format stream "~s" (class-of ,object-var)))
+         (format stream "~s " (class-name (class-of ,object-var))))
        (when ,identity-var
          (format stream "ID"))
        ,@body
