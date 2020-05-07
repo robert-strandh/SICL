@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "satiate-generic-functions")
    (:file "patch-classes")
    (:file "patch-generic-functions")
    (:file "move-functions")
