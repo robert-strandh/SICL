@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-boot-phase-7
   (:use #:common-lisp)
+  (:import-from #:sicl-boot #:load-fasl)
   (:export #:boot))
