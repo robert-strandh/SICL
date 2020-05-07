@@ -50,6 +50,53 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:CASE.
+;;;
+;;; This primitive operation can be used to compile CL:CASE
+;;; efficiently. It has the same syntax as CL:CASE, except
+;;; that the T/OTHERWISE case is not optional, and the keys
+;;; must be actual lists rather than designators thereof.
+;;; Note that the keys are passed pretty directly to the
+;;; backend past HIR level. Implementations using this
+;;; operation should ensure that only keys it is prepared
+;;; to compare against (immediates, most likely) are used.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:case)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 nil) ; keyform and default case
+  (cst:db origin (case-cst keyform-cst . case-csts) cst
+    (declare (ignore case-cst))
+    (let* ((all-cases (cst:listify case-csts))
+           (cases (butlast all-cases))
+           (default (first (last all-cases))))
+      (check-cst-proper-list default 'case-must-be-proper-list)
+      (unless (member (cst:raw (cst:first default)) '(t otherwise))
+        (error 'default-case-missing :cst cst))
+      (loop for case in cases
+            ;; FIXME: Also not actually forms.
+            do (check-cst-proper-list case 'case-must-be-proper-list)
+               (check-cst-proper-list (cst:first case)
+                                      'case-keys-must-be-proper-list)
+            collect (cst:raw (cst:first case)) into comparees
+            collect (cst:rest case) into dests
+            finally (return
+                      (cleavir-ast:make-branch-ast
+                       (cleavir-ast:make-case-ast
+                        (convert keyform-cst env system)
+                        comparees
+                        :origin origin)
+                       (loop for body in dests
+                             collect (process-progn
+                                      (convert-sequence body env system)
+                                      origin))
+                       (process-progn
+                        (convert-sequence (cst:rest default) env system)
+                        origin)
+                       :origin origin))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:VALUES.
 ;;;
 ;;; This primitive operation can be used to inline CL:VALUES.  That

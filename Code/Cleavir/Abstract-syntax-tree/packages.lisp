@@ -31,6 +31,7 @@
    #:required-only-p #:required #:argparse-ast #:body-ast
    #:go-ast #:make-go-ast #:tag-ast
    #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
+   #:branch-ast #:make-branch-ast #:branch-asts #:default-ast
    #:multiple-value-call-ast #:make-multiple-value-call-ast
    #:function-form-ast
    #:values-ast #:make-values-ast
@@ -50,6 +51,7 @@
    #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
    #:bind-ast #:make-bind-ast
    #:eq-ast #:make-eq-ast
+   #:case-ast #:make-case-ast #:comparees
    #:car-ast #:make-car-ast #:cons-ast
    #:cdr-ast #:make-cdr-ast
    #:rplaca-ast #:make-rplaca-ast #:object-ast

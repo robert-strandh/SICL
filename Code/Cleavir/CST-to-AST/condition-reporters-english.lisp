@@ -73,6 +73,26 @@
 	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
+    ((condition case-must-be-proper-list)
+     stream
+     (language acclimation:english))
+  (format stream
+          "CLEAVIR-PRIMOP:CASE cases must be proper lists,~@
+           but the following was found instead:~@
+           ~s"
+          (cst:raw (cst condition))))
+
+(defmethod acclimation:report-condition
+    ((condition case-keys-must-be-proper-list)
+     stream
+     (language acclimation:english))
+  (format stream
+          "CLEAVIR-PRIMOP:CASE cases must have proper lists as keys,~@
+           but the following was found instead:~@
+           ~s"
+          (cst:raw (cst condition))))
+
+(defmethod acclimation:report-condition
     ((condition invalid-eval-when-situation)
      stream
      (language acclimation:english))
@@ -296,6 +316,18 @@
            The following form was found:~@
            ~s"
 	  (cst:raw (cst condition))))
+
+(defmethod acclimation:report-condition
+    ((condition default-case-missing)
+     stream
+     (language acclimation:english))
+  (format stream
+          "CLEAVIR-PRIMOP:CASE forms require a default case.~@
+           That is, the last case must have one of the symbols T or OTHERWISE~@
+           instead of a list of keys to compare against.~@
+           But in this form, the final case is not a default case:~@
+           ~s"
+          (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition lambda-call-first-symbol-not-lambda)

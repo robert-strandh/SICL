@@ -300,6 +300,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction CASE-INSTRUCTION.
+;;;
+;;; This instruction is used to implement a multi-way comparison
+;;; against sets of sets of objects, like CL:CASE.
+;;;
+;;; It has no outputs, and one input, the value being compared.
+;;;
+;;; COMPAREES is a sequence of sequences of objects, representing
+;;; these sets. If COMPAREES has length n, this instruction has
+;;; n+1 successors - one for each set, plus a default.
+
+(defclass case-instruction (instruction multiple-successors-mixin)
+  ((%comparees :initarg :comparees :reader comparees)))
+
+(defun make-case-instruction (input comparees successors)
+  (make-instance 'case-instruction
+    :inputs (list input)
+    :comparees comparees
+    :successors successors))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction CONSP-INSTRUCTION.
 ;;;
 ;;; This instruction is used to test whether its input is a CONS cell.
