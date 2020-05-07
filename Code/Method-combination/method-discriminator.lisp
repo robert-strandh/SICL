@@ -41,5 +41,5 @@
                for required = (getf options :required)
                unless (null required)
                  collect `(when (and ,required (null ,name))
-                            (error "Empty list of requred methods")))
+                            (error "Empty list of required methods")))
        ,@body)))
