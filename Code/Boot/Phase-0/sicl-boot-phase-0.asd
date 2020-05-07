@@ -8,6 +8,7 @@
                #:sicl-package-support
                #:sicl-sequence-support
                #:sicl-arithmetic
+               #:sicl-printer-support
                #:eclector
                #:eclector-concrete-syntax-tree
                #:cleavir-io)
