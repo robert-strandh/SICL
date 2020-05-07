@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "integer")
-   (:file "ratio")))
+   (:file "ratio")
+   (:file "symbol")))
