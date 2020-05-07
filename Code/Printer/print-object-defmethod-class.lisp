@@ -2,4 +2,4 @@
 
 (defmethod print-object ((object class) stream)
   (print-unreadable-object (object stream :type t)
-    (print (class-name object) stream)))
+    (format stream "~a" (class-name object))))
