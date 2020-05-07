@@ -7,8 +7,8 @@
 ;;; This instruction takes as the first input, a lexical location
 ;;; holding the output of an ENCLOSE-INSTRUCTION.  The rest of the
 ;;; inputs initialize the closure with their values.
-(defclass initialize-closure-instruction (instruction one-successor-mixin
-                                          side-effect-mixin)
+(defclass initialize-closure-instruction (one-successor-mixin
+                                          side-effect-mixin instruction)
   ())
 
 (defun make-initialize-closure-instruction (closure values)
@@ -24,8 +24,8 @@
 ;;; a lexical location that will hold the cell being created by the
 ;;; instruction.
 
-(defclass create-cell-instruction (instruction one-successor-mixin
-                                   allocation-mixin)
+(defclass create-cell-instruction (one-successor-mixin
+                                   allocation-mixin instruction)
   ())
 
 (defun make-create-cell-instruction (output &optional successor)
@@ -52,7 +52,7 @@
 ;;; instruction has a single output, which is a dynamic lexical
 ;;; location.
 
-(defclass fetch-instruction (instruction one-successor-mixin)
+(defclass fetch-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-fetch-instruction
@@ -76,7 +76,7 @@
 ;;; single output, namely a dynamic lexical location to hold the value
 ;;; of the variable.
 
-(defclass read-cell-instruction (instruction one-successor-mixin)
+(defclass read-cell-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-read-cell-instruction (input output &optional successor)
@@ -98,7 +98,7 @@
 ;;; input is a constant input or a dynamic lexical input holding the
 ;;; value to write to the cell.  This instruction has no outputs.
 
-(defclass write-cell-instruction (instruction one-successor-mixin side-effect-mixin)
+(defclass write-cell-instruction (one-successor-mixin side-effect-mixin instruction)
   ())
 
 (defun make-write-cell-instruction (cell-input value-input &optional successor)
@@ -124,7 +124,7 @@
 ;;; dynamic lexical location remains valid and is subject to register
 ;;; allocation.
 
-(defclass add-activation-record-instruction (instruction one-successor-mixin)
+(defclass add-activation-record-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-add-activation-record-instruction (env-input size-input env-output)
@@ -147,7 +147,7 @@
 ;;; that the input dynamic lexical location remains valid and is
 ;;; subject to register allocation.
 
-(defclass remove-activation-record-instruction (instruction one-successor-mixin)
+(defclass remove-activation-record-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-remove-activation-record-instruction (env-input env-output)
@@ -171,7 +171,7 @@
 ;;; output is a dynamic lexical location.
 
 (defclass load-from-static-environment-instruction
-    (instruction one-successor-mixin)
+    (one-successor-mixin instruction)
   ())
 
 (defun make-load-from-static-environment-instruction
@@ -198,7 +198,7 @@
 ;;; to be copied.
 
 (defclass store-to-static-environment-instruction
-    (instruction one-successor-mixin)
+    (one-successor-mixin instruction)
   ())
 
 (defun make-store-to-static-environment-instruction
