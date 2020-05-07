@@ -130,7 +130,7 @@
 ;;; The value of the constant is represented as a possibly-negative
 ;;; integer that is the machine-code representation of the constant.
 
-(defclass immediate-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass immediate-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
   ((%value :initarg :value :reader value)))
 
 (defun make-immediate-ast (value &key origin (policy *policy*))
@@ -158,7 +158,7 @@
 ;;; value here represents the value of that constant variable at
 ;;; compile time.
 
-(defclass constant-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass constant-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
   ((%value :initarg :value :reader value)))
 
 (defun make-constant-ast (value &key origin (policy *policy*))
@@ -181,7 +181,7 @@
 ;;; a reference contains the name of the variable, but it is used only
 ;;; for debugging purposes and for the purpose of error reporting.
 
-(defclass lexical-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass lexical-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
   ((%name :initarg :name :reader name)))
 
 (defun make-lexical-ast (name &key origin (policy *policy*))
@@ -202,7 +202,7 @@
 ;;;
 ;;; This AST is generated from a reference to a special variable.
 
-(defclass symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass symbol-value-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
   ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
 
 (defun make-symbol-value-ast (symbol-ast &key origin (policy *policy*))
@@ -220,7 +220,7 @@
 ;;;
 ;;; Class CONSTANT-SYMBOL-VALUE-AST.
 
-(defclass constant-symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass constant-symbol-value-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
   ((%name :initarg :name :reader name)))
 
 (defun make-constant-symbol-value-ast (name &key origin (policy *policy*))
@@ -240,7 +240,7 @@
 ;;;
 ;;; This AST is generated from an assignment to a special variable.
 
-(defclass set-symbol-value-ast (ast no-value-ast-mixin)
+(defclass set-symbol-value-ast (no-value-ast-mixin ast)
   ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
@@ -261,7 +261,7 @@
 ;;;
 ;;; Class SET-CONSTANT-SYMBOL-VALUE-AST.
 
-(defclass set-constant-symbol-value-ast (ast no-value-ast-mixin)
+(defclass set-constant-symbol-value-ast (no-value-ast-mixin ast)
   ((%name :initarg :name :reader name)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
@@ -284,7 +284,7 @@
 ;;;
 ;;; This AST is generated from a reference to a global function.
 
-(defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass fdefinition-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
   (;; This slot contains an AST that produces the function name.
    (%name-ast :initarg :name-ast :reader name-ast)))
 
@@ -307,7 +307,7 @@
 ;;; function, but migration to this AST is suggested.
 
 (defclass constant-fdefinition-ast
-    (ast one-value-ast-mixin side-effect-free-ast-mixin)
+    (one-value-ast-mixin side-effect-free-ast-mixin ast)
   (;; This slot contains the name of the function
    (%name :initarg :name :reader name)))
 
@@ -387,7 +387,7 @@
 ;;; LEXICAL-ASTs of any of the ki because they may not be set
 ;;; correctly (conceptually, they all have the value FALSE then).
 
-(defclass function-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass function-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)
    ;; An alist from lexical ASTs to lists of pertinent declaration specifiers.
@@ -524,7 +524,7 @@
 ;;; This AST does not correspond exactly to the SETQ special operator,
 ;;; because the AST does not return a value.
 
-(defclass setq-ast (ast no-value-ast-mixin)
+(defclass setq-ast (no-value-ast-mixin ast)
   ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
@@ -601,7 +601,7 @@
 ;;;
 ;;; Class TAGBODY-AST.
 
-(defclass tagbody-ast (ast no-value-ast-mixin)
+(defclass tagbody-ast (no-value-ast-mixin ast)
   ((%item-asts :initarg :item-asts :reader item-asts)))
 
 (defun make-tagbody-ast (item-asts &key origin (policy *policy*))
@@ -707,7 +707,7 @@
 ;;; TYPE-SPECIFIER-AST slot with NIL and we compute the real value of
 ;;; it only when it is requested.
 
-(defclass typeq-ast (ast boolean-ast-mixin)
+(defclass typeq-ast (boolean-ast-mixin ast)
   (;; This slot contains the type specifier as an S-expression.  When
    ;; this AST is compiled to HIR, the contents of this slot will be
    ;; transmitted to the TYPEQ-INSTRUCTION so that it can be used by
@@ -759,7 +759,7 @@
 ;;; because it can only be a Boolean which is not evaluated, so we
 ;;; know at AST creation time whether it is true or false. 
 
-(defclass load-time-value-ast (ast one-value-ast-mixin)
+(defclass load-time-value-ast (one-value-ast-mixin ast)
   ((%form :initarg :form :reader form)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
@@ -915,7 +915,7 @@
 ;;; Note that this loses information from DYNAMIC-EXTENT, which
 ;;; does not allow escape from the form with the declaration.
 
-(defclass dynamic-allocation-ast (ast one-value-ast-mixin)
+(defclass dynamic-allocation-ast (one-value-ast-mixin ast)
   ((%form-ast :initarg :form-ast :reader form-ast)))
 
 (defun make-dynamic-allocation-ast (form-ast &key origin (policy *policy*))
@@ -981,7 +981,7 @@
 ;;; It has two children.  This AST can only appear in the TEST
 ;;; position of an IF-AST.
 
-(defclass eq-ast (ast boolean-ast-mixin)
+(defclass eq-ast (boolean-ast-mixin ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
@@ -1011,7 +1011,7 @@
 ;;; is taken instead.
 ;;; This AST can only appear in the TEST position of a BRANCH-AST.
 
-(defclass case-ast (ast multiway-ast-mixin)
+(defclass case-ast (multiway-ast-mixin ast)
   ((%arg-ast :initarg :arg-ast :reader arg-ast)
    (%comparees :initarg :comparees :reader comparees)))
 

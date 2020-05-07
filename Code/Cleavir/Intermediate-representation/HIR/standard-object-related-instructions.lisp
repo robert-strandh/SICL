@@ -10,7 +10,7 @@
 ;;; This instruction produces a single output, which is the contents
 ;;; of the SLOT.
 
-(defclass slot-read-instruction (instruction one-successor-mixin)
+(defclass slot-read-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-slot-read-instruction (input1 input2 output successor)
@@ -30,7 +30,7 @@
 ;;; replaces the contents of the slot with the new value.
 
 (defclass slot-write-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+    (one-successor-mixin side-effect-mixin instruction)
   ())
 
 (defun make-slot-write-instruction (input1 input2 input3 successor)

@@ -2,7 +2,7 @@
 
 (defmacro define-simple-one-arg-float-ast (name)
   `(progn 
-     (defclass ,name (ast one-value-ast-mixin)
+     (defclass ,name (one-value-ast-mixin ast)
        ((%subtype :initarg :subtype :reader subtype)
         (%arg-ast :initarg :arg-ast :reader arg-ast)))
 
@@ -15,7 +15,7 @@
 
 (defmacro define-simple-two-arg-float-ast (name)
   `(progn 
-     (defclass ,name (ast one-value-ast-mixin)
+     (defclass ,name (one-value-ast-mixin ast)
        ((%subtype :initarg :subtype :reader subtype)
         (%arg1-ast :initarg :arg1-ast :reader arg1-ast)
         (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
@@ -30,7 +30,7 @@
 
 (defmacro define-simple-float-comparison-ast (name)
   `(progn 
-     (defclass ,name (ast boolean-ast-mixin)
+     (defclass ,name (boolean-ast-mixin ast)
        ((%subtype :initarg :subtype :reader subtype)
         (%arg1-ast :initarg :arg1-ast :reader arg1-ast)
         (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
@@ -206,7 +206,7 @@
 ;;; This AST can be used to convert a number of one type into another
 ;;; type. Both types are compile-time constants.
 
-(defclass coerce-ast (ast one-value-ast-mixin)
+(defclass coerce-ast (one-value-ast-mixin ast)
   ((%from-type :initarg :from :reader from-type)
    (%to-type :initarg :to :reader to-type)
    (%arg-ast :initarg :arg-ast :reader arg-ast)))
