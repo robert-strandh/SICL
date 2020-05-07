@@ -246,6 +246,8 @@
     (cf "CLOS/initialize-instance-defgenerics.lisp")
     (cf "CLOS/initialize-instance-defmethods.lisp")
     (cf "CLOS/make-instance-support.lisp")
+    (cf "CLOS/make-instance-defgenerics.lisp")
+    (cf "CLOS/make-instance-defmethods.lisp")
     (cf "CLOS/default-superclasses-defgeneric.lisp")
     (cf "CLOS/default-superclasses-defmethods.lisp")
     (cf "CLOS/reinitialize-instance-defgenerics.lisp")
