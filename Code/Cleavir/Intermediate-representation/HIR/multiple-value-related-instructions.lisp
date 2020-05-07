@@ -14,7 +14,7 @@
 ;;; contained in the VALUES-LOCATION, then the remaining ordinary
 ;;; lexical locations are assigned to NIL.
 
-(defclass multiple-to-fixed-instruction (instruction one-successor-mixin)
+(defclass multiple-to-fixed-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-multiple-to-fixed-instruction
@@ -35,7 +35,7 @@
 ;;; that all the inputs are preserved, and the number of inputs is
 ;;; kept with the output.
 
-(defclass fixed-to-multiple-instruction (instruction one-successor-mixin)
+(defclass fixed-to-multiple-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-fixed-to-multiple-instruction
@@ -56,7 +56,7 @@
 ;;; VALUES-LOCATION.
 
 (defclass multiple-value-call-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+    (one-successor-mixin side-effect-mixin instruction)
   ())
 
 (defun make-multiple-value-call-instruction
@@ -76,7 +76,7 @@
 ;;; A separate instruction is useful because values locations can
 ;;; have an unknown or varying number of values.
 
-(defclass the-values-instruction (instruction one-successor-mixin)
+(defclass the-values-instruction (one-successor-mixin instruction)
   ((%required-types :initarg :required :reader required-types)
    (%optional-types :initarg :optional :reader optional-types)
    (%rest-type :initarg :rest :reader rest-type)))

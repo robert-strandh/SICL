@@ -8,7 +8,7 @@
 ;;; CONS cell, and produces a single output, which is the contents of
 ;;; the CAR of the cons cell.
 
-(defclass car-instruction (instruction one-successor-mixin)
+(defclass car-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-car-instruction (input output successor)
@@ -25,7 +25,7 @@
 ;;; CONS cell, and produces a single output, which is the contents of
 ;;; the CDR of the cons cell.
 
-(defclass cdr-instruction (instruction one-successor-mixin)
+(defclass cdr-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-cdr-instruction (input output successor)
@@ -44,7 +44,7 @@
 ;;; the second input. 
 
 (defclass rplaca-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+    (one-successor-mixin side-effect-mixin instruction)
   ())
 
 (defun make-rplaca-instruction (input1 input2 successor)
@@ -63,7 +63,7 @@
 ;;; the second input. 
 
 (defclass rplacd-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+    (one-successor-mixin side-effect-mixin instruction)
   ())
 
 (defun make-rplacd-instruction (input1 input2 successor)
