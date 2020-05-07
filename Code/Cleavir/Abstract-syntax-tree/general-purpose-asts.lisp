@@ -52,6 +52,10 @@
 ;;; results, so are mainly used as the TEST-AST of an IF-AST.
 (defclass boolean-ast-mixin () ())
 
+;;; This class is used as a superclass for ASTs that produce results
+;;; for BRANCH-AST.
+(defclass multiway-ast-mixin () ())
+
 ;;; This class is used as a superclass for ASTs that produce no value
 ;;; and that must be compiled in a context where no value is required.
 (defclass no-value-ast-mixin () ())
@@ -804,6 +808,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class BRANCH-AST.
+;;;
+;;; This class is a generalization of IF-AST. Based on the TEST-AST,
+;;; one of the zero or more BRANCH-ASTs, or else the DEFAULT-AST,
+;;; will be evaluated and its values returned.
+;;;
+;;; This AST can be used for example in the implementation of fast
+;;; CASE or TYPECASE operations.
+
+(defclass branch-ast (ast)
+  ((%test-ast :initarg :test-ast :reader test-ast)
+   (%branch-asts :initarg :branch-asts :reader branch-asts)
+   (%default-ast :initarg :default-ast :reader default-ast)))
+
+(defun make-branch-ast (test-ast branch-asts default-ast
+                        &key origin (policy *policy*))
+  (make-instance 'branch-ast
+    :origin origin :policy policy
+    :test-ast test-ast
+    :branch-asts branch-asts :default-ast default-ast))
+
+(cleavir-io:define-save-info branch-ast
+  (:test-ast test-ast)
+  (:branch-asts branch-asts)
+  (:default-ast default-ast))
+
+(defmethod children ((ast branch-ast))
+  (list* (test-ast ast) (default-ast ast) (branch-asts ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class MULTIPLE-VALUE-CALL-AST.
 
 (defclass multiple-value-call-ast (ast)
@@ -963,3 +998,31 @@
 (defmethod children ((ast eq-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class CASE-AST.
+;;;
+;;; This AST can be used to select an execution path by
+;;; comparing a given object against a fixed set of immediates.
+;;; COMPAREES is a sequence of sequences of objects.
+;;; If the primary value returned by the ARG-AST is EQ to one of
+;;; the objects in the nth sequence, the nth branch is taken;
+;;; if the value doesn't match any immediate the default branch
+;;; is taken instead.
+;;; This AST can only appear in the TEST position of a BRANCH-AST.
+
+(defclass case-ast (ast multiway-ast-mixin)
+  ((%arg-ast :initarg :arg-ast :reader arg-ast)
+   (%comparees :initarg :comparees :reader comparees)))
+
+(defun make-case-ast (arg-ast comparees &key origin (policy *policy*))
+  (make-instance 'case-ast
+    :origin origin :policy policy
+    :arg-ast arg-ast :comparees comparees))
+
+(cleavir-io:define-save-info case-ast
+  (:arg-ast arg-ast)
+  (:comparees comparees))
+
+(defmethod children ((ast case-ast))
+  (list (arg-ast ast)))

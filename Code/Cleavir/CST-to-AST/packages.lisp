@@ -41,6 +41,8 @@
            #:block-name-must-be-a-symbol
            #:form-must-be-proper-list
            #:situations-must-be-proper-list
+           #:case-must-be-proper-list
+           #:case-keys-must-be-proper-list
            #:invalid-eval-when-situation
            #:local-function-definition-must-be-proper-list
            #:lambda-must-be-proper-list
@@ -61,6 +63,7 @@
            #:function-name-names-local-macro
            #:function-name-names-special-operator
            #:no-default-method
+           #:default-case-missing
            #:lambda-call-first-symbol-not-lambda
            #:malformed-lambda-list
            #:odd-keyword-portion-warning
