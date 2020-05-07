@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-inspector)
 
 (defun class-of-object (object)
-  (slot-value object 'sicl-boot-phase-3::%class))
+  (slot-value object 'sicl-boot::%class))
 
 (defun rack-of-object (object)
   (slot-value object 'sicl-boot::%rack))
