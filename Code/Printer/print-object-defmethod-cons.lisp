@@ -1,0 +1,10 @@
+(cl:in-package #:sicl-printer)
+
+(defmethod print-object ((object cons) stream)
+  (format stream "(")
+  (loop for remaining = object then (rest remaining)
+        until (atom remaining)
+        do (format stream "~s " (first remaining))
+        finally (if (null remaining)
+                    (format stream ")")
+                    (format stream ". ~s" remaining))))
