@@ -74,14 +74,24 @@
                                         argument)))
                    (format *trace-output* "~%")
                    (incf *trace-depth*)
-                   (let ((value (apply function arguments)))
+                   (let ((values (multiple-value-list (apply function arguments))))
                      (decf *trace-depth*)
                      (indent)
                      (format *trace-output*
-                             "~s returned ~s: "
-                             function-name
-                             value))
-                   (format *trace-output* "~%")))))))
+                             "~s returned: "
+                             function-name)
+                     (if use-print-object-p
+                       (loop for value in values
+                             do (funcall (sicl-genv:fdefinition 'print-object environment)
+                                         value
+                                         *trace-output*)
+                                (format *trace-output* " "))
+                       (loop for value in values
+                             do (format *trace-output*
+                                        "~s "
+                                        value)))
+                     (format *trace-output* "~%")
+                     (apply #'values values))))))))
 
 (defun trace-all (environment &key use-print-object-p)
   (do-all-symbols (var)
