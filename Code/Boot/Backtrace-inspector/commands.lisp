@@ -18,7 +18,7 @@
 
 (define-inspector-command (com-inspect-argument :name t)
     ((argument 'argument))
-  (sicl-boot-inspector:inspect argument))
+  (clouseau:inspect argument))
 
 (clim:define-presentation-to-command-translator inspect-argument
     (argument
