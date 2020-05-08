@@ -4,8 +4,8 @@
 ;;;
 ;;; List Deletion
 
-(declaim (inline delete-in-list/forward))
-(defun delete-in-list/forward (predicate list start end count)
+(declaim (inline delete-in-list/from-start))
+(defun delete-in-list/from-start (predicate list start end count)
   (let* ((count (canonicalize-count count))
          (head (cons nil nil))
          (tail head))
@@ -13,22 +13,22 @@
     (for-each-relevant-cons (cons index list start end nil)
       (cond ((zerop count)
              (setf (cdr tail) cons)
-             (return-from delete-in-list/forward (cdr head)))
+             (return-from delete-in-list/from-start (cdr head)))
             ((not (funcall predicate (car cons)))
              (setf (cdr tail) cons)
              (setf tail cons))
             (t (decf count))))
     (cdr head)))
 
-(declaim (inline delete-in-list/backward))
-(defun delete-in-list/backward (predicate list start end count)
+(declaim (inline delete-in-list/from-end))
+(defun delete-in-list/from-end (predicate list start end count)
   (let ((count (canonicalize-count count))
         (tail nil))
     (declare (fixnum count))
     (for-each-relevant-cons (cons index list start end t)
       (cond ((zerop count)
              (setf (cdr cons) tail)
-             (return-from delete-in-list/backward list))
+             (return-from delete-in-list/from-end list))
             ((not (funcall predicate (car cons)))
              (setf (cdr cons) tail)
              (setf tail cons))
@@ -38,15 +38,15 @@
 (declaim (inline delete-in-list))
 (defun delete-in-list (predicate list from-end start end count)
   (if (not from-end)
-      (delete-in-list/forward predicate list start end count)
-      (delete-in-list/backward predicate list start end count)))
+      (delete-in-list/from-start predicate list start end count)
+      (delete-in-list/from-end predicate list start end count)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Vector Deletion
 
-(declaim (inline delete-in-vector/forward))
-(defun delete-in-vector/forward (predicate vector start end count)
+(declaim (inline delete-in-vector/from-start))
+(defun delete-in-vector/from-start (predicate vector start end count)
   (let ((count (canonicalize-count count))
         (length (length vector)))
     (multiple-value-bind (start end)
@@ -71,8 +71,8 @@
                  (setf (elt vector new-end) element)
                  (incf new-end))))))))
 
-(declaim (inline delete-in-vector/backward))
-(defun delete-in-vector/backward (predicate vector start end count)
+(declaim (inline delete-in-vector/from-end))
+(defun delete-in-vector/from-end (predicate vector start end count)
   (let ((count (canonicalize-count count))
         (length (length vector)))
     (multiple-value-bind (start end)
@@ -101,5 +101,5 @@
 (declaim (inline delete-in-vector))
 (defun delete-in-vector (predicate vector from-end start end count)
   (if (not from-end)
-      (delete-in-vector/forward predicate vector start end count)
-      (delete-in-vector/backward predicate vector start end count)))
+      (delete-in-vector/from-start predicate vector start end count)
+      (delete-in-vector/from-end predicate vector start end count)))
