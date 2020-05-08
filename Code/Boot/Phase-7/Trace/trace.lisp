@@ -39,6 +39,23 @@
 (defun already-traced-p (function-name environment)
   (nth-value 1 (gethash (cons function-name environment) *traced-functions*)))
 
+(defun print-value (value environment use-print-object-p)
+  (cond ((typep value 'array)
+         (format *trace-output* "[array]"))
+        ((and use-print-object-p (typep value 'sicl-boot::header))
+         (handler-case
+             (funcall (sicl-genv:fdefinition 'print-object environment)
+                      value
+                      *trace-output*)
+           (error ()
+             (format *trace-output*
+                     "[*]~s"
+                     value))))
+        (t
+         (format *trace-output*
+                 "~s"
+                 value))))
+
 (defun trace (function-name environment &key use-print-object-p)
   (cond ((not (tracable-p function-name environment))
          (format *trace-output*
@@ -61,18 +78,14 @@
                            function-name
                            environment)
                    (indent)
-                   (format *trace-output* "With arguments: ")
-                   (if use-print-object-p
-                       (loop for argument in arguments
-                             do (funcall (sicl-genv:fdefinition 'print-object environment)
-                                         argument
-                                         *trace-output*)
-                                (format *trace-output* " "))
-                       (loop for argument in arguments
-                             do (format *trace-output*
-                                        "~s "
-                                        argument)))
-                   (format *trace-output* "~%")
+                   (format *trace-output* "With arguments:~%")
+                   (incf *trace-depth* 4)
+                   (loop for argument in arguments
+                         do (indent)
+                            (format *trace-output* "=>  ")
+                            (print-value argument environment use-print-object-p)
+                            (format *trace-output* "~%"))
+                   (decf *trace-depth* 4)
                    (incf *trace-depth*)
                    (let ((values (multiple-value-list (apply function arguments))))
                      (decf *trace-depth*)
@@ -80,24 +93,18 @@
                      (format *trace-output*
                              "~s returned: "
                              function-name)
-                     (if use-print-object-p
-                       (loop for value in values
-                             do (funcall (sicl-genv:fdefinition 'print-object environment)
-                                         value
-                                         *trace-output*)
-                                (format *trace-output* " "))
-                       (loop for value in values
-                             do (format *trace-output*
-                                        "~s "
-                                        value)))
+                     (loop for value in values
+                           do (print-value value environment use-print-object-p))
                      (format *trace-output* "~%")
                      (apply #'values values))))))))
 
 (defun trace-all (environment &key use-print-object-p)
   (do-all-symbols (var)
-    (when (and (tracable-p var environment)
-               (not (already-traced-p var environment)))
-      (trace var environment :use-print-object-p use-print-object-p))
-    (when (and (tracable-p `(setf ,var) environment)
-               (not (already-traced-p `(setf ,var) environment)))
-      (trace `(setf ,var) environment :use-print-object-p use-print-object-p))))
+    (unless (or (eq var 'print-object)
+                (eq var 'format))
+      (when (and (tracable-p var environment)
+                 (not (already-traced-p var environment)))
+        (trace var environment :use-print-object-p use-print-object-p))
+      (when (and (tracable-p `(setf ,var) environment)
+                 (not (already-traced-p `(setf ,var) environment)))
+        (trace `(setf ,var) environment :use-print-object-p use-print-object-p)))))
