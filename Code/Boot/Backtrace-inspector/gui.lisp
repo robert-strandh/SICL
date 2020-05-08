@@ -99,7 +99,7 @@
                 (loop for i from (1+ start-line-index) below end-line-index
                       do (format pane "~a~%" (aref lines i)))
                 (format pane "~a" (subseq end-line 0 end-character-index)))
-              (format pane "~a%" (subseq end-line end-character-index))))
+              (format pane "~a~%" (subseq end-line end-character-index))))
         (loop for i from (1+ end-line-index) below (length lines)
               do (format pane "~a~%" (aref lines i)))))))
 
