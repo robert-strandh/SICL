@@ -12,7 +12,7 @@
 ;;; machinery involved in verifying the argument count and parsing the
 ;;; arguments.  It has a single successor.
 
-(defclass enter-instruction (instruction one-successor-mixin)
+(defclass enter-instruction (one-successor-mixin instruction)
   ((%lambda-list :initarg :lambda-list :accessor lambda-list)
    ;; An alist from output locations to lists of declaration specifiers.
    ;; Since SPECIAL is handled elsewhere, these declarations should only
@@ -101,8 +101,8 @@
 ;;;
 ;;; Instruction ENCLOSE-INSTRUCTION.
 
-(defclass enclose-instruction (instruction one-successor-mixin
-                               allocation-mixin)
+(defclass enclose-instruction (one-successor-mixin allocation-mixin
+                               instruction)
   ((%code :initarg :code :accessor code)
    ;; Points to the instruction which initializes the closure environment.
    (%initializer :initarg :initializer :accessor initializer :initform nil)))  

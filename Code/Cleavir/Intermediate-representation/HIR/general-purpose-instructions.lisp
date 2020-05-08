@@ -35,7 +35,7 @@
 ;;;
 ;;; Instruction NOP-INSTRUCTION.
 
-(defclass nop-instruction (instruction one-successor-mixin)
+(defclass nop-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-nop-instruction (successors)
@@ -46,7 +46,7 @@
 ;;;
 ;;; Instruction UNREACHABLE-INSTRUCTION.
 
-(defclass unreachable-instruction (instruction no-successors-mixin)
+(defclass unreachable-instruction (no-successors-mixin instruction)
   ())
 
 (defun make-unreachable-instruction ()
@@ -56,7 +56,7 @@
 ;;;
 ;;; Instruction ASSIGNMENT-INSTRUCTION.
 
-(defclass assignment-instruction (instruction one-successor-mixin)
+(defclass assignment-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-assignment-instruction
@@ -71,7 +71,7 @@
 ;;; Instruction FUNCALL-INSTRUCTION.
 
 (defclass funcall-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+    (one-successor-mixin side-effect-mixin instruction)
   ())
 
 (defun make-funcall-instruction
@@ -93,7 +93,7 @@
 ;;; is pretty convenient.
 
 (defclass funcall-no-return-instruction
-    (instruction no-successors-mixin side-effect-mixin)
+    (no-successors-mixin side-effect-mixin instruction)
   ())
 
 (defun make-funcall-no-return-instruction (inputs)
@@ -104,7 +104,7 @@
 ;;;
 ;;; Instruction TAILCALL-INSTRUCTION.
 
-(defclass tailcall-instruction (instruction no-successors-mixin)
+(defclass tailcall-instruction (no-successors-mixin instruction)
   ())
 
 (defun make-tailcall-instruction (inputs)
@@ -116,7 +116,7 @@
 ;;; Instruction RETURN-INSTRUCTION.
 
 (defclass return-instruction
-    (instruction no-successors-mixin side-effect-mixin)
+    (no-successors-mixin side-effect-mixin instruction)
   ())
 
 (defun make-return-instruction (inputs)
@@ -136,7 +136,7 @@
 ;;; replaced by a call to TYPEP.  When it is replaced by a call to
 ;;; TYPEP, we use the constant input as the second argument to TYPEP.
 
-(defclass typeq-instruction (instruction multiple-successors-mixin)
+(defclass typeq-instruction (multiple-successors-mixin instruction)
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-typeq-instruction (input successors value-type)
@@ -157,7 +157,7 @@
 ;;; branch.  Operationally, it has no effect.  But it informs the type
 ;;; inference machinery that the input is of a particular type. 
 
-(defclass the-instruction (instruction one-successor-mixin)
+(defclass the-instruction (one-successor-mixin instruction)
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-the-instruction (input successor value-type)
@@ -181,7 +181,7 @@
 ;;; can be allocated in the local function's stack frame.
 
 (defclass dynamic-allocation-instruction
-    (instruction one-successor-mixin)
+    (one-successor-mixin instruction)
   ())
 
 (defun make-dynamic-allocation-instruction (input successor)
@@ -219,7 +219,7 @@
 ;;; Functions returning to the BLOCK would UNWIND to the CATCH, using
 ;;; a closed-over continuation.
 
-(defclass catch-instruction (instruction multiple-successors-mixin)
+(defclass catch-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-catch-instruction (continuation dynenv-out successors)
@@ -242,7 +242,7 @@
 ;;; environment.
 
 (defclass unwind-instruction
-    (instruction no-successors-mixin side-effect-mixin)
+    (no-successors-mixin side-effect-mixin instruction)
   (;; The destination of the UNWIND-INSTRUCTION is the
    ;; instruction to which it will eventually transfer control.
    ;; This instruction must be the successor of a CATCH-INSTRUCTION.
@@ -279,7 +279,7 @@
 ;;; relevant CATCH-INSTRUCTION.
 
 (defclass local-unwind-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+    (one-successor-mixin side-effect-mixin instruction)
   ())
 
 (defun make-local-unwind-instruction (successor)
@@ -290,7 +290,7 @@
 ;;;
 ;;; Instruction EQ-INSTRUCTION.
 
-(defclass eq-instruction (instruction multiple-successors-mixin)
+(defclass eq-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-eq-instruction (inputs successors)
@@ -311,7 +311,7 @@
 ;;; these sets. If COMPAREES has length n, this instruction has
 ;;; n+1 successors - one for each set, plus a default.
 
-(defclass case-instruction (instruction multiple-successors-mixin)
+(defclass case-instruction (multiple-successors-mixin instruction)
   ((%comparees :initarg :comparees :reader comparees)))
 
 (defun make-case-instruction (input comparees successors)
@@ -328,7 +328,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass consp-instruction (instruction multiple-successors-mixin)
+(defclass consp-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-consp-instruction (input successors)
@@ -344,7 +344,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass fixnump-instruction (instruction multiple-successors-mixin)
+(defclass fixnump-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-fixnump-instruction (input successors)
@@ -360,7 +360,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass characterp-instruction (instruction multiple-successors-mixin)
+(defclass characterp-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-characterp-instruction (input successors)
@@ -372,7 +372,7 @@
 ;;;
 ;;; Instruction SYMBOL-VALUE-INSTRUCTION.
 
-(defclass symbol-value-instruction (instruction one-successor-mixin)
+(defclass symbol-value-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-symbol-value-instruction (input output successor)
@@ -385,7 +385,7 @@
 ;;;
 ;;; Instruction CONSTANT-SYMBOL-VALUE-INSTRUCTION.
 
-(defclass constant-symbol-value-instruction (instruction one-successor-mixin)
+(defclass constant-symbol-value-instruction (one-successor-mixin instruction)
   ((%name :initarg :name :reader name)))
 
 (defun make-constant-symbol-value-instruction (name output successor)
@@ -400,7 +400,7 @@
 ;;; Instruction SET-SYMBOL-VALUE-INSTRUCTION.
 
 (defclass set-symbol-value-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+    (one-successor-mixin side-effect-mixin instruction)
   ())
 
 (defun make-set-symbol-value-instruction (symbol-input value-input successor)
@@ -414,7 +414,7 @@
 ;;; Instruction SET-CONSTANT-SYMBOL-VALUE-INSTRUCTION.
 
 (defclass set-constant-symbol-value-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+    (one-successor-mixin side-effect-mixin instruction)
   ((%name :initarg :name :reader name)))
 
 (defun make-set-constant-symbol-value-instruction (name value-input successor)
@@ -428,7 +428,7 @@
 ;;;
 ;;; Instruction FDEFINITION-INSTRUCTION.
 
-(defclass fdefinition-instruction (instruction one-successor-mixin)
+(defclass fdefinition-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-fdefinition-instruction
@@ -442,7 +442,7 @@
 ;;;
 ;;; Instruction CONSTANT-FDEFINITION-INSTRUCTION.
 
-(defclass constant-fdefinition-instruction (instruction one-successor-mixin)
+(defclass constant-fdefinition-instruction (one-successor-mixin instruction)
   ((%name :initarg :name :reader name)))
 
 (defun make-constant-fdefinition-instruction
@@ -465,7 +465,7 @@
 ;;; also a PHI-INSTRUCTION with N inputs.  If A has more than one
 ;;; predecessor, then it has N predecessors.
 
-(defclass phi-instruction (instruction one-successor-mixin)
+(defclass phi-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-phi-instruction (inputs output successor)
@@ -486,7 +486,7 @@
 ;;; instruction class will typically be emitted when the DEBUG quality
 ;;; has a high value and a SCOPE-AST is encountered.
 
-(defclass use-instruction (instruction one-successor-mixin)
+(defclass use-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-use-instruction (input successor)

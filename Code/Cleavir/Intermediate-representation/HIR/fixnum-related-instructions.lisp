@@ -4,7 +4,7 @@
 ;;;
 ;;; Instruction FIXNUM-ADD-INSTRUCTION.
 
-(defclass fixnum-add-instruction (instruction multiple-successors-mixin)
+(defclass fixnum-add-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-fixnum-add-instruction (inputs output successors)
@@ -17,7 +17,7 @@
 ;;;
 ;;; Instruction FIXNUM-SUB-INSTRUCTION.
 
-(defclass fixnum-sub-instruction (instruction multiple-successors-mixin)
+(defclass fixnum-sub-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-fixnum-sub-instruction (inputs output successors)
@@ -30,7 +30,7 @@
 ;;;
 ;;; Instruction FIXNUM-LESS-INSTRUCTION.
 
-(defclass fixnum-less-instruction (instruction multiple-successors-mixin)
+(defclass fixnum-less-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-fixnum-less-instruction (inputs successors)
@@ -43,7 +43,7 @@
 ;;;
 ;;; Instruction FIXNUM-NOT-GREATER-INSTRUCTION.
 
-(defclass fixnum-not-greater-instruction (instruction multiple-successors-mixin)
+(defclass fixnum-not-greater-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-fixnum-not-greater-instruction (inputs successors)
@@ -56,7 +56,7 @@
 ;;;
 ;;; Instruction FIXNUM-EQUAL-INSTRUCTION.
 
-(defclass fixnum-equal-instruction (instruction multiple-successors-mixin)
+(defclass fixnum-equal-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-fixnum-equal-instruction (inputs successors)

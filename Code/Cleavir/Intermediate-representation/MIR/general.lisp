@@ -42,7 +42,7 @@
 ;;; output which is set to the contents of the memory location at the
 ;;; address.
 
-(defclass memref1-instruction (instruction one-successor-mixin)
+(defclass memref1-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-memref1-instruction (address output &optional successor)
@@ -60,7 +60,7 @@
 ;;; output which is set to the contents of the memory location at the
 ;;; address specified by the input and the offset added together.
 
-(defclass memref2-instruction (instruction one-successor-mixin)
+(defclass memref2-instruction (one-successor-mixin instruction)
   ((%offset :initarg :offset :reader offset)))
 
 (defun make-memref2-instruction (base-address offset output &optional successor)
@@ -79,7 +79,7 @@
 ;;; memory.  The second input is the item to be stored in that
 ;;; location.
 
-(defclass memset1-instruction (instruction one-successor-mixin)
+(defclass memset1-instruction (one-successor-mixin instruction)
   ())
 
 (defun make-memset1-instruction (address value &optional successor)
@@ -98,7 +98,7 @@
 ;;; location.  This instruction adds the input address to the offset
 ;;; and stores the input in the resulting address.
 
-(defclass memset2-instruction (instruction one-successor-mixin)
+(defclass memset2-instruction (one-successor-mixin instruction)
   ((%offset :initarg :offset :reader offset)))
 
 (defun make-memset2-instruction (base-address offset value &optional successor)
@@ -112,7 +112,7 @@
 ;;;
 ;;; MIR instruction SIGNED-ADD-INSTRUCTION
 
-(defclass signed-add-instruction (instruction multiple-successors-mixin)
+(defclass signed-add-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-signed-add-instruction
@@ -133,7 +133,7 @@
 ;;;
 ;;; MIR instruction SIGNED-SUB-INSTRUCTION
 
-(defclass signed-sub-instruction (instruction multiple-successors-mixin)
+(defclass signed-sub-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-signed-sub-instruction
@@ -154,7 +154,7 @@
 ;;;
 ;;; MIR instruction SIGNED-LESS-INSTRUCTION
 
-(defclass signed-less-instruction (instruction multiple-successors-mixin)
+(defclass signed-less-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-signed-less-instruction
@@ -173,7 +173,7 @@
 ;;;
 ;;; MIR instruction SIGNED-NOT-GREATER-INSTRUCTION
 
-(defclass signed-not-greater-instruction (instruction multiple-successors-mixin)
+(defclass signed-not-greater-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-signed-not-greater-instruction
@@ -192,7 +192,7 @@
 ;;;
 ;;; MIR instruction UNSIGNED-ADD-INSTRUCTION
 
-(defclass unsigned-add-instruction (instruction multiple-successors-mixin)
+(defclass unsigned-add-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-unsigned-add-instruction
@@ -213,7 +213,7 @@
 ;;;
 ;;; MIR instruction UNSIGNED-SUB-INSTRUCTION
 
-(defclass unsigned-sub-instruction (instruction multiple-successors-mixin)
+(defclass unsigned-sub-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-unsigned-sub-instruction
@@ -234,7 +234,7 @@
 ;;;
 ;;; MIR instruction UNSIGNED-LESS-INSTRUCTION
 
-(defclass unsigned-less-instruction (instruction multiple-successors-mixin)
+(defclass unsigned-less-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-unsigned-less-instruction
@@ -253,7 +253,7 @@
 ;;;
 ;;; MIR instruction UNSIGNED-NOT-GREATER-INSTRUCTION
 
-(defclass unsigned-not-greater-instruction (instruction multiple-successors-mixin)
+(defclass unsigned-not-greater-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-unsigned-not-greater-instruction
@@ -272,7 +272,7 @@
 ;;;
 ;;; MIR instruction EQUAL-INSTRUCTION
 
-(defclass equal-instruction (instruction multiple-successors-mixin)
+(defclass equal-instruction (multiple-successors-mixin instruction)
   ())
 
 (defun make-equal-instruction

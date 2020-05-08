@@ -2,7 +2,7 @@
 
 (defmacro define-simple-one-arg-float-instruction (name make-name)
   `(progn
-     (defclass ,name (instruction one-successor-mixin)
+     (defclass ,name (one-successor-mixin instruction)
        ((%subtype :initarg :subtype :reader subtype)))
      (defun ,make-name (input output successor)
        (make-instance ',name
@@ -14,7 +14,7 @@
 
 (defmacro define-simple-two-arg-float-instruction (name make-name)
   `(progn
-     (defclass ,name (instruction one-successor-mixin)
+     (defclass ,name (one-successor-mixin instruction)
        ((%subtype :initarg :subtype :reader subtype)))
      (defun ,make-name (input1 input2 output successor)
        (make-instance ',name
@@ -26,7 +26,7 @@
 
 (defmacro define-simple-float-comparison-instruction (name make-name)
   `(progn
-     (defclass ,name (instruction multiple-successors-mixin)
+     (defclass ,name (multiple-successors-mixin instruction)
        ((%subtype :initarg :subtype :reader subtype)))
      (defun ,make-name (input1 input2 successor1 successor2)
        (make-instance ',name
@@ -157,7 +157,7 @@
 ;;; value of its TO-TYPE with the same mathematical value as the input.
 
 (defclass coerce-instruction
-    (instruction one-successor-mixin)
+    (one-successor-mixin instruction)
   ((%from-type :initarg :from :reader from-type)
    (%to-type :initarg :to :reader to-type)))
 
