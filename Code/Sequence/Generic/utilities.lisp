@@ -165,25 +165,6 @@
         (t
          (subseq vector 0 new-length))))
 
-(declaim (inline nth-cons))
-(defun nth-cons (list index)
-  (declare (list list)
-           (array-index index))
-  (labels ((nth-cons-aux (rest counter)
-             (declare (array-index counter))
-             (if (atom rest)
-                 (if (null rest)
-                     (error 'invalid-sequence-index
-                            :datum index
-                            :in-sequence list
-                            :expected-type `(integer 0 ,(1- (length list))))
-                     (error 'must-be-proper-list
-                            :datum list))
-                 (if (zerop counter)
-                     rest
-                     (nth-cons-aux (cdr rest) (1- counter))))))
-    (nth-cons-aux list index)))
-
 (declaim (inline skip-to-start))
 (defun skip-to-start (list start)
   (declare (array-index start))
