@@ -40,7 +40,7 @@
     (if (zerop (length vector))
         (if initial-value-p initial-value (funcall function))
         (multiple-value-bind (start end)
-            (canonicalize-start-and-end vector (length vector) start end)
+            (canonicalize-start-and-end vector start end)
           (with-key-function (key key)
             (if (not from-end)
                 ;; Forward.

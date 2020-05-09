@@ -36,25 +36,29 @@
         ((minusp count) 0)
         (t (min count (- array-total-size-limit 2)))))
 
-(declaim (ftype (function (sequence array-length t t)
-                          (values array-index array-length &optional))
+(declaim (ftype (function (sequence t t)
+                          (values array-index array-length array-length &optional))
                 canonicalize-start-and-end))
 (declaim (inline canonicalize-start-and-end))
-(defun canonicalize-start-and-end (sequence length start end)
-  (declare (sequence sequence) (array-length length))
-  (let ((start (typecase start
-                 (unsigned-byte start)
-                 (otherwise (error 'invalid-start-index-type
-                                   :expected-type 'unsigned-byte
-                                   :datum start
-                                   :sequence sequence))))
-        (end (typecase end
-               (null length)
-               (integer end)
-               (otherwise (error 'invalid-end-index-type
-                                 :expected-type '(or null integer)
-                                 :datum end
-                                 :sequence sequence)))))
+(defun canonicalize-start-and-end (sequence start end)
+  (declare (sequence sequence))
+  (let* ((length (length sequence))
+         (start
+           (typecase start
+             (unsigned-byte start)
+             (otherwise
+              (error 'invalid-start-index
+                     :expected-type 'unsigned-byte
+                     :datum start
+                     :in-sequence sequence))))
+         (end (typecase end
+                (null length)
+                (integer end)
+                (otherwise
+                 (error 'invalid-end-index
+                        :expected-type '(or null integer)
+                        :datum end
+                        :in-sequence sequence)))))
     (unless (<= end length)
       (error 'invalid-end-index
              :datum end
@@ -66,7 +70,7 @@
              :expected-type `(integer 0 ,end)
              :end-index end
              :in-sequence sequence))
-    (values start end)))
+    (values start end length)))
 
 (defmacro with-predicate ((name predicate) &body body)
   (sicl-utilities:with-gensyms (f)
@@ -94,11 +98,6 @@
                ,@body)
              (flet ((,name (a b) (funcall ,f a b)))
                ,@body))))))
-
-(defmacro with-count ((name count) &body body)
-  `(let ((,name (canonicalize-count ,count)))
-     (declare (array-index count))
-     ,@body))
 
 ;; Note: Some macros rely on the fact that CLASS-SUBCLASSES sorts its
 ;; entries most-specific-first.

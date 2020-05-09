@@ -19,6 +19,6 @@
                  (t `(if ,from-end ,backward ,forward)))))
     `(let ((,sequence-var ,sequence))
        (multiple-value-bind (,start-var ,end-var)
-           (canonicalize-start-and-end ,sequence-var (length ,sequence-var) ,start ,end)
+           (canonicalize-start-and-end ,sequence-var ,start ,end)
          (declare (type fixnum ,start-var ,end-var))
          ,loop-over-body))))
