@@ -11,7 +11,10 @@ $p-1$.  An object of purity $0$ is a \emph{host object}.  An object of
 purity $1$ is a is a \emph{bridge object}.  An object of purity $2$ is
 an \emph{impure ersatz object}.  An object of purity $3$ or more is a
 \emph{pure ersatz object}.  Each \emph{phase} of the bootstrapping
-procedure creates objects of one purity.
+procedure creates objects of one purity.  Currently, bootstrapping
+phase $n$ creates objects of purity $p=n-2$.  Phase $n$ puts generic
+function objects in environment $E_{n+1}$ and class objects in
+environment $E_n$.
 
 Suppose we want to access some part of a generic function metaobject
 of purity $p$.  Perhaps we want to add methods to it, or set its
@@ -118,7 +121,10 @@ do not check the validity of initargs during bootstrapping.
 
 Once an instance has been created, \texttt{initialize-instance} is
 called, and \texttt{initialize-instance} immediately calls
-\texttt{shared-initialize}.
+\texttt{shared-initialize}.  During bootstrapping, both these
+functions are generic functions.  For that reason, when used to
+initialize an object of purity $p$,  They must be defined in
+environment $E_{p+2}$.
 
 \section{Processing the \texttt{defclass} macro}
 
