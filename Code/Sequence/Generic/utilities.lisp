@@ -187,21 +187,9 @@
 (declaim (inline skip-to-start))
 (defun skip-to-start (list start)
   (declare (array-index start))
-  (do ((index 0 (1+ index))
-       (rest list (cdr rest)))
-      ((or (= index start)
-           (atom rest))
-       (unless (or (not (atom rest))
-                   (null rest))
-         (error 'must-be-proper-list
-                :datum list))
-       (unless (= index start)
-         (error 'invalid-start-index
-                :datum start
-                :expected-type `(integer 0 ,(1- index))
-                :in-sequence list))
-       rest)
-    (declare (fixnum index))))
+  (if (zerop start)
+      list
+      (nthcdr (1- start) list)))
 
 (defun enumerate-symbol (symbol n)
   (intern
