@@ -2,18 +2,32 @@
 
 ;;;; In this file we define functions for building and traversing a
 ;;;; FUNCTION DAG.  Such a DAG defines the nesting of functions in a
-;;;; program.  A node (other than the root) of the DAG contains a slot
-;;;; holding an ENCLOSE-INSTRUCTION.  Each node contains a list of
-;;;; CHILDREN that are also DAG nodes.  The children of a node N
-;;;; (other than the root) containing some ENCLOSE-INSTRUCTION E are
-;;;; nodes that contain the ENCLOSE-INSTRUCTIONs owned by the CODE of
-;;;; (i.e., the ENTER-INSTRUCTION associated with) E.  The children of
-;;;; the root node are nodes containing the ENCLOSE-INSTRUCTIONs owned
-;;;; by the ENTER-INSTRUCTION INITIAL-INSTRUCTION.  In addition to a
-;;;; list of children, the root node also contains an EQ hash table
-;;;; that maps ENTER-INSTRUCTIONs to DAG nodes such that the DAG node
-;;;; is either the root, or it contains the ENCLOSE-INSTRUCTION that
-;;;; the ENTER-INSTRUCTION is associated with.
+;;;; program.  A interior node in the graph contains an
+;;;; ENCLOSE-INSTRUCTION.  Each node contains a list of CHILDREN that
+;;;; are also DAG nodes.
+;;;;
+;;;; Let N be some interior node.  Let EN be the ENCLOSE-INSTRUCTION
+;;;; of N, and let CEN be the CODE input of EN (i.e., an
+;;;; ENTER-INSTRUCTION).  Consider some child node M of N, and let EM
+;;;; be the ENCLOSE-INSTRUCTION of M.  Then CEN is the owner of EM.
+;;;;
+;;;; Let R be the root node and CR be the ENTER-INSTRUCTION
+;;;; INITIAL-INSTRUCTION passed as an argument to BUILD-FUNCTION-DAG.
+;;;; Consider some child S of R, and let ES be the ENCLOSE-INSTRUCTION
+;;;; of S.  Then CR is the owner of ES.
+;;;;
+;;;; In addition to an ENCLOSE-INSTRUCTION and a list of children,
+;;;; each interior node also contains a list of parents, each of which
+;;;; is another DAG node.
+;;;;
+;;;; In addition to a list of children, the root node also contains an
+;;;; EQ hash table that each ENTER-INSTRUCTION to a list of to DAG
+;;;; nodes.  In this table, the ENTER-INSTRUCTION INITIAL-INSTRUCTION
+;;;; maps to the singleton list containing the root of the DAG.  Let
+;;;; CN be an ENTER-INSTRUCTION of the table other than
+;;;; INITIAL-INSTRUCTION, and let N be an element of the list that CN
+;;;; maps to.  Let EN be the ENCLOSE-INSTRUCTION of N.  Then CN is the
+;;;; CODE input of EN.
 
 (defgeneric enter-instruction (node))
 
@@ -38,8 +52,8 @@
 
 (defun build-function-dag (initial-instruction)
   (let* (;; Create an EQ hash table that maps ENTER-INSTRUCTIONs to
-         ;; DAG nodes such that the DAG node is either the root, or
-         ;; it contains the ENCLOSE-INSTRUCTION that the
+         ;; DAG nodes such that the DAG node is either the root, or it
+         ;; contains the ENCLOSE-INSTRUCTION that the
          ;; ENTER-INSTRUCTION is associated with.
          (table (make-hash-table :test #'eq))
          ;; Create the root of the DAG that is ultimately going to be
