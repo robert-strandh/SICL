@@ -59,6 +59,7 @@
      (:file "position")
      (:file "reduce")
      (:file "remove-duplicates")
+     (:file "remove-aux")
      (:file "remove-if")
      (:file "remove-if-not")
      (:file "remove")

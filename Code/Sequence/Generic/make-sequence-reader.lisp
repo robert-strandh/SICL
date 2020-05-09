@@ -47,7 +47,7 @@
     (declare (function terminate))
     (declare (type #1# vector))
     (multiple-value-bind (start end)
-        (canonicalize-start-and-end vector (length vector) start end)
+        (canonicalize-start-and-end vector start end)
       (declare (optimize (speed 3) (safety 0)))
       (if (not from-end)
           ;; Forward iteration.
