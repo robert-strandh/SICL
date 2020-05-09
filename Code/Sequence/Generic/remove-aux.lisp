@@ -49,17 +49,19 @@
                   (when (funcall predicate (elt vector index))
                     (setf (elt bit-vector (- index start)) 1)
                     (incf n-removed))))
-      (let ((result (make-sequence-like vector (- length n-removed))))
-        (loop for index below start do
-          (setf (elt result index)
-                (elt vector index)))
-        (let ((result-index start))
-          (loop for index from start below end do
-            (when (zerop (elt bit-vector (- index start)))
-              (setf (elt result result-index)
-                    (elt vector index))
-              (incf result-index)))
-          (loop for index from end below length do
-            (setf (elt result (- index n-removed))
-                  (elt vector index)))
-          result)))))
+      (if (zerop n-removed)
+          vector
+          (let ((result (make-sequence-like vector (- length n-removed))))
+            (loop for index below start do
+              (setf (elt result index)
+                    (elt vector index)))
+            (let ((result-index start))
+              (loop for index from start below end do
+                (when (zerop (elt bit-vector (- index start)))
+                  (setf (elt result result-index)
+                        (elt vector index))
+                  (incf result-index)))
+              (loop for index from end below length do
+                (setf (elt result (- index n-removed))
+                      (elt vector index)))
+              result))))))
