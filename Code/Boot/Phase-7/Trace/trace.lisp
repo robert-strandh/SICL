@@ -72,6 +72,9 @@
                  function)
            (setf (sicl-genv:fdefinition function-name environment)
                  (lambda (&rest arguments)
+                   (when (> *trace-depth* 100)
+                     (setf *trace-depth* 0)
+                     (throw 'out nil))
                    (indent)
                    (format *trace-output*
                            "Function named ~s called in environment ~s~%"
