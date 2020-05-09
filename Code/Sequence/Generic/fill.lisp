@@ -7,10 +7,10 @@
 
 (seal-domain #'fill '(list t))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoriod
-  (defmethod fill ((vectoroid #1#) item &key (start 0) end)
-    (for-each-relevant-element (element index vectoroid start end)
+(replicate-for-each-vector-class #1=#:vector-class
+  (defmethod fill ((vector #1#) item &key (start 0) end)
+    (for-each-relevant-element (element index vector start end)
       (setf element item))
-    vectoroid))
+    vector))
 
 (seal-domain #'fill '(vector t))

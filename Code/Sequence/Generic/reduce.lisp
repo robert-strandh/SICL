@@ -32,7 +32,7 @@
 
 (seal-domain #'reduce '(t list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod reduce
       (function (vector #1#)
        &key key from-end (start 0) end (initial-value nil initial-value-p))

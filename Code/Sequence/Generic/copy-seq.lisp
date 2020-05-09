@@ -8,7 +8,7 @@
 
 (seal-domain #'copy-seq '(list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod copy-seq ((vector #1#))
     (make-sequence-like vector (length vector) :initial-contents vector)))
 

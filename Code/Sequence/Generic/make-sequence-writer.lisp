@@ -18,7 +18,7 @@
                      (error 'invalid-end-index
                             :datum index
                             :in-sequence list
-                            :expected-type `(integer ,start ,(1- index))))
+                            :expected-type `(integer ,start ,(1- length))))
                    (funcall terminate (- index start)))
                   (t
                    (let ((v (shiftf (first rest) new-value))
@@ -41,7 +41,7 @@
 
 (seal-domain #'make-sequence-writer '(list t t t t))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod make-sequence-writer ((vector #1#) start end from-end terminate)
     (declare (method-properties inlineable))
     (declare (function terminate))

@@ -7,9 +7,9 @@
        (lambda (element) (not (predicate (key element))))
        list from-end start end count))))
 
-(seal-domain remove-if-not '(t list))
+(seal-domain #'remove-if-not '(t list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod remove-if-not (test (vector #1#) &key from-end (start 0) end count key)
     (with-predicate (predicate test)
       (with-key-function (key key)
@@ -17,4 +17,4 @@
          (lambda (element) (not (predicate (key element))))
          vector from-end start end count)))))
 
-(seal-domain remove-if-not '(t vector))
+(seal-domain #'remove-if-not '(t vector))

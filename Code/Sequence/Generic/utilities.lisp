@@ -115,16 +115,16 @@
 
 (defparameter *vector-classes* (class-subclasses (find-class 'vector)))
 
-(defmacro replicate-for-each-relevant-vectoroid (symbol &body body)
+(defmacro replicate-for-each-vector-class (symbol &body body)
   `(progn
      ,@(loop for class in *vector-classes*
              unless (subtypep class '(array nil))
                append (subst class symbol body))))
 
-;;; A vectoroid is compatible with another vectoroid, if elements of the
-;;; former can be stored in the latter, i.e., when the intersection of both
-;;; element types is non-empty.
-(defmacro replicate-for-all-compatible-vectoroids (symbol-1 symbol-2 &body body)
+;;; A vector class is compatible with another vector class, if elements of
+;;; the former can be stored in the latter, i.e., when the intersection of
+;;; both element types is non-empty.
+(defmacro replicate-for-all-compatible-vector-classes (symbol-1 symbol-2 &body body)
   (sicl-utilities:with-collectors ((forms collect-form))
     (loop for class-1 in *vector-classes* do
       (loop for class-2 in *vector-classes* do

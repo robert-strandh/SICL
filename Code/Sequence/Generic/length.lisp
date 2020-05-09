@@ -13,7 +13,7 @@
 
 (seal-domain #'length '(list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vector
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod length ((vector #1#))
     (declare (method-properties inlineable))
     (cl:length vector)))

@@ -10,11 +10,11 @@
 
 (seal-domain #'find-if '(t list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod find-if-not (predicate (vectoroid #1#) &key from-end (start 0) end key)
+(replicate-for-each-vector-class #1=#:vector-class
+  (defmethod find-if-not (predicate (vector #1#) &key from-end (start 0) end key)
     (with-predicate (predicate predicate)
       (with-key-function (key key)
-        (for-each-relevant-element (element index vectoroid start end from-end)
+        (for-each-relevant-element (element index vector start end from-end)
           (unless (predicate (key element))
             (return-from find-if-not element)))))))
 

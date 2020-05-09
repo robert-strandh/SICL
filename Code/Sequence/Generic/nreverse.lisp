@@ -7,12 +7,12 @@
 
 (seal-domain #'nreverse '(list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod nreverse ((vectoroid #1#))
-    (let ((n (length vectoroid)))
+(replicate-for-each-vector-class #1=#:vector-class
+  (defmethod nreverse ((vector #1#))
+    (let ((n (length vector)))
       (loop for index below (floor n 2) do
-        (rotatef (elt vectoroid index)
-                 (elt vectoroid (- n index 1)))))
-    vectoroid))
+        (rotatef (elt vector index)
+                 (elt vector (- n index 1)))))
+    vector))
 
 (seal-domain #'nreverse '(vector))

@@ -41,7 +41,7 @@
 
 (seal-domain #'make-sequence-reader '(list t t t t))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod make-sequence-reader ((vector #1#) start end from-end terminate)
     (declare (method-properties inlineable))
     (declare (function terminate))

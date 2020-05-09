@@ -8,15 +8,15 @@
        (lambda (element) (test item (key element)))
        list from-end start end count))))
 
-(seal-domain remove '(t list))
+(seal-domain #'remove '(t list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod remove
       (item (vector #1#) &key from-end test test-not (start 0) end count key)
     (with-test-function (test test test-not)
       (with-key-function (key key)
         (remove-from-vector
          (lambda (element) (test item (key element)))
-         list from-end start end count)))))
+         vector from-end start end count)))))
 
-(seal-domain remove '(t vector))
+(seal-domain #'remove '(t vector))
