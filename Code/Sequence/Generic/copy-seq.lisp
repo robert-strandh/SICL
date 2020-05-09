@@ -3,11 +3,7 @@
 (defmethod copy-seq ((list list))
   (sicl-utilities:with-collectors ((result collect))
     (do ((rest list (cdr rest)))
-        ((atom rest)
-         (unless (null rest)
-           (error 'must-be-proper-list
-                  :datum list))
-         (result))
+        ((endp list) (result))
       (collect (car rest)))))
 
 (seal-domain #'copy-seq '(list))
