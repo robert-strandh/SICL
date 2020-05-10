@@ -53,17 +53,18 @@
                      :in-sequence sequence))))
          (end (typecase end
                 (null length)
-                (integer end)
+                (integer
+                 (unless (<= end length)
+                   (error 'invalid-end-index
+                          :datum end
+                          :expected-type `(integer 0 ,length)
+                          :in-sequence sequence))
+                 end)
                 (otherwise
                  (error 'invalid-end-index
                         :expected-type '(or null integer)
                         :datum end
                         :in-sequence sequence)))))
-    (unless (<= end length)
-      (error 'invalid-end-index
-             :datum end
-             :expected-type `(integer 0 ,length)
-             :in-sequence sequence))
     (unless (<= start end)
       (error 'end-less-than-start
              :datum start
