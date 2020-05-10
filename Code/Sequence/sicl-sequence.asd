@@ -28,9 +28,9 @@
      ;; Secondly, load several high-level utilities for working with sequences.
      (:file "for-each-relevant-cons")
      (:file "for-each-relevant-element")
+     (:file "make-cons-iterator")
      (:file "make-sequence-reader")
      (:file "make-sequence-writer")
-     (:file "length-of-shortest-sequence")
 
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the remaining functions.
@@ -54,6 +54,7 @@
      (:file "merge")
      (:file "mismatch")
      (:file "nreverse")
+     (:file "nsubstitute-aux")
      (:file "nsubstitute")
      (:file "nsubstitute-if")
      (:file "nsubstitute-if-not")

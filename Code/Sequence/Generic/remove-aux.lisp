@@ -12,8 +12,7 @@
             ;; it starts with an element that satisfies PREDICATE.
             (copy list))
         (sicl-utilities:with-collectors ((result collect))
-          (flet ((terminate (n)
-                   (declare (ignore n))
+          (flet ((terminate ()
                    (return-from remove-from-list (result copy))))
             (let ((cons-iterator (make-cons-iterator list start end #'terminate)))
               (loop for n-removed from 0 until (= n-removed count) do
@@ -24,7 +23,7 @@
                                until (eq cons current) do
                                  (collect (car cons)))
                          (setf copy (cdr current))))
-              (terminate nil)))))
+              (terminate)))))
       (delete-in-list predicate (copy-seq list) t start end count)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
