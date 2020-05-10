@@ -45,6 +45,8 @@
     #:nsubstitute
     #:nsubstitute-if
     #:nsubstitute-if-not
+    #:concatenate
+    #:merge
     #:remove
     #:remove-if
     #:remove-if-not
