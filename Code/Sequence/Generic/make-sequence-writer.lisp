@@ -5,20 +5,20 @@
   (declare (function terminate))
   (if (not from-end)
       ;; Forward iteration.
-      (multiple-value-bind (start limit)
-          (canonicalize-start-and-end list (1- array-total-size-limit) start end)
+      (multiple-value-bind (start end length)
+          (canonicalize-start-and-end list start end)
         (let ((rest (skip-to-start list start))
               (index start))
           (declare (array-index index))
           (lambda (new-value)
-            (cond ((= index limit)
+            (cond ((= index end)
                    (funcall terminate (- index start)))
                   ((endp rest)
                    (unless (null end)
                      (error 'invalid-end-index
                             :datum index
                             :in-sequence list
-                            :expected-type `(integer ,start ,(1- index))))
+                            :expected-type `(integer ,start ,(1- length))))
                    (funcall terminate (- index start)))
                   (t
                    (let ((v (shiftf (first rest) new-value))
@@ -41,13 +41,13 @@
 
 (seal-domain #'make-sequence-writer '(list t t t t))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod make-sequence-writer ((vector #1#) start end from-end terminate)
     (declare (method-properties inlineable))
     (declare (function terminate))
     (declare (type #1# vector))
     (multiple-value-bind (start end)
-        (canonicalize-start-and-end vector (length vector) start end)
+        (canonicalize-start-and-end vector start end)
       (declare (optimize (speed 3) (safety 0)))
       (if (not from-end)
           ;; Forward iteration.

@@ -10,7 +10,7 @@
 
 (seal-domain #'position '(t list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod position (item (vector #1#) &key from-end test test-not (start 0) end key)
     (with-test-function (test test test-not)
       (with-key-function (key key)

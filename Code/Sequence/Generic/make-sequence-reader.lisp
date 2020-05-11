@@ -5,13 +5,13 @@
   (declare (function terminate))
   (if (not from-end)
       ;; Forward iteration.
-      (multiple-value-bind (start limit)
-          (canonicalize-start-and-end list (1- array-total-size-limit) start end)
+      (multiple-value-bind (start end)
+          (canonicalize-start-and-end list start end)
         (let ((rest (skip-to-start list start))
               (index start))
           (declare (array-index index))
           (lambda ()
-            (cond ((= index limit)
+            (cond ((= index end)
                    (funcall terminate (- index start)))
                   ((endp rest)
                    (unless (null end)
@@ -41,13 +41,13 @@
 
 (seal-domain #'make-sequence-reader '(list t t t t))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod make-sequence-reader ((vector #1#) start end from-end terminate)
     (declare (method-properties inlineable))
     (declare (function terminate))
     (declare (type #1# vector))
     (multiple-value-bind (start end)
-        (canonicalize-start-and-end vector (length vector) start end)
+        (canonicalize-start-and-end vector start end)
       (declare (optimize (speed 3) (safety 0)))
       (if (not from-end)
           ;; Forward iteration.

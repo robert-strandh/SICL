@@ -11,12 +11,12 @@
 
 (seal-domain #'count '(t list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod count (item (vectoroid #1#) &key from-end (start 0) end key test test-not)
+(replicate-for-each-vector-class #1=#:vector-class
+  (defmethod count (item (vector #1#) &key from-end (start 0) end key test test-not)
     (let ((count 0))
       (with-test-function (test test test-not)
         (with-key-function (key key)
-          (for-each-relevant-element (element index vectoroid start end from-end)
+          (for-each-relevant-element (element index vector start end from-end)
             (when (test item (key element))
               (incf count)))))
       count)))

@@ -9,10 +9,10 @@
                    (return-from subseq (result))))))
       (loop (collect (funcall read))))))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod subseq ((vector #1#) start &optional end)
     (multiple-value-bind (start end)
-        (canonicalize-start-and-end vector (length vector) start end)
+        (canonicalize-start-and-end vector start end)
       (replace
        (make-sequence-like vector (- end start))
        vector :start2 start :end2 end))))

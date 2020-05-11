@@ -28,36 +28,37 @@
 
 (declaim (inline canonicalize-count))
 (defun canonicalize-count (count)
-  (cond ((null count)
-         most-positive-fixnum)
+  (cond ((null count) (- array-total-size-limit 2))
         ((not (integerp count))
          (error 'type-error
                 :datum count
                 :expected-type '(or null integer)))
-        ((not (plusp count))
-         0)
-        (t
-         (min count most-positive-fixnum))))
+        ((minusp count) 0)
+        (t (min count (- array-total-size-limit 2)))))
 
-(declaim (ftype (function (sequence array-length t t)
-                          (values array-index array-length &optional))
+(declaim (ftype (function (sequence t t)
+                          (values array-index array-length array-length &optional))
                 canonicalize-start-and-end))
 (declaim (inline canonicalize-start-and-end))
-(defun canonicalize-start-and-end (sequence length start end)
-  (declare (sequence sequence) (array-length length))
-  (let ((start (typecase start
-                 (unsigned-byte start)
-                 (otherwise (error 'invalid-start-index-type
-                                   :expected-type 'unsigned-byte
-                                   :datum start
-                                   :sequence sequence))))
-        (end (typecase end
-               (null length)
-               (integer end)
-               (otherwise (error 'invalid-end-index-type
-                                 :expected-type '(or null integer)
-                                 :datum end
-                                 :sequence sequence)))))
+(defun canonicalize-start-and-end (sequence start end)
+  (declare (sequence sequence))
+  (let* ((length (length sequence))
+         (start
+           (typecase start
+             (unsigned-byte start)
+             (otherwise
+              (error 'invalid-start-index
+                     :expected-type 'unsigned-byte
+                     :datum start
+                     :in-sequence sequence))))
+         (end (typecase end
+                (null length)
+                (integer end)
+                (otherwise
+                 (error 'invalid-end-index
+                        :expected-type '(or null integer)
+                        :datum end
+                        :in-sequence sequence)))))
     (unless (<= end length)
       (error 'invalid-end-index
              :datum end
@@ -69,7 +70,7 @@
              :expected-type `(integer 0 ,end)
              :end-index end
              :in-sequence sequence))
-    (values start end)))
+    (values start end length)))
 
 (defmacro with-predicate ((name predicate) &body body)
   (sicl-utilities:with-gensyms (f)
@@ -114,16 +115,16 @@
 
 (defparameter *vector-classes* (class-subclasses (find-class 'vector)))
 
-(defmacro replicate-for-each-relevant-vectoroid (symbol &body body)
+(defmacro replicate-for-each-vector-class (symbol &body body)
   `(progn
      ,@(loop for class in *vector-classes*
              unless (subtypep class '(array nil))
                append (subst class symbol body))))
 
-;;; A vectoroid is compatible with another vectoroid, if elements of the
-;;; former can be stored in the latter, i.e., when the intersection of both
-;;; element types is non-empty.
-(defmacro replicate-for-all-compatible-vectoroids (symbol-1 symbol-2 &body body)
+;;; A vector class is compatible with another vector class, if elements of
+;;; the former can be stored in the latter, i.e., when the intersection of
+;;; both element types is non-empty.
+(defmacro replicate-for-all-compatible-vector-classes (symbol-1 symbol-2 &body body)
   (sicl-utilities:with-collectors ((forms collect-form))
     (loop for class-1 in *vector-classes* do
       (loop for class-2 in *vector-classes* do
@@ -164,43 +165,12 @@
         (t
          (subseq vector 0 new-length))))
 
-(declaim (inline nth-cons))
-(defun nth-cons (list index)
-  (declare (list list)
-           (array-index index))
-  (labels ((nth-cons-aux (rest counter)
-             (declare (array-index counter))
-             (if (atom rest)
-                 (if (null rest)
-                     (error 'invalid-sequence-index
-                            :datum index
-                            :in-sequence list
-                            :expected-type `(integer 0 ,(1- (length list))))
-                     (error 'must-be-proper-list
-                            :datum list))
-                 (if (zerop counter)
-                     rest
-                     (nth-cons-aux (cdr rest) (1- counter))))))
-    (nth-cons-aux list index)))
-
 (declaim (inline skip-to-start))
 (defun skip-to-start (list start)
   (declare (array-index start))
-  (do ((index 0 (1+ index))
-       (rest list (cdr rest)))
-      ((or (= index start)
-           (atom rest))
-       (unless (or (not (atom rest))
-                   (null rest))
-         (error 'must-be-proper-list
-                :datum list))
-       (unless (= index start)
-         (error 'invalid-start-index
-                :datum start
-                :expected-type `(integer 0 ,(1- index))
-                :in-sequence list))
-       rest)
-    (declare (fixnum index))))
+  (if (zerop start)
+      list
+      (nthcdr (1- start) list)))
 
 (defun enumerate-symbol (symbol n)
   (intern

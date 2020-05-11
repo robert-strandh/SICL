@@ -7,13 +7,13 @@
 
 (seal-domain #'reverse '(list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vectoroid
-  (defmethod reverse ((vectoroid #1#))
-    (let* ((n (length vectoroid))
-           (result (make-array n :element-type (array-element-type vectoroid))))
+(replicate-for-each-vector-class #1=#:vector-class
+  (defmethod reverse ((vector #1#))
+    (let* ((n (length vector))
+           (result (make-array n :element-type (array-element-type vector))))
       (loop for index below n do
         (setf (elt result index)
-              (elt vectoroid (- n index 1))))
+              (elt vector (- n index 1))))
       result)))
 
 (seal-domain #'reverse '(vector))

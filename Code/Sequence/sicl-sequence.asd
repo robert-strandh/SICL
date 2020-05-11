@@ -35,10 +35,12 @@
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the remaining functions.
      (:file "copy-seq")
+     (:file "concatenate")
      (:file "count")
      (:file "count-if")
      (:file "count-if-not")
      (:file "delete-aux")
+     (:file "delete-duplicates")
      (:file "delete")
      (:file "delete-if")
      (:file "delete-if-not")
@@ -49,6 +51,7 @@
      (:file "map-aux")
      (:file "map-into")
      (:file "map")
+     (:file "merge")
      (:file "mismatch")
      (:file "nreverse")
      (:file "nsubstitute")
@@ -59,6 +62,7 @@
      (:file "position")
      (:file "reduce")
      (:file "remove-duplicates")
+     (:file "remove-aux")
      (:file "remove-if")
      (:file "remove-if-not")
      (:file "remove")

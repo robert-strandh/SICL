@@ -10,7 +10,7 @@
 
 (seal-domain #'position-if '(t list))
 
-(replicate-for-each-relevant-vectoroid #1=#:vector
+(replicate-for-each-vector-class #1=#:vector-class
   (defmethod position-if (predicate (vector #1#) &key from-end (start 0) end key)
     (with-predicate (predicate predicate)
       (with-key-function (key key)
