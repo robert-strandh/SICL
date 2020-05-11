@@ -29,6 +29,7 @@
      (:file "for-each-relevant-cons")
      (:file "for-each-relevant-element")
      (:file "make-cons-iterator")
+     (:file "make-sequence-scanner")
      (:file "make-sequence-reader")
      (:file "make-sequence-writer")
 
