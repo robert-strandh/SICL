@@ -121,9 +121,7 @@
              ;; Find all instructions that could potentially be deleted after inlining.
              (let ((function-defs (cleavir-ir:defining-instructions (first (cleavir-ir:inputs call))))
                    (destinies-map *destinies-map*))
-               (if (and enclose-unique-p enter-unique-p)
-                   (interpolate-function call enter)
-                   (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+               (inline-function initial-instruction call enter (make-hash-table :test #'eq))
                (dolist (deleted
                         (cleavir-remove-useless-instructions:remove-useless-instructions-from function-defs))
                  (typecase deleted
