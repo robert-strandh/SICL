@@ -6,8 +6,8 @@
     (multiple-value-bind (start2 end2)
         (canonicalize-start-and-end list2 start2 end2)
       (loop repeat (min (- end1 start1) (- end2 start2))
-            for cons1 on (skip-to-start list1 start1)
-            for cons2 on (skip-to-start list2 start2)
+            for cons1 on (nthcdr start1 list1)
+            for cons2 on (nthcdr start2 list2)
             do (setf (car cons1) (car cons2)))
       list1)))
 
@@ -21,7 +21,7 @@
           (canonicalize-start-and-end vector start2 end2)
         (loop repeat (min (- end1 start1) (- end2 start2))
               for index from start2
-              for cons on (skip-to-start list start1)
+              for cons on (nthcdr start1 list)
               do (setf (car cons) (elt vector index)))
         list)))
 
@@ -32,7 +32,7 @@
           (canonicalize-start-and-end list start2 end2)
         (loop repeat (min (- end1 start1) (- end2 start2))
               for index from start1
-              for cons on (skip-to-start list start2)
+              for cons on (nthcdr start2 list)
               do (setf (elt vector index) (car cons)))
         vector))))
 

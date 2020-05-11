@@ -166,13 +166,6 @@
         (t
          (subseq vector 0 new-length))))
 
-(declaim (inline skip-to-start))
-(defun skip-to-start (list start)
-  (declare (array-index start))
-  (if (zerop start)
-      list
-      (nthcdr (1- start) list)))
-
 (defun enumerate-symbol (symbol n)
   (intern
    (concatenate

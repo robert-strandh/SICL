@@ -7,7 +7,7 @@
   (multiple-value-bind (start end)
       (canonicalize-start-and-end list start end)
     (values
-     (let ((rest (skip-to-start list start))
+     (let ((rest (nthcdr start list))
            (index start))
        (lambda ()
          (if (= index end)

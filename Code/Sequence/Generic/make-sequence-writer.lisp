@@ -8,7 +8,7 @@
     (values
      (if (not from-end)
          ;; Forward iteration.
-         (let ((current (skip-to-start list start))
+         (let ((current (nthcdr start list))
                (index start))
            (declare (array-length index))
            (lambda (new-value)
@@ -22,7 +22,7 @@
                 (current '()))
            (declare (array-index index))
            (loop repeat (- end start)
-                 for element in (skip-to-start list start)
+                 for element in (nthcdr start list)
                  do (push element current))
            (lambda (new-value)
              (if (= index start)
