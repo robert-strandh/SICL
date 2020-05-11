@@ -5,4 +5,7 @@
   (:export
    #:segregate-only
    #:segregate-lexicals
-   #:build-function-dag))
+   #:build-function-dag
+   #:find-enclose-destinies
+   #:destiny-find-encloses
+   #:compute-destinies))
