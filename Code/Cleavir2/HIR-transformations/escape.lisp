@@ -17,7 +17,7 @@
        (when (typep instruction 'call-instruction)
          (loop for origin in (gethash instruction origins)
                unless (eq origin :unknown)
-                 do (pushnew (cons owner (cleavir-ir:code orign))
+                 do (pushnew (cons owner (cleavir-ir:code origin))
                              graph
                              :test #'equal))))
      initial-instruction)
