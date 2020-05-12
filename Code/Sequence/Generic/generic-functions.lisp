@@ -160,6 +160,9 @@
 ;;;
 ;;; Auxiliary Functions
 
+(defgeneric make-sequence-scanner (sequence)
+  (:generic-function-class sequence-function))
+
 (defgeneric make-sequence-reader
     (sequence start end from-end terminate)
   (:generic-function-class sequence-function))

@@ -53,17 +53,18 @@
                      :in-sequence sequence))))
          (end (typecase end
                 (null length)
-                (integer end)
+                (integer
+                 (unless (<= end length)
+                   (error 'invalid-end-index
+                          :datum end
+                          :expected-type `(integer 0 ,length)
+                          :in-sequence sequence))
+                 end)
                 (otherwise
                  (error 'invalid-end-index
                         :expected-type '(or null integer)
                         :datum end
                         :in-sequence sequence)))))
-    (unless (<= end length)
-      (error 'invalid-end-index
-             :datum end
-             :expected-type `(integer 0 ,length)
-             :in-sequence sequence))
     (unless (<= start end)
       (error 'end-less-than-start
              :datum start
@@ -164,13 +165,6 @@
          (setf (fill-pointer vector) new-length))
         (t
          (subseq vector 0 new-length))))
-
-(declaim (inline skip-to-start))
-(defun skip-to-start (list start)
-  (declare (array-index start))
-  (if (zerop start)
-      list
-      (nthcdr (1- start) list)))
 
 (defun enumerate-symbol (symbol n)
   (intern

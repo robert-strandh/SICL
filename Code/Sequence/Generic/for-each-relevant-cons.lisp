@@ -9,7 +9,7 @@
            (rest (gensym))
            (length (gensym))
            (forward
-             `(let ((,list (skip-to-start ,list ,start)))
+             `(let ((,list (nthcdr ,start ,list)))
                 (loop for ,index of-type fixnum from ,start
                       for ,rest = ,list then (cdr ,rest)
                       do (if (endp ,rest)

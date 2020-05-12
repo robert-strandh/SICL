@@ -12,8 +12,7 @@
             ;; it starts with an element that satisfies PREDICATE.
             (copy list))
         (sicl-utilities:with-collectors ((result collect))
-          (flet ((terminate (n)
-                   (declare (ignore n))
+          (flet ((terminate ()
                    (return-from remove-from-list (result copy))))
             (let ((cons-iterator (make-cons-iterator list start end #'terminate)))
               (loop for n-removed from 0 until (= n-removed count) do
@@ -24,7 +23,7 @@
                                until (eq cons current) do
                                  (collect (car cons)))
                          (setf copy (cdr current))))
-              (terminate nil)))))
+              (terminate)))))
       (delete-in-list predicate (copy-seq list) t start end count)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -49,17 +48,19 @@
                   (when (funcall predicate (elt vector index))
                     (setf (elt bit-vector (- index start)) 1)
                     (incf n-removed))))
-      (let ((result (make-sequence-like vector (- length n-removed))))
-        (loop for index below start do
-          (setf (elt result index)
-                (elt vector index)))
-        (let ((result-index start))
-          (loop for index from start below end do
-            (when (zerop (elt bit-vector (- index start)))
-              (setf (elt result result-index)
-                    (elt vector index))
-              (incf result-index)))
-          (loop for index from end below length do
-            (setf (elt result (- index n-removed))
-                  (elt vector index)))
-          result)))))
+      (if (zerop n-removed)
+          vector
+          (let ((result (make-sequence-like vector (- length n-removed))))
+            (loop for index below start do
+              (setf (elt result index)
+                    (elt vector index)))
+            (let ((result-index start))
+              (loop for index from start below end do
+                (when (zerop (elt bit-vector (- index start)))
+                  (setf (elt result result-index)
+                        (elt vector index))
+                  (incf result-index)))
+              (loop for index from end below length do
+                (setf (elt result (- index n-removed))
+                      (elt vector index)))
+              result))))))

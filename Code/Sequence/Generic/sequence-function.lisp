@@ -16,7 +16,7 @@
 
 (defun maybe-signal-sequence-type-error (sequence-function arguments)
   (dolist (sealed-domain (sealed-domains sequence-function))
-    (loop for specializer in sealed-domain
+    (loop for specializer in (sealable-metaobjects:domain-specializers sealed-domain)
           for argument in arguments
           when (subtypep specializer 'sequence)
             unless (typep argument 'sequence)
