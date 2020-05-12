@@ -26,7 +26,7 @@
 
 (define-condition must-be-sequence-type-specifier (type-error)
   ()
-  (:default-initargs :expected-type '(satisfies sequence-type-specifier-p)))
+  (:default-initargs :expected-type 'sequence-type-specifier))
 
 ;;; Index Handling
 
