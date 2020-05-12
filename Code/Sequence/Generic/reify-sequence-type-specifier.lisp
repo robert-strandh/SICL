@@ -13,11 +13,16 @@
 ;;;    prescribes exactly that value as the sequence's length.
 
 (defun reify-sequence-type-specifier (type-specifier &optional environment)
-  (flet ((fail ()
-           (error 'must-be-sequence-type-specifier
-                  :datum type-specifier))
-         (try-slow-path ()
-           (reify-sequence-type-specifier/slow type-specifier environment)))
+  (labels ((fail ()
+             (error 'must-be-sequence-type-specifier
+                    :datum type-specifier))
+           (try-slow-path ()
+             (reify-sequence-type-specifier/slow type-specifier environment))
+           (parse-size (size)
+             (typecase size
+               ((eql *) nil)
+               (array-length size)
+               (otherwise (fail)))))
     (typecase type-specifier
       (symbol
        (case type-specifier
@@ -26,19 +31,14 @@
          ((list cons)
           '(()))
          ((vector simple-vector)
-          (load-time-value
-           (vector)))
+          (vector-prototype '*))
          ((bit-vector simple-bit-vector)
-          (load-time-value
-           (make-array 0 :element-type 'bit)))
+          (vector-prototype 'bit))
          ((string simple-string)
-          (load-time-value
-           (make-array 0 :element-type 'character)))
+          (vector-prototype 'character))
          ((base-string simple-base-string)
-          (load-time-value
-           (make-array 0 :element-type 'base-char)))
-         ((sequence)
-          (fail))
+          (vector-prototype 'base-char))
+         ((sequence) (fail)) ; Sequence is an abstract class.
          (otherwise
           (let ((class (find-class type-specifier nil environment)))
             (if (not class)
@@ -63,7 +63,6 @@
                               (reify-cons-type-specifier cdr (1+ length))))
                            (t (values '(()) t)))))
             (reify-cons-type-specifier type-specifier 0)))
-         ;; Array Type Specifiers.
          ((array simple-array)
           (unless (<= (length type-specifier) 3)
             (fail))
@@ -72,39 +71,49 @@
             (unless (and (consp dimension-spec)
                          (null (cdr dimension-spec)))
               (fail))
-            (let ((prototype (vector-prototype element-type)))
-              (typecase (car dimension-spec)
-                ((eql *)
-                 (values prototype nil))
-                (array-length
-                 (values prototype (car dimension-spec)))
-                (otherwise (fail))))))
-         ;; Vector Type Specifiers.
+            (values
+             (vector-prototype element-type)
+             (parse-size (car dimension-spec)))))
          ((vector)
           (unless (<= (length type-specifier) 3)
             (fail))
           (destructuring-bind (&optional (element-type '*) (size '*))
               (rest type-specifier)
-            (let ((prototype (vector-prototype element-type)))
-              (typecase size
-                ((eql *)
-                 (values prototype nil))
-                (array-length
-                 (values prototype size))
-                (otherwise (fail))))))
-         ;; Simple Vector Type Specifiers.
+            (values
+             (vector-prototype element-type)
+             (parse-size size))))
          ((simple-vector)
           (unless (<= (length type-specifier) 2)
             (fail))
           (destructuring-bind (&optional (size '*))
               (rest type-specifier)
-            (let ((prototype (vector-prototype '*)))
-              (typecase size
-                ((eql *)
-                 (values prototype nil))
-                (array-length
-                 (values prototype size))
-                (otherwise (fail))))))
+            (values
+             (vector-prototype '*)
+             (parse-size size))))
+         ((bit-vector simple-bit-vector)
+          (unless (<= (length type-specifier) 2)
+            (fail))
+          (destructuring-bind (&optional (size '*))
+              (rest type-specifier)
+            (values
+             (vector-prototype 'bit)
+             (parse-size size))))
+         ((string simple-string)
+          (unless (<= (length type-specifier) 2)
+            (fail))
+          (destructuring-bind (&optional (size '*))
+              (rest type-specifier)
+            (values
+             (vector-prototype 'character)
+             (parse-size size))))
+         ((base-string simple-base-string)
+          (unless (<= (length type-specifier) 2)
+            (fail))
+          (destructuring-bind (&optional (size '*))
+              (rest type-specifier)
+            (values
+             (vector-prototype 'base-char)
+             (parse-size size))))
          (otherwise (try-slow-path))))
       (otherwise (try-slow-path)))))
 
