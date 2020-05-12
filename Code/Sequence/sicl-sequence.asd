@@ -40,7 +40,7 @@
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the remaining functions.
      (:file "copy-seq")
-     (:file "concatenate")
+     (:file "concatenate" :depends-on ("map"))
      (:file "count")
      (:file "count-if")
      (:file "count-if-not")
