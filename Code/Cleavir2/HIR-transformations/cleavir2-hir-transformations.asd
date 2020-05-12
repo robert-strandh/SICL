@@ -8,4 +8,5 @@
    (:file "compute-ownership")
    (:file "function-dag")
    (:file "escape")
-   (:file "segregate-lexicals")))
+   (:file "segregate-lexicals")
+   (:file "replace-aliases")))
