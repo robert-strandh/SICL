@@ -1,11 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(deftype array-index ()
-  '(integer 0 (#.(1- array-total-size-limit))))
-
-(deftype array-length ()
-  '(integer 0 (#.array-total-size-limit)))
-
 (declaim (inline function-designator-function))
 (defun function-designator-function (function-designator)
   (typecase function-designator

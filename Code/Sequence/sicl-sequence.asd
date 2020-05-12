@@ -10,11 +10,12 @@
   ((:module "Generic"
     :components
     ((:file "packages")
+     (:file "types")
+     (:file "conditions")
+     (:file "condition-reporters-en")
      (:file "sequence-function")
      (:file "generic-functions")
      (:file "utilities")
-     (:file "conditions")
-     (:file "condition-reporters-en")
 
      ;; Firstly, load the a few elementary sequence functions and seal
      ;; them.  This way, the subsequent definitions can already use
