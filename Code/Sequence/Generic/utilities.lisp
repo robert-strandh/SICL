@@ -168,3 +168,21 @@
     "-"
     (format nil "~D" n))
    (symbol-package symbol)))
+
+(defvar *vector-prototype-table* (make-hash-table :test #'equal))
+
+(defun vector-prototype (element-type)
+  (if (eql element-type '*)
+      (load-time-value (vector))
+      (let ((uaet (upgraded-array-element-type element-type)))
+        (multiple-value-bind (prototype present-p)
+            (gethash uaet *vector-prototype-table*)
+          (if present-p
+              prototype
+              (setf (gethash uaet *vector-prototype-table*)
+                    (make-array 0 :element-type uaet)))))))
+
+(define-compiler-macro vector-prototype (&whole form element-type)
+  (if (constantp element-type)
+      `',(vector-prototype (eval element-type))
+      form))

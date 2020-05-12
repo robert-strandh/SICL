@@ -127,16 +127,3 @@
                      (return (find-most-specific-prototype subclass)))
                        finally (return (class-prototype class)))))
         (values (find-most-specific-prototype (find-class 'sequence)) t))))
-
-(defvar *vector-prototype-table* (make-hash-table :test #'equal))
-
-(defun vector-prototype (element-type)
-  (if (eql element-type '*)
-      (load-time-value (vector))
-      (let ((uaet (upgraded-array-element-type element-type)))
-        (multiple-value-bind (prototype present-p)
-            (gethash uaet *vector-prototype-table*)
-          (if present-p
-              prototype
-              (setf (gethash uaet *vector-prototype-table*)
-                    (make-array 0 :element-type uaet)))))))
