@@ -25,6 +25,10 @@
     (sicl-hir-transformations:eliminate-multiple-to-fixed-instructions hir)
     (sicl-hir-transformations:hoist-constant-inputs hir)
     (cleavir-hir-transformations::process-captured-variables hir)
+    ;; Replacing aliases does not appear to have a great effect when
+    ;; code generation is disabled.  Try removing this commented line
+    ;; when code generation is again enabled.
+    ;; (cleavir-hir-transformations:replace-aliases hir)
     (sicl-hir-transformations:eliminate-create-cell-instructions hir)
     (sicl-hir-transformations:eliminate-fetch-instructions hir)
     (sicl-hir-transformations:eliminate-read-cell-instructions hir)
