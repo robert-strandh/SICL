@@ -8,4 +8,5 @@
    #:build-function-dag
    #:find-enclose-destinies
    #:destiny-find-encloses
-   #:compute-destinies))
+   #:compute-destinies
+   #:replace-aliases))
