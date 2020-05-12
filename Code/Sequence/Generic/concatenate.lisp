@@ -30,25 +30,29 @@
       (declare (type #1# result))
       (with-scan-buffers (scan-buffer)
         (loop for sequence in sequences do
-          (if (typep sequence '#1#)
-              ;; Use a fast, direct variant when SEQUENCE and RESULT have
-              ;; the same type.
-              (let ((amount (length sequence)))
-                (loop for offset below amount do
-                  (setf (elt result (+ index offset))
-                        (elt sequence offset)))
-                (incf index amount))
-              ;; Otherwise, use a sequence scanner.
-              (multiple-value-bind (scanner state)
-                  (make-sequence-scanner sequence)
-                (declare (sequence-scanner scanner))
-                (loop
-                  (multiple-value-bind (amount new-state)
-                      (funcall scanner sequence state scan-buffer)
-                    (when (zerop amount) (return))
-                    (loop for offset below amount do
-                      (setf (elt result (+ index offset))
-                            (svref scan-buffer offset)))
-                    (setf state new-state)
-                    (incf index amount)))))))
+          (typecase sequence
+            (#1#
+             (let ((amount (length sequence)))
+               (loop for offset below amount do
+                 (setf (elt result (+ index offset))
+                       (elt sequence offset)))
+               (incf index amount)))
+            (list
+             (loop for element in sequence
+                   for offset of-type array-length from 0 do
+                     (setf (elt result (+ index offset))
+                           element)))
+            (otherwise
+             (multiple-value-bind (scanner state)
+                 (make-sequence-scanner sequence)
+               (declare (sequence-scanner scanner))
+               (loop
+                 (multiple-value-bind (amount new-state)
+                     (funcall scanner sequence state scan-buffer)
+                   (when (zerop amount) (return))
+                   (loop for offset below amount do
+                     (setf (elt result (+ index offset))
+                           (svref scan-buffer offset)))
+                   (setf state new-state)
+                   (incf index amount))))))))
       result)))
