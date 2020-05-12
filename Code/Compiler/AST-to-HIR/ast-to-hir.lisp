@@ -29,4 +29,5 @@
     (sicl-hir-transformations:eliminate-fetch-instructions hir)
     (sicl-hir-transformations:eliminate-read-cell-instructions hir)
     (sicl-hir-transformations:eliminate-write-cell-instructions hir)
+    (cleavir-remove-useless-instructions:remove-useless-instructions hir)
     hir))
