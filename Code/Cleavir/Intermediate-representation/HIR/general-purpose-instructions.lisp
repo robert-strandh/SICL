@@ -320,6 +320,9 @@
     :comparees comparees
     :successors successors))
 
+(defmethod clone-initargs append ((instruction case-instruction))
+  (list :comparees (comparees instruction)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction CONSP-INSTRUCTION.
