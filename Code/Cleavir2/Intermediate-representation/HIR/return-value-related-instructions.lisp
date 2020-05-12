@@ -54,7 +54,7 @@
 ;;; use this instruction to allocate room for return values.
 
 (defclass initialize-return-values-instruction
-    (instruction one-successor-mixin)
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,5 +71,5 @@
 ;;; first input.
 
 (defclass set-return-value-instruction
-    (instruction one-successor-mixin)
+    (instruction one-successor-mixin side-effect-mixin)
   ())
