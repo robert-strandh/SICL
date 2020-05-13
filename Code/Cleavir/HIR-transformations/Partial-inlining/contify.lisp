@@ -84,8 +84,15 @@
 ;;; return point is conceptually non-constant), or :uncalled.
 
 (defun effectless-local-unwind (instruction)
-  (eq (cleavir-ir:dynamic-environment instruction)
-      (cleavir-ir:dynamic-environment (first (cleavir-ir:successors instruction)))))
+  ;; FIXME copied from clasp.
+  (let* ((succ (first (cleavir-ir:successors instruction)))
+         (outer-dynenv (cleavir-ir:dynamic-environment succ)))
+    (loop for dynenv = (cleavir-ir:dynamic-environment instruction)
+          ;; Note that this is the definer from the previous loop iteration.
+            then (cleavir-ir:dynamic-environment definer)
+          for definer = (first (cleavir-ir:defining-instructions dynenv))
+          until (eq dynenv outer-dynenv)
+          always (typep definer '(or cleavir-ir:catch-instruction cleavir-ir:assignment-instruction)))))
 
 (defun successor-skipping-nops (instruction)
   (do ((successor (first (cleavir-ir:successors instruction)) (first (cleavir-ir:successors successor))))
