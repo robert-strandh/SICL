@@ -28,7 +28,8 @@
 ;;; preserved, and the number of inputs is kept with the global values
 ;;; location.
 
-(defclass fixed-to-multiple-instruction (instruction one-successor-mixin)
+(defclass fixed-to-multiple-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
