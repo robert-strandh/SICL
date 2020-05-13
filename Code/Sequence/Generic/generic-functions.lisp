@@ -17,7 +17,7 @@
   (:generic-function-class sequence-function))
 
 (defgeneric make-sequence-like
-    (sequence length &key initial-element initial-contents)
+    (prototype length &key initial-element initial-contents)
   (:generic-function-class sequence-function))
 
 (defgeneric adjust-sequence
@@ -161,6 +161,12 @@
 ;;; Auxiliary Functions
 
 (defgeneric make-sequence-scanner (sequence)
+  (:generic-function-class sequence-function))
+
+(defgeneric concatenate-into-sequence-like (prototype &rest sequences)
+  (:generic-function-class sequence-function))
+
+(defgeneric map-into-sequence-like (prototype &rest sequences)
   (:generic-function-class sequence-function))
 
 (defgeneric make-sequence-reader

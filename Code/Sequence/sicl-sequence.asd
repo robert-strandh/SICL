@@ -10,13 +10,17 @@
   ((:module "Generic"
     :components
     ((:file "packages")
+
+     ;; Load all types, conditions, and utilities.
+     (:file "types")
+     (:file "conditions")
+     (:file "condition-reporters-en")
      (:file "sequence-function")
      (:file "generic-functions")
      (:file "utilities")
-     (:file "conditions")
-     (:file "condition-reporters-en")
+     (:file "reify-sequence-type-specifier")
 
-     ;; Firstly, load the a few elementary sequence functions and seal
+     ;; Load the a few elementary sequence functions and seal
      ;; them.  This way, the subsequent definitions can already use
      ;; optimized versions of them.
      (:file "length")
@@ -25,7 +29,7 @@
      (:file "make-sequence")
      (:file "make-sequence-like")
 
-     ;; Secondly, load several high-level utilities for working with sequences.
+     ;; Load several high-level utilities for working with sequences.
      (:file "for-each-relevant-cons")
      (:file "for-each-relevant-element")
      (:file "make-cons-iterator")
@@ -36,7 +40,7 @@
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the remaining functions.
      (:file "copy-seq")
-     (:file "concatenate")
+     (:file "concatenate" :depends-on ("map"))
      (:file "count")
      (:file "count-if")
      (:file "count-if-not")
