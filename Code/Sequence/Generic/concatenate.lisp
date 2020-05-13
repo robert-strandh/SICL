@@ -3,11 +3,11 @@
 (defun concatenate (result-type &rest sequences)
   (multiple-value-bind (prototype length)
       (reify-sequence-type-specifier result-type)
-    (let ((result (apply #'concatenate-into-sequence-like prototype sequences)))
+    (let ((result (apply #'concatenate-sequence-like prototype sequences)))
       (when length
         (unless (or (and (integerp length) (= (length result) length))
                     (typep result result-type))
-          (error "Failed to concatenate ~:[the~;~] ~R sequences~@
+          (error "Failed to concatenate~:[ the~;~] ~R sequences~@
                       ~{ ~S~%~}into a sequence of type ~S."
                  (null sequences)
                  (length sequences)
@@ -15,34 +15,36 @@
                  result-type)))
       result)))
 
-(defmethod concatenate-into-sequence-like ((list list) &rest sequences)
+(defmethod concatenate-sequence-like ((list list) &rest sequences)
   (sicl-utilities:with-collectors ((result collect))
     (loop for sequence in sequences do
-      (map nil collect sequence))
+      (map nil #'collect sequence))
     (result)))
 
+(seal-domain #'concatenate-sequence-like '(list))
+
 (replicate-for-each-vector-class #1=#:vector-class
-  (defmethod concatenate-into-sequence-like ((vector #1#) &rest sequences)
+  (defmethod concatenate-sequence-like ((vector #1#) &rest sequences)
     (let* ((length (loop for sequence in sequences sum (length sequence)))
            (result (make-sequence-like vector length))
            (index 0))
       (declare (array-length length index))
       (declare (type #1# result))
-      (with-scan-buffers (scan-buffer)
-        (loop for sequence in sequences do
-          (typecase sequence
-            (#1#
-             (let ((amount (length sequence)))
-               (loop for offset below amount do
-                 (setf (elt result (+ index offset))
-                       (elt sequence offset)))
-               (incf index amount)))
-            (list
-             (loop for element in sequence
-                   for offset of-type array-length from 0 do
-                     (setf (elt result (+ index offset))
-                           element)))
-            (otherwise
+      (loop for sequence in sequences do
+        (typecase sequence
+          (#1#
+           (let ((amount (length sequence)))
+             (loop for offset below amount do
+               (setf (elt result (+ index offset))
+                     (elt sequence offset)))
+             (incf index amount)))
+          (list
+           (loop for element in sequence
+                 for offset of-type array-length from 0 do
+                   (setf (elt result (+ index offset))
+                         element)))
+          (otherwise
+           (with-scan-buffers (scan-buffer)
              (multiple-value-bind (scanner state)
                  (make-sequence-scanner sequence)
                (declare (sequence-scanner scanner))
@@ -56,3 +58,5 @@
                    (setf state new-state)
                    (incf index amount))))))))
       result)))
+
+(seal-domain #'concatenate-sequence-like '(vector))

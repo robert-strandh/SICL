@@ -163,10 +163,7 @@
 (defgeneric make-sequence-scanner (sequence)
   (:generic-function-class sequence-function))
 
-(defgeneric concatenate-into-sequence-like (prototype &rest sequences)
-  (:generic-function-class sequence-function))
-
-(defgeneric map-into-sequence-like (prototype &rest sequences)
+(defgeneric concatenate-sequence-like (prototype &rest sequences)
   (:generic-function-class sequence-function))
 
 (defgeneric make-sequence-reader
