@@ -104,6 +104,9 @@
           (setf (cleavir-ir:outputs create) (list location)))))))
 
 (defun do-inlining (initial-instruction)
+  ;; Do this to pick off stuff that doesn't need full copying
+  ;; inlining.
+  (interpolable-function-analyze initial-instruction)
   ;; Need to remove all useless instructions first for incremental
   ;; r-u-i to catch everything.
   (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)
