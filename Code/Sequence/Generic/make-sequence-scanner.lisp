@@ -37,8 +37,10 @@
             (return (values index state))
             (setf (svref scan-buffer index)
                   (pop state)))
-            finally (return (values state (length scan-buffer))))))
+            finally (return (values (length scan-buffer) state)))))
    list))
+
+(seal-domain #'make-sequence-scanner '(list))
 
 (replicate-for-each-vector-class #1=#:vector-class
   (defmethod make-sequence-scanner ((vector #1#))
@@ -55,3 +57,5 @@
                   (elt vector (+ state index))))
           (values n (+ state n)))))
      0)))
+
+(seal-domain #'make-sequence-scanner '(vector))
