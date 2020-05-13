@@ -58,14 +58,11 @@
                              :successor target
                              :dynamic-environment-location (cleavir-ir:dynamic-environment-location unwind))))
                  (cleavir-ir:bypass-instruction new unwind)))
-    ;; Fix up the return values, and replace return instructions with NOPs that go to after the call.
-    (loop with caller-values = (first (cleavir-ir:outputs call))
-          with next = (first (cleavir-ir:successors call))
+    ;; Replace return instructions with NOPs that go to after the call.
+    (loop with next = (first (cleavir-ir:successors call))
           for return in returns
-          for values = (first (cleavir-ir:inputs return))
-          do (cleavir-ir:replace-datum caller-values values)
-             (let ((nop (make-instance 'cleavir-ir:nop-instruction
-                          :successor (list next)
+          do (let ((nop (make-instance 'cleavir-ir:nop-instruction
+                          :successor next
                           :dynamic-environment-location (cleavir-ir:dynamic-environment-location return))))
                (cleavir-ir:bypass-instruction nop return))))
   ;; Replace the call with a regular control arc into the function.
