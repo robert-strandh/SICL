@@ -12,6 +12,7 @@
                         :body-ast hoisted-ast))
          (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast)))
     (change-class hir 'sicl-hir-transformations:top-level-enter-instruction)
+    (cleavir-partial-inlining:do-inlining hir)
     (sicl-argument-processing:process-parameters hir)
     (sicl-hir-transformations:preprocess-catch-instructions hir)
     (sicl-hir-transformations:preprocess-bind-instructions hir)
