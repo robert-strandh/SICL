@@ -103,7 +103,7 @@
           (cleavir-ir:insert-instruction-after create binding-assignment)
           (setf (cleavir-ir:outputs create) (list location)))))))
 
-(defun do-inlining (initial-instruction)
+(defun full-inlining-pass (initial-instruction)
   ;; Need to remove all useless instructions first for incremental
   ;; r-u-i to catch everything.
   (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)
@@ -121,9 +121,7 @@
              ;; Find all instructions that could potentially be deleted after inlining.
              (let ((function-defs (cleavir-ir:defining-instructions (first (cleavir-ir:inputs call))))
                    (destinies-map *destinies-map*))
-               (if (and enclose-unique-p enter-unique-p)
-                   (interpolate-function call enter)
-                   (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+               (inline-function initial-instruction call enter (make-hash-table :test #'eq))
                (dolist (deleted
                         (cleavir-remove-useless-instructions:remove-useless-instructions-from function-defs))
                  (typecase deleted
@@ -146,3 +144,9 @@
            ;; information.
            (cleavir-ir:reinitialize-data initial-instruction)
            (convert-binding-instructions *binding-assignments*)))
+
+(defun do-inlining (initial-instruction)
+  ;; Do this first to pick off stuff that doesn't need full copying
+  ;; inlining.
+  (interpolable-function-analyze initial-instruction)
+  (full-inlining-pass initial-instruction))
