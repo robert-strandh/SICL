@@ -80,9 +80,15 @@
   (loop for (name . function) in (find-functions e5)
         do (case (patch-function function e3 e4 e5)
              (not-a-sicl-function
-              (format *trace-output*
-                      "~s is not a SICL function~%"
-                      name))
+              (if (consp function)
+                  (when (eq (car function) 'macro-function)
+                    (unless (typep (cadr function) 'sicl-boot::header)
+                      (format *trace-output*
+                              "Macro function for ~s is not a SICL function~%"
+                              name)))
+                  (format *trace-output*
+                          "~s is not a SICL function~%"
+                          name)))
              (unknown-function-class
               (format *trace-output*
                       "~s has an unknown class~%"
