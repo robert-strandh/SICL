@@ -34,8 +34,6 @@
      (:file "for-each-relevant-element")
      (:file "make-cons-iterator")
      (:file "make-sequence-scanner")
-     (:file "make-sequence-reader")
-     (:file "make-sequence-writer")
 
      ;; Now that all utilities and elementary sequence functions have been
      ;; defined, it is possible to load the remaining functions.
