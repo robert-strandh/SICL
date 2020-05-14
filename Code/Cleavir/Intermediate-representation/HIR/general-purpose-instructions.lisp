@@ -72,14 +72,15 @@
 
 (defclass funcall-instruction
     (one-successor-mixin side-effect-mixin instruction)
-  ())
+  ((%inline :initarg :inline :initform nil :reader inline)))
 
 (defun make-funcall-instruction
-    (inputs outputs &optional (successor nil successor-p))
+    (inputs outputs &optional (successor nil successor-p) inline)
   (make-instance 'funcall-instruction
     :inputs inputs
     :outputs outputs
-    :successors (if successor-p (list successor) '())))
+    :successors (if successor-p (list successor) '())
+    :inline inline))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

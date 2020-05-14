@@ -65,9 +65,14 @@
           ;; replacing every call's output with the return values of the
           ;; function.
           (otherwise
-           ;; We want error checking.
            (unless (every (lambda (user)
-                            (call-valid-p code user))
+                            ;; We want error checking.
+                            (and (call-valid-p code user)
+                                 ;; Explicit declaration should
+                                 ;; inhibit interpolation.
+                                 ;; Fix this when we start
+                                 ;; interpolating MVC.
+                                 (not (eq (inline user) 'notinline))))
                           users)
              (return-from interpolable-function-analyze-1))
            (interpolate-function return-point common-output common-dynenv code)

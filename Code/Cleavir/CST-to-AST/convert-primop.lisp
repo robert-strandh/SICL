@@ -351,7 +351,9 @@
      (loop for remaining = arguments-cst then (cst:rest remaining)
            until (cst:null remaining)
            collect (convert (cst:first remaining) env system))
-     :origin origin)))
+     :origin origin
+     ;; FIXME: propagate inline here somehow.
+     )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -40,9 +40,16 @@
                          return nil
                        when (parent-node-p node (instruction-owner caller)) ; recursive
                          return nil
-                       unless (call-valid-p enter caller) return nil
-                         ;; We're all good, but keep looking through for escapes and recursivity.
-                         do (setf result (list enter caller node enclose-unique-p enter-unique-p))
+                       ;; For now, since M-V-C doesn't track inlining
+                       ;; information, only check explicit inline
+                       ;; declarations for local functions.
+                       unless (or (typep caller 'cleavir-ir:multiple-value-call-instruction)
+                                  (eq (inline caller) 'inline))
+                         return nil
+                       unless (call-valid-p enter caller)
+                         return nil
+                       ;; We're all good, but keep looking through for escapes and recursivity.
+                       do (setf result (list enter caller node enclose-unique-p enter-unique-p))
                        finally (return-from one-potential-inline result)))))
            (parent-node-p (parent enter)
              ;; parent is a node (i.e. enclose), enter is an enter instruction
