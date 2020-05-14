@@ -8,7 +8,7 @@
                   (and (integerp length-constraint)
                        (= (length result) length-constraint))
                   (typep result result-type))
-        (error "Failed to concatenate~:[ the~;~] ~R sequences~@
+        (error "Failed to concatenate~:[ the~;~] sequence~P~@
                       ~{ ~S~%~}into a sequence of type ~S."
                (null sequences)
                (length sequences)

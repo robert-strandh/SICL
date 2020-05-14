@@ -28,7 +28,7 @@
                       (and (integerp length-constraint)
                            (= (length result) length-constraint))
                       (typep result result-type))
-            (error "Failed to map the ~R sequences~@
+            (error "Failed to map the sequence~P~@
                     ~{ ~S~%~}into a sequence of type ~S."
                    (1+ (length more-sequences))
                    (list* sequence more-sequences)
