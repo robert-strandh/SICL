@@ -11,7 +11,7 @@
    (:file "patch-slot-metaobject")
    (:file "patch-classes")
    (:file "patch-method-combination")
-   (:file "patch-generic-functions")
+   (:file "patch-functions-and-methods")
    (:file "move-functions")
    (:file "update-instance-slot-list")
    (:file "boot")))
