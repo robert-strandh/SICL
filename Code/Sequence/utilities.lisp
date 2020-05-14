@@ -183,6 +183,7 @@
                     (make-array 0 :element-type uaet)))))))
 
 (define-compiler-macro vector-prototype (&whole form element-type)
+  (declare (notinline vector-prototype))
   (if (constantp element-type)
       `',(vector-prototype (eval element-type))
       form))
