@@ -15,7 +15,10 @@
                       do (if (endp ,rest)
                              (if (and (not (null ,end))
                                       (> ,end ,index))
-                                 (error "END too large")
+                                 (error 'invalid-end-index
+                                        :expected-type `(integer ,start (,index))
+                                        :datum ,end
+                                        :in-sequence ,list)
                                  (loop-finish))
                              (if (and (not (null ,end))
                                       (>= ,index ,end))
