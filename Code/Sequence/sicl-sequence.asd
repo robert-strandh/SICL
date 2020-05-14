@@ -57,7 +57,6 @@
      (:file "merge")
      (:file "mismatch")
      (:file "nreverse")
-     (:file "nsubstitute-aux")
      (:file "nsubstitute")
      (:file "nsubstitute-if")
      (:file "nsubstitute-if-not")
