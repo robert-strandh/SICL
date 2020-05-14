@@ -8,7 +8,7 @@
                   (and (integerp length-constraint)
                        (= (length result) length-constraint))
                   (typep result result-type))
-        (error "Failed to concatenate~:[ the~;~] sequence~P~@
+        (error "Failed to concatenate ~:[the~;zero~] sequence~P~@
                       ~{ ~S~%~}into a sequence of type ~S."
                (null sequences)
                (length sequences)
@@ -40,10 +40,10 @@
                      (elt sequence offset)))
              (incf index amount)))
           (list
-           (loop for element in sequence
-                 for offset of-type array-length from 0 do
-                   (setf (elt result (+ index offset))
-                         element)))
+           (loop for element in sequence do
+             (setf (elt result index)
+                   element)
+             (incf index)))
           (otherwise
            (with-scan-buffers (scan-buffer)
              (multiple-value-bind (scanner state)
