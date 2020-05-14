@@ -53,14 +53,14 @@
         (generic-function-class-e3
           (sicl-genv:find-class 'sicl-clos:standard-generic-function e3)))
     (if (not (typep function 'sicl-boot::header))
-        (format *trace-output* "Not a SICL function~%")
+        'not-a-sicl-function
         (let ((current-class (slot-value function 'sicl-boot::%class)))
           (cond ((eq current-class simple-function-class-e3)
                  (patch-simple-function function e3 e4 e5))
                 ((eq current-class generic-function-class-e3)
                  (patch-generic-function function e3 e4 e5))
                 (t
-                 (format *trace-output* "Unknown function class~%")))))))
+                 'unknown-function-class))))))
 
 (defun find-functions (e5)
   (let ((ht (make-hash-table :test #'eq))
@@ -69,13 +69,21 @@
       (unless (gethash var ht)
         (setf (gethash var ht) t)
         (when (sicl-genv:fboundp var e5)
-          (push (sicl-genv:fdefinition var e5)
+          (push (cons var (sicl-genv:fdefinition var e5))
                 result))
         (when (sicl-genv:fboundp `(setf ,var) e5)
-          (push (sicl-genv:fdefinition `(setf ,var) e5)
+          (push (cons `(setf ,var) (sicl-genv:fdefinition `(setf ,var) e5))
                 result))))
     result))
 
 (defun patch-functions (e3 e4 e5)
-  (loop for function in (find-functions e5)
-        do (patch-function function e3 e4 e5)))
+  (loop for (name . function) in (find-functions e5)
+        do (case (patch-function function e3 e4 e5)
+             (not-a-sicl-function
+              (format *trace-output*
+                      "~s is not a SICL function~%"
+                      name))
+             (unknown-function-class
+              (format *trace-output*
+                      "~s has an unknown class~%"
+                      name)))))
