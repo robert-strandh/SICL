@@ -3,7 +3,7 @@
 (defmethod copy-seq ((list list))
   (sicl-utilities:with-collectors ((result collect))
     (do ((rest list (cdr rest)))
-        ((endp list) (result))
+        ((endp rest) (result))
       (collect (car rest)))))
 
 (seal-domain #'copy-seq '(list))
