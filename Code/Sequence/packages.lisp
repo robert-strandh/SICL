@@ -58,20 +58,19 @@
   (:export
    ;; Conditions.
    #:must-be-nonnegative-integer
-   #:must-be-sequence
    #:must-be-cons
+   #:must-be-sequence
+   #:must-be-function-designator
    #:must-be-list
    #:must-be-proper-list
-   #:both-test-and-test-not-given
-   #:warn-both-test-and-test-not-given
-   #:invalid-sequence-index-type
-   #:invalid-start-index-type
-   #:invalid-end-index-type
+   #:must-be-sequence-type-specifier
    #:invalid-sequence-index
    #:invalid-bounding-index
    #:invalid-start-index
    #:invalid-end-index
    #:end-less-than-start
+   #:both-test-and-test-not-given
+   #:warn-both-test-and-test-not-given
 
    ;; Non-standard symbols.
    #:make-sequence-like
