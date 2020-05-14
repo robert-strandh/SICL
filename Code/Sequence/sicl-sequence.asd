@@ -53,7 +53,7 @@
      (:file "find")
      (:file "find-if")
      (:file "find-if-not")
-     (:file "map-aux")
+     (:file "map-for-effect")
      (:file "map-into")
      (:file "map")
      (:file "merge")
