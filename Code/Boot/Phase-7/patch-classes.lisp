@@ -24,19 +24,13 @@
           (sicl-genv:find-class 'sicl-clos:funcallable-standard-class e5))
         (built-in-class-e5
           (sicl-genv:find-class 'built-in-class e5))
-        (standard-direct-slot-definition-class-e5
-          (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e5))
-        (standard-effective-slot-definition-class-e5
-          (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e5))
         (dsfun (sicl-genv:fdefinition 'sicl-clos:class-direct-slots e5))
         (esfun (sicl-genv:fdefinition 'sicl-clos:class-slots e5)))
     (loop for class in (find-classes e5)
           do (loop for ds in (funcall dsfun class)
-                   do (setf (slot-value ds 'sicl-boot::%class)
-                            standard-direct-slot-definition-class-e5))
+                   do (patch-direct-slot-definition e5))
              (loop for es in (funcall esfun class)
-                   do (setf (slot-value es 'sicl-boot::%class)
-                            standard-effective-slot-definition-class-e5))
+                   do (patch-effective-slot-definition e5))
              (setf (slot-value class 'sicl-boot::%class)
                    (let ((current-class (slot-value class 'sicl-boot::%class)))
                      (cond ((eq current-class standard-class-e4)
