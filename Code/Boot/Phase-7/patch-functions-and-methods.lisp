@@ -39,10 +39,7 @@
           (funcall (sicl-genv:fdefinition
                     'sicl-clos:generic-function-method-combination e4)
                    function)))
-    (setf (slot-value method-combination 'sicl-boot::%class)
-          ;; FIXE: this should be STANDARD-METHOD-COMBINATION once we have
-          ;; that class.
-          (sicl-genv:find-class 'method-combination e5)))
+    (patch-method-combination method-combination e5))
   ;; FIXME: this is not great.  We should try to use
   ;; REINITIALIZE-INSTANCE instead
   (setf (aref (slot-value function 'sicl-boot::%rack) 10)
