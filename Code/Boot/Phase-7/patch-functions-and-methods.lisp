@@ -76,6 +76,6 @@
                 result))))
     result))
 
-(defun patch-generic-functions (e3 e4 e5)
+(defun patch-functions (e3 e4 e5)
   (loop for function in (find-functions e5)
         do (patch-function function e3 e4 e5)))

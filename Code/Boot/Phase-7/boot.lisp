@@ -10,7 +10,7 @@
     (load-make-instance e5)
     (satiate-generic-functions e3 e4 e5)
     (patch-classes e4 e5)
-    (patch-generic-functions e3 e4 e5)
+    (patch-functions e3 e4 e5)
     (move-functions e5 e6)
     (setf (sicl-genv:fdefinition 'make-instance e5)
           (sicl-genv:fdefinition 'sicl-clos::make-instance-temp e5))))
