@@ -11,4 +11,5 @@
    (:file "patch-classes")
    (:file "patch-generic-functions")
    (:file "move-functions")
+   (:file "update-instance-slot-list")
    (:file "boot")))
