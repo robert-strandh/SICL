@@ -10,6 +10,7 @@
    (:file "satiate-generic-functions")
    (:file "patch-slot-metaobject")
    (:file "patch-classes")
+   (:file "patch-method-combination")
    (:file "patch-generic-functions")
    (:file "move-functions")
    (:file "update-instance-slot-list")
