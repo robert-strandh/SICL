@@ -18,9 +18,13 @@
 (deftype sequence-scanner ()
   '(function (sequence t scan-buffer) (values scan-amount t &optional)))
 
+(declaim (inline make-scan-buffer))
+(defun make-scan-buffer ()
+  (make-array +scan-buffer-length+))
+
 (defmacro with-scan-buffers ((&rest scan-buffer-names) &body body)
   `(let ,(loop for scan-buffer-name in scan-buffer-names
-               collect `(,scan-buffer-name (make-array +scan-buffer-length+)))
+               collect `(,scan-buffer-name (make-scan-buffer)))
      (declare (dynamic-extent ,@scan-buffer-names))
      (declare (scan-buffer ,@scan-buffer-names))
      ,@body))
@@ -37,8 +41,10 @@
             (return (values index state))
             (setf (svref scan-buffer index)
                   (pop state)))
-            finally (return (values state (length scan-buffer))))))
+            finally (return (values (length scan-buffer) state)))))
    list))
+
+(seal-domain #'make-sequence-scanner '(list))
 
 (replicate-for-each-vector-class #1=#:vector-class
   (defmethod make-sequence-scanner ((vector #1#))
@@ -50,8 +56,11 @@
         (declare (scan-buffer scan-buffer))
         (let ((n (min (- (length vector) state)
                       (length scan-buffer))))
+          (declare (scan-amount n))
           (loop for index of-type fixnum below n do
             (setf (svref scan-buffer index)
                   (elt vector (+ state index))))
           (values n (+ state n)))))
      0)))
+
+(seal-domain #'make-sequence-scanner '(vector))
