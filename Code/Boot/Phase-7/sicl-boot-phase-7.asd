@@ -8,6 +8,7 @@
    (:file "load-printer")
    (:file "load-make-instance")
    (:file "satiate-generic-functions")
+   (:file "patch-slot-metaobject")
    (:file "patch-classes")
    (:file "patch-generic-functions")
    (:file "move-functions")
