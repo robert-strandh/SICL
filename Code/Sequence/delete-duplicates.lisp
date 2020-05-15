@@ -82,19 +82,19 @@
               (with-key-function (key key)
                 (if (not from-end)
                     (loop for index fixnum from start below end do
-                      (setf (elt vector destination)
-                            (elt vector index))
-                      (unless (position (key (elt vector index)) vector
-                                        :test #'test :key key
-                                        :start (1+ index) :end end)
-                        (incf destination)))
+                      (let* ((element (elt vector index))
+                             (key (key element)))
+                        (setf (elt vector destination) element)
+                        (unless (loop for pos fixnum from (1+ index) below end
+                                        thereis (test key (key (elt vector pos))))
+                          (incf destination))))
                     (loop for index fixnum from start below end do
-                      (setf (elt vector destination)
-                            (elt vector index))
-                      (unless (position (key (elt vector index)) vector
-                                        :test #'test :key key
-                                        :start start :end destination)
-                        (incf destination))))
+                      (let* ((element (elt vector index))
+                             (key (key element)))
+                        (setf (elt vector destination) element)
+                        (unless (loop for pos from start below destination
+                                        thereis (test (key (elt vector pos)) key))
+                          (incf destination)))))
                 (loop for index fixnum from end below length do
                   (setf (elt vector destination)
                         (elt vector index))
