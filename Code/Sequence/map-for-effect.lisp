@@ -1,20 +1,5 @@
 (cl:in-package #:sicl-sequence)
 
-(defun map-for-effect (function sequence &rest more-sequences)
-  (case (length more-sequences)
-    (0 (map-for-effect-1 function sequence))
-    (1 (map-for-effect-2 function sequence (first more-sequences)))
-    (2 (map-for-effect-3 function sequence (first more-sequences) (second more-sequences)))
-    (otherwise
-     (apply #'map-for-effect-n function sequence more-sequences))))
-
-(define-compiler-macro map-for-effect (&whole form function sequence &rest more-sequences)
-  (case (length more-sequences)
-    (0 `(map-for-effect-1 ,function ,sequence ,@more-sequences))
-    (1 `(map-for-effect-2 ,function ,sequence ,@more-sequences))
-    (2 `(map-for-effect-3 ,function ,sequence ,@more-sequences))
-    (otherwise form)))
-
 (declaim (inline map-for-effect-1))
 (defun map-for-effect-1 (function sequence)
   (if (listp sequence)
@@ -100,7 +85,7 @@
       (apply #'mapc function sequence more-sequences)
       (let* ((function (function-designator-function function))
              (sequences (list* sequence more-sequences))
-             (n-sequences (1+ (length more-sequences)))
+             (n-sequences (1+ (cl:length more-sequences)))
              (scanners (make-array n-sequences))
              (states (make-array n-sequences))
              (scan-buffers (make-array n-sequences)))
@@ -135,3 +120,18 @@
                 (loop for pos from (1- n-sequences) downto 0 do
                   (push (svref (svref scan-buffers pos) index) args))
                 (apply function args))))))))
+
+(defun map-for-effect (function sequence &rest more-sequences)
+  (case (length more-sequences)
+    (0 (map-for-effect-1 function sequence))
+    (1 (map-for-effect-2 function sequence (first more-sequences)))
+    (2 (map-for-effect-3 function sequence (first more-sequences) (second more-sequences)))
+    (otherwise
+     (apply #'map-for-effect-n function sequence more-sequences))))
+
+(define-compiler-macro map-for-effect (&whole form function sequence &rest more-sequences)
+  (case (length more-sequences)
+    (0 `(map-for-effect-1 ,function ,sequence ,@more-sequences))
+    (1 `(map-for-effect-2 ,function ,sequence ,@more-sequences))
+    (2 `(map-for-effect-3 ,function ,sequence ,@more-sequences))
+    (otherwise form)))

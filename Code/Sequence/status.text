@@ -1,5 +1,0 @@
-This module is currently in transition.  We are doing a complete
-overhaul of it.  The new version will be much more maintainable,
-thanks to newly introduced abstractions.  More code will be shared
-between different versions of this module, making testing and coverage
-easier.
