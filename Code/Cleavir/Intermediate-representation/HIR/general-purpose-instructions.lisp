@@ -82,6 +82,9 @@
     :successors (if successor-p (list successor) '())
     :inline inline))
 
+(defmethod clone-initargs append ((instruction funcall-instruction))
+  (list :inline (inline instruction)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FUNCALL-NO-RETURN-INSTRUCTION.
@@ -99,7 +102,7 @@
 
 (defun make-funcall-no-return-instruction (inputs)
   (make-instance 'funcall-no-return-instruction
-    :inputs inputs))
+                 :inputs inputs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
