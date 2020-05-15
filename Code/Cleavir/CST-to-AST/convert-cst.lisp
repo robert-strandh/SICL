@@ -139,7 +139,8 @@
     (maybe-wrap-return
      function-type
      (cleavir-ast:make-call-ast function-ast argument-asts
-                                :origin (cst:source cst)))))
+                                :origin (cst:source cst)
+                                :inline (cleavir-env:inline info)))))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
