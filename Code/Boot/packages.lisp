@@ -19,6 +19,7 @@
            #:create-mop-classes
            #:define-accessor-generic-functions
            #:enable-generic-function-invocation
+           #:enable-generic-function-initialization
            #:load-accessor-defgenerics
            #:define-make-instance
            #:enable-class-finalization
