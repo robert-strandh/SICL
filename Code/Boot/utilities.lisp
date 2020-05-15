@@ -22,9 +22,10 @@
                                                #'cons
                                                nil
                                                static-environment-values))
-                                      (closure (funcall (sicl-genv:fdefinition 'make-instance e2)
-                                                        'sicl-clos:simple-function
-                                                        :environment static-environment)))
+                                      (closure
+                                        (funcall (sicl-genv:fdefinition 'make-instance e2)
+                                                 'sicl-clos:simple-function
+                                                 :environment static-environment)))
                                  (closer-mop:set-funcallable-instance-function
                                   closure
                                   (lambda (&rest args)
