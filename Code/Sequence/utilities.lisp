@@ -187,3 +187,13 @@
   (if (constantp element-type)
       `',(vector-prototype (eval element-type))
       form))
+
+(defun hash-table-test-p (test)
+  (or (eql test 'eq)
+      (eql test 'eql)
+      (eql test 'equal)
+      (eql test 'equalp)
+      (eql test #'eq)
+      (eql test #'eql)
+      (eql test #'equal)
+      (eql test #'equalp)))
