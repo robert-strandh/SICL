@@ -17,7 +17,6 @@
            #:enable-defgeneric
            #:enable-method-combinations
            #:create-mop-classes
-           #:define-accessor-generic-functions
            #:enable-generic-function-invocation
            #:enable-generic-function-initialization
            #:load-accessor-defgenerics

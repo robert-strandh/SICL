@@ -78,11 +78,3 @@
     (load-fasl "Package-and-symbol/symbol-name-defgeneric.fasl" ea)
     (load-fasl "Package-and-symbol/symbol-package-defgeneric.fasl" ea)
     (load-fasl "Compiler/Code-object/generic-functions.fasl" ea)))
-
-(defun define-accessor-generic-functions (load-fasl-function ea eb ec)
-  (flet ((load-fasl (path environment)
-           (funcall load-fasl-function path environment)))
-    (enable-defgeneric ea eb ec)
-    (load-fasl "CLOS/invalidate-discriminating-function.fasl" eb)
-    (enable-generic-function-initialization load-fasl-function eb)
-    (load-accessor-defgenerics load-fasl-function ec)))
