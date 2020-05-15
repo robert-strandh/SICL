@@ -136,3 +136,20 @@
      (loop for name in ',function-names
            for function in *intercepted-functions*
            do (setf (sicl-genv:fdefinition name ,env) function))))
+
+(defun define-load-fasl-1 (tie-environment)
+  (setf (sicl-genv:fdefinition 'load-fasl tie-environment)
+        (lambda (relative-pathname)
+          (load-fasl-1 relative-pathname tie-environment))))
+
+(defun define-load-fasl-2 (make-instance-environment tie-environment)
+  (setf (sicl-genv:fdefinition 'load-fasl tie-environment)
+        (lambda (relative-pathname)
+          (format *trace-output* "Loading file ~s~%" relative-pathname)
+          (let* ((client (make-instance 'sicl-boot:client))
+                 (prefixed (concatenate 'string "ASTs/" relative-pathname))
+                 (pathname (asdf:system-relative-pathname '#:sicl-boot prefixed))
+                 (ast (cleavir-io:read-model pathname '(v0)))
+                 (code-object (sicl-compiler:compile-ast client ast)))
+            (sicl-boot:tie-code-object
+             client code-object tie-environment make-instance-environment)))))
