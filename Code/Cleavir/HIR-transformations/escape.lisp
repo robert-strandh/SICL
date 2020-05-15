@@ -19,51 +19,6 @@
      initial-instruction)
     graph))
 
-;;; Run some analysis on the simple functions in the given initial-instruction.
-;;; It's top-down - if a simple function contains other simple functions, only the
-;;; simple function highest up will be analyzed.
-;;; So e.g. if L1 includes L2 and L3, and L2 includes L4, and other than L1 they're all simple,
-;;; analyze-simples of L1 will call analyzer on only L2 and L3.
-;;; FIXME: May analyze an insruction more than once if there are multiple encloses of one ENTER.
-;;; But this function isn't used at the moment anyway.
-(defun analyze-simples (analyzer initial-instruction)
-  (let ((dag (build-function-dag initial-instruction))
-        (location-owners (compute-location-owners initial-instruction))
-        (destinies (compute-destinies initial-instruction)))
-    (let ((trappers (discern-trappers dag destinies))
-          (sharing (discern-sharing dag location-owners)))
-      (labels ((aux (node)
-                 (let ((enter (enter-instruction node)))
-                   (if (and (null (cdr (gethash enter sharing))) ; toplevel
-                            (gethash enter trappers)) ; trapper
-                       (funcall analyzer enter)
-                       (mapc #'aux (children node))))))
-          (aux dag))))
-  (values))
-
-;;; Return a hash from ENTERs (representing functions) to booleans.
-;;; If the boolean is T, the function doesn't have any sub-functions that escape.
-;;; (It may, itself, escape, but that's irrelevant here.)
-;;; Obvious future refinement: If a function escapes, but not to outside a function,
-;;; that function can still be a trapper.
-(defun discern-trappers (function-dag destinies)
-  (let ((result (make-hash-table :test #'eq)))
-    (labels ((aux (node)
-               ;; FIXME: recurses into children multiple times. Efficiency concern
-               (let* ((enclose (enclose-instruction node))
-                      (enter (cleavir-ir:code enclose))
-                      ;; if there no children, recursion stops here.
-                      (child-non-escapes (mapcar #'aux (children node))))
-                 (setf (gethash enter result)
-                       (every #'identity child-non-escapes)) ; no child escapes
-                 ;; Now return whether WE don't escape, for our caller's sake.
-                 (not (member :escape (gethash enclose destinies))))))
-      ;; We have to do the recursion funny since the initial instruction
-      ;; has no enclose/cannot escape.
-      (setf (gethash (initial-instruction function-dag) result)
-            (every #'aux (children function-dag))))
-    result))
-
 (defun data (instruction)
   (append (cleavir-ir:inputs instruction)
 	  (cleavir-ir:outputs instruction)))
