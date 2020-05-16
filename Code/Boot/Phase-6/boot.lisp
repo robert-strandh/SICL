@@ -23,7 +23,7 @@
     (sicl-boot:enable-defgeneric e5 e6 e7)
     (load-fasl "CLOS/invalidate-discriminating-function.fasl" e6)
     (sicl-boot:enable-generic-function-initialization #'load-fasl e6)
-    (sicl-boot:load-accessor-defgenerics #'load-fasl-e7 e7)
+    (sicl-boot:load-accessor-defgenerics #'load-fasl e7)
     (sicl-boot:enable-class-initialization #'load-fasl e5 e6 e7)
     (sicl-boot:create-mop-classes #'load-fasl e6)
     (load-fasl "CLOS/satiation.fasl" e6)))
