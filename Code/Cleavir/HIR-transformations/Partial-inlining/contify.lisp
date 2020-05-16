@@ -5,10 +5,10 @@
 (defun copy-propagate-assignment (assignment)
   (let ((input (first (cleavir-ir:inputs assignment)))
         (output (first (cleavir-ir:outputs assignment))))
-    ;; Without reaching definitions, input must have one definition
-    ;; and output must have one use.
+    ;; Without reaching definitions, the output and input must *both*
+    ;; have only one definition, the initial one.
     (when (and (null (rest (cleavir-ir:defining-instructions input)))
-               (null (rest (cleavir-ir:using-instructions output))))
+               (null (rest (cleavir-ir:defining-instructions output))))
       ;; Some assignments are totally useless.
       (if (eq input output)
           (cleavir-ir:delete-instruction assignment)
