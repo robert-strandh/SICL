@@ -30,4 +30,5 @@
    (:file "finalize-all-classes")
    (:file "header")
    (:file "define-class-of")
-   (:file "enable-allocate-instance")))
+   (:file "enable-allocate-instance")
+   (:file "repl")))
