@@ -14,14 +14,14 @@
           (sicl-clos::make-method-lambda-default
            function nil lambda-expression environment))))
 
-(defun enable-defmethod (load-fasl ea eb)
+(defun enable-defmethod (ea eb)
   (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda eb)
         #'sicl-clos::make-method-lambda-default)
   (define-make-specializer ea)
-  (funcall load-fasl "CLOS/make-method-for-generic-function.fasl" ea)
+  (load-fasl "CLOS/make-method-for-generic-function.fasl" ea)
   (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method eb)
         (sicl-genv:fdefinition 'sicl-clos::method-function ea))
   (with-straddled-function-definitions
       ((sicl-clos::ensure-method) eb)
-    (funcall load-fasl "CLOS/ensure-method.fasl" ea))
+    (load-fasl "CLOS/ensure-method.fasl" ea))
   (define-create-method-lambda eb))

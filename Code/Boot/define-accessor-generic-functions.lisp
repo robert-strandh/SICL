@@ -1,14 +1,14 @@
 (cl:in-package #:sicl-boot)
 
-(defun enable-generic-function-initialization (load-fasl-function ea)
+(defun enable-generic-function-initialization (ea)
   (flet ((load-fasl (path environment)
-           (funcall load-fasl-function path environment)))
+           (load-fasl path environment)))
     (load-fasl "CLOS/generic-function-initialization-support.fasl" ea)
     (load-fasl "CLOS/generic-function-initialization-defmethods.fasl" ea)))
 
-(defun load-accessor-defgenerics (load-fasl-function ea)
+(defun load-accessor-defgenerics (ea)
   (flet ((load-fasl (path environment)
-           (funcall load-fasl-function path environment)))
+           (load-fasl path environment)))
     (load-fasl "CLOS/specializer-direct-generic-functions-defgeneric.fasl" ea)
     (load-fasl "CLOS/setf-specializer-direct-generic-functions-defgeneric.fasl" ea)
     (load-fasl "CLOS/specializer-direct-methods-defgeneric.fasl" ea)

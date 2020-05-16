@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-boot)
 
-(defun enable-method-combinations (load-fasl-function ea eb)
+(defun enable-method-combinations (ea eb)
   (flet ((load-fasl (path environment)
-           (funcall load-fasl-function path environment)))
+           (load-fasl path environment)))
     (load-fasl "Method-combination/accessor-defgenerics.fasl" eb)
     (load-fasl "Method-combination/make-method-combination-defun.fasl" eb)
     (load-fasl "Method-combination/find-method-combination.fasl" eb)

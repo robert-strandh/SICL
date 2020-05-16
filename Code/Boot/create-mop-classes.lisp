@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-boot)
 
-(defun create-mop-classes (load-fasl-function ea)
+(defun create-mop-classes (ea)
   (flet ((load-fasl (path environment)
-           (funcall load-fasl-function path environment)))
+           (load-fasl path environment)))
     (load-fasl "CLOS/t-defclass.fasl" ea)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* ea t)
           (sicl-genv:find-class 't ea))
