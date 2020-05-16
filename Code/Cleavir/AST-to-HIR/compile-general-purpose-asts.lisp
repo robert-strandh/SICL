@@ -448,6 +448,9 @@
     (assert-context ast context nil 1)
     (let* ((all-args (cons (cleavir-ast:callee-ast ast)
                            (cleavir-ast:argument-asts ast)))
+           ;; Could do more sophisticated analysis for whether to
+           ;; mark an instruction as inlinable.
+           (inline (cleavir-ast:inline ast))
 	   (temps (make-temps all-args))
            ;; In case they diverge at some point.
            (inputs temps))
@@ -458,14 +461,16 @@
 	   (make-instance 'cleavir-ir:funcall-instruction
 	     :inputs inputs
 	     :outputs (list results)
-	     :successors successors)
+	     :successors successors
+             :inline inline)
 	   (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
 	     (make-instance 'cleavir-ir:funcall-instruction
 	       :inputs inputs
 	       :outputs (list values-temp)
 	       :successors
 	       (list (cleavir-ir:make-multiple-to-fixed-instruction
-		      values-temp results (first successors))))))
+		      values-temp results (first successors)))
+               :inline inline)))
        context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
