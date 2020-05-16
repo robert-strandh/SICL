@@ -57,7 +57,7 @@ versions.
    (defparameter *b* (boot))
    ```
 
-   Creating the first environment will take a few minutes.
+   Bootstrapping may take a few minutes.
 
 8. Start a REPL:
 
