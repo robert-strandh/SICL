@@ -3,16 +3,18 @@
 ;;; Copy propagate an assignment and return the old defining
 ;;; instructions of the input for the sake of incremental analysis.
 (defun copy-propagate-assignment (assignment)
-  ;; Can only deal with trivial assignments
-  (let ((inputs (cleavir-ir:inputs assignment))
-        (outputs (cleavir-ir:outputs assignment)))
-    (when (and (null (rest inputs))
-               (null (rest outputs)))
-      (let ((input (first inputs))
-            (output (first outputs)))
-        (prog1 (cleavir-ir:using-instructions output)
-          (cleavir-ir:replace-datum input output)
-          (cleavir-ir:delete-instruction assignment))))))
+  (let ((input (first (cleavir-ir:inputs assignment)))
+        (output (first (cleavir-ir:outputs assignment))))
+    ;; Without reaching definitions, input must have one definition
+    ;; and output must have one use.
+    (when (and (null (rest (cleavir-ir:defining-instructions input)))
+               (null (rest (cleavir-ir:using-instructions output))))
+      ;; Some assignments are totally useless.
+      (if (eq input output)
+          (cleavir-ir:delete-instruction assignment)
+          (prog1 (cleavir-ir:using-instructions output)
+            (cleavir-ir:replace-datum input output)
+            (cleavir-ir:delete-instruction assignment))))))
 
 ;;; A lightweight copy propagation utility to get rid of pesky
 ;;; assignments blocking optimizations.
