@@ -74,7 +74,7 @@
                                  ;; inhibit interpolation.
                                  ;; Fix this when we start
                                  ;; interpolating MVC.
-                                 (not (eq (inline user) 'notinline))))
+                                 (not (eq (cleavir-ir:inline-declaration user) 'notinline))))
                           users)
              (return-from interpolable-function-analyze-1))
            (interpolate-function return-point common-output common-dynenv code)

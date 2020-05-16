@@ -43,7 +43,7 @@
                        ;; information, only check explicit inline
                        ;; declarations for local functions.
                        unless (or (typep user 'cleavir-ir:multiple-value-call-instruction)
-                                  (eq (inline user) 'inline))
+                                  (eq (cleavir-ir:inline-declaration user) 'inline))
                          return nil
                        unless (call-valid-p enter user)
                          return nil

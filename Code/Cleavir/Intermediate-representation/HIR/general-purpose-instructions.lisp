@@ -72,7 +72,7 @@
 
 (defclass funcall-instruction
     (one-successor-mixin side-effect-mixin instruction)
-  ((%inline :initarg :inline :initform nil :reader inline)))
+  ((%inline :initarg :inline :initform nil :reader inline-declaration)))
 
 (defun make-funcall-instruction
     (inputs outputs &optional (successor nil successor-p) inline)
@@ -83,7 +83,7 @@
     :inline inline))
 
 (defmethod clone-initargs append ((instruction funcall-instruction))
-  (list :inline (inline instruction)))
+  (list :inline (inline-declaration instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
