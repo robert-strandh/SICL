@@ -24,7 +24,7 @@
                      (eq (first first-form) 'in-package)))
         (setf *package* (find-package (second first-form))))
       (let* ((csts (loop with eof-marker = (list nil)
-                         for cst = (eclector.concrete-syntax-tree:cst-read input-stream nil eof-marker)
+                         for cst = (eclector.concrete-syntax-tree:read input-stream nil eof-marker)
                          until (eq cst eof-marker)
                          collect cst))
              (cst (cst:cons (cst:cst-from-expression 'progn)

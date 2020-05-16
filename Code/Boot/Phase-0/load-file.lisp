@@ -10,6 +10,6 @@
           (error "File must start with an IN-PACKAGE form."))
         (setf *package* (find-package (second first-form))))
       (loop with eof-marker = (list nil)
-            for cst = (eclector.concrete-syntax-tree:cst-read stream nil eof-marker)
+            for cst = (eclector.concrete-syntax-tree:read stream nil eof-marker)
             until (eq cst eof-marker)
             do (sicl-hir-interpreter:cst-eval client cst environment)))))
