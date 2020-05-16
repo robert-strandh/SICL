@@ -200,7 +200,7 @@
 		(values temps
 			(rest place)
 			(list new)
-			`(funcall #'(setf ,(first place)) ,new ,@temps)
+			`(funcall (function (setf ,(first place))) ,new ,@temps)
 			`(,(first place) ,@temps)))
 	      (funcall expander place global-environment))))))
 
