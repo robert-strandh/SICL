@@ -57,14 +57,12 @@ versions.
    (defparameter *b* (boot))
    ```
 
-   Creating the first environment will take a few minutes.  In
-   particular, it will seem that it is stuck when loading a few files,
-   especially remf-defmacro.lisp.
+   Creating the first environment will take a few minutes.
 
 8. Start a REPL:
 
    ```lisp
-   (repl ee4)
+   (repl *e5*)
    ```
 
 [source]: https://github.com/robert-strandh/SICL
