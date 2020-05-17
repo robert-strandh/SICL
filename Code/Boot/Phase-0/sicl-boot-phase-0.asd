@@ -24,5 +24,4 @@
    (:file "fill-environment")
    (:file "environment")
    (:file "load-file")
-   (:file "compile-files")
    (:file "boot")))
