@@ -31,4 +31,5 @@
    (:file "header")
    (:file "define-class-of")
    (:file "enable-allocate-instance")
+   (:file "compile-file")
    (:file "repl")))

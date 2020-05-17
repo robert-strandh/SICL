@@ -16,7 +16,6 @@
   :components
   ((:file "packages")
    (:file "eval")
-   (:file "compile-file")
    (:file "host-load")
    (:file "import-from-host")
    (:file "define-defmacro")
