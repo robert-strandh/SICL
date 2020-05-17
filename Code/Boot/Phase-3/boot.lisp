@@ -12,7 +12,6 @@
     (enable-defmethod boot)
     (define-method-on-method-function e3)
     (load-fasl "Cons/accessor-defuns.fasl" e2)
-    (load-fasl "Cons/cxr.fasl" e2)
     (sicl-boot:enable-method-combinations e2 e3)
     (define-stamp e3)
     (define-compile e3)
