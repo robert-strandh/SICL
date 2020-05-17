@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-0)
+(cl:in-package #:sicl-boot)
 
 (defun read-model-object (stream char)
   (declare (ignore char))
