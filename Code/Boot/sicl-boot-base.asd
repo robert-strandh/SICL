@@ -32,4 +32,5 @@
    (:file "define-class-of")
    (:file "enable-allocate-instance")
    (:file "compile-file")
+   (:file "load-source")
    (:file "repl")))
