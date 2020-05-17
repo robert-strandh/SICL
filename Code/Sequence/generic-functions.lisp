@@ -170,6 +170,9 @@
 (defgeneric concatenate-sequence-like (prototype &rest sequences)
   (:generic-function-class sequence-function))
 
+(defgeneric merge-sequence-like (prototype sequence-1 sequence-2 predicate &key key)
+  (:generic-function-class sequence-function))
+
 (defgeneric make-sequence-reader
     (sequence start end from-end terminate)
   (:generic-function-class sequence-function))

@@ -31,7 +31,7 @@
    (:file "for-each-relevant-cons")
    (:file "for-each-relevant-element")
    (:file "make-cons-iterator")
-   (:file "make-sequence-scanner")
+   (:file "sequence-scanner")
 
    ;; Now that all utilities and elementary sequence functions have been
    ;; defined, it is possible to load the remaining functions.

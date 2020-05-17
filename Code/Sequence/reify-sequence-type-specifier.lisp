@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-sequence)
 
-;;; This function is called by MAP, CONCATENATE, and MAKE-SEQUENCE to
-;;; handle their respective first argument.  It returns two values:
+;;; This function is called by MAP, MERGE, CONCATENATE, and MAKE-SEQUENCE
+;;; to handle their respective first argument.  It returns two values:
 ;;;
 ;;; 1. A sequence prototype, i.e., a sequence that is almost of the
 ;;;    supplied type, except that its may have a different length.
