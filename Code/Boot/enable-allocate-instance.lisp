@@ -6,7 +6,7 @@
           (make-instance 'sicl-boot::header
             :class class
             :rack (make-array size :initial-element 10000000))))
-  (load-fasl "CLOS/stamp-offset-defconstant.fasl" ea)
-  (load-fasl "CLOS/allocate-instance-defgenerics.fasl" ea)
-  (load-fasl "CLOS/allocate-instance-support.fasl" ea)
-  (load-fasl "CLOS/allocate-instance-defmethods.fasl" ea))
+  (load-source "CLOS/stamp-offset-defconstant.lisp" ea)
+  (load-source "CLOS/allocate-instance-defgenerics.lisp" ea)
+  (load-source "CLOS/allocate-instance-support.lisp" ea)
+  (load-source "CLOS/allocate-instance-defmethods.lisp" ea))

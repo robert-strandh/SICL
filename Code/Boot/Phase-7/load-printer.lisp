@@ -4,13 +4,13 @@
   (sicl-boot:import-function-from-host
    'sicl-printer::print-symbol
    e5)
-  (load-fasl "Printer/print-object-defgeneric.fasl" e5)
-  (load-fasl "Printer/print-object-defmethod-t.fasl" e5)
-  (load-fasl "Printer/print-object-defmethod-integer.fasl" e5)
-  (load-fasl "Printer/print-object-defmethod-symbol.fasl" e5)
-  (load-fasl "Printer/print-object-defmethod-cons.fasl" e5)
-  (load-fasl "Printer/print-object-defmethod-standard-object.fasl" e5)
-  (load-fasl "Printer/print-object-defmethod-function.fasl" e5)
-  (load-fasl "Printer/print-object-defmethod-class.fasl" e5)
-  (load-fasl "Printer/print-object-defmethod-generic-function.fasl" e5))
+  (load-source "Printer/print-object-defgeneric.lisp" e5)
+  (load-source "Printer/print-object-defmethod-t.lisp" e5)
+  (load-source "Printer/print-object-defmethod-integer.lisp" e5)
+  (load-source "Printer/print-object-defmethod-symbol.lisp" e5)
+  (load-source "Printer/print-object-defmethod-cons.lisp" e5)
+  (load-source "Printer/print-object-defmethod-standard-object.lisp" e5)
+  (load-source "Printer/print-object-defmethod-function.lisp" e5)
+  (load-source "Printer/print-object-defmethod-class.lisp" e5)
+  (load-source "Printer/print-object-defmethod-generic-function.lisp" e5))
 

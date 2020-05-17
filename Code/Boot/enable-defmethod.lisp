@@ -18,10 +18,10 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda eb)
         #'sicl-clos::make-method-lambda-default)
   (define-make-specializer ea)
-  (load-fasl "CLOS/make-method-for-generic-function.fasl" ea)
+  (load-source "CLOS/make-method-for-generic-function.lisp" ea)
   (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method eb)
         (sicl-genv:fdefinition 'sicl-clos::method-function ea))
   (with-straddled-function-definitions
       ((sicl-clos::ensure-method) eb)
-    (load-fasl "CLOS/ensure-method.fasl" ea))
+    (load-source "CLOS/ensure-method.lisp" ea))
   (define-create-method-lambda eb))

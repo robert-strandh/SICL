@@ -4,14 +4,14 @@
   (with-straddled-function-definitions
       ((sicl-clos::effective-slot-definition-class-default)
        eb)
-    (load-fasl "CLOS/effective-slot-definition-class-support.fasl" ea))
-  (load-fasl "CLOS/effective-slot-definition-class-defgeneric.fasl" eb)
-  (load-fasl "CLOS/effective-slot-definition-class-defmethods.fasl" eb))
+    (load-source "CLOS/effective-slot-definition-class-support.lisp" ea))
+  (load-source "CLOS/effective-slot-definition-class-defgeneric.lisp" eb)
+  (load-source "CLOS/effective-slot-definition-class-defmethods.lisp" eb))
 
 (defun define-class-finalization (eb)
-  (load-fasl "CLOS/class-finalization-defgenerics.fasl" eb)
-  (load-fasl "CLOS/class-finalization-support.fasl" eb)
-  (load-fasl "CLOS/class-finalization-defmethods.fasl" eb))
+  (load-source "CLOS/class-finalization-defgenerics.lisp" eb)
+  (load-source "CLOS/class-finalization-support.lisp" eb)
+  (load-source "CLOS/class-finalization-defmethods.lisp" eb))
 
 (defun enable-class-finalization (ea eb)
   (define-effective-slot-definition-class ea eb)

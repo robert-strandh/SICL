@@ -8,28 +8,28 @@
 ;;; SUB-SPECIALIZER-P is called by COMPUTE-APPLICABLE-METHODS
 ;;; (indirectly) to determine which is two methods is more specific.
 (defun define-sub-specializer-p (environment)
-  (load-fasl "CLOS/sub-specializer-p.fasl" environment))
+  (load-source "CLOS/sub-specializer-p.lisp" environment))
 
 (defun define-compute-applicable-methods (eb)
-  (load-fasl "CLOS/compute-applicable-methods-support.fasl" eb)
-  (load-fasl "CLOS/compute-applicable-methods-defgenerics.fasl" eb)
-  (load-fasl "CLOS/compute-applicable-methods-defmethods.fasl" eb))
+  (load-source "CLOS/compute-applicable-methods-support.lisp" eb)
+  (load-source "CLOS/compute-applicable-methods-defgenerics.lisp" eb)
+  (load-source "CLOS/compute-applicable-methods-defmethods.lisp" eb))
 
 (defun define-compute-effective-method (eb)
-  (load-fasl "CLOS/compute-effective-method-defgenerics.fasl" eb)
-  (load-fasl "CLOS/compute-effective-method-support.fasl" eb)
-  (load-fasl "CLOS/compute-effective-method-defmethods.fasl" eb))
+  (load-source "CLOS/compute-effective-method-defgenerics.lisp" eb)
+  (load-source "CLOS/compute-effective-method-support.lisp" eb)
+  (load-source "CLOS/compute-effective-method-defmethods.lisp" eb))
 
 (defun define-compute-discriminating-function (eb)
-  (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" eb)
-  (load-fasl "CLOS/compute-discriminating-function-support.fasl" eb)
-  (load-fasl "CLOS/discriminating-tagbody.fasl" eb)
-  (load-fasl "CLOS/compute-discriminating-function-support-c.fasl" eb)
-  (load-fasl "CLOS/compute-discriminating-function-defmethods.fasl" eb))
+  (load-source "CLOS/compute-discriminating-function-defgenerics.lisp" eb)
+  (load-source "CLOS/compute-discriminating-function-support.lisp" eb)
+  (load-source "CLOS/discriminating-tagbody.lisp" eb)
+  (load-source "CLOS/compute-discriminating-function-support-c.lisp" eb)
+  (load-source "CLOS/compute-discriminating-function-defmethods.lisp" eb))
 
 (defun define-no-applicable-method (eb)
-  (load-fasl "CLOS/no-applicable-method-defgenerics.fasl" eb)
-  (load-fasl "CLOS/no-applicable-method.fasl" eb))
+  (load-source "CLOS/no-applicable-method-defgenerics.lisp" eb)
+  (load-source "CLOS/no-applicable-method.lisp" eb))
 
 (defun define-find-accessor-method-class (ea eb)
   (setf (sicl-genv:fdefinition 'sicl-clos::find-accessor-method-class eb)
@@ -41,8 +41,8 @@
           (sicl-genv:find-class class-name ea))))
 
 (defun define-classp (eb)
-  (load-fasl "CLOS/classp-defgeneric.fasl" eb)
-  (load-fasl "CLOS/classp-defmethods.fasl" eb))
+  (load-source "CLOS/classp-defgeneric.lisp" eb)
+  (load-source "CLOS/classp-defmethods.lisp" eb))
 
 (defun define-set-funcallable-instance-function (eb)
   (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function eb)
@@ -69,7 +69,7 @@
         (lambda (&rest args)
           (declare (ignore args))
           (error "(setf slot-value) called")))
-  (load-fasl "Evaluation-and-compilation/lambda.fasl" eb)
-  (load-fasl "Data-and-control-flow/setf-defmacro.fasl" eb)
+  (load-source "Evaluation-and-compilation/lambda.lisp" eb)
+  (load-source "Data-and-control-flow/setf-defmacro.lisp" eb)
   (define-find-accessor-method-class ea eb)
   (define-compute-discriminating-function eb))
