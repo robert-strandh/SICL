@@ -3,7 +3,7 @@
 (defun compile-files (client environment)
   (flet ((cf (name)
            (format *trace-output* "Compiling file ~s~%" name)
-           (compile-file client name environment)))
+           (sicl-boot:compile-file client name environment)))
     (cf "CLOS/t-defclass.lisp")
     (cf "CLOS/function-defclass.lisp")
     (cf "CLOS/standard-object-defclass.lisp")
