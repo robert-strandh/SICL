@@ -43,7 +43,7 @@
        sicl-clos::extract-transition-information
        sicl-clos::make-automaton
        sicl-loop::list-car sicl-loop::list-cdr
-       cons cdr cadr cddr caddr cdddr (setf cdr) rplacd first
+       cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd first
        nth assoc reverse
        copy-list list list* append length
        null atom eq not member symbolp functionp stringp consp

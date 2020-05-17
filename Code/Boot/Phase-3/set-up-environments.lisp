@@ -41,7 +41,7 @@
        sicl-genv:find-method-combination-template
        (setf sicl-genv:find-method-combination-template)
        sicl-loop::list-car sicl-loop::list-cdr
-       cons cdr cadr cddr caddr cdddr (setf cdr) rplacd first
+       cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd first
        reverse
        rplacd + member not symbolp functionp stringp
        consp = first
