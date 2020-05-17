@@ -28,6 +28,9 @@
   ()
   (:default-initargs :expected-type 'sequence-type-specifier))
 
+(define-condition must-be-result-type (type-error)
+  ())
+
 ;;; Index Handling
 
 (define-condition invalid-sequence-index (type-error)

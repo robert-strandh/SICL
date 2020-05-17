@@ -64,3 +64,35 @@
      0)))
 
 (seal-domain #'make-sequence-scanner '(vector))
+
+(defmacro with-sequence-scanner ((name sequence) &body body)
+  (sicl-utilities:once-only (sequence)
+    (sicl-utilities:with-gensyms
+        (sequence-scanner scan-buffer state scan-amount index)
+      `(with-scan-buffers (,scan-buffer)
+         (multiple-value-bind (,sequence-scanner ,state)
+             (make-sequence-scanner ,sequence)
+           (declare (sequence-scanner ,sequence-scanner))
+           (multiple-value-bind (,scan-amount ,state)
+               (funcall ,sequence-scanner ,sequence ,state ,scan-buffer)
+             (declare (scan-amount ,scan-amount))
+             (let ((,index 0))
+               (declare (scan-amount ,index))
+               (macrolet ((,name ()
+                            (sicl-utilities:with-gensyms (retry)
+                              `(block nil
+                                 (tagbody ,retry
+                                    (when (= ,',index ,',scan-amount)
+                                      (unless (= ,',scan-amount +scan-buffer-length+)
+                                        (return (values nil nil)))
+                                      (multiple-value-setq (,',scan-amount ,',state)
+                                        (funcall
+                                         ,',sequence-scanner
+                                         ,',sequence
+                                         ,',state
+                                         ,',scan-buffer))
+                                      (setf ,',index 0)
+                                      (go ,retry)))
+                                 (values t (prog1 (svref ,',scan-buffer ,',index)
+                                             (incf ,',index)))))))
+                 ,@body))))))))

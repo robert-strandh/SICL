@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-sequence)
 
-;;; This function is called by MAP, CONCATENATE, and MAKE-SEQUENCE to
-;;; handle their respective first argument.  It returns two values:
+;;; This function is called by MAP, MERGE, CONCATENATE, and MAKE-SEQUENCE
+;;; to handle their respective first argument.  It returns two values:
 ;;;
 ;;; 1. A sequence prototype, i.e., a sequence that is almost of the
 ;;;    supplied type, except that its may have a different length.
@@ -26,6 +26,7 @@
     (typecase type-specifier
       (symbol
        (case type-specifier
+         ((nil) (fail))
          ((null)
           (values '() 0))
          ((list cons)
@@ -127,3 +128,17 @@
                      (return (find-most-specific-prototype subclass)))
                        finally (return (class-prototype class)))))
         (values (find-most-specific-prototype (find-class 'sequence)) t))))
+
+(defmacro with-reified-result-type ((prototype result-type) &body body)
+  (check-type prototype symbol)
+  (sicl-utilities:once-only (result-type)
+    (sicl-utilities:with-gensyms (result p l)
+      `(multiple-value-bind (,p ,l) (reify-sequence-type-specifier ,result-type)
+         (let ((,result (let ((,prototype ,p)) ,@body)))
+           (unless (or (not ,l)
+                       (and (integerp ,l) (= (length ,result) ,l))
+                       (typep ,result ,result-type))
+             (error 'must-be-result-type
+                    :datum ,result
+                    :expected-type ,result-type))
+           ,result)))))

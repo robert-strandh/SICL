@@ -12,11 +12,12 @@
             (loop
               (multiple-value-bind (amount new-state)
                   (funcall scanner sequence state scan-buffer)
+                (declare (scan-amount amount))
                 (setf state new-state)
-                (let ((n (min amount)))
-                  (when (zerop n) (return))
-                  (loop for index below n do
-                    (funcall function (elt scan-buffer index)))))))))))
+                (loop for index below amount do
+                  (funcall function (elt scan-buffer index)))
+                (when (< amount +scan-buffer-length+)
+                  (return)))))))))
 
 (declaim (inline map-for-effect-2))
 (defun map-for-effect-2 (function sequence-1 sequence-2)
@@ -39,11 +40,12 @@
                       (funcall scanner-2 sequence-2 state-2 scan-buffer-2)
                     (setf state-2 new-state-2)
                     (let ((amount (min amount-1 amount-2)))
-                      (when (zerop amount) (return))
                       (loop for index below amount do
                         (funcall function
                                  (elt scan-buffer-1 index)
-                                 (elt scan-buffer-2 index)))))))))))))
+                                 (elt scan-buffer-2 index)))
+                      (when (< amount +scan-buffer-length+)
+                        (return))))))))))))
 
 (declaim (inline map-for-effect-3))
 (defun map-for-effect-3 (function sequence-1 sequence-2 sequence-3)
@@ -73,12 +75,13 @@
                           (funcall scanner-3 sequence-3 state-3 scan-buffer-3)
                         (setf state-3 new-state-3)
                         (let ((amount (min amount-1 amount-2 amount-3)))
-                          (when (zerop amount) (return))
                           (loop for index below amount do
                             (funcall function
                                      (elt scan-buffer-1 index)
                                      (elt scan-buffer-2 index)
-                                     (elt scan-buffer-3 index)))))))))))))))
+                                     (elt scan-buffer-3 index)))
+                          (when (< amount +scan-buffer-length+)
+                            (return))))))))))))))
 
 (defun map-for-effect-n (function sequence &rest more-sequences)
   (if (and (listp sequence) (every #'listp more-sequences))
@@ -99,27 +102,27 @@
                 (setf (svref scan-buffers index)
                       (make-scan-buffer)))
         (loop
-          (let ((min-amount +scan-buffer-length+))
-            (declare (scan-amount min-amount))
-            ;; Fill all scan buffers.
+          (let ((amount +scan-buffer-length+))
+            (declare (scan-amount amount))
+            ;; Fill all scan buffers and minimize the amount.
             (loop for sequence in sequences
                   and index below n-sequences
                   do (symbol-macrolet
                          ((scanner (the sequence-scanner (svref scanners index)))
                           (state (svref states index))
                           (scan-buffer (the scan-buffer (svref scan-buffers index))))
-                       (multiple-value-bind (amount new-state)
+                       (multiple-value-bind (amount-n new-state)
                            (funcall scanner sequence state scan-buffer)
-                         (when (< amount min-amount)
-                           (setf min-amount amount))
+                         (when (< amount-n amount)
+                           (setf amount amount-n))
                          (setf state new-state))))
-            (when (zerop min-amount)
-              (return))
-            (loop for index below min-amount do
+            (loop for index below amount do
               (let ((args '()))
                 (loop for pos from (1- n-sequences) downto 0 do
                   (push (svref (svref scan-buffers pos) index) args))
-                (apply function args))))))))
+                (apply function args))
+              (when (< amount +scan-buffer-length+)
+                (return))))))))
 
 (defun map-for-effect (function sequence &rest more-sequences)
   (case (length more-sequences)
