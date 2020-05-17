@@ -29,4 +29,5 @@
            #:finalize-all-classes
            #:define-class-of
            #:enable-allocate-instance
-           #:compile-file))
+           #:compile-file
+           #:load-source))
