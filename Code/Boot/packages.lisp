@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-boot
   (:use #:common-lisp)
+  (:shadow #:compile-file)
   (:export #:environment
            #:client
            #:boot
@@ -27,4 +28,5 @@
            #:enable-class-initialization
            #:finalize-all-classes
            #:define-class-of
-           #:enable-allocate-instance))
+           #:enable-allocate-instance
+           #:compile-file))
