@@ -26,6 +26,7 @@
     (typecase type-specifier
       (symbol
        (case type-specifier
+         ((nil) (fail))
          ((null)
           (values '() 0))
          ((list cons)
