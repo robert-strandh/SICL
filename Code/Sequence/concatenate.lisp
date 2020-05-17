@@ -1,20 +1,8 @@
 (cl:in-package #:sicl-sequence)
 
 (defun concatenate (result-type &rest sequences)
-  (multiple-value-bind (prototype length-constraint)
-      (reify-sequence-type-specifier result-type)
-    (let ((result (apply #'concatenate-sequence-like prototype sequences)))
-      (unless (or (not length-constraint)
-                  (and (integerp length-constraint)
-                       (= (length result) length-constraint))
-                  (typep result result-type))
-        (error "Failed to concatenate ~:[the~;zero~] sequence~P~@
-                      ~{ ~S~%~}into a sequence of type ~S."
-               (null sequences)
-               (length sequences)
-               sequences
-               result-type))
-      result)))
+  (with-reified-result-type (prototype result-type)
+    (apply #'concatenate-sequence-like prototype sequences)))
 
 (defmethod concatenate-sequence-like ((list list) &rest sequences)
   (sicl-utilities:with-collectors ((result collect))

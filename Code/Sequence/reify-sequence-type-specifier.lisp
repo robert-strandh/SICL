@@ -127,3 +127,17 @@
                      (return (find-most-specific-prototype subclass)))
                        finally (return (class-prototype class)))))
         (values (find-most-specific-prototype (find-class 'sequence)) t))))
+
+(defmacro with-reified-result-type ((prototype result-type) &body body)
+  (check-type prototype symbol)
+  (sicl-utilities:once-only (result-type)
+    (sicl-utilities:with-gensyms (result p l)
+      `(multiple-value-bind (,p ,l) (reify-sequence-type-specifier ,result-type)
+         (let ((,result (let ((,prototype ,p)) ,@body)))
+           (unless (or (not ,l)
+                       (and (integerp ,l) (= (length ,result) ,l))
+                       (typep ,result ,result-type))
+             (error 'must-be-result-type
+                    :datum ,result
+                    :expected-type ,result-type))
+           ,result)))))

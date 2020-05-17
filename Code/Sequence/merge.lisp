@@ -1,19 +1,8 @@
 (cl:in-package #:sicl-sequence)
 
 (defun merge (result-type sequence-1 sequence-2 predicate &key key)
-  (multiple-value-bind (prototype length-constraint)
-      (reify-sequence-type-specifier result-type)
-    (let ((result (merge-sequence-like prototype sequence-1 sequence-2 predicate :key key)))
-      (unless (or (not length-constraint)
-                  (and (integerp length-constraint)
-                       (= (length result) length-constraint))
-                  (typep result result-type))
-        (error "Failed to merge the sequences~% ~S~% ~S~@
-                into a sequence of type ~S."
-               sequence-1
-               sequence-2
-               result-type))
-      result)))
+  (with-reified-result-type (prototype result-type)
+    (merge-sequence-like prototype sequence-1 sequence-2 predicate :key key)))
 
 (defmethod merge-sequence-like
     ((prototype list) (sequence-1 sequence) (sequence-2 sequence) predicate &key key)
