@@ -8,7 +8,7 @@
       boot
     (load-fasl "Cons/accessor-defuns.fasl" e5)
     (load-fasl "Cons/cxr.fasl" e5)
-    (load-fasl "Cons/setf-cxr.fasl" e5)
+    (load-source "Cons/setf-cxr.lisp" e5)
     (load-printer e5)
     (load-make-instance e5)
     (satiate-generic-functions e3 e4 e5)
