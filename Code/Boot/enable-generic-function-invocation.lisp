@@ -22,7 +22,6 @@
 
 (defun define-compute-discriminating-function (eb)
   (load-fasl "CLOS/compute-discriminating-function-defgenerics.fasl" eb)
-  (load-fasl "Cons/accessor-defuns.fasl" eb)
   (load-fasl "CLOS/compute-discriminating-function-support.fasl" eb)
   (load-fasl "CLOS/discriminating-tagbody.fasl" eb)
   (load-fasl "CLOS/compute-discriminating-function-support-c.fasl" eb)
