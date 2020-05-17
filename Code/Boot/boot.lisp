@@ -19,6 +19,10 @@
     (loop for (env1 env2) on (list *e4* *e5* *e6* *e7*)
           until (null env2)
           do (define-load-fasl-2 env1 env2))
+    (uiop:delete-directory-tree
+     (asdf:system-relative-pathname '#:sicl-boot "ASTs/")
+     :validate t
+     :if-does-not-exist :ignore)
     (sicl-boot-phase-0:boot boot)
     (sicl-boot-phase-1:boot boot)
     (sicl-boot-phase-2:boot boot)
