@@ -4,6 +4,19 @@
   (with-reified-result-type (prototype result-type)
     (merge-sequence-like prototype sequence-1 sequence-2 predicate :key key)))
 
+(define-compiler-macro merge
+    (&whole form result-type sequence-1 sequence-2 predicate &rest rest &environment env)
+  (if (constantp result-type)
+      (let ((type (eval result-type)))
+        `(the ,type
+              (merge-sequence-like
+               ',(reify-sequence-type-specifier type env)
+               ,sequence-1
+               ,sequence-2
+               ,predicate
+               ,@rest)))
+      form))
+
 (defmethod merge-sequence-like
     ((prototype list) (sequence-1 sequence) (sequence-2 sequence) predicate &key key)
   (let ((predicate (function-designator-function predicate))

@@ -4,6 +4,16 @@
   (with-reified-result-type (prototype result-type)
     (apply #'concatenate-sequence-like prototype sequences)))
 
+(define-compiler-macro concatenate
+    (&whole form result-type &rest sequences &environment env)
+  (if (constantp result-type)
+      (let ((type (eval result-type)))
+        `(the ,type
+              (concatenate-sequence-like
+               ',(reify-sequence-type-specifier type env)
+               ,@sequences)))
+      form))
+
 (defmethod concatenate-sequence-like ((list list) &rest sequences)
   (sicl-utilities:with-collectors ((result collect))
     (loop for sequence in sequences do

@@ -6,7 +6,8 @@
         (make-sequence-like prototype length)
         (make-sequence-like prototype length :initial-element initial-element))))
 
-(define-compiler-macro make-sequence (&whole form result-type length &rest rest &environment env)
+(define-compiler-macro make-sequence
+    (&whole form result-type length &rest rest &environment env)
   (if (and (constantp result-type)
            (or (null rest)
                (and (eql (first rest) :initial-element)
