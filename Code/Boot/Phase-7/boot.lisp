@@ -6,7 +6,7 @@
                    (e5 sicl-boot:e5)
                    (e6 sicl-boot:e6))
       boot
-    (load-fasl "Cons/accessor-defuns.fasl" e5)
+    (load-source "Cons/accessor-defuns.lisp" e5)
     (load-source "Cons/cxr.lisp" e5)
     (load-source "Cons/setf-cxr.lisp" e5)
     (load-printer e5)
