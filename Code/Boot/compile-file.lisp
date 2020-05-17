@@ -15,6 +15,7 @@
      :character-index ,(sicl-source-tracking:character-index object)))
 
 (defun compile-file (client relative-pathname environment)
+  (format *trace-output* "Compiling file ~s~%" relative-pathname)
   (let ((*package* *package*)
         (input-pathname (asdf:system-relative-pathname '#:sicl relative-pathname)))
     (sicl-source-tracking:with-source-tracking-stream-from-file
