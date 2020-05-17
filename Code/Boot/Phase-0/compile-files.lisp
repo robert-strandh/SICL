@@ -37,7 +37,6 @@
     (cf "Cons/null-defclass.lisp")
     (cf "Cons/accessor-defuns.lisp")
     (cf "Cons/cxr.lisp")
-    (cf "Cons/setf-cxr.lisp")
     (cf "Cons/null-defun.lisp")
     (cf "Cons/list-defun.lisp")
     (cf "Cons/list-star-defun.lisp")
