@@ -7,7 +7,7 @@
     (sicl-hir-interpreter:fill-environment e2)
     (sicl-hir-interpreter:fill-environment e3)
     (sicl-boot:import-functions-from-host
-     '(funcall cons list error)
+     '(funcall cons cadr cddr cdddr list error)
      e2)
     (sicl-boot:import-functions-from-host
      '((setf sicl-genv:function-lambda-list)
