@@ -17,7 +17,7 @@
        (setf sicl-genv:fdefinition)
        (setf sicl-genv:function-lambda-list)
        (setf sicl-genv:function-type)
-       endp null consp atom eq not (setf cdr) apply
+       car cdr rplacd endp null consp atom eq not (setf cdr) apply
        append
        mapcar
        subseq
