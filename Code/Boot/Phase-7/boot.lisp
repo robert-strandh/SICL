@@ -20,4 +20,9 @@
     (patch-functions e3 e4 e5)
     (move-functions e5 e6)
     (setf (sicl-genv:fdefinition 'make-instance e5)
-          (sicl-genv:fdefinition 'sicl-clos::make-instance-temp e5))))
+          (sicl-genv:fdefinition 'sicl-clos::make-instance-temp e5))
+    (sicl-boot:import-function-from-host
+     'cleavir-code-utilities:lambda-list-type-specifier
+     e5)
+    (load-source "CLOS/defgeneric-support.lisp" e5)
+    (load-source "CLOS/defgeneric-defmacro.lisp" e5)))
