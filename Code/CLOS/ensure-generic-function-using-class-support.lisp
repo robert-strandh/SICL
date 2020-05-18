@@ -18,8 +18,8 @@
              (error 'no-such-generic-function-class
                     :class-name generic-function-class))
            (setf generic-function-class class)))
-        ((member generic-function-class
-                 (class-precedence-list (find-class 'generic-function)))
+        ((member (find-class 'generic-function)
+                 (class-precedence-list generic-function-class))
          nil)
         (t
          (error 'generic-function-class-must-be-class-or-name
@@ -30,8 +30,8 @@
              (when (null class)
                (error 'no-such-method-class :class-name method-class))
              (setf method-class class)))
-          ((member method-class
-                 (class-precedence-list (find-class 'method)))
+          ((member (find-class 'method)
+                   (class-precedence-list method-class))
            nil)
           (t
            (error "method class must be a class or a name"))))
@@ -67,8 +67,8 @@
              (error "no such generic-function-class ~s"
                     generic-function-class))
            (setf generic-function-class class)))
-        ((member generic-function-class
-                 (class-precedence-list (find-class 'generic-function)))
+        ((member (find-class 'generic-function)
+                 (class-precedence-list generic-function-class))
          nil)
         (t
          (error "generic function class must be a class or a name")))
@@ -80,8 +80,8 @@
              (when (null class)
                (error "no such method class ~s" method-class))
              (setf method-class class)))
-          ((member method-class
-                 (class-precedence-list (find-class 'method)))
+          ((member (find-class 'method)
+                   (class-precedence-list method-class))
            nil)
           (t
            (error "method class must be a class or a name"))))
