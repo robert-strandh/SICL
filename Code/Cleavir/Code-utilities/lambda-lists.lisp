@@ -363,7 +363,7 @@
 	`(,required t))))
 
 (defun parse-all-required (lambda-list start end item-parser)
-  (loop repeat (- end start)
+  (loop for i from start below end
 	for rest = (nthcdr start lambda-list) then (cdr rest)
 	for required = (car rest)
 	collect (funcall item-parser required)))
