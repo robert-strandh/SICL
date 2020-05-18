@@ -19,51 +19,6 @@
      initial-instruction)
     graph))
 
-;;; Run some analysis on the simple functions in the given initial-instruction.
-;;; It's top-down - if a simple function contains other simple functions, only the
-;;; simple function highest up will be analyzed.
-;;; So e.g. if L1 includes L2 and L3, and L2 includes L4, and other than L1 they're all simple,
-;;; analyze-simples of L1 will call analyzer on only L2 and L3.
-;;; FIXME: May analyze an insruction more than once if there are multiple encloses of one ENTER.
-;;; But this function isn't used at the moment anyway.
-(defun analyze-simples (analyzer initial-instruction)
-  (let ((dag (build-function-dag initial-instruction))
-        (location-owners (compute-location-owners initial-instruction))
-        (destinies (compute-destinies initial-instruction)))
-    (let ((trappers (discern-trappers dag destinies))
-          (sharing (discern-sharing dag location-owners)))
-      (labels ((aux (node)
-                 (let ((enter (enter-instruction node)))
-                   (if (and (null (cdr (gethash enter sharing))) ; toplevel
-                            (gethash enter trappers)) ; trapper
-                       (funcall analyzer enter)
-                       (mapc #'aux (children node))))))
-          (aux dag))))
-  (values))
-
-;;; Return a hash from ENTERs (representing functions) to booleans.
-;;; If the boolean is T, the function doesn't have any sub-functions that escape.
-;;; (It may, itself, escape, but that's irrelevant here.)
-;;; Obvious future refinement: If a function escapes, but not to outside a function,
-;;; that function can still be a trapper.
-(defun discern-trappers (function-dag destinies)
-  (let ((result (make-hash-table :test #'eq)))
-    (labels ((aux (node)
-               ;; FIXME: recurses into children multiple times. Efficiency concern
-               (let* ((enclose (enclose-instruction node))
-                      (enter (cleavir-ir:code enclose))
-                      ;; if there no children, recursion stops here.
-                      (child-non-escapes (mapcar #'aux (children node))))
-                 (setf (gethash enter result)
-                       (every #'identity child-non-escapes)) ; no child escapes
-                 ;; Now return whether WE don't escape, for our caller's sake.
-                 (not (member :escape (gethash enclose destinies))))))
-      ;; We have to do the recursion funny since the initial instruction
-      ;; has no enclose/cannot escape.
-      (setf (gethash (initial-instruction function-dag) result)
-            (every #'aux (children function-dag))))
-    result))
-
 (defun data (instruction)
   (append (cleavir-ir:inputs instruction)
 	  (cleavir-ir:outputs instruction)))
@@ -109,57 +64,6 @@
                         (mark-up instruction-owner location-owner datum))))))
        (initial-instruction function-dag)))
     result))
-
-;;; An incremental version of compute destinies. Only compute the
-;;; destinies from a given enclose-instruction.
-(defun find-enclose-destinies (enclose-instruction)
-  (let ((destinies '())
-        (worklist (cleavir-ir:outputs enclose-instruction)))
-    (loop (when (null worklist)
-            (return destinies))
-          (let ((work (pop worklist)))
-            ;; note that we could hit the same work multiple times, so we use pushnew liberally.
-            (loop for next in (cleavir-ir:using-instructions work)
-                  do (typecase next
-                       ;; here is where we could allow other instructions, etc.
-                       (cleavir-ir:assignment-instruction
-                        (push (first (cleavir-ir:outputs next)) worklist))
-                       (call-instruction
-                        (if (eq work (first (cleavir-ir:inputs next)))
-                            ;; callee
-                            (pushnew next destinies :test #'eq)
-                            ;; arguments
-                            (pushnew :escape destinies :test #'eq)))
-                       (t ; treat as unknown
-                        (pushnew :escape destinies :test #'eq))))))))
-
-(defun destiny-find-encloses (call-instruction)
-  (let ((worklist (list (first (cleavir-ir:inputs call-instruction))))
-        (encloses '()))
-    (loop (when (null worklist)
-            (return encloses))
-          (let ((work (pop worklist)))
-            ;; note that we could hit the same work multiple times, so we use pushnew liberally.
-            (loop for next in (cleavir-ir:defining-instructions work)
-                  do (typecase next
-                       ;; here is where we could allow other instructions, etc.
-                       (cleavir-ir:assignment-instruction
-                        (push (first (cleavir-ir:inputs next)) worklist))
-                       (cleavir-ir:enclose-instruction
-                        (pushnew next encloses))))))))
-
-;;; Compute a hash table from enclose instructions to "destinies".
-;;; A destiny is a list. Elements of the list are either call instructions or :escape.
-;;; Each list has no duplicates.
-(defun compute-destinies (initial-instruction)
-  (let ((destinies (make-hash-table :test #'eq)))
-    (cleavir-ir:map-instructions-arbitrary-order
-     (lambda (i)
-       (when (typep i 'cleavir-ir:enclose-instruction)
-         (setf (gethash i destinies)
-               (find-enclose-destinies i))))
-     initial-instruction)
-    destinies))
 
 ;;; Compute a hash table from call instructions to "origins".
 ;;; An origin is a list. Elements of the list are either enclose instructions,
