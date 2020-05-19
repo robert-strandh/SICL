@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-boot-phase-7)
 
+(defmethod sicl-genv:class-of
+    ((object sicl-boot::header) environment)
+  (slot-value object 'sicl-boot::%class))
+
 (defun boot (boot)
   (with-accessors ((e3 sicl-boot:e3)
                    (e4 sicl-boot:e4)
@@ -21,8 +25,12 @@
     (move-functions e5 e6)
     (setf (sicl-genv:fdefinition 'make-instance e5)
           (sicl-genv:fdefinition 'sicl-clos::make-instance-temp e5))
-    (sicl-boot:import-function-from-host
-     'cleavir-code-utilities:lambda-list-type-specifier
+    (sicl-boot:import-functions-from-host
+     '(cleavir-code-utilities:lambda-list-type-specifier
+       sicl-genv:fdefinition)
      e5)
     (load-source "CLOS/defgeneric-support.lisp" e5)
-    (load-source "CLOS/defgeneric-defmacro.lisp" e5)))
+    (load-source "CLOS/defgeneric-defmacro.lisp" e5)
+    (load-source "CLOS/defmethod-support.lisp" e5)
+    (load-source "CLOS/defmethod-defmacro.lisp" e5)
+    (load-source "Conditionals/support.lisp" e5)))
