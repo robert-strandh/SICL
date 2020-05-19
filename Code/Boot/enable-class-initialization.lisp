@@ -72,6 +72,8 @@
   (load-source "CLOS/class-initialization-support.lisp" eb)
   (load-source "CLOS/class-initialization-defmethods.lisp" eb)
   (load-source "CLOS/reinitialize-instance-defgenerics.lisp" eb)
+  (load-source "CLOS/reinitialize-instance-support.lisp" eb)
+  (load-source "CLOS/reinitialize-instance-defmethods.lisp" eb)
   (define-ensure-class eb)
   ;; FIXME: load files containing the definition instead.
   (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method eb)
