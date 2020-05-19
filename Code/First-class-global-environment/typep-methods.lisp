@@ -88,7 +88,9 @@
           (if (null type-class)
               (error "There is no type named ~s" type-specifier)
               (member type-class
-                      (sicl-clos:class-precedence-list object-class))))
+                      (funcall
+                       (fdefinition 'sicl-clos:class-precedence-list environment)
+                       object-class))))
         (let ((expanded-type (funcall expander type-specifier environment)))
           (typep object expanded-type environment)))))
 
