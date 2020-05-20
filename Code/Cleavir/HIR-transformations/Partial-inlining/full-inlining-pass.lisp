@@ -4,19 +4,32 @@
 (defun all-parameters-required-p (enter)
   (every (lambda (param) (typep param 'cleavir-ir:lexical-location))
          (cleavir-ir:lambda-list enter)))
+(defun lambda-list-too-hairy-p (lambda-list)
+  (or (member '&rest lambda-list)
+      (member '&key lambda-list)))
 
 ;;; Check that a call is valid so that we can avoid inlining invalid calls,
 ;;; and the inliner can safely assume calls are valid.
 ;;; That is, for something like ((lambda ()) x), we want a full call so that
 ;;; the client's runtime can do its normal error signaling.
-;;; We assume that all-parameters-required-p is true of the enter, which
-;;; makes this very easy to determine.
 ;;; FIXME: We should probably signal a warning. If we do, make sure it's not
-;;; redundant with CST-to-ASTs.
+;;; redundant with CST-to-AST's.
 (defun call-valid-p (enter call)
-  (let ((nparams (length (cleavir-ir:lambda-list enter)))
+  (let ((lambda-list (cleavir-ir:lambda-list enter))
         (nargs (1- (length (cleavir-ir:inputs call))))) ; one input for the function
-    (= nparams nargs)))
+    (assert (not (lambda-list-too-hairy-p lambda-list)))
+    ;; KLUDGE: This is basically another lambda list parser.
+    (let ((required-count 0)
+          (optional-count 0)
+          (state :required))
+      (dolist (item lambda-list)
+        (cond ((eq item '&optional)
+               (setq state :optional))
+              (t
+               (case state
+                 (:required (incf required-count))
+                 (:optional (incf optional-count))))))
+      (print (<= required-count nargs (+ optional-count required-count))))))
 
 ;;; get one potential inline that can be done, or else NIL.
 ;;; An inline here is a list (enter call uniquep), where uniquep expresses whether the function

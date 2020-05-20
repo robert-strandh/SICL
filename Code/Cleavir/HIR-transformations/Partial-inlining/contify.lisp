@@ -50,7 +50,7 @@
   (let ((code (cleavir-ir:code enclose))
         (fun (first (cleavir-ir:outputs enclose))))
     ;; FIXME: Bail if the function arg processing is too hairy somehow.
-    (unless (all-parameters-required-p code)
+    (when (lambda-list-too-hairy-p (cleavir-ir:lambda-list code))
       (return-from interpolable-function-analyze-1))
     (copy-propagate-1 fun)
     ;; Copy propagate so silly assignments don't trip us up.
@@ -164,14 +164,29 @@
 (defun rewire-user-into-body (call enter)
   (let ((cleavir-ir:*origin* (cleavir-ir:origin call))
         (cleavir-ir:*policy* (cleavir-ir:policy call))
-        (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment call)))
-    (loop for location in (cleavir-ir:parameters enter)
-          for arg in (rest (cleavir-ir:inputs call))
-          for assign = (make-instance 'binding-assignment-instruction
-                                      :inputs (list arg)
-                                      :outputs (list location))
-          do (push assign *binding-assignments*)
-             (cleavir-ir:insert-instruction-before assign call)))
+        (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment call))
+        (state :required)
+        (args (rest (cleavir-ir:inputs call)))
+        (position 0))
+    ;; KLUDGE: Another weird parser.
+    (dolist (item (cleavir-ir:lambda-list enter))
+      (if (eq item '&optional)
+          (setq state :optional)
+          (let* ((arg (nth position args))
+                 (assign (make-instance
+                          'binding-assignment-instruction
+                          :inputs (list (or arg (cleavir-ir:make-load-time-value-input nil t)))
+                          :outputs (list (ecase state
+                                           (:required item)
+                                           (:optional (first item)))))))
+            (push assign *binding-assignments*)
+            (cleavir-ir:insert-instruction-before assign call)
+            (when (eq state :optional)
+              (change-class (second item)
+                            'cleavir-ir:load-time-value-input
+                            :form (if arg '(quote t) nil)
+                            :read-only-p t))
+            (incf position)))))
   ;; Replace the call with a regular control arc into the function.
   (cleavir-ir:bypass-instruction (first (cleavir-ir:successors enter)) call))
 
