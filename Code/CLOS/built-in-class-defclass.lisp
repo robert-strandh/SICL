@@ -48,6 +48,9 @@
    (%direct-slots
     :initform '()
     :reader class-direct-slots)
+   (%finalized-p
+    :initform t
+    :reader class-finalized-p)
    (%default-initargs
     :initarg :default-initargs
     :accessor class-default-initargs)

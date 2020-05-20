@@ -49,6 +49,9 @@
    (%direct-superclasses
     :initarg :direct-superclasses
     :reader class-direct-superclasses)
+   (%finalized-p
+    :initform nil
+    :accessor class-finalized-p)
    (%default-initargs
     :accessor class-default-initargs)
    (%effective-slots

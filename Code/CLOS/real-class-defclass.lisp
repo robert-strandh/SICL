@@ -43,9 +43,6 @@
    (%documentation
     :initform nil
     :accessor documentation)
-   (%finalized-p
-    :initform nil
-    :accessor class-finalized-p)
    (%precedence-list
     :initform '()
     ;; The AMOP says that CLASS-PRECEDENCE-LIST should signal an error
