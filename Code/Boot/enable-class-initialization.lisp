@@ -69,6 +69,7 @@
   (define-find-or-create-generic-function eb ec)
   (load-source "CLOS/default-superclasses-defgeneric.lisp" eb)
   (load-source "CLOS/default-superclasses-defmethods.lisp" eb)
+  (load-source "CLOS/class-finalization-support.lisp" eb)
   (load-source "CLOS/class-initialization-support.lisp" eb)
   (load-source "CLOS/class-initialization-defmethods.lisp" eb)
   (load-source "CLOS/reinitialize-instance-defgenerics.lisp" eb)

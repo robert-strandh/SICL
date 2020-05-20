@@ -101,6 +101,7 @@
     (define-find-or-create-generic-function e3 e4)
     (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e3)
           (lambda (class) (declare (ignore class)) '()))
+    (load-source "CLOS/class-finalization-support.lisp" e3)
     (load-source "CLOS/class-initialization-support.lisp" e3)
     (load-source "CLOS/class-initialization-defmethods.lisp" e3)
     (define-ensure-class e2 e3)))
