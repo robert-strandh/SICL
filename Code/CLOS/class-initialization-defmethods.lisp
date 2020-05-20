@@ -19,3 +19,11 @@
          class
          slot-names
          initargs))
+
+(defmethod shared-initialize :after
+    ((class built-in-class)
+     slot-names
+     &rest initargs
+     &key
+     &allow-other-keys)
+  (shared-initialize-after-built-in-class-default class))

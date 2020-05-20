@@ -132,3 +132,7 @@
     (add-as-subclass-to-superclasses class direct-superclasses)
     (create-readers-and-writers class slots))
   class)
+
+(defun shared-initialize-after-built-in-class-default (class)
+  (setf (precedence-list class)
+        (compute-class-precedence-list-assuming-superclasses-finalized class)))
