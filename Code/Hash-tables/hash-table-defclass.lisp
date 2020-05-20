@@ -9,5 +9,4 @@
                  :reader hash-table-rehash-size)
    (%rehash-threshold :initarg :rehash-threshold
                       :initform 0.8
-                      :reader hash-table-rehash-threshold))
-  (:metaclass built-in-class))
+                      :reader hash-table-rehash-threshold)))

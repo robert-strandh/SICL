@@ -2,5 +2,4 @@
 
 (defclass string
     (sicl-vector:vector sicl-array:array-character)
-  ()
-  (:metaclass built-in-class))
+  ())

@@ -6,5 +6,4 @@
     :reader symbol-name)
    (%package
     :initarg :package
-    :reader symbol-package))
-  (:metaclass built-in-class))
+    :reader symbol-package)))

@@ -8,7 +8,6 @@
    (data :accessor hash-table-data)
    (count :initform 0
           :accessor %bucket-hash-table-count
-          :reader hash-table-count))
-  (:metaclass built-in-class))
+          :reader hash-table-count)))
   
 (setf sicl-hash-table:*default-hash-table-class* (find-class 'bucket-hash-table))
