@@ -31,6 +31,7 @@
    #:float-sqrt
    #:coerce
    #:slot-read #:slot-write
+   #:funcallable-slot-read #:funcallable-slot-write
    #:aref #:aset
    #:call-with-variable-bound
    #:let-uninitialized

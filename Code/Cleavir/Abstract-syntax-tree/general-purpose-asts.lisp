@@ -331,7 +331,7 @@
 (defclass call-ast (ast)
   ((%callee-ast :initarg :callee-ast :reader callee-ast)
    (%argument-asts :initarg :argument-asts :reader argument-asts)
-   (%inline :initarg :inline :initform nil :reader inline)))
+   (%inline :initarg :inline :initform nil :reader inline-declaration)))
 
 (defun make-call-ast (callee-ast argument-asts &key origin inline (policy *policy*))
   (make-instance 'call-ast
@@ -343,7 +343,7 @@
 (cleavir-io:define-save-info call-ast
   (:callee-ast callee-ast)
   (:argument-asts argument-asts)
-  (:inline inline))
+  (:inline inline-declaration))
 
 (defmethod children ((ast call-ast))
   (list* (callee-ast ast) (argument-asts ast)))

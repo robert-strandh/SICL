@@ -423,6 +423,46 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:FUNCALLABLE-SLOT-READ.
+;;;
+;;; This primop takes two arguments.  The first argument is a form
+;;; that must evaluate to a funcallable instance.  The second argument is
+;;; a form that must evaluate to a fixnum and that indicates the slot
+;;; number to be read.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:funcallable-slot-read)) cst env system)
+  (check-simple-primop-syntax cst 2)
+  (cst:db origin (slot-read-cst instance-cst slot-number-cst) cst
+    (declare (ignore slot-read-cst))
+    (cleavir-ast:make-funcallable-slot-read-ast
+     (convert instance-cst env system)
+     (convert slot-number-cst env system)
+     :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FUNCALLABLE-SLOT-WRITE.
+;;;
+;;; This primop takes three arguments.  The first argument is a form
+;;; that must evaluate to a funcallable instance.  The second argument is
+;;; a form that must evaluate to a fixnum and that indicates the slot
+;;; number to be written.  The third argument is a form that evaluates
+;;; to the object that will be written to the slot.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:funcallable-slot-write)) cst env system)
+  (check-simple-primop-syntax cst 3)
+  (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
+    (declare (ignore slot-write-cst))
+    (cleavir-ast:make-funcallable-slot-write-ast
+     (convert instance-cst env system)
+     (convert slot-number-cst env system)
+     (convert value-cst env system)
+     :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:AREF.
 ;;;
 ;;; This primop takes five arguments. The first and second are an

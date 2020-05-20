@@ -101,12 +101,6 @@
     (setf (instruction-owner result) *target-enter-instruction*)
     result))
 
-(defmethod copy-instruction :around ((instruction cleavir-ir:funcall-instruction) mapping)
-  (let* ((result (call-next-method)))
-    (pushnew instruction *destinies-worklist*)
-    (pushnew result *destinies-worklist*)
-    result))
-
 (defmethod copy-instruction :around ((instruction binding-assignment-instruction) mapping)
   (let ((copy (call-next-method)))
     (push copy *binding-assignments*)
@@ -129,8 +123,6 @@
            :predecessors nil :successors nil
            :dynamic-environment (translate-input
                                  (cleavir-ir:dynamic-environment instruction) mapping))))
-    (pushnew instruction *destinies-worklist*)
-    (pushnew new-enclose *destinies-worklist*)
     ;; We hook things up like this so that the function DAG can be updated correctly.
     (setf (cleavir-ir:code new-enclose)
           (copy-function (cleavir-ir:code instruction) new-enclose mapping))

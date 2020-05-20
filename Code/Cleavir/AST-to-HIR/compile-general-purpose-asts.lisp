@@ -450,7 +450,7 @@
                            (cleavir-ast:argument-asts ast)))
            ;; Could do more sophisticated analysis for whether to
            ;; mark an instruction as inlinable.
-           (inline (cleavir-ast:inline ast))
+           (inline (cleavir-ast:inline-declaration ast))
 	   (temps (make-temps all-args))
            ;; In case they diverge at some point.
            (inputs temps))

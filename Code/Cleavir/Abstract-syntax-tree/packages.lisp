@@ -24,7 +24,7 @@
    #:constant-fdefinition-ast #:make-constant-fdefinition-ast #:info
    #:constant-symbol-value-ast #:make-constant-symbol-value-ast #:info
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
-   #:inline
+   #:inline-declaration
    #:block-ast #:make-block-ast #:body
    #:function-ast #:make-function-ast #:lambda-list
    #:bound-declarations #:docstring #:original-lambda-list
@@ -82,6 +82,8 @@
    #:subtype
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
+   #:funcallable-slot-read-ast #:make-funcallable-slot-read-ast
+   #:funcallable-slot-write-ast #:make-funcallable-slot-write-ast
    #:aref-ast #:aset-ast
    #:element-ast #:array-ast #:index-ast
    #:element-type #:simple-p #:boxed-p

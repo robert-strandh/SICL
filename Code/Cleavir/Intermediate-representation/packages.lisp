@@ -53,7 +53,7 @@
    #:nop-instruction #:make-nop-instruction
    #:unreachable-instruction #:make-unreachable-instruction
    #:assignment-instruction #:make-assignment-instruction
-   #:funcall-instruction #:make-funcall-instruction
+   #:funcall-instruction #:make-funcall-instruction #:inline-declaration
    #:funcall-no-return-instruction #:make-funcall-no-return-instruction
    #:tailcall-instruction #:make-tailcall-instruction
    #:return-instruction #:make-return-instruction
@@ -99,6 +99,8 @@
    #:rplacd-instruction #:make-rplacd-instruction
    #:slot-read-instruction #:make-slot-read-instruction
    #:slot-write-instruction #:make-slot-write-instruction
+   #:funcallable-slot-read-instruction #:make-funcallable-slot-read-instruction
+   #:funcallable-slot-write-instruction #:make-funcallable-slot-write-instruction
    #:memref1-instruction #:make-memref1-instruction
    #:memref2-instruction #:make-memref2-instruction
    #:memset1-instruction #:make-memset1-instruction
