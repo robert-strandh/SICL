@@ -398,6 +398,11 @@
             (generic-function-method-combination generic-function)))
       (multiple-value-bind (applicable-methods ok)
           (compute-applicable-methods-using-classes generic-function classes)
+        (when (null applicable-methods)
+          ;; FIXME: Do this better
+          (error "No applicable methods ~s ~s~%"
+                 (generic-function-name generic-function)
+                 arguments))
         (when ok
           (let* ((effective-method (add-call-cache generic-function
                                                    classes
