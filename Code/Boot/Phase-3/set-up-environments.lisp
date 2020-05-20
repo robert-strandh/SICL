@@ -56,7 +56,8 @@
        position sort mapcar eql equal
        nth assoc
        apply endp cons eq coerce
-       list null append length cdr)
+       list null append length cdr
+       reduce remove-duplicates copy-list last)
      e3)
     (import-functions-from-host
      '(funcall

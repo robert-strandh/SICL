@@ -12,8 +12,7 @@
        sicl-conditionals:and-expander
        listp sort every
        mapc 1+ 1- subseq butlast position identity nthcdr equal
-       find-if-not remove-duplicates union reduce count last
-       copy-list
+       find-if-not union reduce count
        gensym values rest second error
        get-properties
        atom cddr (setf cdr) <
@@ -51,7 +50,8 @@
        eql equal set-exclusive-or
        sort mapcar subseq elt position position-if
        apply endp coerce
-       + floor = /=)
+       + floor = /=
+       reduce last remove-duplicates)
      e4)
     (import-functions-from-host
      '(funcall
