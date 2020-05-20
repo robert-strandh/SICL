@@ -35,6 +35,9 @@
 ;;; Analyze the flow graph to see if there are local functions that
 ;;; can be usefully integrated (contified). And if so, then interpolate.
 (defun interpolable-function-analyze (initial-instruction)
+  ;; This removes catches which might keep returns around and block
+  ;; contification.
+  (cleavir-hir-transformations:eliminate-catches initial-instruction)
   ;; Find every enclose instruction and analyze those.
   (let ((*instruction-ownerships* (cleavir-hir-transformations:compute-instruction-owners initial-instruction))
         (*location-ownerships* (cleavir-hir-transformations:compute-location-owners initial-instruction))
@@ -52,39 +55,47 @@
     ;; FIXME: Bail if the function arg processing is too hairy somehow.
     (when (lambda-list-too-hairy-p (cleavir-ir:lambda-list code))
       (return-from interpolable-function-analyze-1))
-    (copy-propagate-1 fun)
     ;; Copy propagate so silly assignments don't trip us up.
+    (copy-propagate-1 fun)
     (let ((users (cleavir-ir:using-instructions fun)))
-      (multiple-value-bind (return-point common-output common-dynenv)
+      (multiple-value-bind (return-point common-output common-dynenv target-owner)
           (common-return-cont enclose users fun)
         (case return-point
           ;; This function should get deleted somehow.
           (:uncalled)
-          ;; Can't do anything with a non-constant continuation.
-          (:unknown)
-          ;; If there is a common return point, integrate the local
-          ;; function into the call graph and rewire the calls,
-          ;; replacing every call's output with the return values of the
-          ;; function.
+          ;; Can't do anything with escaping stuff.
+          (:escape)
           (otherwise
-           (unless (every (lambda (user)
-                            ;; We want error checking.
-                            (and (call-valid-p code user)
-                                 ;; Explicit declaration should
-                                 ;; inhibit interpolation.
-                                 ;; Fix this when we start
-                                 ;; interpolating MVC.
-                                 (not (eq (cleavir-ir:inline-declaration user) 'notinline))))
-                          users)
-             (return-from interpolable-function-analyze-1))
-           (interpolate-function return-point common-output common-dynenv code)
-           (dolist (call users)
-             (assert (typep call 'cleavir-ir:funcall-instruction))
-             (rewire-user-into-body call code))
-           ;; Now clean up the enclose and other stuff hanging off of
-           ;; the enter instruction.
-           (cleavir-ir:delete-instruction code)
-           (cleavir-ir:delete-instruction enclose)))))))
+           ;; Per HIR rules we can't really interpolate any function
+           ;; when it's ambiguous what its dynenv or owners should be.
+           (when (and common-dynenv target-owner
+                      (every (lambda (user)
+                               ;; We want error checking.
+                               (and (call-valid-p code user)
+                                    ;; Explicit declaration should inhibit
+                                    ;; interpolation. Fix this when we start
+                                    ;; interpolating MVC.
+                                    (not (eq (cleavir-ir:inline-declaration user) 'notinline))))
+                             users))
+             (let ((returns (cleavir-ir:local-instructions-of-type code 'cleavir-ir:return-instruction)))
+               ;; If there is a common return point, integrate the local
+               ;; function into the call graph and rewire the calls,
+               ;; replacing every call's output with the return values of the
+               ;; function.
+               ;; If the return continuation is unknown, it can still get
+               ;; contified as long as the local function never returns
+               ;; normally.
+               (unless (and returns (eq return-point :unknown))
+                 (interpolate-function target-owner common-dynenv code)
+                 (unless (eq return-point :unknown)
+                   (rewire-return-cont returns return-point common-output))
+                 (dolist (call users)
+                   (assert (typep call 'cleavir-ir:funcall-instruction))
+                   (rewire-user-into-body call code))
+                 ;; Now clean up the enclose and other stuff hanging off of
+                 ;; the enter instruction.
+                 (cleavir-ir:delete-instruction code)
+                 (cleavir-ir:delete-instruction enclose))))))))))
 
 ;;; A return point is either a logical continuation (i.e. successor
 ;;; instruction or function to be returned into), :unknown (if the
@@ -133,32 +144,37 @@
 (defun common-return-cont (enclose users fun)
   (let ((return-point :uncalled)
         common-output
-        common-dynenv)
+        common-dynenv
+        target-owner)
     (dolist (user users)
       ;; Make sure all users are actually call instructions that only
       ;; use FUN in call position.
       (unless (and (typep user 'cleavir-ir:funcall-instruction)
                    (eq (first (cleavir-ir:inputs user)) fun)
                    (not (member fun (rest (cleavir-ir:inputs user)))))
-        (setf return-point :unknown)
+        (setf return-point :escape)
         (return))
       (let ((cont (logical-continuation enclose user))
             (dynenv (cleavir-ir:dynamic-environment user))
-            (output (first (cleavir-ir:outputs user))))
+            (output (first (cleavir-ir:outputs user)))
+            (owner (instruction-owner user)))
         (copy-propagate-1 output)
         (cond ((eq return-point :uncalled)
                (unless (eq enclose cont)
                  (setf common-dynenv dynenv)
                  (setf return-point cont)
-                 (setf common-output output)))
-              ((or (eq cont enclose)
-                   (and (eq return-point cont)
-                        (eq dynenv common-dynenv)
-                        (eq output common-output))))
-              (t
-               (setf return-point :unknown)
-               (return)))))
-    (values return-point common-output common-dynenv)))
+                 (setf common-output output)
+                 (setf target-owner owner)))
+              ((eq cont enclose))
+              ((not (eq return-point cont))
+               (setq return-point :unknown))
+              ((not (eq dynenv common-dynenv))
+               (setq dynenv nil))
+              ((not (eq output common-output))
+               (setq output nil))
+              ((not (eq owner target-owner))
+               (setq target-owner nil)))))
+    (values return-point common-output common-dynenv target-owner)))
 
 ;; Rewire the call's body into the given ENTER instruction.
 (defun rewire-user-into-body (call enter)
@@ -190,16 +206,28 @@
   ;; Replace the call with a regular control arc into the function.
   (cleavir-ir:bypass-instruction (first (cleavir-ir:successors enter)) call))
 
+
+;; Fix up the return values, and replace return instructions with NOPs
+;; that go to after the call.
+(defun rewire-return-cont (returns return-point common-output)
+  (loop for return in returns
+        for values = (first (cleavir-ir:inputs return))
+        do (cleavir-ir:replace-datum common-output values)
+           (let ((nop (let ((cleavir-ir:*origin* (cleavir-ir:origin return))
+                            (cleavir-ir:*policy* (cleavir-ir:policy return))
+                            (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment return)))
+                        (cleavir-ir:make-nop-instruction nil))))
+             (cleavir-ir:insert-instruction-before nop return-point)
+             (cleavir-ir:bypass-instruction nop return))))
+
 ;;; Cut and paste a function to inline - i.e. don't copy much of
 ;;; anything, which is nice, but means the original is destroyed. The
 ;;; function will get pasted before the given return-point in the
 ;;; given dynamic environment.
-(defun interpolate-function (return-point common-output new-dynenv enter)
+(defun interpolate-function (target-enter new-dynenv enter)
   (let (;; We need to alter these. We find them before doing any alteration-
         ;; interleaving modification and finds results in unfortunate effects.
-        (returns '())
         (unwinds '())
-        (target-enter (instruction-owner return-point))
         (old-dynenv (cleavir-ir:dynamic-environment enter)))
     ;; Update the ownerships of each local instruction and datum and
     ;; find the exit point instructions. Also update the dynamic
@@ -218,11 +246,10 @@
        (dolist (output (cleavir-ir:outputs instruction))
          (when (eq (location-owner output) enter)
            (setf (location-owner output) target-enter)))
-       (when (typep instruction 'cleavir-ir:return-instruction)
-         (push instruction returns))
        (when (typep instruction 'cleavir-ir:unwind-instruction)
          (push instruction unwinds)))
      enter)
+    (cleavir-ir:replace-datum new-dynenv old-dynenv)
     ;; Turn any unwinds in the body to the function being inlined
     ;; into direct control transfers.
     (loop for unwind in unwinds
@@ -238,17 +265,6 @@
                                  (cleavir-ir:*dynamic-environment*
                                    (cleavir-ir:dynamic-environment unwind)))
                              (cleavir-ir:make-local-unwind-instruction target))))
-                 (cleavir-ir:bypass-instruction new unwind)))
-    ;; Fix up the return values, and replace return instructions with NOPs that go to after the call.
-    (loop with caller-values = common-output
-          for return in returns
-          for values = (first (cleavir-ir:inputs return))
-          do (cleavir-ir:replace-datum caller-values values)
-             (let ((nop (let ((cleavir-ir:*origin* (cleavir-ir:origin return))
-                              (cleavir-ir:*policy* (cleavir-ir:policy return))
-                              (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment return)))
-                          (cleavir-ir:make-nop-instruction nil))))
-               (cleavir-ir:insert-instruction-before nop return-point)
-               (cleavir-ir:bypass-instruction nop return))))
+                 (cleavir-ir:bypass-instruction new unwind))))
   ;; Done!
   (values))

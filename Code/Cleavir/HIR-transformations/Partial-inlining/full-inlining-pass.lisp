@@ -29,7 +29,7 @@
                (case state
                  (:required (incf required-count))
                  (:optional (incf optional-count))))))
-      (print (<= required-count nargs (+ optional-count required-count))))))
+      (<= required-count nargs (+ optional-count required-count)))))
 
 ;;; get one potential inline that can be done, or else NIL.
 ;;; An inline here is a list (enter call uniquep), where uniquep expresses whether the function
