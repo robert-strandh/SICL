@@ -311,10 +311,8 @@
   ;; finalized and if not, calls FINALIZE-INSTANCE, and we would have
   ;; an infinite recursion.
   (setf (class-finalized-p class) t)
-  ;; FIXME: allocate a prototype here, maybe?
-  ;;(setf (class-prototype class)
-  ;;      (allocate-instance class)))
-  )
+  (setf (class-prototype class)
+        (allocate-class-prototype class)))
 
 (defun finalize-inheritance-default (class)
   ;; Make sure all the direct superclasses are already finalized.
