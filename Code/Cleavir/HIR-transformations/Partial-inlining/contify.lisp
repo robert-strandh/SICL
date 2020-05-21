@@ -159,6 +159,7 @@
             (output (first (cleavir-ir:outputs user)))
             (owner (instruction-owner user)))
         (copy-propagate-1 output)
+        ;; Check which properties every user shares.
         (cond ((eq return-point :uncalled)
                (unless (eq enclose cont)
                  (setf common-dynenv dynenv)
@@ -166,14 +167,15 @@
                  (setf common-output output)
                  (setf target-owner owner)))
               ((eq cont enclose))
-              ((not (eq return-point cont))
-               (setq return-point :unknown))
-              ((not (eq dynenv common-dynenv))
-               (setq dynenv nil))
-              ((not (eq output common-output))
-               (setq output nil))
-              ((not (eq owner target-owner))
-               (setq target-owner nil)))))
+              (t
+               (unless (eq return-point cont)
+                 (setq return-point :unknown))
+               (unless (eq dynenv common-dynenv)
+                 (setq dynenv nil))
+               (unless (eq output common-output)
+                 (setq output nil))
+               (unless (eq owner target-owner)
+                 (setq target-owner nil))))))
     (values return-point common-output common-dynenv target-owner)))
 
 ;; Rewire the call's body into the given ENTER instruction.
