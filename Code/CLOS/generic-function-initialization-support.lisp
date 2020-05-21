@@ -46,7 +46,6 @@
        (argument-precedence-order nil argument-precedence-order-p)
        method-combination
        (method-class (find-class 'standard-method))
-       name
      &allow-other-keys)
   (check-documentation documentation)
   (check-declarations declarations)
@@ -69,7 +68,6 @@
                :specializer-profile (make-list (length required)
                                                :initial-element nil)
                :method-class method-class
-               :name name
                initargs))
       (if argument-precedence-order-p
           (error "when argument precedence order appears,~@
@@ -80,7 +78,6 @@
                  :documentation documentation
                  :declarations declarations
                  :method-class method-class
-                 :name name
                  initargs)))
   (funcall invalidate-discriminating-function generic-function)
   generic-function)
