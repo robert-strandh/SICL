@@ -14,4 +14,5 @@
    (:file "patch-functions-and-methods")
    (:file "move-functions")
    (:file "update-instance-slot-list")
+   (:file "allocate-class-prototypes")
    (:file "boot")))
