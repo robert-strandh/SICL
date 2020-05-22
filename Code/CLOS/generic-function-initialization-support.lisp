@@ -41,7 +41,7 @@
      &rest initargs
      &key
        documentation
-       declarations
+       (declarations '())
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
        method-combination
@@ -63,7 +63,6 @@
                generic-function
                slot-names
                :documentation documentation
-               :declarations declarations
                :argument-precedence-order argument-precedence-order
                :specializer-profile (make-list (length required)
                                                :initial-element nil)
@@ -76,7 +75,6 @@
                  generic-function
                  slot-names
                  :documentation documentation
-                 :declarations declarations
                  :method-class method-class
                  initargs)))
   (funcall invalidate-discriminating-function generic-function)
