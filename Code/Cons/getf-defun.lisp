@@ -8,12 +8,7 @@
   (loop for rest on plist by #'cddr
         do (unless (consp (cdr rest))
              (error 'must-be-property-list
-                    :datum plist
-                    'getf))
+                    :datum plist))
         when (eq (car rest) indicator)
           return (cadr rest)
-        finally (unless (null rest)
-                  (error 'must-be-property-list
-                    :datum plist
-                    'getf))
-                (return default)))
+        finally (return default)))
