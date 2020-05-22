@@ -79,6 +79,7 @@
    (%specializer-profile
     :initarg :specializer-profile
     :accessor specializer-profile))
-  (:metaclass funcallable-standard-class))
+  (:metaclass funcallable-standard-class)
+  (:default-initargs :declarations '()))
 
 ;;  LocalWords:  DEFGENERIC defgeneric
