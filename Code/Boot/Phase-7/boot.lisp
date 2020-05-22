@@ -16,6 +16,7 @@
     (load-source "Cons/accessor-defuns.lisp" e5)
     (load-source "Cons/cxr.lisp" e5)
     (load-source "Cons/setf-cxr.lisp" e5)
+    (load-source "Cons/getf-defun.lisp" e5)
     (load-printer e5)
     (load-make-instance e5)
     (load-source "CLOS/ensure-generic-function-defun.lisp" e5)
