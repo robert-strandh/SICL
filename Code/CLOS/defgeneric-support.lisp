@@ -34,15 +34,32 @@
       (separate-options-and-methods options-and-methods)
     ;; FIXME: handle methods.
     (declare (ignore methods))
-    (let* ((method-combination-option (assoc :method-combination options))
-           (method-combination-name (if (null method-combination-option)
-                                        'standard
-                                        (first method-combination-option)))
-           (method-combination-arguments (if (null method-combination-option)
-                                             '()
-                                             (rest method-combination-option)))
+    (let* ((method-combination-option
+             (assoc :method-combination options))
+           (method-combination-name
+             (if (null method-combination-option)
+                 'standard
+                 (first method-combination-option)))
+           (method-combination-arguments
+             (if (null method-combination-option)
+                 '()
+                 (rest method-combination-option)))
            (argument-precedence-order
              (assoc :argument-precedence-order options))
+           (generic-function-class-option
+             (assoc :generic-function-class options))
+           (generic-function-class-name
+             (if (null generic-function-class-option)
+                 'standard-generic-function
+                 (second generic-function-class-option)))
+           (method-class-option
+             (assoc :method-class options))
+           (method-class-name
+             (if (null method-class-option)
+                 'standard-method
+                 (second method-class-option)))
+           (documentation-option
+             (assoc :documentation options))
            (arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
            (function-type `(function ,arg-type t)))
       `(progn (eval-when (:compile-toplevel)
@@ -54,11 +71,23 @@
                 (let* ((env (sicl-global-environment:global-environment))
                        (fun (ensure-generic-function
                              ',name
-                             ;;; FIXME: handle all options.
                              :lambda-list ',lambda-list
                              ,@(if (null argument-precedence-order)
                                    '()
                                    `(:argument-precedence-order ',(rest argument-precedence-order)))
+                             ,@(if (null documentation-option)
+                                   '()
+                                   `(:documentation (second documentation-option)))
+                             :method-combination
+                             (sicl-clos:find-method-combination
+                              (sicl-clos:class-prototype
+                               (find-class ',generic-function-class-name))
+                              ',method-combination-name
+                              ',method-combination-arguments)
+                             :generic-function-class
+                             (find-class ',generic-function-class-name)
+                             :method-class
+                             (find-class ',method-class-name)
                              :environment env)))
                   (setf (sicl-global-environment:function-lambda-list ',name env)
                         ',lambda-list)
