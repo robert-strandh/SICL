@@ -24,6 +24,22 @@
   (do-symbols (symbol (find-package '#:cleavir-primop))
     (setf (sicl-genv:special-operator symbol environment) t)))
 
+(defun define-defgeneric-expander (environment)
+  (setf (sicl-genv:fdefinition 'sicl-clos:defgeneric-expander environment)
+        (lambda (env name lambda-list options-and-methods)
+          (declare (ignore env))
+          (assert (or (null options-and-methods)
+                      (and (null (cdr options-and-methods))
+                           (eq (caar options-and-methods)
+                               :argument-precedence-order))))
+          `(ensure-generic-function
+            ',name
+            :lambda-list ',lambda-list
+            ,@(if (null options-and-methods)
+                  '()
+                  `(:argument-precedence-order ',(cdar options-and-methods)))
+            :environment (sicl-global-environment:global-environment)))))
+
 (defun import-from-cleavir-code-utilities (environment)
   (loop for name in '(cleavir-code-utilities:parse-macro
                       cleavir-code-utilities:separate-ordinary-body
@@ -62,7 +78,6 @@
                       sicl-iteration:dolist-expander
                       sicl-iteration:do-dostar-expander
                       sicl-clos:defclass-expander
-                      sicl-clos:defgeneric-expander
                       sicl-method-combination:define-method-combination-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
@@ -111,6 +126,7 @@
   (define-standard-common-lisp-variables environment)
   (define-standard-common-lisp-special-operators environment)
   (define-cleavir-primops environment)
+  (define-defgeneric-expander environment)
   (import-from-cleavir-code-utilities environment)
   (import-macro-expanders environment)
   (import-sicl-environment-functions environment)
