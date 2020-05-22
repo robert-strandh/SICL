@@ -84,7 +84,10 @@
   (let ((expander (type-expander type-specifier environment)))
     (if (null expander)
         (let* ((type-class (find-class type-specifier environment))
-               (object-class (class-of object environment)))
+               (object-class
+                 (funcall
+                  (fdefinition 'sicl-clos:class-of environment)
+                  object)))
           (if (null type-class)
               (error "There is no type named ~s" type-specifier)
               (member type-class
