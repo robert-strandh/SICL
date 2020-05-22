@@ -38,9 +38,9 @@
            (method-combination-name (if (null method-combination-option)
                                         'standard
                                         (first method-combination-option)))
-           (method-combination-options (if (null method-combination-option)
-                                           '()
-                                           (rest method-combination-option)))
+           (method-combination-arguments (if (null method-combination-option)
+                                             '()
+                                             (rest method-combination-option)))
            (argument-precedence-order
              (assoc :argument-precedence-order options))
            (arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
