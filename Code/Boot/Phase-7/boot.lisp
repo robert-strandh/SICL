@@ -29,6 +29,7 @@
      '(cleavir-code-utilities:lambda-list-type-specifier
        sicl-genv:fdefinition)
      e5)
+    (allocate-class-prototypes e5)
     (load-source "CLOS/defgeneric-support.lisp" e5)
     (load-source "CLOS/defgeneric-defmacro.lisp" e5)
     (load-source "CLOS/defmethod-support.lisp" e5)
