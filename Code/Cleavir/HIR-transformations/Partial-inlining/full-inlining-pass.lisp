@@ -4,19 +4,32 @@
 (defun all-parameters-required-p (enter)
   (every (lambda (param) (typep param 'cleavir-ir:lexical-location))
          (cleavir-ir:lambda-list enter)))
+(defun lambda-list-too-hairy-p (lambda-list)
+  (or (member '&rest lambda-list)
+      (member '&key lambda-list)))
 
 ;;; Check that a call is valid so that we can avoid inlining invalid calls,
 ;;; and the inliner can safely assume calls are valid.
 ;;; That is, for something like ((lambda ()) x), we want a full call so that
 ;;; the client's runtime can do its normal error signaling.
-;;; We assume that all-parameters-required-p is true of the enter, which
-;;; makes this very easy to determine.
 ;;; FIXME: We should probably signal a warning. If we do, make sure it's not
-;;; redundant with CST-to-ASTs.
+;;; redundant with CST-to-AST's.
 (defun call-valid-p (enter call)
-  (let ((nparams (length (cleavir-ir:lambda-list enter)))
+  (let ((lambda-list (cleavir-ir:lambda-list enter))
         (nargs (1- (length (cleavir-ir:inputs call))))) ; one input for the function
-    (= nparams nargs)))
+    (assert (not (lambda-list-too-hairy-p lambda-list)))
+    ;; KLUDGE: This is basically another lambda list parser.
+    (let ((required-count 0)
+          (optional-count 0)
+          (state :required))
+      (dolist (item lambda-list)
+        (cond ((eq item '&optional)
+               (setq state :optional))
+              (t
+               (case state
+                 (:required (incf required-count))
+                 (:optional (incf optional-count))))))
+      (<= required-count nargs (+ optional-count required-count)))))
 
 ;;; get one potential inline that can be done, or else NIL.
 ;;; An inline here is a list (enter call uniquep), where uniquep expresses whether the function
@@ -80,21 +93,25 @@
            (unless (eq (gethash user *instruction-ownerships*) owner)
              (return t))))))
 
-;;; Introduce cells for those bound locations which need them.
+;;; Introduce cells for those bound locations which need them. If a
+;;; cell is not needed, the assignment can get copy propagated away.
 (defun convert-binding-instructions (binding-assignments)
   (dolist (binding-assignment binding-assignments)
+    ;; Change the class now so that we can copy propagate.
+    (change-class binding-assignment 'cleavir-ir:assignment-instruction)
     (let ((location (first (cleavir-ir:outputs binding-assignment))))
-      (when (and location (explicit-cell-p location))
-        (let ((create (make-instance 'cleavir-ir:create-cell-instruction
-                        :origin (cleavir-ir:origin binding-assignment)
-                        :policy (cleavir-ir:policy binding-assignment)
-                        :dynamic-environment (cleavir-ir:dynamic-environment binding-assignment))))
-          (dolist (user (cleavir-ir:using-instructions location))
-            (cleavir-hir-transformations:replace-inputs location location user))
-          (dolist (definer (cleavir-ir:defining-instructions location))
-            (cleavir-hir-transformations:replace-outputs location location definer))
-          (cleavir-ir:insert-instruction-after create binding-assignment)
-          (setf (cleavir-ir:outputs create) (list location)))))))
+      (if (and location (explicit-cell-p location))
+          (let ((create (make-instance 'cleavir-ir:create-cell-instruction
+                                       :origin (cleavir-ir:origin binding-assignment)
+                                       :policy (cleavir-ir:policy binding-assignment)
+                                       :dynamic-environment (cleavir-ir:dynamic-environment binding-assignment))))
+            (dolist (user (cleavir-ir:using-instructions location))
+              (cleavir-hir-transformations:replace-inputs location location user))
+            (dolist (definer (cleavir-ir:defining-instructions location))
+              (cleavir-hir-transformations:replace-outputs location location definer))
+            (cleavir-ir:insert-instruction-after create binding-assignment)
+            (setf (cleavir-ir:outputs create) (list location)))
+          (copy-propagate-1 (first (cleavir-ir:inputs binding-assignment)))))))
 
 (defun full-inlining-pass (initial-instruction)
   ;; Need to remove all useless instructions first for incremental
