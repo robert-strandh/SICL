@@ -11,4 +11,3 @@
                        (funcall (sicl-genv:fdefinition 'allocate-instance e5)
                                 potential-class)
                        potential-class))))))))
-
