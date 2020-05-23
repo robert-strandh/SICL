@@ -44,12 +44,13 @@
        (declarations '())
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
-       method-combination
+       (method-combination nil method-combination-p)
        (method-class (find-class 'standard-method))
      &allow-other-keys)
   (check-documentation documentation)
   (check-declarations declarations)
-  (check-method-combination method-combination)
+  (when method-combination-p
+    (check-method-combination method-combination))
   (check-method-class method-class)
   (if lambda-list-p
       (let* ((parsed-lambda-list
