@@ -22,3 +22,11 @@
          generic-function
          slot-names
          initargs))
+
+(defmethod initialize-instance :before
+    ((object generic-function)
+     &key
+       (method-combination nil method-combination-p)
+     &allow-other-keys)
+  (unless method-combination-p
+    (error 'method-combination-keyword-argument-must-be-given)))
