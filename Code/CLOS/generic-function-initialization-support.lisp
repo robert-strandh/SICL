@@ -45,13 +45,14 @@
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
        (method-combination nil method-combination-p)
-       (method-class (find-class 'standard-method))
+       (method-class nil method-class-p)
      &allow-other-keys)
   (check-documentation documentation)
   (check-declarations declarations)
   (when method-combination-p
     (check-method-combination method-combination))
-  (check-method-class method-class)
+  (when method-class-p
+    (check-method-class method-class))
   (if lambda-list-p
       (let* ((parsed-lambda-list
                (cleavir-code-utilities:parse-generic-function-lambda-list
@@ -66,7 +67,6 @@
                :argument-precedence-order argument-precedence-order
                :specializer-profile (make-list (length required)
                                                :initial-element nil)
-               :method-class method-class
                initargs))
       (if argument-precedence-order-p
           (error "when argument precedence order appears,~@
@@ -74,7 +74,6 @@
           (apply call-next-method
                  generic-function
                  slot-names
-                 :method-class method-class
                  initargs)))
   (funcall invalidate-discriminating-function generic-function)
   generic-function)
