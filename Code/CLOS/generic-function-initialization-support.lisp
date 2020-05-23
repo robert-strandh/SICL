@@ -40,7 +40,7 @@
      slot-names
      &rest initargs
      &key
-       documentation
+       (documentation nil)
        (declarations '())
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
@@ -62,7 +62,6 @@
         (apply call-next-method
                generic-function
                slot-names
-               :documentation documentation
                :argument-precedence-order argument-precedence-order
                :specializer-profile (make-list (length required)
                                                :initial-element nil)
@@ -74,7 +73,6 @@
           (apply call-next-method
                  generic-function
                  slot-names
-                 :documentation documentation
                  :method-class method-class
                  initargs)))
   (funcall invalidate-discriminating-function generic-function)
