@@ -4,5 +4,7 @@
   (:use #:common-lisp)
   (:import-from #:sicl-boot
                 #:load-fasl
-                #:load-source)
+                #:load-source
+                #:import-function-from-host
+                #:import-functions-from-host)
   (:export #:boot))
