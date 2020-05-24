@@ -5,4 +5,4 @@
                #:sicl-list-hash-table)
   :serial t
   :components
-  ((:file with-hash-table-iterator-defmacro)))
+  ((:file "with-hash-table-iterator-defmacro")))
