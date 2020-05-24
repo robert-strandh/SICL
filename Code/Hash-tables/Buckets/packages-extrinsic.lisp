@@ -9,6 +9,7 @@
    #:hash-table-size #:hash-table-test #:%hash-table-test
    #:puthash #:gethash #:remhash #:clrhash
    #:with-hash-table-iterator
+   #:find-hash-function
    #:maphash)
   (:use #:common-lisp)
   (:export #:bucket-hash-table))

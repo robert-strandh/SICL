@@ -1,19 +1,12 @@
-(cl:in-package #:sicl-hash-table)
-
-(defclass bucket-hash-table (hash-table)
-  ((size :initarg :size
-         :initform 16
-         :accessor %bucket-hash-table-size
-         :reader hash-table-size)
-   (data :accessor hash-table-data)
-   (count :initform 0
-          :accessor %bucket-hash-table-count
-          :reader hash-table-count)))
+(cl:in-package #:sicl-bucket-hash-table)
 
 (defmethod initialize-instance :after ((hash-table bucket-hash-table) &key)
   (setf (hash-table-data hash-table)
         (make-array (hash-table-size hash-table)
-                    :initial-element '())))
+                    :initial-element '()))
+  (unless (slot-boundp hash-table 'hash-function)
+    (setf (hash-table-hash-function hash-table)
+          (find-hash-function (hash-table-test hash-table)))))
 
 (defmethod make-hash-table-iterator ((hash-table bucket-hash-table))
   (let ((data (hash-table-data hash-table))
@@ -35,7 +28,9 @@
                        (round (* (hash-table-size hash-table) (hash-table-rehash-size hash-table)))))
          (new-data (make-array new-size :initial-element '())))
     (maphash (lambda (key value)
-               (let* ((key-hash (sxhash key))
+               (let* ((key-hash (funcall (hash-table-hash-function hash-table)
+                                         (hash-table-offset hash-table)
+                                         key))
                       (index (mod key-hash new-size)))
                  (push (cons key value) (aref new-data index))))
              hash-table)
@@ -49,7 +44,9 @@
 
 (defmacro with-entry ((entries-index entries entry key hash-table) &body body)
   (let ((key-hash (gensym)))
-    `(let* ((,key-hash (sxhash ,key))
+    `(let* ((,key-hash (funcall (hash-table-hash-function ,hash-table)
+                                (hash-table-offset ,hash-table)
+                                ,key))
             (,entries-index (mod ,key-hash (hash-table-size ,hash-table)))
             (,entries (aref (hash-table-data ,hash-table) index))
             (,entry (assoc ,key entries :test (hash-table-test ,hash-table))))
