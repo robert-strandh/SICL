@@ -4,6 +4,12 @@
   (sicl-boot:import-function-from-host
    'sicl-printer::print-symbol
    e5)
+  (import-functions-from-host
+   '(zerop minusp float log integer-length * max expt schar princ mod
+     sicl-genv:boundp)
+   e5)
+  (load-source "Printer/variables.lisp" e5)
+  (load-source "Printer/integer.lisp" e5)
   (load-source "Printer/print-object-defgeneric.lisp" e5)
   (load-source "Printer/print-object-defmethod-t.lisp" e5)
   (load-source "Printer/print-object-defmethod-integer.lisp" e5)
