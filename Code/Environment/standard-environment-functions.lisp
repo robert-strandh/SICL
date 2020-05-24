@@ -66,6 +66,11 @@
 ;;; that a special variable entry exists for it AND the storage cell
 ;;; of that entry does not contain +unbound+.
 
+(defun boundp (symbol)
+  (sicl-genv:boundp
+   symbol
+   (load-time-value (sicl-genv:global-environment))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function MAKUNBOUND.
