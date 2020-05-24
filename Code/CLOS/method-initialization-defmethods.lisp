@@ -38,3 +38,7 @@
      &allow-other-keys)
   (declare (ignore slot-definition))
   (apply #'initialize-instance-after-standard-accessor-method method keys))
+
+(defmethod reinitialize-instance
+    ((method method) &key &allow-other-keys)
+  (error 'method-metaobjects-can-not-be-reinitialized))
