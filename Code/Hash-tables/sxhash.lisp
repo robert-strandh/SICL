@@ -53,35 +53,37 @@
   (when (zerop *depth*)
     (return-from equal-hash last-hash))
   (typecase object
-    (cons (let ((*depth* (1- *depth*)))
-            (equal-hash (equal-hash last-hash (car object))
-                        (cdr object))))
+    (cons   (let ((*depth* (1- *depth*)))
+              (equal-hash (equal-hash last-hash (car object))
+                          (cdr object))))
     (symbol (equal-hash (fnv-1a last-hash 1)
                         (symbol-name object)))
     (string (loop for char across object
                   for position below 16
                   for hash = last-hash then (equal-hash last-hash char)
                   finally (return hash)))
-    (t (eq-hash last-hash object))))
+    (t      (eq-hash last-hash object))))
 
 (defun equalp-hash (last-hash object)
   (when (zerop *depth*)
     (return-from equalp-hash last-hash))
   (typecase object
-    (cons (let ((*depth* (1- *depth*)))
-            (equalp-hash (equalp-hash last-hash (car object))
-                         (cdr object))))
-    (symbol (equal-hash (fnv-1a last-hash 1)
-                        (symbol-name object)))
+    (cons      (let ((*depth* (1- *depth*)))
+                 (equalp-hash (equalp-hash last-hash (car object))
+                              (cdr object))))
+    (symbol    (equal-hash (fnv-1a last-hash 1)
+                           (symbol-name object)))
     (character (eq-hash last-hash (char-downcase object)))
-    (string (loop for char across object
-                  for position below 16
-                  for hash = last-hash then (equalp-hash hash char)
-                  finally (return hash)))
-    (array (loop with size = (array-total-size object)
-                 for position below size
-                 for hash = last-hash then (equalp-hash last-hash
-                                                        (aref object position))))
+    (string    (loop for char across object
+                     for position below 16
+                     for hash = last-hash then (equalp-hash hash char)
+                     finally (return hash)))
+    (array     (loop with size = (array-total-size object)
+                     for position below size
+                     for hash = last-hash
+                       then (equalp-hash last-hash
+                                         (row-major-aref object position))
+                     finally (return hash)))
     (t (eq-hash last-hash object))))
 
 (defvar *sxhash-offset* 14695981039346656037)
@@ -89,14 +91,8 @@
   (ldb (byte 62 0)
        (equal-hash *sxhash-offset* object)))
 
-(defvar *hash-functions*
-  `((eq  . ,#'eq-hash)
-    (eql . ,#'eq-hash)
-    (equal  . ,#'equal-hash)
-    (equalp . ,#'equalp-hash))
-  "A list of pairs of test function names and their respective hash functions.")
 (defun find-hash-function (name)
-  (let ((pair (assoc name *hash-functions*)))
+  (let ((pair (assoc name *standard-tests*)))
     (if (null pair)
         (error "No hash function found for the test ~s" name)
         (cdr pair))))
