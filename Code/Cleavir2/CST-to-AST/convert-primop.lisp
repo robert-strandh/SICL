@@ -266,7 +266,7 @@
                                       :name variable)))
                  (setf new-env
                        (trucler:add-lexical-variable
-                        new-env variable variable-ast))))
+                        client new-env variable variable-ast))))
       (process-progn (convert-sequence client body-cst new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
