@@ -86,7 +86,8 @@
 
 (defvar *sxhash-offset* 14695981039346656037)
 (defun sxhash (object)
-  (equal-hash *sxhash-offset* object))
+  (ldb (byte 62 0)
+       (equal-hash *sxhash-offset* object)))
 
 (defvar *hash-functions*
   `((eq  . ,#'eq-hash)
