@@ -43,3 +43,10 @@
 
 ;;; Internal
 (defgeneric make-hash-table-iterator (hash-table))
+
+(defmethod print-object ((table hash-table) stream)
+  (print-unreadable-object (table stream :type t :identity t)
+    (format stream ":test ~s size ~d/~d"
+            (hash-table-test table)
+            (hash-table-count table)
+            (hash-table-size table))))

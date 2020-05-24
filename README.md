@@ -6,8 +6,7 @@ standard library, and documentation.
 
 ## What is SICL?
 
-SICL is a new implementation of Common
-Lisp. It is intentionally
+SICL is a new implementation of Common Lisp. It is intentionally
 divided into many implementation-independent modules that are written
 in a totally or near-totally portable way, so as to allow other
 implementations to incorporate these modules from SICL, rather than
@@ -18,11 +17,13 @@ versions.
 
 1. Make sure you have installed the dependencies:
 
+[the Cluster repository]:https://github.com/robert-strandh/Cluster
 [the Concrete-Syntax-Tree repository]:https://github.com/robert-strandh/Concrete-Syntax-Tree
 [the Eclector repository]:https://github.com/robert-strandh/Eclector
 [the Trucler repository]:https://github.com/robert-strandh/Trucler
 
    * A recent 64-bit version of SBCL
+   * The system "cluster" from [the Cluster repository]
    * The system "concrete-syntax-tree" from [the Concrete-Syntax-Tree repository]
    * The system "eclector", from [the Eclector repository]
    * The system "trucler-reference", from [the Trucler repository]
