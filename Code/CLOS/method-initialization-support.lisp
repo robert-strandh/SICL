@@ -18,11 +18,15 @@
 (defun initialize-instance-after-method
     (method
      &key
+       (qualifiers nil qualifiers-p)
        (lambda-list nil lambda-list-p)
        (specializers nil specializers-p)
        (function nil function-p)
        documentation
      &allow-other-keys)
+  ;; The list of qualifiers must always be supplied.
+  (unless qualifiers-p
+    (error "The list of qualifiers must always be supplied"))
   ;; Do the LAMBDA-LIST.  The AMOP also says that an error is
   ;; signaled if this value is not supplied, so we start by checking
   ;; that.
