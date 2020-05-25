@@ -11,4 +11,5 @@
    #:binary-not-greater
    #:binary-greater
    #:binary-not-less
-   #:binary-equal))
+   #:binary-equal
+   #:sign-and-digit-count))
