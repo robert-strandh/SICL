@@ -2,9 +2,9 @@
 
 (declaim (ftype (function (number number) number)
 		binary-add
-		binary-sub
-		binary-mul
-		binary-div))
+		binary-subtract
+		binary-multiply
+		binary-divide))
 
 (declaim (ftype (function (real real) t)
 		binary-less

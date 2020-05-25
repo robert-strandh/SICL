@@ -4,9 +4,9 @@
   (:use #:common-lisp)
   (:export
    #:binary-add
-   #:binary-sub
-   #:binary-mul
-   #:binary-div
+   #:binary-subtract
+   #:binary-multiply
+   #:binary-divide
    #:binary-less
    #:binary-not-greater
    #:binary-greater
