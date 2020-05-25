@@ -73,4 +73,5 @@
   (load-source "CLOS/template-defgeneric.lisp" ea)
   (load-source "Package-and-symbol/symbol-name-defgeneric.lisp" ea)
   (load-source "Package-and-symbol/symbol-package-defgeneric.lisp" ea)
+  (load-source "Arithmetic/sign-and-digit-count-defgeneric.lisp" ea)
   (load-source "Compiler/Code-object/generic-functions.lisp" ea))
