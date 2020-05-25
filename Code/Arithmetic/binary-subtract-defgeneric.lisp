@@ -1,3 +1,3 @@
 (cl:in-package #:sicl-arithmetic)
 
-(defgeneric binary-minus (minuend subtrahend))
+(defgeneric binary-subtract (minuend subtrahend))

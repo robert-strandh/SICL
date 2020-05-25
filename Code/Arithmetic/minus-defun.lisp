@@ -3,4 +3,4 @@
 (defun - (number &rest subtrahends)
   (if (null subtrahends)
       (- 0 number)
-      (reduce #'binary-minus subtrahends :initial-value number)))
+      (reduce #'binary-subtract subtrahends :initial-value number)))
