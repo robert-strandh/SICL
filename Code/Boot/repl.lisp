@@ -11,6 +11,3 @@
                       *standard-output*)
              (format t "~%")
              (finish-output *standard-output*))))
-
-             
-                       
