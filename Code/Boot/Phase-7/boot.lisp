@@ -34,6 +34,11 @@
        sicl-genv:fdefinition)
      e5)
     (allocate-class-prototypes e5)
+    ;; Up until now, LOAD-FASL in E5 will tie a host code object by
+    ;; calling make MAKE-INSTANCE in E4 in order to create a SICL code
+    ;; object and a SICL function.  But now that that we have tied the
+    ;; knot in E5, we want to call MAKE-INSTANCE in E5.
+    (sicl-boot::define-load-fasl-2 e5 e5)
     (load-source "CLOS/defgeneric-support.lisp" e5)
     (load-source "CLOS/defgeneric-defmacro.lisp" e5)
     (load-source "CLOS/defmethod-support.lisp" e5)
