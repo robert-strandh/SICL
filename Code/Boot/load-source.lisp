@@ -12,5 +12,3 @@
         (format *trace-output* "Reusing existing FASL.~%")
         (compile-file (sicl-genv:client *e0*) relative-pathname *e0*)))
     (load-fasl relative-fasl-pathname environment)))
-
-                
