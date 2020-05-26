@@ -17,9 +17,6 @@
     (load-source "Arithmetic/plus-defun.lisp" e5)
     (load-source "Arithmetic/binary-add-defgeneric.lisp" e5)
     (load-source "Arithmetic/binary-add-defmethods.lisp" e5)
-    (load-source "Cons/cxr.lisp" e5)
-    (load-source "Cons/setf-cxr.lisp" e5)
-    (load-source "Cons/getf-defun.lisp" e5)
     (load-printer e5)
     (load-make-instance e5)
     (load-source "CLOS/ensure-generic-function-defun.lisp" e5)
@@ -39,6 +36,9 @@
     ;; object and a SICL function.  But now that that we have tied the
     ;; knot in E5, we want to call MAKE-INSTANCE in E5.
     (sicl-boot::define-load-fasl-2 e5 e5)
+    (load-source "Cons/cxr.lisp" e5)
+    (load-source "Cons/setf-cxr.lisp" e5)
+    (load-source "Cons/getf-defun.lisp" e5)
     (load-source "CLOS/defgeneric-support.lisp" e5)
     (load-source "CLOS/defgeneric-defmacro.lisp" e5)
     (load-source "CLOS/defmethod-support.lisp" e5)
