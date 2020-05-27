@@ -8,13 +8,27 @@
 ;;; The reason is that expander function might need some of the
 ;;; macros, and the dependency might be circular.  So the strategy is
 ;;; to first import the expanders, then make all the macros work, and
-;;; when everything works, load the expanders normally.  It would seem
-;;; that we could load the FASLs of the expander functions, compiled
-;;; in environment E0, but some macros have temporary, incorrect
-;;; definitions in E0, and in particular the DEFGENERIC macro.  So if
-;;; a file defining an expander function contains a call to any of
-;;; those macros with temporary definitions, then it will be
-;;; incorrectly compiled.
+;;; when everything works, load the expanders normally.
+;;;
+;;; It would seem that we could load the FASLs of the expander
+;;; functions, compiled in environment E0, but some macros have
+;;; temporary, incorrect definitions in E0, and in particular the
+;;; DEFGENERIC macro.  So if a file defining an expander function
+;;; contains a call to any of those macros with temporary definitions,
+;;; then it will be incorrectly compiled.
+;;;
+;;; Occasionally, we can't use the host version of the expander
+;;; function, because it calls some SICL-specific function, like for
+;;; example GET-SETF-EXPANSION.  In that case, we must obviously load
+;;; the support code rather than import it from the host.
+;;;
+;;; Large parts of this code are similar to that of the file
+;;; fill-environment.lisp in phase 0, so it would seem that the
+;;; environment E5 already contains most of the functionality.
+;;; However, SICL simple functions are defined slightly differently in
+;;; phase 0, so we need to do it over here.  Also, code generation
+;;; will not be turned on in phase 0, so that's another reason to load
+;;; some of the code again here.
 (defun enable-macros (environment)
   ;; Enable LAMBDA.
   ;; There is no independent expander for LAMBDA, because it is so
