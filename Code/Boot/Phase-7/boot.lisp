@@ -35,6 +35,7 @@
     ;; object and a SICL function.  But now that that we have tied the
     ;; knot in E5, we want to call MAKE-INSTANCE in E5.
     (sicl-boot::define-load-fasl-2 e5 e5)
+    (enable-compilation e5)
     (sicl-boot:load-source "Cons/accessor-defuns.lisp" e5)
     (sicl-boot:load-source "Cons/cxr.lisp" e5)
     (sicl-boot:load-source "Cons/setf-cxr.lisp" e5)
