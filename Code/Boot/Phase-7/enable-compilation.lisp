@@ -30,6 +30,8 @@
 ;;; will not be turned on in phase 0, so that's another reason to load
 ;;; some of the code again here.
 (defun enable-macros (environment)
+  ;; Enable DEFMACRO.
+  (sicl-boot:load-source "Evaluation-and-compilation/defmacro-defmacro.lisp" environment)
   ;; Enable LAMBDA.
   ;; There is no independent expander for LAMBDA, because it is so
   ;; simple.
