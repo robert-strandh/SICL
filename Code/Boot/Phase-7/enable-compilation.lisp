@@ -44,7 +44,10 @@
   (sicl-boot:load-source "CLOS/defgeneric-defmacro.lisp" environment)
   (sicl-boot:import-function-from-host
    'sicl-clos:defclass-expander environment)
-  (sicl-boot:load-source "CLOS/defclass-defmacro.lisp" environment))
+  (sicl-boot:load-source "CLOS/defclass-defmacro.lisp" environment)
+  (sicl-boot:import-function-from-host
+   'sicl-clos:defmethod-expander environment)
+  (sicl-boot:load-source "CLOS/defmethod-defmacro.lisp" environment))
 
 (defun enable-compilation (environment)
   (enable-special-operators environment)
