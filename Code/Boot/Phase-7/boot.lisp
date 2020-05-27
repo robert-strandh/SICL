@@ -40,8 +40,6 @@
     (sicl-boot:load-source "Cons/cxr.lisp" e5)
     (sicl-boot:load-source "Cons/setf-cxr.lisp" e5)
     (sicl-boot:load-source "Cons/getf-defun.lisp" e5)
-    (sicl-boot:load-source "CLOS/defgeneric-support.lisp" e5)
-    (sicl-boot:load-source "CLOS/defgeneric-defmacro.lisp" e5)
     (sicl-boot:load-source "CLOS/defmethod-support.lisp" e5)
     (sicl-boot:load-source "CLOS/defmethod-defmacro.lisp" e5)
     (sicl-boot:load-source "Cons/member-if-not-defun.lisp" e5)
