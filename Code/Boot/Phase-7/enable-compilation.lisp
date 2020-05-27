@@ -78,6 +78,11 @@
   ;; can't use the host version of this function, because it accesses
   ;; the global environment for SETF expanders.
   (sicl-boot:load-source "Data-and-control-flow/get-setf-expansion-defun.lisp" environment)
+  ;; Enable PUSH and POP.
+  ;; We can't use the host version of the expanders for these macros,
+  ;; because they call GET-SETF-EXPANSION at macro expansion time.
+  (sicl-boot:load-source "Cons/push-pop-support.lisp" environment)
+  (sicl-boot:load-source "Cons/push-pop-defmacro.lisp" environment)
   ;; Enable DEFGENERIC.
   (sicl-boot:import-function-from-host
    'sicl-clos:defgeneric-expander environment)
