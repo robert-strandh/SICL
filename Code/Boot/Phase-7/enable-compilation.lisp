@@ -40,6 +40,10 @@
   ;; There is no independent expander for MULTIPLE-VALUE-BIND.,
   ;; because it is so simple.
   (sicl-boot:load-source "Environment/multiple-value-bind.lisp" environment)
+  ;; Enable MULTIPLE-VALUE-LIST.
+  ;; There is no independent expander for MULTIPLE-VALUE-LIST.,
+  ;; because it is so simple.
+  (sicl-boot:load-source "Data-and-control-flow/multiple-value-list-defmacro.lisp" environment)
   ;; Enable DECLAIM.
   ;; FIXME: define PROCLAIM better.
   (setf (sicl-genv:fdefinition 'proclaim environment)
