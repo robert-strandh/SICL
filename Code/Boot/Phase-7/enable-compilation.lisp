@@ -16,6 +16,10 @@
 ;;; those macros with temporary definitions, then it will be
 ;;; incorrectly compiled.
 (defun enable-macros (environment)
+  ;; Enable LAMBDA.
+  ;; There is no independent expander for LAMBDA, because it is so
+  ;; simple.
+  (sicl-boot:load-source "Evaluation-and-compilation/lambda.lisp" environment)
   ;; Enable DECLAIM.
   ;; FIXME: define PROCLAIM better.
   (setf (sicl-genv:fdefinition 'proclaim environment)
@@ -39,12 +43,15 @@
      sicl-conditionals:ctypecase-expander)
    environment)
   (sicl-boot:load-source "Conditionals/macros.lisp" environment)
+  ;; Enable DEFGENERIC.
   (sicl-boot:import-function-from-host
    'sicl-clos:defgeneric-expander environment)
   (sicl-boot:load-source "CLOS/defgeneric-defmacro.lisp" environment)
+  ;; Enable DEFCLASS.
   (sicl-boot:import-function-from-host
    'sicl-clos:defclass-expander environment)
   (sicl-boot:load-source "CLOS/defclass-defmacro.lisp" environment)
+  ;; Enable DEFMETHOD.
   (sicl-boot:import-function-from-host
    'sicl-clos:defmethod-expander environment)
   (sicl-boot:load-source "CLOS/defmethod-defmacro.lisp" environment))
