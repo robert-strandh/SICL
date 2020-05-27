@@ -71,6 +71,10 @@
      sicl-conditionals:ctypecase-expander)
    environment)
   (sicl-boot:load-source "Conditionals/macros.lisp" environment)
+  ;; Load a file containing the definition of GET-SETF-EXPANSION.  We
+  ;; can't use the host version of this function, because it accesses
+  ;; the global environment for SETF expanders.
+  (sicl-boot:load-source "Data-and-control-flow/get-setf-expansion-defun.lisp" environment)
   ;; Enable DEFGENERIC.
   (sicl-boot:import-function-from-host
    'sicl-clos:defgeneric-expander environment)
