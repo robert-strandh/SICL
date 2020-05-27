@@ -17,7 +17,21 @@
           (format *trace-output* "args: ~s~%" arguments)))
   (sicl-boot:import-function-from-host
    'sicl-evaluation-and-compilation:declaim-expander environment)
-  (sicl-boot:load-source "Evaluation-and-compilation/declaim-defmacro.lisp" environment))
+  (sicl-boot:load-source "Evaluation-and-compilation/declaim-defmacro.lisp" environment)
+  ;; Enable OR, AND, WHEN, UNLESS, COND,
+  ;; CASE, ECASE, CCASE, TYPECASE, ETYPECASE, CTYPECASE.
+  ;; There are no independent expanders for WHEN and UNLESS, because
+  ;; they are so simple.
+  (sicl-boot:import-functions-from-host
+   '(sicl-conditionals:or-expander
+     sicl-conditionals:and-expander
+     sicl-conditionals:case-expander
+     sicl-conditionals:ecase-expander
+     sicl-conditionals:ccase-expander
+     sicl-conditionals:typecase-expander
+     sicl-conditionals:etypecase-expander
+     sicl-conditionals:ctypecase-expander)
+   environment))
 
 (defun enable-compilation (environment)
   (enable-special-operators environment)
