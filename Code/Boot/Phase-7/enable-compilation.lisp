@@ -63,7 +63,11 @@
   ;; Enable PROG and PROG*.
   ;; There are no independent expanders for PROG and PROG*, because
   ;; they are so simple.
-  (sicl-boot:load-source "Data-and-control-flow/prog1-prog2-defmacro.lisp" environment)
+  (sicl-boot:load-source "Data-and-control-flow/prog-progstar-defmacro.lisp" environment)
+  ;; enable INCF and DECF.
+  ;; There are no independent expanders for INCF and DECF, because
+  ;; they are so simple.
+  (sicl-boot:load-source "Arithmetic/incf-decf-defmacro.lisp" environment)
   ;; Enable DECLAIM.
   ;; FIXME: define PROCLAIM better.
   (setf (sicl-genv:fdefinition 'proclaim environment)
