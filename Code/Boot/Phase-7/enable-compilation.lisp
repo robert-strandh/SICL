@@ -37,7 +37,8 @@
      sicl-conditionals:typecase-expander
      sicl-conditionals:etypecase-expander
      sicl-conditionals:ctypecase-expander)
-   environment))
+   environment)
+  (sicl-boot:load-source "Conditionals/macros.lisp" environment))
 
 (defun enable-compilation (environment)
   (enable-special-operators environment)
