@@ -44,13 +44,18 @@
   ;; There is no independent expander for MULTIPLE-VALUE-LIST.,
   ;; because it is so simple.
   (sicl-boot:load-source "Data-and-control-flow/multiple-value-list-defmacro.lisp" environment)
+  ;; Enable MULTIPLE-VALUE-CALL.
+  ;; There is no independent expander for MULTIPLE-VALUE-CALL.,
+  ;; because it is so simple.
+  (sicl-boot:load-source "Data-and-control-flow/multiple-value-call-defmacro.lisp" environment)
   ;; Enable LOOP.
   ;; There is no independent expander for LOOP, because it is so
   ;; simple.
   (sicl-boot:load-source "Loop/loop-defmacro.lisp" environment)
-  ;; There is no independent expander for MULTIPLE-VALUE-CALL.,
-  ;; because it is so simple.
-  (sicl-boot:load-source "Data-and-control-flow/multiple-value-call-defmacro.lisp" environment)
+  ;; Enable RETURN.
+  ;; There is no independent expander for RETURN, because it is so
+  ;; simple.
+  (sicl-boot:load-source "Data-and-control-flow/return-defmacro.lisp" environment)
   ;; Enable DECLAIM.
   ;; FIXME: define PROCLAIM better.
   (setf (sicl-genv:fdefinition 'proclaim environment)
