@@ -34,6 +34,10 @@
   ;; There is no independent expander for LAMBDA, because it is so
   ;; simple.
   (sicl-boot:load-source "Evaluation-and-compilation/lambda.lisp" environment)
+  ;; Enable MULTIPLE-VALUE-BIND.
+  ;; There is no independent expander for MULTIPLE-VALUE-BIND.,
+  ;; because it is so simple.
+  (sicl-boot:load-source "Environment/multiple-value-bind.lisp" environment)
   ;; Enable DECLAIM.
   ;; FIXME: define PROCLAIM better.
   (setf (sicl-genv:fdefinition 'proclaim environment)
