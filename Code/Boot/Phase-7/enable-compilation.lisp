@@ -56,6 +56,14 @@
   ;; There is no independent expander for RETURN, because it is so
   ;; simple.
   (sicl-boot:load-source "Data-and-control-flow/return-defmacro.lisp" environment)
+  ;; Enable PROG1 and PROG2.
+  ;; There are no independent expanders for PROG1 and PROG2, because
+  ;; they are so simple.
+  (sicl-boot:load-source "Data-and-control-flow/prog1-prog2-defmacro.lisp" environment)
+  ;; Enable PROG and PROG*.
+  ;; There are no independent expanders for PROG and PROG*, because
+  ;; they are so simple.
+  (sicl-boot:load-source "Data-and-control-flow/prog1-prog2-defmacro.lisp" environment)
   ;; Enable DECLAIM.
   ;; FIXME: define PROCLAIM better.
   (setf (sicl-genv:fdefinition 'proclaim environment)
