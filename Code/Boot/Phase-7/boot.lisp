@@ -44,7 +44,6 @@
     (sicl-boot:load-source "CLOS/defgeneric-defmacro.lisp" e5)
     (sicl-boot:load-source "CLOS/defmethod-support.lisp" e5)
     (sicl-boot:load-source "CLOS/defmethod-defmacro.lisp" e5)
-    (sicl-boot:load-source "Conditionals/support.lisp" e5)
     (sicl-boot:load-source "Cons/member-if-not-defun.lisp" e5)
     (sicl-boot:load-source "CLOS/defclass-support.lisp" e5)
     (sicl-boot:load-source "CLOS/defclass-defmacro.lisp" e5)))
