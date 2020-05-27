@@ -16,4 +16,5 @@
    (:file "move-functions")
    (:file "update-instance-slot-list")
    (:file "allocate-class-prototypes")
+   (:file "enable-compilation")
    (:file "boot")))
