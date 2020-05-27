@@ -8,7 +8,13 @@
 ;;; The reason is that expander function might need some of the
 ;;; macros, and the dependency might be circular.  So the strategy is
 ;;; to first import the expanders, then make all the macros work, and
-;;; when everything works, load the expanders normally.
+;;; when everything works, load the expanders normally.  It would seem
+;;; that we could load the FASLs of the expander functions, compiled
+;;; in environment E0, but some macros have temporary, incorrect
+;;; definitions in E0, and in particular the DEFGENERIC macro.  So if
+;;; a file defining an expander function contains a call to any of
+;;; those macros with temporary definitions, then it will be
+;;; incorrectly compiled.
 (defun enable-macros (environment)
   ;; Enable DECLAIM.
   ;; FIXME: define PROCLAIM better.
