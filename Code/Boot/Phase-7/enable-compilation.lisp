@@ -49,6 +49,9 @@
   ;; because it is so simple.
   (sicl-boot:load-source "Data-and-control-flow/multiple-value-call-defmacro.lisp" environment)
   ;; Enable LOOP.
+  (sicl-boot:import-functions-from-host
+   '(sicl-loop:expand-body sicl-loop::list-car sicl-loop::list-cdr)
+     environment)
   ;; There is no independent expander for LOOP, because it is so
   ;; simple.
   (sicl-boot:load-source "Loop/loop-defmacro.lisp" environment)
