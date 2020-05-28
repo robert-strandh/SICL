@@ -31,4 +31,5 @@
     (sicl-boot-phase-5:boot boot)
     (sicl-boot-phase-6:boot boot)
     (sicl-boot-phase-7:boot boot)
+    (sicl-boot-phase-8:boot boot)
     boot))
