@@ -9,12 +9,6 @@
 ;;;; INITIALIZE-INSTANCE specialized for STANDARD-CLASS and
 ;;;; FUNCALLABLE-STANDARD-CLASS.
 
-(defun find-or-create-generic-function (function-name lambda-list)
-  (let ((environment (sicl-genv:global-environment)))
-    (ensure-generic-function function-name
-                             :lambda-list lambda-list
-                             :environment environment)))
-
 ;;; Add a reader method to a generic function.  CLASS is a class
 ;;; metaobject that plays the role of specializer for the argument of
 ;;; the reader method.  FUNCTION-NAME is the name of the reader
