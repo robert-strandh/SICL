@@ -129,7 +129,13 @@
   ;; Enable DEFMETHOD.
   (sicl-boot:import-function-from-host
    'sicl-clos:defmethod-expander environment)
-  (load-source "CLOS/defmethod-defmacro.lisp" environment))
+  (load-source "CLOS/defmethod-defmacro.lisp" environment)
+  ;; Enable DEFPARAMETER.
+  (load-source "Data-and-control-flow/defparameter-defmacro.lisp" environment)
+  ;; Enable DEFVAR.
+  (load-source "Data-and-control-flow/defvar-defmacro.lisp" environment)
+  ;; Enable DEFCONSTANT.
+  (load-source "Data-and-control-flow/defconstant-defmacro.lisp" environment))
 
 (defun enable-compilation (environment)
   (enable-special-operators environment)
