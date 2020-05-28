@@ -107,6 +107,9 @@
   ;; There is no independent expander for WITH-ACCESSORS, because it
   ;; is so simple.
   (sicl-boot:load-source "CLOS/with-accessors-defmacro.lisp" environment)
+  ;; Enable QUASIQUOTE for Eclector
+  (setf (sicl-genv:macro-function 'eclector.reader::quasiquote environment)
+        (macro-function 'eclector.reader::quasiquote))
   ;; Enable DEFGENERIC.
   (sicl-boot:import-function-from-host
    'sicl-clos:defgeneric-expander environment)
