@@ -122,6 +122,10 @@
   (sicl-boot:import-function-from-host
    'sicl-clos:defclass-expander environment)
   (sicl-boot:load-source "CLOS/defclass-defmacro.lisp" environment)
+  (sicl-boot:load-source "CLOS/find-or-create-generic-function.lisp" environment)
+  ;; FIXME: load a file with the definition instead of defining it here.
+  (setf (sicl-genv:fdefinition 'sicl-clos::find-accessor-method-class environment)
+        (sicl-genv:fdefinition 'sicl-clos::find-class environment))
   ;; Enable DEFMETHOD.
   (sicl-boot:import-function-from-host
    'sicl-clos:defmethod-expander environment)
