@@ -65,6 +65,8 @@
                       sicl-standard-environment-macros:define-compiler-macro-expander
                       sicl-evaluation-and-compilation:declaim-expander
                       sicl-loop:expand-body
+                      sicl-loop::list-car
+                      sicl-loop::list-cdr
                       sicl-cons:push-expander
                       sicl-cons:pop-expander
                       sicl-cons:pushnew-expander
