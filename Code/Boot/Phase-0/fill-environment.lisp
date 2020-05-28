@@ -65,7 +65,7 @@
     ;; because it takes an environment argument, and the host version
     ;; does not work with the Cleavir/SICL environment objects.
     (ld "Data-and-control-flow/get-setf-expansion-defun.lisp")
-    ;; Load a file containing definisions of standard conditional
+    ;; Load a file containing definitions of standard conditional
     ;; macros, such as AND, OR, CASE, etc.
     (ld "Conditionals/macros.lisp")
     ;; Load a file containing the definitions of the macros DEFVAR,
