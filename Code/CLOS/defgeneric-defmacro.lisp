@@ -1,6 +1,5 @@
 (cl:in-package #:sicl-clos)
 
-(defmacro defgeneric (&environment env
-                        name lambda-list
+(defmacro defgeneric (name lambda-list
                       &rest options-and-methods)
-  (defgeneric-expander env name lambda-list options-and-methods))
+  (defgeneric-expander name lambda-list options-and-methods))

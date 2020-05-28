@@ -28,7 +28,7 @@
         do (remove-method generic-function method))
   (setf (initial-methods generic-function) '()))
 
-(defun defgeneric-expander (env name lambda-list options-and-methods)
+(defun defgeneric-expander (name lambda-list options-and-methods)
   (check-defgeneric-options-and-methods options-and-methods)
   (multiple-value-bind (options methods)
       (separate-options-and-methods options-and-methods)
@@ -61,12 +61,14 @@
            (documentation-option
              (assoc :documentation options))
            (arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
-           (function-type `(function ,arg-type t)))
+           (function-type `(function ,arg-type t))
+           (environment-var (gensym)))
       `(progn (eval-when (:compile-toplevel)
-                (setf (sicl-global-environment:function-lambda-list ',name ,env)
-                      ',lambda-list)
-                (setf (sicl-global-environment:function-type ',name ,env)
-                      ',function-type))
+                (let ((,environment-var (sicl-genv:global-environment)))
+                  (setf (sicl-global-environment:function-lambda-list ',name ,environment-var)
+                        ',lambda-list)
+                  (setf (sicl-global-environment:function-type ',name ,environment-var)
+                        ',function-type)))
               (eval-when (:load-toplevel :execute)
                 (let* ((env (sicl-global-environment:global-environment))
                        (fun (ensure-generic-function

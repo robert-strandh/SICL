@@ -26,8 +26,7 @@
 
 (defun define-defgeneric-expander (environment)
   (setf (sicl-genv:fdefinition 'sicl-clos:defgeneric-expander environment)
-        (lambda (env name lambda-list options-and-methods)
-          (declare (ignore env))
+        (lambda (name lambda-list options-and-methods)
           (assert (or (null options-and-methods)
                       (and (null (cdr options-and-methods))
                            (eq (caar options-and-methods)
