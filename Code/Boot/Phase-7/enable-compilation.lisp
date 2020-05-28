@@ -103,6 +103,10 @@
   ;; because they call GET-SETF-EXPANSION at macro expansion time.
   (sicl-boot:load-source "Cons/push-pop-support.lisp" environment)
   (sicl-boot:load-source "Cons/push-pop-defmacro.lisp" environment)
+  ;; Enable WITH-ACCESSORS
+  ;; There is no independent expander for WITH-ACCESSORS, because it
+  ;; is so simple.
+  (sicl-boot:load-source "CLOS/with-accessors-defmacro.lisp" environment)
   ;; Enable DEFGENERIC.
   (sicl-boot:import-function-from-host
    'sicl-clos:defgeneric-expander environment)
