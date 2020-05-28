@@ -110,6 +110,10 @@
   ;; Enable QUASIQUOTE for Eclector
   (setf (sicl-genv:macro-function 'eclector.reader::quasiquote environment)
         (macro-function 'eclector.reader::quasiquote))
+  ;; Enable DEFUN.
+  (sicl-boot:import-function-from-host
+   'sicl-data-and-control-flow:defun-expander environment)
+  (sicl-boot:load-source "Data-and-control-flow/defun-defmacro.lisp" environment)
   ;; Enable DEFGENERIC.
   (sicl-boot:import-function-from-host
    'sicl-clos:defgeneric-expander environment)
