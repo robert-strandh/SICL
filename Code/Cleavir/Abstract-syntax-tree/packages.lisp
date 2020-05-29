@@ -16,6 +16,7 @@
    #:immediate-ast #:make-immediate-ast #:value
    #:constant-ast #:make-constant-ast #:value
    #:lexical-ast #:make-lexical-ast
+   #:symbol-value-access-ast #:constant-symbol-value-access-ast
    #:symbol-value-ast #:make-symbol-value-ast
    #:set-symbol-value-ast #:make-set-symbol-value-ast
    #:set-constant-symbol-value-ast #:make-set-constant-symbol-value-ast
@@ -53,6 +54,7 @@
    #:bind-ast #:make-bind-ast
    #:eq-ast #:make-eq-ast
    #:case-ast #:make-case-ast #:comparees
+   #:cons-access-ast
    #:car-ast #:make-car-ast #:cons-ast
    #:cdr-ast #:make-cdr-ast
    #:rplaca-ast #:make-rplaca-ast #:object-ast
@@ -80,11 +82,12 @@
    #:float-cos-ast
    #:float-sqrt-ast
    #:subtype
+   #:slot-access-ast #:funcallable-slot-access-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:funcallable-slot-read-ast #:make-funcallable-slot-read-ast
    #:funcallable-slot-write-ast #:make-funcallable-slot-write-ast
-   #:aref-ast #:aset-ast
+   #:array-access-ast #:aref-ast #:aset-ast
    #:element-ast #:array-ast #:index-ast
    #:element-type #:simple-p #:boxed-p
    #:dynamic-allocation-ast #:make-dynamic-allocation-ast

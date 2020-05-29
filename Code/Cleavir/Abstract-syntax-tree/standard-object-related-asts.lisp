@@ -2,17 +2,36 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class SLOT-READ-AST.
+;;; Class SLOT-ACCESS-AST.
 ;;;
-;;; This AST can be used to read a slot from a standard instance.  It
-;;; has two children, an AST that must have a standard instance as its
-;;; value, and an AST that must have a fixnum as its value and that
-;;; indicates a slot number (starting from 0).  This AST generates a
-;;; single value, namely the contents of the slot with the number given.
+;;; Abstract parent class for ASTs representing access to an instance's
+;;; local slots. It has two children, an AST that must have a standard
+;;; instance as its value, and an AST that must have a fixnum as its
+;;; value and that indicates a slot number (starting from 0).
 
-(defclass slot-read-ast (one-value-ast-mixin ast)
+(defclass slot-access-ast (ast)
   ((%object-ast :initarg :object-ast :reader object-ast)
    (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)))
+
+(cleavir-io:define-save-info slot-access-ast
+  (:object-ast object-ast)
+  (:slot-number-ast slot-number-ast))
+
+(defmethod map-children progn (function (ast slot-access-ast))
+  (funcall function (object-ast ast))
+  (funcall function (slot-number-ast ast)))
+(defmethod children append ((ast slot-access-ast))
+  (list (object-ast ast) (slot-number-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SLOT-READ-AST.
+;;;
+;;; This AST can be used to read a slot from a standard instance.
+;;; This AST generates a single value, namely the contents of the slot
+;;; with the number given.
+
+(defclass slot-read-ast (one-value-ast-mixin slot-access-ast) ())
 
 (defun make-slot-read-ast (object-ast slot-number-ast &key origin (policy *policy*))
   (make-instance 'slot-read-ast
@@ -20,32 +39,15 @@
     :object-ast object-ast
     :slot-number-ast slot-number-ast))
 
-(cleavir-io:define-save-info slot-read-ast
-  (:object-ast object-ast)
-  (:slot-number-ast slot-number-ast))
-
-(defmethod map-children (function (ast slot-read-ast))
-  (funcall function (object-ast ast))
-  (funcall function (slot-number-ast ast)))
-(defmethod children ((ast slot-read-ast))
-  (list (object-ast ast) (slot-number-ast ast)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SLOT-WRITE-AST.
 ;;;
-;;; This AST can be used to write a slot in a standard instance.  It
-;;; has three children, an AST that must have a standard instance as
-;;; its value, an AST that must have a fixnum as its value and that
-;;; indicates a slot number (starting from 0), and an AST that
-;;; generates the new value to store in the slot.  This AST generates
-;;; no values.  An attempt to compile this AST in a context where a
-;;; value is needed will result in an error being signaled.
+;;; This AST can be used to write a slot in a standard instance.
+;;; This AST generates no values.
 
-(defclass slot-write-ast (no-value-ast-mixin ast)
-  ((%object-ast :initarg :object-ast :reader object-ast)
-   (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+(defclass slot-write-ast (no-value-ast-mixin slot-access-ast)
+  ((%value-ast :initarg :value-ast :reader value-ast)))
 
 (defun make-slot-write-ast (object-ast slot-number-ast value-ast &key origin (policy *policy*))
   (make-instance 'slot-write-ast
@@ -55,16 +57,35 @@
     :value-ast value-ast))
 
 (cleavir-io:define-save-info slot-write-ast
-  (:object-ast object-ast)
-  (:slot-number-ast slot-number-ast)
-  (:value-ast value-ast))
+    (:value-ast value-ast))
 
-(defmethod map-children (function (ast slot-write-ast))
-  (funcall function (object-ast ast))
-  (funcall function (slot-number-ast ast))
+(defmethod map-children progn (function (ast slot-write-ast))
   (funcall function (value-ast ast)))
-(defmethod children ((ast slot-write-ast))
-  (list (object-ast ast) (slot-number-ast ast) (value-ast ast)))
+(defmethod children append ((ast slot-write-ast))
+  (list (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FUNCALLABLE-SLOT-ACCESS-AST.
+;;;
+;;; Abstract parent class for ASTs representing access to a funcallable
+;;; instance's local slots. It has two children, an AST that must have a
+;;; funcallable instance as its value, and an AST that must have a fixnum
+;;; as its value and that indicates a slot number (starting from 0).
+
+(defclass funcallable-slot-access-ast (ast)
+  ((%object-ast :initarg :object-ast :reader object-ast)
+   (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)))
+
+(cleavir-io:define-save-info funcallable-slot-access-ast
+  (:object-ast object-ast)
+  (:slot-number-ast slot-number-ast))
+
+(defmethod map-children progn (function (ast funcallable-slot-access-ast))
+  (funcall function (object-ast ast))
+  (funcall function (slot-number-ast ast)))
+(defmethod children append ((ast funcallable-slot-access-ast))
+  (list (object-ast ast) (slot-number-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -76,9 +97,9 @@
 ;;; indicates a slot number (starting from 0).  This AST generates a
 ;;; single value, namely the contents of the slot with the number given.
 
-(defclass funcallable-slot-read-ast (one-value-ast-mixin ast)
-  ((%object-ast :initarg :object-ast :reader object-ast)
-   (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)))
+(defclass funcallable-slot-read-ast
+    (one-value-ast-mixin funcallable-slot-access-ast)
+  ())
 
 (defun make-funcallable-slot-read-ast
     (object-ast slot-number-ast &key origin (policy *policy*))
@@ -86,16 +107,6 @@
     :origin origin :policy policy
     :object-ast object-ast
     :slot-number-ast slot-number-ast))
-
-(cleavir-io:define-save-info funcallable-slot-read-ast
-  (:object-ast object-ast)
-  (:slot-number-ast slot-number-ast))
-
-(defmethod map-children (function (ast funcallable-slot-read-ast))
-  (funcall function (object-ast ast))
-  (funcall function (slot-number-ast ast)))
-(defmethod children ((ast funcallable-slot-read-ast))
-  (list (object-ast ast) (slot-number-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -109,10 +120,9 @@
 ;;; no values.  An attempt to compile this AST in a context where a
 ;;; value is needed will result in an error being signaled.
 
-(defclass funcallable-slot-write-ast (no-value-ast-mixin ast)
-  ((%object-ast :initarg :object-ast :reader object-ast)
-   (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+(defclass funcallable-slot-write-ast
+    (no-value-ast-mixin funcallable-slot-access-ast)
+  ((%value-ast :initarg :value-ast :reader value-ast)))
 
 (defun make-funcallable-slot-write-ast
     (object-ast slot-number-ast value-ast &key origin (policy *policy*))
@@ -123,13 +133,10 @@
     :value-ast value-ast))
 
 (cleavir-io:define-save-info funcallable-slot-write-ast
-  (:object-ast object-ast)
-  (:slot-number-ast slot-number-ast)
-  (:value-ast value-ast))
+    (:value-ast value-ast))
 
-(defmethod map-children (function (ast funcallable-slot-write-ast))
-  (funcall function (object-ast ast))
-  (funcall function (slot-number-ast ast))
+(defmethod map-children progn
+    (function (ast funcallable-slot-write-ast))
   (funcall function (value-ast ast)))
-(defmethod children ((ast funcallable-slot-write-ast))
-  (list (object-ast ast) (slot-number-ast ast) (value-ast ast)))
+(defmethod children append ((ast funcallable-slot-write-ast))
+  (list (value-ast ast)))

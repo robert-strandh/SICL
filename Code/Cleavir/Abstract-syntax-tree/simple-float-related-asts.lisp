@@ -10,9 +10,9 @@
        (:subtype subtype)
        (:arg-ast arg-ast))
 
-     (defmethod map-children (function (ast ,name))
+     (defmethod map-children progn (function (ast ,name))
        (funcall function (arg-ast ast0)))
-     (defmethod children ((ast ,name))
+     (defmethod children append ((ast ,name))
        (list (arg-ast ast)))))
 
 (defmacro define-simple-two-arg-float-ast (name)
@@ -27,10 +27,10 @@
        (:arg1-ast arg1-ast)
        (:arg2-ast arg2-ast))
 
-     (defmethod map-children (function (ast ,name))
+     (defmethod map-children progn (function (ast ,name))
        (funcall function (arg1-ast ast))
        (funcall function (arg2-ast ast)))
-     (defmethod children ((ast ,name))
+     (defmethod children append ((ast ,name))
        (list (arg1-ast ast) (arg2-ast ast)))))
 
 (defmacro define-simple-float-comparison-ast (name)
@@ -45,10 +45,10 @@
        (:arg1-ast arg1-ast)
        (:arg2-ast arg2-ast))
 
-     (defmethod map-children (function (ast ,name))
+     (defmethod map-children progn (function (ast ,name))
        (funcall function (arg1-ast ast))
        (funcall function (arg2-ast ast)))
-     (defmethod children ((ast ,name))
+     (defmethod children append ((ast ,name))
        (list (arg1-ast ast) (arg2-ast ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -229,7 +229,7 @@
   (:to to-type)
   (:arg-ast arg-ast))
 
-(defmethod map-children (function (ast coerce-ast))
+(defmethod map-children progn (function (ast coerce-ast))
   (funcall function (arg-ast ast)))
-(defmethod children ((ast coerce-ast))
+(defmethod children append ((ast coerce-ast))
   (list (arg-ast ast)))
