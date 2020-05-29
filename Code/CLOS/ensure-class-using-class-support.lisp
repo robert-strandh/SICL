@@ -111,11 +111,11 @@
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
     (if direct-superclasses-p
-        (apply #'reinitialize-instance
+        (apply #'reinitialize-instance class
                :name name
                :direct-superclasses direct-superclasses
                remaining-keys)
-        (apply #'reinitialize-instance
+        (apply #'reinitialize-instance class
                :name name
                remaining-keys)))
   class)
