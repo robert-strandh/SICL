@@ -30,9 +30,10 @@
 ;;; Method on COMPILE-AST for all simple floating-point arithmetic ASTs.
 
 (defmacro compile-simple-float-arithmetic-ast
-    (ast-class instruction-class)
+    (ast-class (&rest readers) instruction-class)
   `(defmethod compile-ast ((ast ,ast-class) context)
-     (let* ((arguments (cleavir-ast:children ast))
+     (let* ((arguments (list ,@(loop for reader in readers
+                                     collect `(,reader ast))))
             (temps (make-temps arguments))
             (temp (cleavir-ir:new-temporary))
             (successor (make-instance 'cleavir-ir:box-instruction
@@ -52,24 +53,31 @@
         context))))
 
 (compile-simple-float-arithmetic-ast cleavir-ast:float-add-ast
+                                     (cleavir-ast:arg1-ast cleavir-ast:arg2-ast)
                                      cleavir-ir:float-add-instruction)
 
 (compile-simple-float-arithmetic-ast cleavir-ast:float-sub-ast
+                                     (cleavir-ast:arg1-ast cleavir-ast:arg2-ast)
                                      cleavir-ir:float-sub-instruction)
 
 (compile-simple-float-arithmetic-ast cleavir-ast:float-mul-ast
+                                     (cleavir-ast:arg1-ast cleavir-ast:arg2-ast)
                                      cleavir-ir:float-mul-instruction)
 
 (compile-simple-float-arithmetic-ast cleavir-ast:float-div-ast
+                                     (cleavir-ast:arg1-ast cleavir-ast:arg2-ast)
                                      cleavir-ir:float-div-instruction)
 
 (compile-simple-float-arithmetic-ast cleavir-ast:float-sin-ast
+                                     (cleavir-ast:arg-ast)
                                      cleavir-ir:float-sin-instruction)
 
 (compile-simple-float-arithmetic-ast cleavir-ast:float-cos-ast
+                                     (cleavir-ast:arg-ast)
                                      cleavir-ir:float-cos-instruction)
 
 (compile-simple-float-arithmetic-ast cleavir-ast:float-sqrt-ast
+                                     (cleavir-ast:arg-ast)
                                      cleavir-ir:float-sqrt-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -81,7 +89,8 @@
   `(defmethod compile-ast ((ast ,ast-class) context)
      (assert-context ast context 0 2)
      (let* ((subtype (cleavir-ast:subtype ast))
-            (arguments (cleavir-ast:children ast))
+            (arguments (list (cleavir-ast:arg1-ast ast)
+                             (cleavir-ast:arg2-ast ast)))
             (temps (make-temps arguments)))
        (compile-and-unbox-arguments
         arguments
