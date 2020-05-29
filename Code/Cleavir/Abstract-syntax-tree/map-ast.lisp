@@ -11,5 +11,4 @@
       (loop until (null nodes-to-process)
             do (let ((node (pop nodes-to-process)))
                  (funcall function node)
-                 (loop for child in (children node)
-                       do (register-if-unvisited child)))))))
+                 (map-children #'register-if-unvisited node))))))

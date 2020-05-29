@@ -15,7 +15,13 @@
 ;;;; in particular for PROCEDURE INTEGRATION (sometimes called
 ;;;; INLINING).
 
-(defgeneric children (ast))
+(defgeneric map-children (function ast)
+  (:argument-precedence-order ast function))
+(defgeneric children (ast)
+  (:method (ast)
+    (let ((children '()))
+      (map-children (lambda (a) (push a children)) ast)
+      children)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -141,6 +147,8 @@
 (cleavir-io:define-save-info immediate-ast
   (:value value))
 
+(defmethod map-children (function (ast immediate-ast))
+  (declare (ignore function)))
 (defmethod children ((ast immediate-ast))
   (declare (ignorable ast))
   '())
@@ -169,6 +177,8 @@
 (cleavir-io:define-save-info constant-ast
   (:value value))
 
+(defmethod map-children (function (ast constant-ast))
+  (declare (ignore function)))
 (defmethod children ((ast constant-ast))
   (declare (ignorable ast))
   '())
@@ -192,6 +202,8 @@
 (cleavir-io:define-save-info lexical-ast
   (:name name))
 
+(defmethod map-children (function (ast lexical-ast))
+  (declare (ignore function)))
 (defmethod children ((ast lexical-ast))
   (declare (ignorable ast))
   '())
@@ -213,6 +225,8 @@
 (cleavir-io:define-save-info symbol-value-ast
   (:symbol-ast symbol-ast))
 
+(defmethod map-children (function (ast symbol-value-ast))
+  (funcall function (symbol-ast ast)))
 (defmethod children ((ast symbol-value-ast))
   (list (symbol-ast ast)))
 
@@ -231,6 +245,8 @@
 (cleavir-io:define-save-info constant-symbol-value-ast
   (:name name))
 
+(defmethod map-children (function (ast constant-symbol-value-ast))
+  (declare (ignore function)))
 (defmethod children ((ast constant-symbol-value-ast))
   '())
 
@@ -254,6 +270,9 @@
   (:symbol-ast symbol-ast)
   (:value-ast value-ast))
 
+(defmethod map-children (function (ast set-symbol-value-ast))
+  (funcall function (symbol-ast ast))
+  (funcall function (value-ast ast)))
 (defmethod children ((ast set-symbol-value-ast))
   (list (symbol-ast ast) (value-ast ast)))
 
@@ -275,6 +294,8 @@
   (:name name)
   (:value-ast value-ast))
 
+(defmethod map-children (function (ast set-constant-symbol-value-ast))
+  (funcall function (value-ast ast)))
 (defmethod children ((ast set-constant-symbol-value-ast))
   (list (value-ast ast)))
 
@@ -296,6 +317,8 @@
 (cleavir-io:define-save-info fdefinition-ast
   (:name-ast name-ast))
 
+(defmethod map-children (function (ast fdefinition-ast))
+  (funcall function (name-ast ast)))
 (defmethod children ((ast fdefinition-ast))
   (list (name-ast ast)))
 
@@ -319,6 +342,8 @@
 (cleavir-io:define-save-info constant-fdefinition-ast
   (:name name))
 
+(defmethod map-children (function (ast constant-fdefinition-ast))
+  (declare (ignore function)))
 (defmethod children ((ast constant-fdefinition-ast))
   '())
 
@@ -345,6 +370,9 @@
   (:argument-asts argument-asts)
   (:inline inline-declaration))
 
+(defmethod map-children (function (ast call-ast))
+  (funcall function (callee-ast ast))
+  (mapc function (argument-asts ast)))
 (defmethod children ((ast call-ast))
   (list* (callee-ast ast) (argument-asts ast)))
 
@@ -423,6 +451,11 @@
   (:bound-declarations bound-declarations)
   (:original-lambda-list original-lambda-list))
 
+(defmethod map-children (function (ast function-ast))
+  ;; I don't think we actually need to map the lambda list,
+  ;; or return it in CHILDREN for that matter.
+  ;; Let's find out.
+  (funcall function (body-ast ast)))
 (defmethod children ((ast function-ast))
   (list* (body-ast ast)
          (loop for entry in (lambda-list ast)
@@ -441,7 +474,7 @@
 ;;;
 ;;; This AST is a subclass of FUNCTION-AST.  It is used when an AST is
 ;;; transformed by hoisting all the LOAD-TIME-VALUE-ASTs in the tree
-;;; by turning them into LEXIAL-ASTs that are also required parameters
+;;; by turning them into LEXICAL-ASTs that are also required parameters
 ;;; of the TOP-LEVEL-FUNCTION-AST.
 ;;;
 ;;; This AST class supplies a slot that contains a list of the forms
@@ -478,6 +511,8 @@
 (cleavir-io:define-save-info progn-ast
   (:form-asts form-asts))
 
+(defmethod map-children (function (ast progn-ast))
+  (mapc function (form-asts ast)))
 (defmethod children ((ast progn-ast))
   (form-asts ast))
 
@@ -496,6 +531,8 @@
 (cleavir-io:define-save-info block-ast
   (:body-ast body-ast))
 
+(defmethod map-children (function (ast block-ast))
+  (funcall function (body-ast ast)))
 (defmethod children ((ast block-ast))
   (list (body-ast ast)))
 
@@ -517,6 +554,8 @@
   (:block-ast block-ast)
   (:form-ast form-ast))
 
+(defmethod map-children (function (ast return-from-ast))
+  (funcall function (form-ast ast)))
 (defmethod children ((ast return-from-ast))
   (list (form-ast ast)))
 
@@ -541,6 +580,9 @@
   (:lhs-ast lhs-ast)
   (:value-ast value-ast))
 
+(defmethod map-children (function (ast setq-ast))
+  ;; Shouldn't need to map the LHS... let's find out.....
+  (funcall function (value-ast ast)))
 (defmethod children ((ast setq-ast))
   (list (lhs-ast ast) (value-ast ast)))
 
@@ -578,6 +620,8 @@
   (:lhs-asts lhs-asts)
   (:form-ast form-ast))
 
+(defmethod map-children (function (ast multiple-value-setq-ast))
+  (funcall function (form-ast ast)))
 (defmethod children ((ast multiple-value-setq-ast))
   (cons (form-ast ast) (lhs-asts ast)))
 
@@ -596,6 +640,8 @@
 (cleavir-io:define-save-info tag-ast
   (:name name))
 
+(defmethod map-children (function (ast tag-ast))
+  (declare (ignore function)))
 (defmethod children ((ast tag-ast))
   (declare (ignorable ast))
   '())
@@ -615,6 +661,8 @@
 (cleavir-io:define-save-info tagbody-ast
   (:item-asts item-asts))
 
+(defmethod map-children (function (ast tagbody-ast))
+  (mapc function (item-asts ast)))
 (defmethod children ((ast tagbody-ast))
   (item-asts ast))
 
@@ -633,6 +681,8 @@
 (cleavir-io:define-save-info go-ast
   (:tag-ast tag-ast))
 
+(defmethod map-children (function (ast go-ast))
+  (funcall function (tag-ast ast)))
 (defmethod children ((ast go-ast))
   (list (tag-ast ast)))
 
@@ -669,6 +719,8 @@
   (:optional optional-types)
   (:rest rest-type))
 
+(defmethod map-children (function (ast the-ast))
+  (funcall function (form-ast ast)))
 (defmethod children ((ast the-ast))
   (list (form-ast ast)))
 
@@ -748,6 +800,9 @@
   (:type-specifier type-specifier)
   (:form-ast form-ast))
 
+(defmethod map-children (function (ast typeq-ast))
+  (funcall function (form-ast ast))
+  (funcall function (type-specifier-ast ast)))
 (defmethod children ((ast typeq-ast))
   (list (form-ast ast) (type-specifier-ast ast)))
 
@@ -778,6 +833,8 @@
   (:form form)
   (:read-only-p read-only-p))
 
+(defmethod map-children (function (ast load-time-value-ast))
+  (declare (ignore function)))
 (defmethod children ((ast load-time-value-ast))
   '())
 
@@ -806,6 +863,10 @@
   (:then-ast then-ast)
   (:else-ast else-ast))
 
+(defmethod map-children (function (ast if-ast))
+  (funcall function (test-ast ast))
+  (funcall function (then-ast ast))
+  (funcall function (else-ast ast)))
 (defmethod children ((ast if-ast))
   (list (test-ast ast) (then-ast ast) (else-ast ast)))
 
@@ -837,6 +898,10 @@
   (:branch-asts branch-asts)
   (:default-ast default-ast))
 
+(defmethod map-children (function (ast branch-ast))
+  (funcall function (test-ast ast))
+  (funcall function (default-ast ast))
+  (mapc function (branch-asts ast)))
 (defmethod children ((ast branch-ast))
   (list* (test-ast ast) (default-ast ast) (branch-asts ast)))
 
@@ -858,6 +923,9 @@
   (:function-form-ast function-form-ast)
   (:form-asts form-asts))
 
+(defmethod map-children (function (ast multiple-value-call-ast))
+  (funcall function (function-form-ast ast))
+  (mapc function (form-asts ast)))
 (defmethod children ((ast multiple-value-call-ast))
   (list* (function-form-ast ast) (form-asts ast)))
 
@@ -880,6 +948,8 @@
 (cleavir-io:define-save-info values-ast
   (:argument-asts argument-asts))
 
+(defmethod map-children (function (ast values-ast))
+  (mapc function (argument-asts ast)))
 (defmethod children ((ast values-ast))
   (argument-asts ast))
 
@@ -902,6 +972,9 @@
   (:first-form-ast first-form-ast)
   (:form-asts form-asts))
 
+(defmethod map-children (function (ast multiple-value-prog1-ast))
+  (funcall function (first-form-ast ast))
+  (mapc function (form-asts ast)))
 (defmethod children ((ast multiple-value-prog1-ast))
   (cons (first-form-ast ast)
 	(form-asts ast)))
@@ -929,6 +1002,8 @@
 (cleavir-io:define-save-info dynamic-allocation-ast
   (:form-ast form-ast))
 
+(defmethod map-children (function (ast dynamic-allocation-ast))
+  (funcall function (form-ast ast)))
 (defmethod children ((ast dynamic-allocation-ast))
   (list (form-ast ast)))
 
@@ -945,6 +1020,8 @@
 (defun make-unreachable-ast (&key origin (policy *policy*))
   (make-instance 'unreachable-ast :origin origin :policy policy))
 
+(defmethod map-children (function (ast unreachable-ast))
+  (declare (ignore function)))
 (defmethod children ((ast unreachable-ast)) nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -973,6 +1050,9 @@
   (:value-ast value-ast)
   (:body-ast body-ast))
 
+(defmethod map-children (function (ast bind-ast))
+  (funcall function (value-ast ast))
+  (funcall function (body-ast ast)))
 (defmethod children ((ast bind-ast))
   (list (value-ast ast) (body-ast ast)))
 
@@ -998,6 +1078,9 @@
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
+(defmethod map-children (function (ast eq-ast))
+  (funcall function (arg1-ast ast))
+  (funcall function (arg2-ast ast)))
 (defmethod children ((ast eq-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 
@@ -1027,5 +1110,7 @@
   (:arg-ast arg-ast)
   (:comparees comparees))
 
+(defmethod map-children (function (ast case-ast))
+  (funcall function (arg-ast ast)))
 (defmethod children ((ast case-ast))
   (list (arg-ast ast)))

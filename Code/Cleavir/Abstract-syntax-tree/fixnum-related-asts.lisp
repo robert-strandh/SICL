@@ -39,6 +39,10 @@
   (:arg2-ast arg2-ast)
   (:variable-ast variable-ast))
 
+(defmethod map-children (function (ast fixnum-add-ast))
+  (funcall function (arg1-ast ast))
+  (funcall function (arg2-ast ast))
+  (funcall function (variable-ast ast)))
 (defmethod children ((ast fixnum-add-ast))
   (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
 
@@ -74,6 +78,10 @@
   (:arg2-ast arg2-ast)
   (:variable-ast variable-ast))
 
+(defmethod map-children (function (ast fixnum-sub-ast))
+  (funcall function (arg1-ast ast))
+  (funcall function (arg2-ast ast))
+  (funcall function (variable-ast ast)))
 (defmethod children ((ast fixnum-sub-ast))
   (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
 
@@ -91,6 +99,9 @@
        (:arg1-ast arg1-ast)
        (:arg2-ast arg2-ast))
 
+     (defmethod map-children (function (ast ,name))
+       (funcall function (arg1-ast ast))
+       (funcall function (arg2-ast ast)))
      (defmethod children ((ast ,name))
        (list (arg1-ast ast) (arg2-ast ast)))))
 

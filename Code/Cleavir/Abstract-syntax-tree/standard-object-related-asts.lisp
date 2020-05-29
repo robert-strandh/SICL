@@ -24,6 +24,9 @@
   (:object-ast object-ast)
   (:slot-number-ast slot-number-ast))
 
+(defmethod map-children (function (ast slot-read-ast))
+  (funcall function (object-ast ast))
+  (funcall function (slot-number-ast ast)))
 (defmethod children ((ast slot-read-ast))
   (list (object-ast ast) (slot-number-ast ast)))
 
@@ -56,6 +59,10 @@
   (:slot-number-ast slot-number-ast)
   (:value-ast value-ast))
 
+(defmethod map-children (function (ast slot-write-ast))
+  (funcall function (object-ast ast))
+  (funcall function (slot-number-ast ast))
+  (funcall function (value-ast ast)))
 (defmethod children ((ast slot-write-ast))
   (list (object-ast ast) (slot-number-ast ast) (value-ast ast)))
 
@@ -84,6 +91,9 @@
   (:object-ast object-ast)
   (:slot-number-ast slot-number-ast))
 
+(defmethod map-children (function (ast funcallable-slot-read-ast))
+  (funcall function (object-ast ast))
+  (funcall function (slot-number-ast ast)))
 (defmethod children ((ast funcallable-slot-read-ast))
   (list (object-ast ast) (slot-number-ast ast)))
 
@@ -117,5 +127,9 @@
   (:slot-number-ast slot-number-ast)
   (:value-ast value-ast))
 
+(defmethod map-children (function (ast funcallable-slot-write-ast))
+  (funcall function (object-ast ast))
+  (funcall function (slot-number-ast ast))
+  (funcall function (value-ast ast)))
 (defmethod children ((ast funcallable-slot-write-ast))
   (list (object-ast ast) (slot-number-ast ast) (value-ast ast)))

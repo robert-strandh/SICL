@@ -27,6 +27,9 @@
   (:simple-p simple-p)
   (:boxed-p boxed-p))
 
+(defmethod map-children (function (ast aref-ast))
+  (funcall function (array-ast ast))
+  (funcall function (index-ast ast)))
 (defmethod children ((ast aref-ast))
   (list (array-ast ast) (index-ast ast)))
 
@@ -60,5 +63,9 @@
   (:simple-p simple-p)
   (:boxed-p boxed-p))
 
+(defmethod map-children (function (ast aset-ast))
+  (funcall function (array-ast ast))
+  (funcall function (index-ast ast))
+  (funcall function (element-ast ast)))
 (defmethod children ((ast aset-ast))
   (list (array-ast ast) (index-ast ast) (element-ast ast)))

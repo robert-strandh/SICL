@@ -10,6 +10,8 @@
        (:subtype subtype)
        (:arg-ast arg-ast))
 
+     (defmethod map-children (function (ast ,name))
+       (funcall function (arg-ast ast0)))
      (defmethod children ((ast ,name))
        (list (arg-ast ast)))))
 
@@ -25,6 +27,9 @@
        (:arg1-ast arg1-ast)
        (:arg2-ast arg2-ast))
 
+     (defmethod map-children (function (ast ,name))
+       (funcall function (arg1-ast ast))
+       (funcall function (arg2-ast ast)))
      (defmethod children ((ast ,name))
        (list (arg1-ast ast) (arg2-ast ast)))))
 
@@ -40,6 +45,9 @@
        (:arg1-ast arg1-ast)
        (:arg2-ast arg2-ast))
 
+     (defmethod map-children (function (ast ,name))
+       (funcall function (arg1-ast ast))
+       (funcall function (arg2-ast ast)))
      (defmethod children ((ast ,name))
        (list (arg1-ast ast) (arg2-ast ast)))))
 
@@ -221,5 +229,7 @@
   (:to to-type)
   (:arg-ast arg-ast))
 
+(defmethod map-children (function (ast coerce-ast))
+  (funcall function (arg-ast ast)))
 (defmethod children ((ast coerce-ast))
   (list (arg-ast ast)))

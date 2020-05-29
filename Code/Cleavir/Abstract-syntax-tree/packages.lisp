@@ -4,7 +4,7 @@
   (:use #:common-lisp)
   (:shadow #:symbol)
   (:export
-   #:ast #:children
+   #:ast #:map-children #:children
    #:source-info
    #:origin
    #:*policy* #:policy

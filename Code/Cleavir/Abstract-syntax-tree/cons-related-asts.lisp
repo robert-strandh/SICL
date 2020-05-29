@@ -19,6 +19,8 @@
 (cleavir-io:define-save-info car-ast
   (:cons-ast cons-ast))
 
+(defmethod map-children (function (ast car-ast))
+  (funcall function (cons-ast ast)))
 (defmethod children ((ast car-ast))
   (list (cons-ast ast)))
 
@@ -41,6 +43,8 @@
 (cleavir-io:define-save-info cdr-ast
   (:cons-ast cons-ast))
 
+(defmethod map-children (function (ast cdr-ast))
+  (funcall function (cons-ast ast)))
 (defmethod children ((ast cdr-ast))
   (list (cons-ast ast)))
 
@@ -68,6 +72,9 @@
   (:cons-ast cons-ast)
   (:object-ast object-ast))
 
+(defmethod map-children (function (ast rplaca-ast))
+  (funcall function (cons-ast ast))
+  (funcall function (object-ast ast)))
 (defmethod children ((ast rplaca-ast))
   (list (cons-ast ast) (object-ast ast)))
 
@@ -95,5 +102,8 @@
   (:cons-ast cons-ast)
   (:object-ast object-ast))
 
+(defmethod map-children (function (ast rplacd-ast))
+  (funcall function (cons-ast ast))
+  (funcall function (object-ast ast)))
 (defmethod children ((ast rplacd-ast))
   (list (cons-ast ast) (object-ast ast)))
