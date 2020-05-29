@@ -17,4 +17,7 @@
     (load-source "Cons/assoc-defun.lisp" e5)
     (load-source "Cons/make-list-defun.lisp" e5)
     (load-source "Cons/last-defun.lisp" e5)
-    (load-source "Cons/butlast-defun.lisp" e5)))
+    (load-source "Cons/butlast-defun.lisp" e5)
+    (load-source "Cons/union-defun.lisp" e5)
+    (load-source "Cons/set-exclusive-or-defun.lisp" e5)
+    (load-source "Cons/mapcar-defun.lisp" e5)))
