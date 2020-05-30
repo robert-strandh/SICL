@@ -137,7 +137,7 @@
        (let ((result (sort
                       (loop for method in (generic-function-methods generic-function)
                             when (let ((a (maybe-applicable-p method classes-of-arguments)))
-                                   (if (eq a :somtimes)
+                                   (if (eq a :sometimes)
                                        (return-from b (values '() nil))
                                        a))
                               collect method)
