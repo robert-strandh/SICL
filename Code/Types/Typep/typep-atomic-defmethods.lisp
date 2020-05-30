@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-type)
 
-(defmethod typep-atomic (object type-specifier)
+(defmethod typep-atomic (object type-specifier))
 
 ;;; Most cases are captured by this function, since most atomic type
 ;;; specifiers have corresponding classes.
