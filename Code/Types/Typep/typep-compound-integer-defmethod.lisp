@@ -5,10 +5,10 @@
 
 (defmethod typep-compound ((object integer) (head (eql 'integer)) rest)
   (when (null rest)
-    ;; the type specifier is (INTEGER), so since OBJECT is an integer,
+    ;; The type specifier is (INTEGER), so since OBJECT is an integer,
     ;; we are done.
     (return-from typep-compound t))
-  ;; the type specifier is (INTEGER <lower-bound> . ...).
+  ;; The type specifier is (INTEGER <lower-bound> . ...).
   (let ((lower-bound (first rest)))
     (cond ((integerp lower-bound)
 	   (when (< object lower-bound)
@@ -19,7 +19,7 @@
 	  (t
 	   nil)))
   (when (null (rest rest))
-    ;; the type specifier is (INTEGER <lower-bound>), so since we have
+    ;; The type specifier is (INTEGER <lower-bound>), so since we have
     ;; checked that the lower bound is OK, we are done.
     (return-from typep-compound t))
   (let ((upper-bound (second rest)))
