@@ -3,10 +3,6 @@
 (defun proper-list-p (object)
   (integerp (ignore-errors (list-length object))))
 
-;;; Implement TYPEP for a type specifier of the form (HEAD . REST).
-;;; OBJECT is the object to test.
-(defgeneric typep-compound (object head rest))
-
 (defmethod typep-compound :before (object head rest)
   (assert (proper-list-p rest)))
 
