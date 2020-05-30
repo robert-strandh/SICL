@@ -76,5 +76,5 @@
             function-name
             `(lambda ,lambda-list
                ,@declarations
-               ,@forms)
+               (block ,function-name ,@forms))
             ct-env))))))
