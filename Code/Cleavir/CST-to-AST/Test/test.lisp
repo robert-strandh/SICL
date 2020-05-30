@@ -1599,7 +1599,7 @@
                   :boxed-p t
                   :simple-p t
                   :element-type t
-                  :element-ast
+                  :value-ast
                   [cleavir-ast:load-time-value-ast
                      :read-only-p t
                      :form '2

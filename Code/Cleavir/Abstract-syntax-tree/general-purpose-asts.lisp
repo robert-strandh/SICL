@@ -77,6 +77,25 @@
 ;;; effect.
 (defclass side-effect-free-ast-mixin () ())
 
+;;; This class is used as a superclass for ASTs that represent
+;;; a read from some place.
+(defclass read-ast-mixin (one-value-ast-mixin side-effect-free-ast-mixin)
+  ())
+
+;;; This class is used as a superclass for ASTs that represent
+;;; a write to some place.
+(defclass write-ast-mixin (no-value-ast-mixin)
+  (;; The value to be written.
+   (%value-ast :initarg :value-ast :accessor value-ast)))
+
+(cleavir-io:define-save-info write-ast-mixin
+    (:value-ast value-ast))
+
+(defmethod map-children progn (function (ast write-ast-mixin))
+  (funcall function (value-ast ast)))
+(defmethod children append ((ast write-ast-mixin))
+  (list (value-ast ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Predicate to test whether an AST is side-effect free.
@@ -251,7 +270,7 @@
 ;;;
 ;;; This AST is generated from a reference to a special variable.
 
-(defclass symbol-value-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
+(defclass symbol-value-ast (read-ast-mixin symbol-value-access-ast)
   ())
 
 (defun make-symbol-value-ast (symbol-ast &key origin (policy *policy*))
@@ -263,7 +282,7 @@
 ;;;
 ;;; Class CONSTANT-SYMBOL-VALUE-AST.
 
-(defclass constant-symbol-value-ast (one-value-ast-mixin side-effect-free-ast-mixin
+(defclass constant-symbol-value-ast (read-ast-mixin
                                      constant-symbol-value-access-ast)
   ())
 
@@ -278,8 +297,8 @@
 ;;;
 ;;; This AST is generated from an assignment to a special variable.
 
-(defclass set-symbol-value-ast (no-value-ast-mixin symbol-value-access-ast)
-  ((%value-ast :initarg :value-ast :reader value-ast)))
+(defclass set-symbol-value-ast (write-ast-mixin symbol-value-access-ast)
+  ())
 
 (defun make-set-symbol-value-ast (symbol-ast value-ast &key origin (policy *policy*))
   (make-instance 'set-symbol-value-ast
@@ -287,35 +306,19 @@
     :symbol-ast symbol-ast
     :value-ast value-ast))
 
-(cleavir-io:define-save-info set-symbol-value-ast
-  (:value-ast value-ast))
-
-(defmethod map-children progn (function (ast set-symbol-value-ast))
-  (funcall function (value-ast ast)))
-(defmethod children append ((ast set-symbol-value-ast))
-  (list (value-ast ast)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SET-CONSTANT-SYMBOL-VALUE-AST.
 
-(defclass set-constant-symbol-value-ast (no-value-ast-mixin
+(defclass set-constant-symbol-value-ast (write-ast-mixin
                                          constant-symbol-value-access-ast)
-  ((%value-ast :initarg :value-ast :reader value-ast)))
+  ())
 
 (defun make-set-constant-symbol-value-ast (name value-ast &key origin (policy *policy*))
   (make-instance 'set-constant-symbol-value-ast
     :origin origin :policy policy
     :name name
     :value-ast value-ast))
-
-(cleavir-io:define-save-info set-constant-symbol-value-ast
-  (:value-ast value-ast))
-
-(defmethod map-children progn (function (ast set-constant-symbol-value-ast))
-  (funcall function (value-ast ast)))
-(defmethod children append ((ast set-constant-symbol-value-ast))
-  (list (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

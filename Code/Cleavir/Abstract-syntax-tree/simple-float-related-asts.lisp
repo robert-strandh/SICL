@@ -11,7 +11,7 @@
        (:arg-ast arg-ast))
 
      (defmethod map-children progn (function (ast ,name))
-       (funcall function (arg-ast ast0)))
+       (funcall function (arg-ast ast)))
      (defmethod children append ((ast ,name))
        (list (arg-ast ast)))))
 

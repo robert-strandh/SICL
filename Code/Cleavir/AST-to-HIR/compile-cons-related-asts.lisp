@@ -22,7 +22,7 @@
 
 (define-compile-functional-ast
     cleavir-ast:rplaca-ast cleavir-ir:rplaca-instruction
-  (cleavir-ast:cons-ast cleavir-ast:object-ast))
+  (cleavir-ast:cons-ast cleavir-ast:value-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -30,4 +30,4 @@
 
 (define-compile-functional-ast
     cleavir-ast:rplacd-ast cleavir-ir:rplacd-instruction
-  (cleavir-ast:cons-ast cleavir-ast:object-ast))
+  (cleavir-ast:cons-ast cleavir-ast:value-ast))

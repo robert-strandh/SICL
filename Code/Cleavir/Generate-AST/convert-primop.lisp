@@ -415,7 +415,7 @@
     (make-instance 'cleavir-ast:aset-ast
       :array-ast (convert array-form env system)
       :index-ast (convert index-form env system)
-      :element-ast (convert object-form env system)
+      :value-ast (convert object-form env system)
       :element-type type
       :simple-p simple-p
       :boxed-p boxed-p

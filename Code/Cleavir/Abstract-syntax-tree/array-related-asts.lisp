@@ -19,7 +19,7 @@
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))
 
-(cleavir-io:define-save-info aref-ast
+(cleavir-io:define-save-info array-access-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:element-type element-type)
@@ -41,7 +41,7 @@
 ;;; If BOXED-P is false, an additional BOX-INSTRUCTION will
 ;;; be added at the output.
 
-(defclass aref-ast (one-value-ast-mixin array-access-ast) ())
+(defclass aref-ast (read-ast-mixin array-access-ast) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -53,13 +53,5 @@
 ;;; element must be of a type that is acceptable to store in the array,
 ;;; according to how the array is specialized.
 
-(defclass aset-ast (no-value-ast-mixin array-access-ast)
-  ((%element-ast :initarg :element-ast :reader element-ast)))
-
-(cleavir-io:define-save-info aset-ast
-  (:element-ast element-ast))
-
-(defmethod map-children progn (function (ast aset-ast))
-  (funcall function (element-ast ast)))
-(defmethod children append ((ast aset-ast))
-  (list (element-ast ast)))
+(defclass aset-ast (write-ast-mixin array-access-ast)
+  ())

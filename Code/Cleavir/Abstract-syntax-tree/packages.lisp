@@ -13,6 +13,7 @@
    #:one-value-ast-mixin
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
+   #:read-ast-mixin #:write-ast-mixin
    #:immediate-ast #:make-immediate-ast #:value
    #:constant-ast #:make-constant-ast #:value
    #:lexical-ast #:make-lexical-ast
@@ -88,8 +89,7 @@
    #:funcallable-slot-read-ast #:make-funcallable-slot-read-ast
    #:funcallable-slot-write-ast #:make-funcallable-slot-write-ast
    #:array-access-ast #:aref-ast #:aset-ast
-   #:element-ast #:array-ast #:index-ast
-   #:element-type #:simple-p #:boxed-p
+   #:array-ast #:index-ast #:element-type #:simple-p #:boxed-p
    #:dynamic-allocation-ast #:make-dynamic-allocation-ast
    #:unreachable-ast #:make-unreachable-ast
    #:child-ast

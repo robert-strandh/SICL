@@ -31,7 +31,7 @@
 ;;; This AST generates a single value, namely the contents of the slot
 ;;; with the number given.
 
-(defclass slot-read-ast (one-value-ast-mixin slot-access-ast) ())
+(defclass slot-read-ast (read-ast-mixin slot-access-ast) ())
 
 (defun make-slot-read-ast (object-ast slot-number-ast &key origin (policy *policy*))
   (make-instance 'slot-read-ast
@@ -46,8 +46,7 @@
 ;;; This AST can be used to write a slot in a standard instance.
 ;;; This AST generates no values.
 
-(defclass slot-write-ast (no-value-ast-mixin slot-access-ast)
-  ((%value-ast :initarg :value-ast :reader value-ast)))
+(defclass slot-write-ast (write-ast-mixin slot-access-ast) ())
 
 (defun make-slot-write-ast (object-ast slot-number-ast value-ast &key origin (policy *policy*))
   (make-instance 'slot-write-ast
@@ -55,14 +54,6 @@
     :object-ast object-ast
     :slot-number-ast slot-number-ast
     :value-ast value-ast))
-
-(cleavir-io:define-save-info slot-write-ast
-    (:value-ast value-ast))
-
-(defmethod map-children progn (function (ast slot-write-ast))
-  (funcall function (value-ast ast)))
-(defmethod children append ((ast slot-write-ast))
-  (list (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -98,7 +89,7 @@
 ;;; single value, namely the contents of the slot with the number given.
 
 (defclass funcallable-slot-read-ast
-    (one-value-ast-mixin funcallable-slot-access-ast)
+    (read-ast-mixin funcallable-slot-access-ast)
   ())
 
 (defun make-funcallable-slot-read-ast
@@ -121,8 +112,8 @@
 ;;; value is needed will result in an error being signaled.
 
 (defclass funcallable-slot-write-ast
-    (no-value-ast-mixin funcallable-slot-access-ast)
-  ((%value-ast :initarg :value-ast :reader value-ast)))
+    (write-ast-mixin funcallable-slot-access-ast)
+  ())
 
 (defun make-funcallable-slot-write-ast
     (object-ast slot-number-ast value-ast &key origin (policy *policy*))
@@ -131,12 +122,3 @@
     :object-ast object-ast
     :slot-number-ast slot-number-ast
     :value-ast value-ast))
-
-(cleavir-io:define-save-info funcallable-slot-write-ast
-    (:value-ast value-ast))
-
-(defmethod map-children progn
-    (function (ast funcallable-slot-write-ast))
-  (funcall function (value-ast ast)))
-(defmethod children append ((ast funcallable-slot-write-ast))
-  (list (value-ast ast)))

@@ -507,7 +507,7 @@
     (make-instance 'cleavir-ast:aset-ast
       :array-ast (convert array-cst env system)
       :index-ast (convert index-cst env system)
-      :element-ast (convert object-cst env system)
+      :value-ast (convert object-cst env system)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
       :boxed-p (cst:raw boxed-p-cst)

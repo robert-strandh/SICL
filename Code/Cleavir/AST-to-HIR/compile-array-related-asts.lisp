@@ -86,7 +86,7 @@
          :successors
 	 (list
 	  (compile-ast
-	   (cleavir-ast:element-ast ast)
+	   (cleavir-ast:value-ast ast)
 	   (if (cleavir-ast:boxed-p ast)
 	       ;; simple case: no unbox required
 	       (clone-context
@@ -94,7 +94,7 @@
                 :results (list element-temp)
                 :successors (list aset))
 	       ;; if we have to unbox the new value first, compile
-	       ;; the element-ast in a context where the successor
+	       ;; the value-ast in a context where the successor
 	       ;; is an unboxer and the output is a different temp.
 	       (let ((boxed-temp (make-temp)))
                  (clone-context
