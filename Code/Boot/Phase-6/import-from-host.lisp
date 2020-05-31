@@ -51,7 +51,7 @@
        eql equal set-exclusive-or
        sort mapcar subseq elt position position-if
        apply endp coerce
-       + floor = /=
+       + floor = /= zerop
        reduce last remove-duplicates)
      e6)
     (import-functions-from-host

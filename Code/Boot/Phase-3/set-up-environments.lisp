@@ -44,14 +44,14 @@
        cons car cdr cadr cddr caddr cdddr (setf cdr) rplacd first
        reverse
        rplacd + member not symbolp functionp stringp
-       consp = first
+       consp first
        shared-initialize
        make-list set-difference set-exclusive-or
        remove find-if adjoin
        sicl-clos::make-automaton
        sicl-clos::add-path
        sicl-clos::extract-transition-information
-       floor = /=
+       floor = /= zerop
        find subseq list*
        position sort mapcar eql equal
        nth assoc
