@@ -4,7 +4,10 @@
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer ea)
         (lambda (specializer)
           (cond ((symbolp specializer)
-                 (sicl-genv:find-class specializer ea))
+                 (let ((result (sicl-genv:find-class specializer ea)))
+                   (if (null result)
+                       (error "There is no class named ~s." specializer)
+                       result)))
                 (t
                  specializer)))))
 
