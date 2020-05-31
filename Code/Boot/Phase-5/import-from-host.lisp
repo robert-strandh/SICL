@@ -16,7 +16,7 @@
        copy-list
        gensym values rest second error
        get-properties
-       atom cddr (setf cdr) <
+       atom cddr (setf cdr) < <=
        not
        remove-if-not reverse find)
      e4)

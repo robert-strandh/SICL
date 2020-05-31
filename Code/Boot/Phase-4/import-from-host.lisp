@@ -15,7 +15,7 @@
        find-if-not union reduce count
        gensym values rest second error
        get-properties
-       atom cddr (setf cdr) <
+       atom cddr (setf cdr) < <=
        not
        remove-if-not reverse find)
      e3)
