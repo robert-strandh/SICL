@@ -18,10 +18,9 @@
            (default-discriminating-function ,generic-function
                                             arguments
                                             ',specializer-profile))))
-    ;; Come here when there is at least one active argument, i.e. at
-    ;; least one element T in the specializer profile, AND the call
-    ;; history is not empty.  Create a dictionary, mapping effective
-    ;; methods to forms containing APPLY that call those methods.
+    ;; Come here when the call history is not empty.  Create a
+    ;; dictionary, mapping effective methods to forms containing APPLY
+    ;; that call those methods.
     (let ((dico '()))
       (loop for call-cache in call-history
             for effective-method = (effective-method-cache call-cache)
@@ -30,8 +29,24 @@
                              `(return-from b
                                 (funcall ,effective-method arguments)))
                        dico)))
-      ;; Create a discriminating automaton with the entries in the call
-      ;; history.
+      ;; While the call history is not empty at this point, it is
+      ;; possible that the ACTIVE-ARG-COUNT is 0, meaning that no
+      ;; method specializes on any parameter.  In that case, the call
+      ;; history contains a single entry, with the list of active
+      ;; classes being empty.  So we test for that particular case,
+      ;; and skip the construction of the automaton.  Instead, we just
+      ;; generate a call to the only effective method in the single
+      ;; entry.
+      (when (zerop active-arg-count)
+        (let* ((call-cache (first call-history))
+               (effective-method (effective-method-cache call-cache)))
+          (return-from make-discriminating-function-lambda
+            `(lambda (&rest arguments)
+               (funcall ,effective-method arguments)))))
+      ;; Come here when there is at least one active argument, i.e. at
+      ;; least one element T in the specializer profile, AND the call
+      ;; history is not empty.  Create a discriminating automaton with
+      ;; the entries in the call history.
       (let ((automaton (make-automaton (1+ active-arg-count))))
         (loop for call-cache in call-history
               for active-classes = (class-cache call-cache)
