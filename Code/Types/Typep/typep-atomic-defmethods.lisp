@@ -63,8 +63,8 @@
 (defmethod typep-atomic (object (type (eql 'nil)))
   nil)
 
-(defmethod typep-atomic (object (type (eql 'simple-array)))
-  nil)
+;; (defmethod typep-atomic (object (type (eql 'simple-array)))
+;;   nil)
 
-(defmethod typep-atomic ((object array) (type (eql 'simple-array)))
-  t)
+;; (defmethod typep-atomic ((object array) (type (eql 'simple-array)))
+;;   t)
