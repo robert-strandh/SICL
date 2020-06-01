@@ -1,0 +1,39 @@
+Names are preliminary.
+
+The CALL HISTORY is a list of CALL-HISTORY ENTRIES.  An entry has a
+KEY and some additional information.  The key is a list with as many
+elements as there are true values in the specializer profile.  An
+element of the key can be either a class or an EQL specializer object.
+To distinguish between the two, we can for instance represent them as
+a CONS: (class . <class>) (object . <object>).  The key is used when a
+method is added or removed, to determine whether the entry is still
+valid, or should be removed.  But the key is not what is used to
+compute the discriminating function.
+
+The additional information includes a list of applicable methods and
+an effective method function computed from that list.  The list of
+applicable methods may have been modified in that an accessor method
+may have been altered in order to account for the location of the slot
+being accessed, as a function of the information in the entry key.
+This information is bundled up onto a CONS cell, where the list of
+applicable methods is in the CAR and the effective method function is
+in the CDR. Several entries may share this information.  When that is
+the case, their CONS cells are identical (EQ).
+
+The additional information of an entry also includes a MASK.  The mask
+is similar to the key, but it contains the symbol * in a position that
+is not specialized upon by any of the methods in the list of
+applicable methods of the entry.  The mask is what is used to compute
+the discriminating function.
+
+Entries in the call history may be removed as a result of changes in
+the class hierarchy, or as a result of a method being added or removed
+from the generic function.  How the call history is updated in these
+cases is described elsewhere.
+
+Entries in the call history are added as a result of a dispatch miss
+that involves arguments that correspond to applicable methods, but
+that have not yet been encountered.  When a dispatch-miss happens, we
+first call COMPUTE-APPLICABLE-METHODS-USING-CLASSES, passing it the
+list of classes of the arguments.  This call may result in a second
+return value (called OK) that is either true or false.
