@@ -37,3 +37,60 @@ that have not yet been encountered.  When a dispatch-miss happens, we
 first call COMPUTE-APPLICABLE-METHODS-USING-CLASSES, passing it the
 list of classes of the arguments.  This call may result in a second
 return value (called OK) that is either true or false.
+
+If the OK value is true, we create a new call-history entry with the
+list of argument classes as the key.  We examine the list of
+applicable methods to determine whether there are any accessor methods
+in that list.  If that is the case, then these accessor methods are
+replaced by accessor methods that access the slot directly.  The
+location of the slot is determine by the corresponding class of the
+relevant argument.  The possibly modified list of applicable methods
+is then compared to existing such lists in other entries of the call
+history.  If an entry is found with the same applicable methods as the
+new entry, then the CONS cell is shared with the existing entry.  If
+not, an effective-method function is computed and entered into a new
+CONS cell together with the list of the applicable methods.
+
+If the OK value is false, we call COMPUTE-APPLICABLE-METHODS, passing
+it the arguments themselves.  Since an OK value of false was returned
+by the call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES, there must be
+one or more methods in the list of applicable methods with an EQL
+specializer.  We construct a new call-history entry with a key that
+contains the class of each argument that does not correspond to an EQL
+specializer, and that contains the EQL specializer object itself for
+each argument that does correspond to an EQL specializer.  The
+remaining information of the entry is obtained in the same way as the
+true OK case.
+
+The call history is used to construct an AUTOMATON.  The final states
+of the automaton are the effective method functions present in the
+call history, with no duplication.  The automaton is built by a
+recursive function BUILD-AUTOMATON.  Each invocation of
+BUILD-AUTOMATON corresponds to a state of the automaton.  The function
+has a bunch of parameters.
+
+One parameter is a list called the ARGUMENT-STATE, each element
+corresponding to an argument to the generic function that must be
+tested.  An element of the argument state can be either NIL (the start
+value), :BUILT-IN, or :STANDARD.  NIL indicates that in the current
+state of the automaton, the corresponding argument may contain any
+kind of object.  :BUILT-IN and :STANDARD indicate that the
+corresponding argument has been tested to determine whether it
+contains a an instance of a BUILT-IN class or an instance of
+STANDARD-OBJECT, and the value determines what state the automaton is
+in, in the current invocation of BUILD-AUTOMATON.
+
+Another parameter is the list of masks of every entry of the call
+history.  The masks are copied (COPY-LIST) before they are given to
+BUILD-AUTOMATON.  An invocation of BUILD-AUTOMATON chooses an argument
+position to examine in the corresponding state of the automaton.  The
+choice is not important for correctness, but might be for performance.
+If for some position, all masks contain *, then that position no
+longer needs to be tested for.  No mask will contain * in every
+position in any invocation of BUILD-AUTOMATON.  If the masks all
+contain either EQL objects or * in the chosen position,
+BUILD-AUTOMATON may select that position, and generate transitions
+based on each EQL object.  The state following such a transition will
+have the EQL object in the chosen position replaced by *.  If such a
+replacement results in a * in all positions, then a final state has
+been reached.  
