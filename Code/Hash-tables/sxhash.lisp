@@ -91,8 +91,13 @@
   (ldb (byte 62 0)
        (equal-hash *sxhash-offset* object)))
 
+(defvar *standard-hash-functions*
+  `((eq     . ,#'eq-hash)
+    (eql    . ,#'eq-hash)
+    (equal  . ,#'equal-hash)
+    (equalp . ,#'equalp-hash)))
 (defun find-hash-function (name)
-  (let ((pair (assoc name *standard-tests*)))
+  (let ((pair (assoc name *standard-hash-functions*)))
     (if (null pair)
         (error "No hash function found for the test ~s" name)
         (cdr pair))))
