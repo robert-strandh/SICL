@@ -11,7 +11,7 @@
     (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp))
-	  (result (find-or-create-location (cleavir-ast:variable-ast ast))))
+	  (result (find-or-create-location (cleavir-ast:lvar ast))))
       (compile-ast
        (cleavir-ast:arg1-ast ast)
        (clone-context
@@ -40,7 +40,7 @@
     (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp))
-	  (result (find-or-create-location (cleavir-ast:variable-ast ast))))
+	  (result (find-or-create-location (cleavir-ast:lvar ast))))
       (compile-ast
        (cleavir-ast:arg1-ast ast)
        (clone-context

@@ -26,6 +26,11 @@
       (map-children (lambda (a) (push a children)) ast)
       children)))
 
+;;; Call a function on every variable the given AST has.
+(defgeneric map-variables (function ast)
+  (:method-combination progn)
+  (:argument-precedence-order ast function))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Variable *POLICY*. Default for :policy initarg.
@@ -41,8 +46,6 @@
 ;;; ORIGIN is a client-supplied object that is not interpreted by
 ;;; Cleavir.
 ;;; POLICY is the compilation policy in force for the AST.
-;;; DYNAMIC-ENVIRONMENT is a lexical-ast representing the
-;;; dynamic environment in force.
 
 (defclass ast ()
   ((%origin :initform nil :initarg :origin :accessor origin)
@@ -52,6 +55,24 @@
 (cleavir-io:define-save-info ast
   (:origin origin)
   (:policy policy))
+
+;;; Most ASTs have no variables, so here's a default.
+(defmethod map-variables progn (function (ast ast))
+  (declare (ignore function)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class representing a lexical variable
+
+(defclass lexical-variable ()
+  (;; Only used for debugging purposes.
+   (%name :initarg :name :reader name)))
+
+(defun make-lexical-variable (name)
+  (make-instance 'lexical-variable :name name))
+
+(cleavir-io:define-save-info lexical-variable
+    (:name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -210,25 +231,29 @@
 ;;; Class LEXICAL-AST.
 ;;; 
 ;;; A LEXICAL-AST represents a reference to a lexical variable.  Such
-;;; a reference contains the name of the variable, but it is used only
-;;; for debugging purposes and for the purpose of error reporting.
+;;; a reference contains a LEXICAL-VARIABLE object has defined above.
 
-(defclass lexical-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
-  ((%name :initarg :name :reader name)))
+(defclass lexical-ast (read-ast-mixin ast)
+  ((%lvar :initarg :lvar :reader lvar)))
 
-(defun make-lexical-ast (name &key origin (policy *policy*))
+(defun make-lexical-ast (lvar &key origin (policy *policy*))
+  (unless (or (null origin) (consp origin))
+    (error "Weird origin: ~a for lexical AST: ~a"
+           origin (name lvar)))
   (make-instance 'lexical-ast
     :origin origin :policy policy
-    :name name))
+    :lvar lvar))
 
 (cleavir-io:define-save-info lexical-ast
-  (:name name))
+    (:lvar lvar))
 
 (defmethod map-children progn (function (ast lexical-ast))
   (declare (ignore function)))
 (defmethod children append ((ast lexical-ast))
   (declare (ignorable ast))
   '())
+(defmethod map-variables progn (function (ast lexical-ast))
+  (funcall function (lvar ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -411,38 +436,38 @@
 ;;;
 ;;; where: 
 ;;;
-;;;   - Each ri is a LEXICAL-AST. 
+;;;   - Each ri is a LEXICAL-VARIABLE.
 ;;;
-;;;   - r is a LEXICAL-AST.
+;;;   - r is a LEXICAL-VARIABLE.
 ;;;
-;;;   - Each oi is a list of two LEXICAL-ASTs.  The second of the 
+;;;   - Each oi is a list of two LEXICAL-VARIABLEs.  The second of the 
 ;;;     two conceptually contains a Boolean value indicating whether
 ;;;     the first one contains a value supplied by the caller.  
 ;;;
-;;;   - Each ki is a list of a symbol and two LEXICAL-ASTs.  The
+;;;   - Each ki is a list of a symbol and two LEXICAL-VARIABLEs.  The
 ;;;     symbol is the keyword-name that a caller must supply in order
 ;;;     to pass the corresponding argument.  The second of the two
-;;;     LEXICAL-ASTs conceptually contains a Boolean value indicating
-;;;     whether the first LEXICAL-AST contains a value supplied by the
+;;;     LEXICAL-VARIABLEs conceptually contains a Boolean value indicating
+;;;     whether the first LEXICAL-VARIABLE contains a value supplied by the
 ;;;     caller.
 ;;;
-;;; The LEXICAL-ASTs in the lambda list are potentially unrelated to
+;;; The LEXICAL-VARIABLEs in the lambda list are potentially unrelated to
 ;;; the variables that were given in the original lambda expression,
-;;; and they are LEXICAL-ASTs independently of whether the
+;;; and they are LEXICAL-VARIABLEs independently of whether the
 ;;; corresponding variable that was given in the original lambda
 ;;; expression is a lexical variable or a special variable.
 ;;;
 ;;; The body of the FUNCTION-AST must contain code that tests the
-;;; second of the two LEXICAL-ASTs and initializes variables if
-;;; needed.  The if the second LEXICAL-AST in any oi contains FALSE,
+;;; second of the two LEXICAL-VARIABLEs and initializes variables if
+;;; needed.  The if the second LEXICAL-VARIABLE in any oi contains FALSE,
 ;;; then the code in the body is not allowed to test the second
-;;; LEXICAL-ASTs of any of the ki because they may not be set
+;;; LEXICAL-VARIABLEs of any of the ki because they may not be set
 ;;; correctly (conceptually, they all have the value FALSE then).
 
 (defclass function-ast (one-value-ast-mixin side-effect-free-ast-mixin ast)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)
-   ;; An alist from lexical ASTs to lists of pertinent declaration specifiers.
+   ;; An alist from lexical-variables to lists of pertinent declaration specifiers.
    ;; Since SPECIAL is otherwise handled, these are for optimization use only
    ;; and may be discarded at will.
    (%bound-declarations :initarg :bound-declarations :initform nil
@@ -473,21 +498,22 @@
   (:original-lambda-list original-lambda-list))
 
 (defmethod map-children progn (function (ast function-ast))
-  ;; I don't think we actually need to map the lambda list,
-  ;; or return it in CHILDREN for that matter.
-  ;; Let's find out.
   (funcall function (body-ast ast)))
 (defmethod children append ((ast function-ast))
-  (list* (body-ast ast)
-         (loop for entry in (lambda-list ast)
-               append (cond ((symbolp entry)
-                             '())
-                            ((consp entry)
-                             (if (= (length entry) 2)
-                                 entry
-                                 (cdr entry)))
-                            (t
-                             (list entry))))))
+  (list (body-ast ast)))
+
+(defmethod map-variables progn (function (ast function-ast))
+  (loop for item in (lambda-list ast)
+        if (typep item 'lexical-variable)
+          do (funcall function item)
+        else if (listp item)
+               do (ecase (length item)
+                    ((2) ; optional: (var var-p)
+                     (funcall function (first item))
+                     (funcall function (second item)))
+                    ((3) ; key: (key var var-p)
+                     (funcall function (second item))
+                     (funcall function (third item))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -587,25 +613,24 @@
 ;;; This AST does not correspond exactly to the SETQ special operator,
 ;;; because the AST does not return a value.
 
-(defclass setq-ast (no-value-ast-mixin ast)
-  ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+(defclass setq-ast (write-ast-mixin ast)
+  (;; The variable being assigned to.
+   (%lvar :initarg :lvar :reader lvar)))
 
-(defun make-setq-ast (lhs-ast value-ast &key origin (policy *policy*))
+(defun make-setq-ast (lvar value-ast &key origin (policy *policy*))
   (make-instance 'setq-ast
     :origin origin :policy policy
-    :lhs-ast lhs-ast
-    :value-ast value-ast))
+    :lvar lvar :value-ast value-ast))
 
 (cleavir-io:define-save-info setq-ast
-  (:lhs-ast lhs-ast)
-  (:value-ast value-ast))
+  (:lvar lvar))
 
 (defmethod map-children progn (function (ast setq-ast))
-  ;; Shouldn't need to map the LHS... let's find out.....
-  (funcall function (value-ast ast)))
-(defmethod children append ((ast setq-ast))
-  (list (lhs-ast ast) (value-ast ast)))
+  (declare (ignore function)))
+(defmethod children append ((ast setq-ast)) nil)
+
+(defmethod map-variables progn (function (ast setq-ast))
+  (funcall function (lvar ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -613,13 +638,13 @@
 ;;; 
 ;;; This AST can be used to represent MULTIPLE-VALUE-BIND.  
 ;;;
-;;; The LHS-ASTS is a list of lexical locations to be assigned to.
+;;; The LVARS is a list of LEXICAL-VARIABLEs to be assigned to.
 ;;; FORM-AST represents a form to be evaluated, and the values of
-;;; which will be assigned to the lexical locations in LHS-ASTS.  If
+;;; which will be assigned to the LEXICAL-VARIABLEs.  If
 ;;; the FORM-AST produces fewer values than there are lexical
-;;; locations in LHS-ASTS, then NIL is assigned to the remaining
+;;; locations in LVARS, then NIL is assigned to the remaining
 ;;; lexical locations.  If there are more values there are lexical
-;;; locations in LHS-ASTS, then the additional values are not
+;;; locations in LVARS, then the additional values are not
 ;;; assigned anywhere.
 ;;;
 ;;; Unlike the special operator, this AST returns all values from
@@ -628,23 +653,25 @@
 ;;; type checks, and potentially other things.
 
 (defclass multiple-value-setq-ast (ast)
-  ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)
+  ((%lvars :initarg :lvars :reader lvars)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defun make-multiple-value-setq-ast (lhs-asts form-ast &key origin (policy *policy*))
+(defun make-multiple-value-setq-ast (lvars form-ast &key origin (policy *policy*))
   (make-instance 'multiple-value-setq-ast
     :origin origin :policy policy
-    :lhs-asts lhs-asts
-    :form-ast form-ast))
+    :lvars lvars :form-ast form-ast))
 
 (cleavir-io:define-save-info multiple-value-setq-ast
-  (:lhs-asts lhs-asts)
+  (:lvars lvars)
   (:form-ast form-ast))
 
 (defmethod map-children progn (function (ast multiple-value-setq-ast))
   (funcall function (form-ast ast)))
 (defmethod children append ((ast multiple-value-setq-ast))
-  (cons (form-ast ast) (lhs-asts ast)))
+  (list (form-ast ast)))
+
+(defmethod map-variables progn (function (ast multiple-value-setq-ast))
+  (mapc function (lvars ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -702,10 +729,11 @@
 (cleavir-io:define-save-info go-ast
   (:tag-ast tag-ast))
 
+;;; The tag is already a child of the tagbody,
+;;; so it doesn't need to be a child of the GO.
 (defmethod map-children progn (function (ast go-ast))
-  (funcall function (tag-ast ast)))
-(defmethod children append ((ast go-ast))
-  (list (tag-ast ast)))
+  (declare (ignore function)))
+(defmethod children append ((ast go-ast)) nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

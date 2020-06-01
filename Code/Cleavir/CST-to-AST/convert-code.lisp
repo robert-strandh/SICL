@@ -29,10 +29,10 @@
 ;;;; and &KEY parameters.  It can not have any &AUX parameters,
 ;;;; though.  It can also have implementation-specific parameters.
 ;;;; The parameters are different from those of an ordinary lambda
-;;;; list.  A required parameter is represented as a LEXICAL-AST
+;;;; list.  A required parameter is represented as a LEXICAL-VARIABLE
 ;;;; corresponding to the variable of the parameter in the original
 ;;;; lambda list.  The same thing is true for a &REST parameter.  An
-;;;; &OPTIONAL parameter is represented as a list of two LEXICAL-ASTs.
+;;;; &OPTIONAL parameter is represented as a list of two LEXICAL-VARIABLEs.
 ;;;; The first AST of the list corresponds to the variable of the
 ;;;; parameter in the original lambda list, and the second AST
 ;;;; corresponds to a SUPPLIED-P parameter, whether the original
@@ -291,7 +291,7 @@
      idspecs
      remaining-idspecs-in-group
      remaining-idspecs
-     lexical-ast
+     lexical-variable
      remaining-entries-in-group
      remaining-entries
      body
@@ -300,9 +300,12 @@
   (let ((new-env (new-environment-from-parameter parameter
                                                  idspecs
                                                  environment
-                                                 system)))
+                                                 system))
+        (var-cst (cst:name parameter)))
     (set-or-bind-variable
-     (cst:name parameter) lexical-ast
+     var-cst
+     (cleavir-ast:make-lexical-ast lexical-variable
+                                   :origin (cst:source var-cst))
      (lambda ()
        (process-parameters-in-group remaining-parameters-in-group
                                     remaining-parameter-groups
@@ -450,7 +453,7 @@
       (cst:cons (make-atom-cst 'progn origin) forms-cst
                 :source origin)))
 
-;;; Given the entries and idspecs, compute and return an alist from LEXICAL-ASTs
+;;; Given the entries and idspecs, compute and return an alist from LEXICAL-VARIABLEs
 ;;; to lists of declaration specifier CSTs for that lexical variable.
 (defun compute-bound-declarations (entries idspecs)
   ;; NOTE: We use raw declaration specifiers so that ASTs can be serialized

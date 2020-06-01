@@ -210,5 +210,7 @@
   (declare (ignore system))
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn 'ignored-variable-referenced :cst cst))
-  (cleavir-generate-ast::maybe-wrap-the (cleavir-env:type info)
-                                        (cleavir-env:identity info)))
+  (cleavir-generate-ast::maybe-wrap-the
+   (cleavir-env:type info)
+   (cleavir-ast:make-lexical-ast (cleavir-env:identity info)
+                                 :origin (cst:source cst))))

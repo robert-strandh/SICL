@@ -21,7 +21,8 @@
             (cleavir-env:identity info)
             (convert form-cst env system)
             :origin origin)
-           (cleavir-env:identity info))
+           (cleavir-ast:make-lexical-ast (cleavir-env:identity info)
+                                         :origin origin))
      origin)))
 
 (defmethod convert-setq
@@ -39,16 +40,18 @@
 (defmethod convert-setq-special-variable
     (var-cst form-ast info global-env system)
   (declare (ignore system))
+  ;; We can't simply use the set-symbol-value AST, because we need to
+  ;; return the new value as well.
   (let* ((origin (cst:source var-cst))
-         (temp (cleavir-ast:make-lexical-ast (gensym) :origin origin)))
+         (lvar (cleavir-ast:make-lexical-variable (gensym))))
     (process-progn
-     (list (cleavir-ast:make-setq-ast temp form-ast :origin origin)
+     (list (cleavir-ast:make-setq-ast lvar form-ast :origin origin)
 	   (cleavir-ast:make-set-symbol-value-ast
 	    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info) t
                                                   :origin origin)
-	    temp
+	    (cleavir-ast:make-lexical-ast lvar :origin origin)
 	    :origin origin)
-	   temp)
+	   (cleavir-ast:make-lexical-ast lvar :origin origin))
      origin)))
 
 (defmethod convert-setq

@@ -1,21 +1,22 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-;;; VAR-AST and SUPPLIED-P-AST are LEXICAL-ASTs that will be set by
-;;; the implementation-specific argument-parsing code, according to
-;;; what arguments were given.  VALUE-AST is an AST that computes the
-;;; initialization for the variable to be used when no explicit value
-;;; is supplied by the caller.  This function generates the code for
-;;; testing whether SUPPLIED-P-AST computes NIL or T, and for
-;;; assigning the value computed by VALUE-AST to VAR-AST if
-;;; SUPPLIED-P-AST computes NIL.
-(defun make-initialization-ast (var-ast supplied-p-ast value-ast origin env system)
+;;; VAR is a LEXICAL-VARIABLE that will be set by the implementation-
+;;; specific argument-parsing code, according to what arguments were
+;;; given. SUPPLIED-P-AST is similarly the value of the supplied-p
+;;; variable. VALUE-AST is an AST that computes the initialization
+;;; for the variable to be used when no explicit value is supplied by
+;;; the caller.  This function generates the code for testing whether
+;;; SUPPLIED-P-AST computes NIL or T, and for assigning the value
+;;; computed by VALUE-AST to VAR if SUPPLIED-P-AST computes NIL.
+(defun make-initialization-ast
+    (var-cst var supplied-p-ast value-ast origin env system)
   (let ((nil-cst (make-atom-cst nil origin)))
     (cleavir-ast:make-if-ast
      (cleavir-ast:make-eq-ast
       supplied-p-ast
       (convert-constant nil-cst env system)
       :origin origin)
-     (cleavir-ast:make-setq-ast var-ast value-ast :origin origin)
+     (cleavir-ast:make-setq-ast var value-ast :origin origin)
      (convert-constant nil-cst env system)
      :origin origin)))
 
@@ -40,18 +41,24 @@
 ;;; assigning to those LEXICAL-ASTs according to what arguments were
 ;;; given to the function.
 (defun process-init-parameter
-    (var-cst var-ast supplied-p-cst supplied-p-ast init-ast env next-thunk system)
+    (var-cst var supplied-p-cst supplied-p-var init-ast env next-thunk system)
   (let ((origin (cst:source var-cst)))
     (process-progn
-     (list (make-initialization-ast var-ast supplied-p-ast init-ast
+     (list (make-initialization-ast var-cst var
+                                    (cleavir-ast:make-lexical-ast
+                                     supplied-p-var)
+                                    init-ast
                                     origin env system)
            (set-or-bind-variable
-            var-cst var-ast
+            var-cst (cleavir-ast:make-lexical-ast var)
             (if (null supplied-p-cst)
                 next-thunk
                 (lambda ()
                   (set-or-bind-variable
-                   supplied-p-cst supplied-p-ast
+                   supplied-p-cst
+                   (cleavir-ast:make-lexical-ast
+                    supplied-p-var
+                    :origin (cst:source supplied-p-cst))
                    next-thunk env system)))
             env system))
      origin)))

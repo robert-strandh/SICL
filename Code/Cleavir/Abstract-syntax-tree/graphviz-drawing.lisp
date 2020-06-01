@@ -74,7 +74,7 @@
           (label ast)))
 
 (defmethod label ((ast lexical-ast))
-  (format nil "~a" (name ast)))
+  (format nil "~a" (name (lvar ast))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing a TAG-AST.

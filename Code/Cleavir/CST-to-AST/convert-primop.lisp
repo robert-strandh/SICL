@@ -202,10 +202,14 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (add-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore add-cst))
-    (cleavir-ast:make-fixnum-add-ast (convert arg1-cst env system)
-                                     (convert arg2-cst env system)
-                                     (convert variable-cst env system)
-                                     :origin origin)))
+    (cleavir-ast:make-fixnum-add-ast
+     (convert arg1-cst env system)
+     (convert arg2-cst env system)
+     (let* ((varn (cst:raw variable-cst))
+            (info (cleavir-env:variable-info env varn)))
+       (assert (typep info 'cleavir-env:lexical-variable-info))
+       (cleavir-env:identity info))
+     :origin origin)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -217,10 +221,14 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (sub-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore sub-cst))
-    (cleavir-ast:make-fixnum-sub-ast (convert arg1-cst env system)
-                                     (convert arg2-cst env system)
-                                     (convert variable-cst env system)
-                                     :origin origin)))
+    (cleavir-ast:make-fixnum-sub-ast
+     (convert arg1-cst env system)
+     (convert arg2-cst env system)
+     (let* ((varn (cst:raw variable-cst))
+            (info (cleavir-env:variable-info env varn)))
+       (assert (typep info 'cleavir-env:lexical-variable-info))
+       (cleavir-env:identity info))
+     :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -319,12 +327,11 @@
             until (cst:null rest-cst)
             do (let* ((variable-cst (cst:first rest-cst))
                       (variable (cst:raw variable-cst))
-                      (variable-ast (cleavir-ast:make-lexical-ast
-                                     variable
-                                     :origin (cst:source variable-cst))))
+                      (lvar (cleavir-ast:make-lexical-variable
+                             variable)))
                  (setf new-env
                        (cleavir-env:add-lexical-variable
-                        new-env variable variable-ast))))
+                        new-env variable lvar))))
       (process-progn (convert-sequence body-cst new-env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

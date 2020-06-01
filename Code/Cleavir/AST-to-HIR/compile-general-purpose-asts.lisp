@@ -4,18 +4,18 @@
 ;;; ASTs representing locations to HIR locations.
 (defvar *location-info*)
 
-;;; Given an AST of type LEXICAL-LOCATION, return a corresponding HIR
+;;; Given a LEXICAL-VARIABLE return a corresponding HIR
 ;;; lexical location.  If no corresponding HIR location is found, one
-;;; is created and retured, and made to correspond to the AST in
+;;; is created and retured, and made to correspond to the variable in
 ;;; future invocations.
-(defun find-or-create-location (ast)
-  (or (gethash ast *location-info*)
+(defun find-or-create-location (lvar)
+  (or (gethash lvar *location-info*)
       (let ((location
-	      (etypecase ast
-		(cleavir-ast:lexical-ast
+	      (etypecase lvar
+		(cleavir-ast:lexical-variable
 		 (cleavir-ir:make-lexical-location
-		  (cleavir-ast:name ast))))))
-	(setf (gethash ast *location-info*) location))))
+		  (cleavir-ast:name lvar))))))
+	(setf (gethash lvar *location-info*) location))))
 
 ;;; Convenience function to avoid having long function names.
 (defun make-temp ()
@@ -568,7 +568,7 @@
 ;;; Compile a SETQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:setq-ast) context)
-  (let ((location (find-or-create-location (cleavir-ast:lhs-ast ast))))
+  (let ((location (find-or-create-location (cleavir-ast:lvar ast))))
     (compile-ast
      (cleavir-ast:value-ast ast)
      (clone-context context :results (list location)))))
@@ -596,7 +596,7 @@
 
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)
   (let* ((locations (mapcar #'find-or-create-location
-                            (cleavir-ast:lhs-asts ast)))
+                            (cleavir-ast:lvars ast)))
          (results (results context))
          (successor (first (successors context)))
          (assign
@@ -784,7 +784,7 @@
 
 (defmethod compile-ast ((ast cleavir-ast:lexical-ast) context)
   (cleavir-ir:make-assignment-instruction
-   (find-or-create-location ast)
+   (find-or-create-location (cleavir-ast:lvar ast))
    (first (results context))
    (first (successors context))))
 

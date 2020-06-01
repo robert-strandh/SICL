@@ -11,4 +11,9 @@
       (loop until (null nodes-to-process)
             do (let ((node (pop nodes-to-process)))
                  (funcall function node)
+                 (map-children (lambda (a)
+                                 (unless (typep a 'ast)
+                                   (error "AST ~a (class ~a) has a non-ast child"
+                                          node (class-of node))))
+                               node)
                  (map-children #'register-if-unvisited node))))))

@@ -14,37 +14,39 @@
 ;;; This AST can be used to implement a binary addition function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
 ;;; occur as the test of an IF-AST.  As a result of the operation,
-;;; this AST generates a FIXNUM that it writes to VARIABLE.  When
-;;; there is no overflow, VARIABLE is the sum of the two FIXNUM
+;;; this AST generates a FIXNUM that it writes to LVAR.  When
+;;; there is no overflow, LVAR is the sum of the two FIXNUM
 ;;; arguments.  When there is an overflow, if the result is negative,
-;;; then a BIGNUM with the value 2^n + VARIABLE should be created,
-;;; where n is the number of bits in a word.  If VARIABLE is
-;;; non-negative, then a BIGNUM with the value VARIABLE - 2^n should
+;;; then a BIGNUM with the value 2^n + LVAR should be created,
+;;; where n is the number of bits in a word.  If LVAR is
+;;; non-negative, then a BIGNUM with the value LVAR - 2^n should
 ;;; be created.
 
 (defclass fixnum-add-ast (boolean-ast-mixin ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
-   (%variable-ast :initarg :variable-ast :reader variable-ast)))
+   (%lvar :initarg :lvar :reader lvar)))
 
-(defun make-fixnum-add-ast (arg1-ast arg2-ast variable-ast &key origin (policy *policy*))
+(defun make-fixnum-add-ast (arg1-ast arg2-ast lvar &key origin (policy *policy*))
   (make-instance 'fixnum-add-ast
     :origin origin :policy policy
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast
-    :variable-ast variable-ast))
+    :lvar lvar))
 
 (cleavir-io:define-save-info fixnum-add-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast)
-  (:variable-ast variable-ast))
+  (:lvar lvar))
 
 (defmethod map-children progn (function (ast fixnum-add-ast))
   (funcall function (arg1-ast ast))
-  (funcall function (arg2-ast ast))
-  (funcall function (variable-ast ast)))
+  (funcall function (arg2-ast ast)))
 (defmethod children append ((ast fixnum-add-ast))
-  (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
+  (list (arg1-ast ast) (arg2-ast ast)))
+
+(defmethod map-variables progn (function (ast fixnum-add-ast))
+  (funcall function (lvar ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -53,37 +55,39 @@
 ;;; This AST can be used to implement a binary subtraction function.
 ;;; It requires both its arguments to be of type FIXNUM.  It can only
 ;;; occur as the test of an IF-AST.  As a result of the operation,
-;;; this AST generates a FIXNUM that it writes to VARIABLE.  When
-;;; there is no overflow, VARIABLE is the sum of the two FIXNUM
+;;; this AST generates a FIXNUM that it writes to LVAR.  When
+;;; there is no overflow, LVAR is the sum of the two FIXNUM
 ;;; arguments.  When there is an overflow, if the result is negative,
-;;; then a BIGNUM with the value 2^n + VARIABLE should be created,
-;;; where n is the number of bits in a word.  If VARIABLE is
-;;; non-negative, then a BIGNUM with the value VARIABLE - 2^n should
+;;; then a BIGNUM with the value 2^n + LVAR should be created,
+;;; where n is the number of bits in a word.  If LVAR is
+;;; non-negative, then a BIGNUM with the value LVAR - 2^n should
 ;;; be created.
 
 (defclass fixnum-sub-ast (boolean-ast-mixin ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
-   (%variable-ast :initarg :variable-ast :reader variable-ast)))
+   (%lvar :initarg :lvar :reader lvar)))
 
-(defun make-fixnum-sub-ast (arg1-ast arg2-ast variable-ast &key origin (policy *policy*))
+(defun make-fixnum-sub-ast (arg1-ast arg2-ast lvar &key origin (policy *policy*))
   (make-instance 'fixnum-sub-ast
     :origin origin :policy policy
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast
-    :variable-ast variable-ast))
+    :lvar lvar))
 
 (cleavir-io:define-save-info fixnum-sub-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast)
-  (:variable-ast variable-ast))
+  (:lvar lvar))
 
 (defmethod map-children progn (function (ast fixnum-sub-ast))
   (funcall function (arg1-ast ast))
-  (funcall function (arg2-ast ast))
-  (funcall function (variable-ast ast)))
+  (funcall function (arg2-ast ast)))
 (defmethod children append ((ast fixnum-sub-ast))
-  (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
+  (list (arg1-ast ast) (arg2-ast ast)))
+
+(defmethod map-variables progn (function (ast fixnum-sub-ast))
+  (funcall function (lvar ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

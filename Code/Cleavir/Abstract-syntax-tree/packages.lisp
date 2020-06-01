@@ -4,7 +4,7 @@
   (:use #:common-lisp)
   (:shadow #:symbol)
   (:export
-   #:ast #:map-children #:children
+   #:ast #:map-children #:children #:map-variables
    #:source-info
    #:origin
    #:*policy* #:policy
@@ -14,6 +14,7 @@
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
    #:read-ast-mixin #:write-ast-mixin
+   #:lexical-variable #:make-lexical-variable
    #:immediate-ast #:make-immediate-ast #:value
    #:constant-ast #:make-constant-ast #:value
    #:lexical-ast #:make-lexical-ast
@@ -45,8 +46,8 @@
    #:body-asts
    #:progn-ast #:make-progn-ast #:form-asts
    #:return-from-ast #:make-return-from-ast #:form-ast
-   #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
-   #:multiple-value-setq-ast #:make-multiple-value-setq-ast #:lhs-asts
+   #:setq-ast #:make-setq-ast #:lvar #:value-ast
+   #:multiple-value-setq-ast #:make-multiple-value-setq-ast #:lvars
    #:tagbody-ast #:make-tagbody-ast #:item-asts
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast

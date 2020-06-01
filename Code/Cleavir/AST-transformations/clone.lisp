@@ -14,6 +14,11 @@
   (let ((dictionary (make-hash-table :test #'eq)))
     (cleavir-ast:map-ast-depth-first-preorder
      (lambda (node)
+       (cleavir-ast:map-variables
+        (lambda (var)
+          (setf (gethash var dictionary)
+                (make-instance (class-of var))))
+        node)
        (setf (gethash node dictionary)
 	     (make-instance (class-of node))))
      ast)
@@ -51,6 +56,15 @@
 	ast
 	object)))
 
+;;; Similarly with lexical variables.
+(defmethod finalize-substructure ((object cleavir-ast:lexical-variable)
+                                  dictionary)
+  (multiple-value-bind (variable present-p)
+      (gethash object dictionary)
+    (if present-p
+	variable
+	object)))
+
 ;;; Given an AST to finalize and the MODEL AST of which the AST is a
 ;;; clone,  reinitialize the AST with new substructure.
 (defun finalize (ast model dictionary)
@@ -79,6 +93,10 @@
   (let ((dictionary (make-hash-table :test #'eq)))
     (cleavir-ast:map-ast-depth-first-preorder
      (lambda (node)
+       (cleavir-ast:map-variables
+        (lambda (var)
+          (setf (gethash var dictionary) (make-instance (class-of var))))
+        node)
        (setf (gethash node dictionary) (gensym)))
      ast)
     dictionary))
@@ -98,6 +116,14 @@
       (gethash object dictionary)
     (if present-p
 	ast
+	object)))
+
+(defmethod codegen-finalize-substructure ((object cleavir-ast:lexical-variable)
+                                          dictionary)
+  (multiple-value-bind (variable present-p)
+      (gethash object dictionary)
+    (if present-p
+	variable
 	object)))
 
 (defun codegen-finalize (model dictionary)
