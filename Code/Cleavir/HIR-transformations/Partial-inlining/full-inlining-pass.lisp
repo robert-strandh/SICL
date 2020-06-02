@@ -40,7 +40,7 @@
                     (enclose (cleavir-hir-transformations:enclose-instruction node))
                     (fun (first (cleavir-ir:outputs enclose)))
                     result)
-               (copy-propagate-1 fun)
+               (cleavir-hir-transformations:copy-propagate-1 fun)
                (when (all-parameters-required-p enter)
                  ;; Now we just need to pick off any recursive uses, direct or indirect.
                  (loop for user in (cleavir-ir:using-instructions fun)

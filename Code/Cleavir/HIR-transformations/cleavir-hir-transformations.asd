@@ -19,5 +19,6 @@
    (:file "function-dag")
    (:file "segregate-lexicals")
    (:file "escape")
+   (:file "copy-propagate")
    (:file "eliminate-superfluous-temporaries")
    (:file "hir-transformations")))

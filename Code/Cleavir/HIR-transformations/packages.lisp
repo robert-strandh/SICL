@@ -38,4 +38,7 @@
    #:parents
    #:children
    #:remove-enclose-from-function-dag
-   #:add-enclose-to-parents))
+   #:add-enclose-to-parents)
+  (:export
+   copy-propagate-1
+   copy-propagate-instruction))

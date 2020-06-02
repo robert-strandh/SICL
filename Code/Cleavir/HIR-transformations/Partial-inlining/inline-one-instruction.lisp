@@ -10,6 +10,10 @@
 ;;; introduced cells are read-only locations.
 (defclass binding-assignment-instruction (cleavir-ir:assignment-instruction) ())
 
+;;; Don't do anything with binding assignments. We don't want to
+;;; disappear them.
+(defmethod copy-propagate-instruction ((instruction binding-assignment-instruction)))
+
 ;;; Remove data references to old enter and call instructions for.
 (defun disconnect-enter-call-data (enter-instruction call-instruction)
   (dolist (input (cleavir-ir:inputs call-instruction))

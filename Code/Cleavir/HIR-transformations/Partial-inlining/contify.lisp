@@ -1,37 +1,5 @@
 (in-package #:cleavir-partial-inlining)
 
-;;; Copy propagate an assignment and return the old defining
-;;; instructions of the input for the sake of incremental analysis.
-(defun copy-propagate-assignment (assignment)
-  (let ((input (first (cleavir-ir:inputs assignment)))
-        (output (first (cleavir-ir:outputs assignment))))
-    ;; Without reaching definitions, the output and input must *both*
-    ;; have only one definition, the initial one.
-    (when (and (null (rest (cleavir-ir:defining-instructions input)))
-               (null (rest (cleavir-ir:defining-instructions output))))
-      ;; Some assignments are totally useless.
-      (if (eq input output)
-          (cleavir-ir:delete-instruction assignment)
-          (prog1 (cleavir-ir:using-instructions output)
-            (cleavir-ir:replace-datum input output)
-            (cleavir-ir:delete-instruction assignment))))))
-
-;;; A lightweight copy propagation utility to get rid of pesky
-;;; assignments blocking optimizations.
-;;; Copy propagate forward one datum.
-(defun copy-propagate-1 (datum)
-  (let ((worklist (cleavir-ir:using-instructions datum)))
-    (loop (unless worklist
-            (return))
-          (let ((use (pop worklist)))
-            (typecase use
-              (binding-assignment-instruction
-               ;; Don't do anything with binding assignments. We don't want to disappear them.
-               )
-              (cleavir-ir:assignment-instruction
-               (dolist (use (copy-propagate-assignment use))
-                 (push use worklist))))))))
-
 ;;; Analyze the flow graph to see if there are local functions that
 ;;; can be usefully integrated (contified). And if so, then interpolate.
 (defun interpolable-function-analyze (initial-instruction)
@@ -56,7 +24,7 @@
     (when (lambda-list-too-hairy-p (cleavir-ir:lambda-list code))
       (return-from interpolable-function-analyze-1))
     ;; Copy propagate so silly assignments don't trip us up.
-    (copy-propagate-1 fun)
+    (cleavir-hir-transformations:copy-propagate-1 fun)
     (let ((users (cleavir-ir:using-instructions fun)))
       (multiple-value-bind (return-point common-output common-dynenv target-owner)
           (common-return-cont enclose users fun)
@@ -158,7 +126,7 @@
             (dynenv (cleavir-ir:dynamic-environment user))
             (output (first (cleavir-ir:outputs user)))
             (owner (instruction-owner user)))
-        (copy-propagate-1 output)
+        (cleavir-hir-transformations:copy-propagate-1 output)
         ;; Check which properties every user shares.
         (cond ((eq return-point :uncalled)
                (unless (eq enclose cont)
