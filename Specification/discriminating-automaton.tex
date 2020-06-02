@@ -1,30 +1,117 @@
-Names are preliminary.
+Terminology is preliminary.
 
-The CALL HISTORY is a list of CALL-HISTORY ENTRIES.  An entry has a
+The AMOP says that when the second value (called OK) returned by a
+call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES is false, the nature
+of the first value returned is not specified.  For the technique
+described here to work, in such a situation, we need for the first
+return value to be a list of all the methods that might be applicable,
+and we need for them to be ordered from most specific to least
+specific.  We will say that the call to
+COMPUTE-APPLICABLE-METHODS-USING-CLASSES FAILS, when we mean that the
+second return value is false.  Otherwise, we say that that it
+succeeds.
+
+Suppose we have a generic function F with a method combination MC.  It
+is possible to add a method M to F such thatM has qualifiers that are
+incompatible with MC.  Such incompatible qualifiers are detected when
+the method combination is invoked, i.e., when COMPUTE-EFFECTIVE-METHOD
+is called, simply because the method combination is the place where
+qualifiers are analyzed.  The method combination is generally opaque,
+So in general it is not possible to detect incompatible qualifiers
+when a method is added to a generic function.  But for pre-defined
+method combinations, it is obviously possible for an implementation to
+detect incompatible qualifiers when a method is added to a generic
+function that currently has such a method combination.  However, an
+attempt to add a method with incompatible qualifiers for the current
+method combination of the generic function can not be rejected with an
+error.  The reason is that the generic function can be reinitialized
+after the method has been added, and such reinitialization can result
+in a new method combination for which the previously incompatible
+qualifier is now compatible.
+
+The AMOP says that if COMPUTE-APPLICABLE-METHODS-USING-CLASSES fails,
+we must call COMPUTE-APPLICABLE-METHODS instead, in order to determine
+a list of applicable methods for this particular combination of
+argument values.  The AMOP furthermore tells us that we are not
+allowed to cache the result of this call.  As a result, when EQL
+specializers are involved, it is often not possible to cache the
+effective methods, resulting in very slow generic-function
+invocations.  However, there is a way out.  The AMOP also says (and
+this is a general rule in object-oriented programming), client-defined
+methods on specified generic functions must not be applicable when
+given only arguments with specified classes.  As a result, it is not
+possible for conforming client code to detect whether
+COMPUTE-APPLICABLE-METHODS is called with a direct instance of
+STANDARD-GENERIC-FUNCTION.  We take advantage of this possibility to
+cache effective method functions even when EQL specializers are
+involved.
+
+Let's suppose we call a generic function with a list of required
+arguments such as the call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES
+fails.  And suppose that the subsequent call to
+COMPUTE-APPLICABLE-METHODS succeeds.  Then we would like to cache the
+resulting effective-method function.  The reason the call to
+COMPUTE-APPLICABLE-METHODS-USING-CLASSES failed, is that there are
+methods involved that have EQL specializers, and that information
+about the identity of the arguments, in addition to their classes, is
+required in order to determine the applicable methods.  If we want to
+cache effective methods in situations like this, one way to do it is
+to enter the exact argument identities (as EQL specializers) in the
+call history, and it would never be an error to do so.  However, we
+would then often fill up the call history with a huge number of
+combinations of required arguments.  So we must find another way.  But
+there are complications.
+
+Suppose again that the call to
+COMPUTE-APPLICABLE-METHODS-USING-CLASSES failed, and that the call to
+COMPUTE-APPLICABLE-METHODS returned a list of methods with no EQL
+specializers.  We can not cache this result by using only the classes
+of the arguments.  Since the call to
+COMPUTE-APPLICABLE-METHODS-USING-CLASSES failed, there are methods
+with EQL specializers that are applicable to SOME argument values of
+the these classes.  If we do not take these methods into account, an
+incorrect effective method will be invoked when a subsequent call
+involves argument values corresponding to some such EQL specializers.
+Even when the result of calling COMPUTE-APPLICABLE-METHODS contains
+one or more methods with EQL specializers, but not for every argument
+position, we can not cache the result using only the class of the
+remaining argument positions.  As a result, the technique described
+here, takes into account all possible effective methods when a call to
+COMPUTE-APPLICABLE-METHODS-USING-CLASSES fails,
+
+The CALL HISTORY is a list of call-history ENTRIES.  An entry has a
 KEY and some additional information.  The key is a list with as many
 elements as there are true values in the specializer profile.  An
-element of the key can be either a class or an EQL specializer object.
-To distinguish between the two, we can for instance represent them as
-a CONS: (class . <class>) (object . <object>).  The key is used when a
-method is added or removed, to determine whether the entry is still
-valid, or should be removed.  But the key is not what is used to
-compute the discriminating function.
+element of the key can be either a class or an EQL specializer.  The
+key is used when a method is added or removed, to determine whether
+the entry is still valid, or should be removed.  It is also used to
+compute the discriminating function.  When the call history contains
+an entry E1 for which there is a class C in some position, and there is
+another entry E2 that contains an EQL specializer with an object O such
+that the class of O is C (i.e., O is a direct instance of C), then the
+meaning of these entries is that, if they are both valid for a
+particular list of required arguments, then E2 applies, but not E1.
+However, if E1 and E2 are not both valid for some list of required
+arguments,  because they are incompatible in some other argument
+position, then E1 is valid when the argument is O.  For example, if we
+have two entries E1 = (fixnum character) and E2 = (3 character), then
+E1 is valid only when the first argument is not 3.  and if we have 
+E1 = (fixnum character) and E2 = (3 number), then E1 is valid even
+when the first argument is equal to 3.  In other words, if we test the
+first argument and determine that it is equal to 3, we can not exclude
+E1 until we have tested the second argument as well.
 
-The additional information includes a list of applicable methods and
-an effective method function computed from that list.  The list of
-applicable methods may have been modified in that an accessor method
-may have been altered in order to account for the location of the slot
-being accessed, as a function of the information in the entry key.
-This information is bundled up onto a CONS cell, where the list of
-applicable methods is in the CAR and the effective method function is
-in the CDR. Several entries may share this information.  When that is
-the case, their CONS cells are identical (EQ).
-
-The additional information of an entry also includes a MASK.  The mask
-is similar to the key, but it contains the symbol * in a position that
-is not specialized upon by any of the methods in the list of
-applicable methods of the entry.  The mask is what is used to compute
-the discriminating function.
+The additional information in an entry consists of a list of
+applicable methods and an effective method function computed from that
+list.  The list of applicable methods may have been modified after it
+was computed by COMPUTE-APPLICABLE-METHODS-USING-CLASSES, in that an
+accessor method may have been replaced in order to account for the
+location of the slot being accessed, as a function of the information
+in the entry key.  This information is bundled up onto a CONS cell,
+where the list of applicable methods is in the CAR and the effective
+method function is in the CDR. Several entries may share this
+information.  When that is the case, their CONS cells are identical
+(EQ).
 
 Entries in the call history may be removed as a result of changes in
 the class hierarchy, or as a result of a method being added or removed
@@ -32,35 +119,94 @@ from the generic function.  How the call history is updated in these
 cases is described elsewhere.
 
 Entries in the call history are added as a result of a dispatch miss
-that involves arguments that correspond to applicable methods, but
-that have not yet been encountered.  When a dispatch-miss happens, we
-first call COMPUTE-APPLICABLE-METHODS-USING-CLASSES, passing it the
-list of classes of the arguments.  This call may result in a second
-return value (called OK) that is either true or false.
+that involves arguments that can invoke some effective method, but
+this particular combination of arguments has not yet been encountered.
+When a dispatch-miss happens, we call
+COMPUTE-APPLICABLE-METHODS-USING-CLASSES, passing it the list of
+classes of the required arguments.  This call may either succeed or
+fail.
 
-If the OK value is true, we create a new call-history entry with the
-list of argument classes as the key.  We examine the list of
-applicable methods to determine whether there are any accessor methods
-in that list.  If that is the case, then these accessor methods are
-replaced by accessor methods that access the slot directly.  The
-location of the slot is determine by the corresponding class of the
-relevant argument.  The possibly modified list of applicable methods
-is then compared to existing such lists in other entries of the call
-history.  If an entry is found with the same applicable methods as the
-new entry, then the CONS cell is shared with the existing entry.  If
-not, an effective-method function is computed and entered into a new
-CONS cell together with the list of the applicable methods.
+If it succeeds, we take the list of methods returned in the
+first return value, and we call COMPUTE-EFFECTIVE-METHOD, using the
+method combination of the generic function.  If that call fails, we
+signal an error.  Otherwise, we create a new call-history entry with
+the list of argument classes as the key.  We examine the list of
+applicable methods to determine whether there is an accessor method in
+that list.  If that is the case, then that accessor method is replaced
+by one that accesses the slot directly.  The location of the slot is
+determined by the corresponding class of the relevant argument.  The
+possibly modified list of applicable methods is then compared to
+existing such lists in other entries of the call history.  If an entry
+is found with the same applicable methods as the new entry, then the
+CONS cell is shared with the existing entry.  If not, an
+effective-method function is computed and entered into a new CONS cell
+together with the list of the applicable methods.
 
-If the OK value is false, we call COMPUTE-APPLICABLE-METHODS, passing
-it the arguments themselves.  Since an OK value of false was returned
-by the call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES, there must be
-one or more methods in the list of applicable methods with an EQL
-specializer.  We construct a new call-history entry with a key that
-contains the class of each argument that does not correspond to an EQL
-specializer, and that contains the EQL specializer object itself for
-each argument that does correspond to an EQL specializer.  The
-remaining information of the entry is obtained in the same way as the
-true OK case.
+If the call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES fails, we
+first call COMPUTE-APPLICABLE-METHODS with the arguments to the
+generic function.  We then call COMPUTE-EFFECTIVE-METHOD with the
+resulting list of applicable methods.  If the call to
+COMPUTE-EFFECTIVE-METHOD fails, we signal an error. 
+
+If COMPUTE-EFFECTIVE-METHOD succeeds, we need to cache this result.
+Suppose that for each required argument position in the specializer
+profile, at least one method in the list returned by
+COMPUTE-APPLICABLE-METHODS has an EQL specializer.  Then this list of
+methods is valid only for the particular combination of required
+arguments in this call.  In this case, we can add an entry to the call
+history containing an EQL specializer in every position in the key.
+As mentioned above, it is always safe to add such an entry, but in
+this case, such an entry will have to be present, because this
+particular list of methods is applicable only for this particular
+combination of required arguments.
+
+Now suppose again that COMPUTE-EFFECTIVE-METHOD succeeds, but there is
+at least one argument position that does not contain an EQL
+specialzier in any of the methods returned by
+COMPUTE-APPLICABLE-METHODS. Then things get more complicated.
+Consider for example a call with two required arguments 1 and 2.  And
+suppose COMPUTE-APPLICABLE-METHODS returned two methods with
+specializers (1 fixnum) and (fixnum fixnum) respectively.  We must
+find a set of keys to enter into the call history that works
+correctly.  We can not enter only an entry with the key (1 fixnum),
+because it is possible that there is a method with specializers
+(fixnum 3) that was not included in the list returned by 
+COMPUTE-APPLICABLE-METHODS.  Clearly, the new entries in the call
+history must reflect the presence of this method in case some
+subsequent call involves arguments 1 and 3.
+
+So we need to examine the list of methods in the first return value of
+the call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES in order to
+determine combinations of specializers to enter into the call history.
+
+Specifically, for each method, we compute a SPECIALIZER-SIGNATURE.
+This signature is a list with the same length as the number of true
+elements in the specializer profile.  It contains the corresponding
+EQL specializer in each position that has an EQL specializer, and the
+symbol * in other positions. We collect the list of all such
+signatures, and make sure it has no duplicates.  For each unique
+signature in the list, we filter the methods in the list of applicable
+methods, and keep only the ones that are applicable to that particular
+signature.  When * is replaced by the class of the corresponding
+argument in that position, we have a key for an entry in the call
+history.  But we are not done yet.  For each filtered list of methods,
+we must call COMPUTE-EFFECTIVE-METHOD, to determine whether it
+succeeds.  If it does succeed, we associate the new entry with the
+resulting effective method.  If it fails, however, we can not simply
+exclude this particular entry.  Suppose again that we have a call with
+arguments 1 and 2, and methods with specializers (1 fixnum) [a],
+(fixnum 3) [b] (fixnum fixnum) [c], and (fixnum integer) [d].  We
+have specializer signatures (1 *) (* 3) and (* *) generating entries
+(1 fixnum) [a, c, d], (fixnum 3) [b, c, d], and (fixnum fixnum) [a, b,
+c, d].  suppose further that the call to COMPUTE-EFFECTIVE-METHOD
+fails when given methods b, c, and d.  If we exclude the entry with
+the key (fixnum 3), we will incorrectly recognize a call with
+arguments 2 and 3, as an instance of the key (fixnum fixnum).  We must
+therefore include this entry with an effective method that signals an
+error.
+
+The construction of the automaton described below is not quite
+finished.
 
 The call history is used to construct an AUTOMATON.  The final states
 of the automaton are the effective method functions present in the
@@ -80,17 +226,158 @@ contains a an instance of a BUILT-IN class or an instance of
 STANDARD-OBJECT, and the value determines what state the automaton is
 in, in the current invocation of BUILD-AUTOMATON.
 
-Another parameter is the list of masks of every entry of the call
-history.  The masks are copied (COPY-LIST) before they are given to
+Another parameter is a list of keys of entries in the call history.
+The keys are copied (COPY-LIST) before they are given to
 BUILD-AUTOMATON.  An invocation of BUILD-AUTOMATON chooses an argument
 position to examine in the corresponding state of the automaton.  The
 choice is not important for correctness, but might be for performance.
-If for some position, all masks contain *, then that position no
-longer needs to be tested for.  No mask will contain * in every
-position in any invocation of BUILD-AUTOMATON.  If the masks all
-contain either EQL objects or * in the chosen position,
-BUILD-AUTOMATON may select that position, and generate transitions
-based on each EQL object.  The state following such a transition will
-have the EQL object in the chosen position replaced by *.  If such a
-replacement results in a * in all positions, then a final state has
-been reached.  
+In each state, a DISCRIMINATING STEP is chosen, and this step
+determines which of two successor states becomes the new current
+state.  A discriminating step can be either an OBJECT STEP or a CLASS
+STEP.  An object step can be chosen only if the selected argument
+position has an object in at least one of the keys.  A class step can
+always be chosen, but might not always be a good choice.
+
+An object step consists of generating two transitions based on a
+comparison (EQL) of the argument to a literal object.  The TRUE branch
+will enter a state that contains the keys with that object and with
+the class of that object.  The false branch will contain every key
+except the ones with the object tested for.
+
+The purpose of a class step is to segregate the keys based on the
+class of the corresponding argument.  If the ARGUMENT-STATE contains
+NIL for the chosen position, only one type of step is permitted,
+namely one based on the tag for standard objects.  The true branch
+will lead to a state where every class is a built-in class, and the
+false state will contain the remaining keys. If a key contains an
+EQL object, the class of that object determines which state it goes
+to.  The recursive invocation of BUILD-AUTOMATON will contain
+:BUILT-IN for one state and :STANDARD for the other, 
+
+If the ARGUMENT-STATE contains :BUILT-IN in the chosen position, then
+the tag bits for some class in one of the keys is tested for. [to be
+continued] 
+
+If BUILD-AUTOMATON chooses to select on classes, and the argument
+state is :STANDARD, it uses the sorted list of unique numbers of each
+class so that it splits the list in as close to two halves based on
+the stamp of the object. [to be continued]
+
+The resulting automaton is minimized so that equivalent states are
+merged.
+
+From the automaton, we generate a DISCRIMINATING TAGBODY.
+
+Satiation.  The description of satiation is not finished.
+
+Recall that the goal of satiation is to make a generic function
+sufficiently operational that metastability problems are avoided.
+Therefore, satiation does not have to be total, in that the call
+history does not have to contain every possible argument combination
+that results in an effective method.  We examine every method, and we
+access the list of its specializers, restricted to the arguments that
+are present in the specializer-profile.  For each specialized
+parameter we create a list of specializers from the specializers of
+the methods.  Any specializer that is the class named T is excluded.
+And any EQL specializer is replaced by the class of its object.
+Duplicates in each list are removed, and each list is augmented by
+every defined subclass of every member class.  Then a list of types is
+created.  Each tuple is a list of the same length as the specializer
+profile.  The tuples in the list cover every possible combination of
+classes from each class list.  Each tuple is then used in the process
+above, as if it were the classes of some arguments given, thereby
+filling up the call history. Finally, the discriminating function is
+constructed as above.
+
+Example, for TYPEP-ATOMIC:
+
+Method specializers:
+1.  (t symbol)
+2.  (t class)
+3.  (t (EQL atom))
+4.  (cons (EQL atom))
+5.  (t (EQL base-char))
+6.  (character (EQL base-char))
+7.  (t (EQL standard-char))
+8.  (character (EQL standard-char))
+9.  (t (EQL keyword))
+10. (symbol (EQL keyword))
+11. (t (EQL nil))
+
+initial first list:
+(cons character symbol)
+initial second list:
+(symbol class)
+
+None of the classes have any subclasses.
+
+tuples:
+(cons symbol)
+(cons class)
+(character symbol)
+(character class)
+(symbol symbol)
+(symbol class)
+
+for (cons symbol)
+   compute-applicable-methods-using-classes returns:
+   4.  (cons (EQL atom))
+   3.  (t (EQL atom))
+   5.  (t (EQL base-char))
+   7.  (t (EQL standard-char))
+   9.  (t (EQL keyword))
+   11. (t (EQL nil))
+   1.  (t symbol)
+   OK = false
+
+   Specializer signatures:
+   a. (* atom)
+   b. (* base-char)
+   c. (* standard-char)
+   d. (* keyword)
+   e. (* nil)
+   f. (* *)
+
+   Filter using (* atom):
+   4.  (cons (EQL atom))
+   3.  (t (EQL atom))
+   1.  (t symbol)
+
+   Create entry: with key (cons (EQL atom))
+   4.  (cons (EQL atom))
+   3.  (t (EQL atom))
+   1.  (t symbol)
+
+   Filter using (* base-char):
+   5.  (t (EQL base-char))
+   1.  (t symbol)
+
+   Create entry: with key (cons (EQL base-char))
+   5.  (t (EQL base-char))
+   1.  (t symbol)
+
+   Filter using (* standard-char):
+   7.  (t (EQL standard-char))
+   1.  (t symbol)
+
+   Create entry: with key (cons (EQL standard-char))
+   7.  (t (EQL standard-char))
+   1.  (t symbol)
+
+   Filter using (* keyword):
+   9.  (t (EQL keyword))
+   1.  (t symbol)
+
+   Create entry: with key (cons (EQL keyword))
+   9.  (t (EQL keyword))
+   1.  (t symbol)
+
+   Filter using (* nil):
+   11. (t (EQL nil))
+   1.  (t symbol)
+
+   Create entry: with key (cons (EQL nil))
+   11. (t (EQL nil))
+   1.  (t symbol)
+
+   Filter using (* *):
