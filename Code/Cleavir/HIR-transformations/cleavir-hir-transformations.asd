@@ -20,5 +20,6 @@
    (:file "segregate-lexicals")
    (:file "escape")
    (:file "copy-propagate")
+   (:file "multiple-values-eliminate")
    (:file "eliminate-superfluous-temporaries")
    (:file "hir-transformations")))

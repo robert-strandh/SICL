@@ -60,6 +60,10 @@
                  (dolist (call users)
                    (assert (typep call 'cleavir-ir:funcall-instruction))
                    (rewire-user-into-body call code))
+                 ;; Attempt to convert the values locations into a
+                 ;; lexical locations with ordinary assignments if possible.
+                 (when returns
+                   (cleavir-hir-transformations:maybe-convert-values-location common-output))
                  ;; Now clean up the enclose and other stuff hanging off of
                  ;; the enter instruction.
                  (cleavir-ir:delete-instruction code)
