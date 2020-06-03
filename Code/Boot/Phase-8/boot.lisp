@@ -16,6 +16,7 @@
     (load-source "Arithmetic/binary-equal-defgeneric.lisp" e5)
     (load-source "Arithmetic/binary-equal-defmethods.lisp" e5)
     (load-source "Conditionals/support.lisp" e5)
+    (load-source "Cons/listp-defun.lisp" e5)
     (load-source "Cons/set-difference-defun.lisp" e5)
     (load-source "Cons/nset-difference-defun.lisp" e5)
     (load-source "Cons/adjoin-defun.lisp" e5)
