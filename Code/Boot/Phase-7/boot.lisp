@@ -17,6 +17,8 @@
     (load-source "Arithmetic/plus-defun.lisp" e5)
     (load-source "Arithmetic/binary-add-defgeneric.lisp" e5)
     (load-source "Arithmetic/binary-add-defmethods.lisp" e5)
+    (load-source "Arithmetic/binary-subtract-defgeneric.lisp" e5)
+    (load-source "Arithmetic/binary-subtract-defmethods.lisp" e5)
     (load-source "Arithmetic/binary-less-defgeneric.lisp" e5)
     (load-source "Arithmetic/binary-less-defmethods.lisp" e5)
     (load-source "Arithmetic/binary-not-greater-defgeneric.lisp" e5)
