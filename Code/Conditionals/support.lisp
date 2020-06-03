@@ -120,7 +120,7 @@
 (defun eql-ify (keys variable)
   (if (null keys)
       '()
-      (cons `(eql ,variable ,(car keys))
+      (cons `(eql ,variable ',(car keys))
             (eql-ify (cdr keys) variable))))
 
 ;;; Collect a list of all the keys for ecase or ccase
@@ -170,7 +170,7 @@
                       (forms (cdr clause)))
                   (if (and (atom keys)
                            (not (null keys)))
-                      `(if (eql ,variable ,keys)
+                      `(if (eql ,variable ',keys)
                            (progn ,@forms)
                            ,(expand-case-clauses (cdr clauses) variable))
                       (if (not (cleavir-code-utilities:proper-list-p keys))
