@@ -93,25 +93,21 @@
            (unless (eq (gethash user *instruction-ownerships*) owner)
              (return t))))))
 
-;;; Introduce cells for those bound locations which need them. If a
-;;; cell is not needed, the assignment can get copy propagated away.
+;;; Introduce cells for those bound locations which need them.
 (defun convert-binding-instructions (binding-assignments)
   (dolist (binding-assignment binding-assignments)
-    ;; Change the class now so that we can copy propagate.
-    (change-class binding-assignment 'cleavir-ir:assignment-instruction)
     (let ((location (first (cleavir-ir:outputs binding-assignment))))
-      (if (and location (explicit-cell-p location))
-          (let ((create (make-instance 'cleavir-ir:create-cell-instruction
-                                       :origin (cleavir-ir:origin binding-assignment)
-                                       :policy (cleavir-ir:policy binding-assignment)
-                                       :dynamic-environment (cleavir-ir:dynamic-environment binding-assignment))))
-            (dolist (user (cleavir-ir:using-instructions location))
-              (cleavir-hir-transformations:replace-inputs location location user))
-            (dolist (definer (cleavir-ir:defining-instructions location))
-              (cleavir-hir-transformations:replace-outputs location location definer))
-            (cleavir-ir:insert-instruction-after create binding-assignment)
-            (setf (cleavir-ir:outputs create) (list location)))
-          (copy-propagate-1 (first (cleavir-ir:inputs binding-assignment)))))))
+      (when (and location (explicit-cell-p location))
+        (let ((create (make-instance 'cleavir-ir:create-cell-instruction
+                        :origin (cleavir-ir:origin binding-assignment)
+                        :policy (cleavir-ir:policy binding-assignment)
+                        :dynamic-environment (cleavir-ir:dynamic-environment binding-assignment))))
+          (dolist (user (cleavir-ir:using-instructions location))
+            (cleavir-hir-transformations:replace-inputs location location user))
+          (dolist (definer (cleavir-ir:defining-instructions location))
+            (cleavir-hir-transformations:replace-outputs location location definer))
+          (cleavir-ir:insert-instruction-after create binding-assignment)
+          (setf (cleavir-ir:outputs create) (list location)))))))
 
 (defun full-inlining-pass (initial-instruction)
   ;; Need to remove all useless instructions first for incremental
