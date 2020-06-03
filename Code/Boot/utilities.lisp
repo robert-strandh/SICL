@@ -135,3 +135,27 @@
                  (code-object (sicl-compiler:compile-ast client ast)))
             (sicl-boot:tie-code-object
              client code-object tie-environment make-instance-environment)))))
+
+(defun invoke-with-atomic-function-updates (names environment thunk)
+  (let* ((all-entries (sicl-simple-environment::function-entries environment))
+         (entries (loop for name in names collect (gethash name all-entries)))
+         (cells (loop for entry in entries
+                      collect (slot-value entry 'sicl-simple-environment::%function-cell))))
+    ;; Allocate fresh slots for the relevant entries and initialize
+    ;; them to be unbound.
+    (loop for entry in entries
+          do (setf (slot-value entry 'sicl-simple-environment::%function-cell)
+                   (list (sicl-simple-environment::unbound entry))))
+    ;; Do the work.
+    (funcall thunk)
+    (let ((new-functions
+            (loop for name in names
+                  collect (sicl-genv:fdefinition name environment))))
+      ;; Update the old cells and replace the new ones with the old
+      ;; ones.
+      (loop for entry in entries
+            for cell in cells
+            for new-function in new-functions
+            do (setf (car cell) new-function)
+               (setf (slot-value entry 'sicl-simple-environment::%function-cell)
+                     cell)))))
