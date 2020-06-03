@@ -10,7 +10,7 @@
     (return-from typep-compound t))
   ;; The type specifier is (INTEGER <lower-bound> . ...).
   (let ((lower-bound (first rest)))
-    (cond ((typep lower-bound 'integer)
+    (cond ((integerp lower-bound)
 	   (when (< object lower-bound)
 	     (return-from typep-compound nil)))
 	  ((consp lower-bound)
@@ -23,7 +23,7 @@
     ;; checked that the lower bound is OK, we are done.
     (return-from typep-compound t))
   (let ((upper-bound (second rest)))
-    (cond ((typep upper-bound 'integer)
+    (cond ((integerp upper-bound)
 	   (<= object upper-bound))
 	  ((consp upper-bound)
 	   (< object (car upper-bound)))
