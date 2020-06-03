@@ -1,5 +1,9 @@
 Terminology is preliminary.
 
+We use the term RELEVANT ARGUMENT for an argument in a position that
+has at least one specializer other than the class T in any of the
+methods.
+
 The AMOP says that when the second value (called OK) returned by a
 call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES is false, the nature
 of the first value returned is not specified.  For the technique
@@ -12,7 +16,7 @@ second return value is false.  Otherwise, we say that that it
 succeeds.
 
 Suppose we have a generic function F with a method combination MC.  It
-is possible to add a method M to F such thatM has qualifiers that are
+is possible to add a method M to F such that M has qualifiers that are
 incompatible with MC.  Such incompatible qualifiers are detected when
 the method combination is invoked, i.e., when COMPUTE-EFFECTIVE-METHOD
 is called, simply because the method combination is the place where
@@ -32,8 +36,8 @@ qualifier is now compatible.
 The AMOP says that if COMPUTE-APPLICABLE-METHODS-USING-CLASSES fails,
 we must call COMPUTE-APPLICABLE-METHODS instead, in order to determine
 a list of applicable methods for this particular combination of
-argument values.  The AMOP furthermore tells us that we are not
-allowed to cache the result of this call.  As a result, when EQL
+relevant argument values.  The AMOP furthermore tells us that we are
+not allowed to cache the result of this call.  As a result, when EQL
 specializers are involved, it is often not possible to cache the
 effective methods, resulting in very slow generic-function
 invocations.  However, there is a way out.  The AMOP also says (and
@@ -46,21 +50,32 @@ STANDARD-GENERIC-FUNCTION.  We take advantage of this possibility to
 cache effective method functions even when EQL specializers are
 involved.
 
-Let's suppose we call a generic function with a list of required
+The technique described below has some important characteristics.
+First of all, when a dispatch succeeds, it is still possible that
+there is no valid effective method for the particular combination of
+relevant arguments that was given.  In this case, the result of the
+dispatch is that an error is signaled.  Second, when a dispatch fails
+with classes of required arguments C1...Cn, then the cache contains no
+entry with specializers S1...Sn such that either Si = Ci or Si is an
+EQL specialier such that the object of Si is not an direct instance of
+Ci.
+
+Let's suppose we call a generic function with a list of relevant
 arguments such as the call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES
 fails.  And suppose that the subsequent call to
 COMPUTE-APPLICABLE-METHODS succeeds.  Then we would like to cache the
-resulting effective-method function.  The reason the call to
+resulting effective-method function, provided that an effective method
+can be computed.  The reason the call to
 COMPUTE-APPLICABLE-METHODS-USING-CLASSES failed, is that there are
 methods involved that have EQL specializers, and that information
-about the identity of the arguments, in addition to their classes, is
-required in order to determine the applicable methods.  If we want to
-cache effective methods in situations like this, one way to do it is
-to enter the exact argument identities (as EQL specializers) in the
-call history, and it would never be an error to do so.  However, we
-would then often fill up the call history with a huge number of
-combinations of required arguments.  So we must find another way.  But
-there are complications.
+about the identity of the relevant arguments, in addition to their
+classes, is required in order to determine the applicable methods.  If
+we want to cache effective methods in situations like this, one way to
+do it is to enter the exact argument identities (as EQL specializers)
+in the call history, and it would never be an error to do so.
+However, we would then often fill up the call history with a huge
+number of combinations of required arguments.  So we must find another
+way.  But there are complications.
 
 Suppose again that the call to
 COMPUTE-APPLICABLE-METHODS-USING-CLASSES failed, and that the call to
@@ -149,61 +164,48 @@ resulting list of applicable methods.  If the call to
 COMPUTE-EFFECTIVE-METHOD fails, we signal an error. 
 
 If COMPUTE-EFFECTIVE-METHOD succeeds, we need to cache this result.
-Suppose that for each required argument position in the specializer
-profile, at least one method in the list returned by
-COMPUTE-APPLICABLE-METHODS has an EQL specializer.  Then this list of
-methods is valid only for the particular combination of required
-arguments in this call.  In this case, we can add an entry to the call
-history containing an EQL specializer in every position in the key.
-As mentioned above, it is always safe to add such an entry, but in
-this case, such an entry will have to be present, because this
-particular list of methods is applicable only for this particular
-combination of required arguments.
-
-Now suppose again that COMPUTE-EFFECTIVE-METHOD succeeds, but there is
-at least one argument position that does not contain an EQL
-specialzier in any of the methods returned by
-COMPUTE-APPLICABLE-METHODS. Then things get more complicated.
-Consider for example a call with two required arguments 1 and 2.  And
-suppose COMPUTE-APPLICABLE-METHODS returned two methods with
-specializers (1 fixnum) and (fixnum fixnum) respectively.  We must
-find a set of keys to enter into the call history that works
-correctly.  We can not enter only an entry with the key (1 fixnum),
-because it is possible that there is a method with specializers
-(fixnum 3) that was not included in the list returned by 
-COMPUTE-APPLICABLE-METHODS.  Clearly, the new entries in the call
-history must reflect the presence of this method in case some
-subsequent call involves arguments 1 and 3.
-
-So we need to examine the list of methods in the first return value of
+We do this by caching all possible combinations of applicable methods
+for the particular combination of classes of required arguments.  So
+we need to examine the list of methods in the first return value of
 the call to COMPUTE-APPLICABLE-METHODS-USING-CLASSES in order to
 determine combinations of specializers to enter into the call history.
 
-Specifically, for each method, we compute a SPECIALIZER-SIGNATURE.
-This signature is a list with the same length as the number of true
-elements in the specializer profile.  It contains the corresponding
-EQL specializer in each position that has an EQL specializer, and the
-symbol * in other positions. We collect the list of all such
-signatures, and make sure it has no duplicates.  For each unique
-signature in the list, we filter the methods in the list of applicable
-methods, and keep only the ones that are applicable to that particular
-signature.  When * is replaced by the class of the corresponding
-argument in that position, we have a key for an entry in the call
-history.  But we are not done yet.  For each filtered list of methods,
-we must call COMPUTE-EFFECTIVE-METHOD, to determine whether it
-succeeds.  If it does succeed, we associate the new entry with the
-resulting effective method.  If it fails, however, we can not simply
-exclude this particular entry.  Suppose again that we have a call with
-arguments 1 and 2, and methods with specializers (1 fixnum) [a],
-(fixnum 3) [b] (fixnum fixnum) [c], and (fixnum integer) [d].  We
-have specializer signatures (1 *) (* 3) and (* *) generating entries
-(1 fixnum) [a, c, d], (fixnum 3) [b, c, d], and (fixnum fixnum) [a, b,
-c, d].  suppose further that the call to COMPUTE-EFFECTIVE-METHOD
-fails when given methods b, c, and d.  If we exclude the entry with
-the key (fixnum 3), we will incorrectly recognize a call with
-arguments 2 and 3, as an instance of the key (fixnum fixnum).  We must
-therefore include this entry with an effective method that signals an
-error.
+Specifically, for each relevant position, we traverse all the methods
+in the list, and collect some information.  If the position in a
+method contains an EQL specializer, we collect it.  If the position
+does not contain an EQL specialier, we collect the class of the
+corresponding relevant argument instead.  As a result, we now have a
+set (i.e., no duplicates) of specializers for each relevant position.
+We then compute the set of keys as the Cartesian product of these sets.
+
+We then use each key to determine a list of applicable methods for
+that particular key.  We compute this list by traversing the list of
+potentially applicable methods returned by
+COMPUTE-APPLICABLE-METHODS-USING-CLASSES, and collect the method if
+and only if it is applicable.  A method is applicable to a key if, for
+each position, either the key and the method contain the same EQL
+specializer, or the method does not contain an EQL specializer in that
+position.  Suppose again that we have a call with arguments 1 and 2,
+and methods with specializers:
+ 
+(1 fixnum) [a],
+(fixnum 3) [b],
+(fixnum fixnum) [c], and
+(fixnum integer) [d].  
+
+The list of specializers for the first position is (1 fixnum) and for
+the second position, it is (fixnum 3).  We compute all keys as the
+Cartesian product of these sets, giving 
+
+(1 fixnum) [a, c d], 
+(1 3) [a, b, c, d], 
+(fixnum fixnum) [c, d]
+(fixnum 3) [b, c, d]
+
+Finally, we call COMPUTE-EFFECTIVE-METHOD for each list of applicable
+methods.  If this call succeeds, the resulting effective-method
+function is assocated with the entry.  If not, we associated a
+function that signals an error with the entry.
 
 The construction of the automaton described below is not quite
 finished.
@@ -267,117 +269,3 @@ The resulting automaton is minimized so that equivalent states are
 merged.
 
 From the automaton, we generate a DISCRIMINATING TAGBODY.
-
-Satiation.  The description of satiation is not finished.
-
-Recall that the goal of satiation is to make a generic function
-sufficiently operational that metastability problems are avoided.
-Therefore, satiation does not have to be total, in that the call
-history does not have to contain every possible argument combination
-that results in an effective method.  We examine every method, and we
-access the list of its specializers, restricted to the arguments that
-are present in the specializer-profile.  For each specialized
-parameter we create a list of specializers from the specializers of
-the methods.  Any specializer that is the class named T is excluded.
-And any EQL specializer is replaced by the class of its object.
-Duplicates in each list are removed, and each list is augmented by
-every defined subclass of every member class.  Then a list of types is
-created.  Each tuple is a list of the same length as the specializer
-profile.  The tuples in the list cover every possible combination of
-classes from each class list.  Each tuple is then used in the process
-above, as if it were the classes of some arguments given, thereby
-filling up the call history. Finally, the discriminating function is
-constructed as above.
-
-Example, for TYPEP-ATOMIC:
-
-Method specializers:
-1.  (t symbol)
-2.  (t class)
-3.  (t (EQL atom))
-4.  (cons (EQL atom))
-5.  (t (EQL base-char))
-6.  (character (EQL base-char))
-7.  (t (EQL standard-char))
-8.  (character (EQL standard-char))
-9.  (t (EQL keyword))
-10. (symbol (EQL keyword))
-11. (t (EQL nil))
-
-initial first list:
-(cons character symbol)
-initial second list:
-(symbol class)
-
-None of the classes have any subclasses.
-
-tuples:
-(cons symbol)
-(cons class)
-(character symbol)
-(character class)
-(symbol symbol)
-(symbol class)
-
-for (cons symbol)
-   compute-applicable-methods-using-classes returns:
-   4.  (cons (EQL atom))
-   3.  (t (EQL atom))
-   5.  (t (EQL base-char))
-   7.  (t (EQL standard-char))
-   9.  (t (EQL keyword))
-   11. (t (EQL nil))
-   1.  (t symbol)
-   OK = false
-
-   Specializer signatures:
-   a. (* atom)
-   b. (* base-char)
-   c. (* standard-char)
-   d. (* keyword)
-   e. (* nil)
-   f. (* *)
-
-   Filter using (* atom):
-   4.  (cons (EQL atom))
-   3.  (t (EQL atom))
-   1.  (t symbol)
-
-   Create entry: with key (cons (EQL atom))
-   4.  (cons (EQL atom))
-   3.  (t (EQL atom))
-   1.  (t symbol)
-
-   Filter using (* base-char):
-   5.  (t (EQL base-char))
-   1.  (t symbol)
-
-   Create entry: with key (cons (EQL base-char))
-   5.  (t (EQL base-char))
-   1.  (t symbol)
-
-   Filter using (* standard-char):
-   7.  (t (EQL standard-char))
-   1.  (t symbol)
-
-   Create entry: with key (cons (EQL standard-char))
-   7.  (t (EQL standard-char))
-   1.  (t symbol)
-
-   Filter using (* keyword):
-   9.  (t (EQL keyword))
-   1.  (t symbol)
-
-   Create entry: with key (cons (EQL keyword))
-   9.  (t (EQL keyword))
-   1.  (t symbol)
-
-   Filter using (* nil):
-   11. (t (EQL nil))
-   1.  (t symbol)
-
-   Create entry: with key (cons (EQL nil))
-   11. (t (EQL nil))
-   1.  (t symbol)
-
-   Filter using (* *):
