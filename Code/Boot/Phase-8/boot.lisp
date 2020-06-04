@@ -34,4 +34,7 @@
     (load-source "Cons/butlast-defun.lisp" e5)
     (load-source "Cons/union-defun.lisp" e5)
     (load-source "Cons/set-exclusive-or-defun.lisp" e5)
-    (load-source "Cons/mapcar-defun.lisp" e5)))
+    (load-source "Cons/mapcar-defun.lisp" e5)
+    (load-source "Cons/mapc-defun.lisp" e5)
+    (load-source "Cons/mapcan-defun.lisp" e5)
+    (load-source "Cons/mapcon-defun.lisp" e5)))
