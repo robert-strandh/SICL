@@ -14,6 +14,8 @@
     (load-source "Arithmetic/not-equal-defun.lisp" e5)
     (load-source "Arithmetic/minus-defun.lisp" e5)
     (load-source "Arithmetic/one-plus-defun.lisp" e5)
+    (load-source "Arithmetic/one-minus-defun.lisp" e5)
+    (load-source "Arithmetic/zerop-defun.lisp" e5)
     (import-function-from-host 'sicl-genv:type-expander e5)
     (load-source "Conditionals/support.lisp" e5)
     (load-source "Cons/listp-defun.lisp" e5)
