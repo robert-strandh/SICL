@@ -46,4 +46,5 @@
     (load-source "Cons/mapcar-defun.lisp" e5)
     (load-source "Cons/mapc-defun.lisp" e5)
     (load-source "Cons/mapcan-defun.lisp" e5)
-    (load-source "Cons/mapcon-defun.lisp" e5)))
+    (load-source "Cons/mapcon-defun.lisp" e5)
+    (load-source "Data-and-control-flow/not-defun.lisp" e5)))
