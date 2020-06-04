@@ -106,6 +106,7 @@
                          (progn
                            (setf (elt result result-index) elt-2)
                            (incf index-2)
+                           (incf result-index)
                            (when (= index-2 length-2)
                              (finish vector-1 index-1 length-1))
                            (setf elt-2 (elt vector-2 index-2))
@@ -113,11 +114,11 @@
                          (progn
                            (setf (elt result result-index) elt-1)
                            (incf index-1)
+                           (incf result-index)
                            (when (= index-1 length-1)
                              (finish vector-2 index-2 length-2))
                            (setf elt-1 (elt vector-1 index-1))
-                           (setf key-1 (key elt-1))))
-                     (incf result-index)))))))))
+                           (setf key-1 (key elt-1))))))))))))
 
   ;; Merging of arbitrary sequences.
   (defmethod merge-sequence-like
