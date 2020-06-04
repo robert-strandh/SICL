@@ -19,6 +19,7 @@
     (import-function-from-host 'sicl-genv:type-expander e5)
     (load-source "Conditionals/support.lisp" e5)
     (load-source "Cons/null-defun.lisp" e5)
+    (load-source "Cons/endp-defun.lisp" e5)
     (load-source "Cons/listp-defun.lisp" e5)
     (load-source "Cons/list-defun.lisp" e5)
     (load-source "Cons/list-star-defun.lisp" e5)
