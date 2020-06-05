@@ -6,7 +6,6 @@
       (with-reified-result-type (prototype result-type)
         (if (listp prototype)
             (sicl-utilities:with-collectors ((result collect))
-              (declare (dynamic-extent #'collect))
               (let ((function (function-designator-function function)))
                 (declare (function function))
                 (flet ((fn (&rest arguments)

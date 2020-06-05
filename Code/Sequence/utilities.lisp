@@ -149,16 +149,6 @@
             (array-element-type (coerce nil sequence-class))
             `(or ,@(mapcar #'sequence-class-element-type direct-subclasses))))))
 
-;;; This function is used to simplify a constant first argument of MAP or
-;;; MAKE-SEQUENCE at compile time.
-(defun simplify-sequence-type-specifier (type-specifier)
-  (if (subtypep type-specifier '(not sequence))
-      type-specifier
-      (dolist (class (class-subclasses (find-class 'sequence)) type-specifier)
-        (when (and (subtypep type-specifier class)
-                   (subtypep class type-specifier))
-          (return-from simplify-sequence-type-specifier (class-name class))))))
-
 (declaim (inline shrink-vector))
 (defun shrink-vector (vector new-length)
   (declare (vector vector))
@@ -168,15 +158,6 @@
          (setf (fill-pointer vector) new-length))
         (t
          (subseq vector 0 new-length))))
-
-(defun enumerate-symbol (symbol n)
-  (intern
-   (concatenate
-    'string
-    (symbol-name symbol)
-    "-"
-    (format nil "~D" n))
-   (symbol-package symbol)))
 
 (defvar *vector-prototype-table* (make-hash-table :test #'equal))
 

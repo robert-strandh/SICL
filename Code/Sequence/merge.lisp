@@ -74,6 +74,53 @@
 (seal-domain #'merge-sequence-like '(list t t t))
 
 (replicate-for-each-vector-class #1=#:vector-class
+
+  ;; Merging of vectors of the same type as the prototype.
+  (defmethod merge-sequence-like
+      ((prototype #1#) (vector-1 #1#) (vector-2 #1#) predicate &key key)
+    (let ((predicate (function-designator-function predicate))
+          (length-1 (length vector-1))
+          (length-2 (length vector-2)))
+      (declare (array-length length-1 length-2))
+      (with-key-function (key key)
+        (cond ((zerop length-1) vector-2)
+              ((zerop length-2) vector-1)
+              (t
+               (let* ((result (make-sequence-like prototype (+ length-1 length-2)))
+                      (elt-1 (elt vector-1 0))
+                      (elt-2 (elt vector-2 0))
+                      (key-1 (key elt-1))
+                      (key-2 (key elt-2))
+                      (result-index 0)
+                      (index-1 0)
+                      (index-2 0))
+                 (declare (array-length result-index index-1 index-1))
+                 (flet ((finish (vector index length)
+                          (loop for i fixnum from index below length do
+                            (setf (elt result result-index)
+                                  (elt vector i))
+                            (incf result-index))
+                          (return-from merge-sequence-like result)))
+                   (loop
+                     (if (funcall predicate key-2 key-1)
+                         (progn
+                           (setf (elt result result-index) elt-2)
+                           (incf index-2)
+                           (incf result-index)
+                           (when (= index-2 length-2)
+                             (finish vector-1 index-1 length-1))
+                           (setf elt-2 (elt vector-2 index-2))
+                           (setf key-2 (key elt-2)))
+                         (progn
+                           (setf (elt result result-index) elt-1)
+                           (incf index-1)
+                           (incf result-index)
+                           (when (= index-1 length-1)
+                             (finish vector-2 index-2 length-2))
+                           (setf elt-1 (elt vector-1 index-1))
+                           (setf key-1 (key elt-1))))))))))))
+
+  ;; Merging of arbitrary sequences.
   (defmethod merge-sequence-like
       ((prototype #1#) (sequence-1 sequence) (sequence-2 sequence) predicate &key key)
     (let ((predicate (function-designator-function predicate))
@@ -84,44 +131,6 @@
         (cond
           ((zerop length-1) (coerce sequence-2 #1#))
           ((zerop length-2) (coerce sequence-1 #1#))
-          ;; Merging of vectors of the same type as the result.
-          ((and (typep sequence-1 #1#)
-                (typep sequence-2 #1#))
-           (let* ((vector-1 sequence-1)
-                  (vector-2 sequence-2)
-                  (result (make-sequence-like prototype (+ length-1 length-2)))
-                  (elt-1 (elt vector-1 0))
-                  (elt-2 (elt vector-2 0))
-                  (key-1 (key elt-1))
-                  (key-2 (key elt-2))
-                  (result-index 0)
-                  (index-1 0)
-                  (index-2 0))
-             (declare (array-length result-index index-1 index-1))
-             (flet ((finish (vector index length)
-                      (loop for i fixnum from index below length do
-                        (setf (elt result result-index)
-                              (elt vector i))
-                        (incf result-index))
-                      (return-from merge-sequence-like result)))
-               (loop
-                 (if (funcall predicate key-2 key-1)
-                     (progn
-                       (setf (elt result result-index) elt-2)
-                       (incf index-2)
-                       (when (= index-2 length-2)
-                         (finish vector-1 index-1 length-1))
-                       (setf elt-2 (elt vector-2 index-2))
-                       (setf key-2 (key elt-2)))
-                     (progn
-                       (setf (elt result result-index) elt-1)
-                       (incf index-1)
-                       (when (= index-1 length-1)
-                         (finish vector-2 index-2 length-2))
-                       (setf elt-1 (elt vector-1 index-1))
-                       (setf key-1 (key elt-1))))
-                 (incf result-index)))))
-          ;; Merging of arbitrary non-empty sequences.
           (t
            (with-sequence-scanner (iterator-1 sequence-1)
              (with-sequence-scanner (iterator-2 sequence-2)
