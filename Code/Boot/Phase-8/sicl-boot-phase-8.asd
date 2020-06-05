@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "utilities")
    (:file "load-arithmetic-functions")
+   (:file "load-cons-related-functions")
    (:file "boot")))
