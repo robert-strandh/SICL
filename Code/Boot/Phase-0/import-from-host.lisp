@@ -123,6 +123,7 @@
   (host-load "Boot/Phase-0/create-method-lambda.lisp")
   (host-load "CLOS/defmethod-support.lisp")
   (host-load "Character/packages.lisp")
+  (host-load "Hash-tables/packages.lisp")
   (import-standard-common-lisp-functions environment)
   (define-standard-common-lisp-variables environment)
   (define-standard-common-lisp-special-operators environment)
