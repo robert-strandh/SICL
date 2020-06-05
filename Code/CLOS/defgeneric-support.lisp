@@ -100,4 +100,5 @@
                         ',function-type)
                   fun))
               ,@(loop for method in methods
-                      collect `(defmethod ,name ,@(rest method)))))))
+                      collect `(defmethod ,name ,@(rest method)))
+              (fdefinition ',name)))))
