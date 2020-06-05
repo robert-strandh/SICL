@@ -3,6 +3,8 @@
 (defun load-arithmetic-functions (e5)
   (load-source "Arithmetic/less-defun.lisp" e5)
   (load-source "Arithmetic/less-or-equal-defun.lisp" e5)
+  (load-source "Arithmetic/greater-defun.lisp" e5)
+  (load-source "Arithmetic/greater-or-equal-defun.lisp" e5)
   (load-source "Arithmetic/equal-defun.lisp" e5)
   (load-source "Arithmetic/not-equal-defun.lisp" e5)
   (load-source "Arithmetic/plusp-defun.lisp" e5)
