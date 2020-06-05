@@ -16,8 +16,4 @@
 		       (error 'must-be-list
 			      :datum ,element-var
 			      :name ',function-name))))
-	   finally (unless (null ,remaining)
-		     (error 'must-be-association-list
-			    :datum ,alist-var
-			    :name ',function-name))
-		   (return nil))))
+	   finally (return nil))))
