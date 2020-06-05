@@ -1,0 +1,13 @@
+(cl:in-package #:sicl-boot-phase-8)
+
+(defun load-arithmetic-functions (e5)
+  (load-source "Arithmetic/less-defun.lisp" e5)
+  (load-source "Arithmetic/less-or-equal-defun.lisp" e5)
+  (load-source "Arithmetic/equal-defun.lisp" e5)
+  (load-source "Arithmetic/not-equal-defun.lisp" e5)
+  (load-source "Arithmetic/plusp-defun.lisp" e5)
+  (load-source "Arithmetic/minusp-defun.lisp" e5)
+  (load-source "Arithmetic/minus-defun.lisp" e5)
+  (load-source "Arithmetic/one-plus-defun.lisp" e5)
+  (load-source "Arithmetic/one-minus-defun.lisp" e5)
+  (load-source "Arithmetic/zerop-defun.lisp" e5))

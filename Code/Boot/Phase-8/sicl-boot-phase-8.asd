@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "utilities")
+   (:file "load-arithmetic-functions")
    (:file "boot")))
