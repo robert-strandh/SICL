@@ -28,12 +28,15 @@
         do (remove-method generic-function method))
   (setf (initial-methods generic-function) '()))
 
+;;; FIXME: We handle the :METHOD option by expanding to a DEFMETHOD,
+;;; but that is not quite right.  We need to store these methods in a
+;;; slot of the generic function so that we can remove them when the
+;;; DEFGENERIC form is reevaluated.
+
 (defun defgeneric-expander (name lambda-list options-and-methods)
   (check-defgeneric-options-and-methods options-and-methods)
   (multiple-value-bind (options methods)
       (separate-options-and-methods options-and-methods)
-    ;; FIXME: handle methods.
-    (declare (ignore methods))
     (let* ((method-combination-option
              (assoc :method-combination options))
            (method-combination-name
@@ -95,4 +98,6 @@
                         ',lambda-list)
                   (setf (sicl-global-environment:function-type ',name env)
                         ',function-type)
-                  fun))))))
+                  fun))
+              ,@(loop for method in methods
+                      collect `(defmethod ,name ,@(rest method)))))))
