@@ -8,4 +8,5 @@
    (:file "utilities")
    (:file "load-arithmetic-functions")
    (:file "load-cons-related-functions")
+   (:file "load-hash-table-functionality")
    (:file "boot")))
