@@ -68,6 +68,10 @@
                                  tail-2)
                              rest))))))))
           (let ((n (length list)))
+            ;; By handling the case of sorting zero elements and a single
+            ;; element immediately, we ensure that the remaining code will
+            ;; only ever deal with intervals of length two, three, or
+            ;; larger than three.
             (case n
               ((0 1) list)
               (otherwise
