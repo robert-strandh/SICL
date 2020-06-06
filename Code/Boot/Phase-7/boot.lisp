@@ -30,6 +30,7 @@
     (load-source "CLOS/ensure-generic-function-defun.lisp" e5)
     (satiate-generic-functions e3 e4 e5)
     (patch-classes e4 e5)
+    (set-class-unique-number-counter e5)
     (patch-functions e3 e4 e5)
     (move-functions e5 e6)
     (setf (sicl-genv:fdefinition 'make-instance e5)
