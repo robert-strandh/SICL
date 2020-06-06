@@ -11,6 +11,7 @@
    (:file "satiate-generic-functions")
    (:file "patch-slot-metaobject")
    (:file "patch-classes")
+   (:file "set-class-unique-number-counter")
    (:file "patch-method-combination")
    (:file "patch-functions-and-methods")
    (:file "move-functions")
