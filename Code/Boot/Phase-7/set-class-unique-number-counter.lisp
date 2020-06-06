@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-8)
+(cl:in-package #:sicl-boot-phase-7)
 
 (defun find-max-class-unique-number (e5)
   (let ((max 0)
