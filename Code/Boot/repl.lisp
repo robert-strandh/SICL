@@ -6,8 +6,6 @@
            (finish-output *standard-output*)
            (let* ((form (eclector.reader:read))
                   (value (cleavir-cst-to-ast:eval client form e5)))
-             (funcall (sicl-genv:fdefinition 'print-object e5)
-                      value
-                      *standard-output*)
+             (print value)
              (format t "~%")
              (finish-output *standard-output*))))
