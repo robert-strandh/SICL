@@ -5,7 +5,8 @@
         do (format t "SICL> ")
            (finish-output *standard-output*)
            (let* ((form (eclector.reader:read))
-                  (value (cleavir-cst-to-ast:eval client form e5)))
-             (print value)
+                  (values (multiple-value-list (cleavir-cst-to-ast:eval client form e5))))
+             (loop for value in values
+                   do (print value))
              (format t "~%")
              (finish-output *standard-output*))))
