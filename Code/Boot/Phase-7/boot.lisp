@@ -32,9 +32,11 @@
     (patch-classes e4 e5)
     (set-class-unique-number-counter e5)
     (patch-functions e3 e4 e5)
+    (patch-method-specializers e5)
     (move-functions e5 e6)
     (setf (sicl-genv:fdefinition 'make-instance e5)
           (sicl-genv:fdefinition 'sicl-clos::make-instance-temp e5))
+    (satiate-generic-functions e5 e5 e5)
     (sicl-boot:import-functions-from-host
      '(cleavir-code-utilities:lambda-list-type-specifier
        sicl-genv:fdefinition)
