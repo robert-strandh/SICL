@@ -23,7 +23,7 @@
              (setf (first rest)
                    (find-replacement-class (first rest) e5)))))
 
-(defun patch-specializers (e5)
+(defun patch-method-specializers (e5)
   (let ((table (make-hash-table :test #'equal)))
     (do-all-symbols (symbol)
       (unless (gethash symbol table)
