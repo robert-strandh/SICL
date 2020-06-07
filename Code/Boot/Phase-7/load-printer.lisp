@@ -6,7 +6,7 @@
    e5)
   (import-functions-from-host
    '(zerop minusp float log integer-length * max expt schar princ mod
-     sicl-genv:boundp)
+     print sicl-genv:boundp)
    e5)
   (load-source "Printer/variables.lisp" e5)
   (load-source "Printer/integer.lisp" e5)
@@ -19,4 +19,3 @@
   (load-source "Printer/print-object-defmethod-function.lisp" e5)
   (load-source "Printer/print-object-defmethod-class.lisp" e5)
   (load-source "Printer/print-object-defmethod-generic-function.lisp" e5))
-
