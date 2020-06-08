@@ -4,6 +4,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "arithmetic")
    (:file "once-only")
    (:file "with-gensyms")
    (:file "with-collectors")))

@@ -31,12 +31,13 @@
       (declare (type #1# result))
       (loop for sequence in sequences do
         (typecase sequence
-          (#1#
+          (simple-vector #2=
            (let ((amount (length sequence)))
              (loop for offset below amount do
                (setf (elt result (+ index offset))
                      (elt sequence offset)))
              (incf index amount)))
+          (#1# #2#)
           (list
            (loop for element in sequence do
              (setf (elt result index)

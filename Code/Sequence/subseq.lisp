@@ -15,6 +15,9 @@
        (make-sequence-like vector (- end start))
        vector :start2 start :end2 end))))
 
-(defsetf subseq (sequence start &optional end) (value)
-  `(progn (replace ,sequence ,value :start1 ,start :end1 ,end) ,value))
+;; The spec gives this definition of (setf subseq) as an example of using
+;; the long form of defsetf.
+(defsetf subseq (sequence-1 start &optional end) (sequence-2)
+  `(progn (replace ,sequence-1 ,sequence-2 :start1 ,start :end1 ,end)
+          ,sequence-2))
 
