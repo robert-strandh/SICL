@@ -81,3 +81,134 @@
                (values
                 (stable-sort-n list n))))))))))
 
+;;; We use binary insertion sort for stable sorting small blocks of
+;;; elements, and then merge these blocks.  For merging, we use a technique
+;;; by Pok-Son Kim and Arne Kutzner from the paper "Stable Minimum Storage
+;;; Merging by Symmetric Comparisons" (DOI: 10.1007/978-3-540-30140-0_63)
+
+(defconstant +symsort-block-size+ 10)
+
+(defmethod stable-sort ((vector simple-vector) predicate &key key)
+  (declare (simple-vector vector))
+  (let ((length (length vector))
+        (predicate (function-designator-function predicate)))
+    (declare (vector-length length))
+    (declare (function predicate))
+    (with-key-function (key key)
+      (labels
+          ;; Sort the interval from START to END, using binary insertion.
+          ((binary-insertion-sort (start end)
+             (declare (vector-length start end))
+             (loop for position fixnum from (1+ start) below end do
+               (let* ((pivot (elt vector position))
+                      (pivot-key (key pivot))
+                      (l start)
+                      (r position))
+                 (declare (vector-index l r))
+                 (loop until (= l r) do
+                   (let ((m (floor (+ l r) 2)))
+                     (if (funcall predicate pivot-key (key (elt vector m)))
+                         (setf r m)
+                         (setf l (1+ m)))))
+                 (replace vector vector :start1 (1+ l) :start2 l :end2 position)
+                 (setf (elt vector l) pivot)))
+             vector)
+           ;; Merge the adjacent array intervals U (from FIRST1 to FIRST2)
+           ;; and V (from FIRST2 to LAST).
+           (symmerge (first1 first2 last)
+             (declare (vector-length first1 first2 last))
+             (when (< first1 first2 last)
+               (cond
+                 ;; If the interval U has exactly one element, we can insert that
+                 ;; element into V using binary search.
+                 ((= (- first2 first1) 1)
+                  (let ((u (elt vector first1))
+                        (l first2)
+                        (r (1- last)))
+                    (loop until (= l r) do
+                      (let ((m (floor (+ l r) 2)))
+                        (if (funcall predicate (elt vector m) u)
+                            (setf l (1+ m))
+                            (setf r m))))
+                    (replace vector vector :start1 first1 :start2 (1+ first1) :end1 (1- l))
+                    (setf (elt vector l) u)))
+                 ;; If the interval V has exactly one element, we can insert that
+                 ;; element into U using binary search.
+                 ((= (- last first2) 1)
+                  (let ((v (elt vector first2))
+                        (l first1)
+                        (r (1- first2)))
+                    (loop until (= l r) do
+                      (let ((m (floor (+ l r) 2)))
+                        (if (funcall predicate v (elt vector m))
+                            (setf r m)
+                            (setf l (1+ m)))))
+                    (replace vector vector :start1 (1+ l) :start2 l :end2 first2)
+                    (setf (elt vector l) v)))
+                 ;; Otherwise, we perform the actual symmerge.
+                 (t
+                  (let* ((m (floor (+ first1 last) 2))
+                         (n (+ m first2))
+                         (start
+                           (if (> first2 m)
+                               (bsearch (- n last) m (1- n))
+                               (bsearch first1 first2 (1- n))))
+                         (end (- n start)))
+                    (rotate start first2 end)
+                    (symmerge first1 start m)
+                    (symmerge m end last))))))
+           (bsearch (l r p)
+             (declare (vector-length l r p))
+             (loop until (= l r) do
+               (let ((m (floor (+ l r) 2)))
+                 (if (funcall predicate
+                              (key (elt vector (- p m)))
+                              (key (elt vector m)))
+                     (setf r m)
+                     (setf l (1+ m)))))
+             l)
+           (swap-range (start1 start2 n)
+             (declare (vector-length start1 start2 n))
+             (loop for offset fixnum below n do
+               (rotatef (elt vector (+ start1 offset))
+                        (elt vector (+ start2 offset)))))
+           ;; Rotate the two consecutive blocks L and R, where L is the
+           ;; range from START below POSITION, and R is the range from
+           ;; POSITION below END.
+           (rotate (start position end)
+             (declare (vector-length start position end))
+             (when (< start position end)
+               (let ((n-left (- position start))
+                     (n-right (- end position)))
+                 (declare (type vector-length n-left n-right))
+                 (loop
+                   (cond ((= n-left n-right)
+                          (swap-range (- position n-left) position n-left)
+                          (return))
+                         ((> n-left n-right)
+                          (swap-range (- position n-left) position n-right)
+                          (decf n-left n-right))
+                         ((< n-left n-right)
+                          (swap-range (- position n-left) (+ position (- n-right n-left)) n-left)
+                          (decf n-right n-left))))))))
+        ;; Sort each block.
+        (let ((start 0)
+              (end +symsort-block-size+))
+          (declare (vector-length start end))
+          (loop while (< end length) do
+            (binary-insertion-sort start end)
+            (shiftf start end (+ end +symsort-block-size+)))
+          (binary-insertion-sort start length))
+        ;; Successively merge all blocks.
+        (do ((block-size +symsort-block-size+ (* 2 block-size)))
+            ((>= block-size length) vector)
+          (declare (vector-length block-size))
+          (let ((start 0)
+                (end (* 2 block-size)))
+            (loop while (< end length) do
+              (symmerge start (+ start block-size) end)
+              (shiftf start end (+ end (* 2 block-size))))
+            (let ((pos (+ start block-size)))
+              (when (< pos length)
+                (symmerge start pos length)))))))))
+
