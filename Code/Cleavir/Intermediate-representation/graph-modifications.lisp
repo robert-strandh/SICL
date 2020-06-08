@@ -44,14 +44,14 @@
   ;; a reinitialize-data.
   (loop for input in (inputs instruction)
         do (setf (using-instructions input)
-                 (remove instruction (using-instructions input))))
+                 (delete instruction (using-instructions input))))
   (setf (using-instructions (dynamic-environment instruction))
-        (remove instruction (using-instructions
+        (delete instruction (using-instructions
                              (dynamic-environment instruction))))
   (setf (inputs instruction) '())
   (loop for output in (outputs instruction)
         do (setf (defining-instructions output)
-                 (remove instruction (defining-instructions output))))
+                 (delete instruction (defining-instructions output))))
   (setf (outputs instruction) '())
   ;; Delete the instruction from the control flow graph.
   (let ((successor (car (successors instruction)))
@@ -81,7 +81,7 @@
                   ;; multiple times in case some of our predecessors are already a
                   ;; predecessors of our successor.
                   (setf (predecessors successor)
-                        (remove instruction (predecessors successor)
+                        (delete instruction (predecessors successor)
                                 :test #'eq))
                   (loop for predecessor in predecessors
                         do (pushnew predecessor (predecessors successor)
