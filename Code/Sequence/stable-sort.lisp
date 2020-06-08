@@ -86,7 +86,7 @@
 ;;; by Pok-Son Kim and Arne Kutzner from the paper "Stable Minimum Storage
 ;;; Merging by Symmetric Comparisons" (DOI: 10.1007/978-3-540-30140-0_63)
 
-(defconstant +symsort-block-size+ 10)
+(defconstant +symsort-block-size+ 12)
 
 (defmethod stable-sort ((vector simple-vector) predicate &key key)
   (declare (simple-vector vector))
@@ -124,23 +124,23 @@
                  ((= (- first2 first1) 1)
                   (let ((u (elt vector first1))
                         (l first2)
-                        (r (1- last)))
+                        (r last))
                     (loop until (= l r) do
                       (let ((m (floor (+ l r) 2)))
-                        (if (funcall predicate (elt vector m) u)
+                        (if (funcall predicate (key (elt vector m)) (key u))
                             (setf l (1+ m))
                             (setf r m))))
                     (replace vector vector :start1 first1 :start2 (1+ first1) :end1 (1- l))
-                    (setf (elt vector l) u)))
+                    (setf (elt vector (1- l)) u)))
                  ;; If the interval V has exactly one element, we can insert that
                  ;; element into U using binary search.
                  ((= (- last first2) 1)
                   (let ((v (elt vector first2))
                         (l first1)
-                        (r (1- first2)))
+                        (r first2))
                     (loop until (= l r) do
                       (let ((m (floor (+ l r) 2)))
-                        (if (funcall predicate v (elt vector m))
+                        (if (funcall predicate (key v) (key (elt vector m)))
                             (setf r m)
                             (setf l (1+ m)))))
                     (replace vector vector :start1 (1+ l) :start2 l :end2 first2)
