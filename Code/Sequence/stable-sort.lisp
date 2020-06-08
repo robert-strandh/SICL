@@ -56,7 +56,7 @@
                              (cons-sorter (cons-1 cons-2 cons-3) (0 2 1)))
                          (cons-sorter (cons-1 cons-2 cons-3) (0 1 2))))))
              (stable-sort-n (list n)
-               (declare (array-length n))
+               (declare (list-length n))
                (case n
                  (2 (stable-sort-2 list))
                  (3 (stable-sort-3 list))

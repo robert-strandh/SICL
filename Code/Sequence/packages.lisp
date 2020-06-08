@@ -13,6 +13,9 @@
    #:no-primary-method)
 
   (:shadow
+   ;; We define LIST-LENGTH as the type of integers that denote the length
+   ;; of a list.
+   #:list-length
    . #1=
    (#:copy-seq
     #:elt

@@ -18,7 +18,7 @@
             (array-total-size vector)))
     (let ((function (function-designator-function function))
           (index 0))
-      (declare (array-length index))
+      (declare (vector-length index))
       (flet ((fn (&rest arguments)
                (setf (elt vector index)
                      (funcall function arguments))

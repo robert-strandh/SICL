@@ -52,7 +52,7 @@
      (the sequence-scanner
       (lambda (vector state scan-buffer)
         (declare (type #1# vector))
-        (declare (array-length state))
+        (declare (vector-length state))
         (declare (scan-buffer scan-buffer))
         (let ((n (min (- (length vector) state)
                       (length scan-buffer))))

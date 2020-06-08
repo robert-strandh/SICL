@@ -59,7 +59,7 @@
         (canonicalize-start-and-end vector start end)
       (let ((amount (- end start))
             (destination start))
-        (declare (array-length destination))
+        (declare (vector-length destination))
         (if (and (> amount *delete-duplicates-hash-threshold*)
                  (or (and (null test) (null test-not))
                      (hash-table-test-p test)))

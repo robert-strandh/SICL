@@ -3,7 +3,7 @@
 (declaim (inline elt-aux))
 (defun elt-aux (list index)
   (declare (list list)
-           (array-index index))
+           (list-index index))
   (let ((rest list)
         (count 0))
     (loop
@@ -19,7 +19,7 @@
 
 (defmethod elt ((list list) index)
   (declare (method-properties inlineable))
-  (check-type index array-index)
+  (check-type index list-index)
   (car (elt-aux list index)))
 
 (seal-domain #'elt '(list t))
@@ -32,7 +32,7 @@
 
 (defmethod (setf elt) (value (list list) index)
   (declare (method-properties inlineable))
-  (check-type index array-index)
+  (check-type index list-index)
   (setf (car (elt-aux list index)) value))
 
 (seal-domain #'(setf elt) '(t list t))

@@ -32,7 +32,7 @@
              (cons1 rest1 (cdr cons1))
              (cons2 rest2 (cdr cons2)))
             ((= counter limit) list1)
-          (declare (array-length counter limit))
+          (declare (list-length counter limit))
           (setf (car cons1) (car cons2)))))))
 
 (seal-domain #'replace '(list list))
@@ -48,7 +48,7 @@
              (counter 0 (1+ counter))
              (cons (nthcdr start1 list) (cdr cons)))
             ((= counter limit) list)
-          (declare (array-length counter limit))
+          (declare (list-length counter limit))
           (setf (car cons) (elt vector (+ start2 counter)))))))
 
   (defmethod replace ((vector #1#) (list list) &key (start1 0) end1 (start2 0) end2)
@@ -61,7 +61,7 @@
              (counter 0 (1+ counter))
              (cons (nthcdr start2 list) (cdr cons)))
             ((= counter limit) vector)
-          (declare (array-length counter limit))
+          (declare (type (and list-length vector-length) counter limit))
           (setf (elt vector (+ start1 counter)) (car cons)))))))
 
 (seal-domain #'replace '(list vector))
@@ -88,7 +88,7 @@
                 vector1
                 (do ((counter (min (- end1 start1) (- end2 start2)) (1- counter)))
                     ((zerop counter) vector1)
-                  (declare (array-length counter))
+                  (declare (vector-length counter))
                   (setf (elt vector1 (+ start1 counter -1))
                         (elt vector1 (+ start2 counter -1)))))
             ;; If we are dealing with distinct vectors, or if the source
@@ -96,7 +96,7 @@
             (do ((limit (min (- end1 start1) (- end2 start2)))
                  (counter 0 (1+ counter)))
                 ((= counter limit) vector1)
-              (declare (array-length counter limit))
+              (declare (vector-length counter limit))
               (setf (elt vector1 (+ start1 counter))
                     (elt vector2 (+ start2 counter)))))))))
 

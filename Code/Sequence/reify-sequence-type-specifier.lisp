@@ -21,7 +21,7 @@
            (parse-size (size)
              (typecase size
                ((eql *) nil)
-               (array-length size)
+               (vector-length size)
                (otherwise (fail)))))
     (typecase type-specifier
       (symbol

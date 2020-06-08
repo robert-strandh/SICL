@@ -27,7 +27,7 @@
     (let* ((length (loop for sequence in sequences sum (length sequence)))
            (result (make-sequence-like vector length))
            (index 0))
-      (declare (array-length length index))
+      (declare (vector-length length index))
       (declare (type #1# result))
       (loop for sequence in sequences do
         (typecase sequence

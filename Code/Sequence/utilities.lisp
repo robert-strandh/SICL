@@ -31,7 +31,7 @@
         (t (min count (- array-total-size-limit 2)))))
 
 (declaim (ftype (function (sequence t t)
-                          (values array-index array-length array-length &optional))
+                          (values sequence-index sequence-length sequence-length &optional))
                 canonicalize-start-and-end))
 (declaim (inline canonicalize-start-and-end))
 (defun canonicalize-start-and-end (sequence start end)
