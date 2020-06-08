@@ -3,6 +3,11 @@
 (defpackage #:cleavir-primop
   (:use)
   (:export
+   #:fixnump
+   #:consp
+   #:characterp
+   #:single-float-p
+   #:standard-object-p
    #:eq
    #:typeq
    #:car #:cdr #:rplaca #:rplacd
