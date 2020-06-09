@@ -94,6 +94,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:CONSP.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:consp)) cst environment)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (consp-cst object-cst) cst
+    (declare (ignore consp-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:consp-ast
+      :object-ast (convert client object-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:CAR.
 
 (defmethod convert-special
