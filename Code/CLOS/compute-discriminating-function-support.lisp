@@ -322,18 +322,19 @@
   (let ((df (compute-discriminating-function generic-function)))
     (set-funcallable-instance-function generic-function df)))
 
-;;; This function takes a generic function, a list of class numbers, a
-;;; list of classes, and a list of applicable methods and adds an new
-;;; call cache to the call history of the generic function.  If the
-;;; same (EQUAL) applicable method cache A already exists in some call
-;;; cache C in the call history, then the new call cache is
+;;; This function takes a generic function, a list of classes of all
+;;; the required arguments, a list of relevant classes (i.e., classes
+;;; of the arguments that have parameters that are specialized upon),
+;;; and a list of applicable methods.  It adds an new call cache to
+;;; the call history of the generic function.  If the same (EQUAL)
+;;; applicable method cache A already exists in some call cache C in
+;;; the call history, then the new call cache is constructed from the
+;;; list of class numbers passed as an argument, A, and the
+;;; effective-method cache of C.  Otherwise the new call cache is
 ;;; constructed from the list of class numbers passed as an argument,
-;;; A, and the effective-method cache of C.  Otherwise the new call
-;;; cache is constructed from the list of class numbers passed as an
-;;; argument, the list of applicable methods passed as an argument,
-;;; and a new effective method obtained by calling
-;;; COMPUTE-EFFECTIVE-METHOD.  Either way, we return the effective
-;;; method of the new call cache.
+;;; the list of applicable methods passed as an argument, and a new
+;;; effective method obtained by calling COMPUTE-EFFECTIVE-METHOD.
+;;; Either way, we return the effective method of the new call cache.
 (defun add-call-cache
     (generic-function classes relevant-classes applicable-methods)
   (let* ((call-history (call-history generic-function))
