@@ -55,6 +55,7 @@
                                methods)))))
 
 (defun load-call-history (generic-function)
+  (setf (call-history generic-function) '())
   (loop with profile = (specializer-profile generic-function)
         for method in (generic-function-methods generic-function)
         for specializers = (method-specializers method)
