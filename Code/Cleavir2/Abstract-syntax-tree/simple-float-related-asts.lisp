@@ -1,5 +1,22 @@
 (cl:in-package #:cleavir-ast)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SINGLE-FLOAT-P-AST.
+;;;
+;;; This AST can be used by implementations that represent single
+;;; floats as immediate objects with tags.  It can only occur as the
+;;; test of an IF-AST.
+
+(defclass single-float-p-ast (ast boolean-ast-mixin)
+  ((%object-ast :initarg :object-ast :reader object-ast)))
+
+(cleavir-io:define-save-info single-float-p-ast
+  (:object-ast object-ast))
+
+(defmethod children ((ast single-float-p-ast))
+  (list (object-ast ast)))
+
 (defmacro define-simple-one-arg-float-ast (name)
   `(progn 
      (defclass ,name (ast one-value-ast-mixin)
