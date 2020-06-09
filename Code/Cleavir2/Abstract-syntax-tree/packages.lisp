@@ -80,6 +80,7 @@
    #:float-cos-ast
    #:float-sqrt-ast
    #:subtype
+   #:standard-object-p-ast
    #:nook-read-ast #:nook-number-ast
    #:nook-write-ast
    #:aref-ast #:aset-ast
