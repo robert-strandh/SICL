@@ -49,6 +49,7 @@
    #:protected-form-ast
    #:cleanup-thunk-ast
    #:eq-ast
+   #:consp-ast
    #:car-ast #:cons-ast
    #:cdr-ast
    #:rplaca-ast #:object-ast
