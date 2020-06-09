@@ -2,6 +2,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class CONSP-AST.
+;;;
+;;; This AST can be used by implementations that identify CONS cells
+;;; by pointer tags.  It can only occur as the test of an IF-AST.
+
+(defclass consp-ast (ast boolean-ast-mixin)
+  ((%object-ast :initarg :object-ast :reader object-ast)))
+
+(cleavir-io:define-save-info consp-ast
+  (:object-ast object-ast))
+
+(defmethod children ((ast consp-ast))
+  (list (object-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CAR-AST.
 ;;;
 ;;; This AST can be used to implement the function CAR.  However, it
