@@ -144,6 +144,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUMP.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:fixnump)) cst environment)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (fixnump-cst object-cst) cst
+    (declare (ignore fixnump-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:fixnump-ast
+      :object-ast (convert client object-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-ADD.
 
 (defmethod convert-special
