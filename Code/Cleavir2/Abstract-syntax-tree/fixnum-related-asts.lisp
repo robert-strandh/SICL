@@ -3,6 +3,23 @@
 ;;;; This file contains definitions of AST classes that have to do
 ;;;; with fixnum arithmetic and comparison. 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FIXNUMP-AST.
+;;;
+;;; This AST can be used by implementations that represent fixnums as
+;;; immediate objects with tags.  It can only occur as the test of an
+;;; IF-AST.
+
+(defclass fixnump-ast (ast boolean-ast-mixin)
+  ((%object-ast :initarg :object-ast :reader object-ast)))
+
+(cleavir-io:define-save-info fixnump-ast
+  (:object-ast object-ast))
+
+(defmethod children ((ast fixnump-ast))
+  (list (object-ast ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Classes for fixnum arithmetic.
