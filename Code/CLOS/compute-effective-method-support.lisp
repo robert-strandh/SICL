@@ -28,7 +28,7 @@
                                    ',next-methods-var)
                                  (list ,@next-method-list)))
                       ((not (consp method))
-                       `(funcall (method-function ,method)
+                       `(funcall ,(method-function method)
                                  ,',arguments-var
                                  (list ,@next-method-list)))
                       (t (error "Malformed argument to CALL-METHOD ~s" method)))))
