@@ -2,6 +2,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class STANDARD-OBJECT-P-AST.
+;;;
+;;; This AST can be used by implementations that identify standard
+;;; objects by pointer tags.  It can only occur as the test of an
+;;; IF-AST.
+
+(defclass standard-object-p-ast (ast boolean-ast-mixin)
+  ((%object-ast :initarg :object-ast :reader object-ast)))
+
+(cleavir-io:define-save-info standard-object-p-ast
+  (:object-ast object-ast))
+
+(defmethod children ((ast standard-object-p-ast))
+  (list (object-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class NOOK-READ-AST.
 ;;;
 ;;; This AST can be used to read a nook from a standard object.  It
