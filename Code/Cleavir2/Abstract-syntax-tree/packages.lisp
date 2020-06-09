@@ -65,6 +65,7 @@
    #:fixnum-greater-ast
    #:fixnum-not-less-ast
    #:fixnum-equal-ast
+   #:characterp-ast
    #:single-float-p-ast
    #:float-add-ast
    #:float-sub-ast
