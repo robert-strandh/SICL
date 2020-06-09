@@ -219,3 +219,32 @@
             (let ((pos (+ start block-size)))
               (when (< pos length)
                 (symmerge start pos length))))))))))
+
+;;; Stable sorting of bit vectors is one of the few cases where counting
+;;; sort really shines.
+
+(replicate-for-each #1=#:bit-vector (bit-vector simple-bit-vector)
+  (defmethod stable-sort ((bit-vector #1#) predicate &key key)
+    (let ((predicate (function-designator-function predicate))
+          (0-counter 0)
+          (1-counter 0))
+      (declare (vector-index 0-counter 1-counter))
+      (loop for bit across bit-vector do
+        (if (zerop bit)
+            (incf 0-counter)
+            (incf 1-counter)))
+      (with-key-function (key key)
+        (if (or (zerop 0-counter)
+                (zerop 1-counter))
+            bit-vector
+            (let ((k0 (key 0))
+                  (k1 (key 1)))
+              (if (funcall predicate k0 k1)
+                  (progn
+                    (fill bit-vector 0 :end 0-counter)
+                    (fill bit-vector 1 :start 0-counter))
+                  (if (funcall predicate k1 k0)
+                      (progn
+                        (fill bit-vector 1 :end 1-counter)
+                        (fill bit-vector 0 :start 1-counter))
+                      bit-vector))))))))
