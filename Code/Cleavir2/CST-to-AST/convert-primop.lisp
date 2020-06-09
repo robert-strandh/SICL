@@ -261,6 +261,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:CHARACTERP.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:characterp)) cst environment)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (characterp-cst object-cst) cst
+    (declare (ignore characterp-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:characterp-ast
+      :object-ast (convert client object-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:LET-UNINITIALIZED.
 ;;;
 ;;; A form using the operator LET-UNINITIALIZED has the following
