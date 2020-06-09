@@ -56,6 +56,7 @@
    #:rplacd-ast
    #:coerce-ast #:from-type #:to-type #:arg-ast
    #:variable-ast #:operation-ast #:normal-ast #:overflow-ast
+   #:fixnump-ast
    #:fixnum-add-ast
    #:fixnum-sub-ast
    #:arg1-ast #:arg2-ast #:variable-ast
