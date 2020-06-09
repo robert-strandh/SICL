@@ -90,14 +90,14 @@
 ;;; programming language, written by Volker Dobler.
 ;;;
 ;;; A note on performance: For random data, this code is about half as fast
-;;; as a decent merge sort implementation and also requires about twice the
-;;; number of comparisons.  However, it adapts marvelously to partially
-;;; sorted data and does not cons.
+;;; as a decent merge sort, and also requires about twice the number of
+;;; comparisons.  However, it adapts marvelously to partially sorted data
+;;; and does not cons.
 
 (defconstant +symsort-block-size+ 16)
 
 (replicate-for-each #1=#:vector (vector simple-vector)
-(defmethod stable-sort ((vector #1#) predicate &key key)
+ (defmethod stable-sort ((vector #1#) predicate &key key)
   (declare (#1# vector))
   (let ((length (length vector))
         (predicate (function-designator-function predicate)))
