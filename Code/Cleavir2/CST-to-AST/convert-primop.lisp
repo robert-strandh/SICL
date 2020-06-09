@@ -432,6 +432,18 @@
       :simple-p (cst:raw simple-p-cst)
       :boxed-p (cst:raw boxed-p-cst))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:SINGLE-FLOAT-P.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:single-float-p)) cst environment)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (single-float-p-cst object-cst) cst
+    (declare (ignore single-float-p-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:single-float-p-ast
+      :object-ast (convert client object-cst environment))))
+
 ;;; The following macro is used to generate a method on
 ;;; CONVERT-SPECIAL for binary floating-point primops.
 (defmacro define-float-binop (primop ast)
