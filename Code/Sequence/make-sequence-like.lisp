@@ -17,7 +17,7 @@
            (replace result initial-contents)
            result))
         (t
-         (make-list (list-length list)))))
+         (make-list length))))
 
 (seal-domain #'make-sequence-like '(list t))
 

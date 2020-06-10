@@ -117,31 +117,44 @@
       (push-subclasses class)
       subclasses)))
 
-(defparameter *vector-classes* (class-subclasses (find-class 'vector)))
+(defparameter *vector-classes*
+  (loop for class in (mapcar #'class-name (class-subclasses (find-class 'vector)))
+        unless (subtypep class '(array nil))
+          collect class))
+
+(defmacro replicate-for-each (symbol items &body body)
+  (check-type symbol symbol)
+  `(progn
+     ,@(loop for item in items append (subst item symbol body))))
 
 (defmacro replicate-for-each-vector-class (symbol &body body)
-  `(progn
-     ,@(loop for class in *vector-classes*
-             unless (subtypep class '(array nil))
-               append (subst class symbol body))))
+  `(replicate-for-each ,symbol ,*vector-classes* ,@body))
 
 ;;; A vector class is compatible with another vector class, if elements of
 ;;; the former can be stored in the latter, i.e., when the intersection of
 ;;; both element types is non-empty.
 (defmacro replicate-for-all-compatible-vector-classes (symbol-1 symbol-2 &body body)
-  (sicl-utilities:with-collectors ((forms collect-form))
-    (loop for class-1 in *vector-classes* do
-      (loop for class-2 in *vector-classes* do
-        (let ((element-type-1 (sequence-class-element-type class-1))
-              (element-type-2 (sequence-class-element-type class-2)))
-          (unless (subtypep element-type-1 nil)
-            (unless (subtypep element-type-2 nil)
-              (unless (subtypep `(and ,element-type-1 ,element-type-2) nil)
-                (collect-form
-                 (subst class-2 symbol-2 (subst class-1 symbol-1 `(progn ,@body))))))))))
-    `(progn ,@(forms))))
+  `(progn
+     ,@(loop for vector-class in *vector-classes*
+             collect
+             `(replicate-for-each ,symbol-1 (,vector-class)
+                (replicate-for-each ,symbol-2 ,(compatible-vector-classes vector-class)
+                  ,@body)))))
+
+(defun compatible-vector-classes (vector-class)
+  (let ((type-1 (sequence-class-element-type vector-class)))
+    (if (subtypep type-1 'nil)
+        '()
+        (loop for class in *vector-classes*
+              unless
+              (let ((type-2 (sequence-class-element-type class)))
+                (or (subtypep type-2 'nil)
+                    (subtypep `(and ,type-1 ,type-2) nil)))
+                collect class))))
 
 (defun sequence-class-element-type (sequence-class)
+  (when (symbolp sequence-class)
+    (setf sequence-class (find-class sequence-class)))
   (if (subtypep sequence-class '(not vector))
       't
       (let ((direct-subclasses (closer-mop:class-direct-subclasses sequence-class)))

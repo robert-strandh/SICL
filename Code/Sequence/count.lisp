@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-sequence)
 
 (defmethod count (item (list list) &key from-end (start 0) end key test test-not)
+  (declare (method-properties inlineable))
   (let ((count 0))
     (declare (list-length count))
     (with-test-function (test test test-not)
@@ -14,6 +15,7 @@
 
 (replicate-for-each-vector-class #1=#:vector-class
   (defmethod count (item (vector #1#) &key from-end (start 0) end key test test-not)
+    (declare (method-properties inlineable))
     (let ((count 0))
       (declare (vector-length count))
       (with-test-function (test test test-not)

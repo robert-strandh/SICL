@@ -85,34 +85,40 @@
 ;;; elements, and then merge these blocks.  For merging, we use a technique
 ;;; by Pok-Son Kim and Arne Kutzner from the paper "Stable Minimum Storage
 ;;; Merging by Symmetric Comparisons" (DOI: 10.1007/978-3-540-30140-0_63)
+;;;
+;;; This code was inspired by a stable sorting function for the Go
+;;; programming language, written by Volker Dobler.
+;;;
+;;; A note on performance: For random data, this code is about half as fast
+;;; as a decent merge sort, and also requires about twice the number of
+;;; comparisons.  However, it adapts marvelously to partially sorted data
+;;; and does not cons.
 
-(defconstant +symsort-block-size+ 12)
+(defconstant +symsort-block-size+ 16)
 
-(defmethod stable-sort ((vector simple-vector) predicate &key key)
-  (declare (simple-vector vector))
+(replicate-for-each #1=#:vector (vector simple-vector)
+ (defmethod stable-sort ((vector #1#) predicate &key key)
+  (declare (#1# vector))
   (let ((length (length vector))
         (predicate (function-designator-function predicate)))
     (declare (vector-length length))
     (declare (function predicate))
     (with-key-function (key key)
       (labels
-          ;; Sort the interval from START to END, using binary insertion.
-          ((binary-insertion-sort (start end)
+          ;; Sort the interval from START to END.
+          ((insertion-sort (start end)
              (declare (vector-length start end))
              (loop for position fixnum from (1+ start) below end do
                (let* ((pivot (elt vector position))
                       (pivot-key (key pivot))
-                      (l start)
-                      (r position))
-                 (declare (vector-index l r))
-                 (loop until (= l r) do
-                   (let ((m (floor (+ l r) 2)))
-                     (if (funcall predicate pivot-key (key (elt vector m)))
-                         (setf r m)
-                         (setf l (1+ m)))))
-                 (replace vector vector :start1 (1+ l) :start2 l :end2 position)
-                 (setf (elt vector l) pivot)))
-             vector)
+                      (index position))
+                 (declare (vector-length index))
+                 (loop for peek = (elt vector (1- index))
+                       while (funcall predicate pivot-key (key peek))
+                       do (setf (elt vector index) peek)
+                       do (decf index)
+                       until (= index start))
+                 (setf (elt vector index) pivot))))
            ;; Merge the adjacent array intervals U (from FIRST1 to FIRST2)
            ;; and V (from FIRST2 to LAST).
            (symmerge (first1 first2 last)
@@ -122,12 +128,13 @@
                  ;; If the interval U has exactly one element, we can insert that
                  ;; element into V using binary search.
                  ((= (- first2 first1) 1)
-                  (let ((u (elt vector first1))
-                        (l first2)
-                        (r last))
+                  (let* ((u (elt vector first1))
+                         (k (key u))
+                         (l first2)
+                         (r last))
                     (loop until (= l r) do
                       (let ((m (floor (+ l r) 2)))
-                        (if (funcall predicate (key (elt vector m)) (key u))
+                        (if (funcall predicate (key (elt vector m)) k)
                             (setf l (1+ m))
                             (setf r m))))
                     (replace vector vector :start1 first1 :start2 (1+ first1) :end1 (1- l))
@@ -135,12 +142,13 @@
                  ;; If the interval V has exactly one element, we can insert that
                  ;; element into U using binary search.
                  ((= (- last first2) 1)
-                  (let ((v (elt vector first2))
-                        (l first1)
-                        (r first2))
+                  (let* ((v (elt vector first2))
+                         (k (key v))
+                         (l first1)
+                         (r first2))
                     (loop until (= l r) do
                       (let ((m (floor (+ l r) 2)))
-                        (if (funcall predicate (key v) (key (elt vector m)))
+                        (if (funcall predicate k (key (elt vector m)))
                             (setf r m)
                             (setf l (1+ m)))))
                     (replace vector vector :start1 (1+ l) :start2 l :end2 first2)
@@ -159,14 +167,14 @@
                     (symmerge m end last))))))
            (bsearch (l r p)
              (declare (vector-length l r p))
-             (loop until (= l r) do
-               (let ((m (floor (+ l r) 2)))
-                 (if (funcall predicate
-                              (key (elt vector (- p m)))
-                              (key (elt vector m)))
-                     (setf r m)
-                     (setf l (1+ m)))))
-             l)
+             (if (= l r)
+                 l
+                 (let ((m (floor (+ l r) 2)))
+                   (if (funcall predicate
+                                (key (elt vector (- p m)))
+                                (key (elt vector m)))
+                       (bsearch l m p)
+                       (bsearch (1+ m) r p)))))
            (swap-range (start1 start2 n)
              (declare (vector-length start1 start2 n))
              (loop for offset fixnum below n do
@@ -196,9 +204,9 @@
               (end +symsort-block-size+))
           (declare (vector-length start end))
           (loop while (< end length) do
-            (binary-insertion-sort start end)
+            (insertion-sort start end)
             (shiftf start end (+ end +symsort-block-size+)))
-          (binary-insertion-sort start length))
+          (insertion-sort start length))
         ;; Successively merge all blocks.
         (do ((block-size +symsort-block-size+ (* 2 block-size)))
             ((>= block-size length) vector)
@@ -210,5 +218,30 @@
               (shiftf start end (+ end (* 2 block-size))))
             (let ((pos (+ start block-size)))
               (when (< pos length)
-                (symmerge start pos length)))))))))
+                (symmerge start pos length))))))))))
 
+;;; Stable sorting of bit vectors is one of the few cases where counting
+;;; sort really shines.
+
+(replicate-for-each #1=#:bit-vector (bit-vector simple-bit-vector)
+  (defmethod stable-sort ((bit-vector #1#) predicate &key key)
+    (let ((predicate (function-designator-function predicate))
+          (length (length bit-vector))
+          (zeros (count 0 bit-vector)))
+      (declare (vector-length length zeros))
+      (with-key-function (key key)
+        (if (zerop zeros)
+            bit-vector
+            (if (= zeros length)
+                bit-vector
+                (let ((k0 (key 0))
+                      (k1 (key 1)))
+                  (if (funcall predicate k0 k1)
+                      (progn
+                        (fill bit-vector 0 :end zeros)
+                        (fill bit-vector 1 :start zeros))
+                      (if (funcall predicate k1 k0)
+                          (let ((ones (- length zeros)))
+                            (fill bit-vector 1 :end ones)
+                            (fill bit-vector 0 :start ones))
+                          bit-vector)))))))))
