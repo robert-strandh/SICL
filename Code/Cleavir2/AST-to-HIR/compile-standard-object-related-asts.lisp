@@ -2,6 +2,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a STANDARD-OBJECT-P-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:standard-object-p-ast) context)
+  (assert-context ast context 0 2)
+  (let ((temp (make-temp)))
+    (compile-ast
+     client
+     (cleavir-ast:object-ast ast)
+     (clone-context
+      context
+      :result temp
+      :successor
+      (make-instance 'cleavir-ir:standard-object-p-instruction
+        :input temp
+        :successors (successors context))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a NOOK-READ-AST
 
 (defmethod compile-ast (client (ast cleavir-ast:nook-read-ast) context)
