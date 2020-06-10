@@ -94,19 +94,19 @@
           (if open-inf-p
               (if open-sup-p
                   (if (= end (1+ start))
-                      `(if (= ,var ,start)
+                      `(if (cleavir-primop:fixnum-equal ,var ,start)
                            (go ,target)
                            (go ,default))
-                      `(if (< ,var ,start)
+                      `(if (cleavir-primop:fixnum-less ,var ,start)
                            (go ,default)
-                           (if (< ,var ,end)
+                           (if (cleavir-primop:fixnum-less ,var ,end)
                                (go ,target)
                                (go ,default))))
-                  `(if (< ,var ,start)
+                  `(if (cleavir-primop:fixnum-less ,var ,start)
                        (go ,default)
                        (go ,target)))
               (if open-sup-p
-                  `(if (< ,var ,end)
+                  `(if (cleavir-primop:fixnum-less ,var ,end)
                        (go ,target)
                        (go ,default))
                   `(go ,target))))
@@ -119,7 +119,7 @@
                            (interval-start
                             (transfer-group-interval (car right))))))
           ;; FIXME: these cars and cdrs should be abstracted.
-          `(if (< ,var ,(interval-start (transfer-group-interval (car right))))
+          `(if (cleavir-primop:fixnum-less ,var ,(interval-start (transfer-group-interval (car right))))
                ,(compute-test-tree var default left open-inf-p open-p)
                ,(compute-test-tree var default right nil open-sup-p))))))
 
