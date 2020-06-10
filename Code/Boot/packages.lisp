@@ -30,4 +30,5 @@
            #:define-class-of
            #:enable-allocate-instance
            #:compile-file
+           #:define-cleavir-primops
            #:load-source))
