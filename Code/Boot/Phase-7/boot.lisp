@@ -36,6 +36,8 @@
     (move-functions e5 e6)
     (setf (sicl-genv:fdefinition 'make-instance e5)
           (sicl-genv:fdefinition 'sicl-clos::make-instance-temp e5))
+    (setf (sicl-genv:fdefinition 'sicl-clos::find-accessor-method-class e5)
+          (sicl-genv:fdefinition 'sicl-clos::find-class e5))
     (satiate-generic-functions e5 e5 e5)
     (sicl-boot:import-functions-from-host
      '(cleavir-code-utilities:lambda-list-type-specifier
