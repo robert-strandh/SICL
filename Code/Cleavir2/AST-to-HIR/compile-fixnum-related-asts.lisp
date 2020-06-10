@@ -2,6 +2,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a FIXNUMP-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:fixnump-ast) context)
+  (assert-context ast context 0 2)
+  (let ((temp (make-temp)))
+    (compile-ast
+     client
+     (cleavir-ast:object-ast ast)
+     (clone-context
+      context
+      :result temp
+      :successor
+      (make-instance 'cleavir-ir:fixnump-instruction
+        :input temp
+        :successors (successors context))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a FIXNUM-ADD-AST.
 
 (defmethod compile-ast (client (ast cleavir-ast:fixnum-add-ast) context)
