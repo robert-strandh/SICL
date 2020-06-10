@@ -6,6 +6,7 @@
                    (e5 sicl-boot:e5))
       boot
     (sicl-hir-interpreter:fill-environment e5)
+    (sicl-boot:define-cleavir-primops e3)
     (import-functions-from-host
      '((setf sicl-genv:constant-variable)
        sicl-conditionals:cond-expander
