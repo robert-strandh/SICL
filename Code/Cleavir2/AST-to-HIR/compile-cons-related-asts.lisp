@@ -2,6 +2,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a CONSP-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:consp-ast) context)
+  (assert-context ast context 0 2)
+  (let ((temp (make-temp)))
+    (compile-ast
+     client
+     (cleavir-ast:object-ast ast)
+     (clone-context
+      context
+      :result temp
+      :successor
+      (make-instance 'cleavir-ir:consp-instruction
+        :input temp
+        :successors (successors context))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a CAR-AST
 
 (define-compile-functional-ast
