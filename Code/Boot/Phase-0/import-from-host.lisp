@@ -20,10 +20,6 @@
     (when (special-operator-p symbol)
       (setf (sicl-genv:special-operator symbol environment) t))))
 
-(defun define-cleavir-primops (environment)
-  (do-symbols (symbol (find-package '#:cleavir-primop))
-    (setf (sicl-genv:special-operator symbol environment) t)))
-
 (defun define-defgeneric-expander (environment)
   (setf (sicl-genv:fdefinition 'sicl-clos:defgeneric-expander environment)
         (lambda (name lambda-list options-and-methods)
@@ -128,7 +124,7 @@
   (import-standard-common-lisp-functions environment)
   (define-standard-common-lisp-variables environment)
   (define-standard-common-lisp-special-operators environment)
-  (define-cleavir-primops environment)
+  (sicl-boot:define-cleavir-primops environment)
   (define-defgeneric-expander environment)
   (import-from-cleavir-code-utilities environment)
   (import-macro-expanders environment)

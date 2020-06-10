@@ -159,3 +159,8 @@
             do (setf (car cell) new-function)
                (setf (slot-value entry 'sicl-simple-environment::%function-cell)
                      cell)))))
+
+(defun define-cleavir-primops (environment)
+  (do-symbols (symbol (find-package '#:cleavir-primop))
+    (setf (sicl-genv:special-operator symbol environment) t)))
+
