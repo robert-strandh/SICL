@@ -9,6 +9,5 @@
    (:file "environment")
    (:file "import-from-host")
    (:file "utilities")
-   (:file "define-stamp")
    (:file "define-compile")
    (:file "boot")))

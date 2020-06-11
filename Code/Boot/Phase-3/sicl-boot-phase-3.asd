@@ -13,7 +13,6 @@
    (:file "define-make-instance")
    (:file "enable-defmethod")
    (:file "define-method-on-method-function")
-   (:file "define-stamp")
    (:file "define-compile")
    (:file "enable-class-initialization")
    (:file "boot")))
