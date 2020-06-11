@@ -131,18 +131,46 @@
 ;;; TAGBODY tag.  DEFAULT is a symbol indicating a default TAGBODY tag
 ;;; to transfer control to if the value of VAR is not any of the
 ;;; labels in TRANSFERS.
-(defun test-tree-from-transfers (argument-var default transfers)
-  (let ((transfer-groups (make-transfer-groups transfers)))
-    ;; T and T might not be optimal for the last two arguments.
-    (let ((stamp-var (gensym)))
-      `(let ((,stamp-var (stamp ,argument-var)))
-         ,(compute-test-tree stamp-var default transfer-groups t t)))))
+(defun test-tree-from-standard-object-transfers
+    (argument-var default transfers)
+  (if (null transfers)
+      `(go ,default)
+      (let ((transfer-groups (make-transfer-groups transfers)))
+        ;; T and T might not be optimal for the last two arguments.
+        (let ((stamp-var (gensym)))
+          `(let ((,stamp-var (stamp ,argument-var)))
+             ,(compute-test-tree stamp-var default transfer-groups t t))))))
 
 (defparameter *class-name-to-predicate-name*
   `((fixnum . cleavir-primop:fixnump)
     (cons . cleavir-primop:consp)
     (character . cleavir-primop:characterp)
     (single-float . cleavir-primop:single-float-p)))
+
+(defun test-tree-from-non-standard-object-transfers
+    (argument-var default transfers)
+  (loop with tree = `(go ,default)
+        for (class . tag) in transfers
+        for class-name = (class-name class)
+        for predicate-name = (cdr (assoc class-name *class-name-to-predicate-name*))
+        do (setf tree `(if (,predicate-name ,argument-var)
+                           (go ,tag)
+                           ,tree))
+        finally (return tree)))
+
+(defun test-tree-from-transfers (argument-var default transfers)
+  (let ((standard-object-transfers '())
+        (non-standard-object-transfers '()))
+    (loop for transfer in transfers
+          do (if (member (class-name (car transfer))
+                         '(fixnum cons character single-float))
+                 (push transfer non-standard-object-transfers)
+                 (push transfer standard-object-transfers)))
+    `(if (cleavir-primop:standard-object-p ,argument-var)
+         ,(test-tree-from-standard-object-transfers
+           argument-var default standard-object-transfers)
+         ,(test-tree-from-non-standard-object-transfers
+           argument-var default non-standard-object-transfers))))
 
 (defun test-trees-from-internal-layer-info (var default layer-info)
   (loop for state-info in layer-info
