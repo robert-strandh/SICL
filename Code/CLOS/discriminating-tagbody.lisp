@@ -138,6 +138,12 @@
       `(let ((,stamp-var (stamp ,argument-var)))
          ,(compute-test-tree stamp-var default transfer-groups t t)))))
 
+(defparameter *class-name-to-predicate-name*
+  `((fixnum . cleavir-primop:fixnump)
+    (cons . cleavir-primop:consp)
+    (character . cleavir-primop:characterp)
+    (single-float . cleavir-primop:single-float-p)))
+
 (defun test-trees-from-internal-layer-info (var default layer-info)
   (loop for state-info in layer-info
         collect (car state-info)
