@@ -142,7 +142,7 @@
       (let ((transfer-groups (make-transfer-groups transfers)))
         ;; T and T might not be optimal for the last two arguments.
         (let ((stamp-var (gensym)))
-          `(let ((,stamp-var (stamp ,argument-var)))
+          `(let ((,stamp-var (cleavir-primop:nook-read ,argument-var 0)))
              ,(compute-test-tree stamp-var default transfer-groups t t))))))
 
 (defparameter *class-name-to-predicate-name*
