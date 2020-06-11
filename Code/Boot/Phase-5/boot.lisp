@@ -17,7 +17,6 @@
     (sicl-boot:enable-object-initialization e4 e5)
     (load-source "Conditionals/macros.lisp" e4)
     (sicl-boot:enable-method-combinations e4 e5)
-    (define-stamp e5)
     (define-compile e4 e5)
     (sicl-boot:enable-generic-function-invocation e4 e5)
     (load-source "CLOS/standard-instance-access.lisp" e5)

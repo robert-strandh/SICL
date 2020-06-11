@@ -12,7 +12,6 @@
     (enable-defmethod boot)
     (define-method-on-method-function e3)
     (sicl-boot:enable-method-combinations e2 e3)
-    (define-stamp e3)
     (define-compile e3)
     (sicl-boot:define-class-of e3)
     (setf (sicl-genv:fdefinition 'typep e3)
