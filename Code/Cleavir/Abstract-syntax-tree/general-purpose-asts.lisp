@@ -633,8 +633,7 @@
 (cleavir-io:define-save-info go-ast
   (:tag-ast tag-ast))
 
-(defmethod children ((ast go-ast))
-  (list (tag-ast ast)))
+(defmethod children ((ast go-ast)) nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
