@@ -125,12 +125,16 @@
 
 ;;; ARGUMENT-VAR is the name of a variable containing an argument.
 ;;; TRANSFERS is a list of transfers (recall that a transfer is a CONS
-;;; cell of a label (i.e. the unique name of a class) and the name of
-;;; a TAGBODY tag).  We generate a tree of nested IF forms, testing
-;;; VAR against the labels and generating a GO to the corresponding
+;;; cell of a label (i.e. a class metaobject) and the name of a
+;;; TAGBODY tag).  We generate a tree of nested IF forms, testing VAR
+;;; against the labels and generating a GO to the corresponding
 ;;; TAGBODY tag.  DEFAULT is a symbol indicating a default TAGBODY tag
 ;;; to transfer control to if the value of VAR is not any of the
 ;;; labels in TRANSFERS.
+
+;;; Generate a test tree when it is known that the argument value is a
+;;; standard object.  Then we can take the stamp of it and
+;;; discriminate based on intervals of stamps.
 (defun test-tree-from-standard-object-transfers
     (argument-var default transfers)
   (if (null transfers)
@@ -147,6 +151,9 @@
     (character . cleavir-primop:characterp)
     (single-float . cleavir-primop:single-float-p)))
 
+;;; Generate a test tree when it is known that the argument value is a
+;;; non-standard object.  Then we use primop predicates to test what
+;;; class it is.
 (defun test-tree-from-non-standard-object-transfers
     (argument-var default transfers)
   (loop with tree = `(go ,default)
