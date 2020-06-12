@@ -95,4 +95,8 @@
    #:optimize
    #:policy
    #:environment-policy
-   #:compile-time))
+   #:compile-time
+   #:parse-type-specifier
+   #:parse-values-type-specifier
+   #:parse-expanded-type-specifier
+   #:parse-compound-type-specifier))

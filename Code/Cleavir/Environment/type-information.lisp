@@ -181,7 +181,8 @@
    (if (eql element-type '*)
        element-type
        (cleavir-ctype:upgraded-array-element-type
-        (parse-type-specifier element-type environment system)))
+        (parse-type-specifier element-type environment system)
+        system))
    dimensions simplicity system))
 
 (defmethod parse-compound-type-specifier
@@ -201,7 +202,8 @@
      (if (eql et '*)
          et
          (cleavir-ctype:upgraded-complex-part-type
-          (parse-type-specifier et environment system)))
+          (parse-type-specifier et environment system)
+          system))
      system)))
 
 ;;; Internal helper.
@@ -236,7 +238,9 @@
     ((head (eql 'cl:function)) rest environment system)
   (destructuring-bind (&optional (arg '*) (value '*)) rest
     (multiple-value-call #'cleavir-ctype:function
-      (parse-function-type-lambda-list arg environment system)
+      (if (eq arg '*)
+          arg
+          (parse-function-type-lambda-list arg environment system))
       (if (eq value '*)
           value
           (parse-type-specifier value environment system))
