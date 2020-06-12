@@ -11,6 +11,7 @@
 	   #:eval
 	   #:macro-function
 	   #:compiler-macro-function
+           #:find-class
 	   #:function
 	   #:block
 	   #:inline
@@ -74,6 +75,7 @@
    #:macro-function
    #:compiler-macro-function
    #:symbol-macro-expansion
+   #:find-class
    #:lexical-variable
    #:special-variable
    #:global-p
