@@ -9,14 +9,14 @@
 
 ;;; Internal: Check whether the given default ctype is a values ctype.
 (defun values-ctype-p (ctype)
-  (and (consp ctype) (eql (car ctype) 'values)))
+  (and (consp ctype) (eql (car ctype) 'cl:values)))
 
 ;;; Given a possibly non-values ctype, return a values ctype for it.
 (defmethod coerce-to-values (ctype sys)
   (declare (ignore sys))
   (if (values-ctype-p ctype)
       ctype
-      `(values ,ctype &rest t)))
+      `(cl:values ,ctype &rest t)))
 
 (defmethod subtypep (ct1 ct2 sys)
   (declare (ignore sys))
