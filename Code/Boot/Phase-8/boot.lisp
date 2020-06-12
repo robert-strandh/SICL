@@ -8,10 +8,7 @@
     (load-source "Types/Typep/typep-atomic.lisp" e5)
     (load-source "Types/Typep/typep-compound.lisp" e5)
     (load-source "Types/Typep/typep-compound-integer.lisp" e5)
-    ;; (load-arithmetic-functions e5)
-    (import-functions-from-host
-     '(-)
-     e5)
+    (load-arithmetic-functions e5)
     (import-function-from-host 'sicl-genv:type-expander e5)
     (load-source "Conditionals/support.lisp" e5)
     (load-cons-related-functions e5)
