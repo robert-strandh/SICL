@@ -35,6 +35,7 @@
    #:aref #:aset
    #:call-with-variable-bound
    #:let-uninitialized
+   #:the
    #:funcall
    #:multiple-value-call
    #:multiple-value-setq

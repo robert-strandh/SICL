@@ -243,7 +243,7 @@
           (parse-function-type-lambda-list arg environment system))
       (if (eq value '*)
           value
-          (parse-type-specifier value environment system))
+          (parse-values-type-specifier value environment system))
       system)))
 
 (defun parse-function-type-lambda-list (lambda-list env system)

@@ -123,8 +123,8 @@
 ;;; The first seven parameters represent the parsed lambda list.
 ;;; REQUIRED and OPTIONAL are lists of non-values ctypes, and REST is a
 ;;; non-values ctype. KEYP and ALLOW-OTHER-KEYS-P indicate the presences of
-;;; &key and &allow-other-keys respectively. KEYS is a list of (keyword ctype)
-;;; elements, none of the values being ctype.
+;;; &key and &allow-other-keys respectively. KEYS is a list of
+;;; (keyword non-values-ctype) elements.
 ;;; RETURNS is the values ctype of the return values specified.
 ;;;
 ;;; Note that REST must always be provided. If the function does not actually
@@ -170,3 +170,19 @@
 ;;; (values type &rest t) is returned, thus incorporating the fuzziness.
 
 (defgeneric coerce-to-values (ctype system))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic functions REQUIRED, OPTIONAL, REST, KEYSP, KEYS, ALLOW-OTHER-KEYS-P,
+;;; and RETURNS.
+;;;
+;;; These are readers for function and values ctypes. Only the first three work
+;;; with values ctypes; the rest are exclusive to function ctypes.
+
+(defgeneric required (ctype system))
+(defgeneric optional (ctype system))
+(defgeneric rest (ctype system))
+(defgeneric keysp (ctype system))
+(defgeneric keys (ctype system))
+(defgeneric allow-other-keys-p (ctype system))
+(defgeneric returns (ctype system))
