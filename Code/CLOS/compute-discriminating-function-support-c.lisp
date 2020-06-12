@@ -1,5 +1,13 @@
 (cl:in-package #:sicl-clos)
 
+(defun make-cdr (n)
+  (if (= n 0)
+      'arguments
+      (list 'cleavir-primop:cdr (make-cdr (1- n)))))
+
+(defun make-car-cdr (n)
+  (list 'cleavir-primop:car (make-cdr n)))
+
 (defun make-discriminating-function-lambda (generic-function)
   (let* ((specializer-profile (specializer-profile generic-function))
          ;; We do not use the Common Lisp function COUNT here, because
@@ -62,7 +70,7 @@
                            for j from 0
                            when x
                              collect `(,(nth i argument-vars)
-                                       (nth ,j arguments))
+                                       ,(make-car-cdr j))
                              and do (incf i))
                  ,tagbody
                  (default-discriminating-function
