@@ -225,6 +225,7 @@
 
 (replicate-for-each #1=#:bit-vector (bit-vector simple-bit-vector)
   (defmethod stable-sort ((bit-vector #1#) predicate &key key)
+    (declare (#1# bit-vector))
     (let ((predicate (function-designator-function predicate))
           (length (length bit-vector))
           (zeros (count 0 bit-vector)))

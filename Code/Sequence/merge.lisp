@@ -73,8 +73,7 @@
 
 (seal-domain #'merge-sequence-like '(list t t t))
 
-(replicate-for-each-vector-class #1=#:vector-class
-
+(replicate-for-each #1=#:vector-class (simple-vector vector)
   ;; Merging of vectors of the same type as the prototype.
   (defmethod merge-sequence-like
       ((prototype #1#) (vector-1 #1#) (vector-2 #1#) predicate &key key)
@@ -118,8 +117,9 @@
                            (when (= index-1 length-1)
                              (finish vector-2 index-2 length-2))
                            (setf elt-1 (elt vector-1 index-1))
-                           (setf key-1 (key elt-1))))))))))))
+                           (setf key-1 (key elt-1)))))))))))))
 
+(replicate-for-each #1=#:vector-class (simple-vector vector)
   ;; Merging of arbitrary sequences.
   (defmethod merge-sequence-like
       ((prototype #1#) (sequence-1 sequence) (sequence-2 sequence) predicate &key key)

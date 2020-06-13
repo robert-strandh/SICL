@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-sequence)
 
+(defun power-of-two-p (x)
+  (and (integerp x)
+       (plusp x)
+       (zerop (logand x (1- x)))))
+
 (declaim (inline function-designator-function))
 (defun function-designator-function (function-designator)
   (typecase function-designator
@@ -117,10 +122,33 @@
       (push-subclasses class)
       subclasses)))
 
+(defun vector-class-element-type (sequence-class)
+  (let ((prototype (coerce nil sequence-class)))
+    (check-type prototype sequence)
+    (let ((direct-subclasses
+            (closer-mop:class-direct-subclasses (class-of prototype))))
+      (if (null direct-subclasses)
+          (array-element-type prototype)
+          `(or ,@(mapcar #'vector-class-element-type direct-subclasses))))))
+
 (defparameter *vector-classes*
-  (loop for class in (mapcar #'class-name (class-subclasses (find-class 'vector)))
-        unless (subtypep class '(array nil))
-          collect class))
+  (mapcar #'class-name (class-subclasses (find-class 'vector))))
+
+;; Some implementations provide a very long list of vector classes, e.g.,
+;; (simple-array (unsigned-byte 63) (*)).  Creating a special variant of
+;; each sequence function and for each of these vector classes increases
+;; compile times and code bloat substantially, so we prune this list a
+;; little bit.
+(defparameter *relevant-vector-classes*
+  (loop for vector-class in *vector-classes*
+        for element-type = (vector-class-element-type vector-class)
+        when (or (member element-type '(t character base-char fixnum bit))
+                 (member element-type '(short-float single-float double-float long-float))
+                 (and (consp element-type)
+                      (or (eql (car element-type) 'complex)
+                          (and (member (car element-type) '(unsigned-byte signed-byte))
+                               (power-of-two-p (cadr element-type))))))
+          collect vector-class))
 
 (defmacro replicate-for-each (symbol items &body body)
   (check-type symbol symbol)
@@ -130,37 +158,30 @@
 (defmacro replicate-for-each-vector-class (symbol &body body)
   `(replicate-for-each ,symbol ,*vector-classes* ,@body))
 
+(defmacro replicate-for-each-relevant-vector-class (symbol &body body)
+  `(replicate-for-each ,symbol ,*relevant-vector-classes* ,@body))
+
 ;;; A vector class is compatible with another vector class, if elements of
 ;;; the former can be stored in the latter, i.e., when the intersection of
 ;;; both element types is non-empty.
 (defmacro replicate-for-all-compatible-vector-classes (symbol-1 symbol-2 &body body)
   `(progn
-     ,@(loop for vector-class in *vector-classes*
+     ,@(loop for vector-class in *relevant-vector-classes*
              collect
              `(replicate-for-each ,symbol-1 (,vector-class)
                 (replicate-for-each ,symbol-2 ,(compatible-vector-classes vector-class)
                   ,@body)))))
 
 (defun compatible-vector-classes (vector-class)
-  (let ((type-1 (sequence-class-element-type vector-class)))
+  (let ((type-1 (vector-class-element-type vector-class)))
     (if (subtypep type-1 'nil)
         '()
         (loop for class in *vector-classes*
               unless
-              (let ((type-2 (sequence-class-element-type class)))
+              (let ((type-2 (vector-class-element-type class)))
                 (or (subtypep type-2 'nil)
                     (subtypep `(and ,type-1 ,type-2) nil)))
                 collect class))))
-
-(defun sequence-class-element-type (sequence-class)
-  (when (symbolp sequence-class)
-    (setf sequence-class (find-class sequence-class)))
-  (if (subtypep sequence-class '(not vector))
-      't
-      (let ((direct-subclasses (closer-mop:class-direct-subclasses sequence-class)))
-        (if (null direct-subclasses)
-            (array-element-type (coerce nil sequence-class))
-            `(or ,@(mapcar #'sequence-class-element-type direct-subclasses))))))
 
 (declaim (inline shrink-vector))
 (defun shrink-vector (vector new-length)
