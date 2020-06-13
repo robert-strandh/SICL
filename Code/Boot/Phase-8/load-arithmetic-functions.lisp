@@ -12,4 +12,5 @@
   (load-source "Arithmetic/minus-defun.lisp" e5)
   (load-source "Arithmetic/one-plus-defun.lisp" e5)
   (load-source "Arithmetic/one-minus-defun.lisp" e5)
-  (load-source "Arithmetic/zerop-defun.lisp" e5))
+  (load-source "Arithmetic/zerop-defun.lisp" e5)
+  (load-source "Arithmetic/integerp-defun.lisp" e5))
