@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-hash-table)
 
-(defclass hash-table (t)
+(defclass hash-table ()
   ((%test :initarg :test
           :initform 'eql
           :reader %hash-table-test)
