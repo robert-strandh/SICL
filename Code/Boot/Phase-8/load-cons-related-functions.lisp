@@ -18,6 +18,7 @@
   (load-source "Cons/nset-difference-defun.lisp" e5)
   (load-source "Cons/adjoin-defun.lisp" e5)
   (load-source "Cons/append-defun.lisp" e5)
+  (load-source "Cons/nconc-defun.lisp" e5)
   (load-source "Cons/nth-defun.lisp" e5)
   (load-source "Cons/nthcdr-defun.lisp" e5)
   (load-source "Cons/copy-list-defun.lisp" e5)
