@@ -89,8 +89,10 @@
                  (declare (vector-length lo hi))
                  (loop
                    (loop do (incf lo)
+                         while (< lo end) ; Only reached for weird predicates.
                          while (funcall predicate (key (elt vector lo)) pivot-key))
                    (loop do (decf hi)
+                         while (> hi start) ; Only reached for weird predicates.
                          while (funcall predicate pivot-key (key (elt vector hi))))
                    (when (<= hi lo) (return))
                    (rotatef (elt vector lo)
