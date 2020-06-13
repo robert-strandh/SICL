@@ -76,5 +76,8 @@
             function-name
             `(lambda ,lambda-list
                ,@declarations
-               (block ,function-name ,@forms))
+               (block ,(if (consp function-name)
+                           (second function-name)
+                           function-name)
+                 ,@forms))
             ct-env))))))
