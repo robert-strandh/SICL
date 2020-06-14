@@ -43,7 +43,6 @@
               ,(if (listp prototype)
                    (sicl-utilities:with-gensyms (result collect fn)
                      `(sicl-utilities:with-collectors ((,result ,collect))
-                        (declare (dynamic-extent (function ,collect)))
                         (flet ((,fn (,@arguments)
                                  (,collect (funcall ,function ,@arguments))))
                           (declare (dynamic-extent (function ,fn)))
