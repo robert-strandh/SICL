@@ -74,6 +74,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a FIXNUM-DIVIDe-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:fixnum-divide-ast) context)
+  (assert-context ast context 2 1)
+  (let ((temp1 (make-temp))
+        (temp2 (make-temp)))
+    (compile-ast
+     client
+     (cleavir-ast:dividend-ast ast)
+     (clone-context
+      context
+      :result temp1
+      :successor (compile-ast
+                  client
+                  (cleavir-ast:divisor-ast ast)
+                  (clone-context
+                   context
+                   :result temp2
+                   :successor (make-instance 'cleavir-ir:fixnum-divide-instruction
+                                :inputs (list temp1 temp2)
+                                :outputs (results context)
+                                :successors (successors context))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a FIXNUM-LESS-AST.
 
 (defmethod compile-ast (client (ast cleavir-ast:fixnum-less-ast) context)
