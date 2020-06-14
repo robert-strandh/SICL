@@ -129,8 +129,8 @@
       (declare (sequence-length length-1 length-2))
       (with-key-function (key key)
         (cond
-          ((zerop length-1) (coerce sequence-2 '#1#))
-          ((zerop length-2) (coerce sequence-1 '#1#))
+          ((zerop length-1) (coerce sequence-2 (class-of prototype)))
+          ((zerop length-2) (coerce sequence-1 (class-of prototype)))
           (t
            (with-sequence-scanner (iterator-1 sequence-1)
              (with-sequence-scanner (iterator-2 sequence-2)
