@@ -54,6 +54,7 @@
 ;;; Compile a MULTIPLE-VALUE-SETQ-AST.
 
 (defmethod compile-ast (client (ast cleavir-ast:multiple-value-setq-ast) context)
+  (assert-context ast context nil 1)
   (let ((locations (mapcar #'find-or-create-location
                            (cleavir-ast:lhs-asts ast))))
     (compile-ast
@@ -61,10 +62,8 @@
      (cleavir-ast:form-ast ast)
      (clone-context
       context
-      :results :values
-      :successor (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-                   :outputs locations
-                   :successor (first (successors context)))))))
+      :results locations
+      :successor (first (successors context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
