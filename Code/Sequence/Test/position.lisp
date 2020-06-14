@@ -3,7 +3,7 @@
 ;;;; Created:  Fri Aug 23 07:49:49 2002
 ;;;; Contains: Tests for POSITION
 
-(cl:in-package :sicl-sequence-test)
+(in-package #:sicl-sequence-test)
 
 (deftest position-list.1
   (position 'c '(a b c d e c a))
@@ -805,56 +805,56 @@
                :allow-other-keys nil :bad t)
   2)
 
-;; ;;; Error tests
+;;; Error tests
 
-;; (deftest position.error.1
-;;   (check-type-error #'(lambda (x) (position 'a x)) #'sequencep)
-;;   nil)
+(deftest position.error.1
+  (check-type-error #'(lambda (x) (position 'a x)) #'sequencep)
+  nil)
 
-;; (deftest position.error.4
-;;   (signals-error (position 'e '(a b c . d)) type-error)
-;;   t)
+(deftest position.error.4
+  (signals-error (position 'e '(a b c . d)) type-error)
+  t)
 
-;; (deftest position.error.5
-;;   (signals-error (position) program-error)
-;;   t)
+(deftest position.error.5
+  (signals-error (position) program-error)
+  t)
 
-;; (deftest position.error.6
-;;   (signals-error (position 'a) program-error)
-;;   t)
+(deftest position.error.6
+  (signals-error (position 'a) program-error)
+  t)
 
-;; (deftest position.error.7
-;;   (signals-error (position 'a nil :key) program-error)
-;;   t)
+(deftest position.error.7
+  (signals-error (position 'a nil :key) program-error)
+  t)
 
-;; (deftest position.error.8
-;;   (signals-error (position 'a nil 'bad t) program-error)
-;;   t)
+(deftest position.error.8
+  (signals-error (position 'a nil 'bad t) program-error)
+  t)
 
-;; (deftest position.error.9
-;;   (signals-error (position 'a nil 'bad t :allow-other-keys nil) program-error)
-;;   t)
+(deftest position.error.9
+  (signals-error (position 'a nil 'bad t :allow-other-keys nil) program-error)
+  t)
 
-;; (deftest position.error.10
-;;   (signals-error (position 'a nil 1 2) program-error)
-;;   t)
+(deftest position.error.10
+  (signals-error (position 'a nil 1 2) program-error)
+  t)
 
-;; (deftest position.error.11
-;;   (signals-error (locally (position 'a 'b) t) type-error)
-;;   t)
+(deftest position.error.11
+  (signals-error (locally (position 'a 'b) t) type-error)
+  t)
 
-;; (deftest position.error.12
-;;   (signals-error (position 'b '(a b c d) :test #'identity) program-error)
-;;   t)
+(deftest position.error.12
+  (signals-error (position 'b '(a b c d) :test #'identity) program-error)
+  t)
 
-;; (deftest position.error.13
-;;   (signals-error (position 'b '(a b c d) :test-not #'not) program-error)
-;;   t)
+(deftest position.error.13
+  (signals-error (position 'b '(a b c d) :test-not #'not) program-error)
+  t)
 
-;; (deftest position.error.14
-;;   (signals-error (position 'b '(a b c d) :key #'cdr) type-error)
-;;   t)
+(deftest position.error.14
+  (signals-error (position 'b '(a b c d) :key #'cdr) type-error)
+  t)
 
-;; (deftest position.error.15
-;;   (signals-error (position 'b '(a b c d) :key #'cons) program-error)
-;;   t)
+(deftest position.error.15
+  (signals-error (position 'b '(a b c d) :key #'cons) program-error)
+  t)
