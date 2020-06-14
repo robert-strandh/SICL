@@ -60,6 +60,7 @@
    #:fixnum-add-ast
    #:fixnum-sub-ast
    #:arg1-ast #:arg2-ast #:variable-ast
+   #:fixnum-divide-ast #:dividend-ast #:divisor-ast
    #:fixnum-less-ast
    #:fixnum-not-greater-ast
    #:fixnum-greater-ast
