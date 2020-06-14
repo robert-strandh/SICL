@@ -12,4 +12,4 @@
    #:binary-greater
    #:binary-not-less
    #:binary-equal
-   #:sign-and-digit-count))
+   #:sign-and-limb-count))

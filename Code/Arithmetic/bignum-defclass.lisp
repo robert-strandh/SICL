@@ -4,6 +4,6 @@
 ;;; presence of INTEGER as a superclass prevents the automatic
 ;;; inclusion of STANDARD-OBJECT as a superclass.
 (defclass bignum (integer standard-object)
-  ((%sign-and-digit-count
-    :initarg :sign-and-digit-count
-    :reader sign-and-digit-count)))
+  ((%sign-and-limb-count
+    :initarg :limb-count
+    :accessor sign-and-limb-count)))
