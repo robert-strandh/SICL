@@ -10,6 +10,8 @@
    (%ast-results :initarg :ast-results :reader ast-results)
    (%ast-successors :initarg :ast-successors :reader ast-successors)))
 
+;;; FIXME: Check that no results are required when AST-RESULTS is NIL.
+
 (defun assert-context (ast context ast-results ast-successors)
   (when (or (and ast-results
                  (/= ast-results (length (results context))))
