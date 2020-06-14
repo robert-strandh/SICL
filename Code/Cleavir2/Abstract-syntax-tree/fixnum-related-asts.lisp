@@ -87,13 +87,11 @@
 ;;; This AST can be used to implement a binary division function.  It
 ;;; requires its first argument to evaluate to a non-negative FIXNUM
 ;;; and its second argument to evaluate to a positive fixnum.  This
-;;; AST occur only as the FORM-AST of a MULTIPLE-VALUE-SETQ-AST with
-;;; exactly two ASTs in the list LHS-ASTS.  As a result of the
-;;; operation, the first left-hand side of the MULTIPLE-VALUE-SETQ-AST
+;;; AST can occur only in a context where exactly two results are
+;;; required.  As a consequence of the operation, the first result
 ;;; will contain the quotient between the two arguments, and the
-;;; second left-hand side of the MULTIPLE-VALUE-SETQ-AST will contain
-;;; the remainder.  Rounding is towards zero as with the Common Lisp
-;;; function FLOOR.
+;;; second result will contain the remainder.  Rounding is towards
+;;; zero as with the Common Lisp function FLOOR.
 
 (defclass fixnum-divide-ast (ast boolean-ast-mixin)
   ((%dividend-ast :initarg :dividend-ast :reader dividend-ast)
