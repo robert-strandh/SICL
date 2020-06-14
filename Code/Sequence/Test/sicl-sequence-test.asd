@@ -11,6 +11,7 @@
      (:file "ansi-aux")
      (:file "random-aux")
      (:file "remove-aux")
+     (:file "remove-duplicates-aux")
      (:file "search-aux")
      (:file "sort-aux")
      (:file "subseq-aux")))
