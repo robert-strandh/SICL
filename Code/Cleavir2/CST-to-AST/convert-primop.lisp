@@ -196,6 +196,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-DIVIDE.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:fixnum-divide)) cst environment)
+  (check-simple-primop-syntax cst 2)
+  (cst:db origin (divide-cst dividend-cst divisor-cst) cst
+    (declare (ignore divide-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-divide-ast
+      :dividend-ast (convert client dividend-cst environment)
+      :divisor-ast (convert client divisor-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-LESS.
 
 (defmethod convert-special
