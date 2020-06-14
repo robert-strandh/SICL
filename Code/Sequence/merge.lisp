@@ -83,7 +83,7 @@
       (declare (vector-length length-1 length-2))
       (with-key-function (key key)
         (cond ((zerop length-1) (coerce vector-2 (class-of prototype)))
-              ((zerop length-2) (coerce vector-2 (class-of prototype)))
+              ((zerop length-2) (coerce vector-1 (class-of prototype)))
               (t
                (let* ((result (make-sequence-like prototype (+ length-1 length-2)))
                       (elt-1 (elt vector-1 0))
