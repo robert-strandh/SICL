@@ -14,6 +14,8 @@
    #:fixnum-arithmetic
    #:fixnum-add
    #:fixnum-sub
+   #:fixnum-multiply
+   #:fixnum-divide
    #:fixnum-less
    #:fixnum-not-greater
    #:fixnum-greater
