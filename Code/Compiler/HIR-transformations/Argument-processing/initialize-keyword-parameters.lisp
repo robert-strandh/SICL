@@ -29,7 +29,6 @@
                    :dynamic-environment-location dynamic-environment-location)))
       (setf first
             (make-instance 'cleavir-ir:fixnum-divide-instruction
-              :rounding-mode 'floor
               :inputs (list remaining-argument-count-location constant-input-2)
               :outputs (list quotient-location remainder-location)
               :successor first

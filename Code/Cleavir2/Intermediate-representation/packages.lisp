@@ -77,7 +77,7 @@
    #:fixnum-less-instruction
    #:fixnum-not-greater-instruction
    #:fixnum-equal-instruction
-   #:fixnum-divide-instruction #:rounding-mode
+   #:fixnum-divide-instruction
    #:float-add-instruction
    #:float-sub-instruction
    #:float-mul-instruction
