@@ -13,14 +13,19 @@
                                         :from-end from-end)))
               (if (not pos)
                   sequence
-                  (if (not from-end)
-                      (nsubstitute-if-not newitem predicate (copy-seq sequence)
-                                          :key key :start pos :end end
-                                          :count count :from-end nil)
-                      (nsubstitute-if-not newitem predicate (copy-seq sequence)
-                                          :key key :start start :end (1+ pos)
-                                          :count count :from-end t))))))))
+                  (let ((copy (copy-seq sequence)))
+                    (setf (elt copy pos) newitem)
+                    (if (not from-end)
+                        (nsubstitute-if-not newitem predicate copy
+                                            :key key :start (1+ pos) :end end
+                                            :count (1- count) :from-end nil)
+                        (nsubstitute-if-not newitem predicate copy
+                                            :key key :start start :end pos
+                                            :count (1- count) :from-end t)))))))))
 
   (defmethod substitute-if-not (newitem predicate (sequence list)
                                 &key from-end (start 0) end count key)
     #2#))
+
+(seal-domain #'substitute-if-not '(t t vector))
+(seal-domain #'substitute-if-not '(t t list))
