@@ -189,7 +189,8 @@
   (cond ((= (length vector) new-length)
          vector)
         ((array-has-fill-pointer-p vector)
-         (setf (fill-pointer vector) new-length))
+         (setf (fill-pointer vector) new-length)
+         vector)
         (t
          (subseq vector 0 new-length))))
 
