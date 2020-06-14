@@ -36,6 +36,7 @@
    ;; Now that all utilities and elementary sequence functions have been
    ;; defined, it is possible to load the remaining functions.
    (:file "copy-seq")
+   (:file "nreverse")
    (:file "count")
    (:file "count-if")
    (:file "count-if-not")
@@ -54,7 +55,6 @@
    (:file "concatenate")
    (:file "merge")
    (:file "mismatch")
-   (:file "nreverse")
    (:file "nsubstitute")
    (:file "nsubstitute-if")
    (:file "nsubstitute-if-not")
