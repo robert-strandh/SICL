@@ -3,7 +3,7 @@
 ;;;; Created:  Mon Sep 23 20:59:10 2002
 ;;;; Contains: Aux. functions for testing REMOVE-DUPLICATES/DELETE-DUPLICATES
 
-
+(in-package #:sicl-sequence-test)
 
 (defun my-remove-duplicates (orig-sequence
                              &key from-end test test-not (start 0) end key)
