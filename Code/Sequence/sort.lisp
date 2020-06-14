@@ -117,3 +117,6 @@
 (replicate-for-each #1=#:bit-vector (bit-vector simple-bit-vector)
   (defmethod sort ((#1# #1#) predicate &key key)
     (stable-sort #1# predicate :key key)))
+
+(seal-domain #'sort '(list t))
+(seal-domain #'sort '(vector t))

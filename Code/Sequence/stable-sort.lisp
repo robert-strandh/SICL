@@ -246,3 +246,6 @@
                             (fill bit-vector 1 :end ones)
                             (fill bit-vector 0 :start ones))
                           bit-vector)))))))))
+
+(seal-domain #'stable-sort '(list t))
+(seal-domain #'stable-sort '(vector t))

@@ -20,4 +20,4 @@
           (unless (predicate (key element))
             (return-from find-if-not element)))))))
 
-(seal-domain #'find-if '(t vector))
+(seal-domain #'find-if-not '(t vector))

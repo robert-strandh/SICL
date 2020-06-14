@@ -32,3 +32,6 @@
       (when (array-has-fill-pointer-p vector)
         (setf (fill-pointer vector) index))
       vector)))
+
+(seal-domain #'map-into '(list t))
+(seal-domain #'map-into '(vector t))
