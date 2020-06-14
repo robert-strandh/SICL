@@ -49,7 +49,7 @@
 ;;;      required.  Arguments to function calls are examples of ASTs
 ;;;      that are compiled in a context like this.
 ;;;
-;;;      If RESULTS is alist with more than one element, then that
+;;;      If RESULTS is a list with more than one element, then that
 ;;;      many values are required.  The VALUES-FORM-AST of
 ;;;      MULTIPLE-VALUE-BIND-AST is compiled in a context like this.
 ;;;
