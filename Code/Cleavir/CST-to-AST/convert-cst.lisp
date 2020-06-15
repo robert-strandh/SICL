@@ -207,8 +207,14 @@
 
 (defmethod convert-cst
     (cst (info cleavir-env:lexical-variable-info) env system)
-  (declare (ignore system))
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn 'ignored-variable-referenced :cst cst))
-  (cleavir-generate-ast::maybe-wrap-the (cleavir-env:type info)
-                                        (cleavir-env:identity info)))
+  (let ((type (cleavir-env:type info))
+        (lex (cleavir-env:identity info)))
+    (cond ((cleavir-ctype:top-p type system) lex)
+          ((cleavir-ctype:bottom-p type system) ; unusual but possible
+           (cleavir-ast:make-unreachable-ast))
+          (t (cleavir-ast:make-the-ast
+              lex
+              (list type)
+              nil nil)))))
