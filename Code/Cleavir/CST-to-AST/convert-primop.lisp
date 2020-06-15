@@ -149,8 +149,7 @@
 ;;;
 ;;; This primitive operation can be used to compile
 ;;; CL:MULTIPLE-VALUE-SETQ. Unlike that operator, it requires all
-;;; the variables to be lexical, and returns all values from the
-;;; form.
+;;; the variables to be lexical.
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:multiple-value-setq)) cst env system)
