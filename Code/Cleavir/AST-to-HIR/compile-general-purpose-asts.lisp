@@ -592,6 +592,47 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a MULTIPLE-VALUE-EXTRACT-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:multiple-value-extract-ast) context)
+  (let* ((locations (mapcar #'find-or-create-location
+                            (cleavir-ast:lhs-asts ast)))
+         (results (results context))
+         (successor
+           (loop with successor = (first (successors context))
+                 for form-ast in (reverse (cleavir-ast:form-asts ast))
+                 do (setf successor
+                          (compile-ast form-ast
+                                       (clone-context
+                                        context
+                                        :results '()
+                                        :successors (list successor))))))
+         (assign
+           (cond
+             ((typep (results context) 'cleavir-ir:values-location)
+              (cleavir-ir:make-multiple-to-fixed-instruction
+               results locations successor))
+             (t
+              ;; Lexical locations. This is trickier conceptually.
+              ;; We need to get as many values as possible - e.g. if we have
+              ;; LHS = (a b c) and results = (e f), we have to compile the form
+              ;; to return three values, not two. So, we swap results and LHS if
+              ;; LHS is longer, and then generate assignments for the shared number.
+              (when (>= (length locations) (length results))
+                (rotatef locations results))
+              (loop with succ = successor
+                    for location in locations
+                    for result in results
+                    do (setf successor
+                             (cleavir-ir:make-assignment-instruction
+                              result location succ))
+                    finally (return succ))))))
+    (compile-ast
+     (cleavir-ast:first-form-ast ast)
+     (clone-context context :results results :successors (list assign)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a MULTIPLE-VALUE-SETQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)

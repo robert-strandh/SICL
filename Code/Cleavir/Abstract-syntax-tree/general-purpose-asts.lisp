@@ -907,6 +907,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class MULTIPLE-VALUE-EXTRACT-AST
+
+(defclass multiple-value-extract-ast (multiple-value-prog1-ast)
+  ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)))
+
+(defun make-multiple-value-extract-ast
+    (lhs-asts first-form-ast form-asts &key origin (policy *policy*))
+  (make-instance 'multiple-value-extract-ast
+    :origin origin :policy policy
+    :lhs-asts lhs-asts
+    :first-form-ast first-form-ast
+    :form-asts form-asts))
+
+(cleavir-io:define-save-info multiple-value-extract-ast
+    (:lhs-asts lhs-asts))
+
+(defmethod children ((ast multiple-value-extract-ast))
+  (append (lhs-asts ast) (call-next-method)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class DYNAMIC-ALLOCATION-AST
 ;;;
 ;;; This AST is used to translate DYNAMIC-EXTENT declarations.
