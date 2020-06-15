@@ -1,11 +1,14 @@
 (in-package #:cleavir-ctype)
 
-;;; NOTE: Maybe should accept no ctypes (and return top)?
-(defun conjoin (system ctype &rest more-ctypes)
-  (reduce (lambda (ct1 ct2) (conjoin/2 ct1 ct2 system))
-          more-ctypes
-          :initial-value ctype))
-(defun disjoin (system ctype &rest more-ctypes)
-  (reduce (lambda (ct1 ct2) (disjoin/2 ct1 ct2 system))
-          more-ctypes
-          :initial-value ctype))
+(defun conjoin (system &rest ctypes)
+  (cond ((null ctypes) (top system))
+        ((null (cl:rest ctypes)) (first ctypes))
+        (t
+         (reduce (lambda (ct1 ct2) (conjoin/2 ct1 ct2 system))
+                 ctypes))))
+(defun disjoin (system &rest ctypes)
+  (cond ((null ctypes) (bottom system))
+        ((null (cl:rest ctypes)) (first ctypes))
+        (t
+         (reduce (lambda (ct1 ct2) (disjoin/2 ct1 ct2 system))
+                 ctypes))))

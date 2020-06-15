@@ -38,7 +38,11 @@
      environment)
   (cleavir-env:add-function-type
    environment (cst:raw (cst:second declaration-data-cst))
-   (cst:raw (cst:first declaration-data-cst))))
+   (cleavir-env:parse-type-specifier
+    (cst:raw (cst:first declaration-data-cst))
+    environment
+    ;; FIXME
+    nil)))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'ignore))
@@ -110,7 +114,11 @@
      environment)
   (cst:db source (type-cst variable-cst) declaration-data-cst
     (cleavir-env:add-variable-type
-     environment (cst:raw variable-cst) (cst:raw type-cst))))
+     environment (cst:raw variable-cst)
+     (cleavir-env:parse-type-specifier (cst:raw type-cst)
+                                       environment
+                                       ;; FIXME
+                                       nil))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'optimize))
@@ -231,10 +239,12 @@
             (setf new-env
                   (cleavir-env:add-lexical-variable
                    new-env raw-variable var-ast)))))
-    (let ((type (declared-type declarations)))
-      (unless (equal type '(and))
+    (let* ((type (declared-type declarations))
+           ;; FIXME system arguments
+           (ptype (cleavir-env:parse-type-specifier type env nil)))
+      (unless (cleavir-ctype:top-p ptype nil)
         (setf new-env
-              (cleavir-env:add-variable-type new-env raw-variable type))))
+              (cleavir-env:add-variable-type new-env raw-variable ptype))))
     (when (member 'ignore raw-declarations :test #'eq :key #'car)
       (setf new-env
             (cleavir-env:add-variable-ignore new-env raw-variable 'ignore)))

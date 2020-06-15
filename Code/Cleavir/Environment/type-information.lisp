@@ -11,7 +11,6 @@
 
 (defgeneric type-expand (environment type-specifier))
 
-;;; There is no standard way to shadow type names.
 (defmethod type-expand ((env entry) type-specifier)
   (type-expand (next env) type-specifier))
 

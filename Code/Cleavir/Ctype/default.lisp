@@ -30,6 +30,9 @@
   (declare (ignore sys))
   (cl:upgraded-complex-part-type ct))
 
+(defmethod top (sys) (declare (ignore sys)) 't)
+(defmethod bottom (sys) (declare (ignore sys)) 'nil)
+
 (defmethod top-p (ctype sys)
   (declare (ignore sys))
   (or (eql ctype 't)

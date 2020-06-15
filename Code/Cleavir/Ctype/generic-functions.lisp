@@ -16,6 +16,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic functions TOP, BOTTOM.
+;;;
+;;; Return top or bottom ctypes (i.e. ctypes of T and NIL respectively).
+;;; Required to do even very basic type operations.
+
+(defgeneric top (system))
+(defgeneric bottom (system))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic functions TOP-P, BOTTOM-P.
 ;;;
 ;;; Return whether the given ctype is the top or bottom ctype respectively.
