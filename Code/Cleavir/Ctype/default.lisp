@@ -111,7 +111,7 @@
   (declare (ignore system))
   (let ((to-search
           (ecase (first ctype)
-            ((cl:values) (rest ctype))
+            ((cl:values) (cl:rest ctype))
             ((cl:function) (second ctype)))))
     (ldiff to-search (member '&optional to-search))))
 
@@ -119,7 +119,7 @@
   (declare (ignore system))
   (let ((to-search
           (ecase (first ctype)
-            ((cl:values) (rest ctype))
+            ((cl:values) (cl:rest ctype))
             ((cl:function) (second ctype)))))
     (ldiff (member '&optional to-search)
            (member '&rest to-search))))
@@ -128,7 +128,7 @@
   (declare (ignore system))
   (let ((to-search
           (ecase (first ctype)
-            ((cl:values) (rest ctype))
+            ((cl:values) (cl:rest ctype))
             ((cl:function) (second ctype)))))
     (second (member '&rest to-search))))
 

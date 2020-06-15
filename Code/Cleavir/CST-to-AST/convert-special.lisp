@@ -578,12 +578,14 @@
   (check-argument-count cst 2 2)
   (cst:db origin (the-cst value-type-cst form-cst) cst
     (declare (ignore the-cst))
-    (multiple-value-bind (req opt rest)
-        (cleavir-generate-ast::the-values-components (cst:raw value-type-cst))
-      ;; We don't bother collapsing THE forms for user code.
+    (let ((vctype (cleavir-env:parse-values-type-specifier
+                   (cst:raw value-type-cst)
+                   environment system)))
       (cleavir-ast:make-the-ast
        (convert form-cst environment system)
-       req opt rest
+       (cleavir-ctype:required vctype system)
+       (cleavir-ctype:optional vctype system)
+       (cleavir-ctype:rest vctype system)
        :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
