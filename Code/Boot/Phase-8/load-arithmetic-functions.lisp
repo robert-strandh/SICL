@@ -15,4 +15,5 @@
   (load-source "Arithmetic/zerop-defun.lisp" e5)
   (load-source "Arithmetic/integerp-defun.lisp" e5)
   (import-function-from-host 'sicl-genv:type-expander e5)
-  (load-source "Arithmetic/allocate-instance-defmethod-bignum.lisp" e5))
+  (load-source "Arithmetic/allocate-instance-defmethod-bignum.lisp" e5)
+  (load-source "Arithmetic/initialize-instance-defmethod-after-bignum.lisp" e5))
