@@ -61,11 +61,11 @@
           (type-error-datum c)))
 
 (defmethod acclimation:report-condition
-    ((c must-be-sequence-type-specifier)
+    ((c must-be-recognizable-subtype-of-sequence)
      stream
      (language (eql 'en-us)))
   (format stream
-          "A sequence type specifier was required, ~
+          "A recognizable subtype of sequence was required, ~
            but the following was given:~@
            ~s"
           (type-error-datum c)))

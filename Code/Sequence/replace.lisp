@@ -68,8 +68,8 @@
 
 (seal-domain #'replace '(vector list))
 
-(replicate-for-all-compatible-vector-classes #1=#:vector-class-1 #2=#:vector-class-2
-  (defmethod replace ((vector1 #1#) (vector2 #2#) &key (start1 0) end1 (start2 0) end2)
+(replicate-for-each-vector-class #1=#:vector-class
+  (defmethod replace ((vector1 #1#) (vector2 #1#) &key (start1 0) end1 (start2 0) end2)
     (declare (method-properties inlineable))
     (multiple-value-bind (start1 end1)
         (canonicalize-start-and-end vector1 start1 end1)

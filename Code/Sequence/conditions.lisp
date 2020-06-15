@@ -24,9 +24,13 @@
   ()
   (:default-initargs :expected-type 'list))
 
-(define-condition must-be-sequence-type-specifier (type-error)
+(define-condition must-be-recognizable-subtype-of-sequence (type-error)
   ()
   (:default-initargs :expected-type 'sequence-type-specifier))
+
+(define-condition must-be-recognizable-subtype-of-vector
+    (must-be-recognizable-subtype-of-sequence)
+  ())
 
 (define-condition must-be-result-type (type-error)
   ())

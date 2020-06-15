@@ -101,4 +101,4 @@
                    (t `(if ,from-end ,backward ,forward)))))
       `(let (,length)
          (declare (ignorable ,length))
-         ,loop-over-body))))
+         (block nil ,loop-over-body)))))
