@@ -66,7 +66,8 @@
    #:must-be-function-designator
    #:must-be-list
    #:must-be-proper-list
-   #:must-be-sequence-type-specifier
+   #:must-be-recognizable-subtype-of-sequence
+   #:must-be-recognizable-subtype-of-vector
    #:invalid-sequence-index
    #:invalid-bounding-index
    #:invalid-start-index

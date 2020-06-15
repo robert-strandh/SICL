@@ -6,15 +6,21 @@
 ;;; 1. A sequence prototype, i.e., a sequence that is almost of the
 ;;;    supplied type, except that its may have a different length.
 ;;;
-;;; 2. NIL, T, or an integer.  A value of NIL means the type specifier does
-;;;    not contain any length information.  A value of T means that the
-;;;    only way to ensure that an object is of the specified type is by
-;;;    calling TYPEP.  An integer value means that the type specifier
-;;;    prescribes exactly that value as the sequence's length.
+;;; 2. One of the following objects:
+;;;
+;;;    - An integer, meaning that the type specifier prescribes exactly
+;;;      that value as the sequence's length.
+;;;
+;;;    - The symbol NIL, meaning that the type specifier doesn't prescribe
+;;;      a particular sequence length.
+;;;
+;;;    - The keyword :COMPLICATED, meaning that the type specifier is too
+;;;      complicated to be represented by just a prototype and some length
+;;;      information.
 
 (defun reify-sequence-type-specifier (type-specifier &optional environment)
   (labels ((fail ()
-             (error 'must-be-sequence-type-specifier
+             (error 'must-be-recognizable-subtype-of-sequence
                     :datum type-specifier))
            (try-slow-path ()
              (reify-sequence-type-specifier/slow type-specifier environment))
@@ -29,8 +35,10 @@
          ((nil) (fail))
          ((null)
           (values '() 0))
-         ((list cons)
+         ((list)
           '(()))
+         ((cons)
+          (values '(()) :complicated))
          ((vector simple-vector)
           (vector-prototype '*))
          ((bit-vector simple-bit-vector)
@@ -39,7 +47,7 @@
           (vector-prototype 'character))
          ((base-string simple-base-string)
           (vector-prototype 'base-char))
-         ((sequence) (fail)) ; Sequence is an abstract class.
+         ((sequence) (fail))            ; Sequence is an abstract class.
          (otherwise
           (let ((class (find-class type-specifier nil environment)))
             (if (not class)
@@ -50,20 +58,18 @@
          ;; Cons Type Specifiers.
          ((cons)
           (labels ((reify-cons-type-specifier (type-specifier length)
-                     (cond ((eql type-specifier '*)
-                            (values '(()) nil))
-                           ((eql type-specifier 'null)
-                            (values '(()) length))
-                           ((and (consp type-specifier)
-                                 (eql (car type-specifier) 'cons))
-                            (unless (<= (length type-specifier) 3)
-                              (fail))
-                            (destructuring-bind (&optional (car '*) (cdr '*))
-                                (rest type-specifier)
-                              (declare (ignore car))
-                              (reify-cons-type-specifier cdr (1+ length))))
-                           (t (values '(()) t)))))
-            (reify-cons-type-specifier type-specifier 0)))
+                     (destructuring-bind (&optional (car '*) (cdr '*))
+                         (rest type-specifier)
+                       (cond ((not (member car '(t *)))
+                              (values '(()) :complicated))
+                             ((eql cdr 'null)
+                              (values '(()) length))
+                             ((and (consp cdr)
+                                   (eql (first cdr) 'cons))
+                              (reify-cons-type-specifier cdr (1+ length)))
+                             (t
+                              (values '(()) :complicated))))))
+            (reify-cons-type-specifier type-specifier 1)))
          ((array simple-array)
           (unless (<= (length type-specifier) 3)
             (fail))
@@ -119,15 +125,42 @@
       (otherwise (try-slow-path)))))
 
 (defun reify-sequence-type-specifier/slow (type-specifier environment)
-  (if (not (subtypep type-specifier 'sequence environment))
-      (error 'must-be-sequence-type-specifier
-             :datum type-specifier)
-      (labels ((find-most-specific-prototype (class)
-                 (loop for subclass in (class-direct-subclasses class) do
-                   (when (subtypep type-specifier subclass environment)
-                     (return (find-most-specific-prototype subclass)))
-                       finally (return (class-prototype class)))))
-        (values (find-most-specific-prototype (find-class 'sequence)) t))))
+  (cond
+    ((subtypep type-specifier 'list environment)
+     (if (subtypep type-specifier 'null environment)
+         (values nil 0)
+         (values '(()) :complicated)))
+    ((subtypep type-specifier 'vector environment)
+     (if (classp type-specifier)
+         (values (class-prototype type-specifier) nil)
+         (let ((candidates '()))
+           (loop for vector-class in (list* 'simple-vector *specialized-vector-classes*)
+                 unless (subtypep `(and ,vector-class ,type-specifier) nil)
+                   do (pushnew vector-class candidates
+                               :key #'vector-class-element-type
+                               :test #'type=))
+           (unless (= 1 (length candidates))
+             (error 'must-be-recognizable-subtype-of-vector
+                    :datum type-specifier))
+           (values
+            (vector-prototype (vector-class-element-type (first candidates)))
+            :complicated))))
+    ((and (symbolp type-specifier)
+          (find-class type-specifier nil environment))
+     (class-prototype (find-class type-specifier t environment)))
+    (t
+     (error 'must-be-recognizable-subtype-of-sequence
+            :datum type-specifier))))
+
+(defmacro check-result-type (result type)
+  (sicl-utilities:once-only (result)
+    `(unless (typep ,result ',type)
+       (result-type-error ,result ',type))))
+
+(defun result-type-error (result type)
+  (error 'must-be-result-type
+         :datum result
+         :expected-type type))
 
 (defmacro with-reified-result-type ((prototype result-type) &body body)
   (check-type prototype symbol)
@@ -136,9 +169,8 @@
       `(multiple-value-bind (,p ,l) (reify-sequence-type-specifier ,result-type)
          (let ((,result (let ((,prototype ,p)) ,@body)))
            (unless (or (not ,l)
-                       (and (integerp ,l) (= (length ,result) ,l))
+                       (and (integerp ,l)
+                            (= (length ,result) ,l))
                        (typep ,result ,result-type))
-             (error 'must-be-result-type
-                    :datum ,result
-                    :expected-type ,result-type))
+             (result-type-error ,result ,result-type))
            ,result)))))

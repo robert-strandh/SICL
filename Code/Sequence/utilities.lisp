@@ -5,6 +5,15 @@
        (plusp x)
        (zerop (logand x (1- x)))))
 
+(defun type= (type-1 type-2)
+  (multiple-value-bind (1<=2 success)
+      (subtypep type-1 type-2)
+    (if (not success)
+        (values nil (nth-value 1 (subtypep type-2 type-1)))
+        (if (not 1<=2)
+            (values nil success)
+            (subtypep type-2 type-1)))))
+
 (declaim (inline function-designator-function))
 (defun function-designator-function (function-designator)
   (typecase function-designator
@@ -124,7 +133,7 @@
 
 (defun vector-class-element-type (sequence-class)
   (let ((prototype (coerce nil sequence-class)))
-    (check-type prototype sequence)
+    (check-type prototype vector)
     (let ((direct-subclasses
             (closer-mop:class-direct-subclasses (class-of prototype))))
       (if (null direct-subclasses)
@@ -133,6 +142,11 @@
 
 (defparameter *vector-classes*
   (mapcar #'class-name (class-subclasses (find-class 'vector))))
+
+(defparameter *specialized-vector-classes*
+  (loop for vector-class in *vector-classes*
+        unless (class-direct-subclasses (find-class vector-class))
+          collect vector-class))
 
 ;; Some implementations provide a very long list of vector classes, e.g.,
 ;; (simple-array (unsigned-byte 63) (*)).  Creating a special variant of
