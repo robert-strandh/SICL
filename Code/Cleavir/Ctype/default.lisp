@@ -51,7 +51,13 @@
   (cond ((or (bottom-p ct1 sys) (bottom-p ct2 sys)) 'nil)
         ((top-p ct1 sys) ct2)
         ((top-p ct2 sys) ct1)
-        (t `(and ,ct1 ,ct2))))
+        (t (let ((ty `(and ,ct1 ,ct2)))
+             ;; Checking for bottom-ness is a very basic
+             ;; canonicalization we can perform with the
+             ;; limited tools CL gives us.
+             (if (cl:subtypep ty nil)
+                 nil
+                 ty)))))
 
 (defmethod disjoin/2 (ct1 ct2 sys)
   (cond ((or (top-p ct1 sys) (top-p ct2 sys)) 't)
