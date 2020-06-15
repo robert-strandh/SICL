@@ -36,6 +36,33 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:THE.
+;;;
+;;; This primitive operation represents CL:THE strictly in
+;;; the capacity as a declaration, i.e. not an assertion.
+;;; Clients may choose to expand CL:THE forms into uses of
+;;; this operator in situations where a type check is not
+;;; what they want to do.
+;;; This operator has the same syntax as CL:THE.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:the)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 2)
+  (cst:db origin (the-cst value-type-cst form-cst) cst
+    (declare (ignore the-cst))
+    (let ((vctype (cleavir-env:parse-values-type-specifier
+                   (cst:raw value-type-cst)
+                   env system)))
+      (cleavir-ast:make-the-ast
+       (convert form-cst env system)
+       (cleavir-ctype:required vctype)
+       (cleavir-ctype:optional vctype)
+       (cleavir-ctype:rest vctype)
+       :origin origin))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:TYPEQ.
 
 (defmethod convert-special
