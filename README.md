@@ -28,31 +28,28 @@ versions.
    * The system "eclector", from [the Eclector repository]
    * The system "trucler-reference", from [the Trucler repository]
 
-2. Make sure your SBCL has a 10GB heap by passing --dynamic-space-size
-   10000 to SBCL when it starts up.
-
-3. Clone the [source] with `git`:
+2. Clone the [source] with `git`:
 
    ```
    $ git clone https://github.com/robert-strandh/SICL
    $ cd SICL
    ```
 
-4. Make sure the top-level directory can be found by ASDF.
+3. Make sure the top-level directory can be found by ASDF.
 
-5. Compile the boot system as follows:
+4. Compile the boot system as follows:
 
    ```lisp
    (asdf:load-system :sicl-boot)
    ```
 
-6. Change the package for convenience:
+5. Change the package for convenience:
 
    ```lisp
    (in-package #:sicl-boot)
    ```
 
-7. Create an instance of the BOOT class:
+6. Create an instance of the BOOT class:
 
    ```lisp
    (defparameter *b* (boot))
@@ -60,7 +57,7 @@ versions.
 
    Bootstrapping may take a few minutes.
 
-8. Start a REPL:
+7. Start a REPL:
 
    ```lisp
    (repl *e5*)
@@ -70,7 +67,9 @@ versions.
 
 ## Cleavir
 
-Cleavir is an implementation-independent compilation framework for Common Lisp. To use it, make sure that you that you are in the SICL directory and load the neccesary packages and files.
+Cleavir is an implementation-independent compilation framework for
+Common Lisp. To use it, make sure that you that you are in the SICL
+directory and load the neccesary packages and files.
 
 ```lisp
 (ql:quickload '(cleavir-generate-ast  cleavir-ast-to-hir cleavir-hir-interpreter))
