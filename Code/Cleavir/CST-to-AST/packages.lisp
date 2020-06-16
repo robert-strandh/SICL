@@ -19,6 +19,7 @@
            #:convert-setq
            #:convert-let
            #:convert-let*
+           #:type-wrap
            #:process-parameter-groups
            #:process-parameter-group
            #:process-parameters-in-group

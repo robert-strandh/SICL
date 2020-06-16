@@ -568,9 +568,6 @@
 ;;;
 ;;; Converting THE.
 ;;;
-;;; FIXME: either export THE-VALUES-COMPONENTS from
-;;; CLEAVIR-GENERATE-AST, or move it somewhere else.  Perhaps adapt it
-;;; to use CSTs.
 
 (defmethod convert-special
     ((symbol (eql 'the)) cst environment system)
@@ -578,15 +575,11 @@
   (check-argument-count cst 2 2)
   (cst:db origin (the-cst value-type-cst form-cst) cst
     (declare (ignore the-cst))
-    (let ((vctype (cleavir-env:parse-values-type-specifier
-                   (cst:raw value-type-cst)
-                   environment system)))
-      (cleavir-ast:make-the-ast
-       (convert form-cst environment system)
-       (cleavir-ctype:required vctype system)
-       (cleavir-ctype:optional vctype system)
-       (cleavir-ctype:rest vctype system)
-       :origin origin))))
+    (type-wrap (convert form-cst environment system)
+               (cleavir-env:parse-values-type-specifier
+                (cst:raw value-type-cst)
+                environment system)
+               origin environment system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

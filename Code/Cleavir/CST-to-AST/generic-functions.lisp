@@ -47,3 +47,23 @@
 (defgeneric convert-let (cst environment system))
 
 (defgeneric convert-let* (cst environment system))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function TYPE-WRAP.
+;;;
+;;; Given an AST and a ctype, returns a new AST that incorporates the
+;;; information that the AST's value will be of that ctype, in some
+;;; client-specific fashion. For example it could execute a type check,
+;;; or puts in a type declaration (a the-ast), or it could just return
+;;; the AST as-is, ignoring the information.
+;;; There is a default method that returns the AST as-is.
+;;;
+;;; KLUDGE: The origin of the given AST should probably be used,
+;;; rather than being explicitly passed as an argument, but this will
+;;; not be correct for lexical ASTs. Similarly for policies.
+
+(defgeneric type-wrap (ast ctype origin environment system)
+  (:method (ast ctype origin environment system)
+    (declare (ignore ctype origin environment system))
+    ast))

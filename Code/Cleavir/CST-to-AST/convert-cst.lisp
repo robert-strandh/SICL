@@ -166,10 +166,4 @@
     (warn 'ignored-variable-referenced :cst cst))
   (let ((type (cleavir-env:type info))
         (lex (cleavir-env:identity info)))
-    (cond ((cleavir-ctype:top-p type system) lex)
-          ((cleavir-ctype:bottom-p type system) ; unusual but possible
-           (cleavir-ast:make-unreachable-ast))
-          (t (cleavir-ast:make-the-ast
-              lex
-              (list type)
-              nil nil)))))
+    (type-wrap lex type env system)))
