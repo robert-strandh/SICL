@@ -166,4 +166,4 @@
     (warn 'ignored-variable-referenced :cst cst))
   (let ((type (cleavir-env:type info))
         (lex (cleavir-env:identity info)))
-    (type-wrap lex type env system)))
+    (type-wrap lex type (cst:source cst) env system)))
