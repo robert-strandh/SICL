@@ -189,7 +189,7 @@
     ((symbol (eql 'cleavir-primop:multiple-value-extract)) cst env system)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 nil)
-  (cst:db origin (op-cst variables-cst form-cst . body-cst)
+  (cst:db origin (op-cst variables-cst form-cst . body-cst) cst
     (declare (ignore op-cst))
     (let ((lexes
             (loop for var in (cst:raw variables-cst)
