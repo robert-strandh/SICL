@@ -65,27 +65,6 @@ versions.
 
 [source]: https://github.com/robert-strandh/SICL
 
-## Cleavir
-
-Cleavir is an implementation-independent compilation framework for
-Common Lisp. To use it, make sure that you that you are in the SICL
-directory and load the neccesary packages and files.
-
-```lisp
-(ql:quickload '(cleavir-generate-ast  cleavir-ast-to-hir cleavir-hir-interpreter))
-(load "Code/Cleavir/Environment/Examples/sbcl.lisp")
-```
-
-Now you can compile Common Lisp expressions like this:
-
-```lisp
-(cleavir-ast-to-hir:compile-toplevel-unhoisted
-  (cleavir-generate-ast:generate-ast
-   '(lambda () (+ 32 10))
-   (sb-kernel:make-null-lexenv)
-   nil))
-```
-
 ## Documentation
 
 SICL releases are [here].
