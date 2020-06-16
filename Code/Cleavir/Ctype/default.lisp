@@ -16,7 +16,7 @@
   (declare (ignore sys))
   (if (values-ctype-p ctype)
       ctype
-      `(cl:values ,ctype &rest t)))
+      `(cl:values ,ctype &optional &rest t)))
 
 (defmethod subtypep (ct1 ct2 sys)
   (declare (ignore sys))
@@ -122,7 +122,7 @@
           (ecase (first ctype)
             ((cl:values) (cl:rest ctype))
             ((cl:function) (second ctype)))))
-    (ldiff to-search (member '&optional to-search))))
+    (ldiff to-search (cl:member '&optional to-search))))
 
 (defmethod optional (ctype system)
   (declare (ignore system))
@@ -130,8 +130,8 @@
           (ecase (first ctype)
             ((cl:values) (cl:rest ctype))
             ((cl:function) (second ctype)))))
-    (ldiff (member '&optional to-search)
-           (member '&rest to-search))))
+    (ldiff (cl:member '&optional to-search)
+           (cl:member '&rest to-search))))
 
 (defmethod rest (ctype system)
   (declare (ignore system))
@@ -139,23 +139,23 @@
           (ecase (first ctype)
             ((cl:values) (cl:rest ctype))
             ((cl:function) (second ctype)))))
-    (second (member '&rest to-search))))
+    (second (cl:member '&rest to-search))))
 
 ;;; Again, these below are only valid for function ctypes.
 (defmethod keysp (ctype system)
   (declare (ignore system))
-  (member '&key (second ctype)))
+  (cl:member '&key (second ctype)))
 
 (defmethod keys (ctype system)
   (declare (ignore system))
-  (let ((res (member '&key (second ctype))))
+  (let ((res (cl:member '&key (second ctype))))
     (if res
-        (ldiff res (member '&allow-other-keys res))
+        (ldiff res (cl:member '&allow-other-keys res))
         nil)))
 
 (defmethod allow-other-keys-p (ctype system)
   (declare (ignore system))
-  (member '&allow-other-keys (second ctype)))
+  (cl:member '&allow-other-keys (second ctype)))
 
 (defmethod returns (ctype system)
   (declare (ignore system))
