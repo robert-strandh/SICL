@@ -86,7 +86,7 @@ found on [#lisp], [#clasp], and [#clim].
 [#clim]: https://webchat.freenode.net/
 
 
-[LICENSE-BSD]:https://github.com/robert-strandh/SICL/blob/master/LICENSE
+[LICENSE-BSD]:https://github.com/robert-strandh/SICL/blob/master/LICENSE-BSD
 
 Keep up on SICL by reading the IRC [logs]
 
