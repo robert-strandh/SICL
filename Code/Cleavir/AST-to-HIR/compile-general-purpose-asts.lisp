@@ -606,7 +606,8 @@
                                        (clone-context
                                         context
                                         :results '()
-                                        :successors (list successor))))))
+                                        :successors (list successor))))
+                 finally (return successor)))
          (assign
            (cond
              ((typep (results context) 'cleavir-ir:values-location)
