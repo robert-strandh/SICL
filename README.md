@@ -1,8 +1,8 @@
 
 # SICL: A new Common Lisp Implementation
 
-This is the main source code repository for SICL. It contains the compiler,
-standard library, and documentation.
+This is the main source code repository for SICL. It contains the
+compiler, standard library, and documentation.
 
 ## What is SICL?
 
@@ -18,9 +18,9 @@ versions.
 1. Make sure you have installed the dependencies:
 
 [the Cluster repository]:https://github.com/robert-strandh/Cluster
-[the Concrete-Syntax-Tree repository]:https://github.com/robert-strandh/Concrete-Syntax-Tree
-[the Eclector repository]:https://github.com/robert-strandh/Eclector
-[the Trucler repository]:https://github.com/robert-strandh/Trucler
+[the Concrete-Syntax-Tree repository]:https://github.com/s-expressionists/Trucler
+[the Eclector repository]:https://github.com/s-expressionists/Eclector
+[the Trucler repository]:https://github.com/s-expressionists/Trucler
 
    * A recent 64-bit version of SBCL
    * The system "cluster" from [the Cluster repository]
