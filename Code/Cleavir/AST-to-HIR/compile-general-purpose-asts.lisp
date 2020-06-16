@@ -624,7 +624,7 @@
               (loop with succ = successor
                     for location in locations
                     for result in results
-                    do (setf successor
+                    do (setf succ
                              (cleavir-ir:make-assignment-instruction
                               result location succ))
                     finally (return succ))))))
