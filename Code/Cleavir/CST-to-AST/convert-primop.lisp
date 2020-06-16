@@ -151,6 +151,13 @@
 ;;; CL:MULTIPLE-VALUE-SETQ. Unlike that operator, it requires all
 ;;; the variables to be lexical.
 
+;;; Internal helper
+(defun find-lexical-variable (var env)
+  (assert (symbolp var))
+  (let ((info (cleavir-env:variable-info env var)))
+    (assert (typep info 'cleavir-env:lexical-variable-info))
+    (cleavir-env:identity info)))
+
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:multiple-value-setq)) cst env system)
   (check-cst-proper-list cst 'form-must-be-proper-list)
@@ -160,12 +167,9 @@
     (assert (cst:proper-list-p variables-cst))
     (let ((lexes
             (loop for var in (cst:raw variables-cst)
-                  do (assert (symbolp var))
-                  collect (let ((info (cleavir-env:variable-info env var)))
-                            (assert (typep info 'cleavir-env:lexical-variable-info))
-                            info))))
+                  collect (find-lexical-variable var env))))
       (cleavir-ast:make-multiple-value-setq-ast
-       (mapcar #'cleavir-env:identity lexes) ; get actual lexical ASTs
+       lexes
        (convert form-cst env system)
        :origin origin))))
 
@@ -193,10 +197,7 @@
     (declare (ignore op-cst))
     (let ((lexes
             (loop for var in (cst:raw variables-cst)
-                  do (assert (symbolp var))
-                  collect (let ((info (cleavir-env:variable-info env var)))
-                            (assert (typep info 'cleavir-env:lexical-variable-info))
-                            (cleavir-env:identity info)))))
+                  collect (find-lexical-variable var env))))
       (cleavir-ast:make-multiple-value-extract-ast
        lexes
        (convert form-cst env system)
@@ -264,7 +265,8 @@
     (declare (ignore add-cst))
     (cleavir-ast:make-fixnum-add-ast (convert arg1-cst env system)
                                      (convert arg2-cst env system)
-                                     (convert variable-cst env system)
+                                     (find-lexical-variable
+                                      (cst:raw variable-cst) env)
                                      :origin origin)))
 
 
@@ -279,7 +281,8 @@
     (declare (ignore sub-cst))
     (cleavir-ast:make-fixnum-sub-ast (convert arg1-cst env system)
                                      (convert arg2-cst env system)
-                                     (convert variable-cst env system)
+                                     (find-lexical-variable
+                                      (cst:raw variable-cst) env)
                                      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
