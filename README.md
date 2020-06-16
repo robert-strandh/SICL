@@ -67,13 +67,9 @@ versions.
 
 ## Documentation
 
-SICL releases are [here].
-
 [Documentation]:https://github.com/robert-strandh/SICL/tree/master/Specification
 
 Check the [Documentation] directory for more information.
-
-[here]:https://github.com/robert-strandh/SICL/blob/master/RELEASES.md
 
 [CONTRIBUTING.md]: https://github.com/robert-strandh/SICL/blob/master/CONTRIBUTING.md
 
