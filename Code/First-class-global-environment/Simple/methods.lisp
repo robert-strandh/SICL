@@ -353,12 +353,6 @@
 	(push (cons symbol new-expander) (type-expanders env))
 	(setf (cdr association) new-expander))))
 
-(defmethod sicl-genv:packages ((env simple-environment))
-  (packages env))
-
-(defmethod (setf sicl-genv:packages) (new-packages (env simple-environment))
-  (setf (packages env) new-packages))
-
 (defmethod sicl-genv:find-package (name (env simple-environment))
   (values (gethash name (packages env))))
 
