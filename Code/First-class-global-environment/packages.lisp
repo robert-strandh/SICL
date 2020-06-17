@@ -81,7 +81,6 @@
    #:variable-cell
    #:variable-unbound
    #:find-class
-   #:packages
    #:find-package
    #:special-operator
    #:get-setf-expansion
