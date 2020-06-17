@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-boot-phase-8)
 
 (defun load-cons-related-functions (e5)
+  (import-function-from-host 'cleavir-code-utilities:parse-macro e5)
   (load-source "Cons/null-defun.lisp" e5)
   (load-source "Cons/endp-defun.lisp" e5)
   ;; Currently, CONSP is defined to be (TYPEP ... 'CONS) and TYPEP
@@ -11,7 +12,6 @@
   (load-source "Cons/listp-defun.lisp" e5)
   (load-source "Cons/list-defun.lisp" e5)
   (load-source "Cons/list-star-defun.lisp" e5)
-  (import-function-from-host 'cleavir-code-utilities:parse-macro e5)
   (load-source "Cons/with-proper-list-elements-defmacro.lisp" e5)
   (load-source "Cons/with-proper-list-rests-defmacro.lisp" e5)
   (load-source "Cons/set-difference-defun.lisp" e5)
