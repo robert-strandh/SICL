@@ -682,19 +682,11 @@
 ;;;
 ;;; Given a package object, a name, and an environment, associate the
 ;;; name (which must be a string) with that package object in the
-;;; environment.
-;;;
-;;; If NAME is already associated with a package P in the environment,
-;;; then NAME is first removed from the list of names returned by
-;;; PACKAGE-NAMES when called with P as an argument.  Then NAME is
-;;; added to the list returned by PACKAGE-NAMES when called with
-;;; PACKAGE as an argument.
+;;; environment.  If the name is already associated with a package in
+;;; the environment, then an error is signaled.
 ;;;
 ;;; If PACKAGE is NIL, then the association (if it exists) between the
-;;; name and the existing package is removed.  Furthermore, in that
-;;; case PACKAGE-NAMES is called with the package as an argument and
-;;; the association between each of the names and the package is
-;;; removed as well.
+;;; name and the existing package is removed
 
 (defgeneric (setf find-package) (package name environment))
 
