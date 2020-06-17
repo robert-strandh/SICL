@@ -31,4 +31,5 @@
            #:enable-allocate-instance
            #:compile-file
            #:define-cleavir-primops
-           #:load-source))
+           #:load-source
+           #:asdf-system-components))
