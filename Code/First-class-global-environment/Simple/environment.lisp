@@ -41,8 +41,10 @@
 (defclass simple-environment (sicl-global-environment:environment)
   (;; A value used in this environment for unbound variables. 
    (%unbound :initform (list nil) :reader unbound)
-   ;; The package namespace.  A list of packages.
-   (%packages :initform '() :accessor packages)
+   ;; The package namespace.  A hash table mapping names of packages
+   ;; (i.e., strings) to package objects.
+   (%packages :initform (make-hash-table :test #'equal)
+              :accessor packages)
    ;; The class namespace.  An #'EQ hash table mapping names to
    ;; classes.
    (%classes :initform (make-hash-table :test #'eq) :accessor classes)
