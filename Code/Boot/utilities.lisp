@@ -75,10 +75,6 @@
   (loop for name in names
         do (import-function-from-host name environment)))
 
-(defun import-package-from-host (name environment)
-  (push (find-package name)
-        (sicl-genv:packages environment)))
-
 (defun import-class-from-host (name environment)
   (setf (sicl-genv:find-class name environment)
         (find-class name)))
