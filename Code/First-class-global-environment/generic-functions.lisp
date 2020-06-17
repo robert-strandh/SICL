@@ -665,11 +665,38 @@
 ;;;
 ;;; Given a package name and an environment, return the package object
 ;;; associated with that name in the environment.  If there is no
-;;; package associated with that name, then NIL is returned.  Contrary
-;;; to CL:FIND-PACKAGE, this function does not accept a package object
-;;; as its argument.  It has to be a string.
+;;; package associated with that name, then NIL is returned.  The
+;;; argument NAME must be a string.
+;;;
+;;; Notice that FIND-PACKAGE works in a way similar to FIND-CLASS in
+;;; that the package object is not involved in this operation.  The
+;;; environment keeps a mapping from names to packages, and that
+;;; mapping is independent of the name and the nicknames of the
+;;; package object.
 
 (defgeneric find-package (name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF FIND-PACKAGE).
+;;;
+;;; Given a package object, a name, and an environment, associate the
+;;; name (which must be a string) with that package object in the
+;;; environment.
+;;;
+;;; If NAME is already associated with a package P in the environment,
+;;; then NAME is first removed from the list of names returned by
+;;; PACKAGE-NAMES when called with P as an argument.  Then NAME is
+;;; added to the list returned by PACKAGE-NAMES when called with
+;;; PACKAGE as an argument.
+;;;
+;;; If PACKAGE is NIL, then the association (if it exists) between the
+;;; name and the existing package is removed.  Furthermore, in that
+;;; case PACKAGE-NAMES is called with the package as an argument and
+;;; the association between each of the names and the package is
+;;; removed as well.
+
+(defgeneric (setf find-package) (package name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
