@@ -663,8 +663,11 @@
 ;;;
 ;;; Generic function FIND-PACKAGE.
 ;;;
-;;; Contrary to CL:FIND-PACKAGE, this function does not accept a
-;;; package object as its argument.  It has to be a string.
+;;; Given a package name and an environment, return the package object
+;;; associated with that name in the environment.  If there is no
+;;; package associated with that name, then NIL is returned.  Contrary
+;;; to CL:FIND-PACKAGE, this function does not accept a package object
+;;; as its argument.  It has to be a string.
 
 (defgeneric find-package (name environment))
 
