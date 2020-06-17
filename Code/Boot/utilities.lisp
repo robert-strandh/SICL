@@ -164,3 +164,14 @@
   (do-symbols (symbol (find-package '#:cleavir-primop))
     (setf (sicl-genv:special-operator symbol environment) t)))
 
+(defun asdf-system-components (name)
+  (let* ((system (asdf/system:find-system name))
+         (components (asdf/component:component-children system))
+         (names (mapcar #'asdf/component:component-name components))
+         (pathname (asdf/system:system-relative-pathname system ""))
+         (namestring (namestring pathname))
+         (position (search "SICL/Code/" namestring))
+         (suffix (subseq namestring (+ position (length "SICL/Code/")))))
+    (loop for name in names
+          collect (concatenate 'string suffix name ".lisp"))))
+
