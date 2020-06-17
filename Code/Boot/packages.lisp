@@ -10,7 +10,6 @@
            #:*e0* #:*e1* #:*e2* #:*e3* #:*e4* #:*e5* #:*e6* #:*e7*
            #:import-function-from-host
            #:import-functions-from-host
-           #:import-package-from-host
            #:import-class-from-host
            #:tie-code-object
            #:load-fasl
