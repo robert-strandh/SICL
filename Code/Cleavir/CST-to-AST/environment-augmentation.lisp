@@ -6,13 +6,18 @@
     (declaration-identifier
      declaration-identifier-cst
      declaration-data-cst
-     environment))
+     environment
+     system))
 
 (defmethod augment-environment-with-declaration
     (declaration-identifier
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore declaration-identifier-cst
+                   declaration-data-cst
+                   system))
   (warn "Unable to handle declarations specifier: ~s"
         declaration-identifier)
   environment)
@@ -21,7 +26,9 @@
     ((declaration-identifier (eql 'dynamic-extent))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore declaration-identifier-cst system))
   (let ((var-or-function (cst:raw (cst:first declaration-data-cst))))
     (if (consp var-or-function)
         ;; (dynamic-extent (function foo))
@@ -35,20 +42,22 @@
     ((declaration-identifier (eql 'ftype))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore declaration-identifier-cst))
   (cleavir-env:add-function-type
    environment (cst:raw (cst:second declaration-data-cst))
    (cleavir-env:parse-type-specifier
     (cst:raw (cst:first declaration-data-cst))
-    environment
-    ;; FIXME
-    nil)))
+    environment system)))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'ignore))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore system))
   (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
         (ignore (cst:raw declaration-identifier-cst)))
     (if (consp var-or-function)
@@ -61,7 +70,9 @@
     ((declaration-identifier (eql 'ignorable))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore system))
   (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
         (ignore (cst:raw declaration-identifier-cst)))
     (if (consp var-or-function)
@@ -74,7 +85,9 @@
     ((declaration-identifier (eql 'inline))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore system))
   (cleavir-env:add-inline
    environment (cst:raw (cst:first declaration-data-cst))
    (cst:raw declaration-identifier-cst)))
@@ -83,7 +96,9 @@
     ((declaration-identifier (eql 'notinline))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore system))
   (cleavir-env:add-inline
    environment (cst:raw (cst:first declaration-data-cst))
    (cst:raw declaration-identifier-cst)))
@@ -92,7 +107,9 @@
     ((declaration-identifier (eql 'special))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore system))
   ;; This case is a bit tricky, because if the
   ;; variable is globally special, nothing should
   ;; be added to the environment.
@@ -111,21 +128,23 @@
     ((declaration-identifier (eql 'type))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     environment
+     system)
+  (declare (ignore declaration-identifier-cst))
   (cst:db source (type-cst variable-cst) declaration-data-cst
     (cleavir-env:add-variable-type
      environment (cst:raw variable-cst)
      (cleavir-env:parse-type-specifier (cst:raw type-cst)
-                                       environment
-                                       ;; FIXME
-                                       nil))))
+                                       environment system))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'optimize))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
-  (declare (ignore declaration-identifier-cst declaration-data-cst))
+     environment
+     system)
+  (declare (ignore declaration-identifier-cst declaration-data-cst
+                   system))
   ;; OPTIMIZE is handled specially, so we do nothing here.
   ;; This method is just for ensuring that the default method,
   ;; which signals a warning, isn't called.
@@ -154,7 +173,8 @@
 
 ;;; Augment the environment with a list of canonical declartion
 ;;; specifiers.
-(defun augment-environment-with-declarations (environment canonical-dspecs)
+(defun augment-environment-with-declarations (environment system
+                                              canonical-dspecs)
   (let ((new-env
           ;; handle OPTIMIZE specially.
           (let ((optimize (extract-optimize canonical-dspecs)))
@@ -173,7 +193,8 @@
                     declaration-identifier
                     declaration-identifier-cst
                     declaration-data-cst
-                    new-env)))
+                    new-env
+                    system)))
     new-env))
 
 ;;; Given a single variable bound by some binding form, a list of
@@ -223,7 +244,7 @@
 ;;; which the entire LET form was converted.  For a LET* form, it is
 ;;; the same as ENV.
 (defun augment-environment-with-variable
-    (variable-cst declarations env orig-env)
+    (variable-cst declarations system env orig-env)
   (let ((new-env env)
         (raw-variable (cst:raw variable-cst))
         (origin (cst:source variable-cst))
@@ -241,7 +262,7 @@
                    new-env raw-variable var-ast)))))
     (let* ((type (declared-type declarations))
            ;; FIXME system arguments
-           (ptype (cleavir-env:parse-type-specifier type env nil)))
+           (ptype (cleavir-env:parse-type-specifier type env system)))
       (unless (cleavir-ctype:top-p ptype nil)
         (setf new-env
               (cleavir-env:add-variable-type new-env raw-variable ptype))))
@@ -262,15 +283,15 @@
 ;;; that it also tests whether the supplied-p parameter is NIL,
 ;;; indicating that no supplied-p parameter was given.  This function
 ;;; returns the augmented environment.
-(defun augment-environment-with-parameter (var-cst supplied-p-cst dspecs env)
+(defun augment-environment-with-parameter (var-cst supplied-p-cst dspecs env system)
   ;; The dspecs contain declarations for both variables (and only these variables),
   ;; so we have to perform a final separation.
   (let ((new-env (augment-environment-with-variable
-                  var-cst (first dspecs) env env)))
+                  var-cst (first dspecs) system env env)))
       (if (null supplied-p-cst)
           new-env
           (augment-environment-with-variable
-           supplied-p-cst (second dspecs) new-env new-env))))
+           supplied-p-cst (second dspecs) system new-env new-env))))
 
 (defun augment-environment-with-local-function-name (name-cst environment)
   (let* ((name (cst:raw name-cst))

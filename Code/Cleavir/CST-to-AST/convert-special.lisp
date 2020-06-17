@@ -290,7 +290,7 @@
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
-                         new-env canonical-declaration-specifiers)))
+                         new-env system canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  ;; So that flet with empty body works.
@@ -320,7 +320,7 @@
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
-                         new-env canonical-declaration-specifiers)))
+                         new-env system canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  (list
@@ -692,6 +692,6 @@
                (cst:canonicalize-declarations
                 system (cleavir-env:declarations environment) declaration-csts))
              (new-env (augment-environment-with-declarations
-                       environment canonical-declaration-specifiers)))
+                       environment system canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
           (process-progn (convert-sequence forms-cst new-env system) origin))))))
