@@ -360,11 +360,14 @@
   (setf (packages env) new-packages))
 
 (defmethod sicl-genv:find-package (name (env simple-environment))
-  (loop for package in (packages env)
-	when (or (string= (package-name package) name)
-		 (member name (package-nicknames package)
-			 :test #'string=))
-	  return package))
+  (values (gethash name (packages env))))
+
+(defmethod (setf sicl-genv:find-package)
+    (new-package name (env simple-environment))
+  (unless (null (gethash name (packages env)))
+    (error 'a-package-with-the-given-name-already-exists
+           :name name))
+  (setf (gethash name (packages env)) new-package))
 
 (defmethod sicl-genv:find-method-combination-template
     (symbol (env simple-environment))
