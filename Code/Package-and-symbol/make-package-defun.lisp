@@ -4,29 +4,31 @@
 ;;; FIXME: check that nicknames is a proper list of string designators
 ;;; FIXME: check that use is a proper list of package designators.
 (defun make-package (name &key nicknames use)
-  (declare (type string-designator name))
-  (let ((existing-package (find-package name)))
-    (loop until (null existing-package)
+  (let* ((name-string (string name))
+         (nickname-strings (mapcar #'string nicknames))
+         (all-name-strings (cons name-string nickname-strings))
+         (environment (sicl-genv:global-environment))
+         (existing-packages
+           (loop for name in all-name-strings
+                 for package = (sicl-genv:find-package name environment)
+                 unless (null package)
+                   collect package)))
+    (loop until (null existing-packages)
           do (restart-case (error 'package-already-exists
-                                  :name existing-package)
+                                  :packages existing-packages)
                (force (stuff)
                  :report (lambda (stream)
                            (format stream
-                                   "Replace the existing package."))
-                 (setf existing-package nil))
-               (change-name (new-package-name)
-                 :report (lambda (stream)
-                           (format stream
-                                   "Make a package with a different name."))
-                 :interactive (lambda ()
-                                (format *query-io* "Enter new name: ")
-                                (list (read *query-io*)))
-                 (setf existing-package (find-package new-package-name))))))
-  (loop for rest = nicknames then (cdr rest)
-	while (consp rest)
-	do (assert (null (find-package (car rest)))))
-  (let ((package (make-instance 'package)))
-    (setf (name package) (string name))
-    (setf (nicknames package) (copy-list nicknames))
-    (use-package use package)
-    package))
+                                   "Replace the existing packages."))
+                 (mapc #'delete-package existing-packages)
+                 (setf existing-packages '()))))
+    (let ((package (make-instance 'package
+                     :name name-string
+                     :nicknames nickname-strings
+                     ;; FIXME: create with a use list of '() and then
+                     ;; import and check for errors.
+                     :use-list use)))
+      (loop for name in all-name-strings
+            do (setf (sicl-genv:find-package name environment)
+                     package))
+      package)))
