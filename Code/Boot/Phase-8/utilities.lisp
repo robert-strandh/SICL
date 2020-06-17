@@ -36,3 +36,7 @@
                                              standard-generic-function-class))))
                 (push `(setf ,symbol) result)))))))
     result))
+
+(defun load-asdf-system-components (name environment)
+  (loop for name in (sicl-boot:asdf-system-components name)
+        do (load-source name environment)))
