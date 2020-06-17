@@ -51,6 +51,8 @@
   (cond ((or (bottom-p ct1 sys) (bottom-p ct2 sys)) 'nil)
         ((top-p ct1 sys) ct2)
         ((top-p ct2 sys) ct1)
+        ((cl:subtypep ct1 ct2) ct1)
+        ((cl:subtypep ct2 ct1) ct2)
         (t (let ((ty `(and ,ct1 ,ct2)))
              ;; Checking for bottom-ness is a very basic
              ;; canonicalization we can perform with the
@@ -63,6 +65,8 @@
   (cond ((or (top-p ct1 sys) (top-p ct2 sys)) 't)
         ((bottom-p ct1 sys) ct2)
         ((bottom-p ct2 sys) ct1)
+        ((cl:subtypep ct1 ct2) ct2)
+        ((cl:subtypep ct2 ct1) ct1)
         (t `(or ,ct1 ,ct2))))
 
 (defmethod negate (ct sys)
