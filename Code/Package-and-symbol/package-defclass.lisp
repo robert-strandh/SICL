@@ -21,13 +21,11 @@
     :initform '()
     :accessor used-by-list)
    (%external-symbols
-    :initarg :external-symbols
-    :initform '()
-    :accessor external-symbols)
+    :initform (make-hash-table :test #'equal)
+    :reader external-symbols)
    (%internal-symbols
-    :initarg :internal-symbols
-    :initform '()
-    :accessor internal-symbols)
+    :initform (make-hash-table :test #'equal)
+    :reader internal-symbols)
    (%shadowing-symbols
     :initarg :shadowing-symbols
     :initform '()
