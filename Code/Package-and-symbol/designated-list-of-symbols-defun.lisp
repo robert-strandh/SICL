@@ -4,7 +4,6 @@
 ;;; symbol (denoting a singleton list whose element is is that non-nil
 ;;; symbol, or a proper list of symbols, denoting itself.  Thus the
 ;;; symbol NIL denotes the empty list of symbols.
-;;; FIXME: check for conflicts
 (defun designated-list-of-symbols (designator)
   (cond ((null designator) '())
         ((symbolp designator) (list designator))
