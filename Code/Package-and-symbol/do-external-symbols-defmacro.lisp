@@ -7,9 +7,7 @@
         (result-form 'nil))
      &body body)
   (let ((function-name (gensym))
-        (package-var (gensym))
-        (remaining-body body)
-        (declarations '()))
+        (package-var (gensym)))
     (multiple-value-bind (declarations body-forms)
         (cleavir-code-utilities:separate-ordinary-body body)
       `(block nil
