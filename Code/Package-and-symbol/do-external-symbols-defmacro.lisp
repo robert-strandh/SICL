@@ -1,6 +1,5 @@
 (cl:in-package #:sicl-package)
 
-;;; FIXME: check syntax better
 (defmacro do-external-symbols
     ((symbol-variable
       &optional
