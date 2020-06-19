@@ -1,30 +1,39 @@
 (cl:in-package #:sicl-package)
 
 (defun export-one-symbol (symbol package)
-  (flet ((make-external (sym)
-	   (setf (external-symbols package)
-		 (cons sym (external-symbols package)))))
-    (cond ((member symbol (external-symbols package))
-           ;; do nothing
-           (return-from export-one-symbol cl:t))
-          ((member symbol (internal-symbols package))
-           ;; change it to be external
-           (setf (internal-symbols package)
-                 (remove symbol (internal-symbols package)
-                         :test #'eq))
-           (make-external symbol))
+  (let ((external-symbols (external-symbols package))
+        (internal-symbols (internal-symbols package))
+        (symbol-name (symbol-name symbol)))
+    (flet ((make-external ()
+             (setf (gethash symbol-name external-symbols)
+                   symbol)))
+      (multiple-value-bind (accessible-symbol status)
+          (find-symbol symbol-name package)
+        (case status
+          (:external
+           (when (eq accessible-symbol symbol)
+             ;; Then SYMBOL is already accessible in PACKAGE as an
+             ;; external symbol.
+             (return-from export-one-symbol nil)))
+          (:internal
+           (when (eq accessible-symbol symbol)
+             ;; Then SYMBOL is PRESENT in PACKAGE as an internal
+             ;; symbol. Change it to be external.
+             (remhash symbol-name internal-symbols)
+             (make-external symbol)))
+          (:inherited
+           (when (eq symbol accessible-symbol)
+             ;; Then SYMBOL is accessible as an internal symbol via
+             ;; USE-PACKAGE.  Then we first import it and then export
+             ;; it.  We accomplish this effect by making it external
+             ;; from the beginning.
+             (setf (gethash symbol-name external-symbols) symbol)))
           (t
-           (loop for used = (package-use-list package)
-                   then (cdr used)
-                 while (consp used)
-                 do (loop for syms = (package-use-list (car used))
-                            then (cdr syms)
-                          do (when (eq (car syms) symbol)
-                               (make-external symbol)
-                               (return-from export-one-symbol t))))
-           ;; come here if the symbol is not accessible
            (error "symbol ~s not accessible in package ~s"
-                  (symbol-name symbol)
-                  ;; FIXME: This won't work for symbols
-                  ;; without a home package.
-                  (package-name (symbol-package symbol)))))))
+                  symbol package))))
+      (loop for using-package in (used-by-list package)
+            do (multiple-value-bind (other-symbol status)
+                   (find-symbol symbol-name using-package)
+                 (unless (or (null status)
+                             (eq other-symbol symbol))
+                   (resolve-conflict symbol other-symbol using-package)))))))
