@@ -1,3 +1,3 @@
-(cl:in-package #:sicl-package)
+(cl:in-package #:sicl-symbol)
 
 (defgeneric symbol-package (symbol))
