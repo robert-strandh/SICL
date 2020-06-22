@@ -81,14 +81,6 @@
              :in-sequence sequence))
     (values start end length)))
 
-(defmacro with-predicate ((name predicate) &body body)
-  (sicl-utilities:with-gensyms (f)
-    `(let ((,f (function-designator-function ,predicate)))
-       (declare (function ,f))
-       (flet ((,name (x) (funcall ,f x)))
-         (declare (inline ,name))
-         ,@body))))
-
 (defmacro with-key-function ((name key) &body body)
   (sicl-utilities:with-gensyms (f)
     (sicl-utilities:once-only (key)

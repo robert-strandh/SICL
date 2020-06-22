@@ -16,6 +16,7 @@
    (:file "sequence-function")
    (:file "generic-functions")
    (:file "utilities")
+   (:file "with-predicate")
    (:file "reify-sequence-type-specifier")
 
    ;; Load the a few elementary sequence functions and seal
