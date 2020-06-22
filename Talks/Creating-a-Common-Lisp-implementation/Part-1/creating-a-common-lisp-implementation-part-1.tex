@@ -155,6 +155,45 @@ Characteristics:
 }
 
 \frame{
+\frametitle{Run-time support for Common Lisp functions}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-common-lisp-run-time-support.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Run-time support for Common Lisp functions}
+\vskip 0.25cm
+Characteristics:
+\vskip 0.25cm
+\begin{itemize}
+\item All functions share a common address space.
+\item Functions call other functions directly.
+\item Arbitrary data structures can be passed as arguments.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Creating a Common Lisp implementation}
+\vskip 0.25cm
+\begin{itemize}
+\item A compiler for a traditional language is a ``simple'' file
+  translator.
+\item Run-time support for a traditional language is provided by the
+  operating-system kernel.
+\item A compiler for a Common Lisp system is a bit more involved.
+\item Run-time support for Common Lisp is the Common Lisp system.
+\end{itemize}
+\vskip 0.25cm
+Creating a Common Lisp implementation involves writing a compiler, but
+also creating the run-time support, which has some of the aspects of
+a traditional operating-system kernel.
+}
+
+\frame{
 \frametitle{Title}
 \vskip 0.25cm
 Stuff
