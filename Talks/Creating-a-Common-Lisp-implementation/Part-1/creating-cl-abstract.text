@@ -1,0 +1,16 @@
+In this series of presentations, we examine different strategies for
+creating a Common Lisp implementation, as well as the pros and cons of
+each strategy.
+
+We assume basic knowledge about how a typical modern operating system
+(such as Unix) works, and how traditional batch languages (such as C)
+are compiled and executed on such a system.  We furthermore assume
+medium-level knowledge about Common Lisp.
+
+In part 1, we compare the issues of creating a Common Lisp
+implementation to the issues of writing a compiler for a traditional
+batch language for a typical modern operating system.  Given these
+issues, we investigate some strategies for creating a compiler for a
+Common Lisp system, and we examine the requirements on the run-time
+environment for the compiled code to be executable in that
+environment.
