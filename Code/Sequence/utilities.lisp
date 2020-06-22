@@ -22,18 +22,6 @@
     (t (error 'must-be-function-designator
               :datum function-designator))))
 
-(declaim (inline canonicalize-test-and-test-not))
-(defun canonicalize-test-and-test-not (test test-not)
-  (if (null test)
-      (if (null test-not)
-          (values #'eql nil)
-          (values (function-designator-function test-not) t))
-      (if (null test-not)
-          (values (function-designator-function test) nil)
-          (error 'both-test-and-test-not-given
-                    :test test
-                    :test-not test-not))))
-
 (declaim (inline canonicalize-count))
 (defun canonicalize-count (count)
   (cond ((null count) (- array-total-size-limit 2))
@@ -42,7 +30,7 @@
                 :datum count
                 :expected-type '(or null integer)))
         ((minusp count) 0)
-        (t (min count (- array-total-size-limit 2)))))
+        (t (min count +most-positive-vector-length+))))
 
 (declaim (ftype (function (sequence t t)
                           (values sequence-index sequence-length sequence-length &optional))
@@ -80,34 +68,6 @@
              :end-index end
              :in-sequence sequence))
     (values start end length)))
-
-(defmacro with-key-function ((name key) &body body)
-  (sicl-utilities:with-gensyms (f)
-    (sicl-utilities:once-only (key)
-      `(if (null ,key)
-           (flet ((,name (x) x))
-             (declare (inline ,name))
-             ,@body)
-           (let ((,f (function-designator-function ,key)))
-             (declare (function ,f))
-             (flet ((,name (x)
-                      (funcall ,f x)))
-               (declare (inline ,name))
-               ,@body))))))
-
-(defmacro with-test-function ((name test test-not) &body body)
-  (sicl-utilities:with-gensyms (f complementp)
-    (sicl-utilities:once-only (test test-not)
-      `(multiple-value-bind (,f ,complementp)
-           (canonicalize-test-and-test-not ,test ,test-not)
-         (declare (function ,f))
-         (if ,complementp
-             (flet ((,name (a b) (not (funcall ,f a b))))
-               (declare (dynamic-extent #',name))
-               ,@body)
-             (flet ((,name (a b) (funcall ,f a b)))
-               (declare (inline ,name))
-               ,@body))))))
 
 ;; Note: Some macros rely on the fact that CLASS-SUBCLASSES sorts its
 ;; entries most-specific-first.
