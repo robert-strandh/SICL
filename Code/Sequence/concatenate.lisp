@@ -6,13 +6,38 @@
 
 (define-compiler-macro concatenate
     (&whole form result-type &rest sequences &environment env)
-  (if (constantp result-type)
-      (let ((type (eval result-type)))
-        `(the ,type
-              (concatenate-sequence-like
-               ',(reify-sequence-type-specifier type env)
-               ,@sequences)))
-      form))
+  (if (not (constantp result-type))
+      form
+      (let* ((type (eval result-type))
+             (prototype (reify-sequence-type-specifier type env))
+             (bindings (loop for sequence in sequences collect `(,(gensym) ,sequence))))
+        `(the
+          ,type
+          (let ,bindings
+            ,(typecase prototype
+               (list
+                (sicl-utilities:with-gensyms (result collect)
+                  `(sicl-utilities:with-collectors ((,result ,collect))
+                     ,@(loop for (var nil) in bindings collect
+                             `(map nil (function ,collect) ,var))
+                     (,result))))
+               (vector
+                (sicl-utilities:with-gensyms (length result index collect)
+                  `(let* ((,length (+ ,@(loop for (var nil) in bindings
+                                              collect `(length ,var))))
+                          (,result (make-sequence-like ',prototype ,length))
+                          (,index 0))
+                     (declare (vector-length ,length ,index))
+                     (declare (type ,type ,result))
+                     (flet ((,collect (value)
+                              (setf (elt ,result ,index) value)
+                              (incf ,index)))
+                       (declare (inline ,collect))
+                       ,@(loop for (var nil) in bindings collect
+                               `(map nil (function ,collect) ,var)))
+                     ,result)))
+               (otherwise
+                `(concatenate-sequence-like ',prototype ,@(mapcar #'first bindings)))))))))
 
 (defmethod concatenate-sequence-like ((list list) &rest sequences)
   (sicl-utilities:with-collectors ((result collect))
@@ -29,34 +54,11 @@
            (index 0))
       (declare (vector-length length index))
       (declare (type #1# result))
-      (loop for sequence in sequences do
-        (typecase sequence
-          (simple-vector #2=
-           (let ((amount (length sequence)))
-             (loop for offset below amount do
-               (setf (elt result (+ index offset))
-                     (elt sequence offset)))
-             (incf index amount)))
-          (#1# #2#)
-          (list
-           (loop for element in sequence do
-             (setf (elt result index)
-                   element)
-             (incf index)))
-          (otherwise
-           (with-scan-buffers (scan-buffer)
-             (multiple-value-bind (scanner state)
-                 (make-sequence-scanner sequence)
-               (declare (sequence-scanner scanner))
-               (loop
-                 (multiple-value-bind (amount new-state)
-                     (funcall scanner sequence state scan-buffer)
-                   (when (zerop amount) (return))
-                   (loop for offset below amount do
-                     (setf (elt result (+ index offset))
-                           (svref scan-buffer offset)))
-                   (setf state new-state)
-                   (incf index amount))))))))
+      (flet ((collect (value)
+               (setf (elt result index) value)
+               (incf index)))
+        (loop for sequence in sequences do
+          (map nil #'collect sequence)))
       result)))
 
 (seal-domain #'concatenate-sequence-like '(vector))
