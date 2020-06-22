@@ -86,19 +86,6 @@
 \hspace*{1ex}{~} \GRAY{\insertframenumber/\inserttotalframenumber}
 }
 
-
-\frame{
-\frametitle{Title}
-\vskip 0.25cm
-Example:
-\vskip 0.25cm
-\begin{itemize}
-\item Item
-\item Item
-\item etc.
-\end{itemize}
-}
-
 \frame{
 \frametitle{Compiler for a traditional batch language}
 \vskip 0.25cm
@@ -107,6 +94,64 @@ Example:
 \inputfig{fig-c-unix-1.pdf_t}
 \end{center}
 \end{figure}
+}
+
+\frame{
+\frametitle{Compiler for a traditional batch language}
+\vskip 0.25cm
+Characteristics:
+\vskip 0.25cm
+\begin{itemize}
+\item Macros and declarations (implicit or explicit) are entered into
+  the environment.
+\item The compiler uses the environment to emit warnings, and to
+  determine how to generate code.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Run-time support for a traditional batch language}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-c-unix-2.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Run-time support for a traditional batch language}
+\vskip 0.25cm
+Characteristics:
+\vskip 0.25cm
+\begin{itemize}
+\item Each program executes in a separate address space
+\item Systems calls are used for file I/O, communication between
+  programs, configuration, etc.
+\item Communication between programs uses pipes, requiring transitions
+  through the kernel.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Common Lisp file compiler}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-common-lisp-file-compilation.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Common Lisp file compiler}
+\vskip 0.25cm
+Characteristics:
+\vskip 0.25cm
+\begin{itemize}
+\item Requires and existing Common Lisp implementation (at least partial).
+\item more?
+\end{itemize}
 }
 
 \frame{
