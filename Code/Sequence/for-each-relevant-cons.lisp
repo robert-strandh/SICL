@@ -16,7 +16,7 @@
                              (if (and (not (null ,end))
                                       (> ,end ,index))
                                  (error 'invalid-end-index
-                                        :expected-type `(integer ,start (,index))
+                                        :expected-type `(integer ,,start ,,index)
                                         :datum ,end
                                         :in-sequence ,list)
                                  (loop-finish))

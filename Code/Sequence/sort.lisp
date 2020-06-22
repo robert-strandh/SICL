@@ -100,7 +100,7 @@
                  (rotatef (elt vector (1+ start))
                           (elt vector hi))
                  (introsort start hi (1- max-depth))
-                 (introsort hi end (1- max-depth))))
+                 (introsort (1+ hi) end (1- max-depth))))
              ;; Sort the interval from START below END using either
              ;; shellsort, quicksort, or heapsort, depending on which is
              ;; the best fit for the data.

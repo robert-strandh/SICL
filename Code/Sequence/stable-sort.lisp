@@ -81,10 +81,10 @@
                (values
                 (stable-sort-n list n))))))))))
 
-;;; We use binary insertion sort for stable sorting small blocks of
-;;; elements, and then merge these blocks.  For merging, we use a technique
-;;; by Pok-Son Kim and Arne Kutzner from the paper "Stable Minimum Storage
-;;; Merging by Symmetric Comparisons" (DOI: 10.1007/978-3-540-30140-0_63)
+;;; We use insertion sort for stable sorting small blocks of elements, and
+;;; then merge these blocks.  For merging, we use a technique by Pok-Son
+;;; Kim and Arne Kutzner from the paper "Stable Minimum Storage Merging by
+;;; Symmetric Comparisons" (DOI: 10.1007/978-3-540-30140-0_63)
 ;;;
 ;;; This code was inspired by a stable sorting function for the Go
 ;;; programming language, written by Volker Dobler.
