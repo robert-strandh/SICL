@@ -347,7 +347,8 @@ Possible solutions:
 \vskip 0.25cm
 \begin{itemize}
 \item Write \texttt{mapcar} in the implementation language of the
-  core (C).
+  core (C), but this solution goes against our goals to use
+  \commonlisp{} as much as possible.
 \item Use a simpler iteration construct, hoping its expansion does not
   require \texttt{mapcar}.
 \item Use \texttt{tagbody} and \texttt{go} to implement \texttt{mapcar}.
@@ -358,24 +359,6 @@ to be implemented.
 \vskip 0.25cm
 Worse, during maintenance, these choices have to be known so as to
 avoid violations of the constraints.
-}
-
-\frame{
-\frametitle{Title}
-\vskip 0.25cm
-Stuff
-\vskip 0.25cm
-Stuff
-}
-
-\frame{
-\frametitle{Title}
-%% \vskip 0.25cm
-%% \begin{figure}
-%% \begin{center}
-%% \inputfig{fig-50.pdf_t}
-%% \end{center}
-%% \end{figure}
 }
 
 \frame{
