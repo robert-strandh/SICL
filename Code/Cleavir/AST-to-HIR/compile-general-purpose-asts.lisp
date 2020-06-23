@@ -218,7 +218,7 @@
   (loop for sub-ast in (reverse asts)
         for successor = (compile-ast sub-ast context)
         do (setf context (clone-context context
-                                        :successors (list next))))
+                                        :successors (list successor))))
   (first (successors context)))
 
 (defmethod compile-ast ((ast cleavir-ast:progn-ast) context)
