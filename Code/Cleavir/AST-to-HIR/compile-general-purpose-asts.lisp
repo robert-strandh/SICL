@@ -214,17 +214,20 @@
 ;;; every PROGN-AST has at least one FORM-AST in it.  Otherwise a
 ;;; different AST is generated instead.
 
+(defun compile-sequence-for-effect (asts context)
+  (loop for sub-ast in (reverse asts)
+        for successor = (compile-ast sub-ast context)
+        do (setf context (clone-context context
+                                        :successors (list next))))
+  (first (successors context)))
+
 (defmethod compile-ast ((ast cleavir-ast:progn-ast) context)
   (let ((form-asts (cleavir-ast:form-asts ast)))
     (assert (not (null form-asts)))
-    (let ((next (compile-ast (car (last form-asts)) context)))
-      (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
-	    do (setf next (compile-ast sub-ast
-                                       (clone-context
-                                        context
-                                        :results '()
-                                        :successors (list next)))))
-      next)))
+    (let* ((next (compile-ast (car (last form-asts)) context))
+           (context (clone-context context :results '()
+                                           :successors (list next))))
+      (compile-sequence-for-effect (butlast form-asts) context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -578,59 +581,88 @@
 ;;; Compile a MULTIPLE-VALUE-PROG1-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-prog1-ast) context)
-  (let ((next (loop with successor = (first (successors context))
-		    for form-ast in (reverse (cleavir-ast:form-asts ast))
-		    do (setf successor
-			     (compile-ast form-ast
-                                          (clone-context
-                                           context
-                                           :results '()
-                                           :successors (list successor))))
-		    finally (return successor))))
-    (compile-ast (cleavir-ast:first-form-ast ast)
-                 (clone-context context :successors (list next)))))
+  (compile-ast
+   (cleavir-ast:first-form-ast ast)
+   (clone-context
+    context
+    :successors
+    (list
+     (if (typep (results context) 'cleavir-ir:values-location)
+         (let* ((dynenv (cleavir-ir:make-lexical-location
+                         '#:saved-values-dynenv))
+                (body-context
+                  (clone-context
+                   context
+                   :results '()
+                   :dynamic-environment dynenv
+                   :successors
+                   (list (let ((cleavir-ir:*dynamic-environment* dynenv))
+                           (cleavir-ir:make-local-unwind-instruction
+                            (first (successors context))))))))
+          (make-instance 'cleavir-ir:save-values-instruction
+            :outputs (list dynenv)
+            :successors
+            (list
+             (compile-sequence-for-effect
+              (cleavir-ast:form-asts ast)
+              body-context))))
+         (compile-sequence-for-effect
+          (cleavir-ast:form-asts ast)
+          (clone-context :results '())))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a MULTIPLE-VALUE-EXTRACT-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-extract-ast) context)
-  (let* ((locations (mapcar #'find-or-create-location
-                            (cleavir-ast:lhs-asts ast)))
-         (results (results context))
-         (successor
-           (loop with successor = (first (successors context))
-                 for form-ast in (reverse (cleavir-ast:form-asts ast))
-                 do (setf successor
-                          (compile-ast form-ast
-                                       (clone-context
-                                        context
-                                        :results '()
-                                        :successors (list successor))))
-                 finally (return successor)))
-         (assign
-           (cond
-             ((typep (results context) 'cleavir-ir:values-location)
-              (cleavir-ir:make-multiple-to-fixed-instruction
-               results locations successor))
-             (t
-              ;; Lexical locations. This is trickier conceptually.
-              ;; We need to get as many values as possible - e.g. if we have
-              ;; LHS = (a b c) and results = (e f), we have to compile the form
-              ;; to return three values, not two. So, we swap results and LHS if
-              ;; LHS is longer, and then generate assignments for the shared number.
-              (when (>= (length locations) (length results))
-                (rotatef locations results))
-              (loop with succ = successor
-                    for location in locations
-                    for result in results
-                    do (setf succ
-                             (cleavir-ir:make-assignment-instruction
-                              result location succ))
-                    finally (return succ))))))
-    (compile-ast
-     (cleavir-ast:first-form-ast ast)
-     (clone-context context :results results :successors (list assign)))))
+  (let ((results (results context))
+        (locations (mapcar #'find-or-create-location
+                           (cleavir-ast:lhs-asts ast))))
+    (cond
+      ((typep results 'cleavir-ir:values-location)
+       (let* ((dynenv (cleavir-ir:make-lexical-location
+                       '#:saved-values-dynenv))
+              (body-context
+                (clone-context
+                 context
+                 :results '()
+                 :dynamic-environment dynenv
+                 :successors
+                 (list (let ((cleavir-ir:*dynamic-environment* dynenv))
+                         (cleavir-ir:make-local-unwind-instruction
+                          (first (successors context))))))))
+         (make-instance 'cleavir-ir:save-values-instruction
+           :outputs (list dynenv)
+           :successors
+           (list
+            (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+              :inputs (list results)
+              :outputs locations
+              :dynamic-environment dynenv
+              :successors
+              (list
+               (compile-sequence-for-effect (cleavir-ast:form-asts ast)
+                                            body-context)))))))
+      (t
+       (when (>= (length locations) (length results))
+         (rotatef locations results))
+       (let* ((successor
+                (compile-sequence-for-effect (cleavir-ast:form-asts ast)
+                                             (clone-context context
+                                                            :results '())))
+              (succ (loop with succ = successor
+                          for location in locations
+                          for result in results
+                          do (setf succ
+                                   (cleavir-ir:make-assignment-instruction
+                                    result location succ))
+                          finally (return succ))))
+         (compile-ast
+          (cleavir-ast:first-form-ast ast)
+          (clone-context
+           context
+           :results results
+           :successors (list succ))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -95,3 +95,23 @@
   (list :required (required-types instruction)
         :optional (optional-types instruction)
         :rest (rest-type instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction SAVE-VALUES-INSTRUCTION.
+;;;
+;;; This instruction has a single output which is a lexical location
+;;; holding a the dynamic environment.  The instruction takes the
+;;; values in the global values location and creates a new values
+;;; entry to be the top of the dynamic environment.  The output holds
+;;; the augmented dynamic environment.
+
+;;; FIXME: this instruction should not be a subclass of
+;;; SIDE-EFFECT-MIXIN.  It is temporarily the case until we fix
+;;; REMOVE-USELESS-INSTRUCTIONS to take dynamic environment locations
+;;; into account.  Right now, the output of this instruction is
+;;; considered not used, so the instruction gets removed.
+
+(defclass save-values-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
