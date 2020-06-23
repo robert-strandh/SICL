@@ -67,7 +67,7 @@
 \newcommand{\A}{{\mathbb A}}
 \newcommand{\degr}{\mathrm{deg}}
 
-\title{Creating a Common Lisp implementation\\(Part 1)}
+\title{Creating a \commonlisp{} implementation\\(Part 1)}
 
 \author{Robert Strandh}
 \institute{
@@ -134,7 +134,7 @@ Characteristics:
 }
 
 \frame{
-\frametitle{Common Lisp file compiler}
+\frametitle{\commonlisp{} file compiler}
 \vskip 0.25cm
 \begin{figure}
 \begin{center}
@@ -144,18 +144,18 @@ Characteristics:
 }
 
 \frame{
-\frametitle{Common Lisp file compiler}
+\frametitle{\commonlisp{} file compiler}
 \vskip 0.25cm
 Characteristics:
 \vskip 0.25cm
 \begin{itemize}
-\item Requires and existing Common Lisp implementation (at least partial).
+\item Requires and existing \commonlisp{} implementation (at least partial).
 \item more?
 \end{itemize}
 }
 
 \frame{
-\frametitle{Run-time support for Common Lisp functions}
+\frametitle{Run-time support for \commonlisp{} functions}
 \vskip 0.25cm
 \begin{figure}
 \begin{center}
@@ -165,7 +165,7 @@ Characteristics:
 }
 
 \frame{
-\frametitle{Run-time support for Common Lisp functions}
+\frametitle{Run-time support for \commonlisp{} functions}
 \vskip 0.25cm
 Characteristics:
 \vskip 0.25cm
@@ -177,20 +177,135 @@ Characteristics:
 }
 
 \frame{
-\frametitle{Creating a Common Lisp implementation}
+\frametitle{Creating a \commonlisp{} implementation}
 \vskip 0.25cm
 \begin{itemize}
 \item A compiler for a traditional language is a ``simple'' file
   translator.
 \item Run-time support for a traditional language is provided by the
   operating-system kernel.
-\item A compiler for a Common Lisp system is a bit more involved.
-\item Run-time support for Common Lisp is the Common Lisp system.
+\item A compiler for a \commonlisp{} system is a bit more involved.
+\item Run-time support for \commonlisp{} is the \commonlisp{} system.
 \end{itemize}
 \vskip 0.25cm
-Creating a Common Lisp implementation involves writing a compiler, but
+Creating a \commonlisp{} implementation involves writing a compiler, but
 also creating the run-time support, which has some of the aspects of
 a traditional operating-system kernel.
+}
+
+\frame{
+\frametitle{General assumptions}
+\vskip 0.25cm
+\begin{itemize}
+\item We want to use \commonlisp{} as much as possible.
+\item The resulting system should not be too slow, but we do not
+  need extremely good performance.
+\item No classes and no generic functions.  This assumption will be
+  revisited later.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Start with a small core in (say) C}
+\vskip 0.25cm
+\begin{itemize}
+\item Write a minimal subset in an existing language.
+\item Add more and more functionality, written in \commonlisp{}.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Core functionality}
+\vskip 0.25cm
+We need to figure out what initial functionality the core must have.
+\vskip 0.25cm
+\begin{itemize}
+\item A memory manager and garbage collector.
+\item A reader.  It must be possible to read additional \commonlisp{} code.
+\item An evaluator.  The additional \commonlisp{} code must be executed.
+\item A printer, i.e., the \texttt{print} function of \commonlisp{}.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Memory manager and garbage collector}
+\vskip 0.25cm
+A natural choice:
+\begin{itemize}
+\item Use C malloc() to allocate \commonlisp{} objects.
+\item Use the Boehm-Demers-Weiser conservative
+garbage collector to reclaim memory of dead objects.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Reader}
+\vskip 0.25cm
+The \commonlisp{} reader is a complicated module, and is best written
+in \commonlisp{}, but that's not a choice for the core.  Two options:
+\begin{itemize}
+\item Write a subset of the reader in C, capable of reading additional
+  source code.  Replace with a full reader written in \commonlisp{}
+  later.
+\item Write the final reader in C, but leave out complicated standard
+  reader macros that can be written in \commonlisp{} later.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Printer}
+\vskip 0.25cm
+Like the reader, the \commonlisp{} printer is a complicated module,
+and is best written in \commonlisp{}, but that's not a choice for the
+core.
+\vskip 0.25cm
+The same two options are possible.  We will not discuss the printer
+any further.
+}
+
+\frame{
+\frametitle{Strategy 1: Evaluator}
+\vskip 0.25cm
+Several possible implementations:
+\vskip 0.25cm
+\begin{itemize}
+\item A direct interpreter written in C.
+\item A compiler generating native machine code.
+\item A compiler generating byte codes, combined with a byte-code
+  interpreter written in C.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Direct interpreter}
+\vskip 0.25cm
+\begin{itemize}
+\item Relatively simple.
+\item Slow.
+\item ``Cross evaluation'' is not possible.
+  interpreter written in C.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Compiler generating native code}
+\vskip 0.25cm
+\begin{itemize}
+\item Hard to write.
+\item Requires knowledge of the C ABI.
+\item Makes tail-call optimization somewhat difficult.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Compiler generating byte codes}
+\vskip 0.25cm
+\begin{itemize}
+\item Relatively simple to write.
+\item Reasonably fast.
+\item Tail-call optimization is relatively easy.
+\end{itemize}
+This is our recommended choice, at least for the time being.
 }
 
 \frame{
