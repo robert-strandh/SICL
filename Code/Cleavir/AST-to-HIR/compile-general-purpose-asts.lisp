@@ -608,7 +608,7 @@
               body-context))))
          (compile-sequence-for-effect
           (cleavir-ast:form-asts ast)
-          (clone-context :results '())))))))
+          (clone-context context :results '())))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
