@@ -630,19 +630,25 @@
                  :successors
                  (list (let ((cleavir-ir:*dynamic-environment* dynenv))
                          (cleavir-ir:make-local-unwind-instruction
-                          (first (successors context))))))))
-         (make-instance 'cleavir-ir:save-values-instruction
-           :outputs (list dynenv)
-           :successors
-           (list
-            (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-              :inputs (list results)
-              :outputs locations
-              :dynamic-environment dynenv
-              :successors
-              (list
-               (compile-sequence-for-effect (cleavir-ast:form-asts ast)
-                                            body-context)))))))
+                          (first (successors context)))))))
+              (succ
+                (make-instance 'cleavir-ir:save-values-instruction
+                  :outputs (list dynenv)
+                  :successors
+                  (list
+                   (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                     :inputs (list results)
+                     :outputs locations
+                     :dynamic-environment dynenv
+                     :successors
+                     (list
+                      (compile-sequence-for-effect (cleavir-ast:form-asts ast)
+                                                   body-context)))))))
+         (compile-ast
+          (cleavir-ast:first-form-ast ast)
+          (clone-context
+           context
+           :successors (list succ)))))
       (t
        (when (>= (length locations) (length results))
          (rotatef locations results))
