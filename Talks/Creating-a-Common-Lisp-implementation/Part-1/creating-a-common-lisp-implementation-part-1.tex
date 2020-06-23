@@ -308,6 +308,46 @@ Several possible implementations:
 This is our recommended choice, at least for the time being.
 }
 
+\frame[containsverbatim]{
+\frametitle{Strategy 1: Complications}
+\vskip 0.25cm
+Perhaps we would like to implement \texttt{reverse} in \commonlisp{}.
+Here is a reasonable-looking implementation:
+\vskip 0.25cm
+\begin{verbatim}
+(defun reverse (list)
+  (loop with result = '()
+        for element in list
+        do (push element result)
+        finally (return result)))
+\end{verbatim}
+\vskip 0.25cm
+But for this implementation to work, the \texttt{loop} macro must exist.
+\vskip 0.25cm
+And it is entirely possible that the macro expander for \texttt{loop}
+needs \texttt{reverse}.
+}
+
+\frame[containsverbatim]{
+\frametitle{Strategy 1: Complications}
+\vskip 0.25cm
+Possible solutions:
+\vskip 0.25cm
+\begin{itemize}
+\item Write \texttt{reverse} in the implementation language of the
+  core (C).
+\item Use a simpler iteration construct, hoping its expansion does not
+  require \texttt{reverse}.
+\item Use \texttt{tagbody} and \texttt{go} to implement \texttt{reverse}.
+\end{itemize}
+\vskip 0.25cm
+A similar decision has to be made for almost all non-trivial function
+to be implemented.
+\vskip 0.25cm
+Worse, during maintenance, these choices have to be known so as to
+avoid violations of the constraints.
+}
+
 \frame{
 \frametitle{Title}
 \vskip 0.25cm
