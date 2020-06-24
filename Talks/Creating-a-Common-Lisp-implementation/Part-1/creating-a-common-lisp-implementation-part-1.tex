@@ -338,7 +338,7 @@ But for this implementation to work, the \texttt{do} macro must exist.
 \vskip 0.25cm
 And the macro expander for \texttt{do} may very well use
 \texttt{mapcar} to extract the local variables, here \texttt{sublist}
-and \texttt{result}.
+and \texttt{result}.  SBCL does it that way, for example.
 }
 
 \frame[containsverbatim]{
@@ -379,6 +379,45 @@ Example from ECL:
 \end{itemize}
 \vskip 0.25cm
 Disclaimer: It could be written like that for speed.
+}
+
+\frame[containsverbatim]{
+\frametitle{Strategy 1: Complications}
+\vskip 0.25cm
+Major complication: How and when do we define the macro \texttt{defmacro}?
+\vskip 0.25cm
+\begin{itemize}
+\item The macro expander for \texttt{defmacro} is quite complicated.
+  In particular, parsing and generating code for the macro lambda list.
+\item This task is done by a function, traditionally called
+  \texttt{parse-macro} (from the book Common Lisp, the Language).
+\item Since the macro expander is complicated, it very likely needs to
+  use macros, like \texttt{setf}, \texttt{multiple-value-bind},
+  \texttt{case}, \texttt{cond}, \texttt{push}, \texttt{when},
+  \texttt{unless}, \texttt{dolist}, \texttt{dotimes} (from ECL).
+\end{itemize}
+\vskip 0.25cm
+We may have to define many of those macros using some mechanism
+other than \texttt{defmacro}.
+}
+
+\frame[containsverbatim]{
+\frametitle{Strategy 1: Complications, example}
+\vskip 0.25cm
+Example from ECL:
+\vskip 0.25cm
+\begin{itemize}
+\item Many macros are defined using a mechanism similar to
+  \texttt{(setf macro-function)} to avoid the use of \texttt{defmacro}
+  before the latter is defined.
+\item These macros do not use \texttt{parse-macro} (or
+  \texttt{expand-defmacro} as it is called in ECL).
+\item The lambda lists of these macros are parsed with special-purpose
+  code.
+\end{itemize}
+\vskip 0.25cm
+Again, we have code that is not ``natural'', and we end up with
+duplicated code.
 }
 
 \frame[containsverbatim]{
