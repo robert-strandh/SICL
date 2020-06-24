@@ -197,10 +197,12 @@ a traditional operating-system kernel.
 \frametitle{General assumptions}
 \vskip 0.25cm
 \begin{itemize}
-\item We want to use \commonlisp{} as much as possible.
+\item We want to use \commonlisp{} as much as possible for the
+  implementation.
 \item The resulting system should not be too slow, but we do not
   need extremely good performance.
-\item No classes and no generic functions.  This assumption will be
+\item The implementation we are creating has no classes and no generic
+  functions.  This assumption will be
   revisited later.
 \end{itemize}
 }
@@ -283,7 +285,6 @@ Several possible implementations:
 \item Relatively simple.
 \item Slow.
 \item ``Cross evaluation'' is not possible.
-  interpreter written in C.
 \end{itemize}
 }
 
@@ -351,6 +352,7 @@ Possible solutions:
   \commonlisp{} as much as possible.
 \item Use a simpler iteration construct, hoping its expansion does not
   require \texttt{mapcar}.
+\item Use recursion, perhaps tail recursion.
 \item Use \texttt{tagbody} and \texttt{go} to implement \texttt{mapcar}.
 \end{itemize}
 \vskip 0.25cm
@@ -359,6 +361,41 @@ to be implemented.
 \vskip 0.25cm
 Worse, during maintenance, these choices have to be known so as to
 avoid violations of the constraints.
+}
+
+\frame[containsverbatim]{
+\frametitle{Strategy 1: Complications, example}
+\vskip 0.25cm
+Example from ECL:
+\vskip 0.25cm
+\begin{itemize}
+\item \texttt{mapcar} is defined in C with a lot of macros (extension
+  .d) in a file \texttt{mapfun.d} that also defines \texttt{mapc},
+  \texttt{maplist}, \texttt{mapl}, \texttt{mapcan}, and
+  \texttt{mapcon}.
+\item The file has 170 lines of code.
+\item Executing \texttt{sort mapfun.d | uniq | wc -l} gives a bit over
+  60 unique lines of code.
+\end{itemize}
+\vskip 0.25cm
+Disclaimer: It could be written like that for speed.
+}
+
+\frame[containsverbatim]{
+\frametitle{Strategy 1: Complications}
+\vskip 0.25cm
+Summary of problems:
+\vskip 0.25cm
+\begin{itemize}
+\item We end up with a lot of C code, despite our best intentions.
+\item We may end up with multiple versions of the same module, one
+  (simplified) C version, and one (complete) \commonlisp{} version.
+\item Much of the \commonlisp{} code is not written in the most
+  ``natural'' way.
+\item There are many, often implicit, dependencies between modules.
+\item The resulting system is hard to maintain, especially when
+  dependencies are implicit.
+\end{itemize}
 }
 
 \frame{
