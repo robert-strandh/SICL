@@ -110,8 +110,8 @@
     (cst:db s (eval-when-cst situations-cst . body-cst) cst
       (declare (ignore eval-when-cst))
       (let ((situations (cst:raw situations-cst)))
-        (if (or (eq cleavir-generate-ast:*compiler* 'cl:compile)
-                (eq cleavir-generate-ast:*compiler* 'cl:eval)
+        (if (or (eq *compiler* 'cl:compile)
+                (eq *compiler* 'cl:eval)
                 (not *current-form-is-top-level-p*))
             (if (or (member :execute situations)
                     (member 'cl:eval situations))
