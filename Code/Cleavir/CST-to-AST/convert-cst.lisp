@@ -84,46 +84,6 @@
                 (let ((expanded-cst (cst:reconstruct expanded-form cst system)))
                   (convert expanded-cst env system))))))))
 
-;;; Wrap argument ASTs in THE-ASTs based on the function type.
-;;; Also signals warnings for obviously problematic calls
-;;; (i.e. argument count mismatch)
-(defun maybe-type-wrap-arguments (cst function-type argument-asts)
-  (multiple-value-bind (validp required optional restp rest keysp keys aok-p)
-      (parse-function-type function-type)
-    (declare (ignore keys aok-p)) ; Probably need constant propagation
-    (let ((args-length (length argument-asts))
-          (nreq (length required))
-          (npos (+ (length required) (length optional))))
-      (cond ((not validp) ; nothing could be determined about the type - give up
-             argument-asts)
-            ((or (< args-length (length required)) ; too few arguments
-                 (and (not restp) (not keysp)
-                      (> args-length npos))) ; too many
-             (warn 'incorrect-number-of-arguments-style-warning
-                   :expected-min nreq
-                   :expected-max (and (not restp) (not keysp) npos)
-                   :observed args-length
-                   :cst cst)
-             argument-asts)
-            ((and keysp (oddp (- args-length npos)))
-             (warn 'odd-keyword-portion-style-warning :cst cst)
-             argument-asts)
-            (t ; call has a fine number of arguments
-             (loop for arg-ast in argument-asts
-                   for type = (cond (required (pop required))
-                                    (optional (pop optional))
-                                    (restp rest)
-                                    (t 't)) ; keysp but not restp
-                   collect (cleavir-generate-ast::maybe-wrap-the
-                            type arg-ast)))))))
-
-;;; Wrap a function call based on the function's return type.
-(defun maybe-wrap-return (function-type call-ast)
-  (let ((rettype (third function-type)))
-    (if (eq rettype '*)
-        call-ast
-        (cleavir-generate-ast::maybe-wrap-the rettype call-ast))))
-
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
 ;;; form.  ARGUMENTS-CST is a CST representing the sequence of
@@ -132,15 +92,10 @@
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference name-cst info env system))
-         (function-type (function-type info))
-         (argument-asts (maybe-type-wrap-arguments
-                         cst function-type
-                         (convert-sequence arguments-cst env system))))
-    (maybe-wrap-return
-     function-type
-     (cleavir-ast:make-call-ast function-ast argument-asts
-                                :origin (cst:source cst)
-                                :inline (cleavir-env:inline info)))))
+         (argument-asts (convert-sequence arguments-cst env system)))
+    (cleavir-ast:make-call-ast function-ast argument-asts
+                               :origin (cst:source cst)
+                               :inline (cleavir-env:inline info))))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
@@ -207,8 +162,9 @@
 
 (defmethod convert-cst
     (cst (info cleavir-env:lexical-variable-info) env system)
-  (declare (ignore system))
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn 'ignored-variable-referenced :cst cst))
-  (cleavir-generate-ast::maybe-wrap-the (cleavir-env:type info)
-                                        (cleavir-env:identity info)))
+  (let ((type (cleavir-ctype:coerce-to-values
+               (cleavir-env:type info) system))
+        (lex (cleavir-env:identity info)))
+    (type-wrap lex type (cst:source cst) env system)))

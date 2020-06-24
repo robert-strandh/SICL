@@ -186,7 +186,8 @@
 ;;; Convert the body of a function.
 (defun convert-body (body env system)
   (convert (body-cst body)
-           (augment-environment-with-declarations env (dspecs body))
+           (augment-environment-with-declarations
+            env system (dspecs body))
            system))
 
 (defmethod process-parameter-groups
@@ -260,6 +261,7 @@
     ((parameter cst:simple-variable) idspecs environment system)
   (augment-environment-with-variable (cst:name parameter)
                                      (first idspecs)
+                                     system
                                      environment
                                      environment))
 
@@ -268,19 +270,22 @@
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
-                                      environment))
+                                      environment
+                                      system))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:ordinary-optional-parameter) idspecs environment system)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
-                                      environment))
+                                      environment
+                                      system))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:aux-parameter) idspecs environment system)
   (augment-environment-with-variable (cst:name parameter)
                                      (first idspecs)
+                                     system
                                      environment
                                      environment))
 

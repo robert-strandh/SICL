@@ -290,7 +290,7 @@
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
-                         new-env canonical-declaration-specifiers)))
+                         new-env system canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  ;; So that flet with empty body works.
@@ -320,7 +320,7 @@
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
-                         new-env canonical-declaration-specifiers)))
+                         new-env system canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  (list
@@ -568,9 +568,6 @@
 ;;;
 ;;; Converting THE.
 ;;;
-;;; FIXME: either export THE-VALUES-COMPONENTS from
-;;; CLEAVIR-GENERATE-AST, or move it somewhere else.  Perhaps adapt it
-;;; to use CSTs.
 
 (defmethod convert-special
     ((symbol (eql 'the)) cst environment system)
@@ -578,13 +575,11 @@
   (check-argument-count cst 2 2)
   (cst:db origin (the-cst value-type-cst form-cst) cst
     (declare (ignore the-cst))
-    (multiple-value-bind (req opt rest)
-        (cleavir-generate-ast::the-values-components (cst:raw value-type-cst))
-      ;; We don't bother collapsing THE forms for user code.
-      (cleavir-ast:make-the-ast
-       (convert form-cst environment system)
-       req opt rest
-       :origin origin))))
+    (type-wrap (convert form-cst environment system)
+               (cleavir-env:parse-values-type-specifier
+                (cst:raw value-type-cst)
+                environment system)
+               origin environment system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -697,6 +692,6 @@
                (cst:canonicalize-declarations
                 system (cleavir-env:declarations environment) declaration-csts))
              (new-env (augment-environment-with-declarations
-                       environment canonical-declaration-specifiers)))
+                       environment system canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
           (process-progn (convert-sequence forms-cst new-env system) origin))))))
