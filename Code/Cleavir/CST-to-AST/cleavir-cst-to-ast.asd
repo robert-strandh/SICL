@@ -8,6 +8,7 @@
 	       :cleavir-primop
 	       :cleavir-environment
 	       :cleavir-compilation-policy
+               :cleavir-ctype
                :acclimation)
   :serial t
   :components

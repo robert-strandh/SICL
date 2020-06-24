@@ -38,6 +38,7 @@
    #:values-ast #:make-values-ast
    #:multiple-value-prog1-ast #:make-multiple-value-prog1-ast
    #:first-form-ast
+   #:multiple-value-extract-ast #:make-multiple-value-extract-ast
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
    #:form
    #:body-asts

@@ -11,6 +11,7 @@
 	   #:eval
 	   #:macro-function
 	   #:compiler-macro-function
+           #:find-class
 	   #:function
 	   #:block
 	   #:inline
@@ -74,6 +75,7 @@
    #:macro-function
    #:compiler-macro-function
    #:symbol-macro-expansion
+   #:find-class
    #:lexical-variable
    #:special-variable
    #:global-p
@@ -93,4 +95,8 @@
    #:optimize
    #:policy
    #:environment-policy
-   #:compile-time))
+   #:compile-time
+   #:parse-type-specifier
+   #:parse-values-type-specifier
+   #:parse-expanded-type-specifier
+   #:parse-compound-type-specifier))
