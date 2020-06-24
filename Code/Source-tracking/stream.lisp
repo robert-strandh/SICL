@@ -23,6 +23,13 @@
     :lines (read-entire-stream stream)))
 
 ;;; Gray stream programming
+(defmethod trivial-gray-streams:stream-peek-char
+    ((stream source-tracking-stream))
+  (let ((char (trivial-gray-streams:stream-read-char stream)))
+    (unless (eq char :eof)
+      (trivial-gray-streams:stream-unread-char stream char))
+    char))
+
 (defmethod trivial-gray-streams:stream-read-char
     ((stream source-tracking-stream))
   (with-accessors ((lines lines)
