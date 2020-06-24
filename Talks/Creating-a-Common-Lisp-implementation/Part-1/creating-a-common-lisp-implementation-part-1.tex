@@ -223,6 +223,9 @@ We need to figure out what initial functionality the core must have.
 \vskip 0.25cm
 \begin{itemize}
 \item A memory manager and garbage collector.
+\item Code for managing the dynamic run-time environment.
+\item Allocators, predicates, and accessors for built-in data types.
+\item Arithmetic functions for fixnums and floats.
 \item A reader.  It must be possible to read additional \commonlisp{} code.
 \item An evaluator.  The additional \commonlisp{} code must be executed.
 \item A printer, i.e., the \texttt{print} function of \commonlisp{}.
@@ -238,6 +241,57 @@ A natural choice:
 \item Use the Boehm-Demers-Weiser conservative
 garbage collector to reclaim memory of dead objects.
 \end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Managing the dynamic run-time environment}
+\vskip 0.25cm
+This environment consists of:
+\begin{itemize}
+\item Bindings for special variables.
+\item Tags for \texttt{catch} used by \texttt{throw}.
+\item Exit points defined by \texttt{tagbody} and \texttt{block}.
+\item Entries for \texttt{unwind-protect}.
+\item Signal handlers and restarts.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Managing the dynamic run-time environment}
+\vskip 0.25cm
+The dynamic environment can be allocated on the heap as a linked list
+of entries:
+\begin{itemize}
+\item An entry type for bindings of a special variables.
+\item An entry type for \texttt{catch} tags.
+\item An entry type for exit points defined by \texttt{tagbody} and \texttt{block}.
+\item An entry type for for \texttt{unwind-protect}.
+\end{itemize}
+\vskip 0.25cm
+Though \texttt{catch} and \texttt{throw} can be implemented using
+\texttt{block} and \texttt{return-from}.
+\vskip 0.25cm
+Signal handlers and restarts can be implemented using special variables.
+\vskip 0.25cm
+Throw (unwinding the stack) can be implemented using \texttt{setjmp/longjmp}.
+}
+
+\frame{
+\frametitle{Strategy 1: Allocators, predicates, accessors}
+\vskip 0.25cm
+Each built-in data type needs a unique representation:
+\begin{itemize}
+\item Fixnums, bignums, ratios, floats, complex numbers.
+\item Characters.
+\item Symbols, packages.
+\item Conses, arrays, hash tables.
+\item Streams.
+\end{itemize}
+\vskip 0.25cm
+The representation of each type must be determined.
+\vskip 0.25cm
+An allocator function, a predicate, and accessors must be defined in
+the core.
 }
 
 \frame{
