@@ -268,12 +268,16 @@ of entries:
 \item An entry type for for \texttt{unwind-protect}.
 \end{itemize}
 \vskip 0.25cm
-Though \texttt{catch} and \texttt{throw} can be implemented using
-\texttt{block} and \texttt{return-from}.
+However:
+\begin{itemize}
+\item \texttt{catch} and \texttt{throw} can be implemented using
+  \texttt{block} and \texttt{return-from}.
+\item Signal handlers and restarts can be implemented using special variables.
+\end{itemize}
 \vskip 0.25cm
-Signal handlers and restarts can be implemented using special variables.
-\vskip 0.25cm
-Throw (unwinding the stack) can be implemented using \texttt{setjmp/longjmp}.
+Unwinding the stack (\texttt{throw}, \texttt{go},
+\texttt{return-from}) can be implemented using
+\texttt{setjmp/longjmp}.
 }
 
 \frame{
