@@ -94,6 +94,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:THE-TYPEW
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:the-typew)) cst env system)
+  (check-simple-primop-syntax cst 3)
+  (cst:db origin (op-cst form-cst type-cst else-cst) cst
+    (declare (ignore op-cst))
+    (cleavir-ast:make-the-typew-ast
+     (convert form-cst env system)
+     (cst:raw type-cst)
+     (convert else-cst env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:CASE.
 ;;;
 ;;; This primitive operation can be used to compile CL:CASE

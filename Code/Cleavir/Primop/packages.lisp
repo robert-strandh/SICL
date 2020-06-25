@@ -3,7 +3,7 @@
 (defpackage #:cleavir-primop
   (:use)
   (:export
-   #:eq #:typeq #:typew #:case
+   #:eq #:typeq #:typew #:the-typew #:case
    #:car #:cdr #:rplaca #:rplacd
    #:fixnum-arithmetic
    #:fixnum-add

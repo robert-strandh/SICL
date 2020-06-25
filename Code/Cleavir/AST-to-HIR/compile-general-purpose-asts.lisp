@@ -870,6 +870,21 @@
         (list (first successors) (second successors) real-test)
         (cleavir-ast:ctype ast)))))))
 
+(defmethod compile-ast ((ast cleavir-ast:the-typew-ast) context)
+  (assert-context ast context 1 1)
+  (compile-ast
+   (cleavir-ast:form-ast ast)
+   (clone-context
+    context
+    :successors
+    (list
+     (cleavir-ir:make-typew-instruction
+      (first (results context))
+      (list (first (successors context))
+            (compile-ast (cleavir-ast:else-ast ast) context)
+            (first (successors context)))
+      (cleavir-ast:ctype ast))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a LEXICAL-AST.
