@@ -1127,6 +1127,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a NEQ-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:neq-ast) context)
+  (assert-context ast context 0 2)
+  (with-accessors ((successors successors)
+		   (invocation invocation))
+      context
+    (let ((arg1-ast (cleavir-ast:arg1-ast ast))
+          (arg2-ast (cleavir-ast:arg2-ast ast))
+          (temp1 (cleavir-ir:new-temporary))
+          (temp2 (cleavir-ir:new-temporary)))
+      (compile-ast
+       arg1-ast
+       (clone-context
+        context
+        :results (list temp1)
+        :successors (list
+                     (compile-ast
+                      arg2-ast
+                      (clone-context
+                       context
+                       :results (list temp2)
+                       :successors (list
+                                    (cleavir-ir:make-eq-instruction
+                                     (list temp1 temp2)
+                                     ;; Reverse successors.
+                                     (list (second successors)
+                                           (first successors))))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a CASE-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:case-ast) context)

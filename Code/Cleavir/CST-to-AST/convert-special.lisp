@@ -395,7 +395,7 @@
 (defun boolify (test-ast origin env system)
   (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
       test-ast
-      (cleavir-ast:make-eq-ast
+      (cleavir-ast:make-neq-ast
        test-ast
        (convert-constant (make-atom-cst nil origin)
                          env system)
