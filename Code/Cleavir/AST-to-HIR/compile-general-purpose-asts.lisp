@@ -837,6 +837,33 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a TYPEW-AST.
+;;;
+;;; TYPEW instructions are unusual in having three successors
+;;; despite appearing in a normal boolean position. This is
+;;; because their test-ast is used as another boolean test with
+;;; the same destinations (plus the choke).
+
+(defmethod compile-ast ((ast cleavir-ast:typew-ast) context)
+  (assert-context ast context 0 2)
+  (let* ((successors (successors context))
+         (real-test-context
+           (clone-context
+            context
+            :successors (list (cleavir-ir:make-choke-instruction
+                               (first successors))
+                              (cleavir-ir:make-choke-instruction
+                               (second successors)))))
+         (real-test
+           (compile-ast (cleavir-ast:test-ast ast)
+                        real-test-context)))
+    (cleavir-ir:make-typew-instruction
+     (find-or-create-location (cleavir-ast:variable-ast ast))
+     (list (first successors) (second successors) real-test)
+     (cleavir-ast:ctype ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a LEXICAL-AST.
 ;;;
 ;;; This AST has ONE-VALUE-AST-MIXIN as a superclass.

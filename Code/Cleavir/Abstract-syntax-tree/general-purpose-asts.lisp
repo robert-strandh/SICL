@@ -752,6 +752,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class TYPEW-AST.
+
+(defclass typew-ast (boolean-ast-mixin ast)
+  ((%variable-ast :initarg :variable-ast :reader variable-ast)
+   (%ctype :initarg :ctype :reader ctype)
+   (%test-ast :initarg :test-ast :reader test-ast)))
+
+(defun make-typew-ast (variable-ast ctype test-ast &key origin (policy *policy*))
+  (make-instance 'typew-ast
+    :origin origin :policy policy
+    :variable-ast variable-ast :ctype ctype :test-ast test-ast))
+
+(cleavir-io:define-save-info typew-ast
+    (:variable-ast variable-ast)
+  (:ctype ctype)
+  (:test-ast test-ast))
+
+(defmethod children ((ast typew-ast))
+  (list (test-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LOAD-TIME-VALUE-AST.
 ;;;
 ;;; This AST corresponds directly to the LOAD-TIME-VALUE special

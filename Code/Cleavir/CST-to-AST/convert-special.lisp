@@ -392,6 +392,15 @@
 ;;;
 ;;; Converting IF.
 
+(defun boolify (test-ast origin env system)
+  (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
+      test-ast
+      (cleavir-ast:make-eq-ast
+       test-ast
+       (convert-constant (make-atom-cst nil origin)
+                         env system)
+       :origin origin)))
+
 (defmethod convert-special ((symbol (eql 'if)) cst env system)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 3)
@@ -403,21 +412,10 @@
                          (convert-constant (make-atom-cst nil origin)
                                            env system)
                          (cst:db s (else-cst) tail-cst
-                           (convert else-cst env system)))))
-      (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
-          (cleavir-ast:make-if-ast
-           test-ast
-           true-ast
-           false-ast
-           :origin origin)
-          (cleavir-ast:make-if-ast
-           (cleavir-ast:make-eq-ast
-            test-ast
-            (convert-constant (make-atom-cst nil origin) env system)
-            :origin origin)
-           false-ast
-           true-ast
-           :origin origin)))))
+                                 (convert else-cst env system)))))
+      (cleavir-ast:make-if-ast
+       (boolify test-ast origin env system)
+       true-ast false-ast :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

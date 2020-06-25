@@ -51,6 +51,7 @@
    #:the-ast #:make-the-ast
    #:required-types #:optional-types #:rest-type
    #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
+   #:typew-ast #:make-typew-ast #:ctype
    #:bind-ast #:make-bind-ast
    #:eq-ast #:make-eq-ast
    #:case-ast #:make-case-ast #:comparees
