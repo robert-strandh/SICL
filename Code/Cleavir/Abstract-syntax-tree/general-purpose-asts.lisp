@@ -1057,7 +1057,7 @@
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
 (defun make-neq-ast (arg1-ast arg2-ast &key origin (policy *policy*))
-  (make-instance 'eq-ast
+  (make-instance 'neq-ast
     :origin origin :policy policy
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast))
