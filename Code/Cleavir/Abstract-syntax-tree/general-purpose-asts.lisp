@@ -779,7 +779,7 @@
 (defclass the-typew-ast (one-value-ast-mixin ast)
   ((%form-ast :initarg :form-ast :reader form-ast)
    (%ctype :initarg :ctype :reader ctype)
-   (%test-ast :initarg :test-ast :reader test-ast)))
+   (%else-ast :initarg :else-ast :reader else-ast)))
 
 (defun make-the-typew-ast (form-ast ctype else-ast
                            &key origin (policy *policy*))
