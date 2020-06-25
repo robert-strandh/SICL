@@ -783,16 +783,16 @@
 
 (defun make-the-typew-ast (form-ast ctype else-ast
                            &key origin (policy *policy*))
-  (make-instance 'typew-ast
+  (make-instance 'the-typew-ast
     :origin origin :policy policy
     :form-ast form-ast :ctype ctype :else-ast else-ast))
 
-(cleavir-io:define-save-info typew-ast
+(cleavir-io:define-save-info the-typew-ast
     (:form-ast form-ast)
   (:ctype ctype)
   (:else-ast else-ast))
 
-(defmethod children ((ast typew-ast))
+(defmethod children ((ast the-typew-ast))
   (list (form-ast ast) (else-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
