@@ -856,11 +856,19 @@
                                (second successors)))))
          (real-test
            (compile-ast (cleavir-ast:test-ast ast)
-                        real-test-context)))
-    (cleavir-ir:make-typew-instruction
-     (find-or-create-location (cleavir-ast:variable-ast ast))
-     (list (first successors) (second successors) real-test)
-     (cleavir-ast:ctype ast))))
+                        real-test-context))
+         (temp (make-temp)))
+    (compile-ast
+     (cleavir-ast:form-ast ast)
+     (clone-context
+      context
+      :results (list temp)
+      :successors
+      (list
+       (cleavir-ir:make-typew-instruction
+        temp
+        (list (first successors) (second successors) real-test)
+        (cleavir-ast:ctype ast)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

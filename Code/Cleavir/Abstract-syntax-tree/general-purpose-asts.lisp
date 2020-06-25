@@ -755,22 +755,22 @@
 ;;; Class TYPEW-AST.
 
 (defclass typew-ast (boolean-ast-mixin ast)
-  ((%variable-ast :initarg :variable-ast :reader variable-ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
    (%ctype :initarg :ctype :reader ctype)
    (%test-ast :initarg :test-ast :reader test-ast)))
 
-(defun make-typew-ast (variable-ast ctype test-ast &key origin (policy *policy*))
+(defun make-typew-ast (form-ast ctype test-ast &key origin (policy *policy*))
   (make-instance 'typew-ast
     :origin origin :policy policy
-    :variable-ast variable-ast :ctype ctype :test-ast test-ast))
+    :form-ast form-ast :ctype ctype :test-ast test-ast))
 
 (cleavir-io:define-save-info typew-ast
-    (:variable-ast variable-ast)
+    (:form-ast form-ast)
   (:ctype ctype)
   (:test-ast test-ast))
 
 (defmethod children ((ast typew-ast))
-  (list (test-ast ast)))
+  (list (form-ast ast) (test-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -79,20 +79,13 @@
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:TYPEW.
 
-;;; Internal helper
-(defun find-lexical-variable (var env)
-  (assert (symbolp var))
-  (let ((info (cleavir-env:variable-info env var)))
-    (assert (typep info 'cleavir-env:lexical-variable-info))
-    (cleavir-env:identity info)))
-
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:typew)) cst env system)
   (check-simple-primop-syntax cst 3)
-  (cst:db origin (typew-cst var-cst type-cst test-cst) cst
+  (cst:db origin (typew-cst form-cst type-cst test-cst) cst
     (declare (ignore typew-cst))
     (cleavir-ast:make-typew-ast
-     (find-lexical-variable (cst:raw var-cst) env)
+     (convert form-cst env system)
      (cst:raw type-cst)
      (boolify
       (convert test-cst env system)
@@ -174,6 +167,13 @@
 ;;; This primitive operation can be used to compile
 ;;; CL:MULTIPLE-VALUE-SETQ. Unlike that operator, it requires all
 ;;; the variables to be lexical.
+
+;;; Internal helper
+(defun find-lexical-variable (var env)
+  (assert (symbolp var))
+  (let ((info (cleavir-env:variable-info env var)))
+    (assert (typep info 'cleavir-env:lexical-variable-info))
+    (cleavir-env:identity info)))
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:multiple-value-setq)) cst env system)
