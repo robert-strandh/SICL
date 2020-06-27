@@ -28,8 +28,7 @@
                                    (declare (ignorable ,index))
                                    ,@body))))))
            (backward
-             `(multiple-value-bind (,start ,end)
-                  (canonicalize-start-and-end ,list ,start ,end)
+             `(with-list-start-and-end (,start ,end) (,list ,start ,end)
                 (setf ,list (nthcdr ,start ,list))
                 (setf ,length (- ,end ,start))
                 (labels ((,fn (,rest ,index ,length)

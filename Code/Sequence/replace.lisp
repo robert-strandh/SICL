@@ -2,10 +2,8 @@
 
 (defmethod replace ((list1 list) (list2 list) &key (start1 0) end1 (start2 0) end2)
   (declare (method-properties inlineable))
-  (multiple-value-bind (start1 end1)
-      (canonicalize-start-and-end list1 start1 end1)
-    (multiple-value-bind (start2 end2)
-        (canonicalize-start-and-end list2 start2 end2)
+  (with-list-start-and-end (start1 end1) (list1 start1 end1)
+    (with-list-start-and-end (start2 end2) (list2 start2 end2)
       ;; We have to be careful to correctly handle the cases where LIST1
       ;; and LIST2 are identical.  Depending on the relative order of the
       ;; source and the target range, it may be necessary to copy the
@@ -40,10 +38,8 @@
 (replicate-for-each-vector-class #1=#:vector-class
   (defmethod replace ((list list) (vector #1#) &key (start1 0) end1 (start2 0) end2)
     (declare (method-properties inlineable))
-    (multiple-value-bind (start1 end1)
-        (canonicalize-start-and-end list start1 end1)
-      (multiple-value-bind (start2 end2)
-          (canonicalize-start-and-end vector start2 end2)
+    (with-list-start-and-end (start1 end1) (list start1 end1)
+      (with-vector-start-and-end (start2 end2) (vector start2 end2)
         (do ((limit (min (- end1 start1) (- end2 start2)))
              (counter 0 (1+ counter))
              (cons (nthcdr start1 list) (cdr cons)))
@@ -53,10 +49,8 @@
 
   (defmethod replace ((vector #1#) (list list) &key (start1 0) end1 (start2 0) end2)
     (declare (method-properties inlineable))
-    (multiple-value-bind (start1 end1)
-        (canonicalize-start-and-end vector start1 end1)
-      (multiple-value-bind (start2 end2)
-          (canonicalize-start-and-end list start2 end2)
+    (with-vector-start-and-end (start1 end1) (vector start1 end1)
+      (with-list-start-and-end (start2 end2) (list start2 end2)
         (do ((limit (min (- end1 start1) (- end2 start2)))
              (counter 0 (1+ counter))
              (cons (nthcdr start2 list) (cdr cons)))
@@ -71,10 +65,8 @@
 (replicate-for-each-vector-class #1=#:vector-class
   (defmethod replace ((vector1 #1#) (vector2 #1#) &key (start1 0) end1 (start2 0) end2)
     (declare (method-properties inlineable))
-    (multiple-value-bind (start1 end1)
-        (canonicalize-start-and-end vector1 start1 end1)
-      (multiple-value-bind (start2 end2)
-          (canonicalize-start-and-end vector2 start2 end2)
+    (with-vector-start-and-end (start1 end1) (vector1 start1 end1)
+      (with-vector-start-and-end (start2 end2) (vector2 start2 end2)
         (if (and (eq vector1 vector2)
                  (if (= start1 start2) (return-from replace vector1) t)
                  (> end2 start1 start2))

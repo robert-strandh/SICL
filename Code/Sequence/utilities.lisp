@@ -32,43 +32,6 @@
         ((minusp count) 0)
         (t (min count +most-positive-vector-length+))))
 
-(declaim (ftype (function (sequence t t)
-                          (values sequence-index sequence-length sequence-length &optional))
-                canonicalize-start-and-end))
-(declaim (inline canonicalize-start-and-end))
-(defun canonicalize-start-and-end (sequence start end)
-  (declare (sequence sequence))
-  (let* ((length (length sequence))
-         (start
-           (typecase start
-             (unsigned-byte start)
-             (otherwise
-              (error 'invalid-start-index
-                     :expected-type 'unsigned-byte
-                     :datum start
-                     :in-sequence sequence))))
-         (end (typecase end
-                (null length)
-                (integer
-                 (unless (<= end length)
-                   (error 'invalid-end-index
-                          :datum end
-                          :expected-type `(integer 0 ,length)
-                          :in-sequence sequence))
-                 end)
-                (otherwise
-                 (error 'invalid-end-index
-                        :expected-type '(or null integer)
-                        :datum end
-                        :in-sequence sequence)))))
-    (unless (<= start end)
-      (error 'end-less-than-start
-             :datum start
-             :expected-type `(integer 0 ,end)
-             :end-index end
-             :in-sequence sequence))
-    (values start end length)))
-
 ;; Note: Some macros rely on the fact that CLASS-SUBCLASSES sorts its
 ;; entries most-specific-first.
 (defun class-subclasses (class)

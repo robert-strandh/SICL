@@ -17,9 +17,11 @@
    (:file "generic-functions")
    (:file "utilities")
    (:file "with-key-function")
+   (:file "with-list-start-and-end")
    (:file "with-predicate")
-   (:file "with-test-function")
    (:file "with-reified-result-type")
+   (:file "with-test-function")
+   (:file "with-vector-start-and-end")
 
    ;; Load the a few elementary sequence functions and seal
    ;; them.  This way, the subsequent definitions can already use

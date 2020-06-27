@@ -32,8 +32,7 @@
 
 (declaim (inline remove-from-vector))
 (defun remove-from-vector (predicate vector from-end start end count)
-  (multiple-value-bind (start end length)
-      (canonicalize-start-and-end vector start end)
+  (with-vector-start-and-end (start end length) (vector start end)
     (let ((count (canonicalize-count count))
           (bit-vector (make-sequence 'bit-vector (- end start) :initial-element 0))
           (n-removed 0))

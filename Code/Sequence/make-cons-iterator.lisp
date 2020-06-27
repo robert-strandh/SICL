@@ -4,8 +4,7 @@
 (defun make-cons-iterator (list start end terminate)
   (declare (list list))
   (declare (function terminate))
-  (multiple-value-bind (start end)
-      (canonicalize-start-and-end list start end)
+  (with-list-start-and-end (start end) (list start end)
     (values
      (let ((rest (nthcdr start list))
            (index start))
