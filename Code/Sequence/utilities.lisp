@@ -24,13 +24,13 @@
 
 (declaim (inline canonicalize-count))
 (defun canonicalize-count (count)
-  (cond ((null count) (- array-total-size-limit 2))
-        ((not (integerp count))
-         (error 'type-error
-                :datum count
-                :expected-type '(or null integer)))
-        ((minusp count) 0)
-        (t (min count +most-positive-vector-length+))))
+  (typecase count
+    (null +most-positive-vector-length+)
+    ((integer * (0)) 0)
+    ((integer 0 *) (min count +most-positive-vector-length+))
+    (otherwise
+     (error 'must-be-count
+            :datum count))))
 
 ;; Note: Some macros rely on the fact that CLASS-SUBCLASSES sorts its
 ;; entries most-specific-first.

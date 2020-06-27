@@ -70,6 +70,16 @@
            ~s"
           (type-error-datum c)))
 
+(defmethod acclimation:report-condition
+    ((c must-be-count)
+     stream
+     (language (eql 'en-us)))
+  (format stream
+          "A sequence operation count was required, ~
+           but the following was given:~@
+           ~s"
+          (type-error-datum c)))
+
 ;;; Index Handling
 
 (defmethod acclimation:report-condition
