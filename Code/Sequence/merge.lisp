@@ -126,7 +126,7 @@
     (let ((length-1 (length sequence-1))
           (length-2 (length sequence-2)))
       (declare (sequence-length length-1 length-2))
-      (with-predicate (predicate predicate)
+      (with-predicate (predicate predicate :arity 2)
         (with-key-function (key key)
           (cond
             ((zerop length-1) (coerce sequence-2 (class-of prototype)))
