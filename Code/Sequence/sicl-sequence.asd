@@ -19,7 +19,7 @@
    (:file "with-key-function")
    (:file "with-predicate")
    (:file "with-test-function")
-   (:file "reify-sequence-type-specifier")
+   (:file "with-reified-result-type")
 
    ;; Load the a few elementary sequence functions and seal
    ;; them.  This way, the subsequent definitions can already use

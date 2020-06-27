@@ -1,7 +1,28 @@
 (cl:in-package #:sicl-sequence)
 
-;;; This function is called by MAP, MERGE, CONCATENATE, and MAKE-SEQUENCE
-;;; to handle their respective first argument.  It returns two values:
+;;; This macro executes BODY in an environment where the variable PROTOTYPE
+;;; is bound to an instance of the sequence class denoted by RESULT-TYPE,
+;;; and ensures that the value produced by executing BODY in that
+;;; environment is indeed of the specified RESULT-TYPE.
+;;;
+;;; This macro is used to define the functions MAP, MERGE, CONCATENATE and
+;;; MAKE-SEQUENCE.
+
+(defmacro with-reified-result-type ((prototype result-type) &body body)
+  (check-type prototype symbol)
+  (sicl-utilities:once-only (result-type)
+    (sicl-utilities:with-gensyms (result p l)
+      `(multiple-value-bind (,p ,l) (reify-sequence-type-specifier ,result-type)
+         (let ((,result (let ((,prototype ,p)) ,@body)))
+           (unless (or (not ,l)
+                       (and (integerp ,l)
+                            (= (length ,result) ,l))
+                       (typep ,result ,result-type))
+             (result-type-error ,result ,result-type))
+           ,result)))))
+
+;;; For a given type specifier and environment, this function returns two
+;;; values:
 ;;;
 ;;; 1. A sequence prototype, i.e., a sequence that is almost of the
 ;;;    supplied type, except that its may have a different length.
@@ -161,16 +182,3 @@
   (error 'must-be-result-type
          :datum result
          :expected-type type))
-
-(defmacro with-reified-result-type ((prototype result-type) &body body)
-  (check-type prototype symbol)
-  (sicl-utilities:once-only (result-type)
-    (sicl-utilities:with-gensyms (result p l)
-      `(multiple-value-bind (,p ,l) (reify-sequence-type-specifier ,result-type)
-         (let ((,result (let ((,prototype ,p)) ,@body)))
-           (unless (or (not ,l)
-                       (and (integerp ,l)
-                            (= (length ,result) ,l))
-                       (typep ,result ,result-type))
-             (result-type-error ,result ,result-type))
-           ,result)))))
