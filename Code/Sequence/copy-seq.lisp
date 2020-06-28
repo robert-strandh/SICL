@@ -1,10 +1,7 @@
 (cl:in-package #:sicl-sequence)
 
 (defmethod copy-seq ((list list))
-  (sicl-utilities:with-collectors ((result collect))
-    (do ((rest list (cdr rest)))
-        ((endp rest) (result))
-      (collect (car rest)))))
+  (loop for element in list collect element))
 
 (seal-domain #'copy-seq '(list))
 
