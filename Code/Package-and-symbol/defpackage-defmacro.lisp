@@ -115,3 +115,10 @@
   (when (> (count :size options :key #'car) 1)
     (error 'package-size-option-may-occur-at-most-once
            :options options)))
+
+;;; For options that can occur more than once, return a list of all
+;;; the arguments of all the occurrences.
+(defun group-options (name options)
+  (loop for (option-name . arguments) in options
+        when (eq name option-name)
+          append arguments))
