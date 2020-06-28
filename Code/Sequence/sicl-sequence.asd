@@ -15,31 +15,33 @@
    (:file "condition-reporters-en")
    (:file "sequence-function")
    (:file "generic-functions")
-   (:file "utilities")
-   (:file "with-key-function")
-   (:file "with-list-start-and-end")
-   (:file "with-predicate")
-   (:file "with-reified-result-type")
-   (:file "with-test-function")
-   (:file "with-vector-start-and-end")
 
    ;; Load the a few elementary sequence functions and seal
    ;; them.  This way, the subsequent definitions can already use
    ;; optimized versions of them.
    (:file "length")
    (:file "elt")
-   (:file "adjust-sequence")
-   (:file "make-sequence")
-   (:file "make-sequence-like")
 
-   ;; Load several high-level utilities for working with sequences.
+   ;; Load utilities.
+   (:file "utilities")
+   (:file "with-cons-iterator")
+   (:file "with-key-function")
+   (:file "with-list-start-and-end")
+   (:file "with-predicate")
+   (:file "with-reified-result-type")
+   (:file "with-test-function")
+   (:file "with-vector-start-and-end")
    (:file "for-each-relevant-cons")
    (:file "for-each-relevant-element")
-   (:file "make-cons-iterator")
    (:file "sequence-scanner")
 
    ;; Now that all utilities and elementary sequence functions have been
-   ;; defined, it is possible to load the remaining functions.
+   ;; defined, it is possible to load the remaining functions.  The order
+   ;; is mostly alphabetical, except that some very important functions
+   ;; like MAKE-SEQUENCE and NREVERSE are loaded early.
+   (:file "adjust-sequence")
+   (:file "make-sequence")
+   (:file "make-sequence-like")
    (:file "copy-seq")
    (:file "nreverse")
    (:file "count")
