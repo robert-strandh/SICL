@@ -21,6 +21,23 @@
              unless (typep argument 'string-designator)
                do (error 'package-nickname-must-be-a-string-designator
                          :nickname argument)))
+      (:local-nicknames
+       (loop for argument in arguments
+             unless (consp argument)
+               do (error 'package-local-nickname-argument-must-be-cons
+                         :argument argument)
+             unless (cleavir-code-utils:proper-listp argument)
+               do (error 'package-local-nickname-argument-must-be-proper-list
+                         :argument argument)
+             unless (= (length argument) 2)
+               do (error 'package-local-nickname-argument-must-have-length-2
+                         :argument argument)
+             unless (typep (first argument) 'string-designator)
+               do (error 'package-local-nickname-must-be-a-string-designator
+                         :nickname (first argument))
+             unless (typep (second argument) 'package-designator)
+               do (error 'package-local-nickname-package-must-be-a-package-designator
+                         :package-name (second argument))))
       (:documentation
        (when (null arguments)
          (error 'package-documentation-option-requires-an-argument
