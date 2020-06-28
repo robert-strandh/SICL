@@ -85,5 +85,16 @@
                 :size first arguments)))))))
 
 (defun check-defpackage-options (options)
+  ;; We start by checking that the contents of each option is valid in
+  ;; that it is well formed, that it is a valid option name, and that
+  ;; the option arguments are valid for that kind of option type.
   (loop for option in options
-        do (check-defpackage-option option)))
+        do (check-defpackage-option option))
+  ;; Next, we check that the restrictions on the number of options of
+  ;; a certain type are respected.
+  (when (> (count :documentation options :key #'car) 1)
+    (error 'package-documentation-option-may-occur-at-most-once
+           :options options))
+  (when (> (count :size options :key #'car) 1)
+    (error 'package-size-option-may-occur-at-most-once
+           :options options)))
