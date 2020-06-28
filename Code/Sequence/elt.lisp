@@ -2,20 +2,16 @@
 
 (declaim (inline elt-aux))
 (defun elt-aux (list index)
-  (declare (list list)
-           (list-index index))
-  (let ((rest list)
-        (count 0))
-    (loop
-      (when (endp rest)
-        (error 'invalid-sequence-index
-               :datum index
-               :in-sequence list
-               :expected-type `(integer 0 ,(1- (length list)))))
-      (when (= count index)
-        (return rest))
-      (pop rest)
-      (incf count))))
+  (declare (list list) (list-index index))
+  (loop for rest = list then (cdr rest)
+        for position of-type list-length from 0
+        when (endp rest) do
+          (error 'invalid-sequence-index
+                 :datum index
+                 :in-sequence list
+                 :expected-type `(integer 0 ,(1- position)))
+        when (= position index) do (loop-finish)
+        finally (return rest)))
 
 (defmethod elt ((list list) index)
   (declare (method-properties inlineable))

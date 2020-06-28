@@ -3,8 +3,7 @@
 (defparameter *delete-duplicates-hash-threshold* 27)
 
 (defmethod delete-duplicates ((list list) &key from-end test test-not (start 0) end key)
-  (multiple-value-bind (start end)
-      (canonicalize-start-and-end list start end)
+  (with-list-start-and-end (start end) (list start end)
     (let* ((amount (- end start))
            (sentinel (cons nil list))
            (previous (nthcdr start sentinel))
@@ -55,8 +54,7 @@
 (replicate-for-each-vector-class #1=#:vector-class
   (defmethod delete-duplicates ((vector #1#) &key from-end test test-not (start 0) end key)
     (declare (type #1# vector))
-    (multiple-value-bind (start end length)
-        (canonicalize-start-and-end vector start end)
+    (with-vector-start-and-end (start end length) (vector start end)
       (let ((amount (- end start))
             (destination start))
         (declare (vector-length destination))

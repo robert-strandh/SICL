@@ -22,100 +22,15 @@
     (t (error 'must-be-function-designator
               :datum function-designator))))
 
-(declaim (inline canonicalize-test-and-test-not))
-(defun canonicalize-test-and-test-not (test test-not)
-  (if (null test)
-      (if (null test-not)
-          (values #'eql nil)
-          (values (function-designator-function test-not) t))
-      (if (null test-not)
-          (values (function-designator-function test) nil)
-          (error 'both-test-and-test-not-given
-                    :test test
-                    :test-not test-not))))
-
 (declaim (inline canonicalize-count))
 (defun canonicalize-count (count)
-  (cond ((null count) (- array-total-size-limit 2))
-        ((not (integerp count))
-         (error 'type-error
-                :datum count
-                :expected-type '(or null integer)))
-        ((minusp count) 0)
-        (t (min count (- array-total-size-limit 2)))))
-
-(declaim (ftype (function (sequence t t)
-                          (values sequence-index sequence-length sequence-length &optional))
-                canonicalize-start-and-end))
-(declaim (inline canonicalize-start-and-end))
-(defun canonicalize-start-and-end (sequence start end)
-  (declare (sequence sequence))
-  (let* ((length (length sequence))
-         (start
-           (typecase start
-             (unsigned-byte start)
-             (otherwise
-              (error 'invalid-start-index
-                     :expected-type 'unsigned-byte
-                     :datum start
-                     :in-sequence sequence))))
-         (end (typecase end
-                (null length)
-                (integer
-                 (unless (<= end length)
-                   (error 'invalid-end-index
-                          :datum end
-                          :expected-type `(integer 0 ,length)
-                          :in-sequence sequence))
-                 end)
-                (otherwise
-                 (error 'invalid-end-index
-                        :expected-type '(or null integer)
-                        :datum end
-                        :in-sequence sequence)))))
-    (unless (<= start end)
-      (error 'end-less-than-start
-             :datum start
-             :expected-type `(integer 0 ,end)
-             :end-index end
-             :in-sequence sequence))
-    (values start end length)))
-
-(defmacro with-predicate ((name predicate) &body body)
-  (sicl-utilities:with-gensyms (f)
-    `(let ((,f (function-designator-function ,predicate)))
-       (declare (function ,f))
-       (flet ((,name (x) (funcall ,f x)))
-         (declare (inline ,name))
-         ,@body))))
-
-(defmacro with-key-function ((name key) &body body)
-  (sicl-utilities:with-gensyms (f)
-    (sicl-utilities:once-only (key)
-      `(if (null ,key)
-           (flet ((,name (x) x))
-             (declare (inline ,name))
-             ,@body)
-           (let ((,f (function-designator-function ,key)))
-             (declare (function ,f))
-             (flet ((,name (x)
-                      (funcall ,f x)))
-               (declare (inline ,name))
-               ,@body))))))
-
-(defmacro with-test-function ((name test test-not) &body body)
-  (sicl-utilities:with-gensyms (f complementp)
-    (sicl-utilities:once-only (test test-not)
-      `(multiple-value-bind (,f ,complementp)
-           (canonicalize-test-and-test-not ,test ,test-not)
-         (declare (function ,f))
-         (if ,complementp
-             (flet ((,name (a b) (not (funcall ,f a b))))
-               (declare (dynamic-extent #',name))
-               ,@body)
-             (flet ((,name (a b) (funcall ,f a b)))
-               (declare (inline ,name))
-               ,@body))))))
+  (typecase count
+    (null +most-positive-vector-length+)
+    ((integer * (0)) 0)
+    ((integer 0 *) (min count +most-positive-vector-length+))
+    (otherwise
+     (error 'must-be-count
+            :datum count))))
 
 ;; Note: Some macros rely on the fact that CLASS-SUBCLASSES sorts its
 ;; entries most-specific-first.

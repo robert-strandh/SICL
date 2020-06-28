@@ -13,9 +13,8 @@
 
 (seal-domain #'length '(list))
 
-(replicate-for-each-vector-class #1=#:vector-class
-  (defmethod length ((vector #1#))
-    (declare (method-properties inlineable))
-    (cl:length vector)))
+(defmethod length ((vector vector))
+  (declare (method-properties inlineable))
+  (cl:length vector))
 
 (seal-domain #'length '(vector))

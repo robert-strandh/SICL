@@ -35,6 +35,10 @@
 (define-condition must-be-result-type (type-error)
   ())
 
+(define-condition must-be-count (type-error)
+  ()
+  (:default-initargs :expected-type '(or null integer)))
+
 ;;; Index Handling
 
 (define-condition invalid-sequence-index (type-error)

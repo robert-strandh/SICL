@@ -9,8 +9,7 @@
 (replicate-for-each #1=#:vector-class (simple-vector vector)
   (defmethod sort ((vector #1#) predicate &key key)
     (declare (#1# vector))
-    (let ((predicate (function-designator-function predicate)))
-      (declare (function predicate))
+    (with-predicate (predicate predicate :arity 2)
       (with-key-function (key key)
         (labels
             ;; Sort the interval from START below END using shellsort.
@@ -28,12 +27,12 @@
                         (index position))
                    (declare (vector-length index))
                    (loop for peek = (elt vector (- index gap))
-                         while (funcall predicate pivot-key (key peek))
+                         while (predicate pivot-key (key peek))
                          do (setf (elt vector index) peek)
                          do (decf index gap)
                          while (>= index (+ start gap)))
                    (setf (elt vector index) pivot))))
-            ;; Sort the interval from START below END using heapsort.
+             ;; Sort the interval from START below END using heapsort.
              (heapsort (start end)
                (declare (vector-length start end))
                (let ((n (- end start)))
@@ -56,19 +55,18 @@
                              (values child-1 (key (elt vector (+ start child-1))))
                              (let ((key-1 (key (elt vector (+ start child-1))))
                                    (key-2 (key (elt vector (+ start child-2)))))
-                               (if (funcall predicate key-1 key-2)
+                               (if (predicate key-1 key-2)
                                    (values child-2 key-2)
                                    (values child-1 key-1))))))
-                 (when (funcall predicate (key (elt vector (+ start left))) key)
+                 (when (predicate (key (elt vector (+ start left))) key)
                    (rotatef (elt vector (+ start left))
                             (elt vector (+ start largest)))
                    (sift-down start largest right))))
              ;; Sort the three elements with the supplied indices.
              (sort-3 (index-1 index-2 index-3)
                (macrolet ((cswap ((index-1 index-2) &body body)
-                            `(when (funcall predicate
-                                            (key (elt vector ,index-1))
-                                            (key (elt vector ,index-2)))
+                            `(when (predicate (key (elt vector ,index-1))
+                                              (key (elt vector ,index-2)))
                                (rotatef (elt vector ,index-1)
                                         (elt vector ,index-2))
                                ,@body)))
