@@ -6,6 +6,3 @@
 ;;; absolute or directory-relative pathnames.
 
 (defsystem #:sicl)
-
-
-  
