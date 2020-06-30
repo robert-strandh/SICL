@@ -87,6 +87,47 @@
 }
 
 \frame{
+\frametitle{Recapitualation, strategy 1}
+\vskip 0.25cm
+\begin{itemize}
+\item A \emph{core} written in an existing language, typically C.
+\item Additional modules written in \commonlisp{} added to the core.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Recapitualation, strategy 1}
+\vskip 0.25cm
+The core may contain more than what we would have liked:
+\vskip 0.25cm
+\begin{itemize}
+\item An \emph{inner core}:
+  \begin{itemize}
+  \item Object allocation.
+  \item Memory management.
+  \item Accessors for built-in object types.
+  \end{itemize}
+\item An \emph{extended core}:
+  \begin{itemize}
+  \item Functions placed here in order to break circular
+    dependencies.
+  \item Temporary or permanent functions required for bootstrapping,
+    like \texttt{read} and \texttt{eval}.
+  \end{itemize}
+\end{itemize}
+}
+
+\frame{
+\frametitle{Recapitulation, strategy 1}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-recapitulation-strategy-1.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
 \frametitle{Abstract machine}
 \vskip 0.25cm
 \begin{figure}
