@@ -127,6 +127,24 @@ The core may contain more than what we would have liked:
 \end{figure}
 }
 
+\frame[containsverbatim]{
+\frametitle{Recapitulation, strategy 1}
+\vskip 0.25cm
+The inner core may contain functions at a level lower than the lowest
+level of \commonlisp{}.  Example:
+\begin{verbatim}
+(defun car (object)
+  (if (consp object)
+      (core:cons-car object)
+      (if (null object)
+          nil
+          (error ...))))
+\end{verbatim}
+\vskip 0.25cm
+Here, \texttt{car} is part of the \commonlisp{} code, and
+\texttt{cons-car} is part of the inner core.
+}
+
 \frame{
 \frametitle{Abstract machine}
 \vskip 0.25cm
