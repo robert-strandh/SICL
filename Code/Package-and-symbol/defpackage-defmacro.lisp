@@ -142,6 +142,17 @@
                                                             ,from-package-var)))
                         ,package-var)))))
 
+(defun make-imports (options package-var)
+  (loop for (option-name . arguments) in options
+        when (eq option-name :import-from)
+          collect (let ((from-package-var (gensym)))
+                    `(let ((,from-package-var (find-package ,(string (first arguments)))))
+                       (import
+                        (list ,@(loop for symbol-name in (rest arguments)
+                                      collect `(find-symbol ,(string symbol-name)
+                                                            ,from-package-var)))
+                        ,package-var)))))
+
 (defun make-shadow (options package-var)
   `(shadow
     (list ,@(loop for symbol-name in (group-options :shadow options)
@@ -167,4 +178,5 @@
                  :local-nicknames ',(gather-local-nicknames options))))
          ,@(make-shadowing-imports options package-var)
          ,(make-shadow options package-var)
-         ,(make-use options package-var)))))
+         ,(make-use options package-var)
+         ,@(make-imports options package-var)))))
