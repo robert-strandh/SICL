@@ -256,7 +256,11 @@
                    (successors successors)
                    (invocation invocation))
       context
-    (let* ((after (first successors))
+    (let* ((new-results
+             (typecase results
+               (cleavir-ir:values-location results)
+               (t (cleavir-ir:make-values-location))))
+           (after (first successors))
            ;; The name is gone by now, so unlike TAGBODY
            ;; we can't name the catch output.
            (continuation (cleavir-ir:make-lexical-location
@@ -266,15 +270,23 @@
            (local-unwind
              (let ((cleavir-ir:*dynamic-environment* dynenv-out))
                (cleavir-ir:make-local-unwind-instruction after)))
-           (catch (cleavir-ir:make-catch-instruction
-                   continuation
-                   dynenv-out
-                   (list after)))
            (new-context
              (clone-context context
                             :successors (list local-unwind)
-                            :dynamic-environment dynenv-out)))
-      (setf (block-info ast) (list context continuation catch))
+                            :dynamic-environment dynenv-out))
+           (catch (cleavir-ir:make-catch-instruction
+                   continuation
+                   dynenv-out
+                   (list (typecase results
+                           (cleavir-ir:values-location (first successors))
+                           (t (cleavir-ir:make-multiple-to-fixed-instruction
+                               new-results
+                               results
+                               after)))))))
+      (setf (block-info ast) (list (clone-context context
+                                                  :results new-results)
+                                   continuation
+                                   catch))
       ;; Now just hook up the catch to go to the body normally.
       (push (compile-ast (cleavir-ast:body-ast ast) new-context)
             (cleavir-ir:successors catch))
@@ -327,12 +339,12 @@
                           (first successors)))))
           ;; harder case: unwind.
 	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
-                                 continuation destination 1))
-		 (new-context (clone-context
-                               context
-                               :successors (list new-successor)
-                               :results results)))
-	    (compile-ast (cleavir-ast:form-ast ast) new-context))))))
+                                 continuation destination 1)))
+            (compile-ast (cleavir-ast:form-ast ast)
+                         (clone-context
+                          context
+                          :successors (list new-successor)
+                          :results results)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

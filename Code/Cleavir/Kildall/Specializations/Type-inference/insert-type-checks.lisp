@@ -142,6 +142,10 @@
 		  (cleavir-ir:make-load-time-value-input '':expected-type)
 		  (cleavir-ir:make-load-time-value-input
 		   `',expected)))))
+    ;; Update/initialize data.
+    (push fdefinition-instruction (cleavir-ir:defining-instructions fdef))
+    (push fnr-instruction (cleavir-ir:using-instructions fdef))
+    (push fnr-instruction (cleavir-ir:using-instructions datum))
     (cleavir-ir:insert-instruction-before fdefinition-instruction
 					  fnr-instruction)
     (setf (cleavir-ir:predecessors fdefinition-instruction)
@@ -193,5 +197,4 @@
               (push i tvs))))
      initial-instruction)
     (mapc (lambda (i) (the->typeq i env)) thes)
-    (mapc (lambda (i) (the-values->typeqs i env)) tvs)
-    (cleavir-ir:reinitialize-data initial-instruction)))
+    (mapc (lambda (i) (the-values->typeqs i env)) tvs)))
