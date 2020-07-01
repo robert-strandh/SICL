@@ -160,6 +160,27 @@ Executing a macro means executing the macro function, which is usually
 done by the compiler at compile time.
 }
 
+\frame[containsverbatim]{
+\frametitle{Example}
+\vskip 0.25cm
+{\small\begin{verbatim}
+(defmacro case (expression &rest clauses)
+  (let ((expression-var (gensym)))
+    `(let ((,expression-var ,expression))
+       (cond ,@(mapcar (lambda (clause)
+                         `((eql ,expression-var
+                                ',(first clause))
+                           ,@(rest clause)))
+                       clauses)))))
+\end{verbatim}
+\begin{figure}
+\begin{center}
+\inputfig{fig-dependencies-3.pdf_t}
+\end{center}
+\end{figure}
+}
+}
+
 \frame{
 \frametitle{Dependencies, compilation}
 \vskip 0.25cm
