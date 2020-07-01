@@ -79,7 +79,12 @@
               (cleavir-ir:make-initialize-closure-instruction
                (first (cleavir-ir:outputs enclose))
                nil)))
-      (cleavir-ir:insert-instruction-after initializer enclose)
+      ;; Defer initialization until all potentially mutually recurisve
+      ;; functions are available.
+      (do ((current-enclose enclose (first (cleavir-ir:successors current-enclose))))
+          ((not (typep (first (cleavir-ir:successors current-enclose))
+                       'cleavir-ir:enclose-instruction))
+           (cleavir-ir:insert-instruction-after initializer current-enclose)))
       (setf (cleavir-ir:initializer enclose) initializer)
       (setf (gethash initializer instruction-owners)
             (gethash enclose instruction-owners)))
@@ -228,21 +233,7 @@
 
 (defun read-only-location-p (location)
   (let ((definers (cleavir-ir:defining-instructions location)))
-    (and definers (null (rest definers))
-         ;; FIXME: Because of the presence of LABELS in CL, it may be
-         ;; the case that closed over functions , although read-only,
-         ;; will refer to each other in such a way that there are
-         ;; unitialized variables before use in HIR. This can be
-         ;; solved by placing the initialize-closure instruction in
-         ;; the right place, not merely by inserting it right after
-         ;; the enclose it initializes. however, there are still some
-         ;; details to be worked out so we still allocate a cell for
-         ;; any read-only variable deriving from an
-         ;; enclose-instruction as a workaround. So remove this
-         ;; condition and attempt to insert initializers after the
-         ;; last of its inputs have been defined.
-         (let ((definer (first definers)))
-           (not (typep definer 'cleavir-ir:enclose-instruction))))))
+    (and definers (null (rest definers)))))
 
 ;;; Given a single static lexical location LOCATION, if the lexical is
 ;;; assigned to more than once, eliminate it by replacing all accesses
