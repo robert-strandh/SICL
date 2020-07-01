@@ -167,6 +167,12 @@
                   collect `(find-package ,(string name))))
     ,package-var))
 
+(defun make-intern (options package-var)
+  `(intern
+    (list ,@(loop for name in (group-options :intern options)
+                  collect (string name)))
+    ,package-var))
+
 (defun defpackage-expander (name options)
   (check-defpackage-options options)
   (let ((package-var (gensym)))
@@ -179,4 +185,5 @@
          ,@(make-shadowing-imports options package-var)
          ,(make-shadow options package-var)
          ,(make-use options package-var)
-         ,@(make-imports options package-var)))))
+         ,@(make-imports options package-var)
+         ,(make-intern options package-var)))))
