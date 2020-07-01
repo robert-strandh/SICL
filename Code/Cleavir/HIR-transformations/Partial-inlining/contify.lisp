@@ -10,9 +10,13 @@
   (let ((*instruction-ownerships* (cleavir-hir-transformations:compute-instruction-owners initial-instruction))
         (*location-ownerships* (cleavir-hir-transformations:compute-location-owners initial-instruction))
         (*binding-assignments* '()))
-    (mapc #'interpolable-function-analyze-1
-          (cleavir-ir:instructions-of-type initial-instruction
-                                           'cleavir-ir:enclose-instruction))
+    ;; Going in map-instructions order means top down order in the
+    ;; function nesting tree, which captures more functions.
+    (cleavir-ir:map-instructions
+     (lambda (instruction)
+       (when (typep instruction 'cleavir-ir:enclose-instruction)
+         (interpolable-function-analyze-1 instruction)))
+     initial-instruction)
     (convert-binding-instructions *binding-assignments*)))
 
 ;; Do a simple interpolable analysis on one enclose, and act if
