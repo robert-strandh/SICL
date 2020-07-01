@@ -26,7 +26,7 @@
              unless (consp argument)
                do (error 'package-local-nickname-argument-must-be-cons
                          :argument argument)
-             unless (cleavir-code-utils:proper-listp argument)
+             unless (cleavir-code-utilities:proper-list-p argument)
                do (error 'package-local-nickname-argument-must-be-proper-list
                          :argument argument)
              unless (= (length argument) 2)
@@ -41,13 +41,13 @@
       (:documentation
        (when (null arguments)
          (error 'package-documentation-option-requires-an-argument
-                :option option)
+                :option option))
        (unless (null (rest arguments))
          (error 'package-documentation-option-requres-a-single-argument
                 :arguments arguments))
        (unless (stringp (first arguments))
          (error 'package-documentation-must-be-a-string
-                :documentation first arguments))))
+                :documentation (first arguments))))
       (:use
        (loop for argument in arguments
              unless (typep argument 'package-designator)
@@ -93,13 +93,13 @@
       (:size
        (when (null arguments)
          (error 'package-size-option-requires-an-argument
-                :option option)
+                :option option))
        (unless (null (rest arguments))
          (error 'package-size-option-requres-a-single-argument
                 :arguments arguments))
        (unless (integerp (first arguments))
          (error 'package-size-must-be-a-string
-                :size first arguments)))))))
+                :size (first arguments)))))))
 
 (defun check-defpackage-options (options)
   ;; We start by checking that the contents of each option is valid in
@@ -122,3 +122,42 @@
   (loop for (option-name . arguments) in options
         when (eq name option-name)
           append arguments))
+
+(defun gather-nicknames (options)
+  (mapcar #'string
+          (group-options :nicknames options)))
+
+(defun gather-local-nicknames (options)
+  (mapcar #'string
+          (group-options :local-nicknames options)))
+
+(defun make-shadowing-imports (options package-var)
+  (loop for (option-name . arguments) in options
+        when (eq option-name :shadowing-import-from)
+          collect (let ((from-package-var (gensym)))
+                    `(let ((,from-package-var (find-package ,(string (first arguments)))))
+                       (shadowing-import
+                        (list ,@(loop for symbol-name in (rest arguments)
+                                      collect `(find-symbol ,(string symbol-name)
+                                                            ,from-package-var)))
+                        ,package-var)))))
+
+(defun make-shadow (options package-var)
+  `(shadow
+    (list ,@(loop for symbol-name in (group-options :shadow options)
+                  collect `(make-instance 'symbol
+                             :name ,(string symbol-name)
+                             :package ,package-var)))
+    ,package-var))
+
+(defun defpackage-expander (name options)
+  (check-defpackage-options options)
+  (let ((package-var (gensym)))
+    `(eval-when (:compile-toplevel :load-toplevel :execute)
+       (let ((,package-var
+               (make-instance 'package
+                 :name ,(string name)
+                 :nicknames ',(gather-nicknames options)
+                 :local-nicknames ',(gather-local-nicknames options))))
+         ,@(make-shadowing-imports options package-var)
+         ,(make-shadow options package-var)))))
