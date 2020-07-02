@@ -16,4 +16,6 @@
     (load-source "Data-and-control-flow/not-defun.lisp" e5)
     (load-source "Loop/run-time-support.lisp" e5)
     (load-source "CLOS/defgeneric-support.lisp" e5)
-    (load-hash-table-functionality e5)))
+    (load-hash-table-functionality e5)
+    (load-source "Environment/macro-support.lisp" e5)
+    (load-source "Environment/standard-environment-macros.lisp" e5)))
