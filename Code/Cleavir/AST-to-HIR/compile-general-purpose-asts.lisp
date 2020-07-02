@@ -256,7 +256,15 @@
                    (successors successors)
                    (invocation invocation))
       context
-    (let* ((new-results
+    (let* (;; We force the block context to use a values location.
+           ;; This is because the result of the context is
+           ;; necessarily shared by any compiled RETURN-FROMs for
+           ;; it, and these may be in other functions. If the
+           ;; results were lexical locations, these would be
+           ;; shared between functions, and therefore would be
+           ;; closed over. But it's more efficient to use the
+           ;; values mechanism that's used for normal returns.
+           (new-results
              (typecase results
                (cleavir-ir:values-location results)
                (t (cleavir-ir:make-values-location))))
