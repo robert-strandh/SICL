@@ -7,7 +7,8 @@
 ;;; lexical locations and assignments. If so, do that.
 (defun maybe-convert-values-location (location)
   (let ((defines (cleavir-ir:defining-instructions location))
-        (uses (cleavir-ir:using-instructions location)))
+        (uses (cleavir-ir:using-instructions location))
+        (nil-datum (cleavir-ir:make-constant-input nil)))
     (when (and (every (lambda (define)
                         (typep define 'cleavir-ir:fixed-to-multiple-instruction))
                       defines)
@@ -24,10 +25,12 @@
                (loop repeat passing-count
                      collect (cleavir-ir:new-temporary))))
         (dolist (define defines)
-          (let ((cleavir-ir:*origin* (cleavir-ir:origin define))
-                (cleavir-ir:*policy* (cleavir-ir:policy define))
-                (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment define)))
-            (loop for input in (cleavir-ir:inputs define)
+          (let* ((inputs (cleavir-ir:inputs define))
+                 (defaulting-count (max (- passing-count (length inputs)) 0))
+                 (cleavir-ir:*origin* (cleavir-ir:origin define))
+                 (cleavir-ir:*policy* (cleavir-ir:policy define))
+                 (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment define)))
+            (loop for input in (append inputs (make-list defaulting-count :initial-element nil-datum))
                   for location in lexical-locations
                   do (cleavir-ir:insert-instruction-before
                       (cleavir-ir:make-assignment-instruction input location define)
@@ -38,8 +41,7 @@
                  (defaulting-count (max (- (length outputs) passing-count) 0))
                  (cleavir-ir:*origin* (cleavir-ir:origin use))
                  (cleavir-ir:*policy* (cleavir-ir:policy use))
-                 (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment use))
-                 (nil-datum (cleavir-ir:make-load-time-value-input nil t)))
+                 (cleavir-ir:*dynamic-environment* (cleavir-ir:dynamic-environment use)))
             (loop for output in (cleavir-ir:outputs use)
                   for location in (append lexical-locations (make-list defaulting-count :initial-element nil-datum))
                   do (cleavir-ir:insert-instruction-before
