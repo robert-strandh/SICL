@@ -173,17 +173,27 @@
                   collect (string name)))
     ,package-var))
 
+(defun make-export (options package-var)
+  `(export
+    (list ,@(loop for name in (group-options :use options)
+                  collect `(find-symbol ,(string name) ,package-var)))
+    ,package-var))
+
 (defun defpackage-expander (name options)
   (check-defpackage-options options)
   (let ((package-var (gensym)))
     `(eval-when (:compile-toplevel :load-toplevel :execute)
-       (let ((,package-var
-               (make-instance 'package
-                 :name ,(string name)
-                 :nicknames ',(gather-nicknames options)
-                 :local-nicknames ',(gather-local-nicknames options))))
+       (let* ((,package-var (find-package ,(string name)))
+              (,package-var
+                (if (null ,package-var)
+                    (make-instance 'package
+                      :name ,(string name)
+                      :nicknames ',(gather-nicknames options)
+                      :local-nicknames ',(gather-local-nicknames options))
+                    ,package-var)))
          ,@(make-shadowing-imports options package-var)
          ,(make-shadow options package-var)
          ,(make-use options package-var)
          ,@(make-imports options package-var)
-         ,(make-intern options package-var)))))
+         ,(make-intern options package-var)
+         ,(make-export options package-var)))))
