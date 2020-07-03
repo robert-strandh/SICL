@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir-hir-transformations
-  :depends-on (:cleavir-hir :cleavir-meter)
+  :depends-on (:cleavir-hir :cleavir-meter :cleavir-basic-blocks)
   :serial t
   :components
   ((:file "packages")
@@ -20,6 +20,7 @@
    (:file "segregate-lexicals")
    (:file "escape")
    (:file "copy-propagate")
+   (:file "value-type-infer")
    (:file "multiple-values-eliminate")
    (:file "eliminate-superfluous-temporaries")
    (:file "hir-transformations")))

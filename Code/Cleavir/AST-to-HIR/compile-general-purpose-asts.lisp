@@ -843,17 +843,26 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (assert-context ast context 0 2)
-    (let ((temp (make-temp)))
-      (compile-ast
-       (cleavir-ast:form-ast ast)
-       (clone-context
-        context
-        :results (list temp)
-	:successors (list (cleavir-ir:make-typeq-instruction
-                           temp
-                           successors
-                           (cleavir-ast:type-specifier ast))))))))
+    (ecase (length successors)
+      (1
+       (let ((cleavir-ast:*policy* (cleavir-ast:policy ast)))
+         (compile-ast (cleavir-ast:make-if-ast
+                       ast
+                       (cleavir-ast:make-load-time-value-ast (list 'quote t))
+                       (cleavir-ast:make-load-time-value-ast (list 'quote nil)))
+                      context)))
+      (2
+       (assert-context ast context 0 2)
+       (let ((temp (make-temp)))
+         (compile-ast
+          (cleavir-ast:form-ast ast)
+          (clone-context
+           context
+           :results (list temp)
+           :successors (list (cleavir-ir:make-typeq-instruction
+                              temp
+                              successors
+                              (cleavir-ast:type-specifier ast))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
