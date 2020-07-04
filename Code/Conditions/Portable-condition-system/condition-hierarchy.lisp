@@ -116,15 +116,11 @@
 
 (define-condition restart-not-found (control-error)
   ((restart-name :reader restart-not-found-restart-name :initarg :restart-name))
-  (:documentation "A condition type signaled when a restart with a given name
-was not found, even thought it was expected.")
   (:report (lambda (condition stream)
              (format stream "Restart ~S is not active."
                      (restart-not-found-restart-name condition)))))
 
 (define-condition abort-failure (control-error) ()
-  (:documentation "A condition type signaled when the ABORT restart invoked by
-function ABORT failed to transfer control outside of the function.")
   (:report "An ABORT restart failed to transfer control."))
 
 (defun report-case-failure (condition stream)
@@ -136,6 +132,4 @@ function ABORT failed to transfer control outside of the function.")
 (define-condition case-failure (type-error)
   ((name :reader case-failure-name :initarg :name)
    (possibilities :reader case-failure-possibilities :initarg :possibilities))
-  (:documentation "A condition type signaled when a case assertion
-(such as ECASE, ETYPECASE, CCASE, or CTYPECASE) fails to match its keyform.")
   (:report report-case-failure))
