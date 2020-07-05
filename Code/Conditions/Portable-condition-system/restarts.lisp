@@ -2,17 +2,6 @@
 
 (in-package #:portable-condition-system)
 
-;;; Restart definition
-
-(defstruct restart
-  "A restart structure, implementing the ANSI CL system class RESTART."
-  (name (error "NAME required."))
-  (function (error "FUNCTION required."))
-  (report-function nil)
-  (interactive-function nil)
-  (test-function (constantly t))
-  (associated-conditions '()))
-
 (defmethod print-object :around ((restart restart) stream)
   (if *print-escape*
       (print-unreadable-object (restart stream :type t :identity t)
