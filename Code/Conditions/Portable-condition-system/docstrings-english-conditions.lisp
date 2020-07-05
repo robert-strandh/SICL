@@ -1,4 +1,4 @@
-(in-package #:portable-condition-system)
+(cl:in-package #:portable-condition-system)
 
 (setf (documentation 'condition 'type)
       #.(format
