@@ -857,6 +857,56 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a TYPEW-AST.
+;;;
+;;; TYPEW instructions are unusual in having three successors
+;;; despite appearing in a normal boolean position. This is
+;;; because their test-ast is used as another boolean test with
+;;; the same destinations (plus the choke).
+
+(defmethod compile-ast ((ast cleavir-ast:typew-ast) context)
+  (assert-context ast context 0 2)
+  (let* ((successors (successors context))
+         (real-test-context
+           (clone-context
+            context
+            :successors (list (cleavir-ir:make-choke-instruction
+                               (first successors))
+                              (cleavir-ir:make-choke-instruction
+                               (second successors)))))
+         (real-test
+           (compile-ast (cleavir-ast:test-ast ast)
+                        real-test-context))
+         (temp (make-temp)))
+    (compile-ast
+     (cleavir-ast:form-ast ast)
+     (clone-context
+      context
+      :results (list temp)
+      :successors
+      (list
+       (cleavir-ir:make-typew-instruction
+        temp
+        (list (first successors) (second successors) real-test)
+        (cleavir-ast:ctype ast)))))))
+
+(defmethod compile-ast ((ast cleavir-ast:the-typew-ast) context)
+  (assert-context ast context 1 1)
+  (compile-ast
+   (cleavir-ast:form-ast ast)
+   (clone-context
+    context
+    :successors
+    (list
+     (cleavir-ir:make-typew-instruction
+      (first (results context))
+      (list (first (successors context))
+            (compile-ast (cleavir-ast:else-ast ast) context)
+            (first (successors context)))
+      (cleavir-ast:ctype ast))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a LEXICAL-AST.
 ;;;
 ;;; This AST has ONE-VALUE-AST-MIXIN as a superclass.
@@ -1117,6 +1167,37 @@
                                             (cleavir-ir:make-eq-instruction
                                              (list temp1 temp2)
                                              successors))))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a NEQ-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:neq-ast) context)
+  (assert-context ast context 0 2)
+  (with-accessors ((successors successors)
+		   (invocation invocation))
+      context
+    (let ((arg1-ast (cleavir-ast:arg1-ast ast))
+          (arg2-ast (cleavir-ast:arg2-ast ast))
+          (temp1 (cleavir-ir:new-temporary))
+          (temp2 (cleavir-ir:new-temporary)))
+      (compile-ast
+       arg1-ast
+       (clone-context
+        context
+        :results (list temp1)
+        :successors (list
+                     (compile-ast
+                      arg2-ast
+                      (clone-context
+                       context
+                       :results (list temp2)
+                       :successors (list
+                                    (cleavir-ir:make-eq-instruction
+                                     (list temp1 temp2)
+                                     ;; Reverse successors.
+                                     (list (second successors)
+                                           (first successors))))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

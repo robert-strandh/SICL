@@ -752,6 +752,51 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class TYPEW-AST.
+
+(defclass typew-ast (boolean-ast-mixin ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%ctype :initarg :ctype :reader ctype)
+   (%test-ast :initarg :test-ast :reader test-ast)))
+
+(defun make-typew-ast (form-ast ctype test-ast &key origin (policy *policy*))
+  (make-instance 'typew-ast
+    :origin origin :policy policy
+    :form-ast form-ast :ctype ctype :test-ast test-ast))
+
+(cleavir-io:define-save-info typew-ast
+    (:form-ast form-ast)
+  (:ctype ctype)
+  (:test-ast test-ast))
+
+(defmethod children ((ast typew-ast))
+  (list (form-ast ast) (test-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class THE-TYPEW-AST.
+
+(defclass the-typew-ast (one-value-ast-mixin ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%ctype :initarg :ctype :reader ctype)
+   (%else-ast :initarg :else-ast :reader else-ast)))
+
+(defun make-the-typew-ast (form-ast ctype else-ast
+                           &key origin (policy *policy*))
+  (make-instance 'the-typew-ast
+    :origin origin :policy policy
+    :form-ast form-ast :ctype ctype :else-ast else-ast))
+
+(cleavir-io:define-save-info the-typew-ast
+    (:form-ast form-ast)
+  (:ctype ctype)
+  (:else-ast else-ast))
+
+(defmethod children ((ast the-typew-ast))
+  (list (form-ast ast) (else-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LOAD-TIME-VALUE-AST.
 ;;;
 ;;; This AST corresponds directly to the LOAD-TIME-VALUE special
@@ -1019,6 +1064,32 @@
   (:arg2-ast arg2-ast))
 
 (defmethod children ((ast eq-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class NEQ-AST.
+;;;
+;;; This AST can be used to to test whether two objects are distinct.
+;;; It has two children.  This AST can only appear in the TEST
+;;; position of an IF-AST. It is useful for using an AST that
+;;; returns a value as a boolean ast.
+
+(defclass neq-ast (boolean-ast-mixin ast)
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+
+(defun make-neq-ast (arg1-ast arg2-ast &key origin (policy *policy*))
+  (make-instance 'neq-ast
+    :origin origin :policy policy
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
+
+(cleavir-io:define-save-info neq-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
+
+(defmethod children ((ast neq-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

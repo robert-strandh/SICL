@@ -192,10 +192,15 @@
           (optional-types instruction)
           (rest-type instruction)))
 
+(defmethod label ((instruction typew-instruction))
+  (format nil "typew ~a" (ctype instruction)))
+
 (defmethod label ((instruction dynamic-allocation-instruction))
   "DX")
 
 (defmethod label ((instruction nop-instruction)) "nop")
+
+(defmethod label ((instruction choke-instruction)) "choke")
 
 (defmethod label ((instruction unreachable-instruction)) "unreachable")
 
