@@ -2,10 +2,6 @@
 
 (in-package #:portable-condition-system)
 
-;;; Class CONDITION
-
-(defclass condition () ())
-
 (defmethod print-object ((condition condition) stream)
   (format stream "Condition ~S was signaled." (type-of condition)))
 
