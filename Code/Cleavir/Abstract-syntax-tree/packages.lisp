@@ -50,7 +50,7 @@
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast
    #:required-types #:optional-types #:rest-type
-   #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
+   #:typeq-ast #:make-typeq-ast #:type-specifier
    #:typew-ast #:make-typew-ast #:ctype
    #:the-typew-ast #:make-the-typew-ast
    #:bind-ast #:make-bind-ast

@@ -687,22 +687,6 @@
 ;;; <form>) as an error if <form> is not of type <type> might generate
 ;;; a TYPEQ-AST contained in an IF-AST instead of a THE-AST, and to
 ;;; have the ELSE branch of the IF-AST call ERROR.
-;;;
-;;; The TYPEQ-AST can also be used as a target for the standard macro
-;;; CHECK-TYPE.  An implementation might for instance expand
-;;; CHECK-TYPE to a form containing an implementation-specific special
-;;; operator; e.g, (UNLESS (TYPEQ <form> <type-spec>) (CERROR ...))
-;;; and then translate the implementation-specific special operator
-;;; TYPEQ into a TYPEQ-AST.
-;;;
-;;; It used to be the case that we would have an :AFTER method on
-;;; INITIALIZE-INSTANCE that would compute the TYPE-SPECIFIER-AST slot
-;;; from the TYPE-SPECIFIER slot.  However this technique will not
-;;; work when ASTs are cloned, because it is assumed in the cloning
-;;; code that an instance of the AST can be created without any
-;;; initialization arguments.  So instead, we initialize the
-;;; TYPE-SPECIFIER-AST slot with NIL and we compute the real value of
-;;; it only when it is requested.
 
 (defclass typeq-ast (boolean-ast-mixin ast)
   (;; This slot contains the type specifier as an S-expression.  When
@@ -710,27 +694,7 @@
    ;; transmitted to the TYPEQ-INSTRUCTION so that it can be used by
    ;; the type inference machinery.
    (%type-specifier :initarg :type-specifier :reader type-specifier)
-   ;; This slot also contains the type specifier, but this time as a
-   ;; LOAD-TIME-VALUE-AST.  The purpose of this AST is that it will be
-   ;; hoisted so that the type specifier is provided as a load-time
-   ;; constant to be used with TYPEP, should it turn out to be
-   ;; necessary to use TYPEP at runtime to determine the type.
-   (%type-specifier-ast :initform nil
-			:initarg :type-specifier-ast
-			:reader type-specifier-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
-
-(defmethod type-specifier-ast :around ((ast typeq-ast))
-  (let ((value (call-next-method)))
-    (when (null value)
-      (setq value (make-load-time-value-ast
-		   `',(type-specifier ast) t
-                   :origin (cleavir-ast:origin ast)
-		   :policy (cleavir-ast:policy ast)))
-      (reinitialize-instance
-       ast
-       :type-specifier-ast value))
-    value))
 
 (defun make-typeq-ast (form-ast type-specifier &key origin (policy *policy*))
   (make-instance 'typeq-ast
@@ -743,7 +707,7 @@
   (:form-ast form-ast))
 
 (defmethod children ((ast typeq-ast))
-  (list (form-ast ast) (type-specifier-ast ast)))
+  (list (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
