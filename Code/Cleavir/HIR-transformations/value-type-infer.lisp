@@ -290,6 +290,10 @@
 (defclass <-constraint (type-constraint) ())
 (defclass >-constraint (type-constraint) ())
 
+(defmethod print-object ((obj typep-constraint) stream)
+  (print-unreadable-object (obj stream :type t)
+    (format stream "<constraint ~s>" (type-constraint-ctype obj))))
+
 (defclass constraint-table ()
   ((%table :accessor table :initform (make-hash-table :test #'eq))))
 
@@ -329,9 +333,11 @@
            (setf (executablep else-block) nil))
           ;; XXX: Switch this to bottom-p when things are worked out
           ;; more.
-          ((cleavir-ctype:subtypep (cleavir-ctype:conjoin/2 ctype existing-ctype system)
-                                   (cleavir-ctype:bottom system)
-                                   system)
+          ((multiple-value-bind (disjoint certain)
+               (cleavir-ctype:subtypep (cleavir-ctype:conjoin/2 ctype existing-ctype system)
+                                       (cleavir-ctype:bottom system)
+                                       system)
+             (and disjoint certain))
            #+(or)
            (print "NEVER TRUE")
            ;; Never executable.
@@ -488,7 +494,6 @@
 (defun eliminate-redundant-typeqs (initial-instruction system)
   ;; As a prepass, copy propagate all data to make value numbering
   ;; more efficient, as things will fixpoint faster.
-  #+ (or)
   (cleavir-ir:map-instructions
    (lambda (instruction)
      (dolist (output (cleavir-ir:outputs instruction))
