@@ -695,11 +695,6 @@
 ;;; and then translate the implementation-specific special operator
 ;;; TYPEQ into a TYPEQ-AST.
 ;;;
-;;; The TYPEQ-AST generates instructions that are used in the static
-;;; type inference phase.  If static type inference can determine the
-;;; value of the TYPEQ-AST, then no runtime test is required.  If not,
-;;; then a call to TYPEP is generated instead. 
-;;;
 ;;; It used to be the case that we would have an :AFTER method on
 ;;; INITIALIZE-INSTANCE that would compute the TYPE-SPECIFIER-AST slot
 ;;; from the TYPE-SPECIFIER slot.  However this technique will not
@@ -753,6 +748,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TYPEW-AST.
+;;;
+;;; This AST is used to communicate type information to inference passes.
+;;; The TEST-AST is what will actually evaluate the form and determine
+;;; which branch of code to proceed down; the form-ast and ctype are only
+;;; meaningful to inference passes. This allows the computation of type
+;;; tests to be done in a client-dependent way and independently of the
+;;; inference annotations.
+;;; In other words, the typew-ast could be replaced with its form-ast
+;;; and this would have no effect on semantics, just weaken inference.
 
 (defclass typew-ast (boolean-ast-mixin ast)
   ((%form-ast :initarg :form-ast :reader form-ast)
@@ -775,6 +779,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class THE-TYPEW-AST.
+;;;
+;;; This is like TYPEW-AST for the situation in which the form's value
+;;; has been declared to be of the given type. The ELSE-AST is only
+;;; used if type inference determines that the declaration is incorrect.
 
 (defclass the-typew-ast (one-value-ast-mixin ast)
   ((%form-ast :initarg :form-ast :reader form-ast)
