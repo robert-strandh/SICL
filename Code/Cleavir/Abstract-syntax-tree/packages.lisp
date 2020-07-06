@@ -51,8 +51,10 @@
    #:the-ast #:make-the-ast
    #:required-types #:optional-types #:rest-type
    #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
+   #:typew-ast #:make-typew-ast #:ctype
+   #:the-typew-ast #:make-the-typew-ast
    #:bind-ast #:make-bind-ast
-   #:eq-ast #:make-eq-ast
+   #:eq-ast #:make-eq-ast #:neq-ast #:make-neq-ast
    #:case-ast #:make-case-ast #:comparees
    #:car-ast #:make-car-ast #:cons-ast
    #:cdr-ast #:make-cdr-ast

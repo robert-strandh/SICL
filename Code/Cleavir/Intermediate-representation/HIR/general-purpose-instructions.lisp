@@ -176,6 +176,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction TYPEW-INSTRUCTION.
+
+(defclass typew-instruction (multiple-successors-mixin instruction)
+  ((%ctype :initarg :ctype :reader ctype)))
+
+(defun make-typew-instruction (input successors ctype)
+  (make-instance 'typew-instruction
+    :inputs (list input)
+    :outputs '()
+    :successors successors
+    :ctype ctype))
+
+(defmethod clone-initargs append ((instruction typew-instruction))
+  (list :ctype (ctype instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction CHOKE-INSTRUCTION.
+;;;
+;;; This is a somewhat magical instruction used in communicating type
+;;; information. It indicates that type inference should treat this
+;;; instruction as impassable. It has no actual semantic effect,
+;;; however (i.e. is a NOP).
+
+(defclass choke-instruction (one-successor-mixin side-effect-mixin
+                             instruction)
+  ())
+
+(defun make-choke-instruction (successor)
+  (make-instance 'choke-instruction
+    :inputs '() :outputs '()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction DYNAMIC-ALLOCATION-INSTRUCTION.
 ;;;
 ;;; This instruction has no operational effect, like THE.

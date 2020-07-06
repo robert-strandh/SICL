@@ -61,6 +61,8 @@
    #:initialize-closure-instruction #:make-initialize-closure-instruction
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction #:make-the-instruction
+   #:typew-instruction #:make-typew-instruction #:ctype
+   #:choke-instruction #:make-choke-instruction
    #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction
    #:the-values-instruction #:make-the-values-instruction
    #:required-types #:optional-types #:rest-type
