@@ -96,6 +96,25 @@
 }
 
 \frame{
+\frametitle{Why C?}
+\vskip 0.25cm
+There was a question during the streaming of part 1, namely ``Why use
+C rather than C++?''
+\vskip 0.25cm
+Answer: The purpose of the presentations is not to choose an optimal
+language for strategy 1, but to show the complications of strategy 1,
+no matter the language chosen, namely:
+\vskip 0.25cm
+\begin{itemize}
+\item The imposed order between modules makes it necessary to write
+  more code in the language of the core.
+\item And it makes the the \commonlisp{} code of each additional
+  module look ``unnatural'' because we are forced to use a subset of
+  \commonlisp{}.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Recapitualation, strategy 1}
 \vskip 0.25cm
 The core may contain more than what we would have liked:
