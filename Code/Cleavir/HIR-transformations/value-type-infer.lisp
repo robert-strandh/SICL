@@ -28,9 +28,6 @@
    ;; data structure.
    (%in-eq-data :accessor in-eq-data :initarg :in-eq-data)
    (%out-eq-data :accessor out-eq-data :initarg :out-eq-data)
-   ;; Used by value numbering to reanalyze value numberings
-   ;; efficiently.
-   (%reanalyze-locations :accessor reanalyze-locations :initform '())
    ;; For all incoming constraints.
    (%in-constraints :accessor in-constraints :initarg :in-constraints)
    ;; From out constraints coming from stuff like THE.
