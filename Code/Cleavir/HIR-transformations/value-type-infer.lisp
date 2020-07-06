@@ -149,7 +149,7 @@
 (defun copy-hash-table (hash-table)
   (let ((new-hash-table (make-hash-table
                          :test #'eq
-                         :size (hash-table-count hash-table))))
+                         :size (hash-table-size hash-table))))
     (maphash (lambda (k v)
                (setf (gethash k new-hash-table) v))
              hash-table)
