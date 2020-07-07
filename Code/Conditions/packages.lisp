@@ -3,4 +3,4 @@
 (defpackage #:sicl-conditions
   (:use #:common-lisp)
   (:export
-   ))
+   #:condition-class))
