@@ -4,4 +4,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "support")))
+   (:file "support")
+   (:file "condition-class-defclass")
+   (:file "condition-defclass")))
