@@ -687,27 +687,6 @@
 ;;; <form>) as an error if <form> is not of type <type> might generate
 ;;; a TYPEQ-AST contained in an IF-AST instead of a THE-AST, and to
 ;;; have the ELSE branch of the IF-AST call ERROR.
-;;;
-;;; The TYPEQ-AST can also be used as a target for the standard macro
-;;; CHECK-TYPE.  An implementation might for instance expand
-;;; CHECK-TYPE to a form containing an implementation-specific special
-;;; operator; e.g, (UNLESS (TYPEQ <form> <type-spec>) (CERROR ...))
-;;; and then translate the implementation-specific special operator
-;;; TYPEQ into a TYPEQ-AST.
-;;;
-;;; The TYPEQ-AST generates instructions that are used in the static
-;;; type inference phase.  If static type inference can determine the
-;;; value of the TYPEQ-AST, then no runtime test is required.  If not,
-;;; then a call to TYPEP is generated instead. 
-;;;
-;;; It used to be the case that we would have an :AFTER method on
-;;; INITIALIZE-INSTANCE that would compute the TYPE-SPECIFIER-AST slot
-;;; from the TYPE-SPECIFIER slot.  However this technique will not
-;;; work when ASTs are cloned, because it is assumed in the cloning
-;;; code that an instance of the AST can be created without any
-;;; initialization arguments.  So instead, we initialize the
-;;; TYPE-SPECIFIER-AST slot with NIL and we compute the real value of
-;;; it only when it is requested.
 
 (defclass typeq-ast (boolean-ast-mixin ast)
   (;; This slot contains the type specifier as an S-expression.  When
@@ -715,27 +694,7 @@
    ;; transmitted to the TYPEQ-INSTRUCTION so that it can be used by
    ;; the type inference machinery.
    (%type-specifier :initarg :type-specifier :reader type-specifier)
-   ;; This slot also contains the type specifier, but this time as a
-   ;; LOAD-TIME-VALUE-AST.  The purpose of this AST is that it will be
-   ;; hoisted so that the type specifier is provided as a load-time
-   ;; constant to be used with TYPEP, should it turn out to be
-   ;; necessary to use TYPEP at runtime to determine the type.
-   (%type-specifier-ast :initform nil
-			:initarg :type-specifier-ast
-			:reader type-specifier-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
-
-(defmethod type-specifier-ast :around ((ast typeq-ast))
-  (let ((value (call-next-method)))
-    (when (null value)
-      (setq value (make-load-time-value-ast
-		   `',(type-specifier ast) t
-                   :origin (cleavir-ast:origin ast)
-		   :policy (cleavir-ast:policy ast)))
-      (reinitialize-instance
-       ast
-       :type-specifier-ast value))
-    value))
 
 (defun make-typeq-ast (form-ast type-specifier &key origin (policy *policy*))
   (make-instance 'typeq-ast
@@ -748,11 +707,20 @@
   (:form-ast form-ast))
 
 (defmethod children ((ast typeq-ast))
-  (list (form-ast ast) (type-specifier-ast ast)))
+  (list (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TYPEW-AST.
+;;;
+;;; This AST is used to communicate type information to inference passes.
+;;; The TEST-AST is what will actually evaluate the form and determine
+;;; which branch of code to proceed down; the form-ast and ctype are only
+;;; meaningful to inference passes. This allows the computation of type
+;;; tests to be done in a client-dependent way and independently of the
+;;; inference annotations.
+;;; In other words, the typew-ast could be replaced with its form-ast
+;;; and this would have no effect on semantics, just weaken inference.
 
 (defclass typew-ast (boolean-ast-mixin ast)
   ((%form-ast :initarg :form-ast :reader form-ast)
@@ -775,6 +743,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class THE-TYPEW-AST.
+;;;
+;;; This is like TYPEW-AST for the situation in which the form's value
+;;; has been declared to be of the given type. The ELSE-AST is only
+;;; used if type inference determines that the declaration is incorrect.
 
 (defclass the-typew-ast (one-value-ast-mixin ast)
   ((%form-ast :initarg :form-ast :reader form-ast)

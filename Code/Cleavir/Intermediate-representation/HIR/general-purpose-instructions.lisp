@@ -132,13 +132,8 @@
 ;;; Instruction TYPEQ-INSTRUCTION.
 ;;;
 ;;; This instruction takes one input, namely a datum for which a type
-;;; should be tested.  
-;;;
-;;; As a result of various transformations of the instruction graph,
-;;; this instruction will either be eliminated (because we can
-;;; determine statically the result of the test), or it will be
-;;; replaced by a call to TYPEP.  When it is replaced by a call to
-;;; TYPEP, we use the constant input as the second argument to TYPEP.
+;;; should be tested. The first successor is taken if the input is
+;;; of the VALUE-TYPE, and the second if it is not.
 
 (defclass typeq-instruction (multiple-successors-mixin instruction)
   ((%value-type :initarg :value-type :reader value-type)))
@@ -177,6 +172,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TYPEW-INSTRUCTION.
+;;;
+;;; This instruction has three successors. Operationally, the first
+;;; two successors are irrelevant, i.e. this instruction can be
+;;; compiled as a jump directly to the third successor. But for type
+;;; inference, the first successor should be the code executed when
+;;; the single input is of the ctype, and the second when it's not.
+;;; The third successor should be code that actually determines
+;;; whether the input is of the ctype, and branches to either the
+;;; first or second successor depending.
+;;; For declarations, the third successor may be identical to the
+;;; third successor. This means that the second successor will only
+;;; be used if type inference determines that the declaration is
+;;; false, so it can have error code.
 
 (defclass typew-instruction (multiple-successors-mixin instruction)
   ((%ctype :initarg :ctype :reader ctype)))
