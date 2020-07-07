@@ -4,6 +4,8 @@
   (format *trace-output* "Start of phase 8~%")
   (with-accessors ((e5 sicl-boot:e5))
       boot
+    (setf (sicl-genv:macro-function 'defpackage e5)
+          (constantly nil))
     (load-source "Types/Typep/typep.lisp" e5)
     (load-source "Types/Typep/typep-atomic.lisp" e5)
     (load-source "Types/Typep/typep-compound.lisp" e5)
