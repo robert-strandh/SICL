@@ -50,6 +50,11 @@
     ;; knot in E5, we want to call MAKE-INSTANCE in E5.
     (sicl-boot::define-load-fasl-2 e5 e5)
     (enable-compilation e5)
+    ;; During bootstrapping, the default method on
+    ;; EFFECTIVE-SLOT-DEFINITION-CLASS in E5 calls FIND-CLASS in E4,
+    ;; which is obviously wrong once the knot has been tied.  We just
+    ;; have to reload the following file to fix that problem:
+    (load-source "CLOS/effective-slot-definition-class-support.lisp" e5)
     (load-source "Cons/accessor-defuns.lisp" e5)
     (load-source "Cons/cxr.lisp" e5)
     (load-source "Cons/setf-cxr.lisp" e5)
