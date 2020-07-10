@@ -270,7 +270,7 @@
           (if (gethash block block-count)
               (incf (gethash block block-count))
               (setf (gethash block block-count) 0))
-          (when (> (gethash block block-count) 1000)
+          (when (> (gethash block block-count) 500)
             (error "probable infinite loop while trying to fixpoint in value numbering")))
         (reanalyze-block-in-eq-data block (cleavir-basic-blocks:predecessors block))
         (when (block-value-transfer-reanalyze block)
