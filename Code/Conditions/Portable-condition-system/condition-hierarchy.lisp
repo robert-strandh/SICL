@@ -85,7 +85,7 @@
 
 (define-condition end-of-file (stream-error) ())
 
-(define-condition parse-error (error) (stream))
+(define-condition parse-error (error) ())
 
 (define-condition reader-error (parse-error stream-error) ())
 
