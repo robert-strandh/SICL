@@ -11,6 +11,12 @@
             (when (and (typep fun 'sicl-boot::header)
                        (eq (slot-value fun 'sicl-boot::%class)
                            (sicl-genv:find-class 'standard-generic-function e3)))
+              (push fun result))))
+        (when (sicl-genv:fboundp `(setf ,var) e5)
+          (let ((fun (sicl-genv:fdefinition `(setf ,var) e5)))
+            (when (and (typep fun 'sicl-boot::header)
+                       (eq (slot-value fun 'sicl-boot::%class)
+                           (sicl-genv:find-class 'standard-generic-function e3)))
               (push fun result))))))
     result))
 
