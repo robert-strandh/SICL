@@ -246,7 +246,7 @@
             start
             #'cleavir-basic-blocks:successors))
          (reanalyze (and '() initial-ordering))
-         (block-count (when *debug-type-infer* (make-hash-table))))
+         (block-count (make-hash-table)))
     ;; Drain the initial ordering.
     (loop
       (when (null initial-ordering)
@@ -265,13 +265,21 @@
       (when (null reanalyze)
         (return))
       (let ((block (pop reanalyze)))
-        ;; For debugging - try and catch infinite loops.
+        ;; KLUDGE: we detect if it looks like a block is being
+        ;; repeatedly analyzed and manually exit in such a
+        ;; case. Ideally, this shouldn't happen, but it is sometimes
+        ;; possible in convoluted flowgraphs where numbers can be
+        ;; assigned in a periodic manner. Detect such a scenario and
+        ;; warn about it.
         (when block-count
-          (if (gethash block block-count)
-              (incf (gethash block block-count))
-              (setf (gethash block block-count) 0))
-          (when (> (gethash block block-count) 500)
-            (error "probable infinite loop while trying to fixpoint in value numbering")))
+          (let ((count (gethash block block-count)))
+            (if count
+                (progn
+                  (incf (gethash block block-count))
+                  (when (> count 750)
+                    (warn "value numbering: Fixpoint iterations exceeded threshold limit.")
+                    (return)))
+                (setf (gethash block block-count) 0))))
         (reanalyze-block-in-eq-data block (cleavir-basic-blocks:predecessors block))
         (when (block-value-transfer-reanalyze block)
           (dolist (succ (cleavir-basic-blocks:successors block))
