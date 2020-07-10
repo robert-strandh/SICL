@@ -21,6 +21,8 @@
 
 (in-package #:cleavir-hir-transformations)
 
+(defvar *debug-type-infer* nil)
+
 (defclass augmented-basic-block (cleavir-basic-blocks:basic-block)
   (;; Will this block actually get executed?
    (%executablep :accessor executablep :initarg :executablep)
@@ -243,7 +245,8 @@
            (cleavir-utilities:depth-first-search-reverse-postorder
             start
             #'cleavir-basic-blocks:successors))
-         (reanalyze (and '() initial-ordering)))
+         (reanalyze (and '() initial-ordering))
+         (block-count (when *debug-type-infer* (make-hash-table))))
     ;; Drain the initial ordering.
     (loop
       (when (null initial-ordering)
@@ -262,6 +265,13 @@
       (when (null reanalyze)
         (return))
       (let ((block (pop reanalyze)))
+        ;; For debugging - try and catch infinite loops.
+        (when block-count
+          (if (gethash block block-count)
+              (incf (gethash block block-count))
+              (setf (gethash block block-count) 0))
+          (when (> (gethash block block-count) 1000)
+            (error "probable infinite loop while trying to fixpoint in value numbering")))
         (reanalyze-block-in-eq-data block (cleavir-basic-blocks:predecessors block))
         (when (block-value-transfer-reanalyze block)
           (dolist (succ (cleavir-basic-blocks:successors block))
@@ -547,24 +557,24 @@
                     (then (first succs))
                     (else (second succs)))
                (when (not (executablep (gethash then instruction-basic-blocks)))
-                 #+(or)
-                 (format t "~& deleting typeq: ~a" (cleavir-ir:value-type last))
+                 (when *debug-type-infer*
+                   (format t "~& deleting typeq: ~a" (cleavir-ir:value-type last)))
                  (cleavir-ir:bypass-instruction else last))
                (when (not (executablep (gethash else instruction-basic-blocks)))
-                 #+(or)
-                 (format t "~& deleting typeq: ~a" (cleavir-ir:value-type last))
+                 (when *debug-type-infer*
+                   (format t "~& deleting typeq: ~a" (cleavir-ir:value-type last)))
                  (cleavir-ir:bypass-instruction then last))))
             (cleavir-ir:typew-instruction
              (let* ((succs (cleavir-ir:successors last))
                     (then (first succs))
                     (else (second succs)))
                (when (not (executablep (gethash then instruction-basic-blocks)))
-                 #+(or)
-                 (format t "~& deleting typew: ~a" (cleavir-ir:ctype last))
+                 (when *debug-type-infer*
+                   (format t "~& deleting typew: ~a" (cleavir-ir:ctype last)))
                  (cleavir-ir:bypass-instruction else last))
                (when (not (executablep (gethash else instruction-basic-blocks)))
-                 #+(or)
-                 (format t "~& deleting typew: ~a" (cleavir-ir:ctype last))
+                 (when *debug-type-infer*
+                   (format t "~& deleting typew: ~a" (cleavir-ir:ctype last)))
                  (cleavir-ir:bypass-instruction then last))))))))
     (cleavir-ir:reinitialize-data initial-instruction)
     (cleavir-ir:set-predecessors initial-instruction)))
