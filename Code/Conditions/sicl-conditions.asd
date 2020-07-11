@@ -9,4 +9,5 @@
    (:file "condition-defclass")
    (:file "define-condition-support")
    (:file "define-condition-defmacro")
-   (:file "Portable-condition-system/condition-hierarchy")))
+   (:file "Portable-condition-system/condition-hierarchy")
+   (:file "check-type-defmacro")))
