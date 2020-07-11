@@ -6,8 +6,8 @@
   ;; LIST2 are identical.  Depending on the relative order of the source
   ;; and the target range, it may be necessary to copy the source elements.
   (flet ((simple-replace ()
-           (with-cons-iterator (iter1 list1 start1 end1)
-             (with-cons-iterator (iter2 list2 start2 end2)
+           (with-cons-iterator (iter1) (list1 start1 end1)
+             (with-cons-iterator (iter2) (list2 start2 end2)
                (loop
                  (multiple-value-bind (more1 cons1) (iter1)
                    (when (null more1) (return))
@@ -16,7 +16,7 @@
                      (setf (car cons1) (car cons2)))))
                list1)))
          (copying-replace ()
-           (with-cons-iterator (iterator list1 start1 end1)
+           (with-cons-iterator (iterator) (list1 start1 end1)
              (let ((values (subseq list2 start2 end2)))
                (loop
                  (multiple-value-bind (more cons) (iterator)
@@ -40,7 +40,7 @@
 (replicate-for-each-vector-class #1=#:vector-class
   (defmethod replace ((list list) (vector #1#) &key (start1 0) end1 (start2 0) end2)
     (declare (method-properties inlineable))
-    (with-cons-iterator (iterator list start1 end1)
+    (with-cons-iterator (iterator) (list start1 end1)
       (with-vector-start-and-end (start2 end2) (vector start2 end2)
         (loop for index from start2 below end2 do
           (multiple-value-bind (more cons) (iterator)
@@ -53,7 +53,7 @@
   (defmethod replace ((vector #1#) (list list) &key (start1 0) end1 (start2 0) end2)
     (declare (method-properties inlineable))
     (with-vector-start-and-end (start1 end1) (vector start1 end1)
-      (with-cons-iterator (iterator list start2 end2)
+      (with-cons-iterator (iterator) (list start2 end2)
         (loop for index from start1 below end1 do
           (multiple-value-bind (more cons) (iterator)
             (when (not more) (return))

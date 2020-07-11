@@ -7,7 +7,7 @@
   (sicl-utilities:once-only (list start end)
     (let ((forward
             (sicl-utilities:with-gensyms (iterator more)
-              `(with-cons-iterator (,iterator ,list ,start ,end)
+              `(with-cons-iterator (,iterator) (,list ,start ,end)
                  (loop
                    (multiple-value-bind (,more ,cons ,index) (,iterator)
                      (declare (ignorable ,index))

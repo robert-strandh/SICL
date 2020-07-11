@@ -2,7 +2,7 @@
 
 (defmethod subseq ((list list) start &optional end)
   (sicl-utilities:with-collectors ((result collect))
-    (with-cons-iterator (iterator list start end)
+    (with-cons-iterator (iterator) (list start end)
       (loop
         (multiple-value-bind (more cons) (iterator)
           (if (not more)
