@@ -21,4 +21,6 @@
     (load-hash-table-functionality e5)
     (load-source "Environment/macro-support.lisp" e5)
     (load-source "Environment/standard-environment-macros.lisp" e5)
+    (load-source "CLOS/find-method-defgenerics.lisp" e5)
+    (load-source "CLOS/find-method-defmethods.lisp" e5)
     (load-asdf-system-components '#:sicl-conditions e5)))
