@@ -8,4 +8,5 @@
    (:file "condition-class-defclass")
    (:file "condition-defclass")
    (:file "define-condition-support")
-   (:file "define-condition-defmacro")))
+   (:file "define-condition-defmacro")
+   (:file "Portable-condition-system/condition-hierarchy")))
