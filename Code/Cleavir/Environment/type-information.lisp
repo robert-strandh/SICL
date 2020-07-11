@@ -72,7 +72,7 @@
 
 ;;; Default method: Use CL:FIND-CLASS.
 (defmethod find-class (name environment system &optional errorp)
-  (declare (ignore system))
+  (declare (cl:ignore system))
   (cl:find-class name errorp environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -125,13 +125,12 @@
 
 (defmethod parse-expanded-type-specifier
     ((type-specifier symbol) environment system)
-  (declare (ignore system))
   (or (find-class type-specifier environment system nil)
       type-specifier))
 
 (defmethod parse-expanded-type-specifier
     ((type-specifier class) environment system)
-  (declare (ignore environment system))
+  (declare (cl:ignore environment system))
   type-specifier)
 
 (defmethod parse-expanded-type-specifier
@@ -217,7 +216,7 @@
 (macrolet ((defreal (head)
              `(defmethod parse-compound-type-specifier
                   ((head (eql ',head)) rest environment system)
-                (declare (ignore environment))
+                (declare (cl:ignore environment))
                 (parse-range head rest system)))
            (defreals (&rest heads)
              `(progn
@@ -228,12 +227,12 @@
 
 (defmethod parse-compound-type-specifier
     ((head (eql 'member)) rest environment system)
-  (declare (ignore environment))
+  (declare (cl:ignore environment))
   (apply #'cleavir-ctype:member system rest))
 
 (defmethod parse-compound-type-specifier
     ((head (eql 'satisfies)) rest environment system)
-  (declare (ignore environment))
+  (declare (cl:ignore environment))
   (destructuring-bind (fname) rest
     (cleavir-ctype:satisfies fname system)))
 
