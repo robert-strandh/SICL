@@ -31,4 +31,6 @@
     (load-source "Iteration/do-dostar-support.lisp" e5)
     (load-source "Iteration/do-dostar-defmacro.lisp" e5)
     (import-function-from-host 'cleavir-code-utilities:separate-ordinary-body e5)
+    (load-source "Data-and-control-flow/destructuring-bind-support.lisp" e5)
+    (load-source "Data-and-control-flow/destructuring-bind-defmacro.lisp" e5)
     (load-asdf-system-components '#:sicl-conditions e5)))
