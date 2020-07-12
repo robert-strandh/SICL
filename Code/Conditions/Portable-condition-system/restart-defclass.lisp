@@ -1,6 +1,6 @@
 (cl:in-package #:portable-condition-system)
 
-:;; Definition of RESTART as a standard class.
+;;; Definition of RESTART as a standard class.
 
 (defclass restart ()
   ((%name

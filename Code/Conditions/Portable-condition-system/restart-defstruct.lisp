@@ -1,6 +1,6 @@
 (cl:in-package #:portable-condition-system)
 
-:;; Definition of RESTART as a structure class.
+;;; Definition of RESTART as a structure class.
 
 (defstruct restart
   "A restart structure, implementing the ANSI CL system class RESTART."
