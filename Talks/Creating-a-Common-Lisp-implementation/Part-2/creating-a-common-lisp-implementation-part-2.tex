@@ -165,6 +165,28 @@ Here, \texttt{car} is part of the \commonlisp{} code, and
 }
 
 \frame{
+\frametitle{Abstract machine}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-abstract-machine-1.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Abstract machine}
+\vskip 0.25cm
+The instructions of the machine correspond to the functionality of the
+core, namely:
+\begin{itemize}
+\item Allocators for built-in types.
+\item Predicates for those types.
+\item Slot accessors for those types.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Dependencies, execution}
 \vskip 0.25cm
 This relation means that the \emph{execution} of A may
@@ -310,28 +332,6 @@ compile-time self-dependency, and must be eliminated.
 \inputfig{fig-full-example-from-part-1.pdf_t}
 \end{center}
 \end{figure}
-}
-
-\frame{
-\frametitle{Abstract machine}
-\vskip 0.25cm
-\begin{figure}
-\begin{center}
-\inputfig{fig-abstract-machine-1.pdf_t}
-\end{center}
-\end{figure}
-}
-
-\frame{
-\frametitle{Abstract machine}
-\vskip 0.25cm
-The instructions of the machine correspond to the functionality of the
-core, namely:
-\begin{itemize}
-\item Allocators for built-in types.
-\item Predicates for those types.
-\item Slot accessors for those types.
-\end{itemize}
 }
 
 \end{document}
