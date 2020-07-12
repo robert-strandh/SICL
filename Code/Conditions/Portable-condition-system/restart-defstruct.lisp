@@ -10,4 +10,3 @@
   (interactive-function nil)
   (test-function (constantly t))
   (associated-conditions '()))
-
