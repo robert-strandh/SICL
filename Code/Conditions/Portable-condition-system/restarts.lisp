@@ -112,17 +112,17 @@
   (typecase report
     (null '())
     (string `(:report-function (lambda (stream) (write-string ,report stream))))
-    (t `(:report-function #',report))))
+    (t (list :report-function (list 'function report)))))
 
 (defun restart-case-make-interactive-subform (interactive)
   (typecase interactive
     (null '())
-    (t `(:interactive-function #',interactive))))
+    (t (list :interactive-function (list 'function interactive)))))
 
 (defun restart-case-make-test-subform (test)
   (typecase test
     (null '())
-    (t `(:test-function #',test))))
+    (t (list :test-function (list 'function test)))))
 
 (defun restart-case-pop-keywords-from-case (case-forms)
   (let ((things case-forms) report interactive test)
