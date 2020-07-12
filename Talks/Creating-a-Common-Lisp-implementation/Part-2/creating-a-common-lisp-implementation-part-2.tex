@@ -165,6 +165,19 @@ Here, \texttt{car} is part of the \commonlisp{} code, and
 }
 
 \frame{
+\frametitle{Strategy 1: Evaluator}
+\vskip 0.25cm
+Recall that we have the following choices:
+\begin{enumerate}
+\item A direct interpreter.
+\item A compiler generating bytcodes plus a bytecode interpreter.
+\item A compiler generating native code.
+\end{enumerate}
+\vskip 0.25cm
+Our current choice is for option 2.
+}
+
+\frame{
 \frametitle{Abstract machine}
 \vskip 0.25cm
 \begin{figure}
