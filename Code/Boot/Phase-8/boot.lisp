@@ -30,7 +30,11 @@
     (load-source "Iteration/dolist-defmacro.lisp" e5)
     (load-source "Iteration/do-dostar-support.lisp" e5)
     (load-source "Iteration/do-dostar-defmacro.lisp" e5)
-    (import-function-from-host 'cleavir-code-utilities:separate-ordinary-body e5)
+    (import-functions-from-host
+     '(cleavir-code-utilities:separate-ordinary-body
+       cleavir-code-utilities:parse-destructuring-lambda-list
+       cleavir-code-utilities:destructure-lambda-list)
+     e5)
     (load-source "Data-and-control-flow/destructuring-bind-support.lisp" e5)
     (load-source "Data-and-control-flow/destructuring-bind-defmacro.lisp" e5)
     (load-asdf-system-components '#:sicl-conditions e5)))
