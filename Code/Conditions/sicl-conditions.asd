@@ -10,4 +10,5 @@
    (:file "define-condition-support")
    (:file "define-condition-defmacro")
    (:file "Portable-condition-system/condition-hierarchy")
-   (:file "check-type-defmacro")))
+   (:file "check-type-defmacro")
+   (:file "Portable-condition-system/restart-defclass")))
