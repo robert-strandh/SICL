@@ -295,7 +295,7 @@
                 ;; it is a normal clause
                 (let ((type (car clause))
                       (forms (cdr clause)))
-                  `(if (typep ,variable ,type)
+                  `(if (typep ,variable ',type)
                        (progn ,@forms)
                        ,(expand-typecase-clauses (cdr clauses) variable))))))))
 
@@ -327,7 +327,7 @@
                      :clause clause))
             (let ((type (car clause))
                   (forms (cdr clause)))
-              `(if (typep ,variable ,type)
+              `(if (typep ,variable ',type)
                    (progn ,@forms)
                    ,(expand-e/ctypecase-clauses (cdr clauses) variable final name)))))))
 
