@@ -7,5 +7,6 @@
    #:count-nodes
    #:depth-first-search-preorder
    #:depth-first-search-postorder
+   #:depth-first-search-reverse-postorder
    #:predecessor-function
    ))

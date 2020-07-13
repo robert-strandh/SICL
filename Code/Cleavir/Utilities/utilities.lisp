@@ -6,6 +6,18 @@
     (labels ((traverse (node)
 	       (unless (gethash node table)
 		 (setf (gethash node table) t)
+                 (push node result)
+                 (loop for succ in (funcall successor-fun node)
+		       do (traverse succ)))))
+      (traverse start-node))
+    result))
+
+(defun depth-first-search-reverse-postorder (start-node successor-fun)
+  (let ((table (make-hash-table :test #'eq))
+	(result '()))
+    (labels ((traverse (node)
+	       (unless (gethash node table)
+		 (setf (gethash node table) t)
 		 (loop for succ in (funcall successor-fun node)
 		       do (traverse succ))
 		 (push node result))))
@@ -13,7 +25,7 @@
     result))
 
 (defun depth-first-search-postorder (start-node successor-fun)
-  (nreverse (depth-first-search-preorder start-node successor-fun)))
+  (nreverse (depth-first-search-reverse-post-order start-node successor-fun)))
 
 (defun count-nodes (start-node successor-fun)
   (let ((table (make-hash-table :test #'eq)))

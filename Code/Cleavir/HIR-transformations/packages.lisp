@@ -43,4 +43,6 @@
    maybe-convert-values-location)
   (:export
    copy-propagate-1
-   copy-propagate-instruction))
+   copy-propagate-instruction)
+  (:export
+   eliminate-redundant-typeqs))
