@@ -13,4 +13,6 @@
    (:file "check-type-defmacro")
    (:file "Portable-condition-system/restart-defclass")
    (:file "Portable-condition-system/restarts-utilities")
-   (:file "Portable-condition-system/restarts")))
+   (:file "Portable-condition-system/restarts")
+   (:file "Portable-condition-system/handlers-utilities")
+   (:file "Portable-condition-system/handlers")))
