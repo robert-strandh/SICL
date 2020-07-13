@@ -71,6 +71,7 @@
   (load-source "CLOS/setf-slot-definition-location-defgeneric.lisp" ea)
   (load-source "CLOS/variant-signature-defgeneric.lisp" ea)
   (load-source "CLOS/template-defgeneric.lisp" ea)
+  (load-source "Array/array-dimensions-defgeneric.lisp" ea)
   (load-source "Package-and-symbol/symbol-name-defgeneric.lisp" ea)
   (load-source "Package-and-symbol/symbol-package-defgeneric.lisp" ea)
   (load-source "Arithmetic/sign-and-limb-count-defgeneric.lisp" ea)
