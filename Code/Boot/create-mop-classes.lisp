@@ -55,6 +55,7 @@
   (load-source "Array/vector-unsigned-byte-32-defclass.lisp" ea)
   (load-source "Array/vector-unsigned-byte-64-defclass.lisp" ea)
   (load-source "Array/vector-unsigned-byte-8-defclass.lisp" ea)
+  (load-source "String/string-defclass.lisp" ea)
   (load-source "Cons/list-defclass.lisp" ea)
   (load-source "Cons/cons-defclass.lisp" ea)
   (load-source "Package-and-symbol/symbol-defclass.lisp" ea)
