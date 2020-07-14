@@ -38,20 +38,8 @@
 ;;; predecessors of I become the predecessors of S.
 ;;; If it so happens that I = S, the behavior is a bit different.
 ;;; For each predecessor P of I, P replaces I as a successor of P.
-(defun delete-instruction (instruction)
-  (assert (= (length (successors instruction)) 1))
-  ;; Remove the instruction from datum records; this will spare us
-  ;; a reinitialize-data.
-  (loop for input in (inputs instruction)
-        do (setf (using-instructions input)
-                 (delete instruction (using-instructions input))))
-  (setf (using-instructions (dynamic-environment instruction))
-        (delete instruction (using-instructions
-                             (dynamic-environment instruction))))
+(defun delete-instruction/nosync (instruction)
   (setf (inputs instruction) '())
-  (loop for output in (outputs instruction)
-        do (setf (defining-instructions output)
-                 (delete instruction (defining-instructions output))))
   (setf (outputs instruction) '())
   ;; Delete the instruction from the control flow graph.
   (let ((successor (car (successors instruction)))
@@ -86,6 +74,21 @@
                   (loop for predecessor in predecessors
                         do (pushnew predecessor (predecessors successor)
                                     :test #'eq))))))))
+
+(defun delete-instruction (instruction)
+  (assert (= (length (successors instruction)) 1))
+  ;; Remove the instruction from datum records; this will spare us
+  ;; a reinitialize-data.
+  (loop for input in (inputs instruction)
+        do (setf (using-instructions input)
+                 (delete instruction (using-instructions input))))
+  (loop for output in (outputs instruction)
+        do (setf (defining-instructions output)
+                 (delete instruction (defining-instructions output))))
+  (setf (using-instructions (dynamic-environment instruction))
+        (delete instruction (using-instructions
+                             (dynamic-environment instruction))))
+  (delete-instruction/nosync instruction))
 
 ;;; Replace an instruction I with an instruction S, with respect to
 ;;; forward control flow.

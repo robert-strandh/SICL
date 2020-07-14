@@ -30,3 +30,27 @@
           (let ((use (pop worklist)))
             (dolist (use (copy-propagate-instruction use))
               (push use worklist))))))
+
+;;; Do full trivial copy propagation across the entire graph.  Make
+;;; sure to do this without updating metadata with delete-instruction,
+;;; since that gets slow. Instead, use reinitialize-data.
+(defun copy-propagate (initial-instruction)
+  (let ((kill '()))
+    (cleavir-ir:map-instructions
+     (lambda (assignment)
+       (when (typep assignment 'cleavir-ir:assignment-instruction)
+         (let ((input (first (cleavir-ir:inputs assignment)))
+               (output (first (cleavir-ir:outputs assignment))))
+           ;; Without reaching definitions, the output and input must *both*
+           ;; have only one definition, the initial one.
+           (when (and (null (rest (cleavir-ir:defining-instructions input)))
+                      (null (rest (cleavir-ir:defining-instructions output))))
+             ;; Some assignments are totally useless.
+             (if (eq input output)
+                 (push assignment kill)
+                 (progn
+                   (cleavir-ir:replace-datum input output)
+                   (push assignment kill)))))))
+     initial-instruction)
+    (mapc #'cleavir-ir::delete-instruction/nosync kill)
+    (cleavir-ir:reinitialize-data initial-instruction)))
