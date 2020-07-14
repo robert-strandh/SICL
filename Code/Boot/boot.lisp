@@ -23,6 +23,8 @@
      (asdf:system-relative-pathname '#:sicl-boot "ASTs/")
      :validate t
      :if-does-not-exist :ignore)
+    (when (null (find-package '#:sicl-array))
+      (make-package '#:sicl-array :use (list (find-package '#:common-lisp))))
     (sicl-boot-phase-0:boot boot)
     (sicl-boot-phase-1:boot boot)
     (sicl-boot-phase-2:boot boot)
