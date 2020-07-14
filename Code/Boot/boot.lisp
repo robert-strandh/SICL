@@ -25,6 +25,7 @@
      :if-does-not-exist :ignore)
     ;; FIXME: move host-load from phase 0 to main directory.
     (sicl-boot-phase-0::host-load "Array/packages.lisp")
+    (sicl-boot-phase-0::host-load "String/packages.lisp")
     (sicl-boot-phase-0:boot boot)
     (sicl-boot-phase-1:boot boot)
     (sicl-boot-phase-2:boot boot)
