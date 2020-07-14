@@ -509,11 +509,7 @@
 (defun eliminate-redundant-typeqs (initial-instruction system)
   ;; As a prepass, copy propagate all data to make value numbering
   ;; more efficient, as things will fixpoint faster.
-  (cleavir-ir:map-instructions
-   (lambda (instruction)
-     (dolist (output (cleavir-ir:outputs instruction))
-       (cleavir-hir-transformations:copy-propagate-1 output)))
-   initial-instruction)
+  (copy-propagate initial-instruction)
   (let* ((basic-blocks (cleavir-basic-blocks:basic-blocks initial-instruction))
          (instruction-basic-blocks (cleavir-basic-blocks:instruction-basic-blocks basic-blocks))
          (starting-blocks '()))
