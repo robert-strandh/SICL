@@ -49,5 +49,3 @@
    #:string-greaterp
    #:string-not-greaterp
    #:string-not-lessp))
-
-   
