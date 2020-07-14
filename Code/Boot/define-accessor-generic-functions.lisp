@@ -72,6 +72,8 @@
   (load-source "CLOS/variant-signature-defgeneric.lisp" ea)
   (load-source "CLOS/template-defgeneric.lisp" ea)
   (load-source "Array/array-dimensions-defgeneric.lisp" ea)
+  (load-source "Array/vector-fill-pointer-defgeneric.lisp" ea)
+  (load-source "Array/setf-vector-fill-pointer-defgeneric.lisp" ea)
   (load-source "Package-and-symbol/symbol-name-defgeneric.lisp" ea)
   (load-source "Package-and-symbol/symbol-package-defgeneric.lisp" ea)
   (load-source "Arithmetic/sign-and-limb-count-defgeneric.lisp" ea)
