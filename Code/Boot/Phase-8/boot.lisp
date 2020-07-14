@@ -37,4 +37,7 @@
      e5)
     (load-source "Data-and-control-flow/destructuring-bind-support.lisp" e5)
     (load-source "Data-and-control-flow/destructuring-bind-defmacro.lisp" e5)
+    (when (null (find-package '#:portable-condition-system))
+      (make-package '#:portable-condition-system
+                    :use (list (find-package '#:common-lisp))))
     (load-asdf-system-components '#:sicl-conditions e5)))
