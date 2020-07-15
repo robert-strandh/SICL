@@ -73,7 +73,7 @@
     (ld "Environment/standard-environment-macros.lisp")
     ;; Load a file containing the definition of the function
     ;; MACROEXPAND-1.
-    (ld "Evaluation-and-compilation/macroexpand.lisp")
+    (ld "Evaluation-and-compilation/macroexpand-1-defun.lisp")
     ;; Load a file containing the definition of the macro DECLAIM.
     (ld "Evaluation-and-compilation/declaim-defmacro.lisp")
     ;; Load a file containing the definitions of the macros INCF and DECF.
