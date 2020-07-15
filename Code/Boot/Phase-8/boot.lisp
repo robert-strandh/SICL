@@ -40,4 +40,7 @@
     (when (null (find-package '#:portable-condition-system))
       (make-package '#:portable-condition-system
                     :use (list (find-package '#:common-lisp))))
+    (import-function-from-host 'trucler:macro-function e5)
+    (load-source "Evaluation-and-compilation/macroexpand-1-defun.lisp" e5)
+    (load-source "Evaluation-and-compilation/macroexpand-defun.lisp" e5)
     (load-asdf-system-components '#:sicl-conditions e5)))
