@@ -52,6 +52,9 @@
 (defclass value-number-table ()
   ((%table :accessor table :initarg :table)))
 
+(defun immutable-p (datum)
+  (null (rest (cleavir-ir:defining-instructions datum))))
+
 (defun make-value-number-table (&key (size 0))
   (make-instance 'value-number-table
                  :table (make-hash-table :test #'eq :size size)))
@@ -80,26 +83,27 @@
                               :size
                               (loop for table in initialized-tables
                                     minimize (hash-table-count (table table))))))
-           (maphash (lambda (datum number)
-                      (let ((all-same t)
-                            (overdefined nil))
-                        (dolist (table (rest initialized-tables))
-                          (let ((other-number (gethash datum (table table))))
-                            ;; When the other number exists and is
-                            ;; different, then the value is
-                            ;; overdefined.
-                            (when other-number
-                              (unless (eq number other-number)
-                                (setf all-same nil)
-                                (setf overdefined t)
-                                (return)))))
-                        (when all-same
-                          (setf (gethash datum (table value-table))
-                                number))
-                        (when overdefined
-                          (setf (gethash datum (table value-table))
-                                (make-value-number)))))
-                    (table (first initialized-tables)))
+           (when initialized-tables
+             (maphash (lambda (datum number)
+                        (let ((all-same t)
+                              (overdefined nil))
+                          (dolist (table (rest initialized-tables))
+                            (let ((other-number (gethash datum (table table))))
+                              ;; When the other number exists and is
+                              ;; different, then the value is
+                              ;; overdefined.
+                              (when other-number
+                                (unless (eq number other-number)
+                                  (setf all-same nil)
+                                  (setf overdefined t)
+                                  (return)))))
+                          (when all-same
+                            (setf (gethash datum (table value-table))
+                                  number))
+                          (when overdefined
+                            (setf (gethash datum (table value-table))
+                                  (make-value-number)))))
+                      (table (first initialized-tables))))
            (setf (in-eq-data block) value-table)))))
 
 (defun reanalyze-block-in-eq-data (block predecessors)
@@ -172,19 +176,11 @@
                  (output (first (cleavir-ir:outputs instruction)))
                  (input-number (or (gethash input out-table)
                                    (gethash input in-table)
-                                   (if (typep input 'cleavir-ir:lexical-location)
-                                       ;; Assert that this inputs define does not occur after
-                                       ;; its first use in the forward flow order
-                                       ;; (pseudotopological). HIR might have some in the
-                                       ;; initial pass, but this should never happen
-                                       ;; thereafter.
-                                       (progn
-                                         (warn "Potential use before define in HIR? initial")
-                                         :undef)
-                                       ;; For any location that isn't a
-                                       ;; lexical location, use it
-                                       ;; literally.
-                                       input))))
+                                   ;; If it is not in the table, it is
+                                   ;; an immutable value that the
+                                   ;; output can use directly as a
+                                   ;; value number.
+                                   input)))
             (setf (gethash output out-table) input-number)))
          (t
           ;; This is where having known functions would plug into
@@ -195,7 +191,8 @@
           ;; nothing. Basically treating all non-assignment
           ;; instructions as totally opaque.
           (dolist (output (cleavir-ir:outputs instruction))
-            (setf (gethash output out-table) (make-value-number))))))
+            (unless (immutable-p output)
+              (setf (gethash output out-table) (make-value-number)))))))
      block)))
 
 (defun block-value-transfer-reanalyze (block)
@@ -219,9 +216,7 @@
                  (input-number (or (gethash input temp-table)
                                    (gethash input in-table)
                                    (gethash input out-table)
-                                   (if (typep input 'cleavir-ir:lexical-location)
-                                       (warn "Potential use before define in HIR? reanalyze")
-                                       input))))
+                                   input)))
             (setf (gethash output temp-table) input-number)))))
      block)
     ;; Commit the existing or new value numbers of existing data to
@@ -324,7 +319,12 @@
 
 (defun constrain-type-instruction (instruction block system)
   (let* ((input (first (cleavir-ir:inputs instruction)))
-         (input-value (gethash input (table (out-eq-data block))))
+         ;; Get the abstract value number at this program point. If it
+         ;; doesn't exist, ensure it is immutable and use the input
+         ;; itself.
+         (input-value (or (gethash input (table (out-eq-data block)))
+                          (assert (immutable-p input))
+                          input))
          (ctype (if (typep instruction 'cleavir-ir:typeq-instruction)
                     (cleavir-ir:value-type instruction)
                     (cleavir-ir:ctype instruction)))
@@ -509,11 +509,7 @@
 (defun eliminate-redundant-typeqs (initial-instruction system)
   ;; As a prepass, copy propagate all data to make value numbering
   ;; more efficient, as things will fixpoint faster.
-  (cleavir-ir:map-instructions
-   (lambda (instruction)
-     (dolist (output (cleavir-ir:outputs instruction))
-       (cleavir-hir-transformations:copy-propagate-1 output)))
-   initial-instruction)
+  (copy-propagate initial-instruction)
   (let* ((basic-blocks (cleavir-basic-blocks:basic-blocks initial-instruction))
          (instruction-basic-blocks (cleavir-basic-blocks:instruction-basic-blocks basic-blocks))
          (starting-blocks '()))
