@@ -82,7 +82,7 @@
                                    `(:argument-precedence-order ',(rest argument-precedence-order)))
                              ,@(if (null documentation-option)
                                    '()
-                                   `(:documentation (second documentation-option)))
+                                   `(:documentation ,(second documentation-option)))
                              :method-combination
                              (sicl-clos:find-method-combination
                               (sicl-clos:class-prototype
