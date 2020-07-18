@@ -50,8 +50,7 @@
           (function
            (make-instance 'trucler:global-function-description
              :name name
-             :compiler-macro (compiler-macro-function name environment)
-             :class-name (class-name (cl:class-of fdefinition))))
+             :compiler-macro (compiler-macro-function name environment)))
           (cons
            (ecase (first fdefinition)
              (cl:macro-function
@@ -62,14 +61,6 @@
              (cl:special
               (make-instance 'trucler:special-operator-description
                 :name name))))))))
-
-(defmethod trucler:describe-class
-    (client (environment environment) name)
-  (let ((class (find-class name environment)))
-    (if (not class)
-        nil
-        (make-instance 'trucler:class-description
-          :name name))))
 
 (defmethod trucler:describe-block
     (client (environment environment) name)
