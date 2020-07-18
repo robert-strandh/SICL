@@ -6,9 +6,6 @@
 (defmethod describe-function (client (environment environment) name)
   (trucler:describe-function client environment name))
 
-(defmethod describe-class (client (environment environment) name)
-  (trucler:describe-class client environment name))
-
 (defmethod describe-block (client (environment environment) name)
   (trucler:describe-block client environment name))
 

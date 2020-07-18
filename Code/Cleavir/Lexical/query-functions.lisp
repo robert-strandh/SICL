@@ -5,8 +5,6 @@
 
 (defgeneric describe-function (client environment name))
 
-(defgeneric describe-class (client environment name))
-
 (defgeneric describe-block (client environment name))
 
 (defgeneric describe-tag (client environment tag))
