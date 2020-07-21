@@ -201,6 +201,255 @@ Our current choice is for option 2.
 }
 
 \frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-stack.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-1.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-2.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-3.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-4.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-5.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-6.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-7.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-8.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-9.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-10.pdf_t}
+\end{center}
+\end{figure}
+}
+
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-11.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-12.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-13.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-14.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-15.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-16.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Call stack}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-call-17.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Dynamic environment}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-dynamic-environment.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Static environment}
+\vskip 0.25cm
+A function object consists of:
+\begin{itemize}
+\item An \emph{entry point} which is the address of the
+  first instruction of the function.
+\item A \emph{static environment} which contains closed-over
+  variables and perhaps complicated constants.
+\end{itemize}
+\vskip 0.25cm
+The entry point can be shared with other functions.
+}
+
+\frame[containsverbatim]{
+\frametitle{Static environment}
+\vskip 0.25cm
+Example:
+\vskip 0.25cm
+\begin{verbatim}
+(defun foo (x)
+  (lambda (y) (+ x y)))
+
+(list (foo 1) (foo 2))
+\end{verbatim}
+}
+
+
+\frame{
+\frametitle{Static environment}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-static-environment.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Implicit arguments to a function}
+\vskip 0.25cm
+\begin{itemize}
+\item The return address.
+\item The static environment.
+\item The dynamic environment.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Abstract machine}
 \vskip 0.25cm
 \begin{figure}
@@ -313,6 +562,21 @@ Floating-point arithmetic is in the core for reasons of performance.
 \inputfig{fig-function-call-9.pdf_t}
 \end{center}
 \end{figure}
+}
+
+\frame{
+\frametitle{More about complications}
+\vskip 0.25cm
+Recall from part 1 that:
+\vskip 0.25cm
+\begin{itemize}
+\item The \texttt{mapcar} function needs the \texttt{do} macro when it
+  is compiled.
+\item The \texttt{do} macro function needs the \texttt{mapcar}
+  function when it is executed.
+\end{itemize}
+\vskip 0.25cm
+Let us formalize this dependency a bit.
 }
 
 \frame{
@@ -461,6 +725,24 @@ compile-time self-dependency, and must be eliminated.
 \inputfig{fig-full-example-from-part-1.pdf_t}
 \end{center}
 \end{figure}
+}
+
+\frame{
+\frametitle{Topics for part 3}
+\vskip 0.25cm
+In part 3:
+\vskip 0.25cm
+\begin{itemize}
+\item We resolve the dependency problem by cross-compiling code on a
+  host \commonlisp{} implementation. 
+\item The cross compiler will generate bytecodes for the abstract
+  machine.
+\item The core is still written in C, and it contains the bytecode
+  loader and the bytecode interpreter.
+\item But we can now move much of the C code to \commonlisp{}
+\end{itemize}
+\vskip 0.25cm
+This summarizes our strategy 2 which is the main topic of part 3.
 }
 
 \end{document}
