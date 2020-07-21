@@ -205,11 +205,11 @@
          ;; state has changed or not.
          (temp-table (make-hash-table :test #'eq))
          (changed nil))
-    ;; During reanalysis, we really need to only update effects from
-    ;; assignments.
     (cleavir-basic-blocks:map-basic-block-instructions
      (lambda (instruction)
        (typecase instruction
+         ;; During reanalysis, push the effects of assignments
+         ;; normally.
          (cleavir-ir:assignment-instruction
           (let* ((input (first (cleavir-ir:inputs instruction)))
                  (output (first (cleavir-ir:outputs instruction)))
@@ -217,7 +217,13 @@
                                    (gethash input in-table)
                                    (gethash input out-table)
                                    input)))
-            (setf (gethash output temp-table) input-number)))))
+            (setf (gethash output temp-table) input-number)))
+         (t
+          ;; When hitting any other type of instruction, restore the
+          ;; existing entry if it has changed, since we accumulate all
+          ;; effects of numbers to the end of the block.
+          (dolist (output (cleavir-ir:outputs instruction))
+            (setf (gethash output temp-table) (gethash output out-table))))))
      block)
     ;; Commit the existing or new value numbers of existing data to
     ;; the out table, setting stuff up for reanalysis.
