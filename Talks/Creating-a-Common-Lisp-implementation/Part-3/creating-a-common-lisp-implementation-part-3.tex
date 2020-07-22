@@ -1,0 +1,125 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\beamertemplateshadingbackground{red!10}{blue!10}
+%\usepackage{fancybox}
+\usepackage{epsfig}
+\usepackage{verbatim}
+\usepackage{url}
+%\usepackage{graphics}
+%\usepackage{xcolor}
+\usepackage{fancybox}
+\usepackage{moreverb}
+%\usepackage[all]{xy}
+\usepackage{listings}
+\usepackage{filecontents}
+\usepackage{graphicx}
+
+\lstset{
+  language=Lisp,
+  basicstyle=\scriptsize\ttfamily,
+  keywordstyle={},
+  commentstyle={},
+  stringstyle={}}
+
+\def\inputfig#1{\input #1}
+\def\inputeps#1{\includegraphics{#1}}
+\def\inputtex#1{\input #1}
+
+\inputtex{logos.tex}
+
+%\definecolor{ORANGE}{named}{Orange}
+
+\definecolor{GREEN}{rgb}{0,0.8,0}
+\definecolor{YELLOW}{rgb}{1,1,0}
+\definecolor{ORANGE}{rgb}{1,0.647,0}
+\definecolor{PURPLE}{rgb}{0.627,0.126,0.941}
+\definecolor{PURPLE}{named}{purple}
+\definecolor{PINK}{rgb}{1,0.412,0.706}
+\definecolor{WHEAT}{rgb}{1,0.8,0.6}
+\definecolor{BLUE}{rgb}{0,0,1}
+\definecolor{GRAY}{named}{gray}
+\definecolor{CYAN}{named}{cyan}
+
+\newcommand{\orchid}[1]{\textcolor{Orchid}{#1}}
+\newcommand{\defun}[1]{\orchid{#1}}
+
+\newcommand{\BROWN}[1]{\textcolor{BROWN}{#1}}
+\newcommand{\RED}[1]{\textcolor{red}{#1}}
+\newcommand{\YELLOW}[1]{\textcolor{YELLOW}{#1}}
+\newcommand{\PINK}[1]{\textcolor{PINK}{#1}}
+\newcommand{\WHEAT}[1]{\textcolor{wheat}{#1}}
+\newcommand{\GREEN}[1]{\textcolor{GREEN}{#1}}
+\newcommand{\PURPLE}[1]{\textcolor{PURPLE}{#1}}
+\newcommand{\BLACK}[1]{\textcolor{black}{#1}}
+\newcommand{\WHITE}[1]{\textcolor{WHITE}{#1}}
+\newcommand{\MAGENTA}[1]{\textcolor{MAGENTA}{#1}}
+\newcommand{\ORANGE}[1]{\textcolor{ORANGE}{#1}}
+\newcommand{\BLUE}[1]{\textcolor{BLUE}{#1}}
+\newcommand{\GRAY}[1]{\textcolor{gray}{#1}}
+\newcommand{\CYAN}[1]{\textcolor{cyan }{#1}}
+
+\newcommand{\reference}[2]{\textcolor{PINK}{[#1~#2]}}
+%\newcommand{\vect}[1]{\stackrel{\rightarrow}{#1}}
+
+% Use some nice templates
+\beamertemplatetransparentcovereddynamic
+
+\newcommand{\A}{{\mathbb A}}
+\newcommand{\degr}{\mathrm{deg}}
+
+\title{Creating a \commonlisp{} implementation\\(Part 3)}
+
+\author{Robert Strandh}
+\institute{
+}
+\date{July, 2020}
+
+%\inputtex{macros.tex}
+
+\begin{document}
+\frame{
+\titlepage
+}
+
+\setbeamertemplate{footline}{
+\vspace{-1em}
+\hspace*{1ex}{~} \GRAY{\insertframenumber/\inserttotalframenumber}
+}
+
+\frame{
+\frametitle{Topics covered in presentation series}
+\vskip 0.25cm
+\begin{itemize}
+\item Choices of implementation language.
+\item Implementation strategies for the evaluator.
+\item Division of code written in \commonlisp{} and code written in
+  the implementation language.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Topics not covered in presentation series}
+\vskip 0.25cm
+\begin{itemize}
+\item How a \commonlisp{} compiler works.  If there is a demand, maybe
+  in a different series.
+\item How different strategies for memory management work.
+\item Details about how an abstract machine could work.
+\item Details about how a typical concrete processor works.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Topics for part 4}
+\vskip 0.25cm
+In part 3:
+\vskip 0.25cm
+\begin{itemize}
+\item stuff
+\item stuff
+\end{itemize}
+\vskip 0.25cm
+This summarizes our strategy 2 which is the main topic of part 3.
+}
+
+\end{document}
