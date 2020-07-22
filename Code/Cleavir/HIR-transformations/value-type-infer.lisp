@@ -446,11 +446,14 @@
                 ;; that is an implicit T type, so make sure to take note of
                 ;; that.
                 (dolist (predecessor predecessors)
-                  (unless (gethash value (table (out-constraints predecessor)))
-                    (union-constraint-into-table
-                     (make-typeq-constraint value (cleavir-ctype:top system))
-                     constraint-table
-                     system))))
+                  ;; Make sure not to take into account the effect of CHOKE.
+                  (unless (typep (cleavir-basic-blocks:last-instruction predecessor)
+                                 'cleavir-ir:choke-instruction)
+                    (unless (gethash value (table (out-constraints predecessor)))
+                      (union-constraint-into-table
+                       (make-typeq-constraint value (cleavir-ctype:top system))
+                       constraint-table
+                       system)))))
               (table (out-constraints predecessor))))))
        (setf (in-constraints block) constraint-table))))
   (in-constraints block))
@@ -544,8 +547,10 @@
                    #'cleavir-basic-blocks:successors)))
         (dolist (block list)
           (print block)
+          (cleavir-basic-blocks:map-basic-block-instructions #'print block)
           (format t "~&in: ~a" (table (in-constraints block)))
           (format t "~&out: ~a" (table (out-constraints block)))
+          (format t "~&branch: ~a" (branch-constraint block))
           (format t "~&executable: ~a" (executablep block)))))
     ;; We should really fixpoint iterate both the value numbering and
     ;; type analysis passes together, in the sense that deleting
