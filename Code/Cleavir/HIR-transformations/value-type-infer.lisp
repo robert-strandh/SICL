@@ -481,10 +481,9 @@
                   (unless (typep (cleavir-basic-blocks:last-instruction predecessor)
                                  'cleavir-ir:choke-instruction)
                     (unless (gethash value (table (out-constraints predecessor)))
-                      (union-constraint-into-table
-                       (make-typeq-constraint value (cleavir-ctype:top system))
-                       constraint-table
-                       system)))))
+                      ;; Mark the value as being T type implicitly by
+                      ;; removal from table.
+                      (remhash value (table constraint-table))))))
               (table (out-constraints predecessor))))))
        (setf (in-constraints block) constraint-table))))
   (in-constraints block))
