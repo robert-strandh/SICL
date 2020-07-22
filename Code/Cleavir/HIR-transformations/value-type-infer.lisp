@@ -52,8 +52,26 @@
 (defclass value-number-table ()
   ((%table :accessor table :initarg :table)))
 
+;;; Immutable data need not be annotated in block local tables. They
+;;; can be annotated in a global table instead.
+(defvar *global-value-numbers*)
+
 (defun immutable-p (datum)
   (null (rest (cleavir-ir:defining-instructions datum))))
+
+;;; Either get the number from the table or use the datum itself if not.
+(defun immutable-value-number (datum)
+  (assert (immutable-p datum))
+  (or (gethash datum *global-value-numbers*)
+      (assert (not (typep (first (cleavir-ir:defining-instructions datum))
+                          'cleavir-ir:assignment-instruction)))
+      datum))
+
+(defun (setf immutable-value-number) (new-number datum)
+  (assert (immutable-p datum))
+  (assert (typep (first (cleavir-ir:defining-instructions datum))
+                 'cleavir-ir:assignment-instruction))
+  (setf (gethash datum *global-value-numbers*) new-number))
 
 (defun make-value-number-table (&key (size 0))
   (make-instance 'value-number-table
@@ -174,14 +192,14 @@
          (cleavir-ir:assignment-instruction
           (let* ((input (first (cleavir-ir:inputs instruction)))
                  (output (first (cleavir-ir:outputs instruction)))
-                 (input-number (or (gethash input out-table)
-                                   (gethash input in-table)
-                                   ;; If it is not in the table, it is
-                                   ;; an immutable value that the
-                                   ;; output can use directly as a
-                                   ;; value number.
-                                   input)))
-            (setf (gethash output out-table) input-number)))
+                 (input-number (if (immutable-p input)
+                                   (immutable-value-number input)
+                                   (or (gethash input out-table)
+                                       (gethash input in-table)
+                                       (error "WHY?")))))
+            (if (immutable-p output)
+                (setf (immutable-value-number output) input-number)
+                (setf (gethash output out-table) input-number))))
          (t
           ;; This is where having known functions would plug into
           ;; recording the actual value numbers. For now, just
@@ -213,17 +231,27 @@
          (cleavir-ir:assignment-instruction
           (let* ((input (first (cleavir-ir:inputs instruction)))
                  (output (first (cleavir-ir:outputs instruction)))
-                 (input-number (or (gethash input temp-table)
-                                   (gethash input in-table)
-                                   (gethash input out-table)
-                                   input)))
-            (setf (gethash output temp-table) input-number)))
+                 (input-number (if (immutable-p input)
+                                   (immutable-value-number input)
+                                   (or (gethash input temp-table)
+                                       (gethash input in-table)
+                                       (gethash input out-table)
+                                       (error "WHY?A")))))
+            (if (immutable-p output)
+                ;; Reanalyze if the global table has changed.
+                (unless (eq input-number (immutable-value-number output))
+                  (setf (immutable-value-number output) input-number)
+                  (dolist (use (cleavir-ir:using-instructions output))
+                    (when (typep use 'cleavir-ir:assignment-instruction)
+                      (push use changed))))
+                (setf (gethash output temp-table) input-number))))
          (t
           ;; When hitting any other type of instruction, restore the
           ;; existing entry if it has changed, since we accumulate all
           ;; effects of numbers to the end of the block.
           (dolist (output (cleavir-ir:outputs instruction))
-            (setf (gethash output temp-table) (gethash output out-table))))))
+            (unless (immutable-p output)
+              (setf (gethash output temp-table) (gethash output out-table)))))))
      block)
     ;; Commit the existing or new value numbers of existing data to
     ;; the out table, setting stuff up for reanalysis.
@@ -232,7 +260,8 @@
                      (new-number (or (gethash datum temp-table) in-number)))
                  (unless (eq old-number new-number)
                    (setf (gethash datum out-table) new-number)
-                   (setf changed t))))
+                   (unless changed
+                     (setf changed t)))))
              in-table)
     (maphash (lambda (datum temp-number)
                (unless (gethash datum in-table)
@@ -241,7 +270,7 @@
              temp-table)
     changed))
 
-(defun value-number (start)
+(defun value-number (start instruction-basic-blocks)
   (let* ((initial-ordering
            (cleavir-utilities:depth-first-search-reverse-postorder
             start
@@ -282,9 +311,13 @@
                     (return)))
                 (setf (gethash block block-count) 0))))
         (reanalyze-block-in-eq-data block (cleavir-basic-blocks:predecessors block))
-        (when (block-value-transfer-reanalyze block)
-          (dolist (succ (cleavir-basic-blocks:successors block))
-            (pushnew succ reanalyze)))))))
+        (let ((changed (block-value-transfer-reanalyze block)))
+          (when changed
+            (dolist (succ (cleavir-basic-blocks:successors block))
+              (pushnew succ reanalyze))
+            (when (consp changed)
+              (dolist (inst changed)
+                (pushnew (gethash inst instruction-basic-blocks) changed)))))))))
 
 ;;; In Cleavir, actual instructions are the only thing that mark
 ;;; control points, so to build a mapping from control points to the
@@ -325,12 +358,10 @@
 
 (defun constrain-type-instruction (instruction block system)
   (let* ((input (first (cleavir-ir:inputs instruction)))
-         ;; Get the abstract value number at this program point. If it
-         ;; doesn't exist, ensure it is immutable and use the input
-         ;; itself.
-         (input-value (or (gethash input (table (out-eq-data block)))
-                          (assert (immutable-p input))
-                          input))
+         ;; Get the abstract value number at this program point.
+         (input-value (if (immutable-p input)
+                          (immutable-value-number input)
+                          (gethash input (table (out-eq-data block)))))
          (ctype (if (typep instruction 'cleavir-ir:typeq-instruction)
                     (cleavir-ir:value-type instruction)
                     (cleavir-ir:ctype instruction)))
@@ -521,7 +552,8 @@
   (copy-propagate initial-instruction)
   (let* ((basic-blocks (cleavir-basic-blocks:basic-blocks initial-instruction))
          (instruction-basic-blocks (cleavir-basic-blocks:instruction-basic-blocks basic-blocks))
-         (starting-blocks '()))
+         (starting-blocks '())
+         (*global-value-numbers* (make-hash-table)))
     (dolist (block basic-blocks)
       (change-class block 'augmented-basic-block
                     :executablep t
@@ -530,7 +562,7 @@
       (when (typep (cleavir-basic-blocks:first-instruction block) 'cleavir-ir:enter-instruction)
         (push block starting-blocks)))
     (dolist (start starting-blocks)
-      (value-number start)
+      (value-number start instruction-basic-blocks)
       #+(or)
       (let ((list (cleavir-utilities:depth-first-search-reverse-postorder
                    start
@@ -538,7 +570,8 @@
         (dolist (block list)
           (print block)
           (format t "~&in: ~a" (table (in-eq-data block)))
-          (format t "~&out: ~a" (table (out-eq-data block))))))
+          (format t "~&out: ~a" (table (out-eq-data block))))
+        (format t "~&GLOBAL: ~a" *global-value-numbers*)))
     (dolist (start starting-blocks)
       (analyze-types start system)
       #+(or)
