@@ -134,6 +134,98 @@ Let us imagine the following scenario:
 }
 
 \frame{
+\frametitle{Contents of output file}
+\vskip 0.25cm
+The output file contains elements from three sources:
+\vskip 0.25cm
+\begin{enumerate}
+\item From the code in the input file: Names of functions, variables, etc.
+\item From the code generator of the compiler: Instructions, lexical locations, etc.
+\item From macros in the startup environment: Names of functions,
+  variables, etc. that the macro expander generated.
+\end{enumerate}
+\vskip 0.25cm
+The definitions of the macros are specific to the \commonlisp{}
+implementation.
+}
+
+\frame{
+\frametitle{Compiler for a traditional batch language}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-c-unix-1.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Essential difference}
+\vskip 0.25cm
+This difference between the two types of languages is crucial:
+\vskip 0.25cm
+\begin{enumerate}
+\item A compiler for a batch language can run anywhere.
+\item Because of the macros, a \commonlisp{} compiler must in
+  principle be executed from the very \commonlisp{} system that it is
+  written for.
+\end{enumerate}
+\vskip 0.25cm
+Aside from that pesky little problem, a \commonlisp{} compiler can be
+written in portable \commonlisp{} and can thus be executed from any
+conforming \commonlisp{} implementation.
+}
+
+\frame{
+\frametitle{What if a solution existed?}
+\vskip 0.25cm
+Imagine we found a solution to that pesky little problem.
+\vskip 0.25cm
+\begin{itemize}
+\item We could execute the compiler on a \emph{host} \commonlisp{}
+  system. 
+\item We could feed the source of the compiler as input files.
+\item We would then have the compiler, compiled to bytecodes.
+\item With a simple bytecode loader, written in C, we could then load
+  the compiled compiler.
+\item And there is no longer any need for our initial interpreter.
+\end{itemize}
+\vskip 0.25cm
+This is the essence of \emph{cross compilation}.
+}
+
+\frame[containsverbatim]{
+\frametitle{Typical package structure}
+\begin{verbatim}
+(defpackage #:common-lisp
+  (:use)
+  (:export #:car #:cdr ... #:mapcar))
+---
+(defpackage #:target-cons
+  (:use #:common-lisp))
+---
+(in-package #:target-cons)
+
+(defun mapcar (fun list)
+  ...)
+\end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{Example file to compile}
+\begin{verbatim}
+(in-package #:target-cons)
+
+(defun mapcar (function list)
+  (do ((sublist list (rest sublist))
+       (result '()))
+      ((null sublist) (nreverse result))
+    (push (funcall function (first sublist))
+          result)))
+\end{verbatim}
+}
+
+\frame{
 \frametitle{Topics for part 4}
 \vskip 0.25cm
 In part 3:
