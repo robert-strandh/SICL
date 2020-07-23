@@ -9,3 +9,8 @@
 
 (defmacro when (test &body body)
   `(if ,test (progn ,@body)))
+
+(defmacro defun (name lambda-list &body body)
+  `(setf (fdefinition ',name)
+(         (lambda ,lambda-list
+           ,@body)))
