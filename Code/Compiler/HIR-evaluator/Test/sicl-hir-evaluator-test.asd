@@ -9,5 +9,6 @@
                #:sicl-hir-evaluator)
   :components
   ((:file "packages")
-   (:file "eval")
-   (:file "test")))
+   (:file "environment")
+   (:file "sicl-hir-evaluator-test")
+   (:file "tests")))

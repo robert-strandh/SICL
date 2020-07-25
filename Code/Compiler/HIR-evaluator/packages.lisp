@@ -9,6 +9,8 @@
            #:arguments
            #:*call-stack*
            #:enclose
+           #:symbol-value-function
+           #:set-symbol-value-function
            #:fill-environment
            #:instruction-thunk
            #:make-thunk

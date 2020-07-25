@@ -47,10 +47,3 @@
              (setf (sicl-genv:special-variable symbol global-environment t)
                    value)
              (return value))))
-
-(defun fill-environment (environment)
-  (setf (sicl-genv:fdefinition 'enclose environment) #'enclose)
-  (setf (sicl-genv:fdefinition 'symbol-value environment)
-        (symbol-value-function environment))
-  (setf (sicl-genv:fdefinition '(setf symbol-value) environment)
-        (set-symbol-value-function environment)))
