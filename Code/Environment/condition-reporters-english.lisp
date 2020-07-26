@@ -1,10 +1,6 @@
 (cl:in-package #:sicl-standard-environment-functions)
 
 (defmethod acclimation:report-condition
-    ((condition no-such-class) stream (language acclimation:english))
-  (format stream "There is no class named ~s" (name condition)))
-
-(defmethod acclimation:report-condition
     ((condition variables-must-be-proper-list)
      stream
      (language acclimation:english))
