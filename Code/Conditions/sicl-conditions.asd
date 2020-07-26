@@ -16,4 +16,6 @@
    (:file "Portable-condition-system/restarts")
    (:file "Portable-condition-system/handlers-utilities")
    (:file "Portable-condition-system/handlers")
+   (:file "make-condition-defgeneric")
+   (:file "make-condition-defmethods")
    (:file "Portable-condition-system/coerce-to-condition")))
