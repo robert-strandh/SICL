@@ -6,6 +6,7 @@
   ((:file "packages")
    (:file "support")
    (:file "condition-class-defclass")
+   (:file "report-mixin-defclass")
    (:file "condition-defclass")
    (:file "define-condition-support")
    (:file "define-condition-defmacro")
