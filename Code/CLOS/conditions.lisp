@@ -54,9 +54,8 @@
   ((%specializer :initarg :specializer :reader specializer)))
 
 (define-condition no-such-class-name
-    (type-error)
-  ()
-  (:default-initargs :type 'symbol))
+    (error)
+  ((%name :initarg :name :reader name)))
 
 (define-condition slot-definition-argument-must-be-supplied
     (error)
