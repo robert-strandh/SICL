@@ -15,6 +15,8 @@
 (defun define-condition-expander (name supertypes direct-slots options)
   (let* ((report-option (find :report options :key #'car))
          (other-options (remove report-option options))
+         (default-initargs-option (find :default-initargs options :key #'car))
+         (other-options (remove default-initargs-option other-options))
          (supertypes supertypes))
     (when (null supertypes)
       (push 'condition supertypes))
@@ -27,6 +29,7 @@
                     '()
                     `((:default-initargs
                        :report
-                       ,(expand-define-condition-report-function report-option))))
+                       ,(expand-define-condition-report-function report-option)
+                       ,@(rest default-initargs-option))))
               ,@other-options)
             ',name)))
