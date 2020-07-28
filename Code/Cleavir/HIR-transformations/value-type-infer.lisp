@@ -1,11 +1,8 @@
 ;;;; Do value numbering, and constrain properties of value numbers
 ;;;; with type constraints.  Everything is basic block granularity for
-;;;; speed and space efficiency, meaning there may be some loss of
-;;;; precision for local assignments within basic blocks. However, I
-;;;; think it is pretty much not worth the trouble since loss of
-;;;; precision can only be observed by data with more than one
-;;;; defining instruction with some sort of block local type
-;;;; instruction.
+;;;; speed and space efficiency. This works because our instructions
+;;;; which provide type information (TYPEW and TYPEQ) form basic block
+;;;; boundaries.
 
 ;;;; The "value numbering" prepass analysis used here is designed to
 ;;;; make the actual type analysis sparse, in the sense that the type
@@ -13,8 +10,20 @@
 ;;;; number/congruency class + control point tuples, which is a huge
 ;;;; efficiency win, without loss of precision.
 
+;;;; "Value numbering" is really a form of alias analysis on HIR
+;;;; lexical locations done via abstract interpretation over the graph
+;;;; where the abstract domain is value numbers at control points. For
+;;;; efficiency reasons, we also have a global table which has
+;;;; abstract information that holds for every block, coming from
+;;;; immutable data.
+
+;;;; Tyoe analysis is then just a straightforward conservative
+;;;; interpretation where value numbers are matched to types at every
+;;;; control point. Impossible branches are then marked for deletion.
+
 ;;;; TODO actually use the executable flag to reanalyze merge points
-;;;; for more precise type constraints.
+;;;; for more precise type constraints. Requires better worklist
+;;;; management.
 
 ;;;; TODO make value numbering actually aware of
 ;;;; EQ-INSTRUCTION. Probably requires something like a branch effect.
@@ -319,14 +328,7 @@
               (dolist (inst changed)
                 (pushnew (gethash inst instruction-basic-blocks) changed)))))))))
 
-;;; In Cleavir, actual instructions are the only thing that mark
-;;; control points, so to build a mapping from control points to the
-;;; values of data, we basically create a hash table mapping
-;;; INSTRUCTION -> ((datum . constraint))
-
-;;; Except it's only basic block granularity right now. If we wanted
-;;; instruction level granularity we're going to need much better data
-;;; structures.
+;;;; Type analysis
 
 (defclass constraint ()
   ((%value :accessor constraint-value :initarg :value)))
@@ -421,6 +423,9 @@
                (cleavir-ctype:disjoin/2 new (type-constraint-ctype existing) system)
                new)))))
 
+;;; Assumption: choke-instruction terminates basic blocks. This way we
+;;; don't need to do an instruction walk and can push information
+;;; solely on the block level.
 (defun compute-in-constraints (block predecessors system)
   ;; Take the out sets of the predecessors and the branch conditions
   ;; of the predecessors and merge them. Type union is our meet
