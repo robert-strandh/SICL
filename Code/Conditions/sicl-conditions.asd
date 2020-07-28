@@ -5,6 +5,7 @@
   :components
   ((:file "packages")
    (:file "support")
+   (:file "debugger-hook-defparameter")
    (:file "condition-class-defclass")
    (:file "report-mixin-defclass")
    (:file "condition-defclass")
