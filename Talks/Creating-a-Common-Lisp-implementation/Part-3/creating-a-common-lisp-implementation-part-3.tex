@@ -1,0 +1,241 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\beamertemplateshadingbackground{red!10}{blue!10}
+%\usepackage{fancybox}
+\usepackage{epsfig}
+\usepackage{verbatim}
+\usepackage{url}
+%\usepackage{graphics}
+%\usepackage{xcolor}
+\usepackage{fancybox}
+\usepackage{moreverb}
+%\usepackage[all]{xy}
+\usepackage{listings}
+\usepackage{filecontents}
+\usepackage{graphicx}
+
+\lstset{
+  language=Lisp,
+  basicstyle=\scriptsize\ttfamily,
+  keywordstyle={},
+  commentstyle={},
+  stringstyle={}}
+
+\def\inputfig#1{\input #1}
+\def\inputeps#1{\includegraphics{#1}}
+\def\inputtex#1{\input #1}
+
+\inputtex{logos.tex}
+
+%\definecolor{ORANGE}{named}{Orange}
+
+\definecolor{GREEN}{rgb}{0,0.8,0}
+\definecolor{YELLOW}{rgb}{1,1,0}
+\definecolor{ORANGE}{rgb}{1,0.647,0}
+\definecolor{PURPLE}{rgb}{0.627,0.126,0.941}
+\definecolor{PURPLE}{named}{purple}
+\definecolor{PINK}{rgb}{1,0.412,0.706}
+\definecolor{WHEAT}{rgb}{1,0.8,0.6}
+\definecolor{BLUE}{rgb}{0,0,1}
+\definecolor{GRAY}{named}{gray}
+\definecolor{CYAN}{named}{cyan}
+
+\newcommand{\orchid}[1]{\textcolor{Orchid}{#1}}
+\newcommand{\defun}[1]{\orchid{#1}}
+
+\newcommand{\BROWN}[1]{\textcolor{BROWN}{#1}}
+\newcommand{\RED}[1]{\textcolor{red}{#1}}
+\newcommand{\YELLOW}[1]{\textcolor{YELLOW}{#1}}
+\newcommand{\PINK}[1]{\textcolor{PINK}{#1}}
+\newcommand{\WHEAT}[1]{\textcolor{wheat}{#1}}
+\newcommand{\GREEN}[1]{\textcolor{GREEN}{#1}}
+\newcommand{\PURPLE}[1]{\textcolor{PURPLE}{#1}}
+\newcommand{\BLACK}[1]{\textcolor{black}{#1}}
+\newcommand{\WHITE}[1]{\textcolor{WHITE}{#1}}
+\newcommand{\MAGENTA}[1]{\textcolor{MAGENTA}{#1}}
+\newcommand{\ORANGE}[1]{\textcolor{ORANGE}{#1}}
+\newcommand{\BLUE}[1]{\textcolor{BLUE}{#1}}
+\newcommand{\GRAY}[1]{\textcolor{gray}{#1}}
+\newcommand{\CYAN}[1]{\textcolor{cyan }{#1}}
+
+\newcommand{\reference}[2]{\textcolor{PINK}{[#1~#2]}}
+%\newcommand{\vect}[1]{\stackrel{\rightarrow}{#1}}
+
+% Use some nice templates
+\beamertemplatetransparentcovereddynamic
+
+\newcommand{\A}{{\mathbb A}}
+\newcommand{\degr}{\mathrm{deg}}
+
+\title{Creating a \commonlisp{} implementation\\(Part 3)}
+
+\author{Robert Strandh}
+\institute{
+}
+\date{July, 2020}
+
+%\inputtex{macros.tex}
+
+\begin{document}
+\frame{
+\titlepage
+}
+
+\setbeamertemplate{footline}{
+\vspace{-1em}
+\hspace*{1ex}{~} \GRAY{\insertframenumber/\inserttotalframenumber}
+}
+
+\frame{
+\frametitle{Topics covered in presentation series}
+\vskip 0.25cm
+\begin{itemize}
+\item Choices of implementation language.
+\item Implementation strategies for the evaluator.
+\item Division of code written in \commonlisp{} and code written in
+  the implementation language.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Topics not covered in presentation series}
+\vskip 0.25cm
+\begin{itemize}
+\item How a \commonlisp{} compiler works.  If there is a demand, maybe
+  in a different series.
+\item How different strategies for memory management work.
+\item Details about how an abstract machine could work.
+\item Details about how a typical concrete processor works.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Hypothetical situation}
+\vskip 0.25cm
+Let us imagine the following scenario:
+\vskip 0.25cm
+\begin{itemize}
+\item We have managed to write a conforming \commonlisp{} implementation.
+\item We wrote an evaluator in C, as a direct interpreter.
+\item The result is slow, so now we want to write a bytecode compiler.
+\item Since we have a working \commonlisp{} implementation, we can
+  write it in \commonlisp{}.
+\end{itemize}
+}
+
+\frame{
+\frametitle{\commonlisp{} file compiler}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-common-lisp-file-compilation.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Contents of output file}
+\vskip 0.25cm
+The output file contains elements from three sources:
+\vskip 0.25cm
+\begin{enumerate}
+\item From the code in the input file: Names of functions, variables, etc.
+\item From the code generator of the compiler: Instructions, lexical locations, etc.
+\item From macros in the startup environment: Names of functions,
+  variables, etc. that the macro expander generated.
+\end{enumerate}
+\vskip 0.25cm
+The definitions of the macros are specific to the \commonlisp{}
+implementation.
+}
+
+\frame{
+\frametitle{Compiler for a traditional batch language}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-c-unix-1.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Essential difference}
+\vskip 0.25cm
+This difference between the two types of languages is crucial:
+\vskip 0.25cm
+\begin{enumerate}
+\item A compiler for a batch language can run anywhere.
+\item Because of the macros, a \commonlisp{} compiler must in
+  principle be executed from the very \commonlisp{} system that it is
+  written for.
+\end{enumerate}
+\vskip 0.25cm
+Aside from that pesky little problem, a \commonlisp{} compiler can be
+written in portable \commonlisp{} and can thus be executed from any
+conforming \commonlisp{} implementation.
+}
+
+\frame{
+\frametitle{What if a solution existed?}
+\vskip 0.25cm
+Imagine we found a solution to that pesky little problem.
+\vskip 0.25cm
+\begin{itemize}
+\item We could execute the compiler on a \emph{host} \commonlisp{}
+  system. 
+\item We could feed the source of the compiler as input files.
+\item We would then have the compiler, compiled to bytecodes.
+\item With a simple bytecode loader, written in C, we could then load
+  the compiled compiler.
+\item And there is no longer any need for our initial interpreter.
+\end{itemize}
+\vskip 0.25cm
+This is the essence of \emph{cross compilation}.
+}
+
+\frame[containsverbatim]{
+\frametitle{Typical package structure}
+\begin{verbatim}
+(defpackage #:common-lisp
+  (:use)
+  (:export #:car #:cdr ... #:mapcar))
+---
+(defpackage #:target-cons
+  (:use #:common-lisp))
+---
+(in-package #:target-cons)
+
+(defun mapcar (fun list)
+  ...)
+\end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{Example file to compile}
+\begin{verbatim}
+(in-package #:target-cons)
+
+(defun mapcar (function list)
+  (do ((sublist list (rest sublist))
+       (result '()))
+      ((null sublist) (nreverse result))
+    (push (funcall function (first sublist))
+          result)))
+\end{verbatim}
+}
+
+\frame{
+\frametitle{Topics for part 4}
+\vskip 0.25cm
+In part 3:
+\vskip 0.25cm
+\begin{itemize}
+\item stuff
+\item stuff
+\end{itemize}
+\vskip 0.25cm
+This summarizes our strategy 2 which is the main topic of part 3.
+}
+
+\end{document}

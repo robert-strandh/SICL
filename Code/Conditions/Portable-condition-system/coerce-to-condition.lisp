@@ -4,8 +4,7 @@
 
 ;;; COERCE-TO-CONDITION
 
-(defgeneric coerce-to-condition (datum arguments default-type name)
-  (:documentation ))
+(defgeneric coerce-to-condition (datum arguments default-type name))
 
 (defmethod coerce-to-condition ((datum condition) arguments default-type name)
   (when arguments

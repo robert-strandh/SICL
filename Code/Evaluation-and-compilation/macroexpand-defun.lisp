@@ -21,10 +21,6 @@
 ;;; what MACROEXPAND-1 returns is NOT a macro form, but it is a
 ;;; function-call form with a compiler macro associated with it, and
 ;;; the compiler macro might return a macro form.
-;;;
-;;; For reasons mentioned in the previous paragraph, the compiler does
-;;; not call macroexpand at all, but instead a function called
-;;; FULLY-EXPAND-FORM defined below.
 
 (defun macroexpand (form &optional environment)
   (multiple-value-bind (expansion expanded-p)
