@@ -22,4 +22,5 @@
    (:file "Portable-condition-system/handlers")
    (:file "make-condition-defgeneric")
    (:file "make-condition-defmethods")
-   (:file "Portable-condition-system/coerce-to-condition")))
+   (:file "Portable-condition-system/coerce-to-condition")
+   (:file "break-defun")))
