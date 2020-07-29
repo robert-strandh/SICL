@@ -46,6 +46,6 @@
     (load-source "Data-and-control-flow/constantly-defun.lisp" e5)
     (setf (sicl-genv:special-variable '*debug-io* e5 t)
           *debug-io*)
-    (import-function-from-host 'finish-output e5)
+    (import-functions-from-host '(read finish-output) e5)
     (load-asdf-system-components '#:sicl-conditions e5)
     (load-source "CLOS/conditions.lisp" e5)))
