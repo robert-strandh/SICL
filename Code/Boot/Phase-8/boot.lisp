@@ -43,5 +43,6 @@
     (import-function-from-host 'trucler:macro-function e5)
     (load-source "Evaluation-and-compilation/macroexpand-1-defun.lisp" e5)
     (load-source "Evaluation-and-compilation/macroexpand-defun.lisp" e5)
+    (load-source "Data-and-control-flow/constantly-defun.lisp" e5)
     (load-asdf-system-components '#:sicl-conditions e5)
     (load-source "CLOS/conditions.lisp" e5)))
