@@ -1,14 +1,14 @@
 (cl:in-package #:sicl-conditions)
 
+(defun backtrace ()
+  "This function will be redefined")
+
 (defun debugger (condition)
   (loop (format *debug-io* "Debug> ")
         (finish-output *debug-io*)
         (let ((command (read *debug-io*)))
           (case command
-            (:bt
-             (funcall (find-symbol (symbol-name '#:inspect)
-                                   '#:sicl-backtrace-inspector)
-                      sicl-hir-interpreter:*call-stack*))))))
+            (:bt (backtrace))))))
 
 (defgeneric invoke-debugger (condition))
 
