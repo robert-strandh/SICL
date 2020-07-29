@@ -10,6 +10,7 @@
    (:file "condition-class-defclass")
    (:file "report-mixin-defclass")
    (:file "condition-defclass")
+   (:file "debugger")
    (:file "define-condition-support")
    (:file "define-condition-defmacro")
    (:file "Portable-condition-system/condition-hierarchy")
