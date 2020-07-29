@@ -1,19 +1,5 @@
 (in-package #:sicl-conditions)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Restarts.
-
-(defclass restart ()
-  ((%name :initarg :name :reader restart-name)
-   (%function :initarg :function :reader restart-function)
-   (%interactive-function
-    :initarg :interactive-function :reader interactive-function)
-   (%report-function
-    :initarg :report-function :reader report-function)
-   (%test-function
-    :initarg :test-function :reader test-function)))
-
 ;;; The stack of active restarts is a list of restarts ordered from
 ;;; most recent to least recent.
 
