@@ -1,39 +1,4 @@
-(cl:defpackage #:sicl-condition-signaling
-    (:use #:common-lisp)
-  (:shadow #:error
-	   #:cerror
-	   #:signal
-	   #:handler-bind
-	   #:handler-case
-	   #:ignore-errors
-	   #:invoke-debugger
-	   #:*debugger-hook*
-	   #:*break-on-signals*
-	   #:restart
-	   #:restart-bind
-	   #:restart-case
-	   #:restart-name
-	   #:with-condition-restarts
-	   #:compute-restarts
-	   )
-  (:export #:error
-	   #:cerror
-	   #:signal
-	   #:handler-bind
-	   #:handler-case
-	   #:ignore-errors
-	   #:invoke-debugger
-	   #:*debugger-hook*
-	   #:*break-on-signals*
-	   #:restart
-	   #:restart-bind
-	   #:restart-case
-	   #:restart-name
-	   #:with-condition-restarts
-	   #:compute-restarts
-	   ))
-
-(in-package #:sicl-condition-signaling)
+(in-package #:sicl-conditions)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
