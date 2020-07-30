@@ -13,6 +13,7 @@
              (apply #'vector
                     nil ; Ultimately, replace with code object.
                     #'enclose
+                    #'initialize-closure
                     #'cons
                     nil
                     (append (loop with names = (sicl-hir-transformations:function-names hir)

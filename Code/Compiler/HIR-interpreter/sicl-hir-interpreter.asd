@@ -27,5 +27,6 @@
    (:file "bind-instruction")
    (:file "hir-interpreter")
    (:file "enclose-instruction")
+   (:file "initialize-closure-instruction")
    (:file "breakpoint-instruction")
    (:file "cst-eval")))
