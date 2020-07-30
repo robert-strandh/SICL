@@ -7,39 +7,50 @@
          (fun (sicl-hir-interpreter:top-level-hir-to-host-function client hir))
          (sicl-run-time:*dynamic-environment* '()))
     (funcall fun
-             (apply #'vector
-                    (funcall (sicl-genv:fdefinition 'make-instance e2)
-                             'sicl-compiler:code-object
-                             :instructions (sicl-compiler:instructions code-object)
-                             :frame-maps nil
-                             :callee-saves-register-maps nil
-                             :callee-saves-stack-maps nil)
-                    (labels ((enclose (entry-point code-object &rest static-environment-values)
-                               (let* ((static-environment
-                                        (apply #'vector
-                                               code-object
-                                               #'enclose
-                                               #'cons
-                                               nil
-                                               static-environment-values))
-                                      (closure
-                                        (funcall (sicl-genv:fdefinition 'make-instance e2)
-                                                 'sicl-clos:simple-function
-                                                 :environment static-environment)))
-                                 (closer-mop:set-funcallable-instance-function
-                                  closure
-                                  (lambda (&rest args)
-                                    (funcall entry-point
-                                             args
-                                             static-environment
-                                             sicl-run-time:*dynamic-environment*)))
-                                 closure)))
-                      #'enclose)
-                    #'cons
-                    nil
-                    (append (loop for name in function-names
-                                  collect (sicl-genv:function-cell name e1))
-                            constants)))))
+             (labels ((enclose (entry-point code-object static-environment-length)
+                        (let* ((static-environment (make-array (+ sicl-compiler:+first-constant-index+ static-environment-length)))
+                               (closure
+                                 (funcall (sicl-genv:fdefinition 'make-instance e2)
+                                          'sicl-clos:simple-function
+                                          :environment static-environment)))
+                          (setf (svref static-environment sicl-compiler:+code-object-index+)
+                                code-object)
+                          (setf (svref static-environment sicl-compiler:+enclose-function-index+)
+                                #'enclose)
+                          (setf (svref static-environment sicl-compiler:+initialize-closure-function-index+)
+                                #'initialize-closure)
+                          (setf (svref static-environment sicl-compiler:+cons-function-index+)
+                                #'cons)
+                          (setf (svref static-environment sicl-compiler:+nil-index+)
+                                nil)
+                          (closer-mop:set-funcallable-instance-function
+                           closure
+                           (lambda (&rest args)
+                             (funcall entry-point
+                                      args
+                                      static-environment
+                                      sicl-run-time:*dynamic-environment*)))
+                          closure))
+                      (initialize-closure (closure &rest static-environment-values)
+                        (let ((static-environment
+                                (funcall (sicl-genv:fdefinition 'sicl-clos:environment e2)
+                                         closure)))
+                          (replace static-environment static-environment-values
+                                   :start1 sicl-compiler:+first-constant-index+))))
+               (apply #'vector
+                      (funcall (sicl-genv:fdefinition 'make-instance e2)
+                               'sicl-compiler:code-object
+                               :instructions (sicl-compiler:instructions code-object)
+                               :frame-maps nil
+                               :callee-saves-register-maps nil
+                               :callee-saves-stack-maps nil)
+                      #'enclose
+                      #'initialize-closure
+                      #'cons
+                      nil
+                      (append (loop for name in function-names
+                                    collect (sicl-genv:function-cell name e1))
+                              constants))))))
 
 (defun load-fasl (relative-pathname global-environment)
   (funcall (sicl-genv:fdefinition 'sicl-boot:load-fasl global-environment)
@@ -60,6 +71,7 @@
              (apply #'vector
                     nil ; Ultimately, replace with code object.
                     #'sicl-hir-interpreter:enclose
+                    #'sicl-hir-interpreter:initialize-closure
                     #'cons
                     nil
                     (append (loop with names = (sicl-hir-transformations:function-names hir)

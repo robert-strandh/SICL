@@ -4,8 +4,10 @@
 
 (defparameter +enclose-function-index+ 1)
 
-(defparameter +cons-function-index+ 2)
+(defparameter +initialize-closure-function-index+ 2)
 
-(defparameter +nil-index+ 3)
+(defparameter +cons-function-index+ 3)
 
-(defparameter +first-constant-index+ 4)
+(defparameter +nil-index+ 4)
+
+(defparameter +first-constant-index+ 5)

@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:export #:+code-object-index+
            #:+enclose-function-index+
+           #:+initialize-closure-function-index+
            #:+cons-function-index+
            #:+nil-index+
            #:+first-constant-index+

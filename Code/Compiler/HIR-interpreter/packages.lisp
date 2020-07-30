@@ -9,6 +9,7 @@
            #:arguments
            #:*call-stack*
            #:enclose
+           #:initialize-closure
            #:fill-environment
            #:interpret-instruction
            #:lexical-value

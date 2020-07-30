@@ -3,6 +3,7 @@
 (defsystem #:cleavir2-ir-visualizer
   :depends-on (#:cleavir2-ir
                #:cleavir2-hir
+               #:cleavir2-mir
                #:cleavir2-lir
                #:mcclim
                #:clouseau)
