@@ -1,42 +1,37 @@
 (cl:in-package #:sicl-hir-interpreter)
 
-(defclass uninitialized-closure (closer-mop:funcallable-standard-object)
-  ((%entry-point :initarg :entry-point :reader entry-point)
-   (%code-object :initarg :code-object :reader code-object))
+(defclass hir-closure (closer-mop:funcallable-standard-object)
+  ((%environment :initarg :environment :reader environment))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defun enclose (entry-point code-object static-environment-length)
-  (declare (ignore static-environment-length))
-  (let ((closure (make-instance 'uninitialized-closure
-                                :entry-point entry-point
-                                :code-object code-object)))
-    (closer-mop:set-funcallable-instance-function
-     closure
-     (lambda (&rest args)
-       (declare (ignore args))
-       (error "Uninitialized closure ~S called" closure)))
-    closure))
-
-(defun initialize-closure (closure &rest static-environment-values)
-  (check-type closure uninitialized-closure)
-  (let* ((entry-point (entry-point closure))
-         (code-object (code-object closure))
-         (static-environment
-           (apply #'vector
-                  code-object
-                  #'enclose
-                  #'initialize-closure
-                  #'cons
-                  nil
-                  static-environment-values)))
-    (change-class closure 'closer-mop:funcallable-standard-object)
+  (let* ((static-environment (make-array (+ sicl-compiler:+first-constant-index+ static-environment-length)))
+         (closure (make-instance 'hir-closure
+                                 :environment static-environment)))
+    (setf (svref static-environment sicl-compiler:+code-object-index+)
+          code-object)
+    (setf (svref static-environment sicl-compiler:+enclose-function-index+)
+          #'enclose)
+    (setf (svref static-environment sicl-compiler:+initialize-closure-function-index+)
+          #'initialize-closure)
+    (setf (svref static-environment sicl-compiler:+cons-function-index+)
+          #'cons)
+    (setf (svref static-environment sicl-compiler:+nil-index+)
+          nil)
     (closer-mop:set-funcallable-instance-function
      closure
      (lambda (&rest args)
        (funcall entry-point
                 args
                 static-environment
-                sicl-run-time:*dynamic-environment*)))))
+                sicl-run-time:*dynamic-environment*)))
+    closure))
+
+(defun initialize-closure (closure &rest static-environment-values)
+  (check-type closure hir-closure)
+  (let ((static-environment (environment closure)))
+    (replace static-environment static-environment-values
+             :start1 sicl-compiler:+first-constant-index+)))
 
 (defun symbol-value-function (global-environment)
   (lambda (symbol)
