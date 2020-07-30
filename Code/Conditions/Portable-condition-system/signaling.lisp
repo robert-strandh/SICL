@@ -4,8 +4,6 @@
 
 ;;; Condition signaling
 
-(defvar *break-on-signals* nil)
-
 (defvar *handler-clusters* '())
 
 (defun signal (datum &rest arguments)
