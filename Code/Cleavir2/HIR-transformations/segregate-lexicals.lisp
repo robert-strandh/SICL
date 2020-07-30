@@ -55,26 +55,45 @@
     result))
 
 ;;; Given a list of ENTER-INSTRUCTIONs, return an alist mapping each
-;;; ENTER-INSTRUCTION to a new exclusive lexical location for the
-;;; purpose of holding a CELL associated with a shared lexical
-;;; location to be eliminated.
-(defun allocate-cell-locations (enter-instructions)
-  (loop for enter-instruction in enter-instructions
-        collect (cons enter-instruction
-                      (cleavir-ir:new-temporary "CELL"))))
+;;; ENTER-INSTRUCTION to a new exclusive lexical location.
+(defun allocate-exclusive-locations (enter-instructions location)
+  (let ((name (if (read-only-location-p location)
+                  (string (cleavir-ir:name location))
+                  "CELL")))
+    (loop for enter-instruction in enter-instructions
+          collect (cons enter-instruction
+                        (cleavir-ir:new-temporary name)))))
 
-;;; Given an ENCLOSE-INSTRUCTION and the exclusive lexical location
-;;; holding a cell in the function defined by the owner of the
-;;; ENCLOSE-INSTRUCTION (IMPORT), import the cell to the
-;;; ENCLOSE-INSTRUCTION.
+;;; Given an ENCLOSE-INSTRUCTION and the exclusive lexical location ,
+;;; import the exclusive lexical location to the ENCLOSE-INSTRUCTION
+;;; (IMPORT).
 ;;;
 ;;; We add the import to the end of the import list in order to
 ;;; preserve the index of cells in the static environment.
-(defun transmit-cell (enclose import)
-  (let ((imports (cleavir-ir:inputs enclose)))
-    (setf (cleavir-ir:inputs enclose) (append imports (list import)))))
+(defun transmit-exclusive-location (enclose import instruction-owners)
+  (let ((initializer (cleavir-ir:initializer enclose)))
+    (unless initializer
+      (setf initializer
+            ;; The exclusive lexical variable that holds the static
+            ;; environment is the first output of the enter instruction.
+            (make-instance 'cleavir-ir:initialize-closure-instruction
+                           :input (first (cleavir-ir:outputs enclose))))
+      ;; Defer initialization until all potentially mutually recurisve
+      ;; functions are available.
+      (do ((current-enclose enclose (first (cleavir-ir:successors current-enclose))))
+          ((not (typep (first (cleavir-ir:successors current-enclose))
+                       'cleavir-ir:enclose-instruction))
+           (cleavir-ir:insert-instruction-after initializer current-enclose)))
+      (setf (cleavir-ir:initializer enclose) initializer)
+      (setf (gethash initializer instruction-owners)
+            (gethash enclose instruction-owners)))
+    ;; Start by adding the new import to the end of the existing
+    ;; imports of the INITIALIZE-CLOSURE-INSTRUCTION.
+    (let ((imports (cleavir-ir:inputs initializer)))
+      (setf (cleavir-ir:inputs initializer)
+            (append imports (list import))))))
 
-;;; Add a fetch instruction after ENTER so that the cell is accessible.
+;;; Add a fetch instruction after ENTER so that the exclusive-location is accessible.
 (defun add-fetch (enter dloc)
   (let ((env-location (cleavir-ir:static-environment enter))
         ;; the index of the new cell in the closure will just be the
@@ -90,48 +109,49 @@
     (setf (cleavir-ir:closure-size enter) (1+ new-index))))
 
 ;;; For a single shared lexical location to be eliminated, make sure
-;;; that the corresponding cell is available in all functions in which
-;;; the shared location is either read or written, as well as in the
-;;; intermediate functions that neither read nor write the shared
-;;; location, but that occur between such a function and the owner of
-;;; the shared lexical location.  FUNCTION-DAG is a function dag
-;;; defining the nesting of functions.  CELL-LOCATIONS is an alist
-;;; mapping an ENTER-INSTRUCTION to the exclusive lexical location that
-;;; holds the cell for the shared lexical location in the function
-;;; represented by that ENTER-INSTRUCTION.  ENTER-INSTRUCTIONs of
-;;; intermediate functions are also present in CELL-LOCATIONS.  OWNER
-;;; is the ENTER-INSTRUCTION that is the owner of the shared lexical
-;;; location to be eliminated.
+;;; that the corresponding exclusive location, be it a cell or not, is
+;;; available in all functions in which the shared location is either
+;;; read or written, as well as in the intermediate functions that
+;;; neither read nor write the shared location, but that occur between
+;;; such a function and the owner of the shared lexical location.
+;;; FUNCTION-DAG is a function dag defining the nesting of functions.
+;;; DYNAMIC-LOCATIONS is an alist mapping an ENTER-INSTRUCTION to the
+;;; exclusive lexical location that holds the cell for the shared
+;;; lexical location in the function represented by that
+;;; ENTER-INSTRUCTION.  ENTER-INSTRUCTIONs of intermediate functions
+;;; are also present in EXCLUSIVE-LOCATIONS.  OWNER is the
+;;; ENTER-INSTRUCTION that is the owner of the shared lexical location
+;;; to be eliminated.
 ;;;
-;;; We proceed as follows: We insert new instructions after each
-;;; ENTER-INSTRUCTION to write the cell into the exclusive lexical
-;;; variable supplied for that purpose.  After OWNER, we insert a
-;;; CREATE-CELL instruction.  For every other ENTER-INSTRUCTION in
-;;; CELL-LOCATIONS we add a FETCH instruction after it, and we import
-;;; the cell location of the parent function into the corresponding
-;;; ENCLOSE-INSTRUCTION.
-(defun ensure-cell-available (function-dag cell-locations owner)
-  ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
-  ;; the shared lexical location to be eliminated.
-  (cleavir-ir:insert-instruction-after
-   (make-instance 'cleavir-ir:create-cell-instruction
-     :inputs '()
-     :output (cdr (assoc owner cell-locations)))
-   owner)
-  ;; Next, for each entry in CELL-LOCATIONS other than OWNER, transmit
+;;; We proceed as follows: If the exclusive lexical locations are cells,
+;;; we insert new instructions after each ENTER-INSTRUCTION to write
+;;; the cell into the exclusive lexical variable supplied for that
+;;; purpose.  After OWNER, we insert a CREATE-CELL instruction.  For
+;;; every other ENTER-INSTRUCTION in EXCLUSIVE-LOCATIONS we add a FETCH
+;;; instruction after it, and we import the exclusive location of the
+;;; parent function into the corresponding ENCLOSE-INSTRUCTION.
+(defun ensure-exclusive-location-available (function-dag exclusive-locations owner read-only-location-p instruction-owners)
+  (unless read-only-location-p
+    ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
+    ;; the static lexical location to be eliminated.
+    (cleavir-ir:insert-instruction-after
+     (make-instance 'cleavir-ir:create-cell-instruction
+                    :output (cdr (assoc owner exclusive-locations)))
+     owner))
+  ;; Next, for each entry in EXCLUSIVE-LOCATIONS other than OWNER, transmit
   ;; the cell from the corresponding ENCLOSE-INSTRUCTION to the
   ;; ENTER-INSTRUCTION of that entry.
   (loop with dag-nodes = (dag-nodes function-dag)
-        for (enter . cell-location) in cell-locations
-        unless (eq enter owner)
-          do (loop for node in (gethash enter dag-nodes)
+	for (enter . exclusive-location) in exclusive-locations
+	unless (eq enter owner)
+	  do (loop for node in (gethash enter dag-nodes)
                    for enclose = (enclose-instruction node)
                    for parents = (parents node)
                    do (loop for parent in parents
                             for parent-enter = (enter-instruction parent)
-                            for import = (cdr (assoc parent-enter cell-locations))
-                            do (transmit-cell enclose import)))
-             (add-fetch enter cell-location)))
+                            for import = (cdr (assoc parent-enter exclusive-locations))
+                            do (transmit-exclusive-location enclose import instruction-owners)))
+             (add-fetch enter exclusive-location)))
 
 ;;; Given a list of ENTER-INSTRUCTIONs representing the functions that
 ;;; read or write some particular shared lexical location to
@@ -200,11 +220,17 @@
            :outputs '())
          instruction))))
 
-;;; Given a single shared lexical location LOCATION, eliminate it by
-;;; replacing all accesses to it by accesses to a corresponding CELL.
-;;; FUNCTION-DAG is the function dag of the entire program.
-;;; INSTRUCTION-OWNERS is a hash table mapping an instruction to its
-;;; owner.  OWNER is the owner of LOCATION.
+(defun read-only-location-p (location)
+  (let ((definers (cleavir-ir:defining-instructions location)))
+    (and definers (null (rest definers)))))
+
+;;; Given a single shared lexical location LOCATION, if the lexical is
+;;; assigned to more than once, eliminate it by replacing all accesses
+;;; to it by accesses to a corresponding CELL.  Otherwise, it can be
+;;; allocated directly to the static environment.  FUNCTION-DAG is the
+;;; function dag of the entire program. INSTRUCTION-OWNERS is a hash
+;;; table mapping an instruction to its owner.  OWNER is the owner of
+;;; LOCATION.
 (defun process-location
     (location function-dag instruction-owners owner)
   (let* (;; Determine all the functions (represented by
@@ -212,21 +238,30 @@
          (users (functions-using-location location instruction-owners))
          ;; To that set, add the intermediate functions.
          (enters (add-intermediate-functions users function-dag owner))
+         (read-only-location-p (read-only-location-p location))
          ;; Compute a dictionary that associates each
-         ;; ENTER-INSTRUCTION with a cell location.
-         (cell-locations (allocate-cell-locations enters)))
+         ;; ENTER-INSTRUCTION with an exclusive location.
+         (exclusive-locations (allocate-exclusive-locations enters location)))
     (loop for instruction in (cleavir-ir:using-instructions location)
           for instruction-owner = (gethash instruction instruction-owners)
-          for cell-location = (cdr (assoc instruction-owner cell-locations))
-          do (replace-inputs location cell-location instruction))
+          for exclusive-location = (cdr (assoc instruction-owner exclusive-locations))
+          do (if read-only-location-p
+                 (cleavir-ir:substitute-input exclusive-location location instruction)
+                 (replace-inputs location exclusive-location instruction)))
     (loop for instruction in (cleavir-ir:defining-instructions location)
           for instruction-owner = (gethash instruction instruction-owners)
-          for cell-location = (cdr (assoc instruction-owner cell-locations))
-          do (replace-outputs location cell-location instruction))
+          for exclusive-location = (cdr (assoc instruction-owner exclusive-locations))
+          do (if read-only-location-p
+                 (cleavir-ir:substitute-output exclusive-location location instruction)
+                 (replace-outputs location exclusive-location instruction)))
     ;; We do this step last, so that we are sure that the CREATE-CELL
     ;; and FETCH instructions are inserted immediately after the ENTER
     ;; instruction.
-    (ensure-cell-available function-dag cell-locations owner)))
+    (ensure-exclusive-location-available function-dag
+                                         exclusive-locations
+                                         owner
+                                         read-only-location-p
+                                         instruction-owners)))
 
 (defun process-captured-variables (initial-instruction)
   ;; Make sure everything is up to date.

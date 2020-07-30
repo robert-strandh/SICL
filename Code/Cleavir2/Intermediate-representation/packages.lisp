@@ -51,7 +51,8 @@
    #:funcall-no-return-instruction
    #:tailcall-instruction
    #:return-instruction
-   #:enclose-instruction #:code
+   #:enclose-instruction #:code #:initializer
+   #:initialize-closure-instruction
    #:typeq-instruction #:value-type
    #:the-instruction
    #:dynamic-allocation-instruction
