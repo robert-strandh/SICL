@@ -4,6 +4,8 @@
   "This function will be redefined")
 
 (defun debugger (condition)
+  (format *debug-io*
+          "Debugger entered on ~s~%" condition)
   (loop (format *debug-io* "Debug> ")
         (finish-output *debug-io*)
         (let ((command (read *debug-io*)))
