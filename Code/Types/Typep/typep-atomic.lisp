@@ -4,6 +4,8 @@
   (let ((global-environment (sicl-genv:global-environment)))
     (cond ((symbolp type-specifier)
            (case type-specifier
+             ((nil)
+              nil)
              (atom
               (not (consp object)))
              ((base-char standard-char)
