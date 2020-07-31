@@ -24,4 +24,4 @@
    (:file "make-condition-defmethods")
    (:file "Portable-condition-system/coerce-to-condition")
    (:file "break-defun")
-   (:file "Portable-condition-system/signaling")))
+   (:file "signaling")))
