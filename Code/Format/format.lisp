@@ -430,10 +430,10 @@
   (let* ((parameter-name (car parameter-spec))
          (compile-time-value (funcall parameter-name directive)))
     (cond ((null compile-time-value)
-           ;; The parameter was not given at all, in the format control
+           ;; The parameter was not given at all in the format control
            ;; string, neither as a constant value, nor as a value to
            ;; be acquired at runtime (# or V).  We must use a default
-           ;; value of it has any.
+           ;; value if it has any.
            (getf (cdr parameter-spec) :default-value))
           ((eq compile-time-value 'V)
            ;; The parameter was given the explicit value V in the
