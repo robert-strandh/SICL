@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "conditions")
    (:file "condition-reporters-en")
-   (:file "format")))
+   (:file "format")
+   (:file "format-define-compiler-macro")))
