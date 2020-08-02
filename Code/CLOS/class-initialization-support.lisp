@@ -118,9 +118,6 @@
        direct-slots
      &allow-other-keys)
   (check-direct-default-initargs direct-default-initargs)
-  (check-direct-superclasses class direct-superclasses)
-  (when (null direct-superclasses)
-    (setf direct-superclasses (default-superclasses class)))
   (let ((slots (check-and-instantiate-direct-slots class direct-slots)))
     (apply call-next-method
            class
@@ -129,10 +126,25 @@
            :direct-default-initargs direct-default-initargs
            :direct-slots slots
            initargs)
-    (add-as-subclass-to-superclasses class direct-superclasses)
     (create-readers-and-writers class slots))
   class)
 
 (defun shared-initialize-after-built-in-class-default (class)
   (setf (precedence-list class)
         (compute-class-precedence-list-assuming-superclasses-finalized class)))
+
+(defun initialize-instance-around-real-class-default
+    (call-next-method
+     class
+     &rest initargs
+     &key direct-superclasses
+     &allow-other-keys)
+  (check-direct-superclasses class direct-superclasses)
+  (when (null direct-superclasses)
+    (setf direct-superclasses (default-superclasses class)))
+  (apply call-next-method
+         class
+         :direct-superclasses direct-superclasses
+         initargs)
+  (add-as-subclass-to-superclasses class direct-superclasses)
+  class)

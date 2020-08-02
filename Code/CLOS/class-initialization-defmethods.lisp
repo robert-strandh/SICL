@@ -27,3 +27,10 @@
      &key
      &allow-other-keys)
   (shared-initialize-after-built-in-class-default class))
+
+(defmethod initialize-instance :around
+    ((class real-class) &rest initargs &key &allow-other-keys)
+  (apply #'initialize-instance-around-real-class-default
+         #'call-next-method
+         class
+         initargs))
