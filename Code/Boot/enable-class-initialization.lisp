@@ -76,8 +76,6 @@
   (load-source "CLOS/reinitialize-instance-support.lisp" eb)
   (load-source "CLOS/reinitialize-instance-defmethods.lisp" eb)
   (define-ensure-class eb)
-  ;; FIXME: load files containing the definition instead.
-  (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method eb)
-        (constantly nil))
+  (define-add-remove-direct-method eb)
   (define-dependent-protocol eb)
   (define-reader/writer-method-class ea eb))
