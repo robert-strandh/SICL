@@ -30,6 +30,8 @@
           do (patch-direct-slot-definition ds e5))
     (loop for es in (funcall esfun class)
           do (patch-effective-slot-definition es e5))
+    (loop for es in (aref (slot-value class 'sicl-boot::%rack) 1)
+          do (patch-effective-slot-definition es e5))
     (setf (slot-value class 'sicl-boot::%class)
           (let ((current-class (slot-value class 'sicl-boot::%class)))
             (cond ((eq current-class standard-class-e4)
