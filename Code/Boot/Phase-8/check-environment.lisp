@@ -24,6 +24,11 @@
   (let ((rack (slot-value instance 'sicl-boot::%rack)))
     (check-effective-slot-definitions (aref rack 1) environment)))
 
+(defun check-class-effective-slot-definitions (class environment)
+  (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-slots environment))
+         (effective-slot-definitions (funcall fun class)))
+    (check-effective-slot-definitions effective-slot-definitions environment)))
+
 (defun check-metaclass (class environment)
   (let ((metaclass (slot-value class 'sicl-boot::%class)))
     (if (not (typep metaclass 'sicl-boot::header))
@@ -59,7 +64,8 @@
   (if (not (typep class 'sicl-boot::header))
       (format *trace-output* "    Class named ~s is not a SICL object.~%" name)
       (progn (check-metaclass class environment)
-             (check-instance -effective-slot-definitions class environment))
+             (check-instance-effective-slot-definitions class environment)
+             (check-class-effective-slot-definitions class environment)
              (check-superclasses class environment)
              (check-subclasses class environment))))
 
@@ -71,4 +77,3 @@
         (let ((potential-class (sicl-genv:find-class symbol environment)))
           (unless (null potential-class)
             (check-class symbol potential-class environment)))))))
-        
