@@ -9,6 +9,7 @@
            #:arguments
            #:*call-stack*
            #:enclose
+           #:initialize-closure
            #:symbol-value-function
            #:set-symbol-value-function
            #:fill-environment
