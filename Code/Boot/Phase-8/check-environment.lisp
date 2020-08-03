@@ -20,19 +20,21 @@
   (loop for effective-slot-definition in effective-slot-definitions
         do (check-effective-slot-definition effective-slot-definition environment)))
 
+(defun check-metaclass (class environment)
+  (let ((metaclass (slot-value class 'sicl-boot::%class)))
+    (if (not (typep metaclass 'sicl-boot::header))
+        (format *trace-output* "    Metaclass is not a SICL object.~%")
+        (let ((metaclass-name (find-class-name metaclass environment)))
+          (when (null metaclass-name)
+            (format *trace-output* "   Metaclass is not a class in environment.~%"))))))
+
 (defun check-class (name class environment)
   (format *trace-output* "Checking class named ~s~%" name)
   (if (not (typep class 'sicl-boot::header))
       (format *trace-output* "    Class named ~s is not a SICL object.~%" name)
-      (progn 
-        (let ((metaclass (slot-value class 'sicl-boot::%class)))
-          (if (not (typep metaclass 'sicl-boot::header))
-              (format *trace-output* "    Metaclass is not a SICL object.~%")
-              (let ((metaclass-name (find-class-name metaclass environment)))
-                (when (null metaclass-name)
-                  (format *trace-output* "   Metaclass is not a class in environment.~%")))))
-        (let ((rack (slot-value class 'sicl-boot::%rack)))
-          (check-effective-slot-definitions (aref rack 1) environment)))))
+      (progn (check-metaclass class environment)
+             (let ((rack (slot-value class 'sicl-boot::%rack)))
+               (check-effective-slot-definitions (aref rack 1) environment)))))
 
 (defun check-classes (environment)
   (let ((table (make-hash-table :test #'eq)))
