@@ -28,13 +28,25 @@
           (when (null metaclass-name)
             (format *trace-output* "   Metaclass is not a class in environment.~%"))))))
 
+(defun check-superclass (superclass environment)
+  (let ((superclass-name (find-class-name superclass environment)))
+    (when (null superclass-name)
+      (format *trace-output* "   Superclass is not a class in environment.~%"))))
+
+(defun check-superclasses (class environment)
+  (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-direct-superclasses environment))
+         (superclasses (funcall fun class)))
+    (loop for superclass in superclasses
+          do (check-superclass superclass environment))))
+
 (defun check-class (name class environment)
   (format *trace-output* "Checking class named ~s~%" name)
   (if (not (typep class 'sicl-boot::header))
       (format *trace-output* "    Class named ~s is not a SICL object.~%" name)
       (progn (check-metaclass class environment)
              (let ((rack (slot-value class 'sicl-boot::%rack)))
-               (check-effective-slot-definitions (aref rack 1) environment)))))
+               (check-effective-slot-definitions (aref rack 1) environment))
+             (check-superclasses class environment))))
 
 (defun check-classes (environment)
   (let ((table (make-hash-table :test #'eq)))
