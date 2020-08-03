@@ -39,6 +39,17 @@
     (loop for superclass in superclasses
           do (check-superclass superclass environment))))
 
+(defun check-subclass (subclass environment)
+  (let ((subclass-name (find-class-name subclass environment)))
+    (when (null subclass-name)
+      (format *trace-output* "   Subclass is not a class in environment.~%"))))
+
+(defun check-subclasses (class environment)
+  (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-direct-subclasses environment))
+         (subclasses (funcall fun class)))
+    (loop for subclass in subclasses
+          do (check-subclass subclass environment))))
+
 (defun check-class (name class environment)
   (format *trace-output* "Checking class named ~s~%" name)
   (if (not (typep class 'sicl-boot::header))
@@ -46,7 +57,8 @@
       (progn (check-metaclass class environment)
              (let ((rack (slot-value class 'sicl-boot::%rack)))
                (check-effective-slot-definitions (aref rack 1) environment))
-             (check-superclasses class environment))))
+             (check-superclasses class environment)
+             (check-subclasses class environment))))
 
 (defun check-classes (environment)
   (let ((table (make-hash-table :test #'eq)))
