@@ -7,7 +7,7 @@
 
 (defun check-effective-slot-definition (effective-slot-definition environment)
   (if (not (typep effective-slot-definition 'sicl-boot::header))
-      (format *trace-output* "    Effectiveq slot definition is not a SICL object.~%")
+      (format *trace-output* "    Effective slot definition is not a SICL object.~%")
       (progn 
         (let ((class (slot-value effective-slot-definition 'sicl-boot::%class)))
           (if (not (typep class 'sicl-boot::header))
@@ -28,6 +28,23 @@
   (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-slots environment))
          (effective-slot-definitions (funcall fun class)))
     (check-effective-slot-definitions effective-slot-definitions environment)))
+
+(defun check-direct-slot-definition (direct-slot-definition environment)
+  (if (not (typep direct-slot-definition 'sicl-boot::header))
+      (format *trace-output* "    Direct slot definition is not a SICL object.~%")
+      (progn 
+        (let ((class (slot-value direct-slot-definition 'sicl-boot::%class)))
+          (if (not (typep class 'sicl-boot::header))
+              (format *trace-output* "    Class of direct slot definition is not a SICL object.~%")
+              (let ((class-name (find-class-name class environment)))
+                (when (null class-name)
+                  (format *trace-output* "   Class of direct slot definition is not in environment.~%"))))))))
+
+(defun check-direct-slot-definitions (class environment)
+  (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-direct-slots environment))
+         (direct-slot-definitions (funcall fun class)))
+    (loop for direct-slot-definition in direct-slot-definitions
+          do (check-direct-slot-definition direct-slot-definition environment))))
 
 (defun check-metaclass (class environment)
   (let ((metaclass (slot-value class 'sicl-boot::%class)))
@@ -66,6 +83,7 @@
       (progn (check-metaclass class environment)
              (check-instance-effective-slot-definitions class environment)
              (check-class-effective-slot-definitions class environment)
+             (check-direct-slot-definitions class environment)
              (check-superclasses class environment)
              (check-subclasses class environment))))
 
