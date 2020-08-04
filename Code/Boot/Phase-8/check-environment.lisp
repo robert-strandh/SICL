@@ -76,6 +76,21 @@
     (loop for subclass in subclasses
           do (check-subclass subclass environment))))
 
+(defun check-direct-default-initarg (direct-default-initarg environment)
+  (let ((thunk (third direct-default-initarg)))
+    (if (not (typep thunk 'sicl-boot::header))
+        (format *trace-output* "    Thunk of direct default initarg is not a SICL object.~%")
+        (let* ((thunk-class (slot-value thunk 'sicl-boot::%class))
+               (class-name (find-class-name thunk-class environment)))
+          (when (null class-name)
+            (format *trace-output* "   Class of direct defualt initarg thunk is not in environment.~%"))))))
+
+(defun check-direct-default-initargs (class environment)
+  (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-direct-default-initargs environment))
+         (direct-default-initargs (funcall fun class)))
+    (loop for direct-default-initarg in direct-default-initargs
+          do (check-direct-default-initarg direct-default-initarg environment))))
+
 (defun check-class (name class environment)
   (format *trace-output* "Checking class named ~s~%" name)
   (if (not (typep class 'sicl-boot::header))
@@ -85,7 +100,8 @@
              (check-class-effective-slot-definitions class environment)
              (check-direct-slot-definitions class environment)
              (check-superclasses class environment)
-             (check-subclasses class environment))))
+             (check-subclasses class environment)
+             (check-direct-default-initargs class environment))))
 
 (defun check-classes (environment)
   (let ((table (make-hash-table :test #'eq)))
