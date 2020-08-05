@@ -37,9 +37,7 @@
 ;;;
 ;;; The AMOP says that the readers CLASS-DIRECT-DEFAULT-INITARGS,
 ;;; CLASS-DIRECT-SLOTS, CLASS-DEFAULT-INITARGS, and CLASS-SLOTS should
-;;; return the empty list for a built-in class.  However, our built-in
-;;; classes have direct default initargs, direct slots, default
-;;; initargs, and effective slots.
+;;; return the empty list for a built-in class.
 
 (defclass built-in-class (real-class)
   ((%direct-superclasses
