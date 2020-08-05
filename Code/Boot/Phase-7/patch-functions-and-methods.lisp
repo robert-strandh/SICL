@@ -50,12 +50,18 @@
 (defun patch-function (function e3 e4 e5)
   (let ((simple-function-class-e3
           (sicl-genv:find-class 'sicl-clos:simple-function e3))
+        ;; We moved some simple functions from E6 to E5, and the class
+        ;; of those functions is the class SIMPLE-FUNCTION in E4,
+        ;; rather than E4, so we must check for that as well.
+        (simple-function-class-e4
+          (sicl-genv:find-class 'sicl-clos:simple-function e4))
         (generic-function-class-e3
           (sicl-genv:find-class 'sicl-clos:standard-generic-function e3)))
     (if (not (typep function 'sicl-boot::header))
         'not-a-sicl-function
         (let ((current-class (slot-value function 'sicl-boot::%class)))
-          (cond ((eq current-class simple-function-class-e3)
+          (cond ((or (eq current-class simple-function-class-e3)
+                     (eq current-class simple-function-class-e4))
                  (patch-simple-function function e3 e4 e5))
                 ((eq current-class generic-function-class-e3)
                  (patch-generic-function function e3 e4 e5))
