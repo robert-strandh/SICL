@@ -91,6 +91,12 @@
     (loop for direct-default-initarg in direct-default-initargs
           do (check-direct-default-initarg direct-default-initarg environment))))
 
+(defun check-precedence-list (class environment)
+  (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-precedence-list environment))
+         (precedence-list (funcall fun class)))
+    (loop for superclass in precedence-list
+          do (check-superclass superclass environment))))
+
 (defun check-class (name class environment)
   (format *trace-output* "Checking class named ~s~%" name)
   (if (not (typep class 'sicl-boot::header))
@@ -101,7 +107,8 @@
              (check-direct-slot-definitions class environment)
              (check-superclasses class environment)
              (check-subclasses class environment)
-             (check-direct-default-initargs class environment))))
+             (check-direct-default-initargs class environment)
+             (check-precedence-list class environment))))
 
 (defun check-classes (environment)
   (let ((table (make-hash-table :test #'eq)))
