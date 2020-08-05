@@ -752,7 +752,7 @@
     (declare (ignore unwind-protect-cst))
     (let ((cleanup-thunk-cst
             (cst:cons (cst:cst-from-expression 'lambda)
-                      (cons (cst:cst-from-expression '())
+                      (cst:cons (cst:cst-from-expression '())
                             cleanup-form-csts))))
       (cleavir-ast:make-ast 'cleavir-ast:unwind-protect-ast
         :protected-form-ast (convert client

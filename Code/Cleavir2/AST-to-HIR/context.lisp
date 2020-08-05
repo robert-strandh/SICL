@@ -114,8 +114,8 @@
     :dynamic-environment-location dynamic-environment-location))
 
 (defmethod print-object ((obj context) stream)
-  (print-unreadable-object (obj stream)
-    (format stream " results: ~s" (results obj))
+  (print-unreadable-object (obj stream :type t)
+    (format stream "results: ~s" (results obj))
     (format stream " successors: ~s" (successors obj))
     (format stream " dynenv: ~s" (dynamic-environment-location obj))))
 

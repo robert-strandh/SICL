@@ -3,7 +3,7 @@
 (defgeneric cst-eval (client cst environment))
 
 (defmethod cst-eval (client cst environment)
-  (let* ((global-environment (trucler:global-environment client environment))
+  (let* ((global-environment (sicl-genv:global-environment environment))
          (ast (let ((cleavir-cst-to-ast::*origin* nil))
                 (cleavir-cst-to-ast:cst-to-ast client cst global-environment)))
          (hir (sicl-ast-to-hir:ast-to-hir client ast))
@@ -13,6 +13,7 @@
              (apply #'vector
                     nil ; Ultimately, replace with code object.
                     #'enclose
+                    #'initialize-closure
                     #'cons
                     nil
                     (append (loop with names = (sicl-hir-transformations:function-names hir)

@@ -15,6 +15,7 @@
    (:file "make-thunk")
    (:file "run-time")
    (:file "general-purpose-instructions")
+   (:file "initialize-closure-instruction")
    (:file "argument-processing-instructions")
    (:file "return-value-related-instructions")
    (:file "array-related-instructions")
