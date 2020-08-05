@@ -56,4 +56,4 @@
     :accessor class-default-initargs)
    (%effective-slots
     :initform '()
-    :accessor class-slots)))
+    :reader class-slots)))
