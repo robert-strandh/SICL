@@ -199,3 +199,12 @@
         (when (sicl-genv:fboundp `(setf ,symbol) environment)
           (let ((function (sicl-genv:fdefinition `(setf ,symbol) environment)))
             (check-function `(setf ,symbol) function environment)))))))
+
+(defun check-undefined-functions (environment)
+  (maphash (lambda (function-name function-entry)
+             (declare (ignore function-entry))
+             (unless (sicl-genv:fboundp function-name environment)
+               (format *trace-output*
+                       "The function named ~s is referenced but undefined.~%"
+                       function-name)))
+           (sicl-simple-environment::function-entries environment)))
