@@ -155,7 +155,7 @@
          ;; These elements are always the ENCLOSE and the
          ;; INITIALIZE-CLOSURE functions.
          nil)
-        ((typep element '(or integer symbol string))
+        ((typep element '(or integer symbol string float))
          nil)
         ((member element (list #'cons #'apply))
          nil)
