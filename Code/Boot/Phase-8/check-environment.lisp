@@ -127,11 +127,53 @@
           (when (null class-name)
             (format *trace-output* "   Function class is not a class in environment.~%"))))))
 
+(defun check-static-environment-element (index element environment)
+  (cond ((consp element)
+         ;; We hope that we don't have any circular lists in the
+         ;; static environment.
+         (check-static-environment-element index (car element) environment)
+         (check-static-environment-element index (cdr element) environment))
+        ((typep element 'sicl-boot::header)
+         (let* ((class (slot-value element 'sicl-boot::%class))
+                (name (find-class-name class environment)))
+           (when (null name)
+             (format *trace-output*
+                     "    Index ~s of static environment contains an impure object.~%"
+                     index))))
+        ((<= 1 index 2)
+         ;; These elements are always the ENCLOSE and the
+         ;; INITIALIZE-CLOSURE functions.
+         nil)
+        ((typep element '(or integer symbol string))
+         nil)
+        ((member element (list #'cons #'apply))
+         nil)
+        (t
+         (format *trace-output*
+                 "    Index ~s of static environment contains an invalid object.~%"
+                 index))))
+
+(defun check-static-environment (function environment)
+  (let* ((fname 'sicl-clos::environment)
+         (static-environment-function (sicl-genv:fdefinition fname environment))
+         (env (funcall static-environment-function function)))
+    (cond ((null env)
+           nil)
+          ((typep env 'vector)
+           (loop for element across env
+                 for i from 0
+                 do (check-static-environment-element i element environment)))
+          (t
+           (format *trace-output*
+                   "    ~s is not a valid value for the static environment.~%"
+                   env)))))
+
 (defun check-function (name function environment)
   (format *trace-output* "Checking function named ~s~%" name)
   (if (not (typep function 'sicl-boot::header))
       (format *trace-output* "    Function is not a SICL object.~%")
-      (progn (check-function-class function environment))))
+      (progn (check-function-class function environment)
+             (check-static-environment function environment))))
 
 (defun check-functions (environment)
   (let ((table (make-hash-table :test #'eq)))
