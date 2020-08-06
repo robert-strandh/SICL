@@ -155,7 +155,7 @@
          ;; These elements are always the ENCLOSE and the
          ;; INITIALIZE-CLOSURE functions.
          nil)
-        ((typep element '(or integer symbol string float))
+        ((typep element '(or integer symbol string float sicl-genv:environment))
          nil)
         ((member element (list #'cons #'apply))
          nil)
