@@ -127,8 +127,19 @@
           (when (null class-name)
             (format *trace-output* "   Function class is not a class in environment.~%"))))))
 
+(defun object-is-function-cell-in-environment-p (element environment)
+  (maphash (lambda (function-name function-entry)
+             (declare (ignore function-name))
+             (when (eq (sicl-simple-environment::function-cell function-entry)
+                       element)
+               (return-from object-is-function-cell-in-environment-p t)))
+           (sicl-simple-environment::function-entries environment))
+  nil)
+
 (defun check-static-environment-element (index element environment)
-  (cond ((consp element)
+  (cond ((object-is-function-cell-in-environment-p element environment)
+         nil)
+        ((consp element)
          ;; We hope that we don't have any circular lists in the
          ;; static environment.
          (check-static-environment-element index (car element) environment)
