@@ -6,6 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "characterp-defgeneric")
    (:file "upper-case-p-defun")
    (:file "lower-case-p-defun")
    (:file "char-upcase-defun")
