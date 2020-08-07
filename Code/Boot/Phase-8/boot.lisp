@@ -48,4 +48,6 @@
           *debug-io*)
     (import-functions-from-host '(read finish-output) e5)
     (load-asdf-system-components '#:sicl-conditions e5)
-    (load-source "CLOS/conditions.lisp" e5)))
+    (load-source "CLOS/conditions.lisp" e5)
+    (import-function-from-host '(setf sicl-genv:compiler-macro-function) e5)
+    (load-asdf-system-components '#:sicl-character e5)))
