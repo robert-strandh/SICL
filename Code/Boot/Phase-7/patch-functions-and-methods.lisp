@@ -4,7 +4,13 @@
   ;; We may need E3 and E4 later.
   (declare (ignore e3 e4))
   (setf (slot-value function 'sicl-boot::%class)
-        (sicl-genv:find-class 'sicl-clos:simple-function e5)))
+        (sicl-genv:find-class 'sicl-clos:simple-function e5))
+  (let ((static-environment
+          (funcall (sicl-genv:fdefinition 'sicl-clos::environment e5) function)))
+    (when (vectorp static-environment)
+      (let ((code-object (aref static-environment 0)))
+        (setf (slot-value code-object 'sicl-boot::%class)
+              (sicl-genv:find-class 'sicl-clos:code-object e5))))))
 
 (defun patch-method (method e3 e4 e5)
   (declare (ignore e4))
