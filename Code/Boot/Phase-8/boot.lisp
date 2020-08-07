@@ -14,6 +14,10 @@
     (import-function-from-host 'sicl-genv:type-expander e5)
     (load-source "Conditionals/support.lisp" e5)
     (import-function-from-host 'cleavir-code-utilities:parse-macro e5)
+    ;; Some functions in the Cons module use hash tables, indirectly
+    ;; through LOOP clauses.  Therefore this macro must be defined
+    ;; before that module is loaded."
+    (load-source "Hash-tables/with-hash-table-iterator-defmacro.lisp" e5)
     (load-asdf-system-components '#:sicl-cons-defuns e5)
     (load-source "Data-and-control-flow/not-defun.lisp" e5)
     (load-source "Loop/run-time-support.lisp" e5)
