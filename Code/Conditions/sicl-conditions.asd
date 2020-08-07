@@ -14,6 +14,7 @@
    (:file "define-condition-support")
    (:file "define-condition-defmacro")
    (:file "Portable-condition-system/condition-hierarchy")
+   (:file "with-store-value-restart-defmacro")
    (:file "check-type-defmacro")
    (:file "restart-defclass")
    (:file "Portable-condition-system/restarts-utilities")
