@@ -10,8 +10,6 @@
              `(let ,(loop for var in vars
                           for arg in arguments
                           collect `(,var ,arg))
-                (and ,@(loop for rest = (cdr vars) then (cdr rest)
-                             while (consp rest)
-                             for var1 = (car vars) then var2
-                             for var2 = (car rest)
+                (and ,@(loop for (var1 var2) on vars
+                             repeat (1- (length vars))
                              collect `(binary-char-lessp ,var1 ,var2))))))))
