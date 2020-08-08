@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-boot-phase-8
-  :depends-on (#:sicl-boot-base)
+  :depends-on (#:sicl-boot-base
+               #:cl-unicode)
   :serial t
   :components
   ((:file "packages")
