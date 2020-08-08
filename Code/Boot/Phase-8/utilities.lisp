@@ -40,3 +40,38 @@
 (defun load-asdf-system-components (name environment)
   (loop for name in (sicl-boot:asdf-system-components name)
         do (load-source name environment)))
+
+;;; This variable holds an alist where keys are function names and
+;;; values are function definitions or NIL.
+(defparameter *intercepted-functions* '())
+
+(defmethod sicl-genv:fboundp :around
+    (function-name (environment sicl-boot-phase-5::environment))
+  (if (find function-name *intercepted-functions*
+            :test #'equal
+            :key #'car)
+      nil
+      (call-next-method)))
+
+(defmethod (setf sicl-genv:fdefinition) :around
+    (new-definition function-name (environment sicl-boot-phase-5::environment))
+  (let ((entry (find function-name *intercepted-functions*
+                     :test #'equal
+                     :key #'car)))
+    (if (null entry)
+        (call-next-method)
+        (setf (cdr entry) new-definition))))
+
+(defun invoke-with-intercepted-function-names
+    (thunk intercepted-function-names environment)
+  (let ((intercepted-functions (mapcar #'list intercepted-function-names)))
+    (let ((*intercepted-functions* intercepted-functions))
+      (funcall thunk))
+    (loop for (name . definition) in intercepted-functions
+          do (setf (sicl-genv:fdefinition name environment) definition))))
+
+(defmacro with-intercepted-function-names ((names environment) &body body)
+  `(invoke-with-intercepted-function-names
+    (lambda () ,@body)
+    ',names
+    ,environment))
