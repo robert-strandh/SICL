@@ -12,6 +12,8 @@
   (load-source "Arithmetic/minus-defun.lisp" e5)
   (load-source "Arithmetic/one-plus-defun.lisp" e5)
   (load-source "Arithmetic/one-minus-defun.lisp" e5)
+  (load-source "Arithmetic/min-defun.lisp" e5)
+  (load-source "Arithmetic/max-defun.lisp" e5)
   (load-source "Arithmetic/zerop-defun.lisp" e5)
   (load-source "Arithmetic/integerp-defun.lisp" e5)
   (import-function-from-host 'sicl-genv:type-expander e5)
