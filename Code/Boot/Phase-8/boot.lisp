@@ -54,4 +54,5 @@
     (load-asdf-system-components '#:sicl-conditions e5)
     (load-source "CLOS/conditions.lisp" e5)
     (import-function-from-host '(setf sicl-genv:compiler-macro-function) e5)
-    (load-asdf-system-components '#:sicl-character e5)))
+    (load-asdf-system-components '#:sicl-character e5)
+    (load-source "Package-and-symbol/find-package-defun.lisp" e5)))
