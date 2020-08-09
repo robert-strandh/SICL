@@ -5,6 +5,8 @@
         10000000)
   (load-source "CLOS/slot-bound-using-index.lisp" ea)
   (load-source "CLOS/slot-value-etc-support.lisp" ea)
+  (load-source "CLOS/slot-value-etc-defgenerics.lisp" ea)
+  (load-source "CLOS/slot-value-etc-defmethods.lisp" ea)
   (load-source "CLOS/instance-slots-offset-defconstant.lisp" ea)
   (with-straddled-function-definitions
       ((sicl-clos::shared-initialize-default-using-class)
