@@ -6,5 +6,3 @@
       (and (loop for y in arguments
                  never (binary-equal argument y))
            (apply #'/= arguments))))
-
-  
