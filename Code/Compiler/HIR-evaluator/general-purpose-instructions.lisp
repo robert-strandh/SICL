@@ -5,6 +5,7 @@
      (instruction cleavir-ir:return-instruction)
      lexical-environment)
   (make-thunk (client instruction lexical-environment :successors 0)
+    #+(or)(format *trace-output* "~&~S~%" *global-values-location*)
     (throw 'return
       (values-list *global-values-location*))))
 
@@ -24,8 +25,8 @@
                     (let ((sicl-run-time:*dynamic-environment* dynamic-environment))
                       (setf *global-values-location*
                             (multiple-value-list
-                             (let* ((*call-stack*
-                                     (cons call-stack-entry *call-stack*)))
+                             (let* ((*call-stack* (cons call-stack-entry *call-stack*)))
+                               #+(or)(break "~&~S~%" (list ,@(loop for index below arity collect `(input ,index))))
                                (funcall
                                 ,@(loop for index below arity collect `(input ,index))))))
                       (successor 0)))))

@@ -14,7 +14,9 @@
                       &body body)
   (sicl-utilities:once-only (client instruction lexical-environment)
     (let ((thunk-gensym (gensym "THUNK"))
-          (dynamic-environment-gensym (gensym "DYNAMIC-ENVIRONMENT"))
+          (self-gensym (gensym "SELF"))
+          (dynamic-environment-gensym-1 (gensym "DYNAMIC-ENVIRONMENT"))
+          (dynamic-environment-gensym-2 (gensym "DYNAMIC-ENVIRONMENT"))
           (input-gensyms (loop repeat inputs collect (gensym "INPUT")))
           (output-gensyms (loop repeat outputs collect (gensym "OUTPUT")))
           (successor-gensyms (loop repeat successors collect (gensym "SUCCESSOR")))
@@ -28,9 +30,12 @@
            (destructuring-bind (,@successor-gensyms &rest _)
                (cleavir-ir:successors ,instruction)
              (declare (ignore _))
-             (let ((,dynamic-environment-gensym
+             (let ((,dynamic-environment-gensym-1
+                     (value-cell 'dynamic-environment ,lexical-environment))
+                   (,dynamic-environment-gensym-2
                      (value-cell (cleavir-ir:dynamic-environment-location ,instruction)
                                  ,lexical-environment))
+                   (,self-gensym #'dummy-successor)
                    ,@(loop for input-gensym in input-gensyms
                            collect
                            `(,input-gensym (value-cell ,input-gensym ,lexical-environment)))
@@ -40,7 +45,10 @@
                    ,@(loop for successor-thunk-gensym in successor-thunk-gensyms
                            collect
                            `(,successor-thunk-gensym #'dummy-successor)))
-               (declare (ignorable ,dynamic-environment-gensym))
+               (declare (ignorable
+                         ,dynamic-environment-gensym-1
+                         ,dynamic-environment-gensym-1
+                         ,self-gensym))
                (macrolet ((input (index)
                             (case index
                               ,@(loop for input-gensym in input-gensyms
@@ -67,8 +75,17 @@
                                (error "Invalid successor index: ~S" index)))))
                  (let ((,thunk-gensym
                          (symbol-macrolet
-                             ((dynamic-environment (car ,dynamic-environment-gensym)))
-                           (lambda () ,@body))))
+                             ((dynamic-environment (car ,dynamic-environment-gensym-2)))
+                           (lambda ()
+                             (prologue
+                              ,dynamic-environment-gensym-1
+                              ,dynamic-environment-gensym-2
+                              ,self-gensym)
+                             (prog1 (progn ,@body)
+                               (epilogue
+                                ,dynamic-environment-gensym-1
+                                ,dynamic-environment-gensym-2))))))
+                   (setf ,self-gensym ,thunk-gensym)
                    (setf (gethash ,instruction *instruction-thunks*)
                          ,thunk-gensym)
                    ,@(loop for successor-gensym in successor-gensyms
@@ -82,3 +99,30 @@
 
 (defun dummy-successor ()
   (error "Invocation of the dummy successor."))
+
+(defun prologue (cell-1 cell-2 thunk)
+  (let ((env1 (car cell-1))
+        (env2 (car cell-2)))
+    (unless (or (eq env1 env2)
+                (> (length env2) (length env1)))
+      (loop for env = env1 then (rest env)
+            for entry = (first env)
+            until (eq env env2)
+            do (sicl-run-time:invalidate-entry entry))
+      (let ((last-block/tagbody
+              (loop with result = nil
+                    for env = env1 then (rest env)
+                    for entry = (first env)
+                    until (eq env env2)
+                    when (typep entry 'sicl-run-time:unwind-protect-entry)
+                      do (funcall (sicl-run-time:thunk entry))
+                    when (typep entry 'sicl-run-time:block/tagbody-entry)
+                      do (setf result entry)
+                    finally (return result))))
+        (unless (null last-block/tagbody)
+          (throw (sicl-run-time:frame-pointer last-block/tagbody)
+            thunk))))))
+
+(defun epilogue (cell-1 cell-2)
+  (setf (car cell-1)
+        (car cell-2)))
