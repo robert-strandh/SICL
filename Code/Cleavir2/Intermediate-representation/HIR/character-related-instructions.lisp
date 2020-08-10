@@ -19,7 +19,7 @@
 ;;; It has one input which must be a character.  It has one output
 ;;; which is a fixnum representing the code of that character.
 
-(defclass char-code-instruction (instruction one-successors-mixin)
+(defclass char-code-instruction (instruction one-successor-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -30,5 +30,5 @@
 ;;; character with that code.  It has one input which must be a
 ;;; fixnum.  It has one output which is a character.
 
-(defclass code-char-instruction (instruction one-successors-mixin)
+(defclass code-char-instruction (instruction one-successor-mixin)
   ())
