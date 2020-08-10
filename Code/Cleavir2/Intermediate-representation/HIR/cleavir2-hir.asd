@@ -12,6 +12,7 @@
    (:file "cons-related-instructions")
    (:file "standard-object-related-instructions")
    (:file "array-related-instructions")
+   (:file "character-related-instructions")
    (:file "multiple-value-related-instructions")
    (:file "environment-related-instructions")
    (:file "argument-parsing-related-instructions")
