@@ -20,6 +20,7 @@
    (:file "array-related-instructions")
    (:file "boxing-related-instructions")
    (:file "cons-related-instructions")
+   (:file "character-related-instructions")
    (:file "fixnum-related-instructions")
    (:file "multiple-value-related-instructions")
    (:file "catch-instruction")
