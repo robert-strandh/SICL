@@ -36,3 +36,19 @@
     (let ((effective-slot (call-next-method)))
       (setf (slot-value effective-slot '%read-only) read-only)
       effective-slot)))
+
+(defmethod (setf closer-mop:slot-value-using-class) :before (new-value (class structure-class) object (slot structure-effective-slot-definition))
+  (when (and (structure-slot-definition-read-only slot)
+             ;; As a special exception, allow unbound/uninitialized slots to
+             ;; be initialized.
+             (not (closer-mop:slot-boundp-using-class class object slot)))
+    (cerror "Set slot ~S anyway" "Attempt to set read-only slot ~S in ~S"
+            (closer-mop:slot-definition-name slot) object)))
+
+(defmethod closer-mop:slot-makunbound-using-class :before ((class structure-class) object (slot structure-effective-slot-definition))
+  (when (and (structure-slot-definition-read-only slot)
+             ;; As a special exception, allow unbound/uninitialized slots to
+             ;; be initialized.
+             (not (closer-mop:slot-boundp-using-class class object slot)))
+    (cerror "Make slot ~S unbound anyway" "Attempt to make read-only slot ~S in ~S unbound"
+            (closer-mop:slot-definition-name slot) object)))
