@@ -54,6 +54,9 @@
   (intern (apply #'concatenate 'string (mapcar #'string string-designators))
           *package*))
 
+(defun keywordify (string-designator)
+  (intern (string string-designator) '#:keyword))
+
 (defun parse-constructor-options (options struct-name)
   (let ((default-name (symbolicate "MAKE-" struct-name))
         (constructor-options (get-options options :constructor)))

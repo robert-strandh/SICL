@@ -11,4 +11,6 @@
    (:file "structure-slot-definition")
    (:file "structure-object-defclass")
    (:file "defstruct-description-defclass")
-   (:file "defstruct-parse")))
+   (:file "defstruct-parse")
+   (:file "defstruct-expand-object")
+   (:file "defstruct-defmacro")))
