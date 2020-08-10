@@ -40,4 +40,6 @@
    (:file "char-greaterp-2-define-compiler-macro")
    (:file "binary-char-not-lessp-2-defun")
    (:file "char-not-lessp-2-defun")
-   (:file "char-not-lessp-2-define-compiler-macro")))
+   (:file "char-not-lessp-2-define-compiler-macro")
+   (:file "char-code-defun")
+   (:file "code-char-defun")))
