@@ -17,3 +17,19 @@
       (make-instance 'cleavir-ir:characterp-instruction
         :input temp
         :successors (successors context))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a CHAR-CODE-AST
+
+(define-compile-functional-ast
+    cleavir-ast:char-code-ast cleavir-ir:char-code-instruction
+  (cleavir-ast:char-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a CODE-CHAR-AST
+
+(define-compile-functional-ast
+    cleavir-ast:code-char-ast cleavir-ir:code-char-instruction
+  (cleavir-ast:code-ast))
