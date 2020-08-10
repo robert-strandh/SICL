@@ -74,7 +74,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a FIXNUM-DIVIDe-AST.
+;;; Compile a FIXNUM-DIVIDE-AST.
 
 (defmethod compile-ast (client (ast cleavir-ast:fixnum-divide-ast) context)
   (assert-context ast context 2 1)
