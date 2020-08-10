@@ -48,4 +48,6 @@
    #:values
    #:unreachable
    #:ast
-   #:cst-to-ast))
+   #:cst-to-ast
+   #:char-code
+   #:code-char))
