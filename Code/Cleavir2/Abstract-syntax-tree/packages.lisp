@@ -67,8 +67,8 @@
    #:fixnum-not-less-ast
    #:fixnum-equal-ast
    #:characterp-ast
-   #:char-code-ast
-   #:code-char-ast
+   #:char-code-ast #:char-ast
+   #:code-char-ast #:code-ast
    #:single-float-p-ast
    #:float-add-ast
    #:float-sub-ast
