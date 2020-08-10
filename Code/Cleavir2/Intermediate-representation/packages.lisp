@@ -66,7 +66,7 @@
    #:fixnump-instruction
    #:characterp-instruction
    #:char-code-instruction
-   #:chode-char-instruction
+   #:code-char-instruction
    #:short-float-p-instruction
    #:single-float-p-instruction
    #:standard-object-p-instruction
