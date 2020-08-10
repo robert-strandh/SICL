@@ -10,6 +10,7 @@
    (:file "structure-class-defclass-validate-superclass")
    (:file "structure-slot-definition")
    (:file "structure-object-defclass")
+   (:file "copy-structure")
    (:file "defstruct-description-defclass")
    (:file "defstruct-parse")
    (:file "defstruct-expand-object")
