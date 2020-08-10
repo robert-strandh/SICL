@@ -569,3 +569,29 @@
   (declare (ignore client environment))
   (check-simple-primop-syntax cst 0)
   (cleavir-ast:make-ast 'cleavir-ast:unreachable-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CHAR-CODE
+;;;
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:char-code)) cst environment)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (char-code-cst char-cst) cst
+    (declare (ignore char-code-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:char-code-ast
+      :char-ast (convert client char-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CODE-CHAR
+;;;
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:code-char)) cst environment)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (code-char-cst code-cst) cst
+    (declare (ignore code-char-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:code-char-ast
+      :code-ast (convert client code-cst environment))))
