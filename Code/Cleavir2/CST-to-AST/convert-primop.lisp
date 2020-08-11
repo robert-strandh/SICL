@@ -274,6 +274,57 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-LOGAND.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:fixnum-logand)) cst environment)
+  (check-simple-primop-syntax cst 2)
+  (cst:db origin (fixnum-logand-cst arg1-cst arg2-cst) cst
+    (declare (ignore fixnum-logand-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-logand-ast
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-LOGIOR.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:fixnum-logior)) cst environment)
+  (check-simple-primop-syntax cst 2)
+  (cst:db origin (fixnum-logior-cst arg1-cst arg2-cst) cst
+    (declare (ignore fixnum-logior-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-logior-ast
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-LOGXOR.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:fixnum-logxor)) cst environment)
+  (check-simple-primop-syntax cst 2)
+  (cst:db origin (fixnum-logxor-cst arg1-cst arg2-cst) cst
+    (declare (ignore fixnum-logxor-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-logxor-ast
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-LOGNOT.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:fixnum-lognot)) cst environment)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (fixnum-lognot-cst arg-cst) cst
+    (declare (ignore fixnum-lognot-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-lognot-ast
+      :arg-ast (convert client arg-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:CHARACTERP.
 
 (defmethod convert-special
