@@ -4,13 +4,15 @@
 
 (defun check-included-structure-object (description environment)
   (when (defstruct-included-structure-name description)
-    (let ((included-structure (find-class (defstruct-included-structure-name description)
-                                          environment
-                                          nil)))
-      (unless (and included-structure
-                   (typep included-structure 'structure-class))
-        (error "included structure named ~S is either not defined or is not a structure-class"
-               (defstruct-included-structure-name description)))
+    (let* ((parent-name (defstruct-included-structure-name description))
+           (included-structure (find-class parent-name environment nil)))
+      (unless included-structure
+        (if (find-structure-description parent-name nil environment)
+            (error "parent defstruct ~S names a typed defstruct, not a structure-object defstruct" parent-name)
+            (error "parent defstruct ~S does not exist" parent-name)))
+      (unless (typep included-structure 'structure-class)
+        (error "parent struct ~S is not a structure-class"
+               parent-name))
       ;; All included slots must be present in the included structure.
       (dolist (slot (defstruct-included-slots description))
         (let ((existing (find (slot-name slot)

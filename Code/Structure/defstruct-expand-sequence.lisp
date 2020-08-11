@@ -27,8 +27,12 @@
 
 (defun compute-sequence-defstruct-slot-layout (description environment)
   (cond ((defstruct-included-structure-name description)
-         (let ((parent (get-defstruct-description (defstruct-included-structure-name description)
-                                                  environment)))
+         (let* ((parent-name (defstruct-included-structure-name description))
+                (parent (find-structure-description parent-name nil environment)))
+           (unless parent
+             (if (find-class parent-name nil environment)
+                 (error "parent defstruct ~S is a structure-object defstruct, not a typed defstruct" parent-name)
+                 (error "parent defstruct ~S does not exist" parent-name)))
            ;; TODO: This should do a subtypep test to make sure the types are the same/compatible...
            (unless (equal (canonicalize-struct-type (defstruct-type description))
                           (canonicalize-struct-type (defstruct-type parent)))
@@ -142,7 +146,8 @@
       (compute-sequence-defstruct-slot-layout description environment)
     `(progn
        (eval-when (:compile-toplevel :load-toplevel :execute)
-         (register-sequence-defstruct ',description))
+         (setf (find-structure-description ',(defstruct-name description))
+               ',description))
        ,@(loop for constructor in (defstruct-constructors description)
                collect (if (cdr constructor)
                            (generate-sequence-boa-constructor description environment (first constructor) (second constructor) slot-layout name-layout)
