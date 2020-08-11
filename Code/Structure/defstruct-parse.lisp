@@ -259,7 +259,7 @@
            (values (second option)
                    (parse-slot-descriptions (cddr option) conc-name)))
           (t
-           (error "malformed :print-object option ~S" option)))))
+           (error "malformed :include option ~S" option)))))
 
 (defun separate-documentation-and-slots (documentation-and-slots)
   (if (stringp (first documentation-and-slots))
