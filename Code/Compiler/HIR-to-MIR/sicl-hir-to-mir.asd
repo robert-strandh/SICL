@@ -15,6 +15,7 @@
    (:file "array")
    (:file "boxing")
    (:file "fixnum")
+   (:file "character")
    (:file "augment-catch-instruction")
    (:file "augment-bind-instruction")
    (:file "augment-initialize-values-instruction")
