@@ -34,4 +34,12 @@
 
 (defmethod process-instruction
     (client (instruction cleavir-ir:fixnum-lognot-instruction))
-  (change-class instruction 'cleavir-ir:bitwise-not-instruction))
+  (let ((one (make-instance 'cleavir-ir:constant-input :value 1))
+        (temp (make-instance 'cleavir-ir:lexical-location :name (gensym))))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:bitwise-not-instruction
+       :inputs (cleavir-ir:inputs instruction)
+       :output temp)
+     instruction)
+    (change-class instruction 'cleavir-ir:unsigned-sub-instruction
+                  :inputs (list temp one))))
