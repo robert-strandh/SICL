@@ -66,6 +66,10 @@
    #:fixnum-greater-ast
    #:fixnum-not-less-ast
    #:fixnum-equal-ast
+   #:fixnum-logand-ast
+   #:fixnum-logior-ast
+   #:fixnum-logxor-ast
+   #:fixnum-lognot-ast
    #:characterp-ast
    #:char-code-ast #:char-ast
    #:code-char-ast #:code-ast
