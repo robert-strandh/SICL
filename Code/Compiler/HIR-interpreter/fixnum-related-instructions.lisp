@@ -73,3 +73,49 @@
         (setf (lexical-value quotient-location lexical-environment) quotient)
         (setf (lexical-value remainder-location lexical-environment) remainder))))
   (first (cleavir-ir:successors instruction)))
+
+(defmethod interpret-instruction
+    (client
+     (instruction cleavir-ir:fixnum-logand-instruction)
+     lexical-environment)
+  (destructuring-bind (arg1-input arg2-input)
+      (cleavir-ir:inputs instruction)
+    (setf (lexical-value (first (cleavir-ir:outputs instruction))
+                         lexical-environment)
+          (logand (input-value arg1-input lexical-environment)
+                  (input-value arg2-input lexical-environment))))
+  (first (cleavir-ir:successors instruction)))
+
+(defmethod interpret-instruction
+    (client
+     (instruction cleavir-ir:fixnum-logior-instruction)
+     lexical-environment)
+  (destructuring-bind (arg1-input arg2-input)
+      (cleavir-ir:inputs instruction)
+    (setf (lexical-value (first (cleavir-ir:outputs instruction))
+                         lexical-environment)
+          (logior (input-value arg1-input lexical-environment)
+                  (input-value arg2-input lexical-environment))))
+  (first (cleavir-ir:successors instruction)))
+
+(defmethod interpret-instruction
+    (client
+     (instruction cleavir-ir:fixnum-logxor-instruction)
+     lexical-environment)
+  (destructuring-bind (arg1-input arg2-input)
+      (cleavir-ir:inputs instruction)
+    (setf (lexical-value (first (cleavir-ir:outputs instruction))
+                         lexical-environment)
+          (logxor (input-value arg1-input lexical-environment)
+                  (input-value arg2-input lexical-environment))))
+  (first (cleavir-ir:successors instruction)))
+
+(defmethod interpret-instruction
+    (client
+     (instruction cleavir-ir:fixnum-lognot-instruction)
+     lexical-environment)
+  (setf (lexical-value (first (cleavir-ir:outputs instruction))
+                       lexical-environment)
+        (lognot (input-value (first (cleavir-ir:inputs instruction))
+                             lexical-environment)))
+  (first (cleavir-ir:successors instruction)))
