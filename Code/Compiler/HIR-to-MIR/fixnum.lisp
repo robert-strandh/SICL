@@ -19,3 +19,19 @@
 (defmethod process-instruction
     (client (instruction cleavir-ir:fixnum-sub-instruction))
   (change-class instruction 'cleavir-ir:signed-sub-instruction))
+
+(defmethod process-instruction
+    (client (instruction cleavir-ir:fixnum-logand-instruction))
+  (change-class instruction 'cleavir-ir:bitwise-and-instruction))
+
+(defmethod process-instruction
+    (client (instruction cleavir-ir:fixnum-logior-instruction))
+  (change-class instruction 'cleavir-ir:bitwise-or-instruction))
+
+(defmethod process-instruction
+    (client (instruction cleavir-ir:fixnum-logxor-instruction))
+  (change-class instruction 'cleavir-ir:bitwise-exclusive-or-instruction))
+
+(defmethod process-instruction
+    (client (instruction cleavir-ir:fixnum-lognot-instruction))
+  (change-class instruction 'cleavir-ir:bitwise-not-instruction))
