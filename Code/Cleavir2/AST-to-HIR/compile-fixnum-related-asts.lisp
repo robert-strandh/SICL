@@ -216,3 +216,35 @@
                     :successor (make-instance 'cleavir-ir:fixnum-equal-instruction
                                  :inputs (list temp2 temp1)
                                  :successors (successors context))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a FIXNUM-LOGAND-AST
+
+(define-compile-functional-ast
+    cleavir-ast:fixnum-logand-ast cleavir-ir:fixnum-logand-instruction
+  (cleavir-ast:arg1-ast cleavir-ast:arg2-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a FIXNUM-LOGIOR-AST
+
+(define-compile-functional-ast
+    cleavir-ast:fixnum-logior-ast cleavir-ir:fixnum-logior-instruction
+  (cleavir-ast:arg1-ast cleavir-ast:arg2-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a FIXNUM-LOGXOR-AST
+
+(define-compile-functional-ast
+    cleavir-ast:fixnum-logxor-ast cleavir-ir:fixnum-logxor-instruction
+  (cleavir-ast:arg1-ast cleavir-ast:arg2-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a FIXNUM-LOGNOT-AST
+
+(define-compile-functional-ast
+    cleavir-ast:fixnum-lognot-ast cleavir-ir:fixnum-lognot-instruction
+  (cleavir-ast:arg-ast))
