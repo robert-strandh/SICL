@@ -328,32 +328,3 @@
               :environment environment))
       (setf (gethash name (function-entries environment)) entry))
     entry))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; A structure entry represents information about a DEFSTRUCT
-;;; definition with :type specified, i.e. no class, hence the
-;;; required separate storage.
-
-(defclass structure-entry (named-entry)
-  (;; The value of this slot is the value of the :type option
-   ;; specified to DEFSTRUCT.
-   ;; It's possible we could require array upgrading here.
-   (%type :initform nil :initarg :type :accessor type)
-   ;; The value of this slot is the "size" of the structure,
-   ;; meaning the index that any new structure including this
-   ;; one will start at, or more explicitly
-   ;; size of any included structure or 0 + initial-offset
-   ;;  + number of slots + 1 if named
-   (%size :initform nil :initarg :size :accessor size)))
-
-(defun find-structure-entry (environment name)
-  (assert (symbolp name))
-  (gethash name (structure-entries environment)))
-
-(defun ensure-structure-entry (environment name)
-  (let ((entry (find-function-entry environment name)))
-    (when (null entry)
-      (setf entry (make-instance 'structure-entry :name name)
-            (gethash name (structure-entries environment)) entry))
-    entry))
