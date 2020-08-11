@@ -123,7 +123,14 @@
   (parse-copier/predicate-options options :copier (symbolicate "COPY-" name)))
 
 (defun parse-predicate-options (options name)
-  (parse-copier/predicate-options options :predicate (symbolicate name "-P")))
+  (cond ((or (not (get-singular-option options :type))
+             (get-singular-option options :named))
+         ;; Structure is named, allow predicate options.
+         (parse-copier/predicate-options options :predicate (symbolicate name "-P")))
+        (t
+         (when (get-options options :predicate)
+           (error ":predicate not permitted on un-named typed structures"))
+         '())))
 
 (defun parse-named-option (options)
   (let ((option (get-singular-option options :named)))
