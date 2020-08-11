@@ -60,3 +60,47 @@
 
 (defclass fixnum-divide-instruction (instruction one-successor-mixin)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction FIXNUM-LOGAND-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs, both FIXNUMs.  It has a single
+;;; output, also a FIXNUM.  The output is the bitwise AND of the two
+;;; inputs.
+
+(defclass fixnum-logand-instruction (instruction one-successor-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction FIXNUM-LOGIOR-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs, both FIXNUMs.  It has a single
+;;; output, also a FIXNUM.  The output is the bitwise inclusive OR of
+;;; the two inputs.
+
+(defclass fixnum-logior-instruction (instruction one-successor-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction FIXNUM-LOGXOR-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs, both FIXNUMs.  It has a single
+;;; output, also a FIXNUM.  The output is the bitwise exclusive OR of
+;;; the two inputs.
+
+(defclass fixnum-logxor-instruction (instruction one-successor-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction FIXNUM-LOGNOT-INSTRUCTION.
+;;;
+;;; This instruction takes a single input which must be a FIXNUM.  It
+;;; has a single output, also a FIXNUM.  The output is the bitwise NOT
+;;; (i.e. negation) of the input.
+
+(defclass fixnum-lognot-instruction (instruction one-successor-mixin)
+  ())
