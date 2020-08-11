@@ -81,6 +81,10 @@
    #:fixnum-not-greater-instruction
    #:fixnum-equal-instruction
    #:fixnum-divide-instruction
+   #:fixnum-logand-instruction
+   #:fixnum-logior-instruction
+   #:fixnum-logxor-instruction
+   #:fixnum-lognot-instruction
    #:float-add-instruction
    #:float-sub-instruction
    #:float-mul-instruction
