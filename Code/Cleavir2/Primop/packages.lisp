@@ -21,6 +21,10 @@
    #:fixnum-greater
    #:fixnum-not-less
    #:fixnum-equal
+   #:fixnum-logand
+   #:fixnum-logior
+   #:fixnum-logxor
+   #:fixnum-lognot
    ;; Each of these operations takes a type argument in addition to
    ;; the normal argument(s) of the corresponding Common Lisp
    ;; function.  That type argument is the first one, and it is not
