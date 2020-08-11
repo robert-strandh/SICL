@@ -176,3 +176,77 @@
 ;;; position where a value is required, an error is signaled.
 
 (define-fixnum-comparison-ast fixnum-equal-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FIXNUM-LOGAND-AST.
+;;;
+;;; This class can be used to implement the LOGAND function.  It has
+;;; two arguments, and both arguments must evaluate to FIXNUMs.  The
+;;; single value is the bitwise AND of the two arguments.
+
+(defclass fixnum-logand-ast (ast one-value-ast-mixin)
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+
+(cleavir-io:define-save-info fixnum-logand-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
+
+(defmethod children ((ast fixnum-logand-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FIXNUM-LOGIOR-AST.
+;;;
+;;; This class can be used to implement the LOGIOR function.  It has
+;;; two arguments, and both arguments must evaluate to FIXNUMs.  The
+;;; single value is the bitwise inclusive OR of the two arguments.
+
+(defclass fixnum-logior-ast (ast one-value-ast-mixin)
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+
+(cleavir-io:define-save-info fixnum-logior-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
+
+(defmethod children ((ast fixnum-logior-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FIXNUM-LOGXOR-AST.
+;;;
+;;; This class can be used to implement the LOGXOR function.  It has
+;;; two arguments, and both arguments must evaluate to FIXNUMs.  The
+;;; single value is the bitwise exclusive OR of the two arguments.
+
+(defclass fixnum-logxor-ast (ast one-value-ast-mixin)
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+
+(cleavir-io:define-save-info fixnum-logxor-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
+
+(defmethod children ((ast fixnum-logxor-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FIXNUM-LOGNOT-AST.
+;;;
+;;; This class can be used to implement the LOGNOT function.  It has a
+;;; single argument, and it must evaluate to a FIXNUM.  The single
+;;; value is the bitwise NOT of the argument.
+
+(defclass fixnum-lognot-ast (ast one-value-ast-mixin)
+  ((%arg-ast :initarg :arg-ast :reader arg-ast)))
+
+(cleavir-io:define-save-info fixnum-lognot-ast
+  (:arg-ast arg-ast))
+
+(defmethod children ((ast fixnum-lognot-ast))
+  (list (arg-ast ast)))
