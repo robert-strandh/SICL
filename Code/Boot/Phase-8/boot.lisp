@@ -56,4 +56,5 @@
     (import-function-from-host '(setf sicl-genv:compiler-macro-function) e5)
     (load-asdf-system-components '#:sicl-character e5)
     (load-source "Package-and-symbol/find-package-defun.lisp" e5)
-    (load-sicl-utilities e5)))
+    (load-sicl-utilities e5)
+    (load-source "CLOS/slot-value-etc-specified-defuns.lisp" e5)))
