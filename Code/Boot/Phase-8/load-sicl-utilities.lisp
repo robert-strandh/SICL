@@ -6,4 +6,3 @@
         (1- (expt 2 62)))
   (import-function-from-host 'cleavir-code-utilities:parse-deftype environment)
   (load-asdf-system-components '#:sicl-utilities environment))
-
