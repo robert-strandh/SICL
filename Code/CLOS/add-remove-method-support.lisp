@@ -54,13 +54,68 @@
                         collect (if p (pop remaining) class-t))))
     (maybe-applicable-p method classes)))
 
+(defun compute-congruent-lambda-list (method-lambda-list)
+  (let ((result '())
+        (lambda-list method-lambda-list))
+    (tagbody
+     required
+       (when (null lambda-list)
+         (go out))
+       (case (first lambda-list)
+         (&optional
+          ;; Push the lambda-list keyword.
+          (push (pop lambda-list) result)
+          (go optional))
+         (&rest
+          (go rest))
+         (&key
+          (go key))
+         (t
+          ;; We have a required parameter.  Push it on the result.
+          (push (pop lambda-list) result)
+          (go required)))
+     optional
+       (when (null lambda-list)
+         (go out))
+       (case (first lambda-list)
+         (&rest
+          (go rest))
+         (&key
+          (go key))
+         (t
+          ;; We have an optional parameter.
+          (let ((parameter (pop lambda-list)))
+            (push (if (consp parameter)
+                      (first parameter)
+                      parameter)
+                  result))
+          (go optional)))
+     rest
+       ;; Push the lambda-list keyword.
+       (push (pop lambda-list) result)
+       ;; Push the name of the &REST parameter.
+       (push (pop lambda-list) result)
+       (when (null lambda-list)
+         (go out))
+       (go key)
+     key
+       ;; Push the lambda-list keyword.
+       (push (pop lambda-list) result)
+       (go out)
+     out)
+    (reverse result)))
+
 (defun add-method-default (generic-function method)
   (unless (null (method-generic-function method))
     (error 'method-already-associated-with-a-generic-function
            :method-to-add method
            :its-generic-function (method-generic-function method)))
-  ;; FIXME: check that the lambda list are congruent
-  ;;
+  (if (slot-boundp generic-function '%lambda-list)
+      ;; FIXME: check that the lambda lists are congruent.
+      nil
+      (reinitialize-instance generic-function
+        :lambda-list
+        (compute-congruent-lambda-list (method-lambda-list method))))
   ;; See if GENERIC-FUNCTION has a method with the same specializers
   ;; and the same qualifiers as METHOD.  If such a method exists, it
   ;; must be removed before this method is added.
