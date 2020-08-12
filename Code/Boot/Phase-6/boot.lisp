@@ -9,6 +9,8 @@
       boot
     (change-class e6 'environment)
     (import-from-host boot)
+    (setf (sicl-genv:fdefinition 'slot-boundp e6)
+          (constantly t))
     (sicl-boot:enable-class-finalization e4 e5)
     (sicl-boot:finalize-all-classes e5)
     (sicl-boot:enable-defmethod e5 e6)
