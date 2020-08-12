@@ -9,5 +9,6 @@
    (:file "utilities")
    (:file "load-arithmetic-functions")
    (:file "load-hash-table-functionality")
+   (:file "load-sicl-utilities")
    (:file "boot")
    (:file "check-environment")))
