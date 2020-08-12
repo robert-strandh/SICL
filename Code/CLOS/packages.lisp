@@ -102,6 +102,7 @@
    #:ensure-generic-function #:ensure-generic-function-using-class
    #:ensure-class #:ensure-class-using-class
    #:slot-value #:slot-missing #:slot-boundp #:slot-makunbound
+   #:slot-boundp-using-class
    #:slot-value-using-class
    #:print-object #:describe-object #:documentation
    #:make-method-lambda
