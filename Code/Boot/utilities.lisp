@@ -182,4 +182,3 @@
          (suffix (subseq namestring (+ position (length "SICL/Code/")))))
     (loop for name in names
           collect (concatenate 'string suffix name ".lisp"))))
-
