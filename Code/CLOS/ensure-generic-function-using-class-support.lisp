@@ -10,6 +10,7 @@
        (generic-function-class
         (find-class 'standard-generic-function t environment))
        (method-class nil method-class-p)
+       (method-combination nil method-combination-p)
      &allow-other-keys)
   (declare (ignore generic-function))
   (cond ((symbolp generic-function-class)
@@ -35,6 +36,14 @@
            nil)
           (t
            (error "method class must be a class or a name"))))
+  (unless method-combination-p
+    ;; Neither the Common Lisp standard nor the AMOP indicates where
+    ;; this keyword argument is defaulted, but it has to be here,
+    ;; because, this is where we find out that there is no generic
+    ;; function with the name given as an argument.
+    (setf method-combination
+          (sicl-method-combination:find-method-combination
+           'standard '() environment)))
   (let ((remaining-keys (copy-list all-keyword-arguments)))
     (loop while (remf remaining-keys :generic-function-class))
     (loop while (remf remaining-keys :environment))
@@ -44,9 +53,11 @@
                      ;; The AMOP does
                      :name function-name
                      :method-class method-class
+                     :method-combination method-combination
                      remaining-keys)
               (apply #'make-instance generic-function-class
                      :name function-name
+                     :method-combination method-combination
                      remaining-keys)))))
 
 (defun ensure-generic-function-using-class-generic-function
