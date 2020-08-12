@@ -39,7 +39,11 @@
                          (trucler:no-variable-description
                            (lambda (condition)
                              (declare (ignore condition))
-                             (invoke-restart 'cleavir-cst-to-ast:consider-special))))
+                             (invoke-restart 'cleavir-cst-to-ast:consider-special)))
+                         (cleavir-cst-to-ast::encapsulated-condition
+                           (lambda (condition)
+                             (declare (ignore condition))
+                             (invoke-restart 'cleavir-cst-to-ast:signal-original-condition))))
                       (cleavir-cst-to-ast:cst-to-ast
                        client cst environment
                        :file-compilation-semantics t)))))
