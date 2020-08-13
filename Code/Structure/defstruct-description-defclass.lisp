@@ -24,3 +24,9 @@
    (%initform-p :initarg :initform-p :reader slot-initform-p)
    (%type :initarg :type :reader slot-type)
    (%read-only :initarg :read-only :reader slot-read-only)))
+
+(defmethod make-load-form ((object defstruct-description) &optional environment)
+  (make-load-form-saving-slots object :environment environment))
+
+(defmethod make-load-form ((object slot-description) &optional environment)
+  (make-load-form-saving-slots object :environment environment))
