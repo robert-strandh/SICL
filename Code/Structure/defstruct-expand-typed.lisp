@@ -95,6 +95,15 @@
                                (defstruct-direct-slots description))
                        '()))))))
 
+(defun generate-typed-allocate-instance-call (description slot-layout)
+  (if (vector-defstruct-p description)
+      `(make-array ,(length slot-layout) :element-type ',(second (canonicalize-struct-type (defstruct-type description))))
+      `(make-sequence ',(defstruct-type description) ,(length slot-layout))))
+
+(defun fill-named-fields (object name-layout)
+  (loop for (name . name-index) in name-layout
+        collect `(setf (elt ,object ,name-index) ',name)))
+
 (defun generate-typed-ordinary-constructor (description constructor-name slot-layout name-layout)
   (let ((suppliedp-syms (loop for slot in slot-layout
                               when slot
@@ -120,11 +129,8 @@
                                             when slot
                                             collect (list name (slot-initform slot) suppliedp)))
        (declare (ignorable ,@(remove nil suppliedp-syms)))
-       (let ((,object ,(if (vector-defstruct-p description)
-                           `(make-array ,(length slot-layout) :element-type ',(second (canonicalize-struct-type (defstruct-type description))))
-                           `(make-sequence ',(defstruct-type description) ,(length slot-layout)))))
-         ,@(loop for (name . name-index) in name-layout
-                 collect `(setf (elt ,object ,name-index) ',name))
+       (let ((,object ,(generate-typed-allocate-instance-call description slot-layout)))
+         ,@(fill-named-fields object name-layout)
          ,@(loop for slot in slot-layout
                  for name in slot-name-syms
                  for suppliedp in suppliedp-syms
@@ -137,7 +143,141 @@
                                 (setf (elt ,object ,index) ,name))))
          ,object))))
 
-;;;(generate-typed-boa-constructor description environment (first constructor) (second constructor))
+(defun generate-typed-boa-constructor (description name lambda-list slot-layout name-layout)
+  (multiple-value-bind (requireds optionals rest keywords allow-other-keys-p auxs keyp)
+      ;; Don't normalize, as BOA lambda lists have different defaulting behaviour
+      ;; for initforms.
+      (alexandria:parse-ordinary-lambda-list lambda-list :normalize nil)
+    (let ((object (gensym "OBJECT"))
+          (reconstructed-lambda-list '())
+          ;; Slots that have been mentioned in the lambda-list and perform
+          ;; some kind of initialization.
+          (bound-slots '())
+          ;; Slots that might be bound to a value or might be left uninitialized
+          ;; due to the lack of an initform.
+          (potentially-unbound-slots '())
+          ;; Slots that have been made unbound by &aux
+          (unbound-slots '()))
+      (dolist (req requireds)
+        (push req reconstructed-lambda-list)
+        (push req bound-slots))
+      (when optionals
+        (push '&optional reconstructed-lambda-list)
+        (dolist (opt optionals)
+          (let* ((name (if (consp opt)
+                           (first opt)
+                           opt))
+                 (bits (if (consp opt)
+                           (rest opt)
+                           '()))
+                 (slot (find name slot-layout
+                             :key (lambda (x) (and x (slot-name x))))))
+            (when slot
+              (push name bound-slots))
+            (cond ((or (not slot)
+                       bits)
+                   ;; Initform supplied, overrides any initform specified in the defstruct.
+                   ;; Or this arg doesn't name a slot at all.
+                   (push opt reconstructed-lambda-list))
+                  ((slot-initform-p slot)
+                   ;; Use the slot initform.
+                   (push (list name (slot-initform slot))
+                         reconstructed-lambda-list))
+                  (t
+                   ;; Leave uninitialized.
+                   (push (list name '%uninitialized%)
+                         reconstructed-lambda-list)
+                   (push name potentially-unbound-slots))))))
+      (when rest
+        (push '&rest reconstructed-lambda-list)
+        (push rest reconstructed-lambda-list)
+        (push rest bound-slots))
+      (when keyp
+        (push '&key reconstructed-lambda-list)
+        (dolist (key keywords)
+          (let* ((name (cond ((not (consp key)) ; &key foo
+                              key)
+                             ((consp (first key)) ; &key ((:foo foo) ...)
+                              (second (first key)))
+                             (t ; &key (foo ...)
+                              (first key))))
+                 (keyword (cond ((and (consp key) ; &key ((:foo foo) ...)
+                                      (consp (first key)))
+                                 (second (first key)))
+                                (t
+                                 (keywordify name))))
+                 (bits (if (consp key)
+                           (rest key)
+                           '()))
+                 (slot (find name slot-layout
+                             :key (lambda (x) (and x (slot-name x))))))
+            (when slot
+              (push name bound-slots))
+            (cond ((or (not slot)
+                       bits)
+                   ;; Initform supplied, overrides any initform specified in the defstruct.
+                   ;; Or this arg doesn't name a slot at all.
+                   (push key reconstructed-lambda-list))
+                  ((slot-initform-p slot)
+                   ;; Use the slot initform.
+                   (push (list (list keyword name) (slot-initform slot))
+                         reconstructed-lambda-list))
+                  (t
+                   ;; Leave uninitialized.
+                   (push (list (list keyword name) '%uninitialized%)
+                         reconstructed-lambda-list)
+                   (push name potentially-unbound-slots)))))
+        (when allow-other-keys-p
+          (push '&allow-other-keys reconstructed-lambda-list)))
+      (when auxs
+        (push '&aux reconstructed-lambda-list)
+        (dolist (aux auxs)
+          (let* ((name (if (consp aux)
+                           (first aux)
+                           aux))
+                 (bits (if (consp aux)
+                           (rest aux)
+                           '()))
+                 (slot (find name slot-layout
+                             :key (lambda (x) (and x (slot-name x))))))
+            (when slot)
+            (cond ((or (not slot)
+                       bits)
+                   ;; Initform supplied, overrides any initform specified in the defstruct.
+                   ;; Or this arg doesn't name a slot at all.
+                   (push aux reconstructed-lambda-list)
+                   (push name bound-slots))
+                  (t
+                   ;; Completely override the any initform and leave the
+                   ;; slot fully unbound.
+                   (push name unbound-slots))))))
+      `(defun ,name ,(nreverse reconstructed-lambda-list)
+         (let ((,object ,(generate-typed-allocate-instance-call description slot-layout)))
+           ,@(fill-named-fields object name-layout)
+           ,@(loop for slot in slot-layout
+                   for index from 0
+                   when (and slot
+                             (not (find name unbound-slots))
+                             (or (find name bound-slots)
+                                 (slot-initform-p slot)))
+                     collect (let ((name (slot-name slot)))
+                               (cond ((not (find name bound-slots))
+                                      ;; Slot initialized by initform.
+                                      `(setf (elt ,object ,index) ,(slot-initform slot)))
+                                     ((find name potentially-unbound-slots)
+                                      ;; Slot may or may not have a value.
+                                      `(unless (eq ,name '%uninitialized%)
+                                         (setf (elt ,object ,index) ,name)))
+                                     (t
+                                      ;; Slot initialized by argument.
+                                      `(setf (elt ,object ,index) ,name)))))
+           ,object)))))
+
+(defun generate-typed-constructors (description slot-layout name-layout)
+  (loop for constructor in (defstruct-constructors description)
+        collect (if (cdr constructor)
+                    (generate-typed-boa-constructor description (first constructor) (second constructor) slot-layout name-layout)
+                    (generate-typed-ordinary-constructor description (first constructor) slot-layout name-layout))))
 
 (defun generate-typed-slot-accessor (slot index)
   `((defun ,(slot-accessor-name slot) (structure)
@@ -167,10 +307,7 @@
        (eval-when (:compile-toplevel :load-toplevel :execute)
          (setf (find-structure-description ',(defstruct-name description))
                ',description))
-       ,@(loop for constructor in (defstruct-constructors description)
-               collect (if (cdr constructor)
-                           (generate-typed-boa-constructor description environment (first constructor) (second constructor) slot-layout name-layout)
-                           (generate-typed-ordinary-constructor description (first constructor) slot-layout name-layout)))
+       ,@(generate-typed-constructors description slot-layout name-layout)
        ,@(loop for slot in slot-layout
                for index from 0
                when slot
