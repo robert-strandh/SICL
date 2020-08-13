@@ -26,68 +26,74 @@
              (eql (first type) 'vector)))))
 
 (defun compute-sequence-defstruct-slot-layout (description environment)
-  (cond ((defstruct-included-structure-name description)
-         (let* ((parent-name (defstruct-included-structure-name description))
-                (parent (find-structure-description parent-name nil environment)))
-           (unless parent
-             (if (find-class parent-name nil environment)
-                 (error "parent defstruct ~S is a structure-object defstruct, not a typed defstruct" parent-name)
-                 (error "parent defstruct ~S does not exist" parent-name)))
-           ;; TODO: This should do a subtypep test to make sure the types are the same/compatible...
-           (unless (equal (canonicalize-struct-type (defstruct-type description))
-                          (canonicalize-struct-type (defstruct-type parent)))
-             (error "defstruct ~S and ~S have incompatible types ~S and ~S"
-                    (defstruct-name description) (defstruct-name parent)
-                    (defstruct-type description) (defstruct-type parent)))
-           (multiple-value-bind (parent-slot-layout parent-name-layout)
-               (compute-sequence-defstruct-slot-layout parent environment)
-             ;; Make sure there are no conflicting slots and that all the included
-             ;; slots exist.
-             (dolist (slot (defstruct-direct-slots description))
-               (when (find (slot-name slot) parent-slot-layout :key #'slot-name :test #'string=)
-                 (error "duplicate slot name ~S" (slot-name slot))))
-             (dolist (slot (defstruct-included-slots description))
-               (let ((parent-slot (find (slot-name slot) parent-slot-layout :key #'slot-name)))
-                 (unless parent-slot
-                   (error "included slot ~S missing from parent structure ~S"
-                          (slot-name slot) (defstruct-included-structure-name description)))
-                 (unless (subtypep (slot-type slot) (slot-type parent-slot) environment)
-                   (error "included slot ~S has type ~S, which is not a subtype of ~S"
-                          (slot-name slot) (slot-type slot) (slot-type parent-slot)))
-                 ;; TODO: Check that the slot type is a subtype of the parent slot.
-                 (when (and (slot-read-only parent-slot)
-                            (not (slot-read-only slot)))
-                   (error "included slot ~S is read-only in parent" (slot-name slot)))))
-             ;; Turn the parent-slot-layout into a list of effective-ish slots
-             (values (append (loop for parent-slot in parent-slot-layout
-                                   collect (or (find (slot-name parent-slot)
-                                                     (defstruct-included-slots description)
-                                                     :key #'slot-name)
-                                               (make-instance 'slot-description
-                                                              :name (slot-name parent-slot)
-                                                              :accessor-name (if (defstruct-conc-name description)
-                                                                                 (symbolicate (defstruct-conc-name description)
-                                                                                              (slot-name parent-slot))
-                                                                                 (slot-name parent-slot))
-                                                              :initform (slot-initform parent-slot)
-                                                              :initform-p (slot-initform-p parent-slot)
-                                                              :type (slot-type parent-slot)
-                                                              :read-only (slot-read-only parent-slot))))
-                             (if (defstruct-named description)
-                                 (list nil)
-                                 '())
-                             (defstruct-direct-slots description))
-                     (append (if (defstruct-named description)
-                                 (list (cons (defstruct-name description) (length parent-slot-layout)))
-                                 '())
-                             parent-name-layout)))))
-        (t
-         (if (defstruct-named description)
-             (values (list* nil
-                            (defstruct-direct-slots description))
-                     (list (cons (defstruct-name description) 0)))
-             (values (defstruct-direct-slots description)
-                     '())))))
+  (let* ((initial-offset (or (defstruct-initial-offset description) 0))
+         (initial-offset-padding (make-list initial-offset :initial-element nil)))
+    (cond ((defstruct-included-structure-name description)
+           (let* ((parent-name (defstruct-included-structure-name description))
+                  (parent (find-structure-description parent-name nil environment)))
+             (unless parent
+               (if (find-class parent-name nil environment)
+                   (error "parent defstruct ~S is a structure-object defstruct, not a typed defstruct" parent-name)
+                   (error "parent defstruct ~S does not exist" parent-name)))
+             ;; TODO: This should do a subtypep test to make sure the types are the same/compatible...
+             (unless (equal (canonicalize-struct-type (defstruct-type description))
+                            (canonicalize-struct-type (defstruct-type parent)))
+               (error "defstruct ~S and ~S have incompatible types ~S and ~S"
+                      (defstruct-name description) (defstruct-name parent)
+                      (defstruct-type description) (defstruct-type parent)))
+             (multiple-value-bind (parent-slot-layout parent-name-layout)
+                 (compute-sequence-defstruct-slot-layout parent environment)
+               ;; Make sure there are no conflicting slots and that all the included
+               ;; slots exist.
+               (dolist (slot (defstruct-direct-slots description))
+                 (when (find (slot-name slot) parent-slot-layout :key #'slot-name :test #'string=)
+                   (error "duplicate slot name ~S" (slot-name slot))))
+               (dolist (slot (defstruct-included-slots description))
+                 (let ((parent-slot (find (slot-name slot) parent-slot-layout :key #'slot-name)))
+                   (unless parent-slot
+                     (error "included slot ~S missing from parent structure ~S"
+                            (slot-name slot) (defstruct-included-structure-name description)))
+                   (unless (subtypep (slot-type slot) (slot-type parent-slot) environment)
+                     (error "included slot ~S has type ~S, which is not a subtype of ~S"
+                            (slot-name slot) (slot-type slot) (slot-type parent-slot)))
+                   ;; TODO: Check that the slot type is a subtype of the parent slot.
+                   (when (and (slot-read-only parent-slot)
+                              (not (slot-read-only slot)))
+                     (error "included slot ~S is read-only in parent" (slot-name slot)))))
+               ;; Turn the parent-slot-layout into a list of effective-ish slots
+               (values (append (loop for parent-slot in parent-slot-layout
+                                     collect (or (find (slot-name parent-slot)
+                                                       (defstruct-included-slots description)
+                                                       :key #'slot-name)
+                                                 (make-instance 'slot-description
+                                                                :name (slot-name parent-slot)
+                                                                :accessor-name (if (defstruct-conc-name description)
+                                                                                   (symbolicate (defstruct-conc-name description)
+                                                                                                (slot-name parent-slot))
+                                                                                   (slot-name parent-slot))
+                                                                :initform (slot-initform parent-slot)
+                                                                :initform-p (slot-initform-p parent-slot)
+                                                                :type (slot-type parent-slot)
+                                                                :read-only (slot-read-only parent-slot))))
+                               initial-offset-padding
+                               (if (defstruct-named description)
+                                   (list nil)
+                                   '())
+                               (defstruct-direct-slots description))
+                       (append (if (defstruct-named description)
+                                   (list (cons (defstruct-name description) (+ (length parent-slot-layout)
+                                                                               initial-offset)))
+                                   '())
+                               parent-name-layout)))))
+          (t
+           (if (defstruct-named description)
+               (values (append initial-offset-padding
+                               (list* nil
+                                      (defstruct-direct-slots description)))
+                       (list (cons (defstruct-name description) initial-offset)))
+               (values (append initial-offset-padding
+                               (defstruct-direct-slots description))
+                       '()))))))
 
 (defun generate-sequence-ordinary-constructor (description constructor-name slot-layout name-layout)
   (let ((suppliedp-syms (loop for slot in slot-layout
