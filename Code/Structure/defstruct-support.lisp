@@ -2,5 +2,5 @@
 
 (defun expand-defstruct (description environment)
   (if (defstruct-type description)
-      (expand-sequence-defstruct description environment)
+      (expand-typed-defstruct description environment)
       (expand-object-defstruct description environment)))

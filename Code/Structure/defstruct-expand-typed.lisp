@@ -1,8 +1,8 @@
-;;;; Expand sequence-based defstructs.
+;;;; Expand typed defstructs.
 
 (cl:in-package #:sicl-structure)
 
-(defun check-valid-defstruct-sequence (description environment)
+(defun check-valid-defstruct-type (description environment)
   ;; The type must name a symbol naming a sequence type,
   ;; or a list that lookes like (VECTOR element-type).
   (let ((type (defstruct-type description)))
@@ -25,7 +25,7 @@
         (and (consp type)
              (eql (first type) 'vector)))))
 
-(defun compute-sequence-defstruct-slot-layout (description environment)
+(defun compute-typed-defstruct-slot-layout (description environment)
   (let* ((initial-offset (or (defstruct-initial-offset description) 0))
          (initial-offset-padding (make-list initial-offset :initial-element nil)))
     (cond ((defstruct-included-structure-name description)
@@ -42,7 +42,7 @@
                       (defstruct-name description) (defstruct-name parent)
                       (defstruct-type description) (defstruct-type parent)))
              (multiple-value-bind (parent-slot-layout parent-name-layout)
-                 (compute-sequence-defstruct-slot-layout parent environment)
+                 (compute-typed-defstruct-slot-layout parent environment)
                ;; Make sure there are no conflicting slots and that all the included
                ;; slots exist.
                (dolist (slot (defstruct-direct-slots description))
@@ -95,7 +95,7 @@
                                (defstruct-direct-slots description))
                        '()))))))
 
-(defun generate-sequence-ordinary-constructor (description constructor-name slot-layout name-layout)
+(defun generate-typed-ordinary-constructor (description constructor-name slot-layout name-layout)
   (let ((suppliedp-syms (loop for slot in slot-layout
                               when slot
                                 collect (gensym (string (slot-name slot)))
@@ -137,9 +137,9 @@
                                 (setf (elt ,object ,index) ,name))))
          ,object))))
 
-;;;(generate-sequence-boa-constructor description environment (first constructor) (second constructor))
+;;;(generate-typed-boa-constructor description environment (first constructor) (second constructor))
 
-(defun generate-sequence-slot-accessor (slot index)
+(defun generate-typed-slot-accessor (slot index)
   `(progn
      (defun ,(slot-accessor-name slot) (structure)
        (the ,(slot-type slot) (elt structure ,index)))
@@ -147,37 +147,37 @@
          (list `(defun (setf ,(slot-accessor-name slot)) (new-value structure)
                   (setf (elt structure ,index) (the ,(slot-type slot) new-value)))))))
 
-(defun generate-sequence-predicate (description slot-layout name-layout predicate-name)
+(defun generate-typed-predicate (description slot-layout name-layout predicate-name)
   `(defun ,predicate-name (object)
      (and (typep object ',(defstruct-type description))
           (>= (length object) ,(length slot-layout))
           ,@(loop for (sym . index) in name-layout
                   collect `(eql (elt object ,index) ',sym)))))
 
-(defun generate-sequence-copier (description copier-name)
+(defun generate-typed-copier (description copier-name)
   (declare (ignore description))
   ;; TODO: Should this check the type?
   `(defun ,copier-name (object)
      (copy-seq object)))
 
-(defun expand-sequence-defstruct (description environment)
-  (check-valid-defstruct-sequence description environment)
+(defun expand-typed-defstruct (description environment)
+  (check-valid-defstruct-type description environment)
   (multiple-value-bind (slot-layout name-layout)
-      (compute-sequence-defstruct-slot-layout description environment)
+      (compute-typed-defstruct-slot-layout description environment)
     `(progn
        (eval-when (:compile-toplevel :load-toplevel :execute)
          (setf (find-structure-description ',(defstruct-name description))
                ',description))
        ,@(loop for constructor in (defstruct-constructors description)
                collect (if (cdr constructor)
-                           (generate-sequence-boa-constructor description environment (first constructor) (second constructor) slot-layout name-layout)
-                           (generate-sequence-ordinary-constructor description (first constructor) slot-layout name-layout)))
+                           (generate-typed-boa-constructor description environment (first constructor) (second constructor) slot-layout name-layout)
+                           (generate-typed-ordinary-constructor description (first constructor) slot-layout name-layout)))
        ,@(loop for slot in slot-layout
                for index from 0
                when slot
-               collect (generate-sequence-slot-accessor slot index))
+               collect (generate-typed-slot-accessor slot index))
        ,@(loop for predicate-name in (defstruct-predicates description)
-               collect (generate-sequence-predicate description slot-layout name-layout predicate-name))
+               collect (generate-typed-predicate description slot-layout name-layout predicate-name))
        ,@(loop for copier-name in (defstruct-copiers description)
-               collect (generate-sequence-copier description copier-name))
+               collect (generate-typed-copier description copier-name))
        ',(defstruct-name description))))

@@ -15,6 +15,6 @@
    (:file "defstruct-description-defclass")
    (:file "defstruct-parse")
    (:file "defstruct-expand-object")
-   (:file "defstruct-expand-sequence")
+   (:file "defstruct-expand-typed")
    (:file "defstruct-support")
    (:file "defstruct-defmacro")))
