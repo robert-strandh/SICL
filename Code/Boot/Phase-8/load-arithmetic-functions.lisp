@@ -26,6 +26,7 @@
   (load-source "Arithmetic/binary-logand-defgeneric.lisp" e5)
   (load-source "Arithmetic/binary-logand-defmethods.lisp" e5)
   (load-source "Arithmetic/logand-defun.lisp" e5)
+  (load-source "Arithmetic/lognot-defun.lisp" e5)
   (load-source "Arithmetic/numberp-defgeneric.lisp" e5)
   (load-source "Arithmetic/realp-defgeneric.lisp" e5)
   (load-source "Arithmetic/allocate-instance-defmethod-bignum.lisp" e5)
