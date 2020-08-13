@@ -30,6 +30,7 @@
   (load-source "Arithmetic/lognand-defun.lisp" e5)
   (load-source "Arithmetic/lognor-defun.lisp" e5)
   (load-source "Arithmetic/logandc1-defun.lisp" e5)
+  (load-source "Arithmetic/logandc2-defun.lisp" e5)
   (load-source "Arithmetic/numberp-defgeneric.lisp" e5)
   (load-source "Arithmetic/realp-defgeneric.lisp" e5)
   (load-source "Arithmetic/allocate-instance-defmethod-bignum.lisp" e5)
