@@ -140,12 +140,11 @@
 ;;;(generate-typed-boa-constructor description environment (first constructor) (second constructor))
 
 (defun generate-typed-slot-accessor (slot index)
-  `(progn
-     (defun ,(slot-accessor-name slot) (structure)
-       (the ,(slot-type slot) (elt structure ,index)))
-     ,@(unless (slot-read-only slot)
-         (list `(defun (setf ,(slot-accessor-name slot)) (new-value structure)
-                  (setf (elt structure ,index) (the ,(slot-type slot) new-value)))))))
+  `((defun ,(slot-accessor-name slot) (structure)
+      (the ,(slot-type slot) (elt structure ,index)))
+    ,@(unless (slot-read-only slot)
+        (list `(defun (setf ,(slot-accessor-name slot)) (new-value structure)
+                 (setf (elt structure ,index) (the ,(slot-type slot) new-value)))))))
 
 (defun generate-typed-predicate (description slot-layout name-layout predicate-name)
   `(defun ,predicate-name (object)
@@ -175,7 +174,7 @@
        ,@(loop for slot in slot-layout
                for index from 0
                when slot
-               collect (generate-typed-slot-accessor slot index))
+               append (generate-typed-slot-accessor slot index))
        ,@(loop for predicate-name in (defstruct-predicates description)
                collect (generate-typed-predicate description slot-layout name-layout predicate-name))
        ,@(loop for copier-name in (defstruct-copiers description)
