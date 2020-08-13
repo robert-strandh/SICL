@@ -92,11 +92,19 @@
 ;;; MAKE-INSTANCE path, letting INITIALIZE-INSTANCE take care of slot
 ;;; initialization.
 (defun generate-object-ordinary-constructor (description environment name)
-  (let ((slots (all-object-slot-names description environment)))
+  (let* ((slots (all-object-slot-names description environment))
+         ;; "The symbols which name the slots must not be used by the
+         ;; implementation as the names for the lambda variables in the constructor
+         ;; function, since one or more of those symbols might have been proclaimed
+         ;; special or might be defined as the name of a constant variable."
+         (slot-names (loop for slot in slots
+                           ;; Use MAKE-SYMBOL instead of GENSYM so the
+                           ;; name doesn't look too funny in the lambda-list.
+                           collect (make-symbol (symbol-name slot)))))
     ;; Provide keywords in the lambda-list to improve the development
     ;; experience.
-    `(defun ,name (&rest initargs &key ,@slots)
-       (declare (ignore ,@slots))
+    `(defun ,name (&rest initargs &key ,@slot-names)
+       (declare (ignore ,@slot-names))
        (apply #'make-instance ',(defstruct-name description) initargs))))
 
 ;;; BOA constructors are a more complicated as they have the ability

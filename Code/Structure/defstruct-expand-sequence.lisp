@@ -101,11 +101,24 @@
                                 collect (gensym (string (slot-name slot)))
                               else
                                 collect nil))
+        ;; "The symbols which name the slots must not be used by the
+        ;; implementation as the names for the lambda variables in the
+        ;; constructor function, since one or more of those symbols might
+        ;; have been proclaimed special or might be defined as the name
+        ;; of a constant variable."
+        (slot-name-syms (loop for slot in slot-layout
+                              when slot
+                                ;; Use MAKE-SYMBOL instead of GENSYM so the
+                                ;; name doesn't look too funny in the lambda-list.
+                                collect (make-symbol (string (slot-name slot)))
+                              else
+                                collect nil))
         (object (gensym "OBJECT")))
     `(defun ,constructor-name (&key ,@(loop for slot in slot-layout
+                                            for name in slot-name-syms
                                             for suppliedp in suppliedp-syms
                                             when slot
-                                            collect (list (slot-name slot) (slot-initform slot) suppliedp)))
+                                            collect (list name (slot-initform slot) suppliedp)))
        (declare (ignorable ,@(remove nil suppliedp-syms)))
        (let ((,object ,(if (vector-defstruct-p description)
                            `(make-array ,(length slot-layout) :element-type ',(second (canonicalize-struct-type (defstruct-type description))))
@@ -113,14 +126,15 @@
          ,@(loop for (name . name-index) in name-layout
                  collect `(setf (elt ,object ,name-index) ',name))
          ,@(loop for slot in slot-layout
+                 for name in slot-name-syms
                  for suppliedp in suppliedp-syms
                  for index from 0
                  when slot
                  collect (if (slot-initform-p slot)
-                             `(setf (elt ,object ,index) ,(slot-name slot))
+                             `(setf (elt ,object ,index) ,name)
                              ;; If no initform was supplied, then leave the slot uninitialized.
                              `(when ,suppliedp
-                                (setf (elt ,object ,index) ,(slot-name slot)))))
+                                (setf (elt ,object ,index) ,name))))
          ,object))))
 
 ;;;(generate-sequence-boa-constructor description environment (first constructor) (second constructor))
