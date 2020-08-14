@@ -5,11 +5,7 @@
   :components
   ((:file "null-defun")
    (:file "endp-defun")
-   ;; Currently, CONSP is defined to be (TYPEP ... 'CONS) and TYPEP
-   ;; starts by calling CONSP to determine whether the type specifier
-   ;; is atomic or compound.  So if we define CONSP that way, we get
-   ;; an infinite recursion.
-   ;; consp-defun)
+   (:file "consp-defun")
    (:file "listp-defun")
    (:file "list-defun")
    (:file "list-star-defun")
