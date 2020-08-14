@@ -38,81 +38,49 @@
           (error "slot ~S conflicts with slot in included structure ~S"
                  (slot-name slot) included-structure))))))
 
-(defun compute-included-structure-object-slots (description environment)
-  ;; All effective slots, not just explicitly included slots, need to be
-  ;; included so that the correct accessor methods are generated.
-  (when (defstruct-included-structure-name description)
-    (loop with included-structure = (find-class (defstruct-included-structure-name description)
-                                                environment)
-          for slot in (closer-mop:class-slots included-structure)
-          for inclusion = (find (closer-mop:slot-definition-name slot)
-                                (defstruct-included-slots description)
-                                :key #'slot-name)
-          collect (if inclusion
-                      ;; Explicitly included slot.
-                      `(,(closer-mop:slot-definition-name slot)
-                        :type ,(slot-type inclusion)
-                        :read-only ,(slot-read-only inclusion)
-                        ,(if (slot-read-only inclusion) :reader :accessor)
-                        ,(slot-accessor-name inclusion))
-                      ;; Implicitly included slot, only include the accessor option.
-                      (list (closer-mop:slot-definition-name slot)
-                            (if (structure-slot-definition-read-only slot) :reader :accessor)
-                            ;; An ugly wart, we have to generate the name here.
-                            (if (defstruct-conc-name description)
-                                (symbolicate (defstruct-conc-name description)
-                                             (closer-mop:slot-definition-name slot))
-                                (closer-mop:slot-definition-name slot)))))))
-
-(defun compute-direct-structure-object-slots (description)
-  (loop for slot in (defstruct-direct-slots description)
-        collect `(,(slot-name slot)
-                  :initarg ,(keywordify (slot-name slot))
-                  :type ,(slot-type slot)
-                  :read-only ,(slot-read-only slot)
-                  ,(if (slot-read-only slot) :reader :accessor)
-                  ,(slot-accessor-name slot))))
-
-(defun compute-structure-object-direct-default-initargs (description environment)
-  ;; All effective slots, not just explicitly included slots, need to be
-  ;; included so that initforms are evaluated in the correct lexical environment.
-  (when (defstruct-included-structure-name description)
-    (loop with included-structure = (find-class (defstruct-included-structure-name description)
-                                                environment)
-          for slot in (closer-mop:class-slots included-structure)
-          for initarg-kw = (keywordify (closer-mop:slot-definition-name slot))
-          for inclusion = (find (closer-mop:slot-definition-name slot)
-                                (defstruct-included-slots description)
-                                :key #'slot-name)
-          append (cond (inclusion
-                        ;; Explicitly included slot.
-                        ;; Suppress initform if requested.
-                        (if (slot-initform-p inclusion)
-                            (list initarg-kw (slot-initform inclusion))
-                            '()))
-                       (t
-                        (let* ((default-initargs (closer-mop:class-direct-default-initargs included-structure))
-                               (default-initarg (find initarg-kw default-initargs :key #'first)))
-                          (if default-initarg
-                              (list initarg-kw (second default-initarg))
-                              '())))))))
-
-(defun compute-structure-object-direct-default-initargs (description)
-  (loop for slot in (defstruct-direct-slots description)
-        when (slot-initform-p slot)
-        collect (keywordify (slot-name slot))
-        and collect (slot-initform slot)))
-
-(defun all-object-slot-names (description environment)
+(defun all-object-slots (description environment)
   ;; All of them, including implicitly included slots.
   (append
    (when (defstruct-included-structure-name description)
      (loop with included-structure = (find-class (defstruct-included-structure-name description)
                                                  environment)
+           with included-slots = (defstruct-included-slots description)
+           with default-initargs = (closer-mop:class-direct-default-initargs included-structure)
            for slot in (closer-mop:class-slots included-structure)
-           collect (closer-mop:slot-definition-name slot)))
-   (loop for slot in (defstruct-direct-slots description)
-         collect (slot-name slot))))
+           for slot-name = (closer-mop:slot-definition-name slot)
+           for inclusion = (find slot-name included-slots :key #'slot-name)
+           collect (or inclusion
+                       ;; For implicitly included slots, reconstruct a slot-description
+                       ;; from the effective slot-definition.
+                       (let* ((initarg-kw (keywordify slot-name))
+                              (default-initarg (find initarg-kw default-initargs :key #'first)))
+                         (make-instance 'slot-description
+                                        :name slot-name
+                                        ;; Generate an accessor with the right name,
+                                        ;; don't use the one generated for the parent.
+                                        :accessor-name (if (defstruct-conc-name description)
+                                                           (symbolicate (defstruct-conc-name description)
+                                                                        slot-name)
+                                                           slot-name)
+                                        :initform (second default-initarg)
+                                        :initform-p (not (not default-initarg))
+                                        :type (closer-mop:slot-definition-type slot)
+                                        :read-only (structure-slot-definition-read-only slot))))))
+   (defstruct-direct-slots description)))
+
+(defun compute-structure-object-defclass-slots (all-slots)
+  (loop for slot in all-slots
+        collect `(,(slot-name slot)
+                  :type ,(slot-type slot)
+                  :read-only ,(slot-read-only slot)
+                  ,(if (slot-read-only slot) :reader :accessor)
+                  ,(slot-accessor-name slot))))
+
+(defun compute-structure-object-defclass-default-initargs (all-slots)
+  (loop for slot in all-slots
+        when (slot-initform-p slot)
+        collect (keywordify (slot-name slot))
+        and collect (slot-initform slot)))
 
 ;;; Ordinary non-BOA constructors are simple, go through the normal
 ;;; MAKE-INSTANCE path, letting INITIALIZE-INSTANCE take care of slot
@@ -179,28 +147,27 @@
 
 (defun expand-object-defstruct (description environment)
   (check-included-structure-object description environment)
-  `(progn
-     (eval-when (:compile-toplevel :load-toplevel :execute)
-       (defclass ,(defstruct-name description)
-           (,(or (defstruct-included-structure-name description)
-                 'structure-object))
-         (,@(compute-included-structure-object-slots description environment)
-          ,@(compute-direct-structure-object-slots description))
-         (:metaclass structure-class)
-         (:default-initargs ,@(compute-structure-object-included-default-initargs description environment)
-                            ,@(compute-structure-object-direct-default-initargs description))))
-     ,@(loop for constructor in (defstruct-constructors description)
-             collect (if (cdr constructor)
-                         (generate-object-boa-constructor description environment (first constructor) (second constructor))
-                         (generate-object-ordinary-constructor description environment (first constructor))))
-     ,@(loop for predicate-name in (defstruct-predicates description)
-             collect `(defun ,predicate-name (object)
-                        (typep object ',(defstruct-name description))))
-     ,@(loop for copier-name in (defstruct-copiers description)
-             collect `(defun ,copier-name (object)
-                        (check-type object ,(defstruct-name description))
-                        (copy-structure object)))
-     ,@(when (defstruct-print-object description)
-         (list `(defmethod print-object ((object ,(defstruct-name description)) stream)
-                  (funcall #',(defstruct-print-object description) object stream))))
-     ',(defstruct-name description)))
+  (let ((all-slots (all-object-slots description environment)))
+    `(progn
+       (eval-when (:compile-toplevel :load-toplevel :execute)
+         (defclass ,(defstruct-name description)
+             (,(or (defstruct-included-structure-name description)
+                   'structure-object))
+           (,@(compute-structure-object-defclass-slots all-slots))
+           (:metaclass structure-class)
+           (:default-initargs ,@(compute-structure-object-defclass-default-initargs all-slots))))
+       ,@(loop for constructor in (defstruct-constructors description)
+               collect (if (cdr constructor)
+                           (generate-object-boa-constructor description environment (first constructor) (second constructor))
+                           (generate-object-ordinary-constructor description environment (first constructor))))
+       ,@(loop for predicate-name in (defstruct-predicates description)
+               collect `(defun ,predicate-name (object)
+                          (typep object ',(defstruct-name description))))
+       ,@(loop for copier-name in (defstruct-copiers description)
+               collect `(defun ,copier-name (object)
+                          (check-type object ,(defstruct-name description))
+                          (copy-structure object)))
+       ,@(when (defstruct-print-object description)
+           (list `(defmethod print-object ((object ,(defstruct-name description)) stream)
+                    (funcall #',(defstruct-print-object description) object stream))))
+       ',(defstruct-name description))))
