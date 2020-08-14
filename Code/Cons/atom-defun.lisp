@@ -2,4 +2,3 @@
 
 (defun atom (object)
   (not (consp object)))
-
