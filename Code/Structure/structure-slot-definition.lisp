@@ -1,5 +1,14 @@
 (cl:in-package #:sicl-structure)
 
+(defmethod closer-mop:compute-default-initargs ((class structure-class))
+  ;; Modify the default initargs behaviour to stop default initargs from
+  ;; being inherited from superclasses.
+  ;; This, along with help from defstruct, allows the inheritance behaviour
+  ;; for slot initforms to be implemented properly.
+  (remove-duplicates
+   (closer-mop:class-direct-default-initargs class)
+   :key #'first :from-end t))
+
 (defclass structure-slot-definition (closer-mop:standard-slot-definition)
   ((%read-only :initarg :read-only :reader structure-slot-definition-read-only)))
 

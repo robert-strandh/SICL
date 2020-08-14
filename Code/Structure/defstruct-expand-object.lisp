@@ -51,8 +51,6 @@
           collect (if inclusion
                       ;; Explicitly included slot.
                       `(,(closer-mop:slot-definition-name slot)
-                        ,@(when (slot-initform-p slot)
-                            (list :initform (slot-initform inclusion)))
                         :type ,(slot-type inclusion)
                         :read-only ,(slot-read-only inclusion)
                         ,(if (slot-read-only inclusion) :reader :accessor)
@@ -70,12 +68,40 @@
   (loop for slot in (defstruct-direct-slots description)
         collect `(,(slot-name slot)
                   :initarg ,(keywordify (slot-name slot))
-                  ,@(when (slot-initform-p slot)
-                      (list :initform (slot-initform slot)))
                   :type ,(slot-type slot)
                   :read-only ,(slot-read-only slot)
                   ,(if (slot-read-only slot) :reader :accessor)
                   ,(slot-accessor-name slot))))
+
+(defun compute-structure-object-direct-default-initargs (description environment)
+  ;; All effective slots, not just explicitly included slots, need to be
+  ;; included so that initforms are evaluated in the correct lexical environment.
+  (when (defstruct-included-structure-name description)
+    (loop with included-structure = (find-class (defstruct-included-structure-name description)
+                                                environment)
+          for slot in (closer-mop:class-slots included-structure)
+          for initarg-kw = (keywordify (closer-mop:slot-definition-name slot))
+          for inclusion = (find (closer-mop:slot-definition-name slot)
+                                (defstruct-included-slots description)
+                                :key #'slot-name)
+          append (cond (inclusion
+                        ;; Explicitly included slot.
+                        ;; Suppress initform if requested.
+                        (if (slot-initform-p inclusion)
+                            (list initarg-kw (slot-initform inclusion))
+                            '()))
+                       (t
+                        (let* ((default-initargs (closer-mop:class-direct-default-initargs included-structure))
+                               (default-initarg (find initarg-kw default-initargs :key #'first)))
+                          (if default-initarg
+                              (list initarg-kw (second default-initarg))
+                              '())))))))
+
+(defun compute-structure-object-direct-default-initargs (description)
+  (loop for slot in (defstruct-direct-slots description)
+        when (slot-initform-p slot)
+        collect (keywordify (slot-name slot))
+        and collect (slot-initform slot)))
 
 (defun all-object-slot-names (description environment)
   ;; All of them, including implicitly included slots.
@@ -160,7 +186,9 @@
                  'structure-object))
          (,@(compute-included-structure-object-slots description environment)
           ,@(compute-direct-structure-object-slots description))
-         (:metaclass structure-class)))
+         (:metaclass structure-class)
+         (:default-initargs ,@(compute-structure-object-included-default-initargs description environment)
+                            ,@(compute-structure-object-direct-default-initargs description))))
      ,@(loop for constructor in (defstruct-constructors description)
              collect (if (cdr constructor)
                          (generate-object-boa-constructor description environment (first constructor) (second constructor))
