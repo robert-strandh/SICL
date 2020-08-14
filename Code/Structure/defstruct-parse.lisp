@@ -7,26 +7,26 @@
   '(:conc-name :constructor :copier :predicate :include
     :print-object :print-function :type :named :initial-offset))
 
-(defun option-name (option)
+(defun extract-option-name (option)
   (if (listp option)
       (first option)
       option))
 
 (defun check-defstruct-option-names-valid (options)
   (dolist (option options)
-    (let ((option-name (option-name option)))
+    (let ((option-name (extract-option-name option)))
       (unless (member option-name *valid-defstruct-option-names*)
-        (error "invalid defstruction option name ~S" option-name)))))
+        (error 'invalid-option-name :option-name option-name)))))
 
 (defun get-options (options option-name)
   (loop for option in options
-        when (eql (option-name option) option-name)
+        when (eql (extract-option-name option) option-name)
           collect option))
 
 (defun get-singular-option (options option-name)
   (let ((opts (get-options options option-name)))
     (when (rest opts)
-      (error "defstruct option ~S appears multiple times, must appear zero or one times" option-name))
+      (error 'duplicate-option :option-name option-name))
     (first opts)))
 
 ;;; ### Is this defined in a common place?
@@ -44,11 +44,11 @@
           ((endp (cddr option))
            ;; (:conc-name string-designator)
            (unless (typep (second option) 'string-designator)
-             (error "conc-name ~S must be a string designator"
-                    (second option)))
+             (error 'conc-name-must-be-string-designator
+                    :datum (second option)))
            (string (second option)))
           (t
-           (error "malformed conc-name option ~S" option)))))
+           (error 'malformed-option :option option)))))
 
 (defun symbolicate (&rest string-designators)
   (intern (apply #'concatenate 'string (mapcar #'string string-designators))
@@ -62,16 +62,16 @@
         (constructor-options (get-options options :constructor)))
     (cond (constructor-options
            (let ((constructors '()))
-             (labels ((check-constructor-not-defined (name)
-                        (when (member name constructors :key #'first)
-                          (error "constructor ~S defined multiple times" name)))
-                      (add-ordinary (name)
-                        (check-constructor-not-defined name)
-                        (push (list name) constructors))
-                      (add-boa (name lambda-list)
-                        (check-constructor-not-defined name)
-                        (push (list name lambda-list) constructors)))
-               (dolist (option constructor-options)
+             (dolist (option constructor-options)
+               (labels ((check-constructor-not-defined (name)
+                          (when (member name constructors :key #'first)
+                            (error 'duplicate-name :option option)))
+                        (add-ordinary (name)
+                          (check-constructor-not-defined name)
+                          (push (list name) constructors))
+                        (add-boa (name lambda-list)
+                          (check-constructor-not-defined name)
+                          (push (list name lambda-list) constructors)))
                  (cond ((or (not (listp option)) (null (rest option)))
                         ;; :constructor or (:constructor)
                         ;; Generate the default ordinary constructor.
@@ -79,18 +79,17 @@
                        ((null (cddr option))
                         ;; (:constructor <name>)
                         (unless (symbolp (second option))
-                          (error "constructor name ~S is not a symbol" (second option)))
+                          (error 'name-must-be-symbol :option option :datum (second option)))
                         (when (second option)
                           (add-ordinary (second option))))
                        ((null (cdddr option))
                         ;; (:constructor <name> <arglist>)
                         (unless (symbolp (second option))
-                          (error "constructor name ~S is not a symbol" (second option)))
-                        ;; TODO: Verify that the arglist is a sensible BOA LL
+                          (error 'name-must-be-symbol :option option :datum (second option)))
                         (when (second option)
                           (add-boa (second option) (third option))))
                        (t
-                        (error "malformed constructor option ~S" option))))
+                        (error 'malformed-option :option option))))
                (reverse constructors))))
           (t
            ;; A single default ordinary constructor
@@ -100,21 +99,21 @@
   (let ((applicable-options (get-options options option-name)))
     (cond (applicable-options
            (let ((result '()))
-             (flet ((add (name)
-                      (unless (member name result)
-                        (error "duplicate ~S name ~S" option-name name))
-                      (push name result)))
                (dolist (option applicable-options)
+                 (flet ((add (name)
+                          (unless (member name result)
+                            (error 'duplicate-name :option option))
+                          (push name result)))
                  (cond ((or (not (listp option)) (endp (rest option)))
                         ;; <opt> or (<opt>)
                         (add default-name))
                        ((endp (cddr option))
                         ;; (<opt> name)
                         (unless (symbolp (second option))
-                          (error "~S name ~S is not a symbol" option-name (second option)))
+                          (error 'name-must-be-symbol :option option :datum (second option)))
                         (add (second option)))
                        (t
-                        (error "malformed ~S option ~S" option-name option)))))
+                        (error 'malformed-option :option option)))))
              (reverse result)))
           (t
            (list default-name)))))
@@ -129,7 +128,7 @@
          (parse-copier/predicate-options options :predicate (symbolicate name "-P")))
         (t
          (when (get-options options :predicate)
-           (error ":predicate not permitted on un-named typed structures"))
+           (error 'predicate-requires-named-structure))
          '())))
 
 (defun parse-named-option (options)
@@ -143,7 +142,7 @@
            ;; :named
            t)
           (t
-           (error "malformed :named option ~S" option)))))
+           (error 'malformed-option :option option)))))
 
 (defun parse-type-option (options)
   (let ((option (get-singular-option options :type)))
@@ -158,7 +157,7 @@
            ;; parsed properly. NIL is an invalid type to use here anyway.
            (second option))
           (t
-           (error "malformed :type option ~S" option)))))
+           (error 'malformed-option :option option)))))
 
 (defun parse-initial-offset-option (options)
   (let ((option (get-singular-option options :initial-offset)))
@@ -171,19 +170,19 @@
                 (not (minusp (second option))))
            ;; (:initial-offset <non-negative-integer>)
            (when (not (get-singular-option options :type))
-             (error ":initial-offset only valid when :type is also specified"))
+             (error 'initial-offset-requires-typed-structure))
            (second option))
           (t
-           (error "malformed :initial-offset option ~S" option)))))
+           (error 'malformed-option :option option)))))
 
 (defun parse-print-object-option (options)
   (let ((print-object (get-singular-option options :print-object))
         (print-function (get-singular-option options :print-function)))
     (when (and (or print-object print-function)
                (get-singular-option options :type))
-      (error ":print-object/:print-function mutually exclusive with :type"))
+      (error 'print-object/function-requires-structure-object-structure))
     (when (and print-object print-function)
-      (error ":print-object and :print-function are mutually exclusive"))
+      (error 'print-object-and-print-function-mutually-exclusive))
     ;; Canonicalize :print-function down to :print-object
     (when print-function
       (cond ((endp (rest print-function))
@@ -200,7 +199,7 @@
                                      (funcall #',(second print-function)
                                               object stream 0)))))
             (t
-             (error "malformed :print-function option ~S" print-function))))
+             (error 'malformed-option :option print-function))))
     (cond ((not print-object)
            ;; Not specified, no printing behaviour specified.
            nil)
@@ -212,31 +211,32 @@
                 (second print-object))
            (second print-object))
           (t
-           (error "malformed :print-object option ~S" print-object)))))
+           (error 'malformed-option :option print-object)))))
 
 (defun check-duplicate-slot-option (slot-description slot-options option-name)
   (loop with seen = nil
         for (name value) on slot-options by #'cddr
         when (eql name option-name)
           do (if seen
-                 (error "Duplicate slot option ~S in slot description ~S"
-                        option-name slot-description)
+                 (error 'duplicate-slot-option
+                        :option-name option-name
+                        :slot-description slot-description)
                  (setf seen t))))
 
 (defun parse-slot-description (slot-description conc-name)
   (unless (or (symbolp slot-description)
               (listp slot-description))
-    (error "malformed slot-description ~S, must be symbol or list" slot-description))
+    (error 'malformed-slot-description :slot-description slot-description))
   (when (symbolp slot-description)
     (setf slot-description (list slot-description)))
   (let ((slot-name (first slot-description))
         (slot-options (cddr slot-description)))
-    (when (null slot-name)
-      (error "slot name is NIL"))
-    (unless (symbolp slot-name)
-      (error "slot name ~S it not a symbol" slot-name))
+    (when (or (null slot-name)
+              (not (symbolp slot-name)))
+      (error 'slot-name-must-be-non-nil-symbol
+             :datum slot-name))
     (unless (evenp (length slot-options))
-      (error "malformed slot-options in slot description ~S" slot-description))
+      (error 'malformed-slot-description :slot-description slot-description))
     (check-duplicate-slot-option slot-description slot-options :type)
     (check-duplicate-slot-option slot-description slot-options :read-only)
     (make-instance 'slot-description
@@ -262,11 +262,12 @@
                 (symbolp (second option)))
            ;; (:include included-structure-name {slot-description}*)
            (when (null (second option))
-             (error "can't include type nil, not a structure type"))
+             (error 'included-structure-name-must-name-structure-type
+                    :structure-name (second option)))
            (values (second option)
                    (parse-slot-descriptions (cddr option) conc-name)))
           (t
-           (error "malformed :include option ~S" option)))))
+           (error 'malformed-option option)))))
 
 (defun separate-documentation-and-slots (documentation-and-slots)
   (if (stringp (first documentation-and-slots))
@@ -277,14 +278,12 @@
 (defun parse-defstruct (name-and-options documentation-and-slots)
   (multiple-value-bind (documentation slots)
       (separate-documentation-and-slots documentation-and-slots)
-    (when (null name-and-options)
-      (error "empty name-and-options list"))
     (multiple-value-bind (name options)
-        (if (listp name-and-options)
+        (if (consp name-and-options)
             (values (first name-and-options) (rest name-and-options))
             (values name-and-options '()))
       (unless (symbolp name)
-        (error "struct name must be a symbol"))
+        (error 'structure-name-must-be-non-nil-symbol :datum name))
       (check-defstruct-option-names-valid options)
       (let* ((conc-name (parse-conc-name-option options name))
              (direct-slots (parse-slot-descriptions slots conc-name)))
@@ -294,12 +293,12 @@
           (let ((slot-names '()))
             (dolist (slot included-slots)
               (when (find (slot-name slot) slot-names :test #'string=)
-                (error "duplicate included slot named ~S" (slot-name slot)))
+                (error 'duplicate-slot :slot-name (slot-name slot)))
               (push (slot-name slot) slot-names))
             ;; Also checks against the included names.
             (dolist (slot direct-slots)
               (when (find (slot-name slot) slot-names :test #'string=)
-                (error "duplicate slot named ~S" (slot-name slot)))
+                (error 'duplicate-slot :slot-name (slot-name slot)))
               (push (slot-name slot) slot-names)))
           (let ((constructors (parse-constructor-options options name))
                 (copiers (parse-copier-options options name))
