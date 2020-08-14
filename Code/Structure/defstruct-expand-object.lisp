@@ -245,7 +245,7 @@
                     (generate-object-boa-constructor description (first constructor) (second constructor) all-slots)
                     (generate-object-ordinary-constructor description (first constructor) all-slots))))
 
-(defun expand-object-defstruct (description environment)
+(defmethod expand-defstruct ((description defstruct-object-description) environment)
   (check-included-structure-object description environment)
   (let ((all-slots (all-object-slots description environment)))
     `(progn

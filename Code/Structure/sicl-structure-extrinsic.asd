@@ -14,7 +14,7 @@
    (:file "copy-structure")
    (:file "defstruct-description-defclass")
    (:file "defstruct-parse")
+   (:file "defstruct-support")
    (:file "defstruct-expand-object")
    (:file "defstruct-expand-typed")
-   (:file "defstruct-support")
    (:file "defstruct-defmacro")))

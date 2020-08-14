@@ -9,13 +9,17 @@
    (%constructors :initarg :constructors :reader defstruct-constructors)
    (%predicates :initarg :predicates :reader defstruct-predicates)
    (%copiers :initarg :copiers :reader defstruct-copiers)
-   (%named :initarg :named :reader defstruct-named)
-   (%type :initarg :type :reader defstruct-type)
-   (%initial-offset :initarg :initial-offset :reader defstruct-initial-offset)
-   (%print-object :initarg :print-object :reader defstruct-print-object)
    (%included-structure-name :initarg :included-structure-name :reader defstruct-included-structure-name)
    (%included-slots :initarg :included-slots :reader defstruct-included-slots)
    (%direct-slots :initarg :direct-slots :reader defstruct-direct-slots)))
+
+(defclass defstruct-typed-description (defstruct-description)
+  ((%named :initarg :named :reader defstruct-named)
+   (%type :initarg :type :reader defstruct-type)
+   (%initial-offset :initarg :initial-offset :reader defstruct-initial-offset)))
+
+(defclass defstruct-object-description (defstruct-description)
+  ((%print-object :initarg :print-object :reader defstruct-print-object)))
 
 (defclass slot-description ()
   ((%name :initarg :name :reader slot-name)

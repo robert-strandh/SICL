@@ -301,17 +301,35 @@
               (when (find (slot-name slot) slot-names :test #'string=)
                 (error "duplicate slot named ~S" (slot-name slot)))
               (push (slot-name slot) slot-names)))
-          (make-instance 'defstruct-description
-                         :name name
-                         :documentation documentation
-                         :conc-name conc-name
-                         :constructors (parse-constructor-options options name)
-                         :copiers (parse-copier-options options name)
-                         :predicates (parse-predicate-options options name)
-                         :named (parse-named-option options)
-                         :type (parse-type-option options)
-                         :initial-offset (parse-initial-offset-option options)
-                         :print-object (parse-print-object-option options)
-                         :included-structure-name included-structure-name
-                         :included-slots included-slots
-                         :direct-slots direct-slots))))))
+          (let ((constructors (parse-constructor-options options name))
+                (copiers (parse-copier-options options name))
+                (predicates (parse-predicate-options options name))
+                (named (parse-named-option options))
+                (type (parse-type-option options))
+                (initial-offset (parse-initial-offset-option options))
+                (print-object (parse-print-object-option options)))
+            (if type
+                (make-instance 'defstruct-typed-description
+                               :name name
+                               :documentation documentation
+                               :conc-name conc-name
+                               :constructors constructors
+                               :copiers copiers
+                               :predicates predicates
+                               :named named
+                               :type type
+                               :initial-offset initial-offset
+                               :included-structure-name included-structure-name
+                               :included-slots included-slots
+                               :direct-slots direct-slots)
+                (make-instance 'defstruct-object-description
+                               :name name
+                               :documentation documentation
+                               :conc-name conc-name
+                               :constructors constructors
+                               :copiers copiers
+                               :predicates predicates
+                               :print-object print-object
+                               :included-structure-name included-structure-name
+                               :included-slots included-slots
+                               :direct-slots direct-slots))))))))

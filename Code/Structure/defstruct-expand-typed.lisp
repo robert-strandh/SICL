@@ -298,7 +298,7 @@
   `(defun ,copier-name (object)
      (copy-seq object)))
 
-(defun expand-typed-defstruct (description environment)
+(defmethod expand-defstruct ((description defstruct-typed-description) environment)
   (check-valid-defstruct-type description environment)
   (multiple-value-bind (slot-layout name-layout)
       (compute-typed-defstruct-slot-layout description environment)
