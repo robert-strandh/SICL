@@ -254,7 +254,7 @@
          (let ((,object ,(generate-typed-allocate-instance-call description slot-layout)))
            ,@(fill-named-fields object name-layout)
            ,@(loop for slot in slot-layout
-                   for name = (slot-name slot)
+                   for name = (and slot (slot-name slot))
                    for index from 0
                    when (and slot
                              (not (find name unbound-slots))
