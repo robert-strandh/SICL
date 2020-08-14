@@ -1,4 +1,4 @@
 (cl:in-package #:sicl-cons)
 
 (defun consp (object)
-  (typep object 'cons))
+  (if (cleavir-primop:consp object) t nil))
