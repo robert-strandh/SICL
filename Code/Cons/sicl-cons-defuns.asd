@@ -6,6 +6,7 @@
   ((:file "null-defun")
    (:file "endp-defun")
    (:file "consp-defun")
+   (:file "atom-defun")
    (:file "listp-defun")
    (:file "list-defun")
    (:file "list-star-defun")
