@@ -85,8 +85,8 @@
 ;;; Ordinary non-BOA constructors are simple, go through the normal
 ;;; MAKE-INSTANCE path, letting INITIALIZE-INSTANCE take care of slot
 ;;; initialization.
-(defun generate-object-ordinary-constructor (description environment name)
-  (let* ((slots (all-object-slot-names description environment))
+(defun generate-object-ordinary-constructor (description name all-slots)
+  (let* ((slots (mapcar #'slot-name all-slots))
          ;; "The symbols which name the slots must not be used by the
          ;; implementation as the names for the lambda variables in the constructor
          ;; function, since one or more of those symbols might have been proclaimed
@@ -119,11 +119,11 @@
 ;;;
 ;;; TODO: Implement the above properly. BOA constructors don't currently
 ;;; follow the spec but should be good enough for most use cases.
-(defun generate-object-boa-constructor (description environment name lambda-list)
+(defun generate-object-boa-constructor (description name lambda-list all-slots)
   (multiple-value-bind (requireds optionals rest keys aok auxs has-keys)
       (alexandria:parse-ordinary-lambda-list lambda-list)
     (declare (ignore aok has-keys))
-    (let ((all-slots (all-object-slot-names description environment))
+    (let ((all-slots (mapcar #'slot-name all-slots))
           ;; Pick out the slot names and compute the slots without a lambda variable
           (assigned-slots (append requireds
                                   (mapcar #'first optionals)
@@ -145,6 +145,12 @@
                   collect (keywordify slot)
                   and collect slot))))))
 
+(defun generate-object-constructors (description all-slots)
+  (loop for constructor in (defstruct-constructors description)
+        collect (if (cdr constructor)
+                    (generate-object-boa-constructor description (first constructor) (second constructor) all-slots)
+                    (generate-object-ordinary-constructor description (first constructor) all-slots))))
+
 (defun expand-object-defstruct (description environment)
   (check-included-structure-object description environment)
   (let ((all-slots (all-object-slots description environment)))
@@ -156,10 +162,7 @@
            (,@(compute-structure-object-defclass-slots all-slots))
            (:metaclass structure-class)
            (:default-initargs ,@(compute-structure-object-defclass-default-initargs all-slots))))
-       ,@(loop for constructor in (defstruct-constructors description)
-               collect (if (cdr constructor)
-                           (generate-object-boa-constructor description environment (first constructor) (second constructor))
-                           (generate-object-ordinary-constructor description environment (first constructor))))
+       ,@(generate-object-constructors description all-slots)
        ,@(loop for predicate-name in (defstruct-predicates description)
                collect `(defun ,predicate-name (object)
                           (typep object ',(defstruct-name description))))
