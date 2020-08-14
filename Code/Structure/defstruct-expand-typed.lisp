@@ -240,7 +240,6 @@
                            '()))
                  (slot (find name slot-layout
                              :key (lambda (x) (and x (slot-name x))))))
-            (when slot)
             (cond ((or (not slot)
                        bits)
                    ;; Initform supplied, overrides any initform specified in the defstruct.
@@ -255,22 +254,22 @@
          (let ((,object ,(generate-typed-allocate-instance-call description slot-layout)))
            ,@(fill-named-fields object name-layout)
            ,@(loop for slot in slot-layout
+                   for name = (slot-name slot)
                    for index from 0
                    when (and slot
                              (not (find name unbound-slots))
                              (or (find name bound-slots)
                                  (slot-initform-p slot)))
-                     collect (let ((name (slot-name slot)))
-                               (cond ((not (find name bound-slots))
-                                      ;; Slot initialized by initform.
-                                      `(setf (elt ,object ,index) ,(slot-initform slot)))
-                                     ((find name potentially-unbound-slots)
-                                      ;; Slot may or may not have a value.
-                                      `(unless (eq ,name '%uninitialized%)
-                                         (setf (elt ,object ,index) ,name)))
-                                     (t
-                                      ;; Slot initialized by argument.
-                                      `(setf (elt ,object ,index) ,name)))))
+                     collect (cond ((not (find name bound-slots))
+                                    ;; Slot initialized by initform.
+                                    `(setf (elt ,object ,index) ,(slot-initform slot)))
+                                   ((find name potentially-unbound-slots)
+                                    ;; Slot may or may not have a value.
+                                    `(unless (eq ,name '%uninitialized%)
+                                       (setf (elt ,object ,index) ,name)))
+                                   (t
+                                    ;; Slot initialized by argument.
+                                    `(setf (elt ,object ,index) ,name))))
            ,object)))))
 
 (defun generate-typed-constructors (description slot-layout name-layout)

@@ -116,34 +116,128 @@
 ;;; "If no default value is supplied for an aux variable variable, the
 ;;; consequences are undefined if an attempt is later made to read
 ;;; the corresponding slot's value before a value is explicitly assigned."
-;;;
-;;; TODO: Implement the above properly. BOA constructors don't currently
-;;; follow the spec but should be good enough for most use cases.
 (defun generate-object-boa-constructor (description name lambda-list all-slots)
-  (multiple-value-bind (requireds optionals rest keys aok auxs has-keys)
-      (alexandria:parse-ordinary-lambda-list lambda-list)
-    (declare (ignore aok has-keys))
-    (let ((all-slots (mapcar #'slot-name all-slots))
-          ;; Pick out the slot names and compute the slots without a lambda variable
-          (assigned-slots (append requireds
-                                  (mapcar #'first optionals)
-                                  (if rest
-                                      (list rest)
-                                      '())
-                                  (mapcar #'cadar keys) ; (second (first k))
-                                  (mapcar #'first auxs)))
-          ;; Suppliedp variables aren't used for binding
-          (other-vars (append (remove nil (mapcar #'third optionals))
-                              (remove 'nil (mapcar #'third keys)))))
-      `(defun ,name ,lambda-list
-         (declare (ignorable ,@(set-difference (union other-vars assigned-slots)
-                                               all-slots)))
-         (make-instance
-          ',(defstruct-name description)
-          ,@(loop for slot in assigned-slots
-                  when (member slot all-slots)
-                  collect (keywordify slot)
-                  and collect slot))))))
+  (multiple-value-bind (requireds optionals rest keywords allow-other-keys-p auxs keyp)
+      ;; Don't normalize, as BOA lambda lists have different defaulting behaviour
+      ;; for initforms.
+      (alexandria:parse-ordinary-lambda-list lambda-list :normalize nil)
+    (let ((object (gensym "OBJECT"))
+          (reconstructed-lambda-list '())
+          ;; Slots that have been mentioned in the lambda-list and perform
+          ;; some kind of initialization.
+          (bound-slots '())
+          ;; Slots that might be bound to a value or might be left uninitialized
+          ;; due to the lack of an initform.
+          (potentially-unbound-slots '())
+          ;; Slots that have been made unbound by &aux
+          (unbound-slots '()))
+      (dolist (req requireds)
+        (push req reconstructed-lambda-list)
+        (push req bound-slots))
+      (when optionals
+        (push '&optional reconstructed-lambda-list)
+        (dolist (opt optionals)
+          (let* ((name (if (consp opt)
+                           (first opt)
+                           opt))
+                 (bits (if (consp opt)
+                           (rest opt)
+                           '()))
+                 (slot (find name all-slots :key #'slot-name)))
+            (when slot
+              (push name bound-slots))
+            (cond ((or (not slot)
+                       bits)
+                   ;; Initform supplied, overrides any initform specified in the defstruct.
+                   ;; Or this arg doesn't name a slot at all.
+                   (push opt reconstructed-lambda-list))
+                  ((slot-initform-p slot)
+                   ;; Use the slot initform.
+                   (push (list name (slot-initform slot))
+                         reconstructed-lambda-list))
+                  (t
+                   ;; Leave uninitialized.
+                   (push (list name '%uninitialized%)
+                         reconstructed-lambda-list)
+                   (push name potentially-unbound-slots))))))
+      (when rest
+        (push '&rest reconstructed-lambda-list)
+        (push rest reconstructed-lambda-list)
+        (push rest bound-slots))
+      (when keyp
+        (push '&key reconstructed-lambda-list)
+        (dolist (key keywords)
+          (let* ((name (cond ((not (consp key)) ; &key foo
+                              key)
+                             ((consp (first key)) ; &key ((:foo foo) ...)
+                              (second (first key)))
+                             (t ; &key (foo ...)
+                              (first key))))
+                 (keyword (cond ((and (consp key) ; &key ((:foo foo) ...)
+                                      (consp (first key)))
+                                 (second (first key)))
+                                (t
+                                 (keywordify name))))
+                 (bits (if (consp key)
+                           (rest key)
+                           '()))
+                 (slot (find name all-slots :key #'slot-name)))
+            (when slot
+              (push name bound-slots))
+            (cond ((or (not slot)
+                       bits)
+                   ;; Initform supplied, overrides any initform specified in the defstruct.
+                   ;; Or this arg doesn't name a slot at all.
+                   (push key reconstructed-lambda-list))
+                  ((slot-initform-p slot)
+                   ;; Use the slot initform.
+                   (push (list (list keyword name) (slot-initform slot))
+                         reconstructed-lambda-list))
+                  (t
+                   ;; Leave uninitialized.
+                   (push (list (list keyword name) '%uninitialized%)
+                         reconstructed-lambda-list)
+                   (push name potentially-unbound-slots)))))
+        (when allow-other-keys-p
+          (push '&allow-other-keys reconstructed-lambda-list)))
+      (when auxs
+        (push '&aux reconstructed-lambda-list)
+        (dolist (aux auxs)
+          (let* ((name (if (consp aux)
+                           (first aux)
+                           aux))
+                 (bits (if (consp aux)
+                           (rest aux)
+                           '()))
+                 (slot (find name all-slots :key #'slot-name)))
+            (cond ((or (not slot)
+                       bits)
+                   ;; Initform supplied, overrides any initform specified in the defstruct.
+                   ;; Or this arg doesn't name a slot at all.
+                   (push aux reconstructed-lambda-list)
+                   (push name bound-slots))
+                  (t
+                   ;; Completely override the any initform and leave the
+                   ;; slot fully unbound.
+                   (push name unbound-slots))))))
+      `(defun ,name ,(nreverse reconstructed-lambda-list)
+         (let ((,object (allocate-instance (find-class ',(defstruct-name description)))))
+           ,@(loop for slot in all-slots
+                   for name = (slot-name slot)
+                   when (and (not (find name unbound-slots))
+                             (or (find name bound-slots)
+                                 (slot-initform-p slot)))
+                     collect (cond ((not (find name bound-slots))
+                                    ;; Slot initialized by initform.
+                                    `(setf (slot-value ,object ',name) ,(slot-initform slot)))
+                                    ((find name potentially-unbound-slots)
+                                     ;; Slot may or may not have a value.
+                                     `(unless (eq ,name '%uninitialized%)
+                                        (setf (slot-value ,object ',name) ,name)))
+                                    (t
+                                     ;; Slot initialized by argument.
+                                     `(setf (slot-value ,object ',name) ,name))))
+           ,object)))))
 
 (defun generate-object-constructors (description all-slots)
   (loop for constructor in (defstruct-constructors description)
