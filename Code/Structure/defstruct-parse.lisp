@@ -38,8 +38,11 @@
     (cond ((not option)
            ;; Not supplied
            (concatenate 'string (symbol-name struct-name) "-"))
-          ((or (not (listp option)) (endp (rest option)))
-           ;; :conc-name or (:conc-name)
+          ((or (not (listp option))
+               (endp (rest option))
+               (and (endp (cddr option))
+                    (not (second option))))
+           ;; :conc-name, (:conc-name), or (:conc-name nil)
            nil)
           ((endp (cddr option))
            ;; (:conc-name string-designator)
