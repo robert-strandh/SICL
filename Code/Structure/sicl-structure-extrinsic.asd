@@ -12,6 +12,8 @@
    (:file "structure-object-defclass")
    (:file "find-structure-description-extrinsic")
    (:file "copy-structure")
+   (:file "print-structure")
+   (:file "structure-object-print-object")
    (:file "defstruct-description-defclass")
    (:file "defstruct-parse")
    (:file "defstruct-support")
