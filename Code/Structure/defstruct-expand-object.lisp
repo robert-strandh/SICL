@@ -8,11 +8,11 @@
            (included-structure (find-class parent-name environment nil)))
       (unless included-structure
         (if (find-structure-description parent-name nil environment)
-            (error "parent defstruct ~S names a typed defstruct, not a structure-object defstruct" parent-name)
-            (error "parent defstruct ~S does not exist" parent-name)))
+            (error 'included-structure-must-not-be-typed :name parent-name)
+            (error 'included-structure-does-not-exist :name parent-name)))
       (unless (typep included-structure 'structure-class)
-        (error "parent struct ~S is not a structure-class"
-               parent-name))
+        (error 'included-structure-must-be-structure
+               :name parent-name :datum included-structure))
       ;; All included slots must be present in the included structure.
       (dolist (slot (defstruct-included-slots description))
         (let ((existing (find (slot-name slot)
@@ -20,23 +20,26 @@
                               :key #'closer-mop:slot-definition-name
                               :test #'string=)))
           (unless existing
-            (error "included slot ~S does not exist in ~S"
-                   (slot-name slot) included-structure))
+            (error 'included-slot-missing-from-parent
+                   :slot-name (slot-name slot)))
           ;; For the sake of sanity, lets require them to be the same symbol too.
           ;; If it is legal for them to be different, then they need to be
           ;; canonicalized to the existing slot so that slot inheritance works
           ;; correctly.
           (unless (eql (slot-name slot) (closer-mop:slot-definition-name existing))
-            (error "included slot ~S name does not match existing slot name ~S"
-                   (slot-name slot) (closer-mop:slot-definition-name existing)))))
+            (error 'included-slot-conflicts-with-parent-slot
+                   :slot-name (slot-name slot)
+                   :parent-slot-name (closer-mop:slot-definition-name existing)))))
       ;; Direct slots must not be present (string=)
       (dolist (slot (defstruct-direct-slots description))
-        (when (find (slot-name slot)
-                    (closer-mop:class-slots included-structure)
-                    :key #'closer-mop:slot-definition-name
-                    :test #'string=)
-          (error "slot ~S conflicts with slot in included structure ~S"
-                 (slot-name slot) included-structure))))))
+        (let ((existing (find (slot-name slot)
+                              (closer-mop:class-slots included-structure)
+                              :key #'closer-mop:slot-definition-name
+                              :test #'string=)))
+          (when existing
+            (error 'direct-slot-conflicts-with-parent-slot
+                   :slot-name (slot-name slot)
+                   :parent-slot-name (closer-mop:slot-definition-name existing))))))))
 
 (defmethod compute-slot-layout ((description defstruct-object-description) environment)
   (check-included-structure-object description environment)

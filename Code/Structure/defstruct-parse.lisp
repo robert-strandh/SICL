@@ -231,9 +231,8 @@
     (setf slot-description (list slot-description)))
   (let ((slot-name (first slot-description))
         (slot-options (cddr slot-description)))
-    (when (or (null slot-name)
-              (not (symbolp slot-name)))
-      (error 'slot-name-must-be-non-nil-symbol
+    (unless (symbolp slot-name)
+      (error 'slot-name-must-be-symbol
              :datum slot-name))
     (unless (evenp (length slot-options))
       (error 'malformed-slot-description :slot-description slot-description))

@@ -12,7 +12,7 @@
                      (eql (first type) 'vector)
                      (consp (rest type))
                      (endp (rest (rest type)))))
-      (error "bad defstruct type ~S" type))))
+      (error 'invalid-defstruct-type :type type))))
 
 (defun canonicalize-struct-type (type)
   (if (eql type 'vector)
@@ -33,33 +33,38 @@
                   (parent (find-structure-description parent-name nil environment)))
              (unless parent
                (if (find-class parent-name nil environment)
-                   (error "parent defstruct ~S is a structure-object defstruct, not a typed defstruct" parent-name)
-                   (error "parent defstruct ~S does not exist" parent-name)))
+                   (error 'included-structure-must-be-typed :name parent-name)
+                   (error 'included-structure-does-not-exist :name parent-name)))
              ;; TODO: This should do a subtypep test to make sure the types are the same/compatible...
              (unless (equal (canonicalize-struct-type (defstruct-type description))
                             (canonicalize-struct-type (defstruct-type parent)))
-               (error "defstruct ~S and ~S have incompatible types ~S and ~S"
-                      (defstruct-name description) (defstruct-name parent)
-                      (defstruct-type description) (defstruct-type parent)))
+               (error 'included-structure-type-is-incompatible
+                      :type (defstruct-type description)
+                      :included-type (defstruct-type parent)))
              (destructuring-bind (parent-slot-layout parent-name-layout)
                  (compute-slot-layout parent environment)
                ;; Make sure there are no conflicting slots and that all the included
                ;; slots exist.
                (dolist (slot (defstruct-direct-slots description))
-                 (when (find (slot-name slot) parent-slot-layout :key #'slot-name :test #'string=)
-                   (error "duplicate slot name ~S" (slot-name slot))))
+                 (let ((existing (find (slot-name slot) parent-slot-layout :key #'slot-name :test #'string=)))
+                   (when existing
+                     (error 'direct-slot-conflicts-with-parent-slot
+                            :slot-name (slot-name slot)
+                            :parent-slot-name (slot-name existing)))))
                (dolist (slot (defstruct-included-slots description))
                  (let ((parent-slot (find (slot-name slot) parent-slot-layout :key #'slot-name)))
                    (unless parent-slot
-                     (error "included slot ~S missing from parent structure ~S"
-                            (slot-name slot) (defstruct-included-structure-name description)))
+                     (error 'included-slot-missing-from-parent
+                            :slot-name (slot-name slot)))
                    (unless (subtypep (slot-type slot) (slot-type parent-slot) environment)
-                     (error "included slot ~S has type ~S, which is not a subtype of ~S"
-                            (slot-name slot) (slot-type slot) (slot-type parent-slot)))
-                   ;; TODO: Check that the slot type is a subtype of the parent slot.
+                     (error 'included-slot-type-must-be-subtype
+                            :slot-name (slot-name slot)
+                            :type (slot-type slot)
+                            :included-type (slot-type parent-slot)))
                    (when (and (slot-read-only parent-slot)
                               (not (slot-read-only slot)))
-                     (error "included slot ~S is read-only in parent" (slot-name slot)))))
+                     (error 'included-slot-must-be-read-only
+                            :slot-name (slot-name slot)))))
                ;; Turn the parent-slot-layout into a list of effective-ish slots
                (list (append (loop for parent-slot in parent-slot-layout
                                    collect (or (find (slot-name parent-slot)

@@ -40,8 +40,8 @@
               (t
                ;; Can't go from not read-only to read-only.
                (when (structure-slot-definition-read-only slot)
-                 (error "slot ~S in class ~S has bad read-onlyness"
-                        slot class))))))
+                 (error 'included-slot-must-be-read-only
+                        :slot-name (closer-mop:slot-definition-name slot)))))))
     (let ((effective-slot (call-next-method)))
       (setf (slot-value effective-slot '%read-only) read-only)
       effective-slot)))
@@ -51,13 +51,13 @@
              ;; As a special exception, allow unbound/uninitialized slots to
              ;; be initialized.
              (not (closer-mop:slot-boundp-using-class class object slot)))
-    (cerror "Set slot ~S anyway" "Attempt to set read-only slot ~S in ~S"
-            (closer-mop:slot-definition-name slot) object)))
+    (cerror "Set slot anyway" 'slot-is-read-only
+            :object object :slot-name (closer-mop:slot-definition-name slot))))
 
 (defmethod closer-mop:slot-makunbound-using-class :before ((class structure-class) object (slot structure-effective-slot-definition))
   (when (and (structure-slot-definition-read-only slot)
              ;; As a special exception, allow unbound/uninitialized slots to
              ;; be initialized.
              (not (closer-mop:slot-boundp-using-class class object slot)))
-    (cerror "Make slot ~S unbound anyway" "Attempt to make read-only slot ~S in ~S unbound"
-            (closer-mop:slot-definition-name slot) object)))
+    (cerror "Make slot unbound anyway" 'slot-is-read-only
+            :object object :slot-name (closer-mop:slot-definition-name slot))))
