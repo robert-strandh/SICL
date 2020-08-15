@@ -13,7 +13,8 @@
       (unless (typep included-structure 'structure-class)
         (error 'included-structure-must-be-structure
                :name parent-name :datum included-structure))
-      (mop:ensure-finalized included-structure)
+      (unless (mop:class-finalized-p included-structure)
+        (mop:finalize-inheritance included-structure))
       ;; All included slots must be present in the included structure.
       (dolist (slot (defstruct-included-slots description))
         (let ((existing (find (slot-name slot)
