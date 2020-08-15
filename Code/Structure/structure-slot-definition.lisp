@@ -50,7 +50,7 @@
   (when (and (structure-slot-definition-read-only slot)
              ;; As a special exception, allow unbound/uninitialized slots to
              ;; be initialized.
-             (not (closer-mop:slot-boundp-using-class class object slot)))
+             (closer-mop:slot-boundp-using-class class object slot))
     (cerror "Set slot anyway" 'slot-is-read-only
             :object object :slot-name (closer-mop:slot-definition-name slot))))
 
@@ -58,6 +58,6 @@
   (when (and (structure-slot-definition-read-only slot)
              ;; As a special exception, allow unbound/uninitialized slots to
              ;; be initialized.
-             (not (closer-mop:slot-boundp-using-class class object slot)))
+             (closer-mop:slot-boundp-using-class class object slot))
     (cerror "Make slot unbound anyway" 'slot-is-read-only
             :object object :slot-name (closer-mop:slot-definition-name slot))))
