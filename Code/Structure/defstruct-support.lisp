@@ -84,7 +84,7 @@
                               (first key))))
                  (keyword (cond ((and (consp key) ; &key ((:foo foo) ...)
                                       (consp (first key)))
-                                 (second (first key)))
+                                 (first (first key)))
                                 (t
                                  (keywordify name))))
                  (bits (if (consp key)
