@@ -203,7 +203,7 @@
              ;; and that *print-level* is updated as printing descends recursively.
              (setf print-object
                    `(:print-object (lambda (object stream)
-                                     (funcall #',(second print-function)
+                                     (funcall (function ,(second print-function))
                                               object stream 0)))))
             (t
              (error 'malformed-option :option print-function))))

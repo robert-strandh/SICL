@@ -120,4 +120,4 @@
                                           (defstruct-constructors description))))
      ,@(when (defstruct-print-object description)
          (list `(defmethod print-object ((object ,(defstruct-name description)) stream)
-                  (funcall #',(defstruct-print-object description) object stream))))))
+                  (funcall (function ,(defstruct-print-object description)) object stream))))))
