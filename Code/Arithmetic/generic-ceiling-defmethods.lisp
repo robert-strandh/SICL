@@ -1,0 +1,25 @@
+(cl:in-package #:sicl-arithmetic)
+
+(defmethod generic-ceiling ((number fixnum) (divisor fixnum))
+  (cond ((zerop divisor)
+         (error 'division-by-zero
+                :operation 'ceiling
+                :operands (list number divisor)))
+        ((zerop number)
+         (values 0 0))
+        ((minusp number)
+         (if (minusp divisor)
+             (multiple-value-bind (quotient remainder)
+                 (cleavir-primop:fixnum-divide (- number) (- divisor))
+               (values (1+ quotient) (- divisor remainder)))
+             (multiple-value-bind (quotient remainder)
+                 (cleavir-primop:fixnum-divide (- number) divisor)
+               (values (- quotient) (- remainder)))))
+        (t
+         (if (minusp divisor)
+             (multiple-value-bind (quotient remainder)
+                 (cleavir-primop:fixnum-divide number (- divisor))
+               (values (- quotient) remainder))
+             (multiple-value-bind (quotient remainder)
+                 (cleavir-primop:fixnum-divide number divisor)
+               (values (1+ quotient) (- divisor remainder)))))))
