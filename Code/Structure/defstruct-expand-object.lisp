@@ -92,6 +92,7 @@
 (defun compute-structure-object-defclass-slots (all-slots)
   (loop for slot in all-slots
         collect `(,(slot-name slot)
+                  :initarg ,(keywordify (slot-name slot))
                   :type ,(slot-type slot)
                   :read-only ,(slot-read-only slot)
                   ,(if (slot-read-only slot) :reader :accessor)
