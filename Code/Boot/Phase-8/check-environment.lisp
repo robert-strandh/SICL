@@ -179,11 +179,32 @@
                    "    ~s is not a valid value for the static environment.~%"
                    env)))))
 
+(defun check-method (method environment)
+  (let* ((fname 'sicl-clos:method-function)
+         (fun (sicl-genv:fdefinition fname environment))
+         (method-function (funcall fun method)))
+    (if (not (typep method-function 'sicl-boot::header))
+        (format *trace-output* "    Method function is not a SICL object.~%")
+        (progn (check-function-class method-function environment)
+               (check-static-environment method-function environment)))))
+
+(defun check-generic-function (name function environment)
+  (loop with fname = 'sicl-clos:generic-function-methods
+        with fun = (sicl-genv:fdefinition fname environment)
+        with methods = (funcall fun function)
+        for method in methods
+        do (check-method method environment)))
+
 (defun check-function (name function environment)
   (format *trace-output* "Checking function named ~s~%" name)
   (if (not (typep function 'sicl-boot::header))
       (format *trace-output* "    Function is not a SICL object.~%")
       (progn (check-function-class function environment)
+             (let ((class (slot-value function 'sicl-boot::%class)))
+               (when (eq class
+                         (sicl-genv:find-class
+                          'standard-generic-function environment))
+                 (check-generic-function name function environment)))
              (check-static-environment function environment))))
 
 (defun check-functions (environment)
