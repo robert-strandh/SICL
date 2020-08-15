@@ -7,7 +7,7 @@
   :components
   ((:file "packages-extrinsic")
    (:file "structure-class-defclass-extrinsic")
-   (:file "structure-class-defclass-validate-superclass")
+   (:file "structure-class-defclass-validate-superclass-extrinsic")
    (:file "structure-slot-definition")
    (:file "structure-object-defclass")
    (:file "find-structure-description-extrinsic")
