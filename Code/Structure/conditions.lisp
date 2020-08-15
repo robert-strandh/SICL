@@ -100,6 +100,20 @@
    (%type :initarg :type :reader slot-type)
    (%included-type :initarg :included-type :reader included-slot-type)))
 
+;;; #S reader errors
+
+(define-condition non-empty-list-must-follow-sharp-s (reader-error)
+  ())
+
+(define-condition missing-sharp-s-argument (reader-error)
+  ())
+
+(define-condition sharp-s-class-must-name-structure-class (reader-error)
+  ((%name :initarg :name :reader name)))
+
+(define-condition sharp-s-class-must-have-standard-constructor (reader-error)
+  ((%name :initarg :name :reader name)))
+
 ;;; Other errors
 
 (define-condition slot-is-read-only ()
