@@ -43,40 +43,42 @@
                       :included-type (defstruct-type parent)))
              (destructuring-bind (parent-slot-layout parent-name-layout)
                  (compute-slot-layout parent environment)
-               ;; Make sure there are no conflicting slots and that all the included
-               ;; slots exist.
-               (dolist (slot (defstruct-direct-slots description))
-                 (let ((existing (find (slot-name slot) parent-slot-layout :key #'slot-name :test #'string=)))
-                   (when existing
-                     (error 'direct-slot-conflicts-with-parent-slot
-                            :slot-name (slot-name slot)
-                            :parent-slot-name (slot-name existing)))))
-               (dolist (slot (defstruct-included-slots description))
-                 (let ((parent-slot (find (slot-name slot) parent-slot-layout :key #'slot-name)))
-                   (unless parent-slot
-                     (error 'included-slot-missing-from-parent
-                            :slot-name (slot-name slot)))
-                   (unless (subtypep (slot-type slot) (slot-type parent-slot) environment)
-                     (error 'included-slot-type-must-be-subtype
-                            :slot-name (slot-name slot)
-                            :type (slot-type slot)
-                            :included-type (slot-type parent-slot)))
-                   (when (and (slot-read-only parent-slot)
-                              (not (slot-read-only slot)))
-                     (error 'included-slot-must-be-read-only
-                            :slot-name (slot-name slot)))))
+               (let ((parent-slots (remove nil parent-slot-layout)))
+                 ;; Make sure there are no conflicting slots and that all the included
+                 ;; slots exist.
+                 (dolist (slot (defstruct-direct-slots description))
+                   (let ((existing (find (slot-name slot) parent-slots :key #'slot-name :test #'string=)))
+                     (when existing
+                       (error 'direct-slot-conflicts-with-parent-slot
+                              :slot-name (slot-name slot)
+                              :parent-slot-name (slot-name existing)))))
+                 (dolist (slot (defstruct-included-slots description))
+                   (let ((parent-slot (find (slot-name slot) parent-slots :key #'slot-name)))
+                     (unless parent-slot
+                       (error 'included-slot-missing-from-parent
+                              :slot-name (slot-name slot)))
+                     (unless (subtypep (slot-type slot) (slot-type parent-slot) environment)
+                       (error 'included-slot-type-must-be-subtype
+                              :slot-name (slot-name slot)
+                              :type (slot-type slot)
+                              :included-type (slot-type parent-slot)))
+                     (when (and (slot-read-only parent-slot)
+                                (not (slot-read-only slot)))
+                       (error 'included-slot-must-be-read-only
+                              :slot-name (slot-name slot))))))
                ;; Turn the parent-slot-layout into a list of effective-ish slots
                (list (append (loop for parent-slot in parent-slot-layout
-                                   collect (or (find (slot-name parent-slot)
-                                                     (defstruct-included-slots description)
-                                                     :key #'slot-name)
-                                               (make-instance 'slot-description
-                                                              :name (slot-name parent-slot)
-                                                              :accessor-name (compute-accessor-name description (slot-name parent-slot))
-                                                              :initform (slot-initform parent-slot)
-                                                              :initform-p (slot-initform-p parent-slot)
-                                                              :type (slot-type parent-slot)
-                                                              :read-only (slot-read-only parent-slot))))
+                                   collect (and parent-slot
+                                                (or (find (slot-name parent-slot)
+                                                          (defstruct-included-slots description)
+                                                          :key #'slot-name)
+                                                    (make-instance 'slot-description
+                                                                   :name (slot-name parent-slot)
+                                                                   :accessor-name (compute-accessor-name description (slot-name parent-slot))
+                                                                   :initform (slot-initform parent-slot)
+                                                                   :initform-p (slot-initform-p parent-slot)
+                                                                   :type (slot-type parent-slot)
+                                                                   :read-only (slot-read-only parent-slot)))))
                              initial-offset-padding
                              (if (defstruct-named description)
                                  (list nil)
