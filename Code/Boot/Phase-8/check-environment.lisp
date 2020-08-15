@@ -208,3 +208,31 @@
                        "The function named ~s is referenced but undefined.~%"
                        function-name)))
            (sicl-simple-environment::function-entries environment)))
+
+;;; This is only the beginning of an implementation of WHO-CALLS.  We
+;;; also need to check the method function of every method of every
+;;; generic function.
+(defun who-calls (function-name environment)
+  (let* ((table (make-hash-table :test #'eq))
+         (cell (sicl-genv:function-cell function-name environment))
+         (fname 'sicl-clos::environment)
+         (static-environment-function (sicl-genv:fdefinition fname environment)))
+    (do-all-symbols (symbol)
+      (unless (gethash symbol table)
+        (setf (gethash symbol table) t)
+        (flet ((check-function (name function)
+                 (when (typep function 'sicl-boot::header)
+                   (let ((env (funcall static-environment-function function)))
+                     (if (null env)
+                         nil
+                         (loop for element across env
+                               do (when (eq element cell)
+                                    (format *trace-output* "~s~%" name))))))))
+          (when (and (sicl-genv:fboundp symbol environment)
+                     (not (sicl-genv:special-operator symbol environment))
+                     (null (sicl-genv:macro-function symbol environment)))
+            (let ((function (sicl-genv:fdefinition symbol environment)))
+              (check-function symbol function)))
+          (when (sicl-genv:fboundp `(setf ,symbol) environment)
+            (let ((function (sicl-genv:fdefinition `(setf ,symbol) environment)))
+              (check-function `(setf ,symbol) function))))))))
