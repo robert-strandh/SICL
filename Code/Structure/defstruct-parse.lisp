@@ -104,7 +104,7 @@
            (let ((result '()))
                (dolist (option applicable-options)
                  (flet ((add (name)
-                          (unless (member name result)
+                          (when (member name result)
                             (error 'duplicate-name :option option))
                           (push name result)))
                  (cond ((or (not (listp option)) (endp (rest option)))
@@ -114,25 +114,29 @@
                         ;; (<opt> name)
                         (unless (symbolp (second option))
                           (error 'name-must-be-symbol :option option :datum (second option)))
-                        (add (second option)))
+                        (when (second option)
+                          (add (second option))))
                        (t
                         (error 'malformed-option :option option)))))
-             (reverse result)))
+             (values (reverse result) t)))
           (t
-           (list default-name)))))
+           (values (list default-name) nil)))))
 
 (defun parse-copier-options (options name)
   (parse-copier/predicate-options options :copier (symbolicate "COPY-" name)))
 
 (defun parse-predicate-options (options name)
-  (cond ((or (not (get-singular-option options :type))
-             (get-singular-option options :named))
-         ;; Structure is named, allow predicate options.
-         (parse-copier/predicate-options options :predicate (symbolicate name "-P")))
-        (t
-         (when (get-options options :predicate)
-           (error 'predicate-requires-named-structure))
-         '())))
+  (multiple-value-bind (predicates suppliedp)
+      (parse-copier/predicate-options options :predicate (symbolicate name "-P"))
+    (cond ((or (not (get-singular-option options :type))
+               (get-singular-option options :named))
+           ;; Structure is named, allow predicate options.
+           predicates)
+          (t
+           ;; Structure is not named, predicates not permitted.
+           (when (and suppliedp predicates)
+             (error 'predicate-requires-named-structure))
+           '()))))
 
 (defun parse-named-option (options)
   (let ((option (get-singular-option options :named)))
