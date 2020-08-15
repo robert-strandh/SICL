@@ -7,7 +7,7 @@
 (defgeneric generate-slot-initialization-form (description layout object slot value))
 
 (defgeneric generate-boa-constructor (description layout name lambda-list))
-(defgeneric generate-ordinary-constructor (description layout name))
+(defgeneric generate-standard-constructor (description layout name))
 
 ;;; BOA constructors are a more complicated as they have the ability
 ;;; to completely override any specified slot initforms. So, in some
@@ -149,7 +149,7 @@
                                      (generate-slot-initialization-form description layout object slot name))))
            ,object)))))
 
-(defmethod generate-ordinary-constructor (description layout constructor-name)
+(defmethod generate-standard-constructor (description layout constructor-name)
   (let* ((all-slots (layout-slots description layout))
          (suppliedp-syms (loop for slot in all-slots
                                collect (gensym (string (slot-name slot)))))
@@ -183,7 +183,7 @@
   (loop for constructor in (defstruct-constructors description)
         collect (if (cdr constructor)
                     (generate-boa-constructor description layout (first constructor) (second constructor))
-                    (generate-ordinary-constructor description layout (first constructor)))))
+                    (generate-standard-constructor description layout (first constructor)))))
 
 (defgeneric generate-predicate (description layout predicate-name))
 

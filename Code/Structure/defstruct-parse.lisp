@@ -69,7 +69,7 @@
                (labels ((check-constructor-not-defined (name)
                           (when (member name constructors :key #'first)
                             (error 'duplicate-name :option option)))
-                        (add-ordinary (name)
+                        (add-standard (name)
                           (check-constructor-not-defined name)
                           (push (list name) constructors))
                         (add-boa (name lambda-list)
@@ -77,14 +77,14 @@
                           (push (list name lambda-list) constructors)))
                  (cond ((or (not (listp option)) (null (rest option)))
                         ;; :constructor or (:constructor)
-                        ;; Generate the default ordinary constructor.
-                        (add-ordinary default-name))
+                        ;; Generate the default standard constructor.
+                        (add-standard default-name))
                        ((null (cddr option))
                         ;; (:constructor <name>)
                         (unless (symbolp (second option))
                           (error 'name-must-be-symbol :option option :datum (second option)))
                         (when (second option)
-                          (add-ordinary (second option))))
+                          (add-standard (second option))))
                        ((null (cdddr option))
                         ;; (:constructor <name> <arglist>)
                         (unless (symbolp (second option))
@@ -95,7 +95,7 @@
                         (error 'malformed-option :option option)))))
              (reverse constructors)))
           (t
-           ;; A single default ordinary constructor
+           ;; A single default standard constructor
            (list (list default-name))))))
 
 (defun parse-copier/predicate-options (options option-name default-name)
