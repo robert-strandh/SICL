@@ -92,8 +92,8 @@
                         (when (second option)
                           (add-boa (second option) (third option))))
                        (t
-                        (error 'malformed-option :option option))))
-               (reverse constructors))))
+                        (error 'malformed-option :option option)))))
+             (reverse constructors)))
           (t
            ;; A single default ordinary constructor
            (list (list default-name))))))
