@@ -122,3 +122,6 @@
 
 (define-condition undefined-structure-description ()
   ((%name :initarg :name :reader name)))
+
+(define-condition incompatible-redefiniiton-of-typed-structure ()
+  ((%name :initarg :name :reader name)))

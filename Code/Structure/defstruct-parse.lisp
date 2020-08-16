@@ -253,7 +253,8 @@
                    :initform-p (not (endp (rest slot-description)))
                    :initform (second slot-description)
                    :type (getf slot-options :type 't)
-                   :read-only (getf slot-options :read-only 'nil))))
+                   ;; Canonicalize this to T/NIL.
+                   :read-only (if (getf slot-options :read-only 'nil) t nil))))
 
 (defun parse-slot-descriptions (slot-descriptions conc-name)
   (loop for slot in slot-descriptions
