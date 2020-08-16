@@ -47,7 +47,7 @@
                            `(,successor-thunk-gensym #'dummy-successor)))
                (declare (ignorable
                          ,dynamic-environment-gensym-1
-                         ,dynamic-environment-gensym-1
+                         ,dynamic-environment-gensym-2
                          ,self-gensym))
                (macrolet ((input (index)
                             (case index
@@ -81,7 +81,19 @@
                               ,dynamic-environment-gensym-1
                               ,dynamic-environment-gensym-2
                               ,self-gensym)
+                             #+(or)
+                             (format *trace-output*
+                                     "~&~S~% inputs: ~S~%"
+                                     (class-name (class-of ,instruction))
+                                     (list ,@(loop for input-gensym in input-gensyms
+                                                   collect `(car ,input-gensym))))
                              (prog1 (progn ,@body)
+                               #+(or)
+                               (format *trace-output*
+                                       "~& outputs: ~S~% values: ~S~%"
+                                      (list ,@(loop for output-gensym in output-gensyms
+                                                    collect `(car ,output-gensym)))
+                                      *global-values-location*)
                                (epilogue
                                 ,dynamic-environment-gensym-1
                                 ,dynamic-environment-gensym-2))))))

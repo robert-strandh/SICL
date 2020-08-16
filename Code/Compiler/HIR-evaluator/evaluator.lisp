@@ -47,7 +47,8 @@
 ;;; Representing HIR as host functions.
 
 (defun hir-to-host-function (client enter-instruction)
-  (let* ((lexical-environment (make-hash-table :test #'eq))
+  (let* ((*instruction-thunks* (make-hash-table :test #'eq))
+         (lexical-environment (make-hash-table :test #'eq))
          (static-environment-cell-1
            (value-cell 'static-environment lexical-environment))
          (static-environment-cell-2
@@ -68,11 +69,13 @@
       (setf (car dynamic-environment-cell-1) dynamic-environment)
       (setf (car dynamic-environment-cell-2) dynamic-environment)
       (setf (car arguments-cell) (coerce arguments 'vector))
-      (catch 'return
-        (loop (setf thunk (funcall thunk)))))))
+      (let ((thunk thunk))
+        (catch 'return
+          (loop (setf thunk (funcall thunk))))))))
 
 (defun top-level-hir-to-host-function (client enter-instruction)
-  (let* ((lexical-environment (make-hash-table :test #'eq))
+  (let* ((*instruction-thunks* (make-hash-table :test #'eq))
+         (lexical-environment (make-hash-table :test #'eq))
          (static-environment-cell-1
            (value-cell 'static-environment lexical-environment))
          (static-environment-cell-2
@@ -90,5 +93,6 @@
       (setf (car static-environment-cell-2) static-environment)
       (setf (car dynamic-environment-cell-1) '())
       (setf (car dynamic-environment-cell-2) '())
-      (catch 'return
-        (loop (setf thunk (funcall thunk)))))))
+      (let ((thunk thunk))
+        (catch 'return
+          (loop (setf thunk (funcall thunk))))))))

@@ -7,7 +7,6 @@
          (ast (let ((cleavir-cst-to-ast::*origin* nil))
                 (cleavir-cst-to-ast:cst-to-ast client cst global-environment)))
          (hir (sicl-ast-to-hir:ast-to-hir client ast))
-         (*instruction-thunks* (make-hash-table :test #'eq))
          (fun (top-level-hir-to-host-function client hir))
          (sicl-run-time:*dynamic-environment* '()))
     (funcall fun
