@@ -14,7 +14,7 @@
                (values quotient (- remainder)))
              (multiple-value-bind (quotient remainder)
                  (cleavir-primop:fixnum-divide (- number) divisor)
-               (values (- quotient) (- divisor remainder)))))
+               (values (- quotient) (- remainder)))))
         (t
          (if (minusp divisor)
              (multiple-value-bind (quotient remainder)
