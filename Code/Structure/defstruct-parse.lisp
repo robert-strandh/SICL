@@ -54,8 +54,7 @@
            (error 'malformed-option :option option)))))
 
 (defun symbolicate (&rest string-designators)
-  (intern (apply #'concatenate 'string (mapcar #'string string-designators))
-          *package*))
+  (intern (apply #'concatenate 'string (mapcar #'string string-designators))))
 
 (defun keywordify (string-designator)
   (intern (string string-designator) '#:keyword))
