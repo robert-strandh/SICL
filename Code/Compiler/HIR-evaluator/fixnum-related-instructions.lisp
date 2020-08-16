@@ -58,3 +58,39 @@
       (setf (output 0) quotient)
       (setf (output 1) remainder)
       (successor 0))))
+
+(defmethod instruction-thunk
+    (client
+     (instruction cleavir-ir:fixnum-logand-instruction)
+     lexical-environment)
+  (make-thunk (client instruction lexical-environment :inputs 2 :outputs 1)
+    (setf (output 0)
+          (logand (input 0) (input 1)))
+    (successor 0)))
+
+(defmethod instruction-thunk
+    (client
+     (instruction cleavir-ir:fixnum-logior-instruction)
+     lexical-environment)
+  (make-thunk (client instruction lexical-environment :inputs 2 :outputs 1)
+    (setf (output 0)
+          (logior (input 0) (input 1)))
+    (successor 0)))
+
+(defmethod instruction-thunk
+    (client
+     (instruction cleavir-ir:fixnum-logxor-instruction)
+     lexical-environment)
+  (make-thunk (client instruction lexical-environment :inputs 2 :outputs 1)
+    (setf (output 0)
+          (logxor (input 0) (input 1)))
+    (successor 0)))
+
+(defmethod instruction-thunk
+    (client
+     (instruction cleavir-ir:fixnum-lognot-instruction)
+     lexical-environment)
+  (make-thunk (client instruction lexical-environment :inputs 1 :outputs 1)
+    (setf (output 0)
+          (lognot (input 0)))
+    (successor 0)))

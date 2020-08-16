@@ -4,6 +4,7 @@
   :depends-on (#:closer-mop
                #:cleavir2-hir
                #:cleavir2-cst-to-ast
+               #:clordane
                #:sicl-utilities
                #:sicl-ast-to-hir
                #:sicl-hir-transformations
@@ -21,6 +22,7 @@
    (:file "array-related-instructions")
    (:file "boxing-related-instructions")
    (:file "cons-related-instructions")
+   (:file "character-related-instructions")
    (:file "fixnum-related-instructions")
    (:file "multiple-value-related-instructions")
    (:file "catch-instruction")
