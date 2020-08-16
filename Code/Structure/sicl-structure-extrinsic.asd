@@ -20,5 +20,5 @@
    (:file "defstruct-support")
    (:file "defstruct-expand-object")
    (:file "defstruct-expand-typed")
-   (:file "defstruct-defmacro")
+   (:file "defstruct-defmacro-extrinsic")
    (:file "conditions")))
