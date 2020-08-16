@@ -127,7 +127,38 @@
 ;;;
 ;;; Compile a MULTIPLE-VALUE-CALL-AST.
 
-(defmethod compile-ast (client (ast cleavir-ast:multiple-value-call-ast) context)
+(defun compile-divide (client ast context)
+  (with-accessors ((results results)
+                   (successors successors))
+      context
+    (let ((quotient-temp (cleavir-ir:new-temporary))
+          (remainder-temp (cleavir-ir:new-temporary))
+          (function-temp (cleavir-ir:new-temporary)))
+      (compile-ast
+       client
+       (cleavir-ast:function-form-ast ast)
+       (clone-context
+        context
+        :result function-temp
+        :successor
+        (compile-ast
+         client
+         (first (cleavir-ast:form-asts ast))
+         (clone-context
+          context
+          :results (list quotient-temp remainder-temp)
+          :successor
+          (make-instance 'cleavir-ir:funcall-instruction
+            :inputs (list function-temp quotient-temp remainder-temp)
+            :outputs '()
+            :successors
+            (if (eq results :values)
+                successors
+                (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                        :outputs results
+                        :successor (first successors))))))))))))
+
+(defun compile-multiple-value-call (client ast context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -167,3 +198,10 @@
         (make-instance 'cleavir-ir:initialize-values-instruction
           :output values-temp
           :successor successor))))))
+
+(defmethod compile-ast (client (ast cleavir-ast:multiple-value-call-ast) context)
+  (if (and (= (length (cleavir-ast:form-asts ast)) 1)
+           (typep (first (cleavir-ast:form-asts ast))
+                  'cleavir-ast:fixnum-divide-ast))
+      (compile-divide client ast context)
+      (compile-multiple-value-call client ast context)))
