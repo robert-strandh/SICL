@@ -189,6 +189,7 @@
                (check-static-environment method-function environment)))))
 
 (defun check-generic-function (name function environment)
+  (declare (ignore name))
   (loop with fname = 'sicl-clos:generic-function-methods
         with fun = (sicl-genv:fdefinition fname environment)
         with methods = (funcall fun function)
