@@ -22,7 +22,7 @@
    #:slot-definition
    #:direct-slot-definition
    #:effective-slot-definition
-   #:standard--slot-definition
+   #:standard-slot-definition
    #:standard-direct-slot-definition
    #:standard-effective-slot-definition
    #:standard-reader-method
@@ -82,6 +82,7 @@
    #:class-direct-subclasses
    #:add-direct-subclass
    #:compute-effective-slot-definition
+   #:compute-default-initargs
    #:class-of
    #:allocate-instance
    #:make-instance
@@ -103,6 +104,7 @@
    #:ensure-class #:ensure-class-using-class
    #:slot-value #:slot-missing #:slot-boundp #:slot-makunbound
    #:slot-boundp-using-class
+   #:slot-makunbound-using-class
    #:slot-value-using-class
    #:print-object #:describe-object #:documentation
    #:make-method-lambda

@@ -391,18 +391,8 @@
     (new-plist symbol (env simple-environment))
   (setf (gethash symbol (property-lists env)) new-plist))
 
-(defmethod sicl-genv:structure-type (name (env simple-environment))
-  (let ((entry (find-structure-entry env name)))
-    (if entry (type entry) nil)))
+(defmethod sicl-genv:structure-description (name (env simple-environment))
+  (gethash name (structure-entries env)))
 
-(defmethod (setf sicl-genv:structure-type) (type name (env simple-environment))
-  (let ((entry (ensure-structure-entry env name)))
-    (setf (type entry) type)))
-
-(defmethod sicl-genv:structure-size (name (env simple-environment))
-  (let ((entry (find-structure-entry env name)))
-    (if entry (size entry) nil)))
-
-(defmethod (setf sicl-genv:structure-size) (size name (env simple-environment))
-  (let ((entry (ensure-structure-entry env name)))
-    (setf (size entry) size)))
+(defmethod (setf sicl-genv:structure-description) (type name (env simple-environment))
+  (setf (gethash name (structure-entries env)) type))

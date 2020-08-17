@@ -90,8 +90,7 @@
    #:declarations
    #:optimize-quality-values
    #:policy
-   #:structure-type
-   #:structure-size
+   #:structure-description
    #:defun-expander
    #:class-of
    #:typep
