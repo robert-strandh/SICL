@@ -2,7 +2,8 @@
 
 (defun make-environment ()
   (let ((environment
-          (make-instance 'sicl-extrinsic-environment:environment)))
+          (make-instance 'sicl-extrinsic-environment:environment
+            :client (make-instance 'trucler-reference:client))))
     (sicl-extrinsic-environment::import-from-host environment)
     (sicl-hir-interpreter::fill-environment environment)
     environment))

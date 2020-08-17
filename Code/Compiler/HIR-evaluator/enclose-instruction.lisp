@@ -7,7 +7,7 @@
   (let* ((static-environment-cell
            (value-cell 'static-environment lexical-environment))
          (enter-fn
-           (hir-to-host-function client (cleavir-ir:code instruction)))
+           (hir-to-host-function client (cleavir-ir:code instruction) lexical-environment))
          (initializer
            (cleavir-ir:initializer instruction))
          (env-length

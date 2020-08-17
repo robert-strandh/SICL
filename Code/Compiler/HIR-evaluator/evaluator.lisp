@@ -46,9 +46,8 @@
 ;;;
 ;;; Representing HIR as host functions.
 
-(defun hir-to-host-function (client enter-instruction)
+(defun hir-to-host-function (client enter-instruction lexical-environment)
   (let* ((*instruction-thunks* (make-hash-table :test #'eq))
-         (lexical-environment (make-hash-table :test #'eq))
          (static-environment-cell-1
            (value-cell 'static-environment lexical-environment))
          (static-environment-cell-2
