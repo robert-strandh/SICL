@@ -24,8 +24,7 @@
                     (let ((sicl-run-time:*dynamic-environment* dynamic-environment))
                       (setf *global-values-location*
                             (multiple-value-list
-                             (let* ((*call-stack*
-                                     (cons call-stack-entry *call-stack*)))
+                             (let* ((*call-stack* (cons call-stack-entry *call-stack*)))
                                (funcall
                                 ,@(loop for index below arity collect `(input ,index))))))
                       (successor 0)))))

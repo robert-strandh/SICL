@@ -764,48 +764,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function STRUCTURE-TYPE.
+;;; Generic function STRUCTURE-DESCRIPTION.
 ;;;
-;;; Return the :type specification of a defstruct definition for which
-;;; a :type was specified.
+;;; Return the structure description of a defstruct definition for
+;;; which a :type was specified.
 ;;; If no typed structure with the given name exists, NIL is returned.
 ;;;
 ;;; (Defstruct definitions without :type, i.e. structure-objects,
 ;;;  shouldn't need this accessor, as the information is apparent
 ;;;  in the class.)
 
-(defgeneric structure-type (name environment))
+(defgeneric structure-description (name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function (SETF STRUCTURE-TYPE).
+;;; Generic function (SETF STRUCTURE-DESCRIPTION).
 ;;;
-;;; Set the structure type (explained above).
+;;; Set the structure description (explained above).
 ;;;
 ;;; FIXME: Should redefinition be banned? CLHS leaves undefined.
 
-(defgeneric (setf structure-type) (type name environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function STRUCTURE-SIZE.
-;;;
-;;; Return the "size" of a typed structure as needed for :include, i.e.
-;;;  size of included structure or 0 + initial-offset + number of slots
-;;;    + 1 if named.
-;;;
-;;; Returns a positive integer, or NIL if no typed structure of the
-;;; given name is known.
-
-(defgeneric structure-size (name environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function STRUCTURE-SIZE.
-;;;
-;;; Set the structure size.
-
-(defgeneric (setf structure-size) (size name environment))
+(defgeneric (setf structure-description) (description name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

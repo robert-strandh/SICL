@@ -4,7 +4,8 @@
   (make-instance 'trucler-reference:client))
 
 (defparameter *environment*
-  (let ((sicl-boot:*e0* (make-instance 'sicl-boot-phase-0::environment)))
+  (let ((sicl-boot:*e0* (make-instance 'sicl-boot-phase-0::environment
+                          :name "HIR-evaluator-test-environment")))
     (sicl-boot-phase-0::host-load "Array/packages.lisp")
     (sicl-boot-phase-0::host-load "String/packages.lisp")
     (sicl-boot-phase-0:boot

@@ -6,7 +6,8 @@
      lexical-environment)
   (let ((arguments-cell (value-cell 'arguments lexical-environment)))
     (make-thunk (client instruction lexical-environment :outputs 1)
-      (setf (output 0) (length (car arguments-cell)))
+      (setf (output 0)
+            (length (car arguments-cell)))
       (successor 0))))
 
 (defmethod instruction-thunk
