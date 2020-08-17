@@ -12,13 +12,13 @@
     (client
      (instruction cleavir-ir:funcall-instruction)
      lexical-environment)
-  (let* ((input-cells
+  (let* ((input-indices
            (loop for input in (cleavir-ir:inputs instruction)
-                 collect (value-cell input lexical-environment)))
+                 collect (value-index input lexical-environment)))
          (call-stack-entry
            (make-instance 'call-stack-entry
              :origin (cleavir-ast-to-hir:origin instruction)
-             :arguments input-cells)))
+             :arguments input-indices)))
     (macrolet ((fixed-arity-call (arity)
                  `(make-thunk (client instruction lexical-environment :inputs ,arity)
                     (let ((sicl-run-time:*dynamic-environment* dynamic-environment))
@@ -44,7 +44,9 @@
              (setf *global-values-location*
                    (multiple-value-list
                     (let ((*call-stack* (cons call-stack-entry *call-stack*)))
-                      (apply #'funcall (mapcar #'car input-cells)))))
+                      (apply #'funcall
+                             (loop for input-index in input-indices
+                                   collect (lref input-index))))))
              (successor 0))))))))
 
 (defmethod instruction-thunk

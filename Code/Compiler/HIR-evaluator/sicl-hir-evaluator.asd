@@ -12,6 +12,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "lexical-environment")
    (:file "evaluator")
    (:file "make-thunk")
    (:file "run-time")

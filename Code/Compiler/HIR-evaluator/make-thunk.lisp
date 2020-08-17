@@ -15,6 +15,7 @@
   (sicl-utilities:once-only (client instruction lexical-environment)
     (let ((thunk-gensym (gensym "THUNK"))
           (self-gensym (gensym "SELF"))
+          (lexical-locations (gensym "LEXICAL-LOCATIONS"))
           (dynamic-environment-gensym-1 (gensym "DYNAMIC-ENVIRONMENT"))
           (dynamic-environment-gensym-2 (gensym "DYNAMIC-ENVIRONMENT"))
           (input-gensyms (loop repeat inputs collect (gensym "INPUT")))
@@ -31,17 +32,17 @@
                (cleavir-ir:successors ,instruction)
              (declare (ignore _))
              (let ((,dynamic-environment-gensym-1
-                     (value-cell 'dynamic-environment ,lexical-environment))
+                     (value-index 'dynamic-environment ,lexical-environment))
                    (,dynamic-environment-gensym-2
-                     (value-cell (cleavir-ir:dynamic-environment-location ,instruction)
+                     (value-index (cleavir-ir:dynamic-environment-location ,instruction)
                                  ,lexical-environment))
                    (,self-gensym #'dummy-successor)
                    ,@(loop for input-gensym in input-gensyms
                            collect
-                           `(,input-gensym (value-cell ,input-gensym ,lexical-environment)))
+                           `(,input-gensym (value-index ,input-gensym ,lexical-environment)))
                    ,@(loop for output-gensym in output-gensyms
                            collect
-                           `(,output-gensym (value-cell ,output-gensym ,lexical-environment)))
+                           `(,output-gensym (value-index ,output-gensym ,lexical-environment)))
                    ,@(loop for successor-thunk-gensym in successor-thunk-gensyms
                            collect
                            `(,successor-thunk-gensym #'dummy-successor)))
@@ -54,7 +55,7 @@
                               ,@(loop for input-gensym in input-gensyms
                                       for index from 0
                                       collect
-                                      `((,index) `(car ,',input-gensym)))
+                                      `((,index) `(svref ,',lexical-locations ,',input-gensym)))
                               (otherwise
                                (error "Invalid input index: ~S" index))))
                           (output (index)
@@ -62,7 +63,7 @@
                               ,@(loop for output-gensym in output-gensyms
                                       for index from 0
                                       collect
-                                      `((,index) `(car ,',output-gensym)))
+                                      `((,index) `(svref ,',lexical-locations ,',output-gensym)))
                               (otherwise
                                (error "Invalid output index: ~S" index))))
                           (successor (index)
@@ -72,17 +73,24 @@
                                       collect
                                       `((,index) ',successor-thunk-gensym))
                               (otherwise
-                               (error "Invalid successor index: ~S" index)))))
+                               (error "Invalid successor index: ~S" index))))
+                          (lref (index)
+                            `(svref ,',lexical-locations ,index))
+                          (lexical-locations ()
+                            ',lexical-locations))
                  (let ((,thunk-gensym
                          (symbol-macrolet
-                             ((dynamic-environment (car ,dynamic-environment-gensym-2)))
-                           (lambda ()
+                             ((dynamic-environment (svref ,lexical-locations ,dynamic-environment-gensym-2)))
+                           (lambda (,lexical-locations)
+                             (declare (simple-vector ,lexical-locations))
                              (prologue
+                              ,lexical-locations
                               ,dynamic-environment-gensym-1
                               ,dynamic-environment-gensym-2
                               ,self-gensym)
                              (prog1 (progn ,@body)
                                (epilogue
+                                ,lexical-locations
                                 ,dynamic-environment-gensym-1
                                 ,dynamic-environment-gensym-2))))))
                    (setf ,self-gensym ,thunk-gensym)
@@ -100,9 +108,9 @@
 (defun dummy-successor ()
   (error "Invocation of the dummy successor."))
 
-(defun prologue (cell-1 cell-2 thunk)
-  (let ((env1 (car cell-1))
-        (env2 (car cell-2)))
+(defun prologue (lexical-locations index-1 index-2 thunk)
+  (let ((env1 (svref lexical-locations index-1))
+        (env2 (svref lexical-locations index-2)))
     (unless (or (eq env1 env2)
                 (> (length env2) (length env1)))
       (loop for env = env1 then (rest env)
@@ -123,6 +131,6 @@
           (throw (sicl-run-time:frame-pointer last-block/tagbody)
             thunk))))))
 
-(defun epilogue (cell-1 cell-2)
-  (setf (car cell-1)
-        (car cell-2)))
+(defun epilogue (lexical-locations index-1 index-2)
+  (setf (svref lexical-locations index-1)
+        (svref lexical-locations index-2)))

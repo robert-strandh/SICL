@@ -20,4 +20,4 @@
                 then
                 (catch transfer-tag
                   (let ((thunk successor))
-                    (loop (setf thunk (funcall thunk))))))))))
+                    (loop (setf thunk (funcall thunk (lexical-locations)))))))))))
