@@ -8,7 +8,7 @@
    (%arguments :initarg :arguments :reader arguments)))
 
 ;; A list of all values returned by the last function call.
-(defvar *global-values-location*)
+(defvar *global-values-location* nil)
 
 ;; A hash table, caching the thunk of each instruction that has already
 ;; been converted.
