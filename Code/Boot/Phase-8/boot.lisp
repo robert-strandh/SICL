@@ -50,6 +50,7 @@
     (load-source "Evaluation-and-compilation/macroexpand-1-defun.lisp" e5)
     (load-source "Evaluation-and-compilation/macroexpand-defun.lisp" e5)
     (load-source "Data-and-control-flow/constantly-defun.lisp" e5)
+    (load-source "Data-and-control-flow/defun-support.lisp" e5)
     (setf (sicl-genv:special-variable '*debug-io* e5 t)
           *debug-io*)
     (import-functions-from-host '(read finish-output) e5)
