@@ -5,7 +5,7 @@
                    (e3 sicl-boot:e3)
                    (e4 sicl-boot:e4))
       boot
-    (sicl-hir-interpreter:fill-environment e4)
+    (sicl-hir-evaluator:fill-environment e4)
     (import-functions-from-host
      '(cleavir-code-utilities:separate-function-body
        cleavir-code-utilities:required

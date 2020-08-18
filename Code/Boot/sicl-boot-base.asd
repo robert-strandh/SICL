@@ -3,7 +3,7 @@
 (defsystem #:sicl-boot-base
   :depends-on (#:sicl-extrinsic-environment
                #:sicl-ast-to-hir
-               #:sicl-hir-interpreter
+               #:sicl-hir-evaluator
                #:sicl-hir-to-mir
                #:sicl-mir-to-lir
                #:sicl-code-generation

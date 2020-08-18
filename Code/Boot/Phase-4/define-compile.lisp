@@ -7,4 +7,4 @@
           (assert (not (null definition)))
           (let* ((cst (cst:cst-from-expression definition))
                  (client (make-instance 'sicl-boot:client)))
-            (sicl-hir-interpreter:cst-eval client cst e4)))))
+            (sicl-hir-evaluator:cst-eval client cst e4)))))

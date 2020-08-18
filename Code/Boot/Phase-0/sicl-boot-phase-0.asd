@@ -2,7 +2,7 @@
 
 (defsystem #:sicl-boot-phase-0
   :depends-on (#:sicl-boot-base
-               #:sicl-hir-interpreter
+               #:sicl-hir-evaluator
                #:sicl-source-tracking
                #:sicl-data-and-control-flow-support
                #:sicl-package-support

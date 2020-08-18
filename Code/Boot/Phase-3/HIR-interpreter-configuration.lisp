@@ -1,47 +1,35 @@
 (cl:in-package #:sicl-boot-phase-3)
 
-(defmethod sicl-hir-interpreter:interpret-instruction
+(defmethod sicl-hir-evaluator:instruction-thunk
     ((client sicl-boot:client)
      (instruction cleavir-ir:nook-read-instruction)
      lexical-environment)
-  (destructuring-bind (object-input index-input)
-      (cleavir-ir:inputs instruction)
-    (let* ((standard-object-input-value
-             (sicl-hir-interpreter:input-value object-input lexical-environment))
-           (index-input-value
-             (sicl-hir-interpreter:input-value index-input lexical-environment))
-           (output (first (cleavir-ir:outputs instruction))))
-      (setf (sicl-hir-interpreter:lexical-value output lexical-environment)
-            (if (zerop index-input-value)
-                ;; Then the stamp is asked for
-                (flet ((unique-number (class-name)
-                         (funcall (sicl-genv:fdefinition
-                                   'sicl-clos::unique-number sicl-boot:*e3*)
-                                  (sicl-genv:find-class class-name sicl-boot:*e3*))))
-                  (cond ((null standard-object-input-value)
-                         (unique-number 'null))
-                        ((symbolp standard-object-input-value)
-                         (unique-number 'symbol))
-                        ((typep standard-object-input-value 'sicl-boot::header)
-                         (let ((rack (slot-value standard-object-input-value 'sicl-boot::%rack)))
-                           (aref rack 0)))
-                        (t (error "Can't deal with object ~s"
-                                  standard-object-input-value))))
-                (let ((rack (slot-value standard-object-input-value 'sicl-boot::%rack)))
-                  (aref rack index-input-value))))))
-  (first (cleavir-ir:successors instruction)))
+  (sicl-hir-evaluator:make-thunk (client instruction lexical-environment :inputs 2 :outputs 1)
+    (setf (sicl-hir-evaluator:output 0)
+          (if (zerop (sicl-hir-evaluator:input 1))
+              ;; The stamp is asked for
+              (flet ((unique-number (class-name)
+                       (funcall (sicl-genv:fdefinition
+                                 'sicl-clos::unique-number sicl-boot:*e3*)
+                                (sicl-genv:find-class class-name sicl-boot:*e3*))))
+                (typecase (sicl-hir-evaluator:input 0)
+                  (null (unique-number 'null))
+                  (symbol (unique-number 'symbol))
+                  (sicl-boot::header
+                   (let ((rack (slot-value (sicl-hir-evaluator:input 0) 'sicl-boot::%rack)))
+                     (aref rack 0)))
+                  (t (error "Can't compute the stamp of ~s"
+                            (sicl-hir-evaluator:input 0)))))
+              (let ((rack (slot-value (sicl-hir-evaluator:input 0) 'sicl-boot::%rack)))
+                (aref rack (sicl-hir-evaluator:input 1)))))
+    (sicl-hir-evaluator:successor 0)))
 
-(defmethod sicl-hir-interpreter:interpret-instruction
+(defmethod sicl-hir-evaluator:instruction-thunk
     ((client sicl-boot:client)
      (instruction cleavir-ir:nook-write-instruction)
      lexical-environment)
-  (destructuring-bind (object-input index-input value-input)
-      (cleavir-ir:inputs instruction)
-    (let ((object
-            (sicl-hir-interpreter:input-value object-input lexical-environment))
-          (index
-            (sicl-hir-interpreter:input-value index-input lexical-environment))
-          (value
-            (sicl-hir-interpreter:input-value value-input lexical-environment)))
-      (setf (aref (slot-value object 'sicl-boot::%rack) index) value)))
-  (first (cleavir-ir:successors instruction)))
+  (sicl-hir-evaluator:make-thunk (client instruction lexical-environment :inputs 3)
+    (setf (aref (slot-value (sicl-hir-evaluator:input 0) 'sicl-boot::%rack)
+                (sicl-hir-evaluator:input 1))
+          (sicl-hir-evaluator:input 2))
+    (sicl-hir-evaluator:successor 0)))

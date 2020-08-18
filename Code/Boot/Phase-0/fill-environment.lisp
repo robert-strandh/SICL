@@ -2,7 +2,7 @@
 
 (defun fill-environment (client environment)
   (import-from-host environment)
-  (sicl-hir-interpreter:fill-environment environment)
+  (sicl-hir-evaluator:fill-environment environment)
   (define-defmacro environment)
   (define-backquote-macros environment)
   (define-setf-macro-function environment)

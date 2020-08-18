@@ -26,7 +26,7 @@
 (defun display-arguments (frame pane)
   (let ((entry (current-entry frame)))
     (unless (null entry)
-      (loop for argument in (sicl-hir-interpreter:arguments entry)
+      (loop for argument in (sicl-hir-evaluator:arguments entry)
             for i from 1
             do (clim:with-drawing-options (pane :ink clim:+red+)
                  (format pane "~a:" i))
@@ -40,7 +40,7 @@
                  (format pane "~s~%" argument))))))
 
 (defun display-entry (pane entry)
-  (let ((origin (sicl-hir-interpreter:origin entry)))
+  (let ((origin (sicl-hir-evaluator:origin entry)))
     (when (eq entry (current-entry clim:*application-frame*))
       (format pane "+"))
     (multiple-value-bind (x y)
@@ -49,7 +49,7 @@
       (setf (clim:stream-cursor-position pane)
             (values 20 y)))
     (clim:with-output-as-presentation
-        (pane entry 'sicl-hir-interpreter:call-stack-entry)
+        (pane entry 'sicl-hir-evaluator:call-stack-entry)
       (if (null origin)
           (clim:with-drawing-options (pane :ink clim:+red+)
             (format pane "entry with no source information~%"))
@@ -72,8 +72,8 @@
 (defun display-source (frame pane)
   (let ((entry (current-entry frame)))
     (unless (or (null entry)
-                (null (sicl-hir-interpreter:origin entry)))
-      (let* ((origin (sicl-hir-interpreter:origin entry))
+                (null (sicl-hir-evaluator:origin entry)))
+      (let* ((origin (sicl-hir-evaluator:origin entry))
              (start (car origin))
              (start-line-index (sicl-source-tracking:line-index start))
              (start-character-index (sicl-source-tracking:character-index start))

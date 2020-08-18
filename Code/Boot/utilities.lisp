@@ -4,7 +4,7 @@
   (let* ((hir (sicl-compiler:hir code-object))
          (constants (sicl-compiler:constants code-object))
          (function-names (sicl-compiler:function-names code-object))
-         (fun (sicl-hir-interpreter:top-level-hir-to-host-function client hir))
+         (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
          (sicl-run-time:*dynamic-environment* '()))
     (funcall fun
              (labels ((enclose (entry-point code-object static-environment-length)
@@ -64,14 +64,14 @@
          (ast (cleavir-io:read-model pathname '(v0)))
          (hir (sicl-ast-to-hir:ast-to-hir client ast))
          ;; (hir2 (sicl-ast-to-hir:ast-to-hir client ast))
-         (fun (sicl-hir-interpreter:top-level-hir-to-host-function client hir))
+         (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
          (sicl-run-time:*dynamic-environment* '()))
     ;; (sicl-hir-to-mir:hir-to-mir client hir2)
     (funcall fun
              (apply #'vector
                     nil ; Ultimately, replace with code object.
-                    #'sicl-hir-interpreter:enclose
-                    #'sicl-hir-interpreter:initialize-closure
+                    #'sicl-hir-evaluator:enclose
+                    #'sicl-hir-evaluator:initialize-closure
                     #'cons
                     nil
                     (append (loop with names = (sicl-hir-transformations:function-names hir)

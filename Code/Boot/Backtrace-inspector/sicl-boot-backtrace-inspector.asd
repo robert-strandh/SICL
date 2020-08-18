@@ -2,7 +2,8 @@
 
 (defsystem #:sicl-boot-backtrace-inspector
   :depends-on (#:mcclim
-               #:sicl-hir-interpreter
+               #:sicl-source-tracking
+               #:sicl-hir-evaluator
                #:clouseau)
   :serial t
   :components

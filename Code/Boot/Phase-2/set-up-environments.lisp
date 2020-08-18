@@ -4,8 +4,8 @@
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3))
       boot
-    (sicl-hir-interpreter:fill-environment e2)
-    (sicl-hir-interpreter:fill-environment e3)
+    (sicl-hir-evaluator:fill-environment e2)
+    (sicl-hir-evaluator:fill-environment e3)
     (sicl-boot:import-functions-from-host
      '(funcall cons cadr cddr cdddr list error)
      e2)
