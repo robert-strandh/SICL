@@ -31,6 +31,7 @@
 (defun initialize-closure (closure &rest static-environment-values)
   (check-type closure hir-closure)
   (let ((static-environment (environment closure)))
+    (declare (simple-vector static-environment))
     (replace static-environment static-environment-values
              :start1 sicl-compiler:+first-constant-index+)))
 

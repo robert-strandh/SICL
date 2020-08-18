@@ -46,6 +46,7 @@
                    ,@(loop for successor-thunk-gensym in successor-thunk-gensyms
                            collect
                            `(,successor-thunk-gensym #'dummy-successor)))
+               (declare (function ,@successor-thunk-gensyms))
                (declare (ignorable
                          ,dynamic-environment-gensym-1
                          ,dynamic-environment-gensym-2

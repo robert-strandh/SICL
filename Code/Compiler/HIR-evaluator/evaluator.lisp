@@ -12,7 +12,7 @@
 
 ;; A hash table, caching the thunk of each instruction that has already
 ;; been converted.
-(defvar *instruction-thunks* nil)
+(defvar *instruction-thunks*)
 
 ;; The main entry point for converting instructions to thunks.
 (defgeneric instruction-thunk (client instruction lexical-environment))
