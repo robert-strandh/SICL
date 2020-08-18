@@ -62,4 +62,5 @@
     (load-sicl-utilities e5)
     (load-source "CLOS/slot-value-etc-specified-defuns.lisp" e5)
     (load-source "CLOS/defmethod-support.lisp" e5)
+    (load-source "CLOS/defclass-support.lisp" e5)
     (load-source "CLOS/discriminating-automaton.lisp" e5)))
