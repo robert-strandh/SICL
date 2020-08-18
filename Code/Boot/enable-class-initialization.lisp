@@ -53,13 +53,24 @@
   (load-source "CLOS/ensure-class-using-class-defgenerics.lisp" eb)
   (load-source "CLOS/ensure-class-using-class-defmethods.lisp" eb)
   (load-source "Environment/find-class-defun.lisp" eb)
+  (load-source "Data-and-control-flow/nth-value.lisp" eb)
   (load-source "Environment/standard-environment-functions.lisp" eb)
   (load-source "CLOS/ensure-class.lisp" eb))
 
 (defun enable-class-initialization (ea eb ec)
   (setf (sicl-genv:fdefinition 'typep eb)
         (lambda (object type)
-          (sicl-genv:typep object type eb)))
+          (when (or (not (symbolp object))
+                    (not (eq type 'class)))
+            (format *trace-output*
+                    "Typep called with ~s and ~s" object type))
+          (let ((result (sicl-genv:typep object type eb)))
+            (when (or (not (symbolp object))
+                      (not (eq type 'class)))
+              (format *trace-output*
+                      " and returned ~a~%"
+                      (if (null result) "false" "true")))
+            result)))
   (define-validate-superclass eb)
   (define-direct-slot-definition-class ea eb)
   (define-add-remove-direct-subclass eb)
