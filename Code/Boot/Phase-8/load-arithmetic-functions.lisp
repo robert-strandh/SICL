@@ -39,6 +39,7 @@
   (load-source "Arithmetic/ceiling-defun.lisp" e5)
   (load-source "Arithmetic/truncate-defun.lisp" e5)
   (load-source "Arithmetic/round-defun.lisp" e5)
+  (load-source "Arithmetic/mod-defun.lisp" e5)
   (load-source "Arithmetic/evenp-defun.lisp" e5)
   (load-source "Arithmetic/oddp-defun.lisp" e5)
   (load-source "Arithmetic/allocate-instance-defmethod-bignum.lisp" e5)
