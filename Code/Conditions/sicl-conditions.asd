@@ -25,4 +25,5 @@
    (:file "make-condition-defmethods")
    (:file "Portable-condition-system/coerce-to-condition")
    (:file "break-defun")
-   (:file "signaling")))
+   (:file "signaling")
+   (:file "assert-defmacro")))
