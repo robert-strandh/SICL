@@ -93,7 +93,8 @@
 ;;; between the two arguments, and the second result will contain the
 ;;; least significant part of that product.
 
-(defclass fixnum-multiply-ast (ast boolean-ast-mixin)
+(defclass fixnum-multiply-ast
+    (ast side-effect-free--ast-mixin two-values-ast-mixin)
   ((%multiplier-ast :initarg :multiplier-ast :reader multiplier-ast)
    (%multiplicand-ast :initarg :multiplicand-ast :reader multiplicand-ast)))
 
@@ -117,7 +118,8 @@
 ;;; second result will contain the remainder.  Rounding is towards
 ;;; zero as with the Common Lisp function FLOOR.
 
-(defclass fixnum-divide-ast (ast boolean-ast-mixin)
+(defclass fixnum-divide-ast
+    (ast side-effect-free--ast-mixin two-values-ast-mixin)
   ((%dividend-ast :initarg :dividend-ast :reader dividend-ast)
    (%divisor-ast :initarg :divisor-ast :reader divisor-ast)))
 
