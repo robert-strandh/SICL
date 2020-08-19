@@ -127,7 +127,7 @@
 ;;;
 ;;; Compile a MULTIPLE-VALUE-CALL-AST.
 
-(defun compile-divide (client ast context)
+(defun compile-two-value-call (client ast context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -203,5 +203,5 @@
   (if (and (= (length (cleavir-ast:form-asts ast)) 1)
            (typep (first (cleavir-ast:form-asts ast))
                   'cleavir-ast:fixnum-divide-ast))
-      (compile-divide client ast context)
+      (compile-two-value-call client ast context)
       (compile-multiple-value-call client ast context)))
