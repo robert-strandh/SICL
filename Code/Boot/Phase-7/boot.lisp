@@ -25,6 +25,8 @@
     (load-source "Arithmetic/binary-not-greater-defmethods.lisp" e5)
     (load-source "Arithmetic/binary-equal-defgeneric.lisp" e5)
     (load-source "Arithmetic/binary-equal-defmethods.lisp" e5)
+    (load-source "Arithmetic/binary-multiply-defgeneric.lisp" e5)
+    (load-source "Arithmetic/binary-multiply-defmethods.lisp" e5)
     (load-source "Arithmetic/generic-floor-defgeneric.lisp" e5)
     (load-source "Arithmetic/generic-floor-defmethods.lisp" e5)
     (load-source "Arithmetic/generic-ceiling-defgeneric.lisp" e5)
