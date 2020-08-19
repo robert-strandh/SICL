@@ -80,6 +80,7 @@
    #:fixnum-less-instruction
    #:fixnum-not-greater-instruction
    #:fixnum-equal-instruction
+   #:fixnum-multiply-instruction
    #:fixnum-divide-instruction
    #:fixnum-logand-instruction
    #:fixnum-logior-instruction
