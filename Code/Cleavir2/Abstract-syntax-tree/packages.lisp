@@ -10,6 +10,7 @@
    #:boolean-ast-mixin
    #:no-value-ast-mixin
    #:one-value-ast-mixin
+   #:two-values-ast-mixin
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
    #:constant-ast #:value
