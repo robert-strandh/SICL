@@ -37,7 +37,7 @@
 (defclass no-value-ast-mixin () ())
 
 ;;; This class is used as a superclass for ASTs that produce a single
-;;; value that is not typically not just a Boolean value.
+;;; value that is typically not just a Boolean value.
 (defclass one-value-ast-mixin () ())
 
 ;;; This class is used as a superclass for ASTs that have no side
