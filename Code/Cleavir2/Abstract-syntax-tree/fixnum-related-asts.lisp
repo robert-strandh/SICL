@@ -94,7 +94,7 @@
 ;;; least significant part of that product.
 
 (defclass fixnum-multiply-ast
-    (ast side-effect-free--ast-mixin two-values-ast-mixin)
+    (ast side-effect-free-ast-mixin two-values-ast-mixin)
   ((%multiplier-ast :initarg :multiplier-ast :reader multiplier-ast)
    (%multiplicand-ast :initarg :multiplicand-ast :reader multiplicand-ast)))
 
@@ -119,7 +119,7 @@
 ;;; zero as with the Common Lisp function FLOOR.
 
 (defclass fixnum-divide-ast
-    (ast side-effect-free--ast-mixin two-values-ast-mixin)
+    (ast side-effect-free-ast-mixin two-values-ast-mixin)
   ((%dividend-ast :initarg :dividend-ast :reader dividend-ast)
    (%divisor-ast :initarg :divisor-ast :reader divisor-ast)))
 
