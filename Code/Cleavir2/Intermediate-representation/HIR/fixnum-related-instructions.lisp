@@ -57,7 +57,7 @@
 ;;; two inputs, and the second output contains the least significant
 ;;; part of the product.
 
-(defclass fixnum-divide-instruction (instruction one-successor-mixin)
+(defclass fixnum-multiply-instruction (instruction one-successor-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
