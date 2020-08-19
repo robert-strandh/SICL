@@ -61,6 +61,7 @@
    #:fixnum-sub-ast
    #:arg1-ast #:arg2-ast #:variable-ast
    #:fixnum-divide-ast #:dividend-ast #:divisor-ast
+   #:fixnum-multiply-ast #:multiplier-ast #:multiplicand-ast
    #:fixnum-less-ast
    #:fixnum-not-greater-ast
    #:fixnum-greater-ast
