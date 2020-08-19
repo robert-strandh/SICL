@@ -82,6 +82,30 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class FIXNUM-MULTIPLY-AST.
+;;;
+;;; This AST can be used to implement a binary multiplication
+;;; function.  It requires both its arguments to evaluate to
+;;; non-negative FIXNUMs.  This AST can occur only in a context where
+;;; exactly two results are required.  The two results are both
+;;; non-negative FIXNUMs.  As a consequence of the operation, the
+;;; first result will contain most significant part of the product
+;;; between the two arguments, and the second result will contain the
+;;; least significant part of that product.
+
+(defclass fixnum-multiply-ast (ast boolean-ast-mixin)
+  ((%multiplier-ast :initarg :multiplier-ast :reader multiplier-ast)
+   (%multiplicand-ast :initarg :multiplicand-ast :reader multiplicand-ast)))
+
+(cleavir-io:define-save-info fixnum-multiply-ast
+  (:multiplier-ast multiplier-ast)
+  (:multiplicand-ast multiplicand-ast))
+
+(defmethod children ((ast fixnum-multiply-ast))
+  (list (multiplier-ast ast) (multiplicand-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class FIXNUM-DIVIDE-AST.
 ;;;
 ;;; This AST can be used to implement a binary division function.  It
