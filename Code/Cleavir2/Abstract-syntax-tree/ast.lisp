@@ -40,6 +40,11 @@
 ;;; value that is typically not just a Boolean value.
 (defclass one-value-ast-mixin () ())
 
+;;; This class is used as a superclass for ASTs that produce two
+;;; values, and that must be compiled in a context where two values
+;;; are required.
+(defclass two-values-ast-mixin () ())
+
 ;;; This class is used as a superclass for ASTs that have no side
 ;;; effect.
 (defclass side-effect-free-ast-mixin () ())
