@@ -202,6 +202,6 @@
 (defmethod compile-ast (client (ast cleavir-ast:multiple-value-call-ast) context)
   (if (and (= (length (cleavir-ast:form-asts ast)) 1)
            (typep (first (cleavir-ast:form-asts ast))
-                  'cleavir-ast:fixnum-divide-ast))
+                  'cleavir-ast:two-values-ast-mixin))
       (compile-two-value-call client ast context)
       (compile-multiple-value-call client ast context)))
