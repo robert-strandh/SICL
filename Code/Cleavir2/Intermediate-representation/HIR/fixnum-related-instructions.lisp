@@ -49,6 +49,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction FIXNUM-MULTIPLY-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs, both non-negative FIXNUMs.  The
+;;; instruction has two outputs, both non-negative FIXNUMs.  The first
+;;; output contains the most significant part of the product of the
+;;; two inputs, and the second output contains the least significant
+;;; part of the product.
+
+(defclass fixnum-divide-instruction (instruction one-successor-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction FIXNUM-DIVIDE-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input must be a
