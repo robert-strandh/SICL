@@ -50,6 +50,19 @@
 
 (defmethod instruction-thunk
     (client
+     (instruction cleavir-ir:fixnum-multiply-instruction)
+     lexical-environment)
+  (make-thunk (client instruction lexical-environment :inputs 2 :outputs 2)
+    (multiple-value-bind (most-significant least-significant)
+        (floor (* (input 0) (input 1))
+               ;; FIXME: make this number part of some configuration.
+               #.(expt 2 62))
+      (setf (output 0) most-significant)
+      (setf (output 1) least-significant)
+      (successor 0))))
+
+(defmethod instruction-thunk
+    (client
      (instruction cleavir-ir:fixnum-divide-instruction)
      lexical-environment)
   (make-thunk (client instruction lexical-environment :inputs 2 :outputs 2)
