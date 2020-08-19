@@ -196,6 +196,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-MULTIPLY.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:fixnum-multiply)) cst environment)
+  (check-simple-primop-syntax cst 2)
+  (cst:db origin (multiply-cst multiplier-cst multiplicand-cst) cst
+    (declare (ignore multiply-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-multiply-ast
+      :multiplier-ast (convert client multiplier-cst environment)
+      :multiplicand-ast (convert client multiplicand-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-DIVIDE.
 
 (defmethod convert-special
