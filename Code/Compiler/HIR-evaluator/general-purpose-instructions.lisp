@@ -137,3 +137,12 @@
      lexical-environment)
   (make-thunk (client instruction lexical-environment :successors 0)
     (error "Reached an unreachable instruction.")))
+
+(defmethod instruction-thunk
+    (client
+     (instruction cleavir-ir:load-constant-instruction)
+     lexical-environment)
+  (let ((constant (cdr (cleavir-ir:location-info instruction))))
+    (make-thunk (client instruction lexical-environment :outputs 1)
+      (setf (output 0) constant)
+      (successor 0))))
