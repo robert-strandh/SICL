@@ -17,36 +17,28 @@
   (< (char-code constant) #.(expt 2 29)))
 
 (defun hoist-constant-inputs (initial-instruction)
-  (let ((locations '())
-        (static-environment-location
-          (cleavir-ir:static-environment initial-instruction)))
-    (with-accessors ((constants constants)
-                     (function-names function-names))
-        initial-instruction
-      (cleavir-ir:map-instructions-arbitrary-order
-       (lambda (instruction)
-         (loop for remaining = (cleavir-ir:inputs instruction) then (rest remaining)
-               for input = (first remaining)
-               until (null remaining)
-               do (when (and (typep input 'cleavir-ir:constant-input)
-                             (not (trivial-constant-p (cleavir-ir:value input))))
-                    (let* ((value (cleavir-ir:value input))
-                           (pos (position value constants)))
-                      (when (null pos)
-                        (setf pos (length constants))
-                        (setf constants (append constants (list value)))
-                        (let ((location (make-instance 'cleavir-ir:lexical-location
-                                          :name (gensym)))
-                              (position (+ pos (length function-names))))
-                          (setf locations (append locations (list location)))
-                          (cleavir-ir:insert-instruction-after
-                           (make-instance 'cleavir-ir:fetch-instruction
-                             :inputs (list static-environment-location
-                                           (make-instance 'cleavir-ir:constant-input
-                                             :value position))
-                             :output location)
-                           initial-instruction)))
-                      (setf (first remaining)
-                            (nth pos locations))))))
-       initial-instruction)))
+  (with-accessors ((constants constants)
+                   (function-names function-names))
+      initial-instruction
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (loop for remaining = (cleavir-ir:inputs instruction) then (rest remaining)
+             for input = (first remaining)
+             until (null remaining)
+             do (when (and (typep input 'cleavir-ir:constant-input)
+                           (not (trivial-constant-p (cleavir-ir:value input))))
+                  (let* ((value (cleavir-ir:value input))
+                         (pos (position value constants)))
+                    (when (null pos)
+                      (setf pos (length constants))
+                      (setf constants (append constants (list value))))
+                    (let ((temp (make-instance 'cleavir-ir:lexical-location
+                                  :name (gensym))))
+                      (cleavir-ir:insert-instruction-before
+                       (make-instance 'cleavir-ir:load-constant-instruction
+                         :location-info (cons pos value)
+                         :output temp)
+                       instruction)
+                      (setf (first remaining) temp))))))
+     initial-instruction))
   (cleavir-ir:reinitialize-data initial-instruction))
