@@ -72,6 +72,8 @@
    #:standard-object-p-instruction
    #:phi-instruction
    #:use-instruction
+   #:load-constant-instruction
+   #:location-info
    #:aref-instruction #:aset-instruction
    #:element-type #:simple-p #:boxed-p
    #:coerce-instruction #:from-type #:to-type
