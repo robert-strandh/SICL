@@ -383,3 +383,17 @@
 
 (defclass use-instruction (instruction one-successor-mixin)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-CONSTANT-INSTRUCTION.
+;;;
+;;; This instruction can be used by clients who have a way of loading
+;;; constants directly from the instruction stream.  It has no inputs.
+;;; It has a single output which is a lexical location into which the
+;;; constant will be loaded.  The instruction itself contains a slot
+;;; that can be used by client code to store information about where
+;;; the constant is to be found.
+
+(defclass load-constant-instruction (instruction one-successor-mixin)
+  ((%location-info :initarg :location-info :reader location-info)))
