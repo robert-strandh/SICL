@@ -6,6 +6,11 @@
       boot
     (setf (sicl-genv:macro-function 'defpackage e5)
           (constantly nil))
+    (setf (sicl-genv:fdefinition 'host-symbolp e5)
+          #'symbolp)
+    (setf (sicl-genv:fdefinition 'host-symbol-name e5)
+          #'symbol-name)
+    (load-source "Boot/Phase-8/symbol-name-defmethod-around.lisp" e5)
     (load-source "Types/Typep/typep.lisp" e5)
     (load-source "Types/Typep/typep-atomic.lisp" e5)
     (load-source "Types/Typep/typep-compound.lisp" e5)
