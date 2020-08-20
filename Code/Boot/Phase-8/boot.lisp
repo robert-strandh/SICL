@@ -71,4 +71,5 @@
     (load-source "CLOS/discriminating-automaton.lisp" e5)
     (with-intercepted-function-names ((expt) e5)
       (load-source "Arithmetic/expt-defgeneric.lisp" e5)
-      (load-source "Arithmetic/expt-defmethods.lisp" e5))))
+      (load-source "Arithmetic/expt-defmethods.lisp" e5))
+    (load-sequence-functions e5)))
