@@ -14,14 +14,16 @@
      lexical-environment)
   (let* ((input-indices
            (loop for input in (cleavir-ir:inputs instruction)
-                 collect (value-index input lexical-environment)))
-         (call-stack-entry
-           (make-instance 'call-stack-entry
-             :origin (cleavir-ast-to-hir:origin instruction)
-             :arguments input-indices)))
+                 collect (value-index input lexical-environment))))
     (macrolet ((fixed-arity-call (arity)
                  `(make-thunk (client instruction lexical-environment :inputs ,arity)
-                    (let ((sicl-run-time:*dynamic-environment* dynamic-environment))
+                    (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
+                          (call-stack-entry
+                            (make-instance 'call-stack-entry
+                              :origin (cleavir-ast-to-hir:origin instruction)
+                              :arguments
+                              (loop for input-index in input-indices
+                                   collect (lref input-index)))))
                       (setf *global-values-location*
                             (multiple-value-list
                              (let* ((*call-stack* (cons call-stack-entry *call-stack*)))
@@ -40,7 +42,13 @@
         (8 (fixed-arity-call 8))
         (otherwise
          (make-thunk (client instruction lexical-environment)
-           (let ((sicl-run-time:*dynamic-environment* dynamic-environment))
+           (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
+                 (call-stack-entry
+                   (make-instance 'call-stack-entry
+                     :origin (cleavir-ast-to-hir:origin instruction)
+                     :arguments
+                     (loop for input-index in input-indices
+                                   collect (lref input-index)))))
              (setf *global-values-location*
                    (multiple-value-list
                     (let ((*call-stack* (cons call-stack-entry *call-stack*)))
