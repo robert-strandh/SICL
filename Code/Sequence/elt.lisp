@@ -22,7 +22,7 @@
 
 (defmethod elt ((vector vector) index)
   (declare (method-properties inlineable))
-  (cl:elt vector index))
+  (aref vector index))
 
 (seal-domain #'elt '(vector t))
 
@@ -35,6 +35,6 @@
 
 (defmethod (setf elt) (value (vector vector) index)
   (declare (method-properties inlineable))
-  (setf (cl:elt vector index) value))
+  (setf (aref vector index) value))
 
 (seal-domain #'(setf elt) '(t vector t))
