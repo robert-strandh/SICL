@@ -1,8 +1,16 @@
 (cl:in-package #:sicl-ast-evaluator)
 
-(defun augment-environment (environment)
-  (cons (make-hash-table :test #'eq)
-        environment))
+(defun augment-environment (environment lambda-list)
+  (let ((table (make-hash-table :test #'eq)))
+    (loop for item in lambda-list
+          do (cond ((member item lambda-list-keywords)
+                    nil)
+                   ((atom item)
+                    (setf (gethash item table) (gensym)))
+                   (t
+                    (loop for var-ast in item
+                          do (setf (gethash var-ast table) (gensym))))))
+    (cons table environment)))
 
 (defun find-lexical-variable (environment variable-ast)
   (loop for table in environment
