@@ -21,4 +21,6 @@
                   (setf (gethash variable-ast (first environment)) name)
                   (return name))))
 
-               
+(defun add-block (environment block-ast)
+  (setf (gethash block-ast (first environment))
+        (gensym)))
