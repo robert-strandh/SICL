@@ -5,7 +5,7 @@
      (instruction cleavir-ir:bind-instruction)
      lexical-environment)
   (let ((output-index
-          (value-index
+          (ensure-lref
            (cleavir-ir:dynamic-environment-output instruction)
            lexical-environment)))
     (make-thunk (client instruction lexical-environment :inputs 3)

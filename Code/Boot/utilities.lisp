@@ -7,7 +7,7 @@
          (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
          (sicl-run-time:*dynamic-environment* '()))
     (funcall fun
-             (labels ((enclose (entry-point code-object static-environment-length)
+             (labels ((enclose (entry-point code-object static-environment-length lexical-locations)
                         (let* ((static-environment (make-array (+ sicl-compiler:+first-constant-index+ static-environment-length)))
                                (closure
                                  (funcall (sicl-genv:fdefinition 'make-instance e2)
@@ -29,7 +29,8 @@
                              (funcall entry-point
                                       args
                                       static-environment
-                                      sicl-run-time:*dynamic-environment*)))
+                                      sicl-run-time:*dynamic-environment*
+                                      lexical-locations)))
                           closure))
                       (initialize-closure (closure &rest static-environment-values)
                         (let ((static-environment

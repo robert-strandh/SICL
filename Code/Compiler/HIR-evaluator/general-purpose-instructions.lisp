@@ -14,7 +14,7 @@
      lexical-environment)
   (let* ((input-indices
            (loop for input in (cleavir-ir:inputs instruction)
-                 collect (value-index input lexical-environment))))
+                 collect (ensure-lref input lexical-environment))))
     (macrolet ((fixed-arity-call (arity)
                  `(make-thunk (client instruction lexical-environment :inputs ,arity)
                     (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
@@ -22,13 +22,13 @@
                             (make-instance 'call-stack-entry
                               :origin (cleavir-ast-to-hir:origin instruction)
                               :arguments
-                              (loop for input-index in input-indices
-                                   collect (lref input-index)))))
+                              (loop for input-lref in input-indices
+                                    collect (lref input-lref)))))
                       (setf *global-values-location*
                             (multiple-value-list
                              (let* ((*call-stack* (cons call-stack-entry *call-stack*)))
                                (funcall
-                                ,@(loop for index below arity collect `(input ,index))))))
+                                ,@(loop for lref below arity collect `(input ,lref))))))
                       (successor 0)))))
       (case (length (cleavir-ir:inputs instruction))
         (0 (error "Funcall instruction with zero inputs."))
@@ -47,14 +47,14 @@
                    (make-instance 'call-stack-entry
                      :origin (cleavir-ast-to-hir:origin instruction)
                      :arguments
-                     (loop for input-index in input-indices
-                                   collect (lref input-index)))))
+                     (loop for input-lref in input-indices
+                           collect (lref input-lref)))))
              (setf *global-values-location*
                    (multiple-value-list
                     (let ((*call-stack* (cons call-stack-entry *call-stack*)))
                       (apply #'funcall
-                             (loop for input-index in input-indices
-                                   collect (lref input-index))))))
+                             (loop for input-lref in input-indices
+                                   collect (lref input-lref))))))
              (successor 0))))))))
 
 (defmethod instruction-thunk

@@ -32,17 +32,17 @@
                (cleavir-ir:successors ,instruction)
              (declare (ignore _))
              (let ((,dynamic-environment-gensym-1
-                     (value-index 'dynamic-environment ,lexical-environment))
+                     (ensure-lref 'dynamic-environment ,lexical-environment))
                    (,dynamic-environment-gensym-2
-                     (value-index (cleavir-ir:dynamic-environment-location ,instruction)
+                     (ensure-lref (cleavir-ir:dynamic-environment-location ,instruction)
                                  ,lexical-environment))
                    (,self-gensym #'dummy-successor)
                    ,@(loop for input-gensym in input-gensyms
                            collect
-                           `(,input-gensym (value-index ,input-gensym ,lexical-environment)))
+                           `(,input-gensym (ensure-lref ,input-gensym ,lexical-environment)))
                    ,@(loop for output-gensym in output-gensyms
                            collect
-                           `(,output-gensym (value-index ,output-gensym ,lexical-environment)))
+                           `(,output-gensym (ensure-lref ,output-gensym ,lexical-environment)))
                    ,@(loop for successor-thunk-gensym in successor-thunk-gensyms
                            collect
                            `(,successor-thunk-gensym #'dummy-successor)))
@@ -51,12 +51,14 @@
                          ,dynamic-environment-gensym-1
                          ,dynamic-environment-gensym-2
                          ,self-gensym))
-               (macrolet ((input (index)
+               (macrolet ((lref (lref)
+                            `(%lref ,',lexical-locations ,lref))
+                          (input (index)
                             (case index
                               ,@(loop for input-gensym in input-gensyms
                                       for index from 0
                                       collect
-                                      `((,index) `(svref ,',lexical-locations ,',input-gensym)))
+                                      `((,index) `(lref ,',input-gensym)))
                               (otherwise
                                (error "Invalid input index: ~S" index))))
                           (output (index)
@@ -64,7 +66,7 @@
                               ,@(loop for output-gensym in output-gensyms
                                       for index from 0
                                       collect
-                                      `((,index) `(svref ,',lexical-locations ,',output-gensym)))
+                                      `((,index) `(lref ,',output-gensym)))
                               (otherwise
                                (error "Invalid output index: ~S" index))))
                           (successor (index)
@@ -75,13 +77,11 @@
                                       `((,index) ',successor-thunk-gensym))
                               (otherwise
                                (error "Invalid successor index: ~S" index))))
-                          (lref (index)
-                            `(svref ,',lexical-locations ,index))
                           (lexical-locations ()
                             ',lexical-locations))
                  (let ((,thunk-gensym
                          (symbol-macrolet
-                             ((dynamic-environment (svref ,lexical-locations ,dynamic-environment-gensym-2)))
+                             ((dynamic-environment (lref ,dynamic-environment-gensym-2)))
                            (lambda (,lexical-locations)
                              (declare (simple-vector ,lexical-locations))
                              (prologue
@@ -109,9 +109,9 @@
 (defun dummy-successor ()
   (error "Invocation of the dummy successor."))
 
-(defun prologue (lexical-locations index-1 index-2 thunk)
-  (let ((env1 (svref lexical-locations index-1))
-        (env2 (svref lexical-locations index-2)))
+(defun prologue (lexical-locations lref-1 lref-2 thunk)
+  (let ((env1 (%lref lexical-locations lref-1))
+        (env2 (%lref lexical-locations lref-2)))
     (unless (or (eq env1 env2)
                 (> (length env2) (length env1)))
       (loop for env = env1 then (rest env)
@@ -132,6 +132,6 @@
           (throw (sicl-run-time:frame-pointer last-block/tagbody)
             thunk))))))
 
-(defun epilogue (lexical-locations index-1 index-2)
-  (setf (svref lexical-locations index-1)
-        (svref lexical-locations index-2)))
+(defun epilogue (lexical-locations lref-1 lref-2)
+  (setf (%lref lexical-locations lref-1)
+        (%lref lexical-locations lref-2)))

@@ -4,16 +4,16 @@
     (client
      (instruction cleavir-ir:initialize-closure-instruction)
      lexical-environment)
-  (let* ((static-environment-index (value-index 'static-environment lexical-environment))
+  (let* ((static-environment-lref (ensure-lref 'static-environment lexical-environment))
          (inputs (cleavir-ir:inputs instruction))
-         (closure-index (value-index (first inputs) lexical-environment))
-         (input-indices
+         (closure-lref (ensure-lref (first inputs) lexical-environment))
+         (input-lrefs
            (loop for input in (rest inputs)
-                 collect (value-index input lexical-environment))))
+                 collect (ensure-lref input lexical-environment))))
     (make-thunk (client instruction lexical-environment)
-      (apply (aref (lref static-environment-index)
+      (apply (aref (lref static-environment-lref)
                    sicl-compiler:+initialize-closure-function-index+)
-             (lref closure-index)
-             (loop for input-index in input-indices
-                   collect (lref input-index)))
+             (lref closure-lref)
+             (loop for input-lref in input-lrefs
+                   collect (lref input-lref)))
       (successor 0))))
