@@ -56,3 +56,9 @@
                        (loop for ast in item
                              collect (find-lexical-variable new-environment ast)))))
        ,(translate-ast (ast:body-ast ast) global-environment new-environment))))
+
+(defmethod translate-ast
+    ((ast ast:progn-ast) global-environment lexical-environment)
+  `(progn ,@(loop for form-ast in (ast:form-asts ast)
+                  collect (translate-ast
+                           form-ast global-environment lexical-environment))))
