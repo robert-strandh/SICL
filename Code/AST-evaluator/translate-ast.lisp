@@ -37,6 +37,22 @@
     ((ast ast:call-ast) global-environment lexical-environment)
   `(funcall
     ,(translate-ast (ast:callee-ast ast) global-environment lexical-environment)
-    ,@(loop for argument-ast in (cleavir-ast:argument-asts ast)
+    ,@(loop for argument-ast in (ast:argument-asts ast)
             collect (translate-ast
                      argument-ast global-environment lexical-environment))))
+
+(defmethod translate-ast
+    ((ast ast:function-ast) global-environment lexical-environment)
+  (let* ((lambda-list (ast:lambda-list ast))
+         (new-environment (augment-environment lexical-environment lambda-list)))
+    `(lambda
+         ,(loop for item in (ast:lambda-list ast)
+                collect
+                (cond ((member item lambda-list-keywords)
+                       item)
+                      ((atom item)
+                       (find-lexical-variable new-environment item))
+                      (t
+                       (loop for ast in item
+                             collect (find-lexical-variable new-environment ast)))))
+       ,(translate-ast (ast:body-ast ast) global-environment new-environment))))
