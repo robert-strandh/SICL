@@ -62,3 +62,10 @@
   `(progn ,@(loop for form-ast in (ast:form-asts ast)
                   collect (translate-ast
                            form-ast global-environment lexical-environment))))
+
+(defmethod translate-ast
+    ((ast ast:block-ast) global-environment lexical-environment)
+  (add-block lexical-environment ast)
+  `(block ,(find-lexical-variable lexical-environment ast)
+     (translate-ast
+      (ast:body-ast ast) global-environment lexical-environment)))
