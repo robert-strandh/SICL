@@ -21,6 +21,6 @@
                   (setf (gethash ast (first environment)) name)
                   (return name))))
 
-(defun add-identifier (environment ast)
+(defun add-identifier (environment ast &optional (identifier (gensym)))
   (setf (gethash ast (first environment))
-        (gensym)))
+        identifier))
