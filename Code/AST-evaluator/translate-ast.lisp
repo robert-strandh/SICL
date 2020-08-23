@@ -78,3 +78,17 @@
     `(progn (unwind ',name)
             (return-from ,name
               ,(ast:form-ast ast)))))
+
+(defmethod translate-ast
+    ((ast ast:tagbody-ast) global-environment lexical-environment)
+  (let ((name (gensym)))
+    (loop for item-ast in (ast:item-asts ast)
+          when (typep item-ast 'ast:tag-ast)
+            do (add-identifier lexical-environment item-ast name))
+    `(with-exit-point (,name)
+       (tagbody
+          ,(loop for item-ast in (ast:item-asts ast)
+                 collect (if (typep item-ast 'ast:tag-ast)
+                             (ast:name item-ast)
+                             (translate-ast
+                              item-ast global-environment lexical-environment)))))))
