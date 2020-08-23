@@ -69,15 +69,16 @@
   (let ((name (find-identifier lexical-environment ast)))
     `(with-exit-point (,name)
        (block ,name
-         (translate-ast
-          (ast:body-ast ast) global-environment lexical-environment)))))
+         ,(translate-ast
+           (ast:body-ast ast) global-environment lexical-environment)))))
 
 (defmethod translate-ast
     ((ast ast:return-from-ast) global-environment lexical-environment)
   (let ((name (find-identifier lexical-environment (ast:block-ast ast))))
     `(progn (unwind ',name)
             (return-from ,name
-              ,(ast:form-ast ast)))))
+              ,(translate-ast
+                (ast:form-ast ast) global-environment lexical-environment)))))
 
 (defmethod translate-ast
     ((ast ast:tagbody-ast) global-environment lexical-environment)
@@ -98,3 +99,14 @@
   (let ((name (find-identifier lexical-environment (ast:tag-ast ast))))
     `(progn (unwind ',name)
             (go ,name))))
+
+(defmethod translate-ast
+    ((ast ast:if-ast) global-environment lexical-environment)
+  `(if ,(translate-ast (ast:test-ast ast) global-environment lexical-environment)
+       ,(translate-ast (ast:then-ast ast) global-environment lexical-environment)
+       ,(translate-ast (ast:else-ast ast) global-environment lexical-environment)))
+
+(defmethod translate-ast
+    ((ast ast:eq-ast) global-environment lexical-environment)
+  `(eq ,(translate-ast (ast:arg1-ast ast) global-environment lexical-environment)
+       ,(translate-ast (ast:arg2-ast ast) global-environment lexical-environment)))
