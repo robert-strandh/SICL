@@ -45,3 +45,16 @@
 
 (defclass unwind-protect-entry ()
   ((%thunk :initarg :thunk :reader thunk)))
+
+(defun unwind (name)
+  (let ((exit-point-entry (loop for entry in *dynamic-environment*
+                                when (and (typep entry 'exit-point-entry)
+                                          (eq (name entry) name))
+                                  return entry)))
+    (when (null exit-point-entry)
+      (error 'attempt-to-exit-to-an-invalid-exit-point))
+    (loop until (eq exit-point-entry (first *dynamic-environment*))
+          do (let ((entry (pop *dynamic-environment*)))
+               (when (typep entry 'unwind-protect-entry)
+                 (funcall (thunk entry)))))))
+    
