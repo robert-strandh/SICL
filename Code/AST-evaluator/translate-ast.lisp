@@ -92,3 +92,9 @@
                              (ast:name item-ast)
                              (translate-ast
                               item-ast global-environment lexical-environment)))))))
+
+(defmethod translate-ast
+    ((ast ast:go-ast) global-environment lexical-environment)
+  (let ((name (find-identifier lexical-environment (ast:tag-ast ast))))
+    `(progn (unwind ',name)
+            (go ,name))))
