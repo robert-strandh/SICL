@@ -66,6 +66,8 @@
 (defmethod translate-ast
     ((ast ast:block-ast) global-environment lexical-environment)
   (add-block lexical-environment ast)
-  `(block ,(find-lexical-variable lexical-environment ast)
-     (translate-ast
-      (ast:body-ast ast) global-environment lexical-environment)))
+  (let ((name (find-lexical-variable lexical-environment ast)))
+    `(with-exit-point (,name)
+       (block ,name
+         (translate-ast
+          (ast:body-ast ast) global-environment lexical-environment)))))
