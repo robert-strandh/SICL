@@ -31,3 +31,7 @@
                    :value ,value-form)
                  *dynamic-environment*)))
      ,@body))
+
+(defclass exit-point-entry ()
+  ((%name :initarg :name :reader name)
+   (%validp :initform t :accessor validp)))
