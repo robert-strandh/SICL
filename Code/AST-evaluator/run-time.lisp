@@ -36,10 +36,10 @@
   ((%name :initarg :name :reader name)
    (%validp :initform t :accessor validp)))
 
-(defmacro with-exit-point ((name-form) &body body)
+(defmacro with-exit-point ((name) &body body)
   `(let ((*dynamic-environment*
            (cons (make-instance 'exit-point-entry
-                   :name ,name-form)
+                   :name ',name)
                  *dynamic-environment*)))
      ,@body))
 
