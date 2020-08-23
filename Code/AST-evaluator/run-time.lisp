@@ -42,3 +42,6 @@
                    :name ,name-form)
                  *dynamic-environment*)))
      ,@body))
+
+(defclass unwind-protect-entry ()
+  ((%thunk :initarg :thunk :reader thunk)))
