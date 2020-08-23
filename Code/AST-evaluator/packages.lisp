@@ -2,7 +2,7 @@
 
 (defpackage #:sicl-ast-evaluator
   (:use #:common-lisp)
-  (:shadow #:symbol-value)
+  (:shadow #:symbol-value #:eval)
   (:local-nicknames (#:env #:sicl-genv)
                     (#:ast #:cleavir-ast))
   (:export))
