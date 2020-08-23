@@ -13,4 +13,5 @@
    (:file "run-time")
    (:file "lexical-environment")
    (:file "translate-ast")
-   (:file "translate-code")))
+   (:file "translate-code")
+   (:file "eval")))
