@@ -71,3 +71,10 @@
        (block ,name
          (translate-ast
           (ast:body-ast ast) global-environment lexical-environment)))))
+
+(defmethod translate-ast
+    ((ast ast:return-from-ast) global-environment lexical-environment)
+  (let ((name (find-lexical-variable lexical-environment (ast:block-ast ast))))
+    `(progn (unwind ',name)
+            (return-from ,name
+              ,(ast:form-ast ast)))))
