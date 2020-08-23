@@ -12,15 +12,15 @@
                           do (setf (gethash var-ast table) (gensym))))))
     (cons table environment)))
 
-(defun find-lexical-variable (environment variable-ast)
+(defun find-identifier (environment ast)
   (loop for table in environment
         do (multiple-value-bind (name presentp)
-               (gethash variable-ast table)
+               (gethash ast table)
              (when presentp (return name)))
         finally (let ((name (gensym)))
-                  (setf (gethash variable-ast (first environment)) name)
+                  (setf (gethash ast (first environment)) name)
                   (return name))))
 
-(defun add-block (environment block-ast)
-  (setf (gethash block-ast (first environment))
+(defun add-identifier (environment ast)
+  (setf (gethash ast (first environment))
         (gensym)))

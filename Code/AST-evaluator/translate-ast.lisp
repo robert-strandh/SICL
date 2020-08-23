@@ -15,7 +15,7 @@
 
 (defmethod translate-ast
     ((ast ast:lexical-ast) global-environment lexical-environment)
-  (find-lexical-variable ast lexical-environment))
+  (find-identifier lexical-environment ast))
 
 (defmethod translate-ast
     ((ast ast:symbol-value-ast) global-environment lexical-environment)
@@ -51,10 +51,10 @@
                 (cond ((member item lambda-list-keywords)
                        item)
                       ((atom item)
-                       (find-lexical-variable new-environment item))
+                       (find-identifier new-environment item))
                       (t
                        (loop for ast in item
-                             collect (find-lexical-variable new-environment ast)))))
+                             collect (find-identifier new-environment ast)))))
        ,(translate-ast (ast:body-ast ast) global-environment new-environment))))
 
 (defmethod translate-ast
@@ -65,8 +65,8 @@
 
 (defmethod translate-ast
     ((ast ast:block-ast) global-environment lexical-environment)
-  (add-block lexical-environment ast)
-  (let ((name (find-lexical-variable lexical-environment ast)))
+  (add-identifier lexical-environment ast)
+  (let ((name (find-identifier lexical-environment ast)))
     `(with-exit-point (,name)
        (block ,name
          (translate-ast
@@ -74,7 +74,7 @@
 
 (defmethod translate-ast
     ((ast ast:return-from-ast) global-environment lexical-environment)
-  (let ((name (find-lexical-variable lexical-environment (ast:block-ast ast))))
+  (let ((name (find-identifier lexical-environment (ast:block-ast ast))))
     `(progn (unwind ',name)
             (return-from ,name
               ,(ast:form-ast ast)))))
