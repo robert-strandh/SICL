@@ -1,13 +1,13 @@
 (cl:in-package #:sicl-ast-evaluator)
 
-(defclass client (trucler-reference:client)
-  ())
-
 (defun translate-code (code environment)
   (let* ((cst (cst:cst-from-expression code))
-         (client (make-instance 'client))
+         (client (client environment))
          (ast (cleavir-cst-to-ast:cst-to-ast
                client cst environment))
          (table (make-hash-table :test #'eq))
          (lexical-environment (list table)))
-    (translate-ast ast environment lexical-environment)))
+    (let ((*run-time-environment-name* (gensym)))
+      `(lambda (,*run-time-environment-name*)
+         (declare (ignorable ,*run-time-environment-name*))
+         ,(translate-ast ast environment lexical-environment)))))
