@@ -5,11 +5,14 @@
                #:cleavir2-cst-to-ast
                #:concrete-syntax-tree
                #:eclector
-               #:sicl-simple-environment)
+               #:clostrum
+               #:clostrum/virtual)
   :serial t
   :components
   ((:file "packages")
+   (:file "client")
    (:file "environment")
+   (:file "trucler-methods")
    (:file "run-time")
    (:file "lexical-environment")
    (:file "translate-ast")
