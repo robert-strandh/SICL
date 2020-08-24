@@ -3,6 +3,6 @@
 (defpackage #:sicl-ast-evaluator
   (:use #:common-lisp)
   (:shadow #:symbol-value #:eval)
-  (:local-nicknames (#:env #:sicl-genv)
+  (:local-nicknames (#:env #:clostrum)
                     (#:ast #:cleavir-ast))
   (:export))
