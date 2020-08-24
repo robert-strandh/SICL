@@ -5,9 +5,10 @@
 (defmethod translate-ast
     ((ast ast:fdefinition-ast) global-environment lexical-environment)
   `(env:fdefinition
+    (client ,*run-time-environment-name*)
+    ,*run-time-environment-name*
     ,(translate-ast
-      (ast:name-ast ast) global-environment lexical-environment)
-    ,global-environment))
+      (ast:name-ast ast) global-environment lexical-environment)))
 
 (defmethod translate-ast
     ((ast ast:constant-ast) global-environment lexical-environment)
