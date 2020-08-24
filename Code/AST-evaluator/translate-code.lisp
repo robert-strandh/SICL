@@ -1,8 +1,7 @@
 (cl:in-package #:sicl-ast-evaluator)
 
-(defun translate-code (code environment)
-  (let* ((cst (cst:cst-from-expression code))
-         (client (client environment))
+(defun translate-code (cst environment)
+  (let* ((client (client environment))
          (ast (cleavir-cst-to-ast:cst-to-ast
                client cst environment))
          (table (make-hash-table :test #'eq))
