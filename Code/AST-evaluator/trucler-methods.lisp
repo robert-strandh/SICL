@@ -5,7 +5,7 @@
 ;;; Trucler Methods
 
 (defmethod trucler:describe-variable
-    (client (environment evaluation-environment) name)
+    (client (environment base-run-time-environment) name)
   (if (env:boundp client environment name)
       (or (special-variable-description client environment name)
           (constant-variable-description client environment name)
@@ -49,25 +49,24 @@
           :expansion expansion))))
 
 (defmethod trucler:describe-function
-    (client (environment evaluation-environment) name)
+    (client (environment base-run-time-environment) name)
   (if (not (env:fboundp client  environment name))
       nil
-      (let ((fdefinition (env:fdefinition client environment name)))
-        (etypecase fdefinition
-          (function
-           (make-instance 'trucler:global-function-description
-             :name name
-             :compiler-macro (env:compiler-macro-function client environment name)))
-          (cons
-           (ecase (first fdefinition)
-             (cl:macro-function
-              (make-instance 'trucler:global-macro-description
-                :name name
-                :expander (second fdefinition)
-                :compiler-macro (env:compiler-macro-function client environment name)))
-             (cl:special
-              (make-instance 'trucler:special-operator-description
-                :name name))))))))
+      (let ((macro-function (env:macro-function client environment name)))
+        (if (not (null macro-function))
+            (make-instance 'trucler:global-macro-description
+              :name name
+              :expander macro-function
+              :compiler-macro (env:compiler-macro-function client environment name))
+            (let ((fdefinition (env:fdefinition client environment name)))
+              (etypecase fdefinition
+                (function
+                 (make-instance 'trucler:global-function-description
+                   :name name
+                   :compiler-macro (env:compiler-macro-function client environment name)))
+                (cons
+                 (make-instance 'trucler:special-operator-description
+                   :name name))))))))
 
 (defmethod trucler:describe-function
     (client (environment compilation-environment) name)
