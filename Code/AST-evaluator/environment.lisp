@@ -1,11 +1,16 @@
 (cl:in-package #:sicl-ast-evaluator)
 
-(defclass run-time-environment
+(defclass base-run-time-environment
     (clostrum/virtual::virtual-run-time-environment)
+  ())
+
+(defclass run-time-environment
+    (base-run-time-environment)
   ((%client :initarg :client :reader client)))
 
 (defclass evaluation-environment
-    (run-time-environment clostrum:evaluation-environment-mixin)
+    (base-run-time-environment
+     clostrum:evaluation-environment-mixin)
   ())
 
 (defclass compilation-environment
@@ -15,6 +20,9 @@
 (defmethod client ((environment compilation-environment))
   (client (env:parent environment)))
 
+(defmethod client ((environment evaluation-environment))
+  (client (env:parent environment)))
+
 (defun make-environment-constellation ()
   (let* ((client (make-instance 'client))
          (startup-environment
@@ -22,7 +30,6 @@
              :client client))
          (evaluation-environment
            (make-instance 'evaluation-environment
-             :client client
              :parent startup-environment))
          (compilation-environment
            (make-instance 'compilation-environment
