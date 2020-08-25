@@ -48,6 +48,13 @@
 (defclass unwind-protect-entry ()
   ((%thunk :initarg :thunk :reader thunk)))
 
+(defmacro with-unwind-protect ((thunk-form) &body body)
+  `(let ((*dynamic-environment*
+           (cons (make-instance unwind-protect-entry
+                   :thunk ,thunk-form)
+                 *dynamic-environment*)))
+     ,@body))
+
 (defun unwind (name)
   (let ((exit-point-entry (loop for entry in *dynamic-environment*
                                 when (and (typep entry 'exit-point-entry)
