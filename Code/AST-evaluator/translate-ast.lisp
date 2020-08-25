@@ -102,6 +102,21 @@
             (go ,name))))
 
 (defmethod translate-ast
+    ((ast ast:setq-ast) global-environment lexical-environment)
+  `(setq ,(translate-ast (ast:lhs-ast ast) global-environment lexical-environment)
+         ,(translate-ast (ast:value-ast ast) global-environment lexical-environment)))
+
+(defmethod translate-ast
+    ((ast ast:unwind-protect-ast) global-environment lexical-environment)
+  (let ((thunk-form
+          (translate-ast
+           (ast:cleanup-thunk-ast ast) global-environment lexical-environment)))
+  `(with-unwind-protect
+       (,thunk-form)
+     ,(translate-ast (ast:protected-form-ast ast) global-environment lexical-environment)
+     (funcall ,thunk-form))))
+
+(defmethod translate-ast
     ((ast ast:if-ast) global-environment lexical-environment)
   `(if ,(translate-ast (ast:test-ast ast) global-environment lexical-environment)
        ,(translate-ast (ast:then-ast ast) global-environment lexical-environment)
