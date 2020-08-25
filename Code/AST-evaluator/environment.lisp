@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-ast-evaluator)
 
 (defclass base-run-time-environment
-    (clostrum/virtual::virtual-run-time-environment)
+    (clostrum/virtual:virtual-run-time-environment)
   ())
 
 (defclass run-time-environment
@@ -14,7 +14,7 @@
   ())
 
 (defclass compilation-environment
-    (clostrum:compilation-environment)
+    (clostrum/virtual:virtual-compilation-environment)
   ())
 
 (defmethod client ((environment compilation-environment))
