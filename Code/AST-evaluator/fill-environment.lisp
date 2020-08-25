@@ -47,6 +47,68 @@
     (when (fboundp `(setf ,symbol))
       (import-function client environment `(setf ,symbol)))))
 
+(defparameter *standard-function-names*
+  '(;; Functions on lists (i.e., from the conses dictionary).
+    car cdr rplaca rplacd caar cadr cdar cddr
+    caaar caadr cadar caddr cdaar cdadr cddar cdddr
+    first second third fourth fifth sixth seventh eighth ninth tenth nth
+    rest nthcdr
+    cons consp atom null endp
+    copy-tree tree-equal sublis nsublis
+    subst subst-if subst-if-not nsubst nsubst-if nsubst-if-not
+    list list* copy-list list-length listp make-list
+    append revappend nreconc last butlast nbutlast
+    ldiff tailp
+    member member-if member-if-not
+    mapc mapcar mapcan mapl maplist mapcon
+    acons copy-alist
+    assoc assoc-if assoc-if-not rassoc rassoc-if rassoc-if-not
+    get-properties
+    union nunion
+    intersection nintersection
+    set-difference nset-difference
+    set-exclusive-or nset-exclusive-or
+    adjoin subsetp
+    ;; Sequence functions.
+    copy-seq elt fill make-sequence subseq length
+    map map-into reduce reverse nreverse sort stable-sort merge
+    search replace mismatch concatenate
+    count count-if count-if-not
+    find find-if find-if-not
+    position position-if position-if-not
+    substitute substitute-if substitute-if-not
+    nsubstitute nsubstitute-if nsubstitute-if-not
+    remove remove-if remove-if-not
+    delete delete-if delete-if-not
+    remove-duplicates delete-duplicates
+    ;; Functions on numbers
+    = /= < > <= >=
+    + - * / 1+ 1-
+    min max abs evenp oddp exp expt gcd lcm
+    minusp plusp zerop numberp realp rationalp integerp
+    floor ffloor ceiling fceiling truncate ftruncate round fround mod rem
+    ash integer-length
+    logand logandc1 logandc2 lognand
+    logior logorc1 logorc2 lognor logxor
+    lognot logbitp logcount logtest
+    byte byte-size byte-position
+    deposit-field dpb ldb ldb-test mask-field
+    ;; Data and Control Flow
+    apply funcall
+    not eq eql equal equalp identity complement constantly
+    every some notevery notany
+    values values-list
+    ;; Symbols
+    symbolp keywordp
+    make-symbol copy-symbol gensym symbol-name symbol-package
+    ;; Printer
+    format write prin1 print pprint princ
+    write-to-string prin1-to-string princ-to-string))
+
+(defun import-standard-functions (client environment)
+  (loop for function-name in *standard-function-names*
+        do (import-function client environment function-name)))
+
 (defun load-file (relative-filename environment)
   (let ((*package* *package*)
         (filename (asdf:system-relative-pathname
@@ -72,6 +134,7 @@
     (define-defmacro client environment)
     (define-backquote-macros client environment)
     (import-environment-functions client environment)
+    (import-standard-functions client environment)
     (flet ((ld (relative-file-name)
              (format *trace-output* "Loading file ~a~%" relative-file-name)
              (load-file relative-file-name environment)))
