@@ -21,5 +21,6 @@
    (:file "translate-ast")
    (:file "translate-character-related-asts")
    (:file "translate-array-related-asts")
+   (:file "translate-cons-related-asts")
    (:file "translate-code")
    (:file "eval")))
