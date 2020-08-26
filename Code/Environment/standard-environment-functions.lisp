@@ -187,30 +187,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function GET-SETF-EXPANSION.
-
-;;; FIXME: This function should macroexpand the place if there is not
-;;; expander for it.
-(defun get-setf-expansion
-    (place &optional environment)
-  (let ((global-environment (sicl-genv:global-environment environment)))
-    (if (symbolp place)
-	(let ((temp (gensym)))
-	  (values '() '() `(,temp) `(setq ,place ,temp) place))
-	(let ((expander (sicl-genv:setf-expander (first place) global-environment)))
-	  (if (null expander)
-	      (let ((temps (mapcar (lambda (p) (declare (ignore p)) (gensym))
-				   (rest place)))
-		    (new (gensym)))
-		(values temps
-			(rest place)
-			(list new)
-			`(funcall (function (setf ,(first place))) ,new ,@temps)
-			`(,(first place) ,@temps)))
-	      (funcall expander place global-environment))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function (SETF FIND-CLASS).
 
 (defun (setf find-class) (new-class symbol &optional errorp environment)
