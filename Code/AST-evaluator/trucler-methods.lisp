@@ -167,6 +167,10 @@
     (client (environment compilation-environment))
   environment)
 
+(defmethod trucler:global-environment
+    (client (environment base-run-time-environment))
+  environment)
+
 (defmethod trucler:macro-function (name (env compilation-environment))
   (env:macro-function (client env) env name))
 
