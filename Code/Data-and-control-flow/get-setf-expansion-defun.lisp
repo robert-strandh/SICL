@@ -1,7 +1,6 @@
 (in-package #:sicl-data-and-control-flow)
 
-;;; FIXME: This definition is wrong because it does not allow for the
-;;; place to be macroexpanded in the lexical environment.
+;;; FIXME: This definition is clearly wrong, but it will go away in the future anyway.
 (defun get-setf-expansion (place &optional environment)
   (let ((global-env (if (null environment)
                         (sicl-genv:global-environment)
