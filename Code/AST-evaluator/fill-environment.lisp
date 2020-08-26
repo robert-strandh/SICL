@@ -129,6 +129,29 @@
                    '#:sicl relative-filename)))
     (load filename)))
 
+(defun define-function-global-environment (client environment)
+  (host-load "Environment/environment-package.lisp")
+  ;; This function is used by macros in order to find the current
+  ;; global environment.  If no argument is given, the run-time
+  ;; environment (or startup environment) is returned.  If a macro
+  ;; supplies an argument, and then it will typically be the
+  ;; environment given to it by the &ENVIRONMENT parameter, then
+  ;; the compilation environment is returned.  Macros use this
+  ;; function to find information that is truly global, and that
+  ;; Trucler does not manage, such as compiler macros. type
+  ;; definitions, SETF expanders, etc.
+  (setf (env:fdefinition
+         client
+         environment
+         ;; There has got to be an easier way to define the
+         ;; package so that it exists before this system is
+         ;; compiled.
+         (intern (symbol-name '#:global-environment) '#:sicl-environment))
+        (lambda (&optional env)
+          (if (null env)
+              environment
+              (trucler:global-environment client env)))))
+
 (defun fill-environment (environment)
   (let ((client (client environment)))
     (define-defmacro client environment)
@@ -140,27 +163,7 @@
              (load-file relative-file-name environment)))
       (host-load "Evaluation-and-compilation/packages.lisp")
       (host-load "Data-and-control-flow/packages.lisp")
-      (host-load "Environment/environment-package.lisp")
-      ;; This function is used by macros in order to find the current
-      ;; global environment.  If no argument is given, the run-time
-      ;; environment (or startup environment) is returned.  If a macro
-      ;; supplies an argument, and then it will typically be the
-      ;; environment given to it by the &ENVIRONMENT parameter, then
-      ;; the compilation environment is returned.  Macros use this
-      ;; function to find information that is truly global, and that
-      ;; Trucler does not manage, such as compiler macros. type
-      ;; definitions, SETF expanders, etc.
-      (setf (env:fdefinition
-             client
-             environment
-             ;; There has got to be an easier way to define the
-             ;; package so that it exists before this system is
-             ;; compiled.
-             (intern (symbol-name '#:global-environment) '#:sicl-environment))
-            (lambda (&optional env)
-              (if (null env)
-                  environment
-                  (trucler:global-environment client env))))
+      (define-function-global-environment client environment)
       ;; Load a file containing a definition of the macro LAMBDA.
       ;; This macro is particularly simple, so it doesn't really
       ;; matter how it is expanded.  This is fortunate, because at the
