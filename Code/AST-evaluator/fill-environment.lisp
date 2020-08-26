@@ -170,4 +170,9 @@
       ;; We define the macro LAMBDA before we redefine DEFMACRO as a
       ;; target macro because PARSE-MACRO returns a LAMBDA form, so we
       ;; need this macro in order to redefine DEFMACRO.
-      (ld "Evaluation-and-compilation/lambda.lisp"))))
+      (ld "Evaluation-and-compilation/lambda.lisp")
+      ;; Load a file containing the definition of the macro
+      ;; MULTIPLE-VALUE-BIND.  We need it early because it is used in
+      ;; the expansion of SETF, which we also need early for reasons
+      ;; explained below.
+      (ld "Data-and-control-flow/multiple-value-bind-defmacro.lisp"))))
