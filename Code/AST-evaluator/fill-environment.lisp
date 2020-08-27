@@ -217,4 +217,4 @@
       ;; directly, but that would have been less "natural", so we do
       ;; it this way instead.
       ;; FIXME: this file name is temporary.
-      (ld "Data-and-control-flow/clostrum-setf-defmacro.lisp"))))
+      (ld "Data-and-control-flow-Clostrum/setf-defmacro.lisp"))))
