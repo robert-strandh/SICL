@@ -5,6 +5,5 @@
                #:clostrum/virtual)
   :serial t
   :components
-  ((:file "packages")))
-
-  
+  ((:file "packages")
+   (:file "environment")))
