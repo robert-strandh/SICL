@@ -6,8 +6,8 @@
                #:cleavir-code-utilities
                #:concrete-syntax-tree
                #:eclector
-               #:clostrum
-               #:clostrum/virtual
+               #:sicl-client
+               #:sicl-environment
                #:sicl-source-tracking)
   :serial t
   :components
@@ -15,7 +15,6 @@
    (:file "client")
    (:file "fill-environment")
    (:file "environment")
-   (:file "trucler-methods")
    (:file "run-time")
    (:file "lexical-environment")
    (:file "translate-ast")
