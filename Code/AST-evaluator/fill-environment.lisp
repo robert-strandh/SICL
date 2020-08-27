@@ -179,10 +179,6 @@
                               (list new)
                               `(funcall (function (setf ,(first place))) ,new ,@temps)
                               `(,(first place) ,@temps)))
-                    ;; FIXME: have we defined the signature of a
-                    ;; Clostrum setf expander?  Maybe we don't have
-                    ;; to?  Clostrum does not in any way use the
-                    ;; expanders.
                     (funcall expander environment place)))))))
 
 (defun fill-environment (environment)
