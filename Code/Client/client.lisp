@@ -1,6 +1,8 @@
 (cl:in-package #:sicl-client)
 
-(defclass sicl () ())
+(defclass sicl (trucler-reference:client
+                clostrum/virtual:virtual-client)
+  ())
 
 (defclass x86-64 () ())
 
