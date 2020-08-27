@@ -219,15 +219,6 @@
       ;; the expansion of SETF, which we also need early for reasons
       ;; explained below.
       (ld "Data-and-control-flow/multiple-value-bind-defmacro.lisp")
-      ;; Load a file containing a definition of the macro SETF.  We
-      ;; need the SETF macro early, because it is needed in order to
-      ;; define the macro DEFMACRO.  The reason for that, is that the
-      ;; expansion of DEFMACRO uses SETF to set the macro function.
-      ;; We could have defined DEFMACRO to call (SETF MACRO-FUNCTION)
-      ;; directly, but that would have been less "natural", so we do
-      ;; it this way instead.
-      ;; FIXME: this file name is temporary.
-      (ld "Data-and-control-flow-Clostrum/setf-defmacro.lisp")
       ;; At this point, we have all the ingredients (the macros LAMBDA and
       ;; SETF) in order to redefine the macro DEFMACRO as a native macro.
       ;; SINCE we already have a primitive form of DEFMACRO, we use it to
