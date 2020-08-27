@@ -10,7 +10,7 @@
                    (t
                     (loop for var-ast in item
                           do (setf (gethash var-ast table) (gensym))))))
-    (cons table environment)))
+    (list* (make-hash-table :test #'eq) table environment)))
 
 (defun find-identifier (environment ast)
   (loop for table in environment
