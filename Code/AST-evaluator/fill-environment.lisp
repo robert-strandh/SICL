@@ -214,13 +214,13 @@
       ;; target macro because PARSE-MACRO returns a LAMBDA form, so we
       ;; need this macro in order to redefine DEFMACRO.
       (ld "Evaluation-and-compilation/lambda.lisp")
-      ;; At this point, we have all the ingredients (the macros LAMBDA and
-      ;; SETF) in order to redefine the macro DEFMACRO as a native macro.
-      ;; SINCE we already have a primitive form of DEFMACRO, we use it to
-      ;; define DEFMACRO.  The result of loading this file is that all new
-      ;; macros defined subsequently will have their macro functions
-      ;; compiled with the target compiler.  However, the macro function of
-      ;; DEFMACRO is still compiled with the host compiler.
+      ;; At this point, we can redefine the macro DEFMACRO as a native
+      ;; macro.  Since we already have a primitive form of DEFMACRO,
+      ;; we use it to define DEFMACRO.  The result of loading this
+      ;; file is that all new macros defined subsequently will have
+      ;; their macro functions compiled with the target compiler.
+      ;; However, the macro function of DEFMACRO is still compiled
+      ;; with the host compiler.
       (ld "Evaluation-and-compilation-Clostrum/defmacro-defmacro.lisp")
       ;; As mentioned above, at this point, we have a version of DEFMACRO
       ;; that will compile the macro function of the macro definition using
