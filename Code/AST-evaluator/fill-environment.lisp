@@ -10,6 +10,14 @@
 ;;; environment.  Luckily, most macros are, and certainly the ones we
 ;;; need to define with this version of DEFMACRO until we can replace
 ;;; it with a native version.
+;;;
+;;; However, there is a different problem as well.  Since macro
+;;; functions may call SICL-ENVIRONMENT:GLOBAL-ENVIRONMENT, it needs
+;;; to be defined, but since the host compiler is used, the macro
+;;; function is compiled in the null lexical environment, so
+;;; SICL-ENVIRONMENT:GLOBAL-ENVIRONMENT is not defined.  To fix that
+;;; problem, we wrap the macro body in a lexical definition of it that
+;;; returns the run-time environment.
 (defun define-defmacro (client environment)
   (setf (env:macro-function client environment 'defmacro)
         (compile nil
