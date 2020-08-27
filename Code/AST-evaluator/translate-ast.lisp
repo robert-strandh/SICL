@@ -5,7 +5,7 @@
 (defmethod translate-ast
     ((ast ast:fdefinition-ast) global-environment lexical-environment)
   `(env:fdefinition
-    (client ,*run-time-environment-name*)
+    (sicl-environment:client ,*run-time-environment-name*)
     ,*run-time-environment-name*
     ,(translate-ast
       (ast:name-ast ast) global-environment lexical-environment)))
@@ -45,7 +45,8 @@
 (defmethod translate-ast
     ((ast ast:function-ast) global-environment lexical-environment)
   (let* ((lambda-list (ast:lambda-list ast))
-         (new-environment (augment-environment lexical-environment lambda-list)))
+         (new-environment (augment-environment lexical-environment lambda-list))
+         (body (translate-ast (ast:body-ast ast) global-environment new-environment)))
     `(lambda
          ,(loop for item in (ast:lambda-list ast)
                 collect
@@ -56,7 +57,9 @@
                       (t
                        (loop for ast in item
                              collect (find-identifier new-environment ast)))))
-       ,(translate-ast (ast:body-ast ast) global-environment new-environment))))
+       (let ,(loop for name being each hash-value of (first new-environment)
+                   collect name)
+           ,body))))
 
 (defmethod translate-ast
     ((ast ast:progn-ast) global-environment lexical-environment)
