@@ -50,23 +50,28 @@
 
 (defmethod trucler:describe-function
     (client (environment base-run-time-environment) name)
-  (if (not (fboundp client  environment name))
-      nil
-      (let ((macro-function (macro-function client environment name)))
-        (if (not (null macro-function))
-            (make-instance 'trucler:global-macro-description
-              :name name
-              :expander macro-function
-              :compiler-macro (compiler-macro-function client environment name))
-            (let ((fdefinition (fdefinition client environment name)))
-              (etypecase fdefinition
-                (function
-                 (make-instance 'trucler:global-function-description
-                   :name name
-                   :compiler-macro (compiler-macro-function client environment name)))
-                (cons
-                 (make-instance 'trucler:special-operator-description
-                   :name name))))))))
+  (cond ((not (fboundp client  environment name))
+         nil)
+        ((symbolp name)
+         (let ((macro-function (macro-function client environment name)))
+           (if (not (null macro-function))
+               (make-instance 'trucler:global-macro-description
+                 :name name
+                 :expander macro-function
+                 :compiler-macro (compiler-macro-function client environment name))
+               (let ((fdefinition (fdefinition client environment name)))
+                 (etypecase fdefinition
+                   (function
+                    (make-instance 'trucler:global-function-description
+                      :name name
+                      :compiler-macro (compiler-macro-function client environment name)))
+                   (cons
+                    (make-instance 'trucler:special-operator-description
+                      :name name)))))))
+        (t
+         (make-instance 'trucler:global-function-description
+           :name name
+           :compiler-macro (compiler-macro-function client environment name)))))
 
 (defmethod trucler:describe-function
     (client (environment compilation-environment) name)
@@ -99,67 +104,47 @@
   (make-instance 'trucler-reference:environment
     :global-environment global-environment))
 
-(macrolet ((def (name lambda-list)
-             `(defmethod ,name ,lambda-list
-                (,name
-                 ,@(loop for item in lambda-list
-                         append
-                         (cond ((equal item '(environment compilation-environment))
-                                '((make-trucler-environment environment)))
-                               ((member item lambda-list-keywords)
-                                '())
-                               ((symbolp item)
-                                `(,item))))))))
-  (def trucler:augment-with-variable-description
-      (client (environment compilation-environment) variable-description))
-  (def trucler:augment-with-function-description
-      (client (environment compilation-environment) function-description))
-  (def trucler:augment-with-block-description
-      (client (environment compilation-environment) block-description))
-  (def trucler:augment-with-tag-description
-      (client (environment compilation-environment) tag-description))
-  (def trucler:augment-with-optimize-description
-      (client (environment compilation-environment) optimize-description))
-  (def trucler:add-lexical-variable
-      (client (environment compilation-environment) symbol &optional identity))
-  (def trucler:add-special-variable
-      (client (environment compilation-environment) symbol))
-  (def trucler:add-local-symbol-macro
-      (client (environment compilation-environment) symbol expansion))
-  (def trucler:add-local-function
-      (client (environment compilation-environment) function-name &optional identity))
-  (def trucler:add-local-macro
-      (client (environment compilation-environment) symbol expander))
-  (def trucler:add-block
-      (client (environment compilation-environment) symbol &optional identity))
-  (def trucler:add-tag
-      (client (environment compilation-environment) tag &optional identity))
-  (def trucler:add-variable-type
-      (client (environment compilation-environment) symbol type))
-  (def trucler:add-function-type
-      (client (environment compilation-environment) function-name type))
-  (def trucler:add-variable-ignore
-      (client (environment compilation-environment) symbol ignore))
-  (def trucler:add-function-ignore
-      (client (environment compilation-environment) function-name ignore))
-  (def trucler:add-variable-dynamic-extent
-      (client (environment compilation-environment) symbol))
-  (def trucler:add-function-dynamic-extent
-      (client (environment compilation-environment) function-name))
-  (def trucler:add-inline
-      (client (environment compilation-environment) function-name inline))
-  (def trucler:add-inline-data
-      (client (environment compilation-environment) function-name inline-data))
-  (def trucler:add-speed
-      (client (environment compilation-environment) value))
-  (def trucler:add-compilation-speed
-      (client (environment compilation-environment) value))
-  (def trucler:add-debug
-      (client (environment compilation-environment) value))
-  (def trucler:add-safety
-      (client (environment compilation-environment) value))
-  (def trucler:add-space
-      (client (environment compilation-environment) value)))
+(macrolet
+    ((def (name &rest lambda-list)
+       `(progn (defmethod ,name (client (e compilation-environment) ,@lambda-list)
+                 (,name client (make-trucler-environment e)
+                              ,@(loop for item in lambda-list
+                                      append
+                                      (if (member item lambda-list-keywords)
+                                          '()
+                                          (list item)))))
+               (defmethod ,name (client (e base-run-time-environment) ,@lambda-list)
+                 (,name client (make-trucler-environment e)
+                              ,@(loop for item in lambda-list
+                                      append
+                                      (if (member item lambda-list-keywords)
+                                          '()
+                                          (list item))))))))
+  (def trucler:augment-with-variable-description variable-description)
+  (def trucler:augment-with-function-description function-description)
+  (def trucler:augment-with-block-description block-description)
+  (def trucler:augment-with-tag-description tag-description)
+  (def trucler:augment-with-optimize-description optimize-description)
+  (def trucler:add-lexical-variable symbol &optional identity)
+  (def trucler:add-special-variable symbol)
+  (def trucler:add-local-symbol-macro symbol expansion)
+  (def trucler:add-local-function function-name &optional identity)
+  (def trucler:add-local-macro symbol expander)
+  (def trucler:add-block symbol &optional identity)
+  (def trucler:add-tag tag &optional identity)
+  (def trucler:add-variable-type symbol type)
+  (def trucler:add-function-type function-name type)
+  (def trucler:add-variable-ignore symbol ignore)
+  (def trucler:add-function-ignore function-name ignore)
+  (def trucler:add-variable-dynamic-extent symbol)
+  (def trucler:add-function-dynamic-extent function-name)
+  (def trucler:add-inline function-name inline)
+  (def trucler:add-inline-data function-name inline-data)
+  (def trucler:add-speed value)
+  (def trucler:add-compilation-speed value)
+  (def trucler:add-debug value)
+  (def trucler:add-safety value)
+  (def trucler:add-space value))
 
 ;;; Miscellaneous Functions
 
