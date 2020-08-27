@@ -195,6 +195,8 @@
     (define-backquote-macros client environment)
     (import-environment-functions client environment)
     (import-standard-functions client environment)
+    (import-function client environment 'cleavir-code-utilities:parse-macro)
+    (import-function client environment 'error)
     (flet ((ld (relative-file-name)
              (format *trace-output* "Loading file ~a~%" relative-file-name)
              (load-file relative-file-name environment)))
