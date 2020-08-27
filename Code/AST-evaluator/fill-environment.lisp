@@ -17,7 +17,7 @@
                   'defmacro
                   '(&environment env name lambda-list &body body)
                   `((eval-when (:compile-toplevel :load-toplevel :execute)
-                      (setf (env:macro-function (client env) env name)
+                      (setf (env:macro-function (env:client env) env name)
                             (compile nil
                                      (cleavir-code-utilities:parse-macro
                                       name
@@ -130,7 +130,6 @@
     (load filename)))
 
 (defun define-function-global-environment (client environment)
-  (host-load "Environment/environment-package.lisp")
   ;; This function is used by macros in order to find the current
   ;; global environment.  If no argument is given, the run-time
   ;; environment (or startup environment) is returned.  If a macro
@@ -146,7 +145,7 @@
          ;; There has got to be an easier way to define the
          ;; package so that it exists before this system is
          ;; compiled.
-         (intern (symbol-name '#:global-environment) '#:sicl-environment))
+         'sicl-environment:global-environment)
         (lambda (&optional env)
           (if (null env)
               environment
@@ -183,7 +182,7 @@
                     (funcall expander environment place)))))))
 
 (defun fill-environment (environment)
-  (let ((client (client environment)))
+  (let ((client (env:client environment)))
     (define-defmacro client environment)
     (define-backquote-macros client environment)
     (import-environment-functions client environment)

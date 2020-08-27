@@ -13,7 +13,7 @@
           return (value entry)
         ;; FIXME: make sure it is bound in the global environment
         finally (return (env:special-variable
-                         (client global-environment) global-environment name))))
+                         (env:client global-environment) global-environment name))))
 
 (defun (setf symbol-value) (value name global-environment)
   (loop for entry in *dynamic-environment*
@@ -22,7 +22,7 @@
           do (setf (value entry) value)
           and return value
         finally (setf (env:special-variable
-                       (client global-environment) global-environment name t)
+                       (env:client global-environment) global-environment name t)
                       value)
                 (return value)))
 
