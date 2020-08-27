@@ -1,44 +1,22 @@
 (cl:in-package #:sicl-ast-evaluator)
 
-(defclass base-run-time-environment
-    (clostrum/virtual:virtual-run-time-environment)
-  ())
-
-(defclass run-time-environment
-    (base-run-time-environment)
-  ((%client :initarg :client :reader client)))
-
-(defclass evaluation-environment
-    (base-run-time-environment
-     clostrum:evaluation-environment-mixin)
-  ())
-
-(defclass compilation-environment
-    (clostrum/virtual:virtual-compilation-environment)
-  ())
-
-(defmethod client ((environment compilation-environment))
-  (client (env:parent environment)))
-
-(defmethod client ((environment evaluation-environment))
-  (client (env:parent environment)))
-
 (defun make-environment-constellation ()
-  (let* ((client (make-instance 'client))
+  (let* ((client (make-instance 'client:sicl))
          (startup-environment
-           (make-instance 'run-time-environment
+           (make-instance 'env:run-time-environment
              :client client))
          (evaluation-environment
-           (make-instance 'evaluation-environment
+           (make-instance 'env:evaluation-environment
              :parent startup-environment))
          (compilation-environment
-           (make-instance 'compilation-environment
+           (make-instance 'env:compilation-environment
              :parent evaluation-environment)))
     compilation-environment))
 
+;;; FIXME: We don't want to specialize on a class in a different module.
 (defmethod initialize-instance :after
-    ((environment run-time-environment) &key)
-  (let ((client (client environment)))
+    ((environment env:run-time-environment) &key)
+  (let ((client (env:client environment)))
     (do-external-symbols (symbol '#:common-lisp)
       (when (special-operator-p symbol)
         (setf (env:special-operator client environment symbol)
