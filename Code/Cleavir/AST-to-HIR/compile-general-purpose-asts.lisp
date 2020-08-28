@@ -612,15 +612,18 @@
      (if (typep (results context) 'cleavir-ir:values-location)
          (let* ((dynenv (cleavir-ir:make-lexical-location
                          '#:saved-values-dynenv))
+                (next
+                  (let ((cleavir-ir:*dynamic-environment* dynenv))
+                    (make-instance 'cleavir-ir:load-values-instruction
+                      :successors (list
+                                   (cleavir-ir:make-local-unwind-instruction
+                                    (first (successors context)))))))
                 (body-context
                   (clone-context
                    context
                    :results '()
                    :dynamic-environment dynenv
-                   :successors
-                   (list (let ((cleavir-ir:*dynamic-environment* dynenv))
-                           (cleavir-ir:make-local-unwind-instruction
-                            (first (successors context))))))))
+                   :successors (list next))))
           (make-instance 'cleavir-ir:save-values-instruction
             :outputs (list dynenv)
             :successors

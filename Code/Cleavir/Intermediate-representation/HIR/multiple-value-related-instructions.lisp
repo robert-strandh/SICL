@@ -115,3 +115,21 @@
 (defclass save-values-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-VALUES-INSTRUCTION.
+;;;
+;;; This instruction has no inputs. It reads the values entry on the
+;;; top of the dynamic environment, and fills the global values
+;;; location with those values.
+;;;
+;;; Note that this instruction only reads from the dynamic
+;;; environment, and does not "pop" the top entry. This should be
+;;; done by a LOCAL-UNWIND-INSTRUCTION instead. These concerns are
+;;; separate so that code can unwind without restoring the values,
+;;; e.g. in (block nil (multiple-value-prog1 form1 (return form2))).
+
+(defclass load-values-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
