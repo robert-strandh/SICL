@@ -189,13 +189,18 @@
                               `(,(first place) ,@temps)))
                     (funcall expander environment place)))))))
 
+(defun import-code-utilities (client environment)
+  (import-function client environment 'cleavir-code-utilities:parse-macro)
+  (import-function client environment 'cleavir-code-utilities:lambda-list-type-specifier)
+  (import-function client environment 'cleavir-code-utilities:separate-function-body))
+
 (defun fill-environment (environment)
   (let ((client (env:client environment)))
     (define-defmacro client environment)
     (define-backquote-macros client environment)
     (import-environment-functions client environment)
     (import-standard-functions client environment)
-    (import-function client environment 'cleavir-code-utilities:parse-macro)
+    (import-code-utilities client environment)
     (import-function client environment 'error)
     (flet ((ld (relative-file-name)
              (format *trace-output* "Loading file ~a~%" relative-file-name)
@@ -243,4 +248,5 @@
       ;; We define MULTIPLE-VALUE-CALL as a macro.  This macro expands
       ;; to a primop that takes a function, rather than a function
       ;; designator, as its first argument.
-      (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp"))))
+      (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp")
+      (host-load "Data-and-control-flow-Clostrum/defun-support.lisp"))))
