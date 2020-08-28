@@ -234,4 +234,10 @@
       (import-function
        client environment 'sicl-data-and-control-flow:defun-expander)
       ;; Load a file containing the definition of macro DEFUN.
-      (ld "Data-and-control-flow-Clostrum/defun-defmacro.lisp"))))
+      (ld "Data-and-control-flow-Clostrum/defun-defmacro.lisp")
+      ;; Load a file containing definition of function
+      ;; GET-SETF-EXPANSION.  We can not use the version of this
+      ;; function provided by the host, because it takes an
+      ;; environment argument, and the host version does not work with
+      ;; the Cleavir/SICL environment objects.
+      (ld "Data-and-control-flow-Clostrum/get-setf-expansion-defun.lisp"))))
