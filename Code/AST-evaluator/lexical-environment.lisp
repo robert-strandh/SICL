@@ -7,9 +7,14 @@
                     nil)
                    ((atom item)
                     (setf (gethash item table) (gensym)))
+                   ((= (length item) 2)
+                    ;; It is an &OPTIONAL parameter constellation.
+                    (setf (gethash (first item) table) (gensym))
+                    (setf (gethash (second item) table) (gensym)))
                    (t
-                    (loop for var-ast in item
-                          do (setf (gethash var-ast table) (gensym))))))
+                    ;; It is a &KEY parameter constellation.
+                    (setf (gethash (second item) table) (gensym))
+                    (setf (gethash (third item) table) (gensym)))))
     (list* (make-hash-table :test #'eq) table environment)))
 
 (defun find-identifier (environment ast)
