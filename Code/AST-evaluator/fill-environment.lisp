@@ -239,4 +239,8 @@
       ;; Load a file containing the definition of the macro
       ;; MULTIPLE-VALUE-LIST.  This definition is needed, because it
       ;; is used in the expansion of the macro NTH-VALUE loaded below.
-      (ld "Data-and-control-flow/multiple-value-list-defmacro.lisp"))))
+      (ld "Data-and-control-flow/multiple-value-list-defmacro.lisp")
+      ;; We define MULTIPLE-VALUE-CALL as a macro.  This macro expands
+      ;; to a primop that takes a function, rather than a function
+      ;; designator, as its first argument.
+      (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp"))))
