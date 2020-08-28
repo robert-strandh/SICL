@@ -222,16 +222,21 @@
       ;; However, the macro function of DEFMACRO is still compiled
       ;; with the host compiler.
       (ld "Evaluation-and-compilation-Clostrum/defmacro-defmacro.lisp")
-      ;; As mentioned above, at this point, we have a version of DEFMACRO
-      ;; that will compile the macro function of the macro definition using
-      ;; the target compiler.  However, the macro function of the macro
-      ;; DEFMACRO itself is still the result of using the host compiler.
-      ;; By loading the definition of DEFMACRO again, we fix this
-      ;; "problem".
+      ;; As mentioned above, at this point, we have a version of
+      ;; DEFMACRO that will compile the macro function of the macro
+      ;; definition using the target compiler.  However, the macro
+      ;; function of the macro DEFMACRO itself is still the result of
+      ;; using the host compiler.  By loading the definition of
+      ;; DEFMACRO again, we fix this "problem".
       (ld "Evaluation-and-compilation-Clostrum/defmacro-defmacro.lisp")
       ;; Up to this point, the macro function of the macro LAMBDA was
       ;; compiled using the host compiler.  Now that we have the final
-      ;; version of the macro DEFMACRO, we can reload the file containing
-      ;; the definition of the macro LAMBDA, which will cause the macro
-      ;; function to be compiled with the target compiler.
-      (ld "Evaluation-and-compilation/lambda.lisp"))))
+      ;; version of the macro DEFMACRO, we can reload the file
+      ;; containing the definition of the macro LAMBDA, which will
+      ;; cause the macro function to be compiled with the target
+      ;; compiler.
+      (ld "Evaluation-and-compilation/lambda.lisp")
+      ;; Load a file containing the definition of the macro
+      ;; MULTIPLE-VALUE-LIST.  This definition is needed, because it
+      ;; is used in the expansion of the macro NTH-VALUE loaded below.
+      (ld "Data-and-control-flow/multiple-value-list-defmacro.lisp"))))
