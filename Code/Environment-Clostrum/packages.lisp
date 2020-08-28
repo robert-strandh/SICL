@@ -15,6 +15,13 @@
            #:run-time-environment
            #:evaluation-environment
            #:compilation-environment
+           #:function-descriptino
+           #:simple-function-description
+           #:generic-function-description
+           #:lambda-list
+           #:class-name
+           #:method-class-name
+           #:method-combination-info
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
