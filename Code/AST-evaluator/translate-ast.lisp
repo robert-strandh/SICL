@@ -56,9 +56,17 @@
                        item)
                       ((atom item)
                        (find-identifier new-environment item))
+                      ((= (length item) 2)
+                       ;; It is an optional parameter.
+                       `(,(find-identifier new-environment (first item))
+                         nil
+                         ,(find-identifier new-environment (second item))))
                       (t
-                       (loop for ast in item
-                             collect (find-identifier new-environment ast)))))
+                       ;; It is a keyword parameter.
+                       `((,(first item)
+                          ,(find-identifier new-environment (second item)))
+                         nil
+                         ,(find-identifier new-environment (third item))))))
        (let ,vars
          (declare (ignorable ,@vars))
          ,body))))
