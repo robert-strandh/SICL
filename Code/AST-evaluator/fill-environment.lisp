@@ -228,4 +228,10 @@
       ;; DEFMACRO itself is still the result of using the host compiler.
       ;; By loading the definition of DEFMACRO again, we fix this
       ;; "problem".
-      (ld "Evaluation-and-compilation-Clostrum/defmacro-defmacro.lisp"))))
+      (ld "Evaluation-and-compilation-Clostrum/defmacro-defmacro.lisp")
+      ;; Up to this point, the macro function of the macro LAMBDA was
+      ;; compiled using the host compiler.  Now that we have the final
+      ;; version of the macro DEFMACRO, we can reload the file containing
+      ;; the definition of the macro LAMBDA, which will cause the macro
+      ;; function to be compiled with the target compiler.
+      (ld "Evaluation-and-compilation/lambda.lisp"))))
