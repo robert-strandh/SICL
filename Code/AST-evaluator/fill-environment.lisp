@@ -163,32 +163,6 @@
               environment
               (trucler:global-environment client env)))))
 
-(defun define-get-setf-expansion (client environment)
-  ;; We define a temporary version of GET-SETF-EXPANSION.  The real
-  ;; one will be loaded from a file once we have the DEFUN macro
-  ;; working.  This version has two problems. 1.  It does not
-  ;; macroexpand the place.  2.  It does not consult the environment
-  ;; to determine whether there are lexical functions or macros that
-  ;; will inhibit the SETF expansion.
-  (setf (clostrum:fdefinition client environment 'get-setf-expansion)
-        (lambda (place &optional env)
-          (declare (ignore env))
-          (if (symbolp place)
-              (let ((temp (gensym)))
-                (values '() '() `(,temp) `(setq ,place ,temp) place))
-              (let ((expander
-                      (clostrum:setf-expander client environment (first place))))
-                (if (null expander)
-                    (let ((temps (mapcar (lambda (p) (declare (ignore p)) (gensym))
-                                         (rest place)))
-                          (new (gensym)))
-                      (values temps
-                              (rest place)
-                              (list new)
-                              `(funcall (function (setf ,(first place))) ,new ,@temps)
-                              `(,(first place) ,@temps)))
-                    (funcall expander environment place)))))))
-
 (defun import-code-utilities (client environment)
   (import-function client environment 'cleavir-code-utilities:parse-macro)
   (import-function client environment 'cleavir-code-utilities:lambda-list-type-specifier)
@@ -208,7 +182,6 @@
       (host-load "Evaluation-and-compilation/packages.lisp")
       (host-load "Data-and-control-flow/packages.lisp")
       (define-function-global-environment client environment)
-      (define-get-setf-expansion client environment)
       ;; Load a file containing a definition of the macro LAMBDA.
       ;; This macro is particularly simple, so it doesn't really
       ;; matter how it is expanded.  This is fortunate, because at the
