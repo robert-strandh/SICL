@@ -46,7 +46,9 @@
     ((ast ast:function-ast) global-environment lexical-environment)
   (let* ((lambda-list (ast:lambda-list ast))
          (new-environment (augment-environment lexical-environment lambda-list))
-         (body (translate-ast (ast:body-ast ast) global-environment new-environment)))
+         (body (translate-ast (ast:body-ast ast) global-environment new-environment))
+         (vars (loop for name being each hash-value of (first new-environment)
+                     collect name)))
     `(lambda
          ,(loop for item in (ast:lambda-list ast)
                 collect
@@ -57,9 +59,9 @@
                       (t
                        (loop for ast in item
                              collect (find-identifier new-environment ast)))))
-       (let ,(loop for name being each hash-value of (first new-environment)
-                   collect name)
-           ,body))))
+       (let ,vars
+         (declare (ignorable ,@vars))
+         ,body))))
 
 (defmethod translate-ast
     ((ast ast:progn-ast) global-environment lexical-environment)
