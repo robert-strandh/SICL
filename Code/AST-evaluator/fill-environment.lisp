@@ -251,4 +251,6 @@
       (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp")
       (host-load "Data-and-control-flow-Clostrum/defun-support.lisp")
       (import-function
-       client environment 'sicl-data-and-control-flow:defun-expander))))
+       client environment 'sicl-data-and-control-flow:defun-expander)
+      ;; Load a file containing the definition of macro DEFUN.
+      (ld "Data-and-control-flow-Clostrum/defun-defmacro.lisp"))))
