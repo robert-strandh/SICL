@@ -183,6 +183,7 @@
     (import-code-utilities client environment)
     (import-trucler-functions client environment)
     (import-function client environment 'error)
+    (import-function client environment 'typep)
     (flet ((ld (relative-file-name)
              (format *trace-output* "Loading file ~a~%" relative-file-name)
              (load-file relative-file-name environment)))
