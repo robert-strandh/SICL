@@ -249,4 +249,6 @@
       ;; to a primop that takes a function, rather than a function
       ;; designator, as its first argument.
       (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp")
-      (host-load "Data-and-control-flow-Clostrum/defun-support.lisp"))))
+      (host-load "Data-and-control-flow-Clostrum/defun-support.lisp")
+      (import-function
+       client environment 'sicl-data-and-control-flow:defun-expander))))
