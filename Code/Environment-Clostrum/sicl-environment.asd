@@ -9,4 +9,5 @@
   :components
   ((:file "packages")
    (:file "environment")
-   (:file "trucler-methods")))
+   (:file "trucler-methods")
+   (:file "function-description")))
