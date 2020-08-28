@@ -1,9 +1,30 @@
 (in-package #:sicl-data-and-control-flow)
 
-;;; FIXME: This definition is wrong because it does not allow for the
-;;; place to be macroexpanded in the lexical environment.
-(defun get-setf-expansion (place &optional environment)
-  (let ((global-env (if (null environment)
-                        (sicl-genv:global-environment)
-                        (sicl-genv:global-environment environment))))
-    (sicl-global-environment:get-setf-expansion place global-env)))
+(defun get-setf-expansion
+    (place &optional (environment (sicl-environment:global-environment)))
+  (let* ((global-env (sicl-environment:global-environment environment))
+         (client (sicl-environment:client global-env)))
+    (if (symbolp place)
+        (let ((description (trucler:describe-variable client environment place)))
+          (if (typep description 'trucler:symbol-macro-description)
+              (get-setf-expansion (trucler:expansion description) environment)
+              (let ((temp (gensym)))
+                (values '() '() `(,temp) `(setq place ,temp) place))))
+        (let ((description
+                (trucler:describe-function client environment (first place))))
+          (if (typep description 'trucler:macro-description)
+              (let* ((expander (trucler:expander description))
+                     (expansion (funcall expander place)))
+                (get-setf-expansion expansion environment))
+              (let ((expander (sicl-environment:setf-expander
+                               client global-env (first place))))
+                (if (null expander)
+                    (let ((temps (mapcar (lambda (p) (declare (ignore p)) (gensym))
+                                         (rest place)))
+                          (new (gensym)))
+                      (values temps
+                              (rest place)
+                              (list new)
+                              `(funcall (function (setf ,(first place))) ,new ,@temps)
+                              `(,(first place) ,@temps)))
+                    (funcall expander environment place))))))))
