@@ -168,6 +168,12 @@
   (import-function client environment 'cleavir-code-utilities:lambda-list-type-specifier)
   (import-function client environment 'cleavir-code-utilities:separate-function-body))
 
+(defun import-trucler-functions (client environment)
+  (import-function client environment 'trucler:describe-function)
+  (import-function client environment 'trucler:describe-variable)
+  (import-function client environment 'trucler:expansion)
+  (import-function client environment 'trucler:expander))
+
 (defun fill-environment (environment)
   (let ((client (env:client environment)))
     (define-defmacro client environment)
@@ -175,6 +181,7 @@
     (import-environment-functions client environment)
     (import-standard-functions client environment)
     (import-code-utilities client environment)
+    (import-trucler-functions client environment)
     (import-function client environment 'error)
     (flet ((ld (relative-file-name)
              (format *trace-output* "Loading file ~a~%" relative-file-name)
