@@ -59,6 +59,17 @@
     (when (fboundp `(setf ,symbol))
       (import-function client environment `(setf ,symbol)))))
 
+(defun import-conditionals-support (client environment)
+  (import-function client environment 'sicl-conditionals:or-expander)
+  (import-function client environment 'sicl-conditionals:and-expander)
+  (import-function client environment 'sicl-conditionals:cond-expander)
+  (import-function client environment 'sicl-conditionals:case-expander)
+  (import-function client environment 'sicl-conditionals:ecase-expander)
+  (import-function client environment 'sicl-conditionals:ccase-expander)
+  (import-function client environment 'sicl-conditionals:typecase-expander)
+  (import-function client environment 'sicl-conditionals:etypecase-expander)
+  (import-function client environment 'sicl-conditionals:ctypecase-expander))
+
 (defparameter *standard-function-names*
   '(;; Functions on lists (i.e., from the conses dictionary).
     car cdr rplaca rplacd caar cadr cdar cddr
@@ -182,6 +193,7 @@
     (import-standard-functions client environment)
     (import-code-utilities client environment)
     (import-trucler-functions client environment)
+    (import-conditionals-support client environment)
     (import-function client environment 'error)
     (import-function client environment 'typep)
     (flet ((ld (relative-file-name)
