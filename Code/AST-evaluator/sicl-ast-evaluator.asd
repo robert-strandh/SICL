@@ -8,7 +8,8 @@
                #:eclector
                #:sicl-client
                #:sicl-environment
-               #:sicl-source-tracking)
+               #:sicl-source-tracking
+               #:sicl-data-and-control-flow-support)
   :serial t
   :components
   ((:file "packages")
