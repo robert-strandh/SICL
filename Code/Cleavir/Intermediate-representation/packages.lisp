@@ -66,7 +66,7 @@
    #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction
    #:the-values-instruction #:make-the-values-instruction
    #:required-types #:optional-types #:rest-type
-   #:save-values-instruction
+   #:save-values-instruction #:load-values-instruction
    #:catch-instruction #:make-catch-instruction
    #:unwind-instruction #:make-unwind-instruction #:destination #:unwind-index
    #:local-unwind-instruction #:make-local-unwind-instruction

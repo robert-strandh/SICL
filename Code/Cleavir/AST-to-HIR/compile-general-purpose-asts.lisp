@@ -269,6 +269,11 @@
                (cleavir-ir:values-location results)
                (t (cleavir-ir:make-values-location))))
            (after (first successors))
+           (new-after
+             (typecase results
+               (cleavir-ir:values-location after)
+               (t (cleavir-ir:make-multiple-to-fixed-instruction
+                   new-results results after))))
            ;; The name is gone by now, so unlike TAGBODY
            ;; we can't name the catch output.
            (continuation (cleavir-ir:make-lexical-location
@@ -285,16 +290,13 @@
            (catch (cleavir-ir:make-catch-instruction
                    continuation
                    dynenv-out
-                   (list (typecase results
-                           (cleavir-ir:values-location (first successors))
-                           (t (cleavir-ir:make-multiple-to-fixed-instruction
-                               new-results
-                               results
-                               after)))))))
-      (setf (block-info ast) (list (clone-context context
-                                                  :results new-results)
-                                   continuation
-                                   catch))
+                   (list new-after))))
+      (setf (block-info ast)
+            (list (clone-context context
+                                 :results new-results
+                                 :successors (list new-after))
+                  continuation
+                  catch))
       ;; Now just hook up the catch to go to the body normally.
       (push (compile-ast (cleavir-ast:body-ast ast) new-context)
             (cleavir-ir:successors catch))
@@ -610,15 +612,18 @@
      (if (typep (results context) 'cleavir-ir:values-location)
          (let* ((dynenv (cleavir-ir:make-lexical-location
                          '#:saved-values-dynenv))
+                (next
+                  (let ((cleavir-ir:*dynamic-environment* dynenv))
+                    (make-instance 'cleavir-ir:load-values-instruction
+                      :successors (list
+                                   (cleavir-ir:make-local-unwind-instruction
+                                    (first (successors context)))))))
                 (body-context
                   (clone-context
                    context
                    :results '()
                    :dynamic-environment dynenv
-                   :successors
-                   (list (let ((cleavir-ir:*dynamic-environment* dynenv))
-                           (cleavir-ir:make-local-unwind-instruction
-                            (first (successors context))))))))
+                   :successors (list next))))
           (make-instance 'cleavir-ir:save-values-instruction
             :outputs (list dynenv)
             :successors
