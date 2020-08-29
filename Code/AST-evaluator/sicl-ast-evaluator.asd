@@ -9,7 +9,8 @@
                #:sicl-client
                #:sicl-environment
                #:sicl-source-tracking
-               #:sicl-data-and-control-flow-support)
+               #:sicl-data-and-control-flow-support
+               #:sicl-conditionals-support-clostrum)
   :serial t
   :components
   ((:file "packages")
