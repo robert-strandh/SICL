@@ -126,11 +126,18 @@
     make-symbol copy-symbol gensym symbol-name symbol-package
     ;; Printer
     format write prin1 print pprint princ
-    write-to-string prin1-to-string princ-to-string))
+    write-to-string prin1-to-string princ-to-string
+    ;; Misc
+    coerce))
 
 (defun import-standard-functions (client environment)
   (loop for function-name in *standard-function-names*
         do (import-function client environment function-name)))
+
+(defun import-cleavir-primops (client environment)
+  (setf (sicl-environment:special-operator
+         client environment 'cleavir-primop:multiple-value-call)
+        '(:special-operator t)))
 
 (defun load-file (relative-filename environment)
   (let ((*package* *package*)
@@ -191,6 +198,7 @@
     (define-backquote-macros client environment)
     (import-environment-functions client environment)
     (import-standard-functions client environment)
+    (import-cleavir-primops client environment)
     (import-code-utilities client environment)
     (import-trucler-functions client environment)
     (import-conditionals-support client environment)
@@ -251,6 +259,11 @@
       ;; cause the macro function to be compiled with the target
       ;; compiler.
       (ld "Evaluation-and-compilation/lambda.lisp")
+      ;; Similarly, the macro MULTIPLE-VALUE-BIND was compiled using
+      ;; the host compiler.  By loading this file again, we will
+      ;; compile the macro function again, this time with the target
+      ;; compiler.
+      (ld "Data-and-control-flow/multiple-value-bind-defmacro.lisp")
       ;; Similarly, the macros for conditional were compiled using the
       ;; host compiler.  By loading this file again, we will compile
       ;; those macro functions again, this time with the target
@@ -264,6 +277,7 @@
       ;; to a primop that takes a function, rather than a function
       ;; designator, as its first argument.
       (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp")
+      (ld "Data-and-control-flow-Clostrum/setf-defmacro.lisp")
       (host-load "Data-and-control-flow-Clostrum/defun-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:defun-expander)
