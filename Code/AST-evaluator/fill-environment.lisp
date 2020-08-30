@@ -296,4 +296,8 @@
       (ld "Data-and-control-flow-Clostrum/defvar-defmacro.lisp")
       (ld "Data-and-control-flow-Clostrum/defparameter-defmacro.lisp")
       (ld "Evaluation-and-compilation/macroexpand-hook-defparameter.lisp")
-      (ld "Evaluation-and-compilation-Clostrum/macroexpand-1-defun.lisp"))))
+      (ld "Evaluation-and-compilation-Clostrum/macroexpand-1-defun.lisp")
+      (host-load "Evaluation-and-compilation/declaim-support.lisp")
+      (import-function
+       client environment 'sicl-evaluation-and-compilation:declaim-expander)
+      (ld "Evaluation-and-compilation/declaim-defmacro.lisp"))))
