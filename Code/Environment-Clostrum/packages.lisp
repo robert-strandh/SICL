@@ -24,6 +24,9 @@
            #:method-class-name
            #:method-combination-info
            #:get-setf-expansion
+           #:variable-description
+           #:constant-variable-description
+           #:special-variable-description
            #:type
            #:value
            .
