@@ -33,7 +33,7 @@
           (if (typep description 'trucler:symbol-macro-description)
               (get-setf-expansion client environment (trucler:expansion description))
               (let ((temp (gensym)))
-                (values '() '() `(,temp) `(setq place ,temp) place))))
+                (values '() '() `(,temp) `(setq ,place ,temp) place))))
         (let ((description
                 (trucler:describe-function client environment (first place))))
           (if (typep description 'trucler:macro-description)
