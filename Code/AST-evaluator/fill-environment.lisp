@@ -290,4 +290,5 @@
       ;; the Cleavir/SICL environment objects.
       ;; FIXME: check whether this one is actually used by macro expanders.
       (ld "Data-and-control-flow-Clostrum/get-setf-expansion-defun.lisp")
-      (ld "Data-and-control-flow-Clostrum/defconstant-defmacro.lisp"))))
+      (ld "Data-and-control-flow-Clostrum/defconstant-defmacro.lisp")
+      (ld "Data-and-control-flow-Clostrum/defvar-defmacro.lisp"))))
