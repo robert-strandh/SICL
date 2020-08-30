@@ -217,6 +217,9 @@
       ;; expansion of SETF, which we also need early for reasons explained
       ;; below.
       (ld "Data-and-control-flow/multiple-value-bind-defmacro.lisp")
+      ;; Load a file containing definitions of standard conditional
+      ;; macros, such as AND, OR, CASE, etc.
+      (ld "Conditionals-Clostrum/macros.lisp")
       ;; At this point, we can redefine the macro DEFMACRO as a native
       ;; macro.  Since we already have a primitive form of DEFMACRO,
       ;; we use it to define DEFMACRO.  The result of loading this
