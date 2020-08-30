@@ -288,4 +288,6 @@
       ;; function provided by the host, because it takes an
       ;; environment argument, and the host version does not work with
       ;; the Cleavir/SICL environment objects.
-      (ld "Data-and-control-flow-Clostrum/get-setf-expansion-defun.lisp"))))
+      ;; FIXME: check whether this one is actually used by macro expanders.
+      (ld "Data-and-control-flow-Clostrum/get-setf-expansion-defun.lisp")
+      (ld "Data-and-control-flow-Clostrum/defconstant-defmacro.lisp"))))
