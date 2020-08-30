@@ -26,4 +26,3 @@
     :initarg :method-combination-info
     :initform '(standard)
     :reader method-combination-info)))
-   
