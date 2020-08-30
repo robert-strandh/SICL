@@ -228,8 +228,9 @@
       ;; directly, but that would have been less "natural", so we do
       ;; it this way instead.
       (ld "Data-and-control-flow-Clostrum/setf-defmacro.lisp")
-      ;; At this point, we can redefine the macro DEFMACRO as a native
-      ;; macro.  Since we already have a primitive form of DEFMACRO,
+      ;; At this point, we have all the ingredients (the macros LAMBDA
+      ;; and SETF) in order to redefine the macro DEFMACRO as a native
+      ;; macro.  SINCE we already have a primitive form of DEFMACRO,
       ;; we use it to define DEFMACRO.  The result of loading this
       ;; file is that all new macros defined subsequently will have
       ;; their macro functions compiled with the target compiler.
@@ -250,6 +251,11 @@
       ;; cause the macro function to be compiled with the target
       ;; compiler.
       (ld "Evaluation-and-compilation/lambda.lisp")
+      ;; Similarly, the macros for conditional were compiled using the
+      ;; host compiler.  By loading this file again, we will compile
+      ;; those macro functions again, this time with the target
+      ;; compiler.
+      (ld "Conditionals-Clostrum/macros.lisp")
       ;; Load a file containing the definition of the macro
       ;; MULTIPLE-VALUE-LIST.  This definition is needed, because it
       ;; is used in the expansion of the macro NTH-VALUE loaded below.
