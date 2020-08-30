@@ -25,6 +25,7 @@
            #:method-combination-info
            #:get-setf-expansion
            #:type
+           #:value
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
