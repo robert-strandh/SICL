@@ -2,7 +2,7 @@
 
 (defpackage #:sicl-environment
   (:use #:common-lisp)
-  (:shadow #:get-setf-expansion)
+  (:shadow #:get-setf-expansion type)
   (:shadowing-import-from
    #:clostrum
    .
@@ -24,6 +24,7 @@
            #:method-class-name
            #:method-combination-info
            #:get-setf-expansion
+           #:type
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
