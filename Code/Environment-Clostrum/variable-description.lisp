@@ -10,4 +10,4 @@
   ())
 
 (defclass constant-variable-description (variable-description)
-  ())
+  ((%value :initarg :value :reader value)))
