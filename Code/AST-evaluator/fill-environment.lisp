@@ -190,7 +190,9 @@
   (import-function client environment 'trucler:describe-function)
   (import-function client environment 'trucler:describe-variable)
   (import-function client environment 'trucler:expansion)
-  (import-function client environment 'trucler:expander))
+  (import-function client environment 'trucler:symbol-macro-expansion)
+  (import-function client environment 'trucler:expander)
+  (import-function client environment 'trucler:macro-function))
 
 (defun fill-environment (environment)
   (let ((client (env:client environment)))
