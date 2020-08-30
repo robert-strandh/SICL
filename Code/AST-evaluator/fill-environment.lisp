@@ -295,4 +295,5 @@
       (ld "Data-and-control-flow-Clostrum/defconstant-defmacro.lisp")
       (ld "Data-and-control-flow-Clostrum/defvar-defmacro.lisp")
       (ld "Data-and-control-flow-Clostrum/defparameter-defmacro.lisp")
-      (ld "Evaluation-and-compilation/macroexpand-hook-defparameter.lisp"))))
+      (ld "Evaluation-and-compilation/macroexpand-hook-defparameter.lisp")
+      (ld "Evaluation-and-compilation-Clostrum/macroexpand-1-defun.lisp"))))
