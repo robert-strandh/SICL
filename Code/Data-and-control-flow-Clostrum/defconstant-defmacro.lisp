@@ -15,6 +15,8 @@
                  (make-instance 'sicl-environment:constant-variable-description
                    :value initial-value))))
        (eval-when (:load-toplevel :execute)
-         (setf (sicl-environment:constant-variable
-                ,client-var ,env-var ',name)
-               ,initial-value)))))
+         (let* ((,env-var (sicl-environment:global-environment))
+                (,client-var (sicl-environment:client ,env-var)))
+           (setf (sicl-environment:constant-variable
+                  ,client-var ,env-var ',name)
+                 ,initial-value))))))

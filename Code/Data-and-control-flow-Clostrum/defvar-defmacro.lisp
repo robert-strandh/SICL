@@ -14,6 +14,8 @@
                   ,client-var ,env-var ',name)
                  (make-instance 'sicl-environment:special-variable-description))))
        (eval-when (:load-toplevel :execute)
-         (setf (sicl-environment:special-variable
-                ,client-var ,env-var ',name nil)
-               ,initial-value)))))
+         (let* ((,env-var (sicl-environment:global-environment))
+                (,client-var (sicl-environment:client ,env-var)))
+           (setf (sicl-environment:special-variable
+                  ,client-var ,env-var ',name nil)
+                 ,initial-value))))))
