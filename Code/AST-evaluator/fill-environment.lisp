@@ -220,6 +220,14 @@
       ;; Load a file containing definitions of standard conditional
       ;; macros, such as AND, OR, CASE, etc.
       (ld "Conditionals-Clostrum/macros.lisp")
+      ;; Load a file containing a definition of the macro SETF.  We
+      ;; need the SETF macro early, because it is needed in order to
+      ;; define the macro DEFMACRO.  The reason for that, is that the
+      ;; expansion of DEFMACRO uses SETF to set the macro function.
+      ;; We could have defined DEFMACRO to call (SETF MACRO-FUNCTION)
+      ;; directly, but that would have been less "natural", so we do
+      ;; it this way instead.
+      (ld "Data-and-control-flow-Clostrum/setf-defmacro.lisp")
       ;; At this point, we can redefine the macro DEFMACRO as a native
       ;; macro.  Since we already have a primitive form of DEFMACRO,
       ;; we use it to define DEFMACRO.  The result of loading this
