@@ -6,14 +6,14 @@
         (expansion
           (cleavir-code-utilities:parse-macro name lambda-list body)))
     `(progn (eval-when (:compile-toplevel)
-              (funcall #'(setf sicl-environment:macro-function)
-                       ,expansion
-                       (sicl-environment:client ,compilation-environment)
-                       ,compilation-environment
-                       ',name))
+              (setf (sicl-environment:macro-function
+                     (sicl-environment:client ,compilation-environment)
+                     ,compilation-environment
+                     ',name)
+                    ,expansion))
             (eval-when (:load-toplevel :execute)
-              (funcall #'(setf sicl-environment:macro-function)
-                       ,expansion
-                       (sicl-environment:client (sicl-environment:global-environment))
-                       (sicl-environment:global-environment)
-                       ',name)))))
+              (setf (sicl-environment:macro-function
+                     (sicl-environment:client (sicl-environment:global-environment))
+                     (sicl-environment:global-environment)
+                     ',name)
+                    ,expansion)))))
