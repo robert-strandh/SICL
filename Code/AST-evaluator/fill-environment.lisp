@@ -324,4 +324,8 @@
       (host-load "Data-and-control-flow-Clostrum/psetf-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:psetf-expander)
-      (ld "Data-and-control-flow-Clostrum/psetf-defmacro.lisp"))))
+      (ld "Data-and-control-flow-Clostrum/psetf-defmacro.lisp")
+      (host-load "Data-and-control-flow-Clostrum/rotatef-support.lisp")
+      (import-function
+       client environment 'sicl-data-and-control-flow:rotatef-expander)
+      (ld "Data-and-control-flow-Clostrum/rotatef-defmacro.lisp"))))
