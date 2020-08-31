@@ -184,7 +184,8 @@
 (defun import-code-utilities (client environment)
   (import-function client environment 'cleavir-code-utilities:parse-macro)
   (import-function client environment 'cleavir-code-utilities:lambda-list-type-specifier)
-  (import-function client environment 'cleavir-code-utilities:separate-function-body))
+  (import-function client environment 'cleavir-code-utilities:separate-function-body)
+  (import-function client environment 'cleavir-code-utilities:parse-destructuring-lambda-list))
 
 (defun import-trucler-functions (client environment)
   (import-function client environment 'trucler:describe-function)
@@ -328,4 +329,8 @@
       (host-load "Data-and-control-flow-Clostrum/rotatef-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:rotatef-expander)
-      (ld "Data-and-control-flow-Clostrum/rotatef-defmacro.lisp"))))
+      (ld "Data-and-control-flow-Clostrum/rotatef-defmacro.lisp")
+      (host-load "Data-and-control-flow/destructuring-bind-support.lisp")
+      (import-function
+       client environment 'sicl-data-and-control-flow:destructuring-bind-expander)
+      (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp"))))
