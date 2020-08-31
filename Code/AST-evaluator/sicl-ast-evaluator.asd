@@ -10,6 +10,7 @@
                #:sicl-environment
                #:sicl-source-tracking
                #:sicl-data-and-control-flow-support
+               #:sicl-evaluation-and-compilation-support
                #:sicl-conditionals-support-clostrum)
   :serial t
   :components
