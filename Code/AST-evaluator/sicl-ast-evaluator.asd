@@ -12,6 +12,7 @@
                #:sicl-data-and-control-flow-support
                #:sicl-evaluation-and-compilation-support
                #:sicl-arithmetic
+               #:sicl-loop-support
                #:sicl-conditionals-support-clostrum)
   :serial t
   :components
