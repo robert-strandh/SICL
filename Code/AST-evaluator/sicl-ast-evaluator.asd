@@ -9,7 +9,7 @@
                #:sicl-client
                #:sicl-environment
                #:sicl-source-tracking
-               #:sicl-data-and-control-flow-support
+               #:sicl-data-and-control-flow-support-clostrum
                #:sicl-evaluation-and-compilation-support
                #:sicl-arithmetic
                #:sicl-loop-support
