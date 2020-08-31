@@ -333,4 +333,8 @@
       (host-load "Data-and-control-flow/destructuring-bind-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:destructuring-bind-expander)
-      (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp"))))
+      (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
+      (host-load "Data-and-control-flow-Clostrum/shiftf-support.lisp")
+      (import-function
+       client environment 'sicl-data-and-control-flow:shiftf-expander)
+      (ld "Data-and-control-flow-Clostrum/shiftf-defmacro.lisp"))))
