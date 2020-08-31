@@ -310,4 +310,6 @@
       ;; POP.
       (import-function client environment 'sicl-cons:push-expander)
       (import-function client environment 'sicl-cons:pop-expander)
-      (ld "Cons/push-pop-defmacro.lisp"))))
+      (ld "Cons/push-pop-defmacro.lisp")
+      ;; Load a file containing the definition of the macro RETURN.
+      (ld "Data-and-control-flow/return-defmacro.lisp"))))
