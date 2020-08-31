@@ -315,4 +315,7 @@
       (ld "Data-and-control-flow/return-defmacro.lisp")
       ;; Load a file containing the definitions of the macros PROG1
       ;; and PROG2.
-      (ld "Data-and-control-flow/prog1-prog2-defmacro.lisp"))))
+      (ld "Data-and-control-flow/prog1-prog2-defmacro.lisp")
+      ;; Load a file containing the definitions of the macros PROG and
+      ;; PROG*.
+      (ld "Data-and-control-flow/prog-progstar-defmacro.lisp"))))
