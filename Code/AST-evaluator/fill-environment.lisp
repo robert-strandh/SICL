@@ -281,7 +281,6 @@
       ;; designator, as its first argument.
       (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp")
       (ld "Data-and-control-flow-Clostrum/setf-defmacro.lisp")
-      (host-load "Data-and-control-flow-Clostrum/defun-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:defun-expander)
       ;; Load a file containing the definition of macro DEFUN.
@@ -322,19 +321,15 @@
       (import-function
        client environment 'cleavir-code-utilities:separate-ordinary-body)
       (ld "Data-and-control-flow/prog-progstar-defmacro.lisp")
-      (host-load "Data-and-control-flow-Clostrum/psetf-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:psetf-expander)
       (ld "Data-and-control-flow-Clostrum/psetf-defmacro.lisp")
-      (host-load "Data-and-control-flow-Clostrum/rotatef-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:rotatef-expander)
       (ld "Data-and-control-flow-Clostrum/rotatef-defmacro.lisp")
-      (host-load "Data-and-control-flow/destructuring-bind-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:destructuring-bind-expander)
       (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
-      (host-load "Data-and-control-flow-Clostrum/shiftf-support.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:shiftf-expander)
       (ld "Data-and-control-flow-Clostrum/shiftf-defmacro.lisp"))))
