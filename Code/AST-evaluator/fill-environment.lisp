@@ -300,4 +300,7 @@
       (host-load "Evaluation-and-compilation/declaim-support.lisp")
       (import-function
        client environment 'sicl-evaluation-and-compilation:declaim-expander)
-      (ld "Evaluation-and-compilation/declaim-defmacro.lisp"))))
+      (ld "Evaluation-and-compilation/declaim-defmacro.lisp")
+      ;; Load a file containing the definitions of the macros INCF and
+      ;; DECF.
+      (ld "Arithmetic/incf-decf-defmacro.lisp"))))
