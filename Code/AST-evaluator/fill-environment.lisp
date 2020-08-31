@@ -304,4 +304,5 @@
       ;; Load a file containing the definitions of the macros INCF and
       ;; DECF.
       (ld "Arithmetic/incf-decf-defmacro.lisp")
+      (import-function client environment 'sicl-loop:expand-body)
       (ld "Loop/loop-defmacro.lisp"))))
