@@ -303,4 +303,5 @@
       (ld "Evaluation-and-compilation/declaim-defmacro.lisp")
       ;; Load a file containing the definitions of the macros INCF and
       ;; DECF.
-      (ld "Arithmetic/incf-decf-defmacro.lisp"))))
+      (ld "Arithmetic/incf-decf-defmacro.lisp")
+      (ld "Loop/loop-defmacro.lisp"))))
