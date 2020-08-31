@@ -318,4 +318,6 @@
       (ld "Data-and-control-flow/prog1-prog2-defmacro.lisp")
       ;; Load a file containing the definitions of the macros PROG and
       ;; PROG*.
+      (import-function
+       client environment 'cleavir-code-utilities:separate-ordinary-body)
       (ld "Data-and-control-flow/prog-progstar-defmacro.lisp"))))
