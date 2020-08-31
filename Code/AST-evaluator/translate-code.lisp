@@ -25,4 +25,5 @@
     (let ((*run-time-environment-name* (gensym)))
       `(lambda (,*run-time-environment-name*)
          (declare (ignorable ,*run-time-environment-name*))
+         #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
          ,(translate-ast ast environment lexical-environment)))))
