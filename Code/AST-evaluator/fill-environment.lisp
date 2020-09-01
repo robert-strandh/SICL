@@ -150,9 +150,10 @@
           (error "File must start with an IN-PACKAGE form."))
         (setf *package* (find-package (second first-form))))
       (loop with eof-marker = (list nil)
+            with client = (env:client environment)
             for cst = (eclector.concrete-syntax-tree:read stream nil eof-marker)
             until (eq cst eof-marker)
-            do (eval cst environment)))))
+            do (eval client environment cst)))))
 
 (defun host-load (relative-filename)
   (let ((filename (asdf:system-relative-pathname

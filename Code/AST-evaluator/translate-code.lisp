@@ -17,9 +17,8 @@
      (cleavir-cst-to-ast:cst-to-ast
       client cst environment)))
 
-(defun translate-code (cst environment)
-  (let* ((client (env:client environment))
-         (ast (cst-to-ast client cst environment))
+(defun translate-code (client environment cst)
+  (let* ((ast (cst-to-ast client cst environment))
          (table (make-hash-table :test #'eq))
          (lexical-environment (list table)))
     (let ((*run-time-environment-name* (gensym)))
