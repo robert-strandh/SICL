@@ -13,7 +13,7 @@
                #:sicl-evaluation-and-compilation-support
                #:sicl-arithmetic
                #:sicl-loop-support
-               #:sicl-cons-support
+               #:sicl-cons-support-clostrum
                #:sicl-conditionals-support-clostrum)
   :serial t
   :components
