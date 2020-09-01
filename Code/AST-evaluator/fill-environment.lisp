@@ -128,7 +128,7 @@
     format write prin1 print pprint princ
     write-to-string prin1-to-string princ-to-string
     ;; Misc
-    coerce))
+    coerce getf))
 
 (defun import-standard-functions (client environment)
   (loop for function-name in *standard-function-names*
@@ -186,7 +186,8 @@
   (import-function client environment 'cleavir-code-utilities:parse-macro)
   (import-function client environment 'cleavir-code-utilities:lambda-list-type-specifier)
   (import-function client environment 'cleavir-code-utilities:separate-function-body)
-  (import-function client environment 'cleavir-code-utilities:parse-destructuring-lambda-list))
+  (import-function client environment 'cleavir-code-utilities:parse-destructuring-lambda-list)
+  (import-function client environment 'cleavir-code-utilities:list-structure))
 
 (defun import-trucler-functions (client environment)
   (import-function client environment 'trucler:describe-function)
