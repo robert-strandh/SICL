@@ -333,4 +333,7 @@
       (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:shiftf-expander)
-      (ld "Data-and-control-flow-Clostrum/shiftf-defmacro.lisp"))))
+      (ld "Data-and-control-flow-Clostrum/shiftf-defmacro.lisp")
+      ;; Load a file containing the definition of the macro PUSHNEW.
+      (import-function client environment 'sicl-cons:pushnew-expander)
+      (ld "Cons-Clostrum/pushnew-defmacro.lisp"))))
