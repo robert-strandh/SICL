@@ -14,7 +14,8 @@
                #:sicl-arithmetic
                #:sicl-loop-support
                #:sicl-cons-support-clostrum
-               #:sicl-conditionals-support-clostrum)
+               #:sicl-conditionals-support-clostrum
+               #:sicl-iteration-support)
   :serial t
   :components
   ((:file "packages")
