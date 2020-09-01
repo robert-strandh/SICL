@@ -47,8 +47,10 @@
   (let* ((lambda-list (ast:lambda-list ast))
          (new-environment (augment-environment lexical-environment lambda-list))
          (body (translate-ast (ast:body-ast ast) global-environment new-environment))
-         (vars (loop for name being each hash-value of (first new-environment)
-                     collect name)))
+         (vars
+           (remove-duplicates
+            (loop for name being each hash-value of (first new-environment)
+                  collect name))))
     `(lambda
          ,(loop for item in (ast:lambda-list ast)
                 collect
@@ -102,17 +104,18 @@
             do (add-identifier lexical-environment item-ast name))
     `(with-exit-point (,name)
        (tagbody
-          ,(loop for item-ast in (ast:item-asts ast)
-                 collect (if (typep item-ast 'ast:tag-ast)
-                             (ast:name item-ast)
-                             (translate-ast
-                              item-ast global-environment lexical-environment)))))))
+          ,@(loop for item-ast in (ast:item-asts ast)
+                  collect (if (typep item-ast 'ast:tag-ast)
+                              (ast:name item-ast)
+                              (translate-ast
+                               item-ast global-environment lexical-environment)))))))
 
 (defmethod translate-ast
     ((ast ast:go-ast) global-environment lexical-environment)
-  (let ((name (find-identifier lexical-environment (ast:tag-ast ast))))
+  (let* ((tag-ast (ast:tag-ast ast))
+         (name (find-identifier lexical-environment tag-ast)))
     `(progn (unwind ',name)
-            (go ,name))))
+            (go ,(ast:name tag-ast)))))
 
 (defmethod translate-ast
     ((ast ast:setq-ast) global-environment lexical-environment)
