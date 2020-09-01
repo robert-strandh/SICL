@@ -343,4 +343,7 @@
       (ld "Iteration/dotimes-defmacro.lisp")
       ;; Load a file containing the definition of the macro DOLIST.
       (import-function client environment 'sicl-iteration:dolist-expander)
-      (ld "Iteration/dolist-defmacro.lisp"))))
+      (ld "Iteration/dolist-defmacro.lisp")
+      ;; Load a file containing the definition of the macros DO and DO*.
+      (import-function client environment 'sicl-iteration:do-dostar-expander)
+      (ld "Iteration/do-dostar-defmacro.lisp"))))
