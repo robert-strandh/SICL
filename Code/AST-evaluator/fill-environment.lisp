@@ -340,4 +340,7 @@
       (ld "Cons-Clostrum/pushnew-defmacro.lisp")
       ;; Load a file containing the definition of the macro DOTIMES.
       (import-function client environment 'sicl-iteration:dotimes-expander)
-      (ld "Iteration/dotimes-defmacro.lisp"))))
+      (ld "Iteration/dotimes-defmacro.lisp")
+      ;; Load a file containing the definition of the macro DOLIST.
+      (import-function client environment 'sicl-iteration:dolist-expander)
+      (ld "Iteration/dolist-defmacro.lisp"))))
