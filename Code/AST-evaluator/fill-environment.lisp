@@ -337,4 +337,7 @@
       (ld "Data-and-control-flow-Clostrum/shiftf-defmacro.lisp")
       ;; Load a file containing the definition of the macro PUSHNEW.
       (import-function client environment 'sicl-cons:pushnew-expander)
-      (ld "Cons-Clostrum/pushnew-defmacro.lisp"))))
+      (ld "Cons-Clostrum/pushnew-defmacro.lisp")
+      ;; Load a file containing the definition of the macro DOTIMES.
+      (import-function client environment 'sicl-iteration:dotimes-expander)
+      (ld "Iteration/dotimes-defmacro.lisp"))))
