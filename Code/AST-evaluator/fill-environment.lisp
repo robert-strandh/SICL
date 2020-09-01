@@ -346,4 +346,7 @@
       (ld "Iteration/dolist-defmacro.lisp")
       ;; Load a file containing the definition of the macros DO and DO*.
       (import-function client environment 'sicl-iteration:do-dostar-expander)
-      (ld "Iteration/do-dostar-defmacro.lisp"))))
+      (ld "Iteration/do-dostar-defmacro.lisp")
+      ;; Load a file containing the definition of the macro REMF.
+      (import-function client environment 'sicl-cons:remf-expander)
+      (ld "Cons-Clostrum/remf-defmacro.lisp"))))
