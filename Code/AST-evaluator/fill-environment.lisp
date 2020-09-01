@@ -357,4 +357,7 @@
       ;; Load a file containing the definition of the macro
       ;; WITH-PROPER-LIST-ELEMENTS used by several functions such as
       ;; SET-DIFFERENCE, UNION, etc.
-      (ld "Cons/with-proper-list-elements-defmacro.lisp"))))
+      (ld "Cons/with-proper-list-elements-defmacro.lisp")
+      ;; Load a file containing the definition of the macro
+      ;; WITH-ALIST-ELEMENTS used by functions in the ASSOC family.
+      (ld "Cons/with-alist-elements-defmacro.lisp"))))
