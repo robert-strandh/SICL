@@ -107,6 +107,69 @@
 \item Details about how an abstract machine could work.
 \item Details about how a typical concrete processor works.
 \end{itemize}
+\vskip 0.25cm
+Interest for some of these topics has been expressed.  We may create
+talks on these topics in the future.
+}
+
+\frame{
+\frametitle{General assumptions (from Part 1)}
+\vskip 0.25cm
+\begin{itemize}
+\item We want to use \commonlisp{} as much as possible for the
+  implementation.
+\item The resulting system should not be too slow, but we do not
+  need extremely good performance.
+\item The implementation we are creating has no classes and no generic
+  functions.  This assumption will be
+  revisited later.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Strategy 1: Start with a small core in (say) C}
+\vskip 0.25cm
+\begin{itemize}
+\item Write a minimal subset in an existing language.
+\item Add more and more functionality, written in \commonlisp{}.
+\end{itemize}
+}
+
+\frame[containsverbatim]{
+\frametitle{Strategy 1: Complications}
+\vskip 0.25cm
+Summary of problems:
+\vskip 0.25cm
+\begin{itemize}
+\item We end up with a lot of C code, despite our best intentions.
+\item We may end up with multiple versions of the same module, one
+  (simplified) C version, and one (complete) \commonlisp{} version.
+\item Much of the \commonlisp{} code is not written in the most
+  ``natural'' way.
+\item There are many, often implicit, dependencies between modules.
+\item The resulting system is hard to maintain, especially when
+  dependencies are implicit.
+\end{itemize}
+}
+
+\frame[containsverbatim]{
+\frametitle{Circular compile-time dependencies}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-full-example-from-part-1.pdf_t}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Abstract machine}
+\vskip 0.25cm
+\begin{figure}
+\begin{center}
+\inputfig{fig-abstract-machine-1.pdf_t}
+\end{center}
+\end{figure}
 }
 
 \frame{
@@ -121,6 +184,8 @@ Let us imagine the following scenario:
 \item Since we have a working \commonlisp{} implementation, we can
   write it in \commonlisp{}.
 \end{itemize}
+\vskip 0.25cm
+This bytecode compiler is the core of strategy 2.
 }
 
 \frame{
