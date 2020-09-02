@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "define-condition-support")))
+   (:file "define-condition-support")
+   (:file "handlers-utilities")))
