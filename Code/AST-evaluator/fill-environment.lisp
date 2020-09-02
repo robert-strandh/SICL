@@ -366,4 +366,9 @@
       (ld "Conditions/define-condition-defmacro.lisp")
       (ld "Conditions/assert-defmacro.lisp")
       (ld "Conditions/check-type-defmacro.lisp")
-      (ld "Conditions/handler-bind-defmacro.lisp"))))
+      (ld "Conditions/handler-bind-defmacro.lisp")
+      (import-function
+       client environment 'sicl-conditions:make-handler-case-without-no-error-case)
+      (import-function
+       client environment 'sicl-conditions:make-handler-case-with-no-error-case)
+      (ld "Conditions/handler-case-defmacro.lisp"))))
