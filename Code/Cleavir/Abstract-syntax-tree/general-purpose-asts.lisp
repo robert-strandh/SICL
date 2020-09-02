@@ -332,10 +332,13 @@
   ((%callee-ast :initarg :callee-ast :reader callee-ast)
    (%argument-asts :initarg :argument-asts :reader argument-asts)
    (%inline :initarg :inline :initform nil :reader inline-declaration)
-   ;; default KLUDGE
-   (%attributes :initarg :attributes :initform 0 :reader attributes)))
+   (%attributes :initarg :attributes :reader attributes
+                :initform (cleavir-attributes:default-attributes))))
 
-(defun make-call-ast (callee-ast argument-asts &key origin inline (policy *policy*) (attributes 0))
+(defun make-call-ast (callee-ast argument-asts
+                      &key origin inline (policy *policy*)
+                        (attributes
+                         (cleavir-attributes:default-attributes)))
   (make-instance 'call-ast
     :origin origin :policy policy
     :callee-ast callee-ast
@@ -407,13 +410,15 @@
    (%docstring :initarg :docstring :initform nil :reader docstring)
    (%original-lambda-list :initarg :original-lambda-list :initform nil
                           :reader original-lambda-list)
-   ;; default is a KLUDGE
-   (%attributes :initarg :attributes :initform 0 :reader attributes)))
+   (%attributes :initarg :attributes :reader attributes
+                :initform (cleavir-attributes:default-attributes))))
 
 (defun make-function-ast (body-ast lambda-list
                           &key name docstring original-lambda-list
                             bound-declarations
-                            origin (policy *policy*) (attributes 0))
+                            origin (policy *policy*)
+                            (attributes
+                             (cleavir-attributes:default-attributes)))
   (make-instance 'function-ast
     :origin origin :policy policy
     :name name :docstring docstring
@@ -871,10 +876,13 @@
 (defclass multiple-value-call-ast (ast)
   ((%function-form-ast :initarg :function-form-ast :reader function-form-ast)
    (%form-asts :initarg :form-asts :reader form-asts)
-   ;; default KLUDGE
-   (%attributes :initarg :attributes :initform 0 :reader attributes)))
+   (%attributes :initarg :attributes :reader attributes
+                :initform (cleavir-attributes:default-attributes))))
 
-(defun make-multiple-value-call-ast (function-form-ast form-asts &key origin (policy *policy*) (attributes 0))
+(defun make-multiple-value-call-ast
+    (function-form-ast form-asts
+     &key origin (policy *policy*)
+       (attributes (cleavir-attributes:default-attributes)))
   (make-instance 'multiple-value-call-ast
     :origin origin :policy policy
     :function-form-ast function-form-ast

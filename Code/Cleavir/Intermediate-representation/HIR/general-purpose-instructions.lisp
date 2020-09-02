@@ -70,15 +70,18 @@
 ;;;
 ;;; Instruction FUNCALL-INSTRUCTION.
 
+;;; TODO: Make some kind of abstract parent for all the calls.
+
 (defclass funcall-instruction
     (one-successor-mixin side-effect-mixin instruction)
   ((%inline :initarg :inline :initform nil :reader inline-declaration)
-   ;; default KLUDGE
-   (%attributes :initarg :attributes :initform 0 :reader attributes)))
+   (%attributes :initarg :attributes :reader attributes
+                :initform (cleavir-attributes:default-attributes))))
 
 (defun make-funcall-instruction
     (inputs outputs
-     &optional (successor nil successor-p) inline (attributes 0))
+     &optional (successor nil successor-p) inline
+       (attributes (cleavir-attributes:default-attributes)))
   (make-instance 'funcall-instruction
     :inputs inputs
     :outputs outputs

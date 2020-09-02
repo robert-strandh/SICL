@@ -58,10 +58,12 @@
 (defclass multiple-value-call-instruction
     (one-successor-mixin side-effect-mixin instruction)
   ;; default KLUDGE
-  ((%attributes :initarg :attributes :initform 0 :reader attributes)))
+  ((%attributes :initarg :attributes :reader attributes
+                :initform (cleavir-attributes:default-attributes))))
 
 (defun make-multiple-value-call-instruction
-    (inputs output &optional (successor nil successor-p) (attributes 0))
+    (inputs output &optional (successor nil successor-p)
+                     (attributes (cleavir-attributes:default-attributes)))
   (make-instance 'multiple-value-call-instruction
     :inputs inputs
     :outputs (list output)

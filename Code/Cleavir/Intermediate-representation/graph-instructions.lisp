@@ -28,8 +28,8 @@
    (%docstring :initarg :docstring :initform nil :reader docstring)
    (%original-lambda-list :initarg :original-lambda-list :initform nil
                           :reader original-lambda-list)
-   ;; default KLUDGE
-   (%attributes :initarg :attributes :initform 0 :reader attributes)))
+   (%attributes :initarg :attributes :reader attributes
+                :initform (cleavir-attributes:default-attributes))))
 
 (defgeneric static-environment (instruction))
 (defmethod static-environment ((instruction enter-instruction))
@@ -46,7 +46,9 @@
 (defun make-enter-instruction
     (lambda-list dynenv &key (successor nil successor-p) origin
                           name docstring bound-declarations
-                          original-lambda-list (attributes 0))
+                          original-lambda-list
+                          (attributes
+                           (cleavir-attributes:default-attributes)))
   (let* ((outputs (loop for item in lambda-list
                         append (cond ((member item lambda-list-keywords) '())
                                      ((consp item)
