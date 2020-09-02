@@ -72,18 +72,23 @@
 
 (defclass funcall-instruction
     (one-successor-mixin side-effect-mixin instruction)
-  ((%inline :initarg :inline :initform nil :reader inline-declaration)))
+  ((%inline :initarg :inline :initform nil :reader inline-declaration)
+   ;; default KLUDGE
+   (%attributes :initarg :attributes :initform 0 :reader attributes)))
 
 (defun make-funcall-instruction
-    (inputs outputs &optional (successor nil successor-p) inline)
+    (inputs outputs
+     &optional (successor nil successor-p) inline (attributes 0))
   (make-instance 'funcall-instruction
     :inputs inputs
     :outputs outputs
     :successors (if successor-p (list successor) '())
-    :inline inline))
+    :inline inline
+    :attributes attributes))
 
 (defmethod clone-initargs append ((instruction funcall-instruction))
-  (list :inline (inline-declaration instruction)))
+  (list :inline (inline-declaration instruction)
+        :attributes (attributes instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -274,6 +279,9 @@
     :outputs (list continuation dynenv-out)
     :successors successors))
 
+(defmethod dynamic-environment-output ((instruction catch-instruction))
+  (second (outputs instruction)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction UNWIND-INSTRUCTION.
@@ -292,7 +300,7 @@
     (no-successors-mixin side-effect-mixin instruction)
   (;; The destination of the UNWIND-INSTRUCTION is the
    ;; instruction to which it will eventually transfer control.
-   ;; This instruction must be the successor of a CATCH-INSTRUCTION.
+   ;; This instruction is a CATCH-INSTRUCTION.
    ;; It is not a normal successor because the exit is non-local.
    (%destination :initarg :destination :accessor destination)
    (%index :initarg :index :accessor unwind-index)))

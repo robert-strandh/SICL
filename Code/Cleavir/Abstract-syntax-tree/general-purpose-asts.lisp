@@ -331,19 +331,23 @@
 (defclass call-ast (ast)
   ((%callee-ast :initarg :callee-ast :reader callee-ast)
    (%argument-asts :initarg :argument-asts :reader argument-asts)
-   (%inline :initarg :inline :initform nil :reader inline-declaration)))
+   (%inline :initarg :inline :initform nil :reader inline-declaration)
+   ;; default KLUDGE
+   (%attributes :initarg :attributes :initform 0 :reader attributes)))
 
-(defun make-call-ast (callee-ast argument-asts &key origin inline (policy *policy*))
+(defun make-call-ast (callee-ast argument-asts &key origin inline (policy *policy*) (attributes 0))
   (make-instance 'call-ast
     :origin origin :policy policy
     :callee-ast callee-ast
     :inline inline
-    :argument-asts argument-asts))
+    :argument-asts argument-asts
+    :attributes attributes))
 
 (cleavir-io:define-save-info call-ast
   (:callee-ast callee-ast)
   (:argument-asts argument-asts)
-  (:inline inline-declaration))
+  (:inline inline-declaration)
+  (:attributes attributes))
 
 (defmethod children ((ast call-ast))
   (list* (callee-ast ast) (argument-asts ast)))
@@ -402,26 +406,30 @@
    (%name :initarg :name :initform nil :accessor name)
    (%docstring :initarg :docstring :initform nil :reader docstring)
    (%original-lambda-list :initarg :original-lambda-list :initform nil
-                          :reader original-lambda-list)))
+                          :reader original-lambda-list)
+   ;; default is a KLUDGE
+   (%attributes :initarg :attributes :initform 0 :reader attributes)))
 
 (defun make-function-ast (body-ast lambda-list
                           &key name docstring original-lambda-list
                             bound-declarations
-                            origin (policy *policy*))
+                            origin (policy *policy*) (attributes 0))
   (make-instance 'function-ast
     :origin origin :policy policy
     :name name :docstring docstring
     :original-lambda-list original-lambda-list
     :bound-declarations bound-declarations
     :body-ast body-ast
-    :lambda-list lambda-list))
+    :lambda-list lambda-list
+    :attributes attributes))
 
 (cleavir-io:define-save-info function-ast
   (:lambda-list lambda-list)
   (:body-ast body-ast)
   (:name name) (:docstring docstring)
   (:bound-declarations bound-declarations)
-  (:original-lambda-list original-lambda-list))
+  (:original-lambda-list original-lambda-list)
+  (:attributes attributes))
 
 (defmethod children ((ast function-ast))
   (list* (body-ast ast)
@@ -862,17 +870,20 @@
 
 (defclass multiple-value-call-ast (ast)
   ((%function-form-ast :initarg :function-form-ast :reader function-form-ast)
-   (%form-asts :initarg :form-asts :reader form-asts)))
+   (%form-asts :initarg :form-asts :reader form-asts)
+   ;; default KLUDGE
+   (%attributes :initarg :attributes :initform 0 :reader attributes)))
 
-(defun make-multiple-value-call-ast (function-form-ast form-asts &key origin (policy *policy*))
+(defun make-multiple-value-call-ast (function-form-ast form-asts &key origin (policy *policy*) (attributes 0))
   (make-instance 'multiple-value-call-ast
     :origin origin :policy policy
     :function-form-ast function-form-ast
-    :form-asts form-asts))
+    :form-asts form-asts :attributes attributes))
 
 (cleavir-io:define-save-info multiple-value-call-ast
   (:function-form-ast function-form-ast)
-  (:form-asts form-asts))
+  (:form-asts form-asts)
+  (:attributes attributes))
 
 (defmethod children ((ast multiple-value-call-ast))
   (list* (function-form-ast ast) (form-asts ast)))

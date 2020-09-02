@@ -102,6 +102,36 @@
 ;;;
 ;;; FUNCTION-INFO.
 
+;;; Attributes are miscellaneous information about functions, not
+;;; slotted into any of the other qualities of an info.
+
+;;; Only attribute right now is :DYN-CALL, which means that the
+;;; function does not call (and cannot cause to be called) any of its
+;;; arguments except in the dynamic environment the function itself
+;;; was called in. So it doesn't do unwind-protect or special
+;;; bindings or anything else that needs to be unwound around it,
+;;; or store it anywhere some other function could do arbitrary
+;;; things with it, or signal a condition that makes it accessible
+;;; to arbitrary condition handlers.
+;;; If a function calls itself in a different dynamic environment,
+;;; this attribute can still be in place.
+
+(defun make-attributes (&rest attributes)
+  (loop with result = 0
+        for attr in attributes
+        for flag = (ecase attr
+                     ((:dyn-call) 1))
+        do (setf result (logior result flag))
+        finally (return result)))
+
+(defun default-attributes () 0)
+
+(defun has-attribute-p (attributes attribute-name)
+  (plusp
+   (logand attributes
+           (ecase attribute-name
+             ((:dyn-call) 1)))))
+
 ;;; Cleavir tools call this function in order to obtain information
 ;;; about a symbol in a function position.  It could also be used to
 ;;; obtain information about a function name that is not a symbol.
@@ -142,7 +172,11 @@
    ;; this function.
    (%dynamic-extent :initform nil
 		    :initarg :dynamic-extent
-		    :reader dynamic-extent)))
+		    :reader dynamic-extent)
+   ;; Miscellaneous attributes.
+   (%attributes :initform (default-attributes)
+                :initarg :attributes
+                :reader attributes)))
   
 (defclass global-function-info ()
   (;; The name of the global function.  It can be different from the
@@ -177,8 +211,12 @@
    ;; this function.
    (%dynamic-extent :initform nil
 		    :initarg :dynamic-extent
-		    :reader dynamic-extent)))
-  
+		    :reader dynamic-extent)
+   ;; Miscellaneous attributes.
+   (%attributes :initform (default-attributes)
+                :initarg :attributes
+                :reader attributes)))
+
 (defclass local-macro-info ()
   (;; The name of the local macro.  It can be different from the
    ;; function name supplied in the query as a result of errors and

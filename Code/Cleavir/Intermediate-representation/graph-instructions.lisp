@@ -27,7 +27,9 @@
    (%name :initarg :name :initform nil :reader name)
    (%docstring :initarg :docstring :initform nil :reader docstring)
    (%original-lambda-list :initarg :original-lambda-list :initform nil
-                          :reader original-lambda-list)))
+                          :reader original-lambda-list)
+   ;; default KLUDGE
+   (%attributes :initarg :attributes :initform 0 :reader attributes)))
 
 (defgeneric static-environment (instruction))
 (defmethod static-environment ((instruction enter-instruction))
@@ -44,7 +46,7 @@
 (defun make-enter-instruction
     (lambda-list dynenv &key (successor nil successor-p) origin
                           name docstring bound-declarations
-                          original-lambda-list)
+                          original-lambda-list (attributes 0))
   (let* ((outputs (loop for item in lambda-list
                         append (cond ((member item lambda-list-keywords) '())
                                      ((consp item)
@@ -62,6 +64,7 @@
       :name name :docstring docstring
       :original-lambda-list original-lambda-list
       :bound-declarations bound-declarations
+      :attributes attributes
       :origin origin)))
 
 (defmethod clone-initargs append ((instruction enter-instruction))
@@ -70,7 +73,8 @@
         :closure-size (closure-size instruction)
         :name (name instruction)
         :docstring (docstring instruction)
-        :original-lambda-list (original-lambda-list instruction)))
+        :original-lambda-list (original-lambda-list instruction)
+        :attributes (attributes instruction)))
 
 ;;; Maintain consistency of lambda list and declarations with outputs.
 (defmethod substitute-output :after (new old (instruction enter-instruction))

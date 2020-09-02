@@ -487,7 +487,8 @@
 	     :inputs inputs
 	     :outputs (list results)
 	     :successors successors
-             :inline inline)
+             :inline inline
+             :attributes (cleavir-ast:attributes ast))
 	   (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
 	     (make-instance 'cleavir-ir:funcall-instruction
 	       :inputs inputs
@@ -495,7 +496,8 @@
 	       :successors
 	       (list (cleavir-ir:make-multiple-to-fixed-instruction
 		      values-temp results (first successors)))
-               :inline inline)))
+               :inline inline
+               :attributes (cleavir-ast:attributes ast))))
        context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -568,6 +570,7 @@
                  :docstring (cleavir-ast:docstring ast)
                  :original-lambda-list (cleavir-ast:original-lambda-list ast)
                  :bound-declarations bd
+                 :attributes (cleavir-ast:attributes ast)
                  :origin (cleavir-ast:origin ast)))
          (values (cleavir-ir:make-values-location))
          (return (cleavir-ir:make-return-instruction (list values)))
@@ -1067,14 +1070,16 @@
                  (make-instance 'cleavir-ir:multiple-value-call-instruction
                    :inputs inputs
                    :outputs (list results)
-                   :successors successors)
+                   :successors successors
+                   :attributes (cleavir-ast:attributes ast))
                  (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
                    (make-instance 'cleavir-ir:multiple-value-call-instruction
                      :inputs inputs
                      :outputs (list values-temp)
                      :successors
                      (list (cleavir-ir:make-multiple-to-fixed-instruction
-                            values-temp results (first successors))))))))
+                            values-temp results (first successors)))
+                     :attributes (cleavir-ast:attributes ast))))))
 	(loop for form-ast in (reverse (cleavir-ast:form-asts ast))
 	      for form-temp in (reverse form-temps)
 	      do (setf successor

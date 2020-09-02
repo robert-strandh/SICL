@@ -6,6 +6,7 @@
     (cleavir-ast:make-fdefinition-ast
      (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info)
                                            t :origin source)
+     :attributes (cleavir-env:attributes info)
      :origin source)))
 
 (defmethod convert-function-reference

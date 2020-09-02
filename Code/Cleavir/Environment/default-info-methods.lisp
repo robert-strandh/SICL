@@ -716,7 +716,8 @@
       (ast (or entry defining-info)))
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
-      (if (null entry) (dynamic-extent defining-info) t))))
+      (if (null entry) (dynamic-extent defining-info) t))
+    :attributes (attributes defining-info)))
 
 (defmethod make-info
     (environment (defining-info global-function-info))
@@ -735,6 +736,7 @@
     ;;  shouldn't be local expansions for global functions.
     :ast (ast defining-info)
     :compiler-macro (compiler-macro defining-info)
+    :attributes (attributes defining-info)
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
       (if (null entry) (dynamic-extent defining-info) t))))

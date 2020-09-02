@@ -53,7 +53,8 @@
    #:nop-instruction #:make-nop-instruction
    #:unreachable-instruction #:make-unreachable-instruction
    #:assignment-instruction #:make-assignment-instruction
-   #:funcall-instruction #:make-funcall-instruction #:inline-declaration
+   #:funcall-instruction #:make-funcall-instruction
+   #:inline-declaration #:attributes
    #:funcall-no-return-instruction #:make-funcall-no-return-instruction
    #:tailcall-instruction #:make-tailcall-instruction
    #:return-instruction #:make-return-instruction

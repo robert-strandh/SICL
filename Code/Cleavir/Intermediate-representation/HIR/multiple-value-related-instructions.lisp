@@ -57,14 +57,20 @@
 
 (defclass multiple-value-call-instruction
     (one-successor-mixin side-effect-mixin instruction)
-  ())
+  ;; default KLUDGE
+  ((%attributes :initarg :attributes :initform 0 :reader attributes)))
 
 (defun make-multiple-value-call-instruction
-    (inputs output &optional (successor nil successor-p))
+    (inputs output &optional (successor nil successor-p) (attributes 0))
   (make-instance 'multiple-value-call-instruction
     :inputs inputs
     :outputs (list output)
-    :successors (if successor-p (list successor) '())))
+    :successors (if successor-p (list successor) '())
+    :attributes attributes))
+
+(defmethod clone-initargs append
+    ((instruction multiple-value-call-instruction))
+  (list :attributes (attributes instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
