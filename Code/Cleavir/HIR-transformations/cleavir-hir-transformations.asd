@@ -17,6 +17,7 @@
    (:file "eliminate-typeq")
    (:file "simplify-box-unbox")
    (:file "function-dag")
+   (:file "simple-unwind")
    (:file "segregate-lexicals")
    (:file "escape")
    (:file "copy-propagate")
