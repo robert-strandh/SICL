@@ -6,4 +6,5 @@
    #:define-condition-expander
    #:make-handler-case-without-no-error-case
    #:make-handler-case-with-no-error-case
+   #:restart-bind-transform-binding
    #:condition-class))
