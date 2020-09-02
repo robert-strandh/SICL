@@ -173,6 +173,10 @@ Summary of problems:
 }
 
 \frame{
+\frametitle{What can be done?}
+}
+
+\frame{
 \frametitle{Hypothetical situation}
 \vskip 0.25cm
 Let us imagine the following scenario:
@@ -288,6 +292,108 @@ This is the essence of \emph{cross compilation}.
     (push (funcall function (first sublist))
           result)))
 \end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{Package structure for cross compilation}
+\begin{verbatim}
+(defpackage #:target-common-lisp
+  ...
+  ...
+---
+(defpackage #:target-cons
+  (:use #:target-common-lisp))
+---
+(in-package #:target-cons)
+
+(defun mapcar (fun list)
+  ...)
+\end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{ASDF system definition for cross compilation}
+\begin{verbatim}
+(cl:in-package #:asdf-user)
+
+(defsystem #:target
+  :depends-on (#:cleavir-code-utilities)
+  :serial t
+  :components
+  ((:file "target-common-lisp-package")
+   (:file "target-cons-package")
+   (:file "target-evaluation-and-compilation-package")
+   (:file "target-data-and-control-flow-package")
+   (:file "load-target-macros")))
+\end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{Package structure for cross compilation}
+\begin{verbatim}
+(cl:in-package #:common-lisp-user)
+
+(defpackage #:target-cons
+  (:use #:target-common-lisp))
+---
+(cl:in-package #:common-lisp-user)
+
+(defpackage #:target-data-and-control-flow
+  (:use #:target-common-lisp))
+---
+(cl:in-package #:common-lisp-user)
+
+(defpackage #:target-evaluation-and-compilation
+  (:use #:target-common-lisp))
+\end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{The \texttt{target-common-lisp} package}
+{\small\begin{verbatim}
+(cl:in-package #:common-lisp-user)
+
+(defpackage #:target-common-lisp
+  (:use)
+  (:import-from #:common-lisp
+     .
+     #.(let ((result '()))
+         (do-external-symbols (symbol (find-package '#:cl))
+           (when (or (member symbol lambda-list-keywords)
+                     (special-operator-p symbol))
+             (push (symbol-name symbol) result)))
+         result))
+  (:export
+   .
+   #.(let ((result '()))
+       (do-external-symbols (symbol (find-package '#:cl))
+         (push (symbol-name symbol) result))
+       result)))
+\end{verbatim}
+}
+}
+
+\frame[containsverbatim]{
+\frametitle{Load target macros}
+{\small\begin{verbatim}
+(cl:in-package #:common-lisp-user)
+
+(defun load-target-macros ()
+  (setf (macro-function 'target-common-lisp:defmacro)
+        (macro-function 'defmacro))
+  (do-external-symbols (symbol (find-package '#:common-lisp))
+    (when (and (fboundp symbol)
+               (null (macro-function symbol))
+               (not (special-operator-p symbol)))
+      (setf (fdefinition (find-symbol (symbol-name symbol)
+                         '#:target-common-lisp))
+            (fdefinition symbol))))
+  (load "defmacro-defmacro.lisp")
+  (load "lambda-defmacro.lisp")
+  (load "return-defmacro.lisp")
+  (load "when-defmacro.lisp")
+\end{verbatim}
+}
 }
 
 \frame{
