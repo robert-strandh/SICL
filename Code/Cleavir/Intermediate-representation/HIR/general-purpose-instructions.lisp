@@ -294,7 +294,9 @@
 ;;; a closed-over continuation.
 
 (defclass catch-instruction (multiple-successors-mixin instruction)
-  ())
+  (;; Indicates whether all unwind instructions to this catch are simple.
+   ;; See HIR-transformations/simple-unwind.lisp.
+   (%simple-p :initarg :simple-p :initform nil :reader simple-p)))
 
 (defun make-catch-instruction (continuation dynenv-out successors)
   (make-instance 'catch-instruction
@@ -303,6 +305,9 @@
 
 (defmethod dynamic-environment-output ((instruction catch-instruction))
   (second (outputs instruction)))
+
+(defmethod clone-initargs append ((instruction catch-instruction))
+  (list :simple-p (simple-p instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -325,7 +330,10 @@
    ;; This instruction is a CATCH-INSTRUCTION.
    ;; It is not a normal successor because the exit is non-local.
    (%destination :initarg :destination :accessor destination)
-   (%index :initarg :index :accessor unwind-index)))
+   (%index :initarg :index :accessor unwind-index)
+   ;; Indicates whether the dynamic environment is usefully known
+   ;; statically. See HIR-transformations/simple-unwinds.lisp.
+   (%simple-p :initarg :simple-p :initform nil :reader simple-p)))
 
 (defun make-unwind-instruction (continuation destination index)
   (make-instance 'unwind-instruction
@@ -335,7 +343,8 @@
 
 (defmethod clone-initargs append ((instruction unwind-instruction))
   (list :destination (destination instruction)
-        :index (unwind-index instruction)))
+        :index (unwind-index instruction)
+        :simple-p (simple-p instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
