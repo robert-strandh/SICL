@@ -375,4 +375,15 @@
       (ld "Conditions/ignore-errors-defmacro.lisp")
       (import-function
        client environment 'sicl-conditions:restart-bind-transform-binding)
-      (ld "Conditions/restart-bind-defmacro.lisp"))))
+      (ld "Conditions/restart-bind-defmacro.lisp")
+      (import-function
+       client environment 'sicl-conditions:restart-case-make-restart-binding)
+      (import-function
+       client environment 'sicl-conditions:restart-case-make-restart-case)
+      (import-function
+       client environment 'sicl-conditions:restart-case-signaling-form-p)
+      (import-function
+       client environment 'sicl-conditions:restart-case-expand-signaling-form)
+      (import-function
+       client environment 'sicl-conditions:restart-case-parse-case)
+      (ld "Conditions/restart-case-defmacro.lisp"))))
