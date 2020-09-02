@@ -360,4 +360,7 @@
       (ld "Cons/with-proper-list-elements-defmacro.lisp")
       ;; Load a file containing the definition of the macro
       ;; WITH-ALIST-ELEMENTS used by functions in the ASSOC family.
-      (ld "Cons/with-alist-elements-defmacro.lisp"))))
+      (ld "Cons/with-alist-elements-defmacro.lisp")
+      (import-function
+       client environment 'sicl-conditions:define-condition-expander)
+      (ld "Conditions/define-condition-defmacro.lisp"))))
