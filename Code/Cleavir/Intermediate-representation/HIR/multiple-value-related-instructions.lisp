@@ -56,10 +56,8 @@
 ;;; VALUES-LOCATION.
 
 (defclass multiple-value-call-instruction
-    (one-successor-mixin side-effect-mixin instruction)
-  ;; default KLUDGE
-  ((%attributes :initarg :attributes :reader attributes
-                :initform (cleavir-attributes:default-attributes))))
+    (one-successor-mixin abstract-call-instruction)
+  ())
 
 (defun make-multiple-value-call-instruction
     (inputs output &optional (successor nil successor-p)
@@ -70,9 +68,8 @@
     :successors (if successor-p (list successor) '())
     :attributes attributes))
 
-(defmethod clone-initargs append
-    ((instruction multiple-value-call-instruction))
-  (list :attributes (attributes instruction)))
+(defmethod callee ((call multiple-value-call-instruction))
+  (first (inputs call)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

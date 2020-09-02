@@ -68,15 +68,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FUNCALL-INSTRUCTION.
+;;; Instruction ABSTRACT-FUNCALL-INSTRUCTION.
+;;;
+;;; This should be the parent class for all instructions representing
+;;; a function call.
 
-;;; TODO: Make some kind of abstract parent for all the calls.
-
-(defclass funcall-instruction
-    (one-successor-mixin side-effect-mixin instruction)
+(defclass abstract-call-instruction (side-effect-mixin instruction)
   ((%inline :initarg :inline :initform nil :reader inline-declaration)
    (%attributes :initarg :attributes :reader attributes
                 :initform (cleavir-attributes:default-attributes))))
+
+;;; Given a call instruction, return the input datum representing
+;;; the function to call.
+(defgeneric callee (call-instruction))
+
+(defmethod clone-initargs append ((instruction abstract-call-instruction))
+  (list :inline (inline-declaration instruction)
+        :attributes (attributes instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction FUNCALL-INSTRUCTION.
+
+(defclass funcall-instruction
+    (one-successor-mixin abstract-call-instruction)
+  ())
 
 (defun make-funcall-instruction
     (inputs outputs
@@ -89,9 +105,7 @@
     :inline inline
     :attributes attributes))
 
-(defmethod clone-initargs append ((instruction funcall-instruction))
-  (list :inline (inline-declaration instruction)
-        :attributes (attributes instruction)))
+(defmethod callee ((call funcall-instruction)) (first (inputs call)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -105,23 +119,28 @@
 ;;; is pretty convenient.
 
 (defclass funcall-no-return-instruction
-    (no-successors-mixin side-effect-mixin instruction)
+    (no-successors-mixin abstract-call-instruction)
   ())
 
 (defun make-funcall-no-return-instruction (inputs)
   (make-instance 'funcall-no-return-instruction
                  :inputs inputs))
 
+(defmethod callee ((call funcall-no-return-instruction))
+  (first (inputs call)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TAILCALL-INSTRUCTION.
 
-(defclass tailcall-instruction (no-successors-mixin instruction)
+(defclass tailcall-instruction (no-successors-mixin abstract-call-instruction)
   ())
 
 (defun make-tailcall-instruction (inputs)
   (make-instance 'tailcall-instruction
-    :inputs inputs))
+                 :inputs inputs))
+
+(defmethod callee ((call tailcall-instruction)) (first (inputs call)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
