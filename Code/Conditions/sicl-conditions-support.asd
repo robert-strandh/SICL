@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "define-condition-support")
-   (:file "handlers-utilities")))
+   (:file "handlers-utilities")
+   (:file "restarts-utilities")))
