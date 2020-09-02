@@ -371,4 +371,5 @@
        client environment 'sicl-conditions:make-handler-case-without-no-error-case)
       (import-function
        client environment 'sicl-conditions:make-handler-case-with-no-error-case)
-      (ld "Conditions/handler-case-defmacro.lisp"))))
+      (ld "Conditions/handler-case-defmacro.lisp")
+      (ld "Conditions/ignore-errors-defmacro.lisp"))))
