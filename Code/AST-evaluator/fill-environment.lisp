@@ -364,4 +364,5 @@
       (import-function
        client environment 'sicl-conditions:define-condition-expander)
       (ld "Conditions/define-condition-defmacro.lisp")
-      (ld "Conditions/assert-defmacro.lisp"))))
+      (ld "Conditions/assert-defmacro.lisp")
+      (ld "Conditions/check-type-defmacro.lisp"))))
