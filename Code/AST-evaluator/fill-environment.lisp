@@ -372,4 +372,7 @@
       (import-function
        client environment 'sicl-conditions:make-handler-case-with-no-error-case)
       (ld "Conditions/handler-case-defmacro.lisp")
-      (ld "Conditions/ignore-errors-defmacro.lisp"))))
+      (ld "Conditions/ignore-errors-defmacro.lisp")
+      (import-function
+       client environment 'sicl-conditions:restart-bind-transform-binding)
+      (ld "Conditions/restart-bind-defmacro.lisp"))))
