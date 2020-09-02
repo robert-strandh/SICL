@@ -153,10 +153,6 @@
     ((s escape)
      (instruction cleavir-ir:multiple-value-call-instruction))
   (transfer-call s instruction))
-(defmethod transfer
-    ((s escape)
-     (instruction cleavir-ir:funcall-no-return-instruction))
-  (transfer-call s instruction))
 
 (defmethod transfer
     ((s escape) (instruction cleavir-ir:enter-instruction))

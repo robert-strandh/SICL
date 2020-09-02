@@ -134,14 +134,16 @@
 	    (cleavir-ir:make-load-time-value-input ''cl:error)
 	    fdef))
 	 (fnr-instruction
-	   (cleavir-ir:make-funcall-no-return-instruction
+	   (cleavir-ir:make-funcall-instruction
 	    (list fdef
 		  (cleavir-ir:make-load-time-value-input ''cl:type-error)
 		  (cleavir-ir:make-load-time-value-input '':datum)
 		  datum
 		  (cleavir-ir:make-load-time-value-input '':expected-type)
 		  (cleavir-ir:make-load-time-value-input
-		   `',expected)))))
+		   `',expected))
+            (list (cleavir-ir:make-values-location))
+            (cleavir-ir:make-unreachable-instruction))))
     ;; Update/initialize data.
     (push fdefinition-instruction (cleavir-ir:defining-instructions fdef))
     (push fnr-instruction (cleavir-ir:using-instructions fdef))

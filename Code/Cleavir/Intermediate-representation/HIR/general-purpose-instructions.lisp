@@ -109,41 +109,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FUNCALL-NO-RETURN-INSTRUCTION.
-;;;
-;;; This is for calls that are known to never return normally,
-;;; e.g. calls to ERROR. Having no successor simplifies analysis
-;;; by making whatever leads here irrelevant to other code.
-;;;
-;;; It's a separate class because funcall having one-successor-mixin
-;;; is pretty convenient.
-
-(defclass funcall-no-return-instruction
-    (no-successors-mixin abstract-call-instruction)
-  ())
-
-(defun make-funcall-no-return-instruction (inputs)
-  (make-instance 'funcall-no-return-instruction
-                 :inputs inputs))
-
-(defmethod callee ((call funcall-no-return-instruction))
-  (first (inputs call)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction TAILCALL-INSTRUCTION.
-
-(defclass tailcall-instruction (no-successors-mixin abstract-call-instruction)
-  ())
-
-(defun make-tailcall-instruction (inputs)
-  (make-instance 'tailcall-instruction
-                 :inputs inputs))
-
-(defmethod callee ((call tailcall-instruction)) (first (inputs call)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction RETURN-INSTRUCTION.
 
 (defclass return-instruction
