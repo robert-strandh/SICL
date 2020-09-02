@@ -183,3 +183,14 @@
          (suffix (subseq namestring (+ position (length "SICL/Code/")))))
     (loop for name in names
           collect (concatenate 'string suffix name ".lisp"))))
+
+(defmacro with-asdf-system-components
+    ((component-name-var system-name) &body body)
+  (let ((system-var (gensym))
+        (components-var (gensym))
+        (names-var (gensym)))
+    `(let* ((,system-var (asdf/system:find-system ,system-name))
+            (,components-var (asdf/component:component-children ,system-var))
+            (,names-var (mapcar #'asdf/component:component-pathname ,components-var)))
+       (loop for ,component-name-var in ,names-var
+             do ,@body))))
