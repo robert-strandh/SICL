@@ -386,4 +386,5 @@
        client environment 'sicl-conditions:restart-case-expand-signaling-form)
       (import-function
        client environment 'sicl-conditions:restart-case-parse-case)
-      (ld "Conditions/restart-case-defmacro.lisp"))))
+      (ld "Conditions/restart-case-defmacro.lisp")
+      (ld "Conditions/with-simple-restart-defmacro.lisp"))))
