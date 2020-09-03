@@ -12,6 +12,7 @@
              collect (symbol-name symbol)))
   (:export #:global-environment
            #:client
+           #:method-combination-template
            #:base-run-time-environment
            #:run-time-environment
            #:evaluation-environment
