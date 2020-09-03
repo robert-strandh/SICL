@@ -12,4 +12,5 @@
    (:file "trucler-methods")
    (:file "function-description")
    (:file "variable-description")
+   (:file "class-description")
    (:file "get-setf-expansion-defun")))
