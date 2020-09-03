@@ -18,7 +18,7 @@ versions.
 1. Make sure you have installed the dependencies:
 
 [the Cluster repository]:https://github.com/robert-strandh/Cluster
-[the Concrete-Syntax-Tree repository]:https://github.com/s-expressionists/Trucler
+[the Concrete-Syntax-Tree repository]:https://github.com/s-expressionists/Concrete-Syntax-Tree
 [the Eclector repository]:https://github.com/s-expressionists/Eclector
 [the Trucler repository]:https://github.com/s-expressionists/Trucler
 
