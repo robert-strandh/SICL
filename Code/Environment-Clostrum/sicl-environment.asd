@@ -8,6 +8,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "generic-functions")
    (:file "environment")
    (:file "trucler-methods")
    (:file "function-description")
