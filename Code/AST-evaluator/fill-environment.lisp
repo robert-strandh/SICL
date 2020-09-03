@@ -390,4 +390,6 @@
       (ld "Conditions/with-simple-restart-defmacro.lisp")
       (ld "Conditions/with-condition-restarts-defmacro.lisp")
       (import-function client environment 'sicl-clos:with-slots-expander)
-      (ld "CLOS/with-slots-defmacro.lisp"))))
+      (ld "CLOS/with-slots-defmacro.lisp")
+      (import-function client environment 'sicl-clos:defclass-expander)
+      (ld "CLOS/defclass-defmacro.lisp"))))
