@@ -56,13 +56,21 @@
 (defun canonicalize-specializers (specializers)
   `(list ,@(mapcar #'canonicalize-specializer specializers)))
 
+;;; FIXME: What we should really do here is to call
+;;; TRUCLER:DESCRIBE-FUNCTION to determine the GENERIC-FUNCTION-CLASS
+;;; and the METHOD-CLASS, so that we can call MAKE-METHOD-LAMBDA with
+;;; the correct arguments.  However, Trucler does not provide this
+;;; information (yet).  Perhaps we need to create a subclass of the
+;;; class TRUCLER:GENERIC-FUNCTION-DESCRIPTION that contains all the
+;;; information.
+
 (defun defmethod-expander (ct-env function-name rest)
   (multiple-value-bind
         (qualifiers required remaining specializers declarations documentation forms)
       (parse-defmethod rest)
     (let* ((lambda-list (append required remaining))
            (generic-function-var (gensym)))
-      `(let* ((rt-env (sicl-genv:global-environment))
+      `(let* ((rt-env (sicl-environment:global-environment))
               (,generic-function-var
                 (ensure-generic-function ',function-name :environment rt-env)))
          (ensure-method
