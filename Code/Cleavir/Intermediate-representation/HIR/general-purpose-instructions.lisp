@@ -68,52 +68,44 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction ABSTRACT-FUNCALL-INSTRUCTION.
+;;;
+;;; This should be the parent class for all instructions representing
+;;; a function call.
+
+(defclass abstract-call-instruction (side-effect-mixin instruction)
+  ((%inline :initarg :inline :initform nil :reader inline-declaration)
+   (%attributes :initarg :attributes :reader attributes
+                :initform (cleavir-attributes:default-attributes))))
+
+;;; Given a call instruction, return the input datum representing
+;;; the function to call.
+(defgeneric callee (call-instruction))
+
+(defmethod clone-initargs append ((instruction abstract-call-instruction))
+  (list :inline (inline-declaration instruction)
+        :attributes (attributes instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction FUNCALL-INSTRUCTION.
 
 (defclass funcall-instruction
-    (one-successor-mixin side-effect-mixin instruction)
-  ((%inline :initarg :inline :initform nil :reader inline-declaration)))
+    (one-successor-mixin abstract-call-instruction)
+  ())
 
 (defun make-funcall-instruction
-    (inputs outputs &optional (successor nil successor-p) inline)
+    (inputs outputs
+     &optional (successor nil successor-p) inline
+       (attributes (cleavir-attributes:default-attributes)))
   (make-instance 'funcall-instruction
     :inputs inputs
     :outputs outputs
     :successors (if successor-p (list successor) '())
-    :inline inline))
+    :inline inline
+    :attributes attributes))
 
-(defmethod clone-initargs append ((instruction funcall-instruction))
-  (list :inline (inline-declaration instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction FUNCALL-NO-RETURN-INSTRUCTION.
-;;;
-;;; This is for calls that are known to never return normally,
-;;; e.g. calls to ERROR. Having no successor simplifies analysis
-;;; by making whatever leads here irrelevant to other code.
-;;;
-;;; It's a separate class because funcall having one-successor-mixin
-;;; is pretty convenient.
-
-(defclass funcall-no-return-instruction
-    (no-successors-mixin side-effect-mixin instruction)
-  ())
-
-(defun make-funcall-no-return-instruction (inputs)
-  (make-instance 'funcall-no-return-instruction
-                 :inputs inputs))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction TAILCALL-INSTRUCTION.
-
-(defclass tailcall-instruction (no-successors-mixin instruction)
-  ())
-
-(defun make-tailcall-instruction (inputs)
-  (make-instance 'tailcall-instruction
-    :inputs inputs))
+(defmethod callee ((call funcall-instruction)) (first (inputs call)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -267,12 +259,20 @@
 ;;; a closed-over continuation.
 
 (defclass catch-instruction (multiple-successors-mixin instruction)
-  ())
+  (;; Indicates whether all unwind instructions to this catch are simple.
+   ;; See HIR-transformations/simple-unwind.lisp.
+   (%simple-p :initarg :simple-p :initform nil :reader simple-p)))
 
 (defun make-catch-instruction (continuation dynenv-out successors)
   (make-instance 'catch-instruction
     :outputs (list continuation dynenv-out)
     :successors successors))
+
+(defmethod dynamic-environment-output ((instruction catch-instruction))
+  (second (outputs instruction)))
+
+(defmethod clone-initargs append ((instruction catch-instruction))
+  (list :simple-p (simple-p instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -292,10 +292,13 @@
     (no-successors-mixin side-effect-mixin instruction)
   (;; The destination of the UNWIND-INSTRUCTION is the
    ;; instruction to which it will eventually transfer control.
-   ;; This instruction must be the successor of a CATCH-INSTRUCTION.
+   ;; This instruction is a CATCH-INSTRUCTION.
    ;; It is not a normal successor because the exit is non-local.
    (%destination :initarg :destination :accessor destination)
-   (%index :initarg :index :accessor unwind-index)))
+   (%index :initarg :index :accessor unwind-index)
+   ;; Indicates whether the dynamic environment is usefully known
+   ;; statically. See HIR-transformations/simple-unwinds.lisp.
+   (%simple-p :initarg :simple-p :initform nil :reader simple-p)))
 
 (defun make-unwind-instruction (continuation destination index)
   (make-instance 'unwind-instruction
@@ -305,7 +308,8 @@
 
 (defmethod clone-initargs append ((instruction unwind-instruction))
   (list :destination (destination instruction)
-        :index (unwind-index instruction)))
+        :index (unwind-index instruction)
+        :simple-p (simple-p instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

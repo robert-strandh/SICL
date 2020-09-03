@@ -95,6 +95,7 @@
          (argument-asts (convert-sequence arguments-cst env system)))
     (cleavir-ast:make-call-ast function-ast argument-asts
                                :origin (cst:source cst)
+                               :attributes (cleavir-env:attributes info)
                                :inline (cleavir-env:inline info))))
 
 ;;; Convert a form representing a call to a named global function.

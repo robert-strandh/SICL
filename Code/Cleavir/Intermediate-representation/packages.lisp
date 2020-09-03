@@ -53,9 +53,9 @@
    #:nop-instruction #:make-nop-instruction
    #:unreachable-instruction #:make-unreachable-instruction
    #:assignment-instruction #:make-assignment-instruction
-   #:funcall-instruction #:make-funcall-instruction #:inline-declaration
-   #:funcall-no-return-instruction #:make-funcall-no-return-instruction
-   #:tailcall-instruction #:make-tailcall-instruction
+   #:abstract-call-instruction #:callee
+   #:inline-declaration #:attributes
+   #:funcall-instruction #:make-funcall-instruction
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code #:initializer
    #:initialize-closure-instruction #:make-initialize-closure-instruction

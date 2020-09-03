@@ -80,7 +80,7 @@
 ;;;; parent.
 
 (defsystem :cleavir-ir
-  :depends-on (:cleavir-meter)
+  :depends-on (:cleavir-attributes :cleavir-meter)
   :serial t
   :components
   ((:file "packages")

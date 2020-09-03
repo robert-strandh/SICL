@@ -56,15 +56,20 @@
 ;;; VALUES-LOCATION.
 
 (defclass multiple-value-call-instruction
-    (one-successor-mixin side-effect-mixin instruction)
+    (one-successor-mixin abstract-call-instruction)
   ())
 
 (defun make-multiple-value-call-instruction
-    (inputs output &optional (successor nil successor-p))
+    (inputs output &optional (successor nil successor-p)
+                     (attributes (cleavir-attributes:default-attributes)))
   (make-instance 'multiple-value-call-instruction
     :inputs inputs
     :outputs (list output)
-    :successors (if successor-p (list successor) '())))
+    :successors (if successor-p (list successor) '())
+    :attributes attributes))
+
+(defmethod callee ((call multiple-value-call-instruction))
+  (first (inputs call)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

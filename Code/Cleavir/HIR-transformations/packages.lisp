@@ -3,7 +3,7 @@
 (defpackage #:cleavir-hir-transformations
   (:use #:common-lisp)
   (:export
-   #:eliminate-catches
+   #:eliminate-catches #:mark-simple-unwinds
    #:load-time-value-is-constant-p
    #:load-time-value-constant
    #:convert-constant-to-immediate

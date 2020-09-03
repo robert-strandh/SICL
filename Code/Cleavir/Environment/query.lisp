@@ -142,7 +142,11 @@
    ;; this function.
    (%dynamic-extent :initform nil
 		    :initarg :dynamic-extent
-		    :reader dynamic-extent)))
+		    :reader dynamic-extent)
+   ;; Miscellaneous attributes.
+   (%attributes :initform (cleavir-attributes:default-attributes)
+                :initarg :attributes
+                :reader attributes)))
   
 (defclass global-function-info ()
   (;; The name of the global function.  It can be different from the
@@ -177,8 +181,12 @@
    ;; this function.
    (%dynamic-extent :initform nil
 		    :initarg :dynamic-extent
-		    :reader dynamic-extent)))
-  
+		    :reader dynamic-extent)
+   ;; Miscellaneous attributes.
+   (%attributes :initform (cleavir-attributes:default-attributes)
+                :initarg :attributes
+                :reader attributes)))
+
 (defclass local-macro-info ()
   (;; The name of the local macro.  It can be different from the
    ;; function name supplied in the query as a result of errors and

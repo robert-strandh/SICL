@@ -2,6 +2,7 @@
 
 (defsystem :cleavir-ast
   :depends-on (:cleavir-io
+               :cleavir-attributes
 	       :cleavir-meter)
   :serial t
   :components
