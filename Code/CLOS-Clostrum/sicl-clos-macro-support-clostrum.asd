@@ -13,18 +13,18 @@
    ;; slot writer here.
    (:file "initial-methods-defgeneric")
    (:file "setf-initial-methods-defgeneric")
-   ;; (:file "defgeneric-support")
+   (:file "defgeneric-support")
    ;; The expansion of DEFMETHOD refers to CLASS-PROTOTYPE to compute
    ;; the argument to MAKE-METHOD-LAMBDA, so we include the definition
    ;; of the generic function so as to avoid warnings.
-   ;; (:file "class-prototype-defgeneric")
+   (:file "class-prototype-defgeneric")
    ;; The expansion of DEFMETHOD refers to MAKE-METHOD-LAMBDA, so we
    ;; include the definition of the generic function here.
-   ;; (:file "make-method-lambda-defgenerics")
+   (:file "make-method-lambda-defgenerics")
    ;; The expansion of DEFMETHOD refers to CLASS-PROTOTYPE to compute
    ;; the argument to MAKE-METHOD-LAMBDA, so we include the definition
    ;; of the generic function so as to avoid warnings.
-   ;; (:file "generic-function-method-class-defgeneric")
+   (:file "generic-function-method-class-defgeneric")
    ;; (:file "defmethod-support")
    ))
 
