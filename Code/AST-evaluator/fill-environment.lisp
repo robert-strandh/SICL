@@ -392,4 +392,6 @@
       (import-function client environment 'sicl-clos:with-slots-expander)
       (ld "CLOS/with-slots-defmacro.lisp")
       (import-function client environment 'sicl-clos:defclass-expander)
-      (ld "CLOS/defclass-defmacro.lisp"))))
+      (ld "CLOS/defclass-defmacro.lisp")
+      (import-function client environment 'sicl-clos:defgeneric-expander)
+      (ld "CLOS-Clostrum/defgeneric-defmacro.lisp"))))
