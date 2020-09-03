@@ -27,6 +27,10 @@
            #:variable-description
            #:constant-variable-description
            #:special-variable-description
+           #:class-description
+           #:name
+           #:superclass-names
+           #:metaclass-name
            #:type
            #:value
            .
