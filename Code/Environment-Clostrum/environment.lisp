@@ -7,6 +7,15 @@
    (%method-combination-templates :initform (make-hash-table :test #'eq)
                                   :accessor method-combination-templates)))
 
+(defmethod find-method-combination-template
+    (symbol (env base-run-time-environment))
+  (gethash symbol (method-combination-templates env)))
+
+(defmethod (setf find-method-combination-template)
+    (new-template symbol (env base-run-time-environment))
+  (setf (gethash symbol (method-combination-templates env)) new-template)
+  new-template)
+
 (defclass run-time-environment
     (base-run-time-environment)
   ((%client :initarg :client :reader client)))
