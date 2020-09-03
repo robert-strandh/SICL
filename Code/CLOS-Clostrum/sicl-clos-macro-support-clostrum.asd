@@ -25,6 +25,5 @@
    ;; the argument to MAKE-METHOD-LAMBDA, so we include the definition
    ;; of the generic function so as to avoid warnings.
    (:file "generic-function-method-class-defgeneric")
-   ;; (:file "defmethod-support")
-   ))
+   (:file "defmethod-support")))
 
