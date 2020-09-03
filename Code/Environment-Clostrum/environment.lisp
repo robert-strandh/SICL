@@ -2,7 +2,10 @@
 
 (defclass base-run-time-environment
     (clostrum/virtual:virtual-run-time-environment)
-  ())
+  (;; This slot holds an EQ hash table, mapping symbols to
+   ;; method-combination templates.
+   (%method-combination-templates :initform (make-hash-table :test #'eq)
+                                  :accessor method-combination-templates)))
 
 (defclass run-time-environment
     (base-run-time-environment)
