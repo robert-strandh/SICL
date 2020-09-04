@@ -4,7 +4,7 @@
   (loop for entry in sicl-run-time:*dynamic-environment*
         when (and (typep entry 'sicl-run-time:special-variable-entry)
                   (eq name (sicl-run-time:name entry)))
-          return (value entry)
+          return (sicl-run-time:value entry)
         ;; FIXME: make sure it is bound in the global environment
         finally (return (env:special-variable
                          (env:client global-environment) global-environment name))))
@@ -13,7 +13,7 @@
   (loop for entry in sicl-run-time:*dynamic-environment*
         when (and (typep entry 'sicl-run-time:special-variable-entry)
                   (eq name (sicl-run-time:name entry)))
-          do (setf (value entry) value)
+          do (setf (sicl-run-time:value entry) value)
           and return value
         finally (setf (env:special-variable
                        (env:client global-environment) global-environment name t)
@@ -48,7 +48,7 @@
   (let ((sicl-run-time:block/tagbody-entry
           (loop for entry in sicl-run-time:*dynamic-environment*
                 when (and (typep entry 'sicl-run-time:block/tagbody-entry)
-                          (eq (name entry) name))
+                          (eq (sicl-run-time:identifier entry) name))
                   return entry)))
     (when (null sicl-run-time:block/tagbody-entry)
       (error 'attempt-to-exit-to-an-invalid-exit-point))
@@ -56,4 +56,4 @@
                     (first sicl-run-time:*dynamic-environment*))
           do (let ((entry (pop sicl-run-time:*dynamic-environment*)))
                (when (typep entry 'sicl-run-time:unwind-protect-entry)
-                 (funcall (thunk entry)))))))
+                 (funcall (sicl-run-time:thunk entry)))))))
