@@ -7,6 +7,7 @@
            #:stack-pointer
            #:frame-pointer
            #:special-variable-entry
+           #:identifier
            #:name
            #:value
            #:unwind-protect-entry
