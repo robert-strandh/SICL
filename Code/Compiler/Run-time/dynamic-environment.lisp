@@ -19,7 +19,7 @@
 (defclass block/tagbody-entry (exit-point)
   ((%stack-pointer :initarg :stack-pointer :reader stack-pointer)
    (%frame-pointer :initarg :frame-pointer :reader frame-pointer)
-   (%continuation :initarg :continuation :reader continuation)))
+   (%identifier :initarg :identifier :reader identifier)))
 
 (defmethod print-object ((object block/tagbody-entry) stream)
   (print-unreadable-object (object stream :type t :identity t)
