@@ -12,4 +12,10 @@
            (destination (cleavir-ir:destination instruction))
            (successors (cleavir-ir:successors destination))
            (successor (nth unwind-index successors)))
+      ;; FIXME: We should search the dynamic environment for a valid
+      ;; entry of type BLOCK/TAGBODY-ENTRY with a CONTINUATION being
+      ;; the same as the INPUT-VALUE, and we should execute the thunk
+      ;; of any UNWIND-PROTECT entries in between.  As it is, validity
+      ;; will not be checked, and no UNWIND-PROTECT entry will be
+      ;; taken into account.
       (throw input-value successor))))
