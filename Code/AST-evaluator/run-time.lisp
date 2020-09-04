@@ -39,12 +39,9 @@
                  sicl-run-time:*dynamic-environment*)))
      ,@body))
 
-(defclass unwind-protect-entry ()
-  ((%thunk :initarg :thunk :reader thunk)))
-
 (defmacro with-unwind-protect ((thunk-form) &body body)
   `(let ((sicl-run-time:*dynamic-environment*
-           (cons (make-instance unwind-protect-entry
+           (cons (make-instance 'sicl-run-time:unwind-protect-entry
                    :thunk ,thunk-form)
                  sicl-run-time:*dynamic-environment*)))
      ,@body))
@@ -58,7 +55,7 @@
       (error 'attempt-to-exit-to-an-invalid-exit-point))
     (loop until (eq exit-point-entry (first sicl-run-time:*dynamic-environment*))
           do (let ((entry (pop sicl-run-time:*dynamic-environment*)))
-               (when (typep entry 'unwind-protect-entry)
+               (when (typep entry 'sicl-run-time:unwind-protect-entry)
                  (funcall (thunk entry)))))))
 
 (defparameter *call-stack* '())
