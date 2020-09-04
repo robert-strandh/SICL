@@ -14,11 +14,12 @@
                #:sicl-arithmetic
                #:sicl-loop-support
                #:sicl-cons-support-clostrum
-               #:sicl-conditionals-support-clostrum
                #:sicl-iteration-support
                #:sicl-conditions-support
                #:sicl-clos-macro-support-clostrum
-               #:sicl-run-time)
+               #:sicl-hir-evaluator
+               #:sicl-run-time
+               #:sicl-conditionals-support-clostrum)
   :serial t
   :components
   ((:file "packages")
