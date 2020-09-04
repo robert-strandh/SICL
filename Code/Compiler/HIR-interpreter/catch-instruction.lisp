@@ -13,6 +13,8 @@
             transfer-tag)
       (setf (lexical-value dynamic-environment-output lexical-environment)
             (cons (make-instance 'sicl-run-time:block/tagbody-entry
+                    :continuation transfer-tag
+                    :stack-pointer nil
                     :frame-pointer abandon-tag)
                   (lexical-value (cleavir-ir:dynamic-environment-location instruction)
                                  lexical-environment)))
