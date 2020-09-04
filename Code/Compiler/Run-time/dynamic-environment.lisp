@@ -11,10 +11,10 @@
   nil)
 
 (defclass exit-point (entry)
-  ((%valid-p :initform t :accessor valid-p)))
+  ((%validp :initform t :accessor validp)))
 
 (defmethod invalidate-entry ((entry exit-point))
-  (setf (valid-p entry) nil))
+  (setf (validp entry) nil))
 
 (defclass block/tagbody-entry (exit-point)
   ((%stack-pointer :initarg :stack-pointer :reader stack-pointer)

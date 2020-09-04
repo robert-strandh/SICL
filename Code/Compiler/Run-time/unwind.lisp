@@ -7,7 +7,7 @@
     (let ((exit-point (loop for entry in dynamic-environment
                             when (and (typep entry 'block/tagbody-entry)
                                       (eq continuation (continuation entry)))
-                              do (if (valid-p entry)
+                              do (if (validp entry)
                                      (return entry)
                                      (error "Attempt to unwind to an abandoned entry"))
                             finally (error "Attempt to unwind to a non-existing entry"))))
@@ -15,7 +15,7 @@
       (loop for entry in dynamic-environment
             until (eq entry exit-point)
             when (typep entry 'exit-point)
-              do (setf (valid-p entry) nil))
+              do (setf (validp entry) nil))
       ;; Next, execute thunks of UNWIND-PROTECT entries.
       (loop for env = dynamic-environment then (rest env)
             for entry = (first env)
