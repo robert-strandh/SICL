@@ -1,13 +1,9 @@
 (cl:in-package #:sicl-ast-evaluator)
 
-(defclass special-variable-entry ()
-  ((%name :initarg :name :reader name)
-   (%value :initarg :value :accessor value)))
-
 (defun symbol-value (name global-environment)
   (loop for entry in sicl-run-time:*dynamic-environment*
-        when (and (typep entry 'special-variable-entry)
-                  (eq name (name entry)))
+        when (and (typep entry 'sicl-run-time:special-variable-entry)
+                  (eq name (sicl-run-time:name entry)))
           return (value entry)
         ;; FIXME: make sure it is bound in the global environment
         finally (return (env:special-variable
@@ -15,8 +11,8 @@
 
 (defun (setf symbol-value) (value name global-environment)
   (loop for entry in sicl-run-time:*dynamic-environment*
-        when (and (typep entry 'special-variable-entry)
-                  (eq name (name entry)))
+        when (and (typep entry 'sicl-run-time:special-variable-entry)
+                  (eq name (sicl-run-time:name entry)))
           do (setf (value entry) value)
           and return value
         finally (setf (env:special-variable
@@ -26,7 +22,7 @@
 
 (defmacro with-variable-bound ((name-form value-form) &body body)
   `(let ((sicl-run-time:*dynamic-environment*
-           (cons (make-instance 'special-variable-entry
+           (cons (make-instance 'sicl-run-time:special-variable-entry
                    :name ,name-form
                    :value ,value-form)
                  sicl-run-time:*dynamic-environment*)))
