@@ -17,7 +17,8 @@
                #:sicl-conditionals-support-clostrum
                #:sicl-iteration-support
                #:sicl-conditions-support
-               #:sicl-clos-macro-support-clostrum)
+               #:sicl-clos-macro-support-clostrum
+               #:sicl-run-time)
   :serial t
   :components
   ((:file "packages")
