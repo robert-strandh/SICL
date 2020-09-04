@@ -57,9 +57,3 @@
           do (let ((entry (pop sicl-run-time:*dynamic-environment*)))
                (when (typep entry 'sicl-run-time:unwind-protect-entry)
                  (funcall (thunk entry)))))))
-
-(defparameter *call-stack* '())
-
-(defclass invocation ()
-  ((%location :initarg :location :reader location)
-   (%arguments :initarg :arguments :reader arguments)))
