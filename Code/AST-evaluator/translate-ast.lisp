@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-ast-evaluator)
 
+(defvar *run-time-environment-name*)
+
 (defgeneric translate-ast (ast global-environment lexical-environment))
 
 (defmethod translate-ast
