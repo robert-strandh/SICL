@@ -37,21 +37,26 @@
 (defmethod translate-ast
     ((ast ast:call-ast) global-environment lexical-environment)
   (let ((arguments-var (gensym)))
-    `(let* ((,arguments-var
-              (list ,@(loop for argument-ast in (ast:argument-asts ast)
-                            collect (translate-ast
-                                     argument-ast
-                                     global-environment
-                                     lexical-environment))))
-            (sicl-hir-evaluator:*call-stack*
-              (cons (make-instance 'sicl-hir-evaluator:call-stack-entry
-                      :origin ',(cleavir-cst-to-ast:origin ast)
-                      :arguments ,arguments-var)
-                    sicl-hir-evaluator:*call-stack*)))
-
-       (apply
-        ,(translate-ast (ast:callee-ast ast) global-environment lexical-environment)
-        ,arguments-var))))
+    (if (null (cleavir-cst-to-ast:origin ast))
+        `(funcall
+          ,(translate-ast (ast:callee-ast ast) global-environment lexical-environment)
+          ,@(loop for argument-ast in (ast:argument-asts ast)
+                  collect (translate-ast
+                           argument-ast global-environment lexical-environment)))
+        `(let* ((,arguments-var
+                  (list ,@(loop for argument-ast in (ast:argument-asts ast)
+                                collect (translate-ast
+                                         argument-ast
+                                         global-environment
+                                         lexical-environment))))
+                (sicl-hir-evaluator:*call-stack*
+                  (cons (make-instance 'sicl-hir-evaluator:call-stack-entry
+                          :origin ',(cleavir-cst-to-ast:origin ast)
+                          :arguments ,arguments-var)
+                        sicl-hir-evaluator:*call-stack*)))
+           (apply
+            ,(translate-ast (ast:callee-ast ast) global-environment lexical-environment)
+            ,arguments-var)))))
 
 (defmethod translate-ast
     ((ast ast:function-ast) global-environment lexical-environment)
