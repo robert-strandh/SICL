@@ -6,4 +6,4 @@
   (:local-nicknames (#:env #:sicl-environment)
                     (#:client #:sicl-client)
                     (#:ast #:cleavir-ast))
-  (:export))
+  (:export #:eval))
