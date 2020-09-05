@@ -23,9 +23,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "client")
-   (:file "fill-environment")
-   (:file "environment")
    (:file "run-time")
    (:file "lexical-environment")
    (:file "translate-ast")
