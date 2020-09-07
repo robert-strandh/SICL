@@ -802,26 +802,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function TYPEP.
-;;;
-;;; This function provides the implementation of the standard function
-;;; TYPEP.  It can also be called directly when the environment is
-;;; known.
-
-(defgeneric typep (object type-specifier environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function TYPEP-COMPOUND.
-;;;
-;;; This generic function should not be called directly.  It is called
-;;; by TYPEP when a compound type specifier is detected.
-
-(defgeneric typep-compound
-    (object atomic-type-specifier subsidiary-type-information environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Generic function SUBTYPEP.
 ;;;
 ;;; This function provides the implementation of the standard function
