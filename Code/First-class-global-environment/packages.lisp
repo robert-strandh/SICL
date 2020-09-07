@@ -51,7 +51,6 @@
            #:declaration
            #:symbol-plist
            #:class-of
-           #:typep
            #:subtypep
            )
   (:export
@@ -93,7 +92,6 @@
    #:structure-description
    #:defun-expander
    #:class-of
-   #:typep
    #:typep-compound
    #:subtypep
    #:client
