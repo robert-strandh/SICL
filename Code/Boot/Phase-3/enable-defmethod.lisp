@@ -7,10 +7,8 @@
                  (find-class 't))
                 ((symbolp specializer)
                  (sicl-genv:find-class specializer e2))
-                ((sicl-genv:typep specializer 'specializer e2)
-                 specializer)
                 (t
-                 (error "Specializer must be symbol or specializer metaobject: ~s"
+                 (error "Specializer must be a symbol: ~s"
                         specializer))))))
 
 (defun enable-defmethod (boot)

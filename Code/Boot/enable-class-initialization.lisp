@@ -59,18 +59,14 @@
 
 (defun enable-class-initialization (ea eb ec)
   (setf (sicl-genv:fdefinition 'typep eb)
-        (lambda (object type)
-          (when (or (not (symbolp object))
-                    (not (eq type 'class)))
-            (format *trace-output*
-                    "Typep called with ~s and ~s" object type))
-          (let ((result (sicl-genv:typep object type eb)))
-            (when (or (not (symbolp object))
-                      (not (eq type 'class)))
-              (format *trace-output*
-                      " and returned ~a~%"
-                      (if (null result) "false" "true")))
-            result)))
+        (let ((existing (sicl-genv:fdefinition 'typep eb)))
+          (lambda (object type)
+            (cond ((eq type 'function)
+                   (typep object 'function))
+                  ((eq type 'class)
+                   (not (symbolp object)))
+                  (t
+                   (funcall existing object type))))))
   (define-validate-superclass eb)
   (define-direct-slot-definition-class ea eb)
   (define-add-remove-direct-subclass eb)

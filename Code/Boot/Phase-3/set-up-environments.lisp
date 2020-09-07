@@ -11,7 +11,6 @@
        cleavir-code-utilities:required
        cleavir-code-utilities:parse-specialized-lambda-list
        cleavir-code-utilities:proper-list-p
-       sicl-genv:typep
        sicl-genv:fboundp
        sicl-genv:fdefinition
        (setf sicl-genv:fdefinition)
@@ -33,7 +32,6 @@
        cleavir-code-utilities:proper-list-p
        (setf sicl-genv:special-variable)
        sicl-genv:find-class
-       sicl-genv:typep
        (setf sicl-genv:fdefinition)
        (setf sicl-genv:macro-function)
        sicl-genv:macro-function

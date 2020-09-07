@@ -10,11 +10,3 @@
 
 (defclass environment (sicl-boot:environment)
   ())
-
-(defmethod sicl-genv:typep
-    (object (type-specifier (eql 'generic-function)) (environment environment))
-  t)
-
-(defmethod sicl-genv:typep
-    (object (type-specifier (eql 'class)) (environment environment))
-  t)

@@ -29,7 +29,6 @@
        cleavir-code-utilities:proper-list-p
        (setf sicl-genv:type-expander)
        (setf sicl-genv:find-class)
-       sicl-genv:typep
        (setf sicl-genv:special-variable)
        sicl-genv:find-class
        (setf sicl-genv:fdefinition)
