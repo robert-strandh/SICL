@@ -2,9 +2,8 @@
 
 (defun create-method-lambda
     (possible-generic-function lambda-expression environment)
-  (let ((generic-function-p (sicl-genv:typep possible-generic-function
-                                             'generic-function
-                                             environment)))
+  (let ((generic-function-p
+          (typep possible-generic-function 'generic-function)))
     (make-method-lambda
      (if generic-function-p
          possible-generic-function

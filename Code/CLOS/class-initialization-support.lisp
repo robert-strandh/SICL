@@ -76,9 +76,7 @@
     (error 'direct-superclasses-must-be-proper-list
            :superclasses direct-superclasses))
   (loop for direct-superclass in direct-superclasses
-        do (unless (sicl-genv:typep direct-superclass
-                                    'class
-                                    (sicl-genv:global-environment))
+        do (unless (typep direct-superclass 'class)
              (error 'superclass-must-be-a-class-metaobject
                     :superclass direct-superclass))
            (unless (validate-superclass class direct-superclass)

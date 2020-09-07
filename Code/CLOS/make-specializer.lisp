@@ -9,7 +9,7 @@
   (let ((environment (sicl-genv:global-environment)))
     (cond ((symbolp specializer)
            (find-class specializer environment))
-          ((sicl-genv:typep specializer 'specializer environment)
+          ((typep specializer 'specializer)
            specializer)
           (t
            (error "Specializer must be symbol or specializer metaobject: ~s"
