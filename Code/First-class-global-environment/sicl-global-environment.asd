@@ -41,6 +41,5 @@
   :components
   ((:file "packages")
    (:file "generic-functions")
-   (:file "typep-methods")
    (:file "trucler-methods")
    (:file "other-functions")))
