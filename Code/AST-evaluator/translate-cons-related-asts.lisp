@@ -1,28 +1,28 @@
 (cl:in-package #:sicl-ast-evaluator)
 
 (defmethod translate-ast
-    ((ast ast:consp-ast) global-environment lexical-environment)
+    ((ast ast:consp-ast) lexical-environment)
   `(car
-    ,(translate-ast (ast:object-ast ast)  global-environment lexical-environment)))
+    ,(translate-ast (ast:object-ast ast) lexical-environment)))
 
 (defmethod translate-ast
-    ((ast ast:car-ast) global-environment lexical-environment)
+    ((ast ast:car-ast) lexical-environment)
   `(car
-    ,(translate-ast (ast:cons-ast ast)  global-environment lexical-environment)))
+    ,(translate-ast (ast:cons-ast ast) lexical-environment)))
 
 (defmethod translate-ast
-    ((ast ast:cdr-ast) global-environment lexical-environment)
+    ((ast ast:cdr-ast) lexical-environment)
   `(cdr
-    ,(translate-ast (ast:cons-ast ast)  global-environment lexical-environment)))
+    ,(translate-ast (ast:cons-ast ast) lexical-environment)))
 
 (defmethod translate-ast
-    ((ast ast:rplaca-ast) global-environment lexical-environment)
+    ((ast ast:rplaca-ast) lexical-environment)
   `(rplaca
-    ,(translate-ast (ast:cons-ast ast)  global-environment lexical-environment)
-    ,(translate-ast (ast:object-ast ast)  global-environment lexical-environment)))
+    ,(translate-ast (ast:cons-ast ast) lexical-environment)
+    ,(translate-ast (ast:object-ast ast) lexical-environment)))
 
 (defmethod translate-ast
-    ((ast ast:rplacd-ast) global-environment lexical-environment)
+    ((ast ast:rplacd-ast) lexical-environment)
   `(rplacd
-    ,(translate-ast (ast:cons-ast ast)  global-environment lexical-environment)
-    ,(translate-ast (ast:object-ast ast)  global-environment lexical-environment)))
+    ,(translate-ast (ast:cons-ast ast) lexical-environment)
+    ,(translate-ast (ast:object-ast ast) lexical-environment)))

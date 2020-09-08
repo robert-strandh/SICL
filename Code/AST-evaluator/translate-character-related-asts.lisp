@@ -1,10 +1,10 @@
 (cl:in-package #:sicl-ast-evaluator)
 
 (defmethod translate-ast
-    ((ast ast:characterp-ast) global-environment lexical-environment)
+    ((ast ast:characterp-ast) lexical-environment)
   `(characterp
     ,(translate-ast
-      (ast:object-ast ast) global-environment lexical-environment)))
+      (ast:object-ast ast) lexical-environment)))
 
 ;;; FIXME: we might want to have these functions query the
 ;;; environment, rather then relying on the host having the same
@@ -13,13 +13,13 @@
 ;;; bootstrapping.
 
 (defmethod translate-ast
-    ((ast ast:char-code-ast) global-environment lexical-environment)
+    ((ast ast:char-code-ast) lexical-environment)
   `(char-code
     ,(translate-ast
-      (ast:char-ast ast) global-environment lexical-environment)))
+      (ast:char-ast ast) lexical-environment)))
   
 (defmethod translate-ast
-    ((ast ast:code-char-ast) global-environment lexical-environment)
+    ((ast ast:code-char-ast) lexical-environment)
   `(code-char
     ,(translate-ast
-      (ast:code-ast ast) global-environment lexical-environment)))
+      (ast:code-ast ast) lexical-environment)))

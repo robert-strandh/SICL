@@ -26,4 +26,4 @@
          (declare (ignorable ,*run-time-environment-name*))
          (declare (optimize (speed 0) (compilation-speed 3) (debug 0) (safety 3) (space 0)))
          #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
-         ,(translate-ast ast environment lexical-environment)))))
+         ,(translate-ast ast lexical-environment)))))
