@@ -1,10 +1,1 @@
 (cl:in-package #:sicl-boot-phase-5)
-
-(defun load-fasl-e6 (relative-pathname global-environment)
-  (format *trace-output* "Loading file ~s~%" relative-pathname)
-  (let* ((client (make-instance 'sicl-boot:client))
-         (prefixed (concatenate 'string "ASTs/" relative-pathname))
-         (pathname (asdf:system-relative-pathname '#:sicl-boot prefixed))
-         (ast (cleavir-io:read-model pathname '(v0)))
-         (code-object (sicl-compiler:compile-ast client ast)))
-    (sicl-boot:tie-code-object client code-object global-environment sicl-boot:*e5*)))
