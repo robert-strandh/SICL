@@ -34,6 +34,7 @@
            #:metaclass-name
            #:type
            #:value
+           #:find-method-combination-template
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
