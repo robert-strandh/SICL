@@ -14,4 +14,5 @@
    (:file "function-description")
    (:file "variable-description")
    (:file "class-description")
-   (:file "get-setf-expansion-defun")))
+   (:file "get-setf-expansion-defun")
+   (:file "temporary-fix")))
