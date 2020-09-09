@@ -17,9 +17,8 @@
      (cleavir-cst-to-ast:cst-to-ast
       client cst environment)))
 
-(defun translate-code (client environment cst)
-  (let* ((ast (cst-to-ast client cst environment))
-         (table (make-hash-table :test #'eq))
+(defun translate-top-level-ast (ast)
+  (let* ((table (make-hash-table :test #'eq))
          (lexical-environment (list table)))
     (let ((*run-time-environment-name* (gensym)))
       `(lambda (,*run-time-environment-name*)
@@ -27,3 +26,7 @@
          (declare (optimize (speed 0) (compilation-speed 3) (debug 0) (safety 3) (space 0)))
          #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
          ,(translate-ast ast lexical-environment)))))
+
+(defun translate-code (client environment cst)
+  (let ((ast (cst-to-ast client cst environment)))
+    (translate-top-level-ast ast)))
