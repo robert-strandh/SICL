@@ -59,15 +59,13 @@
                  :name name
                  :expander macro-function
                  :compiler-macro (compiler-macro-function client environment name))
-               (let ((fdefinition (fdefinition client environment name)))
-                 (etypecase fdefinition
-                   (function
-                    (make-instance 'trucler:global-function-description
-                      :name name
-                      :compiler-macro (compiler-macro-function client environment name)))
-                   (cons
-                    (make-instance 'trucler:special-operator-description
-                      :name name)))))))
+               (if (special-operator client environment name)
+                   (make-instance 'trucler:special-operator-description
+                     :name name)
+                   (let ((fdefinition (fdefinition client environment name)))
+                     (make-instance 'trucler:global-function-description
+                       :name name
+                       :compiler-macro (compiler-macro-function client environment name)))))))
         (t
          (make-instance 'trucler:global-function-description
            :name name
