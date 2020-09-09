@@ -5,9 +5,12 @@
         when (and (typep entry 'sicl-run-time:special-variable-entry)
                   (eq name (sicl-run-time:name entry)))
           return (sicl-run-time:value entry)
-        ;; FIXME: make sure it is bound in the global environment
-        finally (return (env:special-variable
-                         (env:client global-environment) global-environment name))))
+        finally (multiple-value-bind (boundp value)
+                    (env:special-variable
+                     (env:client global-environment) global-environment name)
+                  (if boundp
+                      (return value)
+                      (error "unbound variable ~s" name)))))
 
 (defun (setf symbol-value) (value name global-environment)
   (loop for entry in sicl-run-time:*dynamic-environment*
