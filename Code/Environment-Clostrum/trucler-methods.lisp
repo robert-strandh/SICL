@@ -20,7 +20,7 @@
    client (parent environment) name))
 
 (defun special-variable-description (client environment name)
-  (multiple-value-bind (value special-variable-p)
+  (multiple-value-bind (special-variable-p value)
       (special-variable client environment name)
     (declare (ignore value))
     (if (not special-variable-p)
@@ -30,7 +30,7 @@
           :type (variable-type client environment name)))))
 
 (defun constant-variable-description (client environment name)
-  (multiple-value-bind (value constant-variable-p)
+  (multiple-value-bind (constant-variable-p value)
       (constant-variable client environment name)
     (if (not constant-variable-p)
         nil
