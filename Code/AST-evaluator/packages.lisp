@@ -7,4 +7,5 @@
                     (#:client #:sicl-client)
                     (#:ast #:cleavir-ast))
   (:export #:translate-top-level-ast
+           #:translate-ast
            #:eval))
