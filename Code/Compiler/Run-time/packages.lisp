@@ -17,4 +17,5 @@
            #:augment-with-special-variable-entry
            #:unwind
            #:initialize-values
-           #:call-with-values))
+           #:call-with-values
+           #:find-special-variable-entry))
