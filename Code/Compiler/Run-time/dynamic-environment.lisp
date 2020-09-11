@@ -46,3 +46,13 @@
 (defmethod print-object ((object unwind-protect-entry) stream)
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~s" (thunk object))))
+
+;;; Given the name (a symbol) of a special variable, return the most
+;;; recently pushed SPECIAL-VARIABLE-ENTRY with that name.  If no such
+;;; entry exists, then return NIL.
+(defun find-special-variable-entry (dynamic-environment name)
+  (loop for entry in dynamic-environment
+        when (and (typep entry 'special-variable-entry)
+                  (eq name (name entry)))
+          return entry
+        finally (return nil)))
