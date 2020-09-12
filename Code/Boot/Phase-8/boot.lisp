@@ -11,7 +11,7 @@
     (setf (sicl-genv:fdefinition 'host-symbol-name e5)
           #'symbol-name)
     (import-function-from-host 'sicl-genv:type-expander e5)
-    (import-functions-from-host '(caar rplaca) e5)
+    (import-functions-from-host '(caar rplaca rassoc nconc) e5)
     (load-source "Boot/Phase-8/symbol-name-defmethod-around.lisp" e5)
     (load-source "Types/Typep/typep.lisp" e5)
     (load-source "Types/Typep/typep-atomic.lisp" e5)
@@ -24,7 +24,6 @@
     ;; through LOOP clauses.  Therefore this macro must be defined
     ;; before that module is loaded."
     (load-source "Hash-tables/with-hash-table-iterator-defmacro.lisp" e5)
-    (load-asdf-system-components '#:sicl-cons-defuns e5)
     (load-source "Loop/run-time-support.lisp" e5)
     (load-source "CLOS/defgeneric-support.lisp" e5)
     (load-hash-table-functionality e5)
@@ -73,6 +72,7 @@
     ;; This files should be loaded last, because they contain code
     ;; that can be executed by the host during bootstrapping.
     (load-source "CLOS/discriminating-automaton.lisp" e5)
+    (load-asdf-system-components '#:sicl-cons-defuns e5)
     (load-source "Cons/accessor-defuns.lisp" e5)
     (load-source "Cons/cxr.lisp" e5)
     (load-source "Data-and-control-flow/not-defun.lisp" e5)
