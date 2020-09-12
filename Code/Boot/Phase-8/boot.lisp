@@ -69,8 +69,10 @@
     (load-source "CLOS/slot-value-etc-specified-defuns.lisp" e5)
     (load-source "CLOS/defmethod-support.lisp" e5)
     (load-source "CLOS/defclass-support.lisp" e5)
-    (load-source "CLOS/discriminating-automaton.lisp" e5)
     (with-intercepted-function-names ((expt) e5)
       (load-source "Arithmetic/expt-defgeneric.lisp" e5)
       (load-source "Arithmetic/expt-defmethods.lisp" e5))
-    (load-sequence-functions e5)))
+    (load-sequence-functions e5)
+    ;; This files should be loaded last, because they contain code
+    ;; that can be executed by the host during bootstrapping.
+    (load-source "CLOS/discriminating-automaton.lisp" e5)))
