@@ -5,4 +5,3 @@
      cleavir-ir:one-successor-mixin
      cleavir-ir:side-effect-mixin)
   ((%debug-information :initarg :debug-information :accessor debug-information)))
-
