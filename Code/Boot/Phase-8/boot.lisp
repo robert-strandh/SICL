@@ -11,13 +11,14 @@
     (setf (sicl-genv:fdefinition 'host-symbol-name e5)
           #'symbol-name)
     (import-function-from-host 'sicl-genv:type-expander e5)
-    (import-functions-from-host '(caar rplaca rassoc nconc) e5)
+    (import-functions-from-host
+     '(caar rplaca rassoc nconc evenp min - > integerp)
+     e5)
     (load-source "Boot/Phase-8/symbol-name-defmethod-around.lisp" e5)
     (load-source "Types/Typep/typep.lisp" e5)
     (load-source "Types/Typep/typep-atomic.lisp" e5)
     (load-source "Types/Typep/typep-compound.lisp" e5)
     (load-source "Types/Typep/typep-compound-integer.lisp" e5)
-    (load-arithmetic-functions e5)
     (load-source "Conditionals/support.lisp" e5)
     (import-function-from-host 'cleavir-code-utilities:parse-macro e5)
     ;; Some functions in the Cons module use hash tables, indirectly
@@ -71,6 +72,7 @@
     (load-sequence-functions e5)
     ;; This files should be loaded last, because they contain code
     ;; that can be executed by the host during bootstrapping.
+    (load-arithmetic-functions e5)
     (load-source "CLOS/discriminating-automaton.lisp" e5)
     (load-asdf-system-components '#:sicl-cons-defuns e5)
     (load-source "Cons/accessor-defuns.lisp" e5)
