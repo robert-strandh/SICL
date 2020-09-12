@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:export
    #:breakpoint-instruction
+   #:debug-information
    #:dynamic-environment-instruction
    #:caller-stack-pointer-instruction
    #:caller-frame-pointer-instruction
