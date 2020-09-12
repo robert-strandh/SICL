@@ -11,6 +11,7 @@
     (setf (sicl-genv:fdefinition 'host-symbol-name e5)
           #'symbol-name)
     (import-function-from-host 'sicl-genv:type-expander e5)
+    (import-functions-from-host '(caar rplaca) e5)
     (load-source "Boot/Phase-8/symbol-name-defmethod-around.lisp" e5)
     (load-source "Types/Typep/typep.lisp" e5)
     (load-source "Types/Typep/typep-atomic.lisp" e5)
