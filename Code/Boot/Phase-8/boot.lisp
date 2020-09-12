@@ -75,4 +75,6 @@
     (load-sequence-functions e5)
     ;; This files should be loaded last, because they contain code
     ;; that can be executed by the host during bootstrapping.
-    (load-source "CLOS/discriminating-automaton.lisp" e5)))
+    (load-source "CLOS/discriminating-automaton.lisp" e5)
+    (load-source "Cons/accessor-defuns.lisp" e5)
+    (load-source "Cons/cxr.lisp" e5)))

@@ -65,8 +65,6 @@
     ;; which is obviously wrong once the knot has been tied.  We just
     ;; have to reload the following file to fix that problem:
     (load-source "CLOS/effective-slot-definition-class-support.lisp" e5)
-    (load-source "Cons/accessor-defuns.lisp" e5)
-    (load-source "Cons/cxr.lisp" e5)
     (load-source "Cons/setf-cxr.lisp" e5)
     (load-source "Cons/getf-defun.lisp" e5)
     (load-source "Cons/member-if-not-defun.lisp" e5)))
