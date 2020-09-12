@@ -25,9 +25,6 @@
     ;; before that module is loaded."
     (load-source "Hash-tables/with-hash-table-iterator-defmacro.lisp" e5)
     (load-asdf-system-components '#:sicl-cons-defuns e5)
-    (load-source "Data-and-control-flow/not-defun.lisp" e5)
-    (load-source "Data-and-control-flow/eq-defun.lisp" e5)
-    (load-source "Data-and-control-flow/identity-defun.lisp" e5)
     (load-source "Loop/run-time-support.lisp" e5)
     (load-source "CLOS/defgeneric-support.lisp" e5)
     (load-hash-table-functionality e5)
@@ -77,4 +74,7 @@
     ;; that can be executed by the host during bootstrapping.
     (load-source "CLOS/discriminating-automaton.lisp" e5)
     (load-source "Cons/accessor-defuns.lisp" e5)
-    (load-source "Cons/cxr.lisp" e5)))
+    (load-source "Cons/cxr.lisp" e5)
+    (load-source "Data-and-control-flow/not-defun.lisp" e5)
+    (load-source "Data-and-control-flow/eq-defun.lisp" e5)
+    (load-source "Data-and-control-flow/identity-defun.lisp" e5)))
