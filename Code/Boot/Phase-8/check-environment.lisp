@@ -1,5 +1,19 @@
 (cl:in-package #:sicl-boot-phase-8)
 
+(defparameter *indentation* 0)
+
+(defun indent ()
+  (loop repeat *indentation*
+        do (format *trace-output* "   ")))
+
+(defun report-problem (format-control &rest arguments)
+  (indent)
+  (apply #'format *trace-output* format-control arguments))
+
+(defmacro with-more-indentation (&body body)
+  `(let ((*indentation* (1+ *indentation*)))
+     ,@body))
+
 (defun find-class-name (class environment)
   (do-all-symbols (symbol nil)
     (when (eq (sicl-genv:find-class symbol environment) class)
@@ -7,14 +21,14 @@
 
 (defun check-effective-slot-definition (effective-slot-definition environment)
   (if (not (typep effective-slot-definition 'sicl-boot::header))
-      (format *trace-output* "    Effective slot definition is not a SICL object.~%")
+      (report-problem "***Effective slot definition is not a SICL object.~%")
       (progn 
         (let ((class (slot-value effective-slot-definition 'sicl-boot::%class)))
           (if (not (typep class 'sicl-boot::header))
-              (format *trace-output* "    Class of effective slot definition is not a SICL object.~%")
+              (report-problem "***Class of effective slot definition is not a SICL object.~%")
               (let ((class-name (find-class-name class environment)))
                 (when (null class-name)
-                  (format *trace-output* "   Class of effective slot definition is not in environment.~%"))))))))
+                  (report-problem "***Class of effective slot definition is not in environment.~%"))))))))
 
 (defun check-effective-slot-definitions (effective-slot-definitions environment)
   (loop for effective-slot-definition in effective-slot-definitions
@@ -31,14 +45,14 @@
 
 (defun check-direct-slot-definition (direct-slot-definition environment)
   (if (not (typep direct-slot-definition 'sicl-boot::header))
-      (format *trace-output* "    Direct slot definition is not a SICL object.~%")
+      (report-problem "***Direct slot definition is not a SICL object.~%")
       (progn 
         (let ((class (slot-value direct-slot-definition 'sicl-boot::%class)))
           (if (not (typep class 'sicl-boot::header))
-              (format *trace-output* "    Class of direct slot definition is not a SICL object.~%")
+              (report-problem "***Class of direct slot definition is not a SICL object.~%")
               (let ((class-name (find-class-name class environment)))
                 (when (null class-name)
-                  (format *trace-output* "   Class of direct slot definition is not in environment.~%"))))))))
+                  (report-problem "***Class of direct slot definition is not in environment.~%"))))))))
 
 (defun check-direct-slot-definitions (class environment)
   (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-direct-slots environment))
@@ -49,15 +63,15 @@
 (defun check-metaclass (class environment)
   (let ((metaclass (slot-value class 'sicl-boot::%class)))
     (if (not (typep metaclass 'sicl-boot::header))
-        (format *trace-output* "    Metaclass is not a SICL object.~%")
+        (report-problem "***Metaclass is not a SICL object.~%")
         (let ((metaclass-name (find-class-name metaclass environment)))
           (when (null metaclass-name)
-            (format *trace-output* "   Metaclass is not a class in environment.~%"))))))
+            (report-problem "***Metaclass is not a class in environment.~%"))))))
 
 (defun check-superclass (superclass environment)
   (let ((superclass-name (find-class-name superclass environment)))
     (when (null superclass-name)
-      (format *trace-output* "   Superclass is not a class in environment.~%"))))
+      (report-problem "***Superclass is not a class in environment.~%"))))
 
 (defun check-superclasses (class environment)
   (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-direct-superclasses environment))
@@ -68,7 +82,7 @@
 (defun check-subclass (subclass environment)
   (let ((subclass-name (find-class-name subclass environment)))
     (when (null subclass-name)
-      (format *trace-output* "   Subclass is not a class in environment.~%"))))
+      (report-problem "***Subclass is not a class in environment.~%"))))
 
 (defun check-subclasses (class environment)
   (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-direct-subclasses environment))
@@ -79,11 +93,11 @@
 (defun check-direct-default-initarg (direct-default-initarg environment)
   (let ((thunk (third direct-default-initarg)))
     (if (not (typep thunk 'sicl-boot::header))
-        (format *trace-output* "    Thunk of direct default initarg is not a SICL object.~%")
+        (report-problem "***Thunk of direct default initarg is not a SICL object.~%")
         (let* ((thunk-class (slot-value thunk 'sicl-boot::%class))
                (class-name (find-class-name thunk-class environment)))
           (when (null class-name)
-            (format *trace-output* "   Class of direct defualt initarg thunk is not in environment.~%"))))))
+            (report-problem "***Class of direct defualt initarg thunk is not in environment.~%"))))))
 
 (defun check-direct-default-initargs (class environment)
   (let* ((fun (sicl-genv:fdefinition 'sicl-clos:class-direct-default-initargs environment))
@@ -98,9 +112,9 @@
           do (check-superclass superclass environment))))
 
 (defun check-class (name class environment)
-  (format *trace-output* "Checking class named ~s~%" name)
+  (report-problem "***Checking class named ~s~%" name)
   (if (not (typep class 'sicl-boot::header))
-      (format *trace-output* "    Class named ~s is not a SICL object.~%" name)
+      (report-problem "***Class named ~s is not a SICL object.~%" name)
       (progn (check-metaclass class environment)
              (check-instance-effective-slot-definitions class environment)
              (check-class-effective-slot-definitions class environment)
@@ -122,10 +136,13 @@
 (defun check-function-class (function environment)
   (let ((class (slot-value function 'sicl-boot::%class)))
     (if (not (typep class 'sicl-boot::header))
-        (format *trace-output* "    Function class is not a SICL object.~%")
+        (report-problem
+         "***Function class ~s of function ~s is not a SICL object.~%"
+         class
+         function)
         (let ((class-name (find-class-name class environment)))
           (when (null class-name)
-            (format *trace-output* "   Function class is not a class in environment.~%"))))))
+            (report-problem "***Function class is not a class in environment.~%"))))))
 
 (defun object-is-function-cell-in-environment-p (element environment)
   (maphash (lambda (function-name function-entry)
@@ -148,8 +165,8 @@
          (let* ((class (slot-value element 'sicl-boot::%class))
                 (name (find-class-name class environment)))
            (when (null name)
-             (format *trace-output*
-                     "    Index ~s of static environment contains an impure object.~%"
+             (report-problem
+                     "***Index ~s of static environment contains an impure object.~%"
                      index))))
         ((<= 1 index 2)
          ;; These elements are always the ENCLOSE and the
@@ -160,8 +177,8 @@
         ((member element (list #'cons #'apply))
          nil)
         (t
-         (format *trace-output*
-                 "    Index ~s of static environment contains an invalid object.~%"
+         (report-problem
+                 "***Index ~s of static environment contains an invalid object.~%"
                  index))))
 
 (defun check-static-environment (function environment)
@@ -175,18 +192,20 @@
                  for i from 0
                  do (check-static-environment-element i element environment)))
           (t
-           (format *trace-output*
-                   "    ~s is not a valid value for the static environment.~%"
+           (report-problem
+                   "***~s is not a valid value for the static environment.~%"
                    env)))))
 
 (defun check-method (method environment)
-  (let* ((fname 'sicl-clos:method-function)
-         (fun (sicl-genv:fdefinition fname environment))
-         (method-function (funcall fun method)))
-    (if (not (typep method-function 'sicl-boot::header))
-        (format *trace-output* "    Method function is not a SICL object.~%")
-        (progn (check-function-class method-function environment)
-               (check-static-environment method-function environment)))))
+  (report-problem "Checking method ~s~%" method)
+  (with-more-indentation
+    (let* ((fname 'sicl-clos:method-function)
+           (fun (sicl-genv:fdefinition fname environment))
+           (method-function (funcall fun method)))
+      (if (not (typep method-function 'sicl-boot::header))
+          (report-problem "***Method function is not a SICL object.~%")
+          (progn (check-function-class method-function environment)
+                 (check-static-environment method-function environment))))))
 
 (defun check-generic-function (name function environment)
   (declare (ignore name))
@@ -197,16 +216,17 @@
         do (check-method method environment)))
 
 (defun check-function (name function environment)
-  (format *trace-output* "Checking function named ~s~%" name)
-  (if (not (typep function 'sicl-boot::header))
-      (format *trace-output* "    Function is not a SICL object.~%")
-      (progn (check-function-class function environment)
-             (let ((class (slot-value function 'sicl-boot::%class)))
-               (when (eq class
-                         (sicl-genv:find-class
-                          'standard-generic-function environment))
-                 (check-generic-function name function environment)))
-             (check-static-environment function environment))))
+  (report-problem "Checking function named ~s~%" name)
+  (with-more-indentation
+    (if (not (typep function 'sicl-boot::header))
+        (report-problem "***Function is not a SICL object.~%")
+        (progn (check-function-class function environment)
+               (let ((class (slot-value function 'sicl-boot::%class)))
+                 (when (eq class
+                           (sicl-genv:find-class
+                            'standard-generic-function environment))
+                   (check-generic-function name function environment)))
+               (check-static-environment function environment)))))
 
 (defun check-functions (environment)
   (let ((table (make-hash-table :test #'eq)))
@@ -226,8 +246,8 @@
   (maphash (lambda (function-name function-entry)
              (declare (ignore function-entry))
              (unless (sicl-genv:fboundp function-name environment)
-               (format *trace-output*
-                       "The function named ~s is referenced but undefined.~%"
+               (report-problem
+                       "***The function named ~s is referenced but undefined.~%"
                        function-name)))
            (sicl-simple-environment::function-entries environment)))
 
