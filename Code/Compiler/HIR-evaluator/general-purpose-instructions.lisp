@@ -8,6 +8,9 @@
     (throw 'return
       (values-list *global-values-location*))))
 
+(defparameter *funcall-table* (make-hash-table :test #'eq))
+(defparameter *time-table* (make-hash-table :test #'eq))
+
 (defmethod instruction-thunk
     (client
      (instruction cleavir-ir:funcall-instruction)
@@ -17,18 +20,25 @@
                  collect (ensure-lref input lexical-environment))))
     (macrolet ((fixed-arity-call (arity)
                  `(make-thunk (client instruction lexical-environment :inputs ,arity)
-                    (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
-                          (call-stack-entry
-                            (make-instance 'call-stack-entry
-                              :origin (cleavir-ast-to-hir:origin instruction)
-                              :arguments
-                              (loop for input-lref in input-indices
-                                    collect (lref input-lref)))))
+                    (let* ((sicl-run-time:*dynamic-environment* dynamic-environment)
+                           (origin (cleavir-ast-to-hir:origin instruction))
+                           ;; (start (get-internal-run-time))
+                           (call-stack-entry
+                             (make-instance 'call-stack-entry
+                               :origin origin
+                               :arguments
+                               (loop for input-lref in input-indices
+                                     collect (lref input-lref)))))
+                      ;; (unless (null origin)
+                      ;;   (incf (gethash origin *funcall-table* 0)))
                       (setf *global-values-location*
                             (multiple-value-list
                              (let* ((*call-stack* (cons call-stack-entry *call-stack*)))
                                (funcall
                                 ,@(loop for lref below arity collect `(input ,lref))))))
+                      ;; (unless (null origin)
+                      ;;   (incf (gethash origin *time-table* 0)
+                      ;;         (- (get-internal-run-time) start)))
                       (successor 0)))))
       (case (length (cleavir-ir:inputs instruction))
         (0 (error "Funcall instruction with zero inputs."))
@@ -42,19 +52,26 @@
         (8 (fixed-arity-call 8))
         (otherwise
          (make-thunk (client instruction lexical-environment)
-           (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
-                 (call-stack-entry
-                   (make-instance 'call-stack-entry
-                     :origin (cleavir-ast-to-hir:origin instruction)
-                     :arguments
-                     (loop for input-lref in input-indices
-                           collect (lref input-lref)))))
+           (let* ((sicl-run-time:*dynamic-environment* dynamic-environment)
+                  (origin (cleavir-ast-to-hir:origin instruction))
+                  ;; (start (get-internal-run-time))
+                  (call-stack-entry
+                    (make-instance 'call-stack-entry
+                      :origin origin
+                      :arguments
+                      (loop for input-lref in input-indices
+                            collect (lref input-lref)))))
+             ;; (unless (null origin)
+             ;;   (incf (gethash origin *funcall-table* 0)))
              (setf *global-values-location*
                    (multiple-value-list
                     (let ((*call-stack* (cons call-stack-entry *call-stack*)))
                       (apply #'funcall
                              (loop for input-lref in input-indices
                                    collect (lref input-lref))))))
+             ;; (unless (null origin)
+             ;;   (incf (gethash origin *time-table* 0)
+             ;;         (- (get-internal-run-time) start)))
              (successor 0))))))))
 
 (defmethod instruction-thunk
