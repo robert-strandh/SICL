@@ -1,0 +1,23 @@
+In this series of presentations, we examine different strategies for
+creating a Common Lisp implementation, as well as the pros and cons of
+each strategy.
+
+We assume basic knowledge about how a typical modern operating system
+(such as Unix) works, and how traditional batch languages (such as C)
+are compiled and executed on such a system.  We furthermore assume
+medium-level knowledge about Common Lisp.
+
+In part 3, we investigate one possible solution to the conundrum of
+our first strategy outlined in part 2, namely the circular
+compile-time dependencies between many standard macros and standard
+functions, forcing us to write more code in a language other than
+Common Lisp, and also forcing us to write "unnatural" Common Lisp
+code.  The solution to this problem is the foundation of our second
+strategy for creating a Common Lisp implementation, and it relies on
+using an existing host Common Lisp implementation for cross
+compilation.
+
+Since some time has passed since part 1 and 2 were streamed, we
+strongly recommend that interested participants make sure that the
+material covered in those two parts is fresh in memory, if necessary
+by watching those presentations again.
