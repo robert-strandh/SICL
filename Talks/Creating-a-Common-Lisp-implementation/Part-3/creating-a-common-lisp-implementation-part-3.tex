@@ -397,8 +397,55 @@ This is the essence of \emph{cross compilation}.
 }
 }
 
+\frame[containsverbatim]{
+\frametitle{Load target macros}
+{\small\begin{verbatim}
+(cl:in-package #:target-evaluation-and-compilation)
+
+(defmacro defmacro (name lambda-list &body body)
+  (cleavir-code-utilities:parse-macro name lambda-list body))
+\end{verbatim}
+}
+\vskip 0.25cm
+The \texttt{parse-macro} function is from CLtL2, and can be written in
+portable \commonlisp{}.
+}
+
+\frame[containsverbatim]{
+\frametitle{Load target macros}
+{\small\begin{verbatim}
+(cl:in-package #:target-evaluation-and-compilation)
+
+(defmacro lambda (lambda-list &body body)
+  `(function (lambda ,lambda-list ,@body)))
+\end{verbatim}
+}
+}
+
+\frame[containsverbatim]{
+\frametitle{Load target macros}
+{\small\begin{verbatim}
+(cl:in-package #:target-data-and-control-flow)
+
+(defmacro return (&optional (form nil))
+  `(return-from nil ,form))
+\end{verbatim}
+}
+}
+
+\frame[containsverbatim]{
+\frametitle{Load target macros}
+{\small\begin{verbatim}
+(cl:in-package #:target-data-and-control-flow)
+
+(defmacro when (test &body body)
+  `(if ,test (progn ,@body) nil))
+\end{verbatim}
+}
+}
+
 \frame{
-\frametitle{Minor issue}
+\frametitle{Minor issues}
 \vskip 0.25cm
 The compiled files will refer to package \texttt{target-common-lisp}
 rather than to \texttt{common-lisp}.
@@ -406,6 +453,33 @@ rather than to \texttt{common-lisp}.
 To handle that issue, when the compiled file is loaded into the target
 system, make \texttt{target-common-lisp} a nickname of the package
 \texttt{common-lisp}.
+\vskip 0.25cm
+Target-specific function executed by target macro expanders must also
+be loaded on the host.
+}
+
+\frame{
+\frametitle{What we have accomplished}
+\vskip 0.25cm
+We can compile any target code on the host.
+\vskip 0.25cm
+And \emph{any} includes the evaluator and the reader.
+\vskip 0.25cm
+The only C code left is the bytecode interpreter and the abstract
+machine.
+}
+
+\frame{
+\frametitle{We can do even better}
+\vskip 0.25cm
+We don't have to compile to bytecodes.  We can compile to native
+code.
+\vskip 0.25cm
+Building the target system from compiled files can be a bit tricky,
+but it can be done.
+\vskip 0.25cm
+This technique is essentially what SBCL uses for its bootstrapping
+procedure.
 }
 
 \frame{
