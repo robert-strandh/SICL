@@ -264,7 +264,7 @@ This is the essence of \emph{cross compilation}.
 }
 
 \frame[containsverbatim]{
-\frametitle{Typical package structure}
+\frametitle{Typical native package structure}
 \begin{verbatim}
 (defpackage #:common-lisp
   (:use)
@@ -392,21 +392,30 @@ This is the essence of \emph{cross compilation}.
   (load "lambda-defmacro.lisp")
   (load "return-defmacro.lisp")
   (load "when-defmacro.lisp")
+  ...)
 \end{verbatim}
 }
 }
 
 \frame{
+\frametitle{Minor issue}
+\vskip 0.25cm
+The compiled files will refer to package \texttt{target-common-lisp}
+rather than to \texttt{common-lisp}.
+\vskip 0.25cm
+To handle that issue, when the compiled file is loaded into the target
+system, make \texttt{target-common-lisp} a nickname of the package
+\texttt{common-lisp}.
+}
+
+\frame{
 \frametitle{Topics for part 4}
 \vskip 0.25cm
-In part 3:
+Recall that we are creating a pre-ANSI \commonlisp{} implementation,
+so it has no classes and no generic functions.
 \vskip 0.25cm
-\begin{itemize}
-\item stuff
-\item stuff
-\end{itemize}
-\vskip 0.25cm
-This summarizes our strategy 2 which is the main topic of part 3.
+In part 4, we examine the impact on our implementation of not having
+CLOS from the start.
 }
 
 \end{document}
