@@ -8,10 +8,11 @@
                (null (macro-function symbol))
                (not (special-operator-p symbol)))
       (setf (fdefinition (find-symbol (symbol-name symbol) '#:target-common-lisp))
-            (fdefinition symbol))))
+            (fdefinition symbol)))
+    (when (fboundp `(setf ,symbol))
+      (setf (fdefinition `(setf ,(find-symbol (symbol-name symbol) '#:target-common-lisp)))
+            (fdefinition `(setf ,symbol)))))
   (load "defmacro-defmacro.lisp")
   (load "lambda-defmacro.lisp")
   (load "return-defmacro.lisp")
   (load "when-defmacro.lisp")
-
-        
