@@ -386,8 +386,9 @@ This is the essence of \emph{cross compilation}.
                (null (macro-function symbol))
                (not (special-operator-p symbol)))
       (setf (fdefinition (find-symbol (symbol-name symbol)
-                         '#:target-common-lisp))
-            (fdefinition symbol))))
+                                      '#:target-common-lisp))
+                         (fdefinition symbol)))
+    ... [same for (setf <foo>) functions] 
   (load "defmacro-defmacro.lisp")
   (load "lambda-defmacro.lisp")
   (load "return-defmacro.lisp")
@@ -403,7 +404,9 @@ This is the essence of \emph{cross compilation}.
 (cl:in-package #:target-evaluation-and-compilation)
 
 (defmacro defmacro (name lambda-list &body body)
-  (cleavir-code-utilities:parse-macro name lambda-list body))
+  `(setf (macro-function ',name)
+         ,(cleavir-code-utilities:parse-macro
+            name lambda-list body)))
 \end{verbatim}
 }
 \vskip 0.25cm
