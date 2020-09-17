@@ -10,6 +10,7 @@
    (:file "load-arithmetic-functions")
    (:file "load-hash-table-functionality")
    (:file "load-sicl-utilities")
+   (:file "define-compile")
    (:file "boot")
    (:file "check-environment")
    (:file "load-sequence-functions")))
