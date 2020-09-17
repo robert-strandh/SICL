@@ -12,5 +12,6 @@
    (:file "load-sicl-utilities")
    (:file "define-compile")
    (:file "boot")
+   (:file "patch-environment")
    (:file "check-environment")
    (:file "load-sequence-functions")))
