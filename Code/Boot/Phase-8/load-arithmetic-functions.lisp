@@ -43,6 +43,4 @@
   (load-source "Arithmetic/rem-defun.lisp" e5)
   (load-source "Arithmetic/evenp-defun.lisp" e5)
   (load-source "Arithmetic/oddp-defun.lisp" e5)
-  (load-source "Arithmetic/multiply-defun.lisp" e5)
-  (load-source "Arithmetic/allocate-instance-defmethod-bignum.lisp" e5)
-  (load-source "Arithmetic/initialize-instance-defmethod-after-bignum.lisp" e5))
+  (load-source "Arithmetic/multiply-defun.lisp" e5))
