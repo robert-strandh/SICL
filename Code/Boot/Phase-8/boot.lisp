@@ -6,6 +6,7 @@
       boot
     (define-compile e5)
     (patch-accessor-methods e5)
+    (patch-other-methods e5)
     (setf (sicl-genv:macro-function 'defpackage e5)
           (constantly nil))
     (setf (sicl-genv:fdefinition 'host-symbolp e5)
