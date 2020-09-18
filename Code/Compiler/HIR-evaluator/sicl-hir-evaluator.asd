@@ -4,7 +4,6 @@
   :depends-on (#:closer-mop
                #:cleavir2-hir
                #:cleavir2-cst-to-ast
-               #:clordane
                #:sicl-utilities
                #:sicl-ast-to-hir
                #:sicl-hir-transformations
