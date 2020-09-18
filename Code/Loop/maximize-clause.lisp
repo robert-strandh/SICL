@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 (defclass maximize-clause (max/min-accumulation-clause) ())
@@ -32,61 +20,61 @@
 
 (define-parser maximize-it-into-clause-parser
   (consecutive (lambda (maximize it into var type-spec)
-		 (declare (ignore maximize it into))
-		 (make-instance 'maximize-it-into-clause
-		   :into-var var
-		   :type-spec type-spec))
-	       (alternative (keyword-parser 'maximize)
-			    (keyword-parser 'maximizing))
-	       (keyword-parser 'it)
-	       (keyword-parser 'into)
-	       (singleton #'identity
-			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))
-	       'optional-type-spec-parser))
+                 (declare (ignore maximize it into))
+                 (make-instance 'maximize-it-into-clause
+                   :into-var var
+                   :type-spec type-spec))
+               (alternative (keyword-parser 'maximize)
+                            (keyword-parser 'maximizing))
+               (keyword-parser 'it)
+               (keyword-parser 'into)
+               (singleton #'identity
+                          (lambda (x)
+                            (and (symbolp x) (not (constantp x)))))
+               'optional-type-spec-parser))
 
 (define-parser maximize-it-clause-parser
   (consecutive (lambda (maximize it type-spec)
-		 (declare (ignore maximize it))
-		 (make-instance 'maximize-it-clause
-		   :type-spec type-spec))
-	       (alternative (keyword-parser 'maximize)
-			    (keyword-parser 'maximizing))
-	       (keyword-parser 'it)
-	       'optional-type-spec-parser))
+                 (declare (ignore maximize it))
+                 (make-instance 'maximize-it-clause
+                   :type-spec type-spec))
+               (alternative (keyword-parser 'maximize)
+                            (keyword-parser 'maximizing))
+               (keyword-parser 'it)
+               'optional-type-spec-parser))
 
 (define-parser maximize-form-into-clause-parser
   (consecutive (lambda (maximize form into var type-spec)
-		 (declare (ignore maximize into))
-		 (make-instance 'maximize-form-into-clause
-		   :form form
-		   :into-var var
-		   :type-spec type-spec))
-	       (alternative (keyword-parser 'maximize)
-			    (keyword-parser 'maximizing))
-	       'anything-parser
-	       (keyword-parser 'into)
-	       (singleton #'identity
-			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))
-	       'optional-type-spec-parser))
+                 (declare (ignore maximize into))
+                 (make-instance 'maximize-form-into-clause
+                   :form form
+                   :into-var var
+                   :type-spec type-spec))
+               (alternative (keyword-parser 'maximize)
+                            (keyword-parser 'maximizing))
+               'anything-parser
+               (keyword-parser 'into)
+               (singleton #'identity
+                          (lambda (x)
+                            (and (symbolp x) (not (constantp x)))))
+               'optional-type-spec-parser))
 
 (define-parser maximize-form-clause-parser
   (consecutive (lambda (maximize form type-spec)
-		 (declare (ignore maximize))
-		 (make-instance 'maximize-form-clause
-		   :form form
-		   :type-spec type-spec))
-	       (alternative (keyword-parser 'maximize)
-			    (keyword-parser 'maximizing))
-	       'anything-parser
-	       'optional-type-spec-parser))
+                 (declare (ignore maximize))
+                 (make-instance 'maximize-form-clause
+                   :form form
+                   :type-spec type-spec))
+               (alternative (keyword-parser 'maximize)
+                            (keyword-parser 'maximizing))
+               'anything-parser
+               'optional-type-spec-parser))
 
 (define-parser maximize-clause-parser
   (alternative 'maximize-it-into-clause-parser
-	       'maximize-it-clause-parser
-	       'maximize-form-into-clause-parser
-	       'maximize-form-clause-parser))
+               'maximize-it-clause-parser
+               'maximize-form-into-clause-parser
+               'maximize-form-clause-parser))
 
 (add-clause-parser 'maximize-clause-parser)
 
@@ -99,25 +87,25 @@
   `(if (null ,*accumulation-variable*)
        (setq ,*accumulation-variable* ,(form clause))
        (setq ,*accumulation-variable*
-	     (max ,*accumulation-variable* ,(form clause)))))
+             (max ,*accumulation-variable* ,(form clause)))))
 
 (defmethod body-form ((clause maximize-form-into-clause) end-tag)
   (declare (ignore end-tag))
   `(if (null ,(into-var clause))
        (setq ,(into-var clause) ,(form clause))
        (setq ,(into-var clause)
-	     (max ,(into-var clause) ,(form clause)))))
+             (max ,(into-var clause) ,(form clause)))))
 
 (defmethod body-form ((clause maximize-it-clause) end-tag)
   (declare (ignore end-tag))
   `(if (null ,*accumulation-variable*)
        (setq ,*accumulation-variable* ,*it-var*)
        (setq ,*accumulation-variable*
-	     (max ,*accumulation-variable* ,*it-var*))))
+             (max ,*accumulation-variable* ,*it-var*))))
 
 (defmethod body-form ((clause maximize-it-into-clause) end-tag)
   (declare (ignore end-tag))
   `(if (null ,(into-var clause))
        (setq ,(into-var clause) ,*it-var*)
        (setq ,(into-var clause)
-	     (max ,(into-var clause) ,*it-var*))))
+             (max ,(into-var clause) ,*it-var*))))
