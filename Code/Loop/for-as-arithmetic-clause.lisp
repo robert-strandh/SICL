@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved.
-;;;;
-;;;; Permission is hereby granted to use this software for any
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences.
-
 (cl:in-package #:sicl-loop)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -41,8 +29,8 @@
    ;; then the loop does not terminate because of this clause, and
    ;; then this slot contains NIL.
    (%termination-test :initform nil
-		      :initarg :termination-test
-		      :reader termination-test)
+                      :initarg :termination-test
+                      :reader termination-test)
    ;; This variable is one step ahead of the iteration variable, and
    ;; when the iteration variable is NIL, the value of this variable
    ;; is never assigned to any iteration variable.
@@ -54,7 +42,7 @@
 
 (defmethod bound-variables ((subclause for-as-arithmetic))
   (mapcar #'car
-	  (extract-variables (var-spec subclause) nil)))
+          (extract-variables (var-spec subclause) nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -70,26 +58,26 @@
 
 (defun arithmetic-value-and-type (type-spec)
   (cond ((eq type-spec 'fixnum)
-	 (values 0 type-spec))
-	((eq type-spec 'float)
-	 (values 0.0 type-spec))
-	((eq type-spec 'short-float)
-	 (values 0s0 type-spec))
-	((eq type-spec 'single-float)
-	 (values 0f0 type-spec))
-	((eq type-spec 'double-float)
-	 (values 0d0 type-spec))
-	((eq type-spec 'long-float)
-	 (values 0l0 type-spec))
-	((and (consp type-spec)
-	      (eq (car type-spec) 'integer)
-	      (consp (cdr type-spec))
-	      (integerp (cadr type-spec)))
-	 (values (cadr type-spec) type-spec))
-	;; We could add some more here, for instance intervals
-	;; of floats.
-	(t
-	 (values 0 't))))
+         (values 0 type-spec))
+        ((eq type-spec 'float)
+         (values 0.0 type-spec))
+        ((eq type-spec 'short-float)
+         (values 0s0 type-spec))
+        ((eq type-spec 'single-float)
+         (values 0f0 type-spec))
+        ((eq type-spec 'double-float)
+         (values 0d0 type-spec))
+        ((eq type-spec 'long-float)
+         (values 0l0 type-spec))
+        ((and (consp type-spec)
+              (eq (car type-spec) 'integer)
+              (consp (cdr type-spec))
+              (integerp (cadr type-spec)))
+         (values (cadr type-spec) type-spec))
+        ;; We could add some more here, for instance intervals
+        ;; of floats.
+        (t
+         (values 0 't))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -101,10 +89,10 @@
 
 (define-parser simple-var-parser
   (singleton #'identity
-	     (lambda (x)
-	       (or (null x)
-		   (and (symbolp x)
-			(not (constantp x)))))))
+             (lambda (x)
+               (or (null x)
+                   (and (symbolp x)
+                        (not (constantp x)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -125,38 +113,38 @@
 
 (define-parser to-parser
   (consecutive (lambda (keyword form)
-		 (declare (ignore keyword))
-		 (cons '<= form))
-	       (keyword-parser 'to)
-	       'anything-parser))
+                 (declare (ignore keyword))
+                 (cons '<= form))
+               (keyword-parser 'to)
+               'anything-parser))
 
 (define-parser upto-parser
   (consecutive (lambda (keyword form)
-		 (declare (ignore keyword))
-		 (cons '<= form))
-	       (keyword-parser 'upto)
-	       'anything-parser))
+                 (declare (ignore keyword))
+                 (cons '<= form))
+               (keyword-parser 'upto)
+               'anything-parser))
 
 (define-parser below-parser
   (consecutive (lambda (keyword form)
-		 (declare (ignore keyword))
-		 (cons '< form))
-	       (keyword-parser 'below)
-	       'anything-parser))
+                 (declare (ignore keyword))
+                 (cons '< form))
+               (keyword-parser 'below)
+               'anything-parser))
 
 (define-parser downto-parser
   (consecutive (lambda (keyword form)
-		 (declare (ignore keyword))
-		 (cons '<= form))
-	       (keyword-parser 'downto)
-	       'anything-parser))
+                 (declare (ignore keyword))
+                 (cons '<= form))
+               (keyword-parser 'downto)
+               'anything-parser))
 
 (define-parser above-parser
   (consecutive (lambda (keyword form)
-		 (declare (ignore keyword))
-		 (cons '< form))
-	       (keyword-parser 'above)
-	       'anything-parser))
+                 (declare (ignore keyword))
+                 (cons '< form))
+               (keyword-parser 'above)
+               'anything-parser))
 
 (define-parser by-parser
   (consecutive 'project-form (keyword-parser 'by) 'anything-parser))
@@ -174,112 +162,112 @@
 ;;; Order is FROM TO BY.
 (define-parser arithmetic-up-1-parser
   (consecutive (lambda (var type-spec from to by)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'from-parser 'upfrom-parser)
-	       (alternative 'to-parser 'upto-parser 'below-parser)
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'from-parser 'upfrom-parser)
+               (alternative 'to-parser 'upto-parser 'below-parser)
+               'by-parser))
 
 ;;; Order is FROM BY TO.
 (define-parser arithmetic-up-2-parser
   (consecutive (lambda (var type-spec from by to)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(from by to)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'from-parser 'upfrom-parser)
-	       'by-parser
-	       (alternative 'to-parser 'upto-parser 'below-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(from by to)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'from-parser 'upfrom-parser)
+               'by-parser
+               (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;; Order is TO FROM BY.
 (define-parser arithmetic-up-3-parser
   (consecutive (lambda (var type-spec to from by)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(to from by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'to-parser 'upto-parser 'below-parser)
-	       (alternative 'from-parser 'upfrom-parser)
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(to from by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'to-parser 'upto-parser 'below-parser)
+               (alternative 'from-parser 'upfrom-parser)
+               'by-parser))
 
 ;;; Order is TO BY FROM.
 (define-parser arithmetic-up-4-parser
   (consecutive (lambda (var type-spec to by from)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(to by from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'to-parser 'upto-parser 'below-parser)
-	       'by-parser
-	       (alternative 'from-parser 'upfrom-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(to by from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'to-parser 'upto-parser 'below-parser)
+               'by-parser
+               (alternative 'from-parser 'upfrom-parser)))
 
 ;;; Order is BY FROM TO.
 (define-parser arithmetic-up-5-parser
   (consecutive (lambda (var type-spec by from to)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(by from to)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser
-	       (alternative 'from-parser 'upfrom-parser)
-	       (alternative 'to-parser 'upto-parser 'below-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(by from to)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser
+               (alternative 'from-parser 'upfrom-parser)
+               (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;; Order is BY TO FROM.
 (define-parser arithmetic-up-6-parser
   (consecutive (lambda (var type-spec by to from)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(by to from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser
-	       (alternative 'to-parser 'upto-parser 'below-parser)
-	       (alternative 'from-parser 'upfrom-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(by to from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser
+               (alternative 'to-parser 'upto-parser 'below-parser)
+               (alternative 'from-parser 'upfrom-parser)))
 
 (define-parser three-keyword-up-parser
   (alternative 'arithmetic-up-1-parser
-	       'arithmetic-up-2-parser
-	       'arithmetic-up-3-parser
-	       'arithmetic-up-4-parser
-	       'arithmetic-up-5-parser
-	       'arithmetic-up-6-parser))
+               'arithmetic-up-2-parser
+               'arithmetic-up-3-parser
+               'arithmetic-up-4-parser
+               'arithmetic-up-5-parser
+               'arithmetic-up-6-parser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -290,32 +278,32 @@
 ;;; Order is FROM TO.
 (define-parser arithmetic-up-7-parser
   (consecutive (lambda (var type-spec from to)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'from-parser 'upfrom-parser)
-	       (alternative 'to-parser 'upto-parser 'below-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'from-parser 'upfrom-parser)
+               (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;; Order is TO FROM.
 (define-parser arithmetic-up-8-parser
   (consecutive (lambda (var type-spec to from)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(to from by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'to-parser 'upto-parser 'below-parser)
-	       (alternative 'from-parser 'upfrom-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(to from by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'to-parser 'upto-parser 'below-parser)
+               (alternative 'from-parser 'upfrom-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -326,30 +314,30 @@
 ;;; Order is FROM BY.
 (define-parser arithmetic-up-9-parser
   (consecutive (lambda (var type-spec from by)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(from by to)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :by-form by))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'from-parser 'upfrom-parser)
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(from by to)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :by-form by))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'from-parser 'upfrom-parser)
+               'by-parser))
 
 ;;; Order is BY FROM.
 (define-parser arithmetic-up-10-parser
   (consecutive (lambda (var type-spec by from)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(by from to)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :by-form by))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser
-	       (alternative 'from-parser 'upfrom-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(by from to)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :by-form by))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser
+               (alternative 'from-parser 'upfrom-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -360,40 +348,40 @@
 ;;; Order is TO BY.
 (define-parser arithmetic-up-11-parser
   (consecutive (lambda (var type-spec to by)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(to by from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'to-parser 'upto-parser 'below-parser)
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(to by from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'to-parser 'upto-parser 'below-parser)
+               'by-parser))
 
 ;;; Order is BY TO.
 (define-parser arithmetic-up-12-parser
   (consecutive (lambda (var type-spec by to)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(by to from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser
-	       (alternative 'to-parser 'upto-parser 'below-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(by to from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser
+               (alternative 'to-parser 'upto-parser 'below-parser)))
 
 (define-parser two-keyword-up-parser
   (alternative 'arithmetic-up-7-parser
-	       'arithmetic-up-8-parser
-	       'arithmetic-up-9-parser
-	       'arithmetic-up-10-parser
-	       'arithmetic-up-11-parser
-	       'arithmetic-up-12-parser))
+               'arithmetic-up-8-parser
+               'arithmetic-up-9-parser
+               'arithmetic-up-10-parser
+               'arithmetic-up-11-parser
+               'arithmetic-up-12-parser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -402,14 +390,14 @@
 
 (define-parser arithmetic-up-13-parser
   (consecutive (lambda (var type-spec from)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'from-parser 'upfrom-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'from-parser 'upfrom-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -418,15 +406,15 @@
 
 (define-parser arithmetic-up-14-parser
   (consecutive (lambda (var type-spec to)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(to from by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :end-form (cdr to)
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'to-parser 'upto-parser 'below-parser)))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(to from by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :end-form (cdr to)
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -435,19 +423,19 @@
 
 (define-parser arithmetic-up-15-parser
   (consecutive (lambda (var type-spec by)
-		 (make-instance 'for-as-arithmetic-up
-		   :order '(by to from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :by-form by))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-up
+                   :order '(by to from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :by-form by))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser))
 
 (define-parser one-keyword-up-parser
   (alternative 'arithmetic-up-13-parser
-	       'arithmetic-up-14-parser
-	       'arithmetic-up-15-parser))
+               'arithmetic-up-14-parser
+               'arithmetic-up-15-parser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -465,280 +453,280 @@
 ;;; FROM/DOWNFROM - DOWNTO/ABOVE - BY
 (define-parser arithmetic-down-1-parser
   (consecutive (lambda (var type-spec from to by)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'from-parser 'downfrom-parser)
-	       (alternative 'downto-parser 'above-parser)
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'from-parser 'downfrom-parser)
+               (alternative 'downto-parser 'above-parser)
+               'by-parser))
 
 ;;; FROM/DOWNFROM - BY - DOWNTO/ABOVE
 (define-parser arithmetic-down-2-parser
   (consecutive (lambda (var type-spec from by to)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(from by to)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'from-parser 'downfrom-parser)
-	       'by-parser
-	       (alternative 'downto-parser 'above-parser)))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(from by to)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'from-parser 'downfrom-parser)
+               'by-parser
+               (alternative 'downto-parser 'above-parser)))
 
 ;;; DOWNTO/ABOVE - FROM/DOWNFROM - BY
 (define-parser arithmetic-down-3-parser
   (consecutive (lambda (var type-spec to from by)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(to from by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'downto-parser 'above-parser)
-	       (alternative 'from-parser 'downfrom-parser)
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(to from by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'downto-parser 'above-parser)
+               (alternative 'from-parser 'downfrom-parser)
+               'by-parser))
 
 ;;; DOWNTO/ABOVE - BY - FROM/DOWNFROM
 (define-parser arithmetic-down-4-parser
   (consecutive (lambda (var type-spec to by from)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(to by from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'downto-parser 'above-parser)
-	       'by-parser
-	       (alternative 'from-parser 'downfrom-parser)))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(to by from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'downto-parser 'above-parser)
+               'by-parser
+               (alternative 'from-parser 'downfrom-parser)))
 
 ;;; BY- FROM/DOWNFROM - DOWNTO/ABOVE
 (define-parser arithmetic-down-5-parser
   (consecutive (lambda (var type-spec by from to)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(by from to)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser
-	       (alternative 'from-parser 'downfrom-parser)
-	       (alternative 'downto-parser 'above-parser)))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(by from to)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser
+               (alternative 'from-parser 'downfrom-parser)
+               (alternative 'downto-parser 'above-parser)))
 
 ;;; BY- DOWNTO/ABOVE - FROM/DOWNFROM
 (define-parser arithmetic-down-6-parser
   (consecutive (lambda (var type-spec by to from)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(by to from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser
-	       (alternative 'downto-parser 'above-parser)
-	       (alternative 'from-parser 'downfrom-parser)))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(by to from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser
+               (alternative 'downto-parser 'above-parser)
+               (alternative 'from-parser 'downfrom-parser)))
 
 ;;; DOWNFROM - TO/DOWNTO/ABOVE - BY
 (define-parser arithmetic-down-7-parser
   (consecutive (lambda (var type-spec from to by)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'downfrom-parser
-	       (alternative 'to-parser 'downto-parser 'above-parser)
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'downfrom-parser
+               (alternative 'to-parser 'downto-parser 'above-parser)
+               'by-parser))
 
 ;;; DOWNFROM - BY - TO/DOWNTO/ABOVE
 (define-parser arithmetic-down-8-parser
   (consecutive (lambda (var type-spec from by to)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(from by to)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'downfrom-parser
-	       'by-parser
-	       (alternative 'to-parser 'downto-parser 'above-parser)))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(from by to)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'downfrom-parser
+               'by-parser
+               (alternative 'to-parser 'downto-parser 'above-parser)))
 
 ;;; TO/DOWNTO/ABOVE - DOWNFROM - BY
 (define-parser arithmetic-down-9-parser
   (consecutive (lambda (var type-spec to from by)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(to from by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'to-parser 'downto-parser 'above-parser)
-	       'downfrom-parser
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(to from by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'to-parser 'downto-parser 'above-parser)
+               'downfrom-parser
+               'by-parser))
 
 ;;; TO/DOWNTO/ABOVE - BY - DOWNFROM
 (define-parser arithmetic-down-10-parser
   (consecutive (lambda (var type-spec to by from)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(to by from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'to-parser 'downto-parser 'above-parser)
-	       'by-parser
-	       'downfrom-parser))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(to by from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'to-parser 'downto-parser 'above-parser)
+               'by-parser
+               'downfrom-parser))
 
 ;;; BY- DOWNFROM - TO/DOWNTO/ABOVE
 (define-parser arithmetic-down-11-parser
   (consecutive (lambda (var type-spec by from to)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(by from to)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser
-	       'downfrom-parser
-	       (alternative 'to-parser 'downto-parser 'above-parser)))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(by from to)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser
+               'downfrom-parser
+               (alternative 'to-parser 'downto-parser 'above-parser)))
 
 ;;; BY- TO/DOWNTO/ABOVE - DOWNFROM
 (define-parser arithmetic-down-12-parser
   (consecutive (lambda (var type-spec by to from)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(by to from)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :by-form by
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'by-parser
-	       (alternative 'to-parser 'downto-parser 'above-parser)
-	       'downfrom-parser))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(by to from)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :by-form by
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'by-parser
+               (alternative 'to-parser 'downto-parser 'above-parser)
+               'downfrom-parser))
 
 ;;; FROM/DOWNFROM - DOWNTO/ABOVE
 (define-parser arithmetic-down-13-parser
   (consecutive (lambda (var type-spec from to)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       (alternative 'from-parser 'downfrom-parser)
-	       (alternative 'downto-parser 'above-parser)))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               (alternative 'from-parser 'downfrom-parser)
+               (alternative 'downto-parser 'above-parser)))
 
 ;;; DOWNFROM - TO/DOWNTO
 (define-parser arithmetic-down-14-parser
   (consecutive (lambda (var type-spec from to)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :end-form (cdr to)
-		   :termination-test (car to)))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'downfrom-parser
-	       (alternative 'downto-parser 'to-parser)))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :end-form (cdr to)
+                   :termination-test (car to)))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'downfrom-parser
+               (alternative 'downto-parser 'to-parser)))
 
 ;;; DOWNFROM - BY
 (define-parser arithmetic-down-15-parser
   (consecutive (lambda (var type-spec from by)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from
-		   :by-form by))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'downfrom-parser
-	       'by-parser))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from
+                   :by-form by))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'downfrom-parser
+               'by-parser))
 
 ;;; DOWNFROM
 (define-parser arithmetic-down-16-parser
   (consecutive (lambda (var type-spec from)
-		 (make-instance 'for-as-arithmetic-down
-		   :order '(from to by)
-		   :var-spec var
-		   :type-spec type-spec
-		   :start-form from))
-	       'simple-var-parser
-	       'optional-type-spec-parser
-	       'downfrom-parser))
+                 (make-instance 'for-as-arithmetic-down
+                   :order '(from to by)
+                   :var-spec var
+                   :type-spec type-spec
+                   :start-form from))
+               'simple-var-parser
+               'optional-type-spec-parser
+               'downfrom-parser))
 
 (define-parser three-keyword-down-parser
   (alternative 'arithmetic-down-1-parser
-	       'arithmetic-down-2-parser
-	       'arithmetic-down-3-parser
-	       'arithmetic-down-4-parser
-	       'arithmetic-down-5-parser
-	       'arithmetic-down-6-parser
-	       'arithmetic-down-7-parser
-	       'arithmetic-down-8-parser
-	       'arithmetic-down-9-parser
-	       'arithmetic-down-10-parser
-	       'arithmetic-down-11-parser
-	       'arithmetic-down-12-parser
-	       'arithmetic-down-13-parser
-	       'arithmetic-down-14-parser
-	       'arithmetic-down-15-parser
-	       'arithmetic-down-16-parser))
+               'arithmetic-down-2-parser
+               'arithmetic-down-3-parser
+               'arithmetic-down-4-parser
+               'arithmetic-down-5-parser
+               'arithmetic-down-6-parser
+               'arithmetic-down-7-parser
+               'arithmetic-down-8-parser
+               'arithmetic-down-9-parser
+               'arithmetic-down-10-parser
+               'arithmetic-down-11-parser
+               'arithmetic-down-12-parser
+               'arithmetic-down-13-parser
+               'arithmetic-down-14-parser
+               'arithmetic-down-15-parser
+               'arithmetic-down-16-parser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -752,9 +740,9 @@
 
 (define-parser for-as-arithmetic-parser
   (alternative 'three-keyword-up-parser
-	       'three-keyword-down-parser
-	       'two-keyword-up-parser
-	       'one-keyword-up-parser))
+               'three-keyword-down-parser
+               'two-keyword-up-parser
+               'one-keyword-up-parser))
 
 (add-for-as-subclause-parser 'for-as-arithmetic-parser)
 
@@ -765,41 +753,41 @@
 (defmethod initial-bindings ((clause for-as-arithmetic))
   (let ((order (order clause)))
     (cond ((equal order '(from to by))
-	   `((,(start-var clause) ,(start-form clause))
-	     ,@(if (null (end-form clause))
-		   '()
-		   `((,(end-var clause) ,(end-form clause))))
-	     (,(by-var clause) ,(by-form clause))))
-	  ((equal order '(from by to))
-	   `((,(start-var clause) ,(start-form clause))
-	     (,(by-var clause) ,(by-form clause))
-	     ,@(if (null (end-form clause))
-		   '()
-		   `((,(end-var clause) ,(end-form clause))))))
-	  ((equal order '(to from by))
-	   `(,@(if (null (end-form clause))
-		   '()
-		   `((,(end-var clause) ,(end-form clause))))
-	     (,(start-var clause) ,(start-form clause))
-	     (,(by-var clause) ,(by-form clause))))
-	  ((equal order '(to by from))
-	   `(,@(if (null (end-form clause))
-		   '()
-		   `((,(end-var clause) ,(end-form clause))))
-	     (,(by-var clause) ,(by-form clause))
-	     (,(start-var clause) ,(start-form clause))))
-	  ((equal order '(by from to))
-	   `((,(by-var clause) ,(by-form clause))
-	     (,(start-var clause) ,(start-form clause))
-	     ,@(if (null (end-form clause))
-		   '()
-		   `((,(end-var clause) ,(end-form clause))))))
-	  ((equal order '(by to from))
-	   `((,(by-var clause) ,(by-form clause))
-	     ,@(if (null (end-form clause))
-		   '()
-		   `((,(end-var clause) ,(end-form clause))))
-	     (,(start-var clause) ,(start-form clause)))))))
+           `((,(start-var clause) ,(start-form clause))
+             ,@(if (null (end-form clause))
+                   '()
+                   `((,(end-var clause) ,(end-form clause))))
+             (,(by-var clause) ,(by-form clause))))
+          ((equal order '(from by to))
+           `((,(start-var clause) ,(start-form clause))
+             (,(by-var clause) ,(by-form clause))
+             ,@(if (null (end-form clause))
+                   '()
+                   `((,(end-var clause) ,(end-form clause))))))
+          ((equal order '(to from by))
+           `(,@(if (null (end-form clause))
+                   '()
+                   `((,(end-var clause) ,(end-form clause))))
+             (,(start-var clause) ,(start-form clause))
+             (,(by-var clause) ,(by-form clause))))
+          ((equal order '(to by from))
+           `(,@(if (null (end-form clause))
+                   '()
+                   `((,(end-var clause) ,(end-form clause))))
+             (,(by-var clause) ,(by-form clause))
+             (,(start-var clause) ,(start-form clause))))
+          ((equal order '(by from to))
+           `((,(by-var clause) ,(by-form clause))
+             (,(start-var clause) ,(start-form clause))
+             ,@(if (null (end-form clause))
+                   '()
+                   `((,(end-var clause) ,(end-form clause))))))
+          ((equal order '(by to from))
+           `((,(by-var clause) ,(by-form clause))
+             ,@(if (null (end-form clause))
+                   '()
+                   `((,(end-var clause) ,(end-form clause))))
+             (,(start-var clause) ,(start-form clause)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -808,11 +796,11 @@
 (defmethod wrap-subclause ((subclause for-as-arithmetic) inner-form)
   (if (null (var-spec subclause))
       `(let ((,(temp-var subclause) ,(start-var subclause)))
-	 ,inner-form)
+         ,inner-form)
       `(let ((,(temp-var subclause) ,(start-var subclause))
-	     (,(var-spec subclause) ,(start-var subclause)))
-	 (declare (cl:type ,(type-spec subclause) ,(var-spec subclause)))
-	 ,inner-form)))
+             (,(var-spec subclause) ,(start-var subclause)))
+         (declare (cl:type ,(type-spec subclause) ,(var-spec subclause)))
+         ,inner-form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -822,19 +810,19 @@
   (if (null (termination-test clause))
       `(incf ,(temp-var clause) ,(by-var clause))
       `(if (,(termination-test clause)
-	    ,(temp-var clause)
-	    ,(end-var clause))
-	   (incf ,(temp-var clause) ,(by-var clause))
-	   (go ,end-tag))))
+            ,(temp-var clause)
+            ,(end-var clause))
+           (incf ,(temp-var clause) ,(by-var clause))
+           (go ,end-tag))))
 
 (defmethod prologue-form ((clause for-as-arithmetic-down) end-tag)
   (if (null (termination-test clause))
       `(decf ,(temp-var clause) ,(by-var clause))
       `(if (,(termination-test clause)
-	    ,(end-var clause)
-	    ,(temp-var clause))
-	   (decf ,(temp-var clause) ,(by-var clause))
-	   (go ,end-tag))))
+            ,(end-var clause)
+            ,(temp-var clause))
+           (decf ,(temp-var clause) ,(by-var clause))
+           (go ,end-tag))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -844,17 +832,17 @@
   (if (null (termination-test clause))
       nil
       `(unless (,(termination-test clause)
-		,(temp-var clause)
-		,(end-var clause))
-	 (go ,end-tag))))
+                ,(temp-var clause)
+                ,(end-var clause))
+         (go ,end-tag))))
 
 (defmethod termination-form ((clause for-as-arithmetic-down) end-tag)
   (if (null (termination-test clause))
       nil
       `(unless (,(termination-test clause)
-		,(end-var clause)
-		,(temp-var clause))
-	 (go ,end-tag))))
+                ,(end-var clause)
+                ,(temp-var clause))
+         (go ,end-tag))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -864,10 +852,10 @@
   (if (null (var-spec clause))
       `(incf ,(temp-var clause) ,(by-var clause))
       `(progn (setq ,(var-spec clause) ,(temp-var clause))
-	      (incf ,(temp-var clause) ,(by-var clause)))))
+              (incf ,(temp-var clause) ,(by-var clause)))))
 
 (defmethod step-form ((clause for-as-arithmetic-down))
   (if (null (var-spec clause))
       `(decf ,(temp-var clause) ,(by-var clause))
       `(progn (setq ,(var-spec clause) ,(temp-var clause))
-	      (decf ,(temp-var clause) ,(by-var clause)))))
+              (decf ,(temp-var clause) ,(by-var clause)))))

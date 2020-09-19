@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -35,15 +23,15 @@
   (multiple-value-bind (temp-vars dictionary)
       (fresh-variables (var-spec clause))
     (reinitialize-instance clause
-			   :temp-vars temp-vars
-			   :dictionary dictionary)))
+                           :temp-vars temp-vars
+                           :dictionary dictionary)))
 
 ;;; The FOR-AS-ACROSS clasue binds all the variables in the VAR-SPEC
 ;;; of the clause, so this method should return a list of all those
 ;;; variables.
 (defmethod bound-variables ((clause for-as-across))
   (mapcar #'car
-	  (extract-variables (var-spec clause) nil)))
+          (extract-variables (var-spec clause) nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -51,15 +39,15 @@
 
 (define-parser for-as-across-parser
   (consecutive (lambda (var type-spec across vector-form)
-		 (declare (ignore across))
-		 (make-instance 'for-as-across
-		   :var-spec var
-		   :type-spec type-spec
-		   :vector-form vector-form))
-	       'anything-parser
-	       'optional-type-spec-parser
-	       (keyword-parser 'across)
-	       'anything-parser))
+                 (declare (ignore across))
+                 (make-instance 'for-as-across
+                   :var-spec var
+                   :type-spec type-spec
+                   :vector-form vector-form))
+               'anything-parser
+               'optional-type-spec-parser
+               (keyword-parser 'across)
+               'anything-parser))
 
 (add-for-as-subclause-parser 'for-as-across-parser)
 
@@ -74,7 +62,7 @@
 (defmethod final-bindings ((clause for-as-across))
   `((,(length-var clause) (length ,(form-var clause)))
     ,@(loop for (real-var) in (dictionary clause)
-	    collect `(,real-var nil))))
+            collect `(,real-var nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -82,9 +70,9 @@
 
 (defmethod declarations ((clause for-as-across))
   (loop with d-var-spec = (var-spec clause)
-	with d-type-spec = (type-spec clause)
-	for (variable type) in (extract-variables d-var-spec d-type-spec)
-	collect `(cl:type (or null ,type) ,variable)))
+        with d-type-spec = (type-spec clause)
+        for (variable type) in (extract-variables d-var-spec d-type-spec)
+        collect `(cl:type (or null ,type) ,variable)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -92,10 +80,10 @@
 
 (defmethod prologue-form ((clause for-as-across) end-tag)
   `(progn ,(termination-form clause end-tag)
-	  ,(generate-assignments (var-spec clause)
-				 `(aref ,(form-var clause)
-					,(index-var clause)))
-	  (incf ,(index-var clause))))
+          ,(generate-assignments (var-spec clause)
+                                 `(aref ,(form-var clause)
+                                        ,(index-var clause)))
+          (incf ,(index-var clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -111,6 +99,6 @@
 
 (defmethod step-form ((clause for-as-across))
   `(progn ,(generate-assignments (var-spec clause)
-				 `(aref ,(form-var clause)
-					,(index-var clause)))
-	  (incf ,(index-var clause))))
+                                 `(aref ,(form-var clause)
+                                        ,(index-var clause)))
+          (incf ,(index-var clause))))
