@@ -42,6 +42,6 @@
     (client global-environment)))
 
 (defmethod fdefinition (client (environment trucler-reference:environment) name)
-  (warn "Function FDEFINITION called with a lexical environment")
+  (warn "Function FDEFINITION called with a lexical environment and name: ~s" name)
   (let ((global-environment (trucler:global-environment client environment)))
     (fdefinition client global-environment name)))
