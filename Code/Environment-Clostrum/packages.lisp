@@ -10,6 +10,8 @@
            unless (member symbol '(clostrum:run-time-environment
                                    clostrum:compilation-environment))
              collect (symbol-name symbol)))
+  (:import-from #:clostrum/virtual
+                #:function-cell)
   (:export #:global-environment
            #:client
            #:method-combination-template
@@ -35,6 +37,7 @@
            #:type
            #:value
            #:find-method-combination-template
+           #:function-cell
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
