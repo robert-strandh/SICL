@@ -19,7 +19,7 @@
            #:run-time-environment
            #:evaluation-environment
            #:compilation-environment
-           #:function-descriptino
+           #:function-description
            #:simple-function-description
            #:generic-function-description
            #:lambda-list
