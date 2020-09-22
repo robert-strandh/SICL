@@ -3,5 +3,5 @@
 (defmacro loop (&rest forms)
   (let ((end-tag (gensym)))
     `(macrolet ((loop-finish ()
-		  `(go ,',end-tag)))
+                  `(go ,',end-tag)))
        ,(sicl-loop::expand-body forms end-tag))))

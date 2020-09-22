@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;; A parser is a function that takes a list of tokens to parse, and
@@ -34,14 +22,14 @@
 (defun parse-trace-output (format-control &rest arguments)
   (when *parse-trace-p*
     (format *trace-output*
-	    (make-string (* 2 *indent-level*) :initial-element #\Space))
+            (make-string (* 2 *indent-level*) :initial-element #\Space))
     (apply #'format *trace-output* format-control arguments)))
 
 (defun trace-parser (name parser tokens)
   (let ((*indent-level* (1+ *indent-level*)))
     (parse-trace-output "trying ~s on ~s~%" name tokens)
     (multiple-value-bind (successp result rest)
-	(funcall parser tokens)
+        (funcall parser tokens)
       (parse-trace-output "~asuccess~%" (if successp "" "no "))
       (values successp result rest))))
 
@@ -52,15 +40,15 @@
      ;; warnings at compile time saying the function does not exist. 
      (eval-when (:compile-toplevel)
        (setf (fdefinition ',name)
-	     (lambda (tokens)
-	       (declare (ignore tokens))
-	       (error "Undefined parser: ~s" ',name))))
+             (lambda (tokens)
+               (declare (ignore tokens))
+               (error "Undefined parser: ~s" ',name))))
      ;; At load time, we set the FDEFINITION of the name to the
      ;; result of executing BODY.
      (eval-when (:load-toplevel :execute)
        (setf (fdefinition ',name)
-	     (lambda (tokens)
-	       (trace-parser ',name (progn ,@body) tokens))))))
+             (lambda (tokens)
+               (trace-parser ',name (progn ,@body) tokens))))))
 
 ;;; Take a function designator (called the TRANSFORMER) and a
 ;;; predicate P and return a parser Q that invokes the predicate on
@@ -85,16 +73,16 @@
     ;; TAGBODY instead. 
     (block nil
       (let ((remaining-parsers parsers))
-	(tagbody
-	 again
-	   (if (null remaining-parsers)
-	       (return (values nil nil tokens))
-	       (multiple-value-bind (successp result rest)
-		   (funcall (car remaining-parsers) tokens)
-		 (pop remaining-parsers)
-		 (if successp
-		     (return (values t result rest))
-		     (go again)))))))))
+        (tagbody
+         again
+           (if (null remaining-parsers)
+               (return (values nil nil tokens))
+               (multiple-value-bind (successp result rest)
+                   (funcall (car remaining-parsers) tokens)
+                 (pop remaining-parsers)
+                 (if successp
+                     (return (values t result rest))
+                     (go again)))))))))
 
 ;;; Take a function designator (called the COMBINER) and a list of
 ;;; parsers P1, P2, ..., Pn and return a parser Q that invokes every
@@ -108,22 +96,22 @@
     ;; TAGBODY instead. 
     (block nil
       (let ((remaining-tokens tokens)
-	    (remaining-parsers parsers)
-	    (results '()))
-	(tagbody
-	 again
-	   (if (null remaining-parsers)
-	       (return (values t
-			       (apply combiner (reverse results))
-			       remaining-tokens))
-	       (multiple-value-bind (successp result rest)
-		   (funcall (car remaining-parsers) remaining-tokens)
-		 (pop remaining-parsers)
-		 (if successp
-		     (progn (push result results)
-			    (setf remaining-tokens rest)
-			    (go again))
-		     (return (values nil nil tokens))))))))))
+            (remaining-parsers parsers)
+            (results '()))
+        (tagbody
+         again
+           (if (null remaining-parsers)
+               (return (values t
+                               (apply combiner (reverse results))
+                               remaining-tokens))
+               (multiple-value-bind (successp result rest)
+                   (funcall (car remaining-parsers) remaining-tokens)
+                 (pop remaining-parsers)
+                 (if successp
+                     (progn (push result results)
+                            (setf remaining-tokens rest)
+                            (go again))
+                     (return (values nil nil tokens))))))))))
 
 ;;; Take a function designator (called the COMBINER) and a parser P
 ;;; and return a parser Q that invokes P repeatedly until it fails,
@@ -136,19 +124,19 @@
 (defun repeat* (combiner parser)
   (lambda (tokens)
     (let ((remaining-tokens tokens)
-	  (results '()))
+          (results '()))
       (block nil
-	(tagbody
-	 again
-	   (multiple-value-bind (successp result rest)
-	       (funcall parser remaining-tokens)
-	     (if successp
-		 (progn (push result results)
-			(setf remaining-tokens rest)
-			(go again))
-		 (return (values t
-				 (apply combiner (reverse results))
-				 remaining-tokens)))))))))
+        (tagbody
+         again
+           (multiple-value-bind (successp result rest)
+               (funcall parser remaining-tokens)
+             (if successp
+                 (progn (push result results)
+                        (setf remaining-tokens rest)
+                        (go again))
+                 (return (values t
+                                 (apply combiner (reverse results))
+                                 remaining-tokens)))))))))
 
 ;;; Take a function designator (called the COMBINER) and a parser P
 ;;; and return a parser Q that invokes P repeatedly until it fails,
@@ -160,23 +148,23 @@
   (lambda (tokens)
     (let ((results '()))
       (multiple-value-bind (successp result rest)
-	  (funcall parser tokens)
-	(if (not successp)
-	    (values nil nil tokens)
-	    (let ((remaining-tokens rest))
-	      (push result results)
-	      (block nil
-		(tagbody
-		 again 
-		   (multiple-value-bind (successp result rest)
-		       (funcall parser remaining-tokens)
-		     (if successp
-			 (progn (push result results)
-				(setf remaining-tokens rest)
-				(go again))
-			 (return (values t
-					 (apply combiner (reverse results))
-					 remaining-tokens))))))))))))
+          (funcall parser tokens)
+        (if (not successp)
+            (values nil nil tokens)
+            (let ((remaining-tokens rest))
+              (push result results)
+              (block nil
+                (tagbody
+                 again 
+                   (multiple-value-bind (successp result rest)
+                       (funcall parser remaining-tokens)
+                     (if successp
+                         (progn (push result results)
+                                (setf remaining-tokens rest)
+                                (go again))
+                         (return (values t
+                                         (apply combiner (reverse results))
+                                         remaining-tokens))))))))))))
 
 ;;; Take a default value and a parser P and return a parser Q that
 ;;; always succeeds.  Q invokes P once.  If P succeeds, then Q
@@ -186,9 +174,9 @@
 (defun optional (default parser)
   (lambda (tokens)
     (multiple-value-bind (successp result rest)
-	(funcall parser tokens)
+        (funcall parser tokens)
       (if successp
-	  (values t result rest)
-	  (values t default tokens)))))
+          (values t result rest)
+          (values t default tokens)))))
 
 ;;;  LocalWords:  parsers
