@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -31,8 +19,8 @@
 
 (defmethod bound-variables ((subclause for-as-hash))
   (mapcar #'car
-	  (append (extract-variables (var-spec subclause) nil)
-		  (extract-variables (other-var-spec subclause) nil))))
+          (append (extract-variables (var-spec subclause) nil)
+                  (extract-variables (other-var-spec subclause) nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -40,131 +28,131 @@
 
 (define-parser hash-key-parser
   (alternative (keyword-parser 'hash-key)
-	       (keyword-parser 'hash-keys)))
+               (keyword-parser 'hash-keys)))
 
 (define-parser hash-value-parser
   (alternative (keyword-parser 'hash-value)
-	       (keyword-parser 'hash-values)))
+               (keyword-parser 'hash-values)))
 
 (define-parser hash-value-other-parser
   (singleton #'second
-	     (lambda (token)
-	       (and (consp token)
-		    (consp (cdr token))
-		    (null (cddr token))
-		    (symbolp (car token))
-		    (equal (symbol-name (car token)) (string '#:hash-value))))))
+             (lambda (token)
+               (and (consp token)
+                    (consp (cdr token))
+                    (null (cddr token))
+                    (symbolp (car token))
+                    (equal (symbol-name (car token)) (string '#:hash-value))))))
 
 (define-parser hash-key-other-parser
   (singleton #'second
-	     (lambda (token)
-	       (and (consp token)
-		    (consp (cdr token))
-		    (null (cddr token))
-		    (symbolp (car token))
-		    (equal (symbol-name (car token)) (string '#:hash-key))))))
+             (lambda (token)
+               (and (consp token)
+                    (consp (cdr token))
+                    (null (cddr token))
+                    (symbolp (car token))
+                    (equal (symbol-name (car token)) (string '#:hash-key))))))
 
 (define-parser hash-key-using-parser
   (consecutive (lambda (var-spec
-			type-spec
-			being
-			each
-			hash-key
-			of
-			hash-table-form
-			using
-			other)
-		 (declare (ignore being each hash-key of using))
-		 (make-instance 'for-as-hash-key
-		   :var-spec var-spec
-		   :type-spec type-spec
-		   :hash-table-form hash-table-form
-		   :other-var-spec other))
-	       'anything-parser
-	       'optional-type-spec-parser
-	       'being-parser
-	       'each-the-parser
-	       'hash-key-parser
-	       'in-of-parser
-	       'anything-parser
-	       (keyword-parser 'using)
-	       'hash-value-other-parser))
+                        type-spec
+                        being
+                        each
+                        hash-key
+                        of
+                        hash-table-form
+                        using
+                        other)
+                 (declare (ignore being each hash-key of using))
+                 (make-instance 'for-as-hash-key
+                   :var-spec var-spec
+                   :type-spec type-spec
+                   :hash-table-form hash-table-form
+                   :other-var-spec other))
+               'anything-parser
+               'optional-type-spec-parser
+               'being-parser
+               'each-the-parser
+               'hash-key-parser
+               'in-of-parser
+               'anything-parser
+               (keyword-parser 'using)
+               'hash-value-other-parser))
 
 (define-parser hash-key-no-using-parser
   (consecutive (lambda (var-spec
-			type-spec
-			being
-			each
-			hash-key
-			of
-			hash-table-form)
-		 (declare (ignore being each hash-key of))
-		 (make-instance 'for-as-hash-key
-		   :var-spec var-spec
-		   :type-spec type-spec
-		   :hash-table-form hash-table-form
-		   :other-var-spec nil))
-	       'anything-parser
-	       'optional-type-spec-parser
-	       'being-parser
-	       'each-the-parser
-	       'hash-key-parser
-	       'in-of-parser
-	       'anything-parser))
+                        type-spec
+                        being
+                        each
+                        hash-key
+                        of
+                        hash-table-form)
+                 (declare (ignore being each hash-key of))
+                 (make-instance 'for-as-hash-key
+                   :var-spec var-spec
+                   :type-spec type-spec
+                   :hash-table-form hash-table-form
+                   :other-var-spec nil))
+               'anything-parser
+               'optional-type-spec-parser
+               'being-parser
+               'each-the-parser
+               'hash-key-parser
+               'in-of-parser
+               'anything-parser))
 
 (define-parser hash-value-using-parser
   (consecutive (lambda (var-spec
-			type-spec
-			being
-			each
-			hash-key
-			of
-			hash-table-form
-			using
-			other)
-		 (declare (ignore being each hash-key of using))
-		 (make-instance 'for-as-hash-value
-		   :var-spec var-spec
-		   :type-spec type-spec
-		   :hash-table-form hash-table-form
-		   :other-var-spec other))
-	       'anything-parser
-	       'optional-type-spec-parser
-	       'being-parser
-	       'each-the-parser
-	       'hash-value-parser
-	       'in-of-parser
-	       'anything-parser
-	       (keyword-parser 'using)
-	       'hash-key-other-parser))
+                        type-spec
+                        being
+                        each
+                        hash-key
+                        of
+                        hash-table-form
+                        using
+                        other)
+                 (declare (ignore being each hash-key of using))
+                 (make-instance 'for-as-hash-value
+                   :var-spec var-spec
+                   :type-spec type-spec
+                   :hash-table-form hash-table-form
+                   :other-var-spec other))
+               'anything-parser
+               'optional-type-spec-parser
+               'being-parser
+               'each-the-parser
+               'hash-value-parser
+               'in-of-parser
+               'anything-parser
+               (keyword-parser 'using)
+               'hash-key-other-parser))
 
 (define-parser hash-value-no-using-parser
   (consecutive (lambda (var-spec
-			type-spec
-			being
-			each
-			hash-key
-			of
-			hash-table-form)
-		 (declare (ignore being each hash-key of))
-		 (make-instance 'for-as-hash-value
-		   :var-spec var-spec
-		   :type-spec type-spec
-		   :hash-table-form hash-table-form
-		   :other-var-spec nil))
-	       'anything-parser
-	       'optional-type-spec-parser
-	       'being-parser
-	       'each-the-parser
-	       'hash-value-parser
-	       'in-of-parser
-	       'anything-parser))
+                        type-spec
+                        being
+                        each
+                        hash-key
+                        of
+                        hash-table-form)
+                 (declare (ignore being each hash-key of))
+                 (make-instance 'for-as-hash-value
+                   :var-spec var-spec
+                   :type-spec type-spec
+                   :hash-table-form hash-table-form
+                   :other-var-spec nil))
+               'anything-parser
+               'optional-type-spec-parser
+               'being-parser
+               'each-the-parser
+               'hash-value-parser
+               'in-of-parser
+               'anything-parser))
 
 (define-parser for-as-hash-parser
   (alternative 'hash-key-using-parser
-	       'hash-key-no-using-parser
-	       'hash-value-using-parser
-	       'hash-value-no-using-parser))
+               'hash-key-no-using-parser
+               'hash-value-using-parser
+               'hash-value-no-using-parser))
 
 (add-for-as-subclause-parser 'for-as-hash-parser)
 
@@ -181,22 +169,22 @@
 
 (defmethod wrap-subclause ((subclause for-as-hash) inner-form)
   `(let ((,(temp-entry-p-var subclause) nil)
-	 (,(temp-key-var subclause) nil)
-	 (,(temp-value-var subclause) nil)
-	 ,@(loop with d-var-spec = (var-spec subclause)
-		 with d-type-spec = (type-spec subclause)
-		 for (variable) in (extract-variables d-var-spec d-type-spec)
-		 collect `(,variable nil))
-	 ,@(loop with other-var-spec = (other-var-spec subclause)
-		 for (variable) in (extract-variables other-var-spec nil)
-		 collect `(,variable nil)))
+         (,(temp-key-var subclause) nil)
+         (,(temp-value-var subclause) nil)
+         ,@(loop with d-var-spec = (var-spec subclause)
+                 with d-type-spec = (type-spec subclause)
+                 for (variable) in (extract-variables d-var-spec d-type-spec)
+                 collect `(,variable nil))
+         ,@(loop with other-var-spec = (other-var-spec subclause)
+                 for (variable) in (extract-variables other-var-spec nil)
+                 collect `(,variable nil)))
      (declare ,@(loop with d-var-spec = (var-spec subclause)
-		      with d-type-spec = (type-spec subclause)
-		      for (variable type)
-			in (extract-variables d-var-spec d-type-spec)
-		      collect `(cl:type (or null ,type) ,variable)))
+                      with d-type-spec = (type-spec subclause)
+                      for (variable type)
+                        in (extract-variables d-var-spec d-type-spec)
+                      collect `(cl:type (or null ,type) ,variable)))
      (with-hash-table-iterator
-	 (,(iterator-var subclause) ,(hash-table-var subclause))
+         (,(iterator-var subclause) ,(hash-table-var subclause))
        ,inner-form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -205,39 +193,39 @@
 
 (defmethod prologue-form ((subclause for-as-hash-key) end-tag)
   `(progn (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
-	    (setq ,(temp-entry-p-var subclause) entry-p
-		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause) value))
-	  (unless ,(temp-entry-p-var subclause)
-	    (go ,end-tag))
-	  ,(generate-assignments (var-spec subclause)
-				 (temp-key-var subclause))
-	  ,(generate-assignments (other-var-spec subclause)
-				 (temp-value-var subclause))
-	  (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
-	    (setq ,(temp-entry-p-var subclause) entry-p
-		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause) value))))
+              (,(iterator-var subclause))
+            (setq ,(temp-entry-p-var subclause) entry-p
+                  ,(temp-key-var subclause) key
+                  ,(temp-value-var subclause) value))
+          (unless ,(temp-entry-p-var subclause)
+            (go ,end-tag))
+          ,(generate-assignments (var-spec subclause)
+                                 (temp-key-var subclause))
+          ,(generate-assignments (other-var-spec subclause)
+                                 (temp-value-var subclause))
+          (multiple-value-bind (entry-p key value)
+              (,(iterator-var subclause))
+            (setq ,(temp-entry-p-var subclause) entry-p
+                  ,(temp-key-var subclause) key
+                  ,(temp-value-var subclause) value))))
 
 (defmethod prologue-form ((subclause for-as-hash-value) end-tag)
   `(progn (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
-	    (setq ,(temp-entry-p-var subclause) entry-p
-		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause) value))
-	  (unless ,(temp-entry-p-var subclause)
-	    (go ,end-tag))
-	  ,(generate-assignments (var-spec subclause)
-				 (temp-value-var subclause))
-	  ,(generate-assignments (other-var-spec subclause)
-				 (temp-key-var subclause))
-	  (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
-	    (setq ,(temp-entry-p-var subclause) entry-p
-		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause) value))))
+              (,(iterator-var subclause))
+            (setq ,(temp-entry-p-var subclause) entry-p
+                  ,(temp-key-var subclause) key
+                  ,(temp-value-var subclause) value))
+          (unless ,(temp-entry-p-var subclause)
+            (go ,end-tag))
+          ,(generate-assignments (var-spec subclause)
+                                 (temp-value-var subclause))
+          ,(generate-assignments (other-var-spec subclause)
+                                 (temp-key-var subclause))
+          (multiple-value-bind (entry-p key value)
+              (,(iterator-var subclause))
+            (setq ,(temp-entry-p-var subclause) entry-p
+                  ,(temp-key-var subclause) key
+                  ,(temp-value-var subclause) value))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -253,22 +241,22 @@
 
 (defmethod step-form ((subclause for-as-hash-key))
   `(progn ,(generate-assignments (var-spec subclause)
-				 (temp-key-var subclause))
-	  ,(generate-assignments (other-var-spec subclause)
-				 (temp-value-var subclause))
-	  (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
-	    (setq ,(temp-entry-p-var subclause) entry-p
-		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause) value))))
+                                 (temp-key-var subclause))
+          ,(generate-assignments (other-var-spec subclause)
+                                 (temp-value-var subclause))
+          (multiple-value-bind (entry-p key value)
+              (,(iterator-var subclause))
+            (setq ,(temp-entry-p-var subclause) entry-p
+                  ,(temp-key-var subclause) key
+                  ,(temp-value-var subclause) value))))
 
 (defmethod step-form ((subclause for-as-hash-value))
   `(progn ,(generate-assignments (var-spec subclause)
-				 (temp-value-var subclause))
-	  ,(generate-assignments (other-var-spec subclause)
-				 (temp-key-var subclause))
-	  (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
-	    (setq ,(temp-entry-p-var subclause) entry-p
-		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause) value))))
+                                 (temp-value-var subclause))
+          ,(generate-assignments (other-var-spec subclause)
+                                 (temp-key-var subclause))
+          (multiple-value-bind (entry-p key value)
+              (,(iterator-var subclause))
+            (setq ,(temp-entry-p-var subclause) entry-p
+                  ,(temp-key-var subclause) key
+                  ,(temp-value-var subclause) value))))

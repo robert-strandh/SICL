@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -60,8 +48,8 @@
 
 (defmethod bound-variables ((clause for-as-clause))
   (reduce #'append
-	  (mapcar #'bound-variables (subclauses clause))
-	  :from-end t))
+          (mapcar #'bound-variables (subclauses clause))
+          :from-end t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -77,11 +65,11 @@
 
 (defun for-as-subclause-parser (tokens)
   (loop for parser in *for-as-subclause-parsers*
-	do (multiple-value-bind (successp result rest)
-	       (funcall parser tokens)
-	     (when successp
-	       (return (values t result rest))))
-	finally (return (values nil nil tokens))))
+        do (multiple-value-bind (successp result rest)
+               (funcall parser tokens)
+             (when successp
+               (return (values t result rest))))
+        finally (return (values nil nil tokens))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -89,18 +77,18 @@
 
 (define-parser for-as-clause-parser
   (consecutive (lambda (for subclause more-subclauses)
-		 (declare (ignore for))
-		 (make-instance 'for-as-clause
-		   :subclauses (cons subclause more-subclauses)))
-	       (alternative (keyword-parser 'for)
-			    (keyword-parser 'as))
-	       'for-as-subclause-parser
-	       (repeat* #'list
-			(consecutive (lambda (and subclause)
-				       (declare (ignore and))
-				       subclause)
-				     (keyword-parser 'and)
-				     'for-as-subclause-parser))))
+                 (declare (ignore for))
+                 (make-instance 'for-as-clause
+                   :subclauses (cons subclause more-subclauses)))
+               (alternative (keyword-parser 'for)
+                            (keyword-parser 'as))
+               'for-as-subclause-parser
+               (repeat* #'list
+                        (consecutive (lambda (and subclause)
+                                       (declare (ignore and))
+                                       subclause)
+                                     (keyword-parser 'and)
+                                     'for-as-subclause-parser))))
 
 (add-clause-parser 'for-as-clause-parser)
 
@@ -114,11 +102,11 @@
 
 (defmethod initial-bindings ((clause for-as-clause))
   (reduce #'append (mapcar #'initial-bindings (subclauses clause))
-	  :from-end t))
+          :from-end t))
 
 (defmethod final-bindings ((clause for-as-clause))
   (reduce #'append (mapcar #'final-bindings (subclauses clause))
-	  :from-end t))
+          :from-end t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -126,7 +114,7 @@
 
 (defmethod declarations ((clause for-as-clause))
   (reduce #'append (mapcar #'declarations (subclauses clause))
-	  :from-end t))
+          :from-end t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -134,8 +122,8 @@
 
 (defmethod prologue-form ((clause for-as-clause) end-tag)
   `(progn ,@(mapcar (lambda (subclause)
-		      (prologue-form subclause end-tag))
-		    (subclauses clause))))
+                      (prologue-form subclause end-tag))
+                    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -143,8 +131,8 @@
 
 (defmethod termination-form ((clause for-as-clause) end-tag)
   `(progn ,@(mapcar (lambda (subclause)
-		      (termination-form subclause end-tag))
-		    (subclauses clause))))
+                      (termination-form subclause end-tag))
+                    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -152,8 +140,8 @@
 
 (defmethod body-form ((clause for-as-clause) end-tag)
   `(progn ,@(mapcar (lambda (clause)
-		      (body-form clause end-tag))
-		    (subclauses clause))))
+                      (body-form clause end-tag))
+                    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

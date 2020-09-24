@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -22,7 +10,7 @@
 
 (defmethod bound-variables ((subclause for-as-equals-then))
   (mapcar #'car
-	  (extract-variables (var-spec subclause) nil)))
+          (extract-variables (var-spec subclause) nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -30,33 +18,33 @@
 
 (define-parser for-as-equals-then-parser-1
   (consecutive (lambda (var-spec type-spec = form1 then form2)
-		 (declare (ignore = then))
-		 (make-instance 'for-as-equals-then
-		   :var-spec var-spec
-		   :type-spec type-spec
-		   :initial-form form1
-		   :subsequent-form form2))
-	       ;; Accept anything for now.  Analyze later.
-	       'anything-parser
-	       'optional-type-spec-parser
-	       (keyword-parser '=)
-	       'anything-parser
-	       (keyword-parser 'then)
-	       'anything-parser))
+                 (declare (ignore = then))
+                 (make-instance 'for-as-equals-then
+                   :var-spec var-spec
+                   :type-spec type-spec
+                   :initial-form form1
+                   :subsequent-form form2))
+               ;; Accept anything for now.  Analyze later.
+               'anything-parser
+               'optional-type-spec-parser
+               (keyword-parser '=)
+               'anything-parser
+               (keyword-parser 'then)
+               'anything-parser))
 
 (define-parser for-as-equals-then-parser-2
   (consecutive (lambda (var-spec type-spec = form1)
-		 (declare (ignore =))
-		 (make-instance 'for-as-equals-then
-		   :var-spec var-spec
-		   :type-spec type-spec
-		   :initial-form form1
-		   :subsequent-form form1))
-	       ;; Accept anything for now.  Analyze later.
-	       'anything-parser
-	       'optional-type-spec-parser
-	       (keyword-parser '=)
-	       'anything-parser))
+                 (declare (ignore =))
+                 (make-instance 'for-as-equals-then
+                   :var-spec var-spec
+                   :type-spec type-spec
+                   :initial-form form1
+                   :subsequent-form form1))
+               ;; Accept anything for now.  Analyze later.
+               'anything-parser
+               'optional-type-spec-parser
+               (keyword-parser '=)
+               'anything-parser))
 
 ;;; Make sure parser 1 is tried first.  For that, it must be added
 ;;; last.
@@ -69,9 +57,9 @@
 
 (defmethod initial-bindings ((clause for-as-equals-then))
   (loop with d-var-spec = (var-spec clause)
-	with d-type-spec = (type-spec clause)
-	for (variable) in (extract-variables d-var-spec d-type-spec)
-	collect `(,variable nil)))
+        with d-type-spec = (type-spec clause)
+        for (variable) in (extract-variables d-var-spec d-type-spec)
+        collect `(,variable nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -79,9 +67,9 @@
 
 (defmethod declarations ((clause for-as-equals-then))
   (loop with d-var-spec = (var-spec clause)
-	with d-type-spec = (type-spec clause)
-	for (variable type) in (extract-variables d-var-spec d-type-spec)
-	collect `(cl:type (or null ,type) ,variable)))
+        with d-type-spec = (type-spec clause)
+        for (variable type) in (extract-variables d-var-spec d-type-spec)
+        collect `(cl:type (or null ,type) ,variable)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -93,8 +81,8 @@
       (fresh-variables (var-spec clause))
     `(let* ,(destructure-variables temp-tree (initial-form clause))
        (setq ,@(loop for (original . temp) in dictionary
-		     collect original
-		     collect temp)))))
+                     collect original
+                     collect temp)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -105,5 +93,5 @@
       (fresh-variables (var-spec clause))
     `(let* ,(destructure-variables temp-tree (subsequent-form clause))
        (setq ,@(loop for (original . temp) in dictionary
-		     collect original
-		     collect temp)))))
+                     collect original
+                     collect temp)))))
