@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014 - 2015
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;; The purpose of this generic function is to generate a list of all
@@ -123,48 +111,48 @@
 
 (defun accumulation-bindings (clauses)
   (let* ((descriptors
-	   (reduce #'append
-		   (mapcar #'accumulation-variables clauses)))
-	 (equal-fun (lambda (d1 d2)
-		      (and (eq (first d1) (first d2))
-			   (eq (second d1) (second d2)))))
-	 (unique (remove-duplicates descriptors :test equal-fun)))
+           (reduce #'append
+                   (mapcar #'accumulation-variables clauses)))
+         (equal-fun (lambda (d1 d2)
+                      (and (eq (first d1) (first d2))
+                           (eq (second d1) (second d2)))))
+         (unique (remove-duplicates descriptors :test equal-fun)))
     (loop for (name category type) in unique
-	  for initial-value = (cond  ((eq category 'count/sum)
-				      (coerce 0 type))
-				     ((eq category 'always/never)
-				      t)
-				     (t
-				      nil))
-	  collect (if (null name)
-		      `(,*accumulation-variable* ,initial-value)
-		      `(,name ,initial-value))
-	  when (eq category 'list)
-	    collect (if (null name)
-		      `(,*list-tail-accumulation-variable* nil)
-		      `(,(tail-variable name) nil)))))
+          for initial-value = (cond  ((eq category 'count/sum)
+                                      (coerce 0 type))
+                                     ((eq category 'always/never)
+                                      t)
+                                     (t
+                                      nil))
+          collect (if (null name)
+                      `(,*accumulation-variable* ,initial-value)
+                      `(,name ,initial-value))
+          when (eq category 'list)
+            collect (if (null name)
+                      `(,*list-tail-accumulation-variable* nil)
+                      `(,(tail-variable name) nil)))))
 
 (defvar *loop-name*)
 
 (defun prologue-body-epilogue (clauses end-tag)
   (let ((start-tag (gensym)))
     `(tagbody
-	(progn ,@(mapcar (lambda (clause)
-			   (prologue-form clause end-tag))
-			 clauses))
-	,start-tag
-	(progn ,@(mapcar (lambda (clause)
-			   (body-form clause end-tag))
-			 clauses))
-	(progn ,@(mapcar (lambda (clause)
-			   (termination-form clause end-tag))
-			 clauses))
-	(progn ,@(mapcar #'step-form clauses))
-	(go ,start-tag)
-	,end-tag
-	(progn ,@(mapcar #'epilogue-form clauses)
-	       (return-from ,*loop-name*
-		 ,*accumulation-variable*)))))
+        (progn ,@(mapcar (lambda (clause)
+                           (prologue-form clause end-tag))
+                         clauses))
+        ,start-tag
+        (progn ,@(mapcar (lambda (clause)
+                           (body-form clause end-tag))
+                         clauses))
+        (progn ,@(mapcar (lambda (clause)
+                           (termination-form clause end-tag))
+                         clauses))
+        (progn ,@(mapcar #'step-form clauses))
+        (go ,start-tag)
+        ,end-tag
+        (progn ,@(mapcar #'epilogue-form clauses)
+               (return-from ,*loop-name*
+                 ,*accumulation-variable*)))))
 
 ;;; Once the LOOP prologue, the LOOP body, and the LOOP epilogue have
 ;;; all been constructed, a bunch of successive WRAPPERS are applied
@@ -203,8 +191,8 @@
 (defmethod wrap-clause ((clause subclauses-mixin) inner-form)
   (let ((result inner-form))
     (mapc (lambda (subclause)
-	    (setf result (wrap-subclause subclause result)))
-	  (reverse (subclauses clause)))
+            (setf result (wrap-subclause subclause result)))
+          (reverse (subclauses clause)))
     `(let ,(initial-bindings clause)
        ,result)))
 
@@ -214,34 +202,34 @@
 (defun do-clauses (all-clauses end-tag)
   (let ((result (prologue-body-epilogue all-clauses end-tag)))
     (mapc (lambda (clause)
-	    (setf result (wrap-clause clause result)))
-	  (reverse all-clauses))
+            (setf result (wrap-clause clause result)))
+          (reverse all-clauses))
     result))
 
 (defun expand-clauses (all-clauses end-tag)
   (let ((acc (accumulation-bindings all-clauses)))
     `(let (,@(if (member *accumulation-variable* acc :key #'car)
-		 '()
-		 `((,*accumulation-variable* nil)))
-	   ,@acc)
+                 '()
+                 `((,*accumulation-variable* nil)))
+           ,@acc)
        ,(do-clauses all-clauses end-tag))))
 
 (defun expand-body (loop-body end-tag)
   (if (every #'consp loop-body)
       (let ((tag (gensym)))
-	`(block nil
-	   (tagbody
-	      ,tag
-	      ,@loop-body
-	      (go ,tag))))
+        `(block nil
+           (tagbody
+              ,tag
+              ,@loop-body
+              (go ,tag))))
       (let ((clauses (parse-loop-body loop-body)))
-	(analyze-clauses clauses)
-	(let* ((name (if (typep (car clauses) 'name-clause)
-			 (name (car clauses))
-			 nil))
-	       (*loop-name* name)
-	       (*accumulation-variable* (gensym))
-	       (*list-tail-accumulation-variable* (gensym))
-	       (*tail-variables* (make-hash-table :test #'eq)))
-	  `(block ,name
-	     ,(expand-clauses clauses end-tag))))))
+        (analyze-clauses clauses)
+        (let* ((name (if (typep (car clauses) 'name-clause)
+                         (name (car clauses))
+                         nil))
+               (*loop-name* name)
+               (*accumulation-variable* (gensym))
+               (*list-tail-accumulation-variable* (gensym))
+               (*tail-variables* (make-hash-table :test #'eq)))
+          `(block ,name
+             ,(expand-clauses clauses end-tag))))))
