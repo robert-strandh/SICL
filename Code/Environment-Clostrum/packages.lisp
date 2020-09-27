@@ -11,7 +11,8 @@
                                    clostrum:compilation-environment))
              collect (symbol-name symbol)))
   (:import-from #:clostrum/virtual
-                #:function-cell)
+                #:function-cell
+                #:variable-cell)
   (:export #:global-environment
            #:client
            #:method-combination-template
@@ -38,6 +39,7 @@
            #:value
            #:find-method-combination-template
            #:function-cell
+           #:variable-cell
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
