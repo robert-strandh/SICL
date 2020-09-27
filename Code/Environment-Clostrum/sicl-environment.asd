@@ -1,8 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-environment
-  :depends-on (#:trucler
-               #:trucler-reference
+  :depends-on (#:sicl-lexical-environment
                #:clostrum
                #:clostrum/virtual)
   :serial t
