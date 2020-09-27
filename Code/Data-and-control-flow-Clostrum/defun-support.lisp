@@ -16,15 +16,12 @@
                    (make-instance 'sicl-environment:simple-function-description
                      :lambda list ',lambda-list))))
          (eval-when (:load-toplevel :execute)
-           (let* ((,env-var (sicl-environment:global-environment))
-                  (,client-var (sicl-environment:client ,env-var)))
-             (setf (sicl-environment:fdefinition
-                    ,client-var ,env-var ',name)
-                   (lambda ,lambda-list
-                     ,@declarations
-                     ,@(if (null documentation)
-                           '()
-                           (list documentation))
-                     (block ,(if (symbolp name) name (second name))
-                       ,@forms))))
+           (setf (fdefinition ',name)
+                 (lambda ,lambda-list
+                   ,@declarations
+                   ,@(if (null documentation)
+                         '()
+                         (list documentation))
+                   (block ,(if (symbolp name) name (second name))
+                     ,@forms)))
            ',name)))))
