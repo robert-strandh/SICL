@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2015
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;; Recall that in the dictionary entry for LOOP, the HyperSpec says:
@@ -46,19 +34,19 @@
 
 (define-parser selectable-clause-parser
   (alternative 'do-clause-parser
-	       'return-clause-parser
-	       'collect-clause-parser
-	       'append-clause-parser
-	       'nconc-clause-parser
-	       'count-clause-parser
-	       'sum-clause-parser
-	       'maximize-clause-parser
-	       'minimize-clause-parser
-	       'conditional-clause-parser))
+               'return-clause-parser
+               'collect-clause-parser
+               'append-clause-parser
+               'nconc-clause-parser
+               'count-clause-parser
+               'sum-clause-parser
+               'maximize-clause-parser
+               'minimize-clause-parser
+               'conditional-clause-parser))
 
 (define-parser and-selectable-clause-parser
   (consecutive (lambda (and selectable-clause)
-		 (declare (ignore and))
-		 selectable-clause)
-	       (keyword-parser 'and)
-	       'selectable-clause-parser))
+                 (declare (ignore and))
+                 selectable-clause)
+               (keyword-parser 'and)
+               'selectable-clause-parser))

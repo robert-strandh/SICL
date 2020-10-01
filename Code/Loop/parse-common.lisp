@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -20,7 +8,7 @@
 
 (defun keyword-parser (symbol)
   (singleton (constantly symbol)
-	     (lambda (token) (symbol-equal symbol token))))
+             (lambda (token) (symbol-equal symbol token))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -39,7 +27,7 @@
 
 (define-parser each-the-parser
   (alternative (keyword-parser 'each)
-	       (keyword-parser 'the)))
+               (keyword-parser 'the)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -48,7 +36,7 @@
 
 (define-parser in-of-parser
   (alternative (keyword-parser 'in)
-	       (keyword-parser 'of)))
+               (keyword-parser 'of)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -65,9 +53,9 @@
 
 (define-parser compound+
   (repeat+ (lambda (&rest forms)
-	     (cons 'progn forms))
-	   (singleton #'identity #'consp)))
-		      
+             (cons 'progn forms))
+           (singleton #'identity #'consp)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; This parser succeeds whenever the list of tokens is either empty
@@ -92,8 +80,8 @@
 
 (defun non-clause-keyword (tokens)
   (if (or (null tokens)
-	  (member (car tokens) *clause-keywords*
-		  :test #'symbol-equal))
+          (member (car tokens) *clause-keywords*
+                  :test #'symbol-equal))
       (values t nil tokens)
       (values nil nil tokens)))
 
@@ -111,11 +99,11 @@
 
 (defun parse-clause (tokens)
   (loop for parser in *clause-parsers*
-	do (multiple-value-bind (successp result rest)
-	       (funcall parser tokens)
-	     (when successp
-	       (return (values t result rest))))
-	finally (return (values nil nil tokens))))
+        do (multiple-value-bind (successp result rest)
+               (funcall parser tokens)
+             (when successp
+               (return (values t result rest))))
+        finally (return (values nil nil tokens))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -132,14 +120,14 @@
 ;;; Create a list of clauses from the body of the LOOP form.
 (defun parse-loop-body (body)
   (let ((remaining-body body)
-	(clauses '()))
+        (clauses '()))
     (loop until (null remaining-body)
-	  do (multiple-value-bind (success-p clause rest)
-		 (parse-clause remaining-body)
-	       (if success-p
-		   (progn (setf remaining-body rest)
-			  (push clause clauses))
-		   ;; FIXME: this is not the right error to signal.
-		   (error 'expected-keyword-but-found
-			  :found (car rest)))))
+          do (multiple-value-bind (success-p clause rest)
+                 (parse-clause remaining-body)
+               (if success-p
+                   (progn (setf remaining-body rest)
+                          (push clause clauses))
+                   ;; FIXME: this is not the right error to signal.
+                   (error 'expected-keyword-but-found
+                          :found (car rest)))))
     (reverse clauses)))
