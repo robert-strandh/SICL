@@ -1,15 +1,3 @@
-;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;;
-;;;; all rights reserved. 
-;;;;
-;;;; Permission is hereby granted to use this software for any 
-;;;; purpose, including using, modifying, and redistributing it.
-;;;;
-;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
-
 (cl:in-package #:sicl-loop)
 
 ;;; Loop keywords are symbols, but they are not recognized by symbol
@@ -36,18 +24,18 @@
 (defun destructure-variables (d-var-spec form)
   (let ((bindings '()))
     (labels ((traverse (d-var-spec form)
-	       (cond ((null d-var-spec)
-		      nil)
-		     ((symbolp d-var-spec)
-		      (push `(,d-var-spec ,form) bindings))
-		     ((not (consp d-var-spec))
-		      (error 'expected-var-spec-but-found
-			     :found d-var-spec))
-		     (t
-		      (let ((temp (gensym)))
-			(push `(,temp ,form) bindings)
-			(traverse (car d-var-spec) `(list-car ,temp))
-			(traverse (cdr d-var-spec) `(list-cdr ,temp)))))))
+               (cond ((null d-var-spec)
+                      nil)
+                     ((symbolp d-var-spec)
+                      (push `(,d-var-spec ,form) bindings))
+                     ((not (consp d-var-spec))
+                      (error 'expected-var-spec-but-found
+                             :found d-var-spec))
+                     (t
+                      (let ((temp (gensym)))
+                        (push `(,temp ,form) bindings)
+                        (traverse (car d-var-spec) `(list-car ,temp))
+                        (traverse (cdr d-var-spec) `(list-cdr ,temp)))))))
       (traverse d-var-spec form)
       (reverse bindings))))
 
@@ -60,47 +48,47 @@
 (defun fresh-variables (d-var-spec)
   (let* ((dictionary '()))
     (labels ((traverse (d-var-spec)
-	       (cond ((null d-var-spec)
-		      nil)
-		     ((symbolp d-var-spec)
-		      (let ((temp (gensym)))
-			(push (cons d-var-spec temp) dictionary)
-			temp))
-		     (t
-		      (cons (traverse (car d-var-spec))
-			    (traverse (cdr d-var-spec)))))))
+               (cond ((null d-var-spec)
+                      nil)
+                     ((symbolp d-var-spec)
+                      (let ((temp (gensym)))
+                        (push (cons d-var-spec temp) dictionary)
+                        temp))
+                     (t
+                      (cons (traverse (car d-var-spec))
+                            (traverse (cdr d-var-spec)))))))
       (values (traverse d-var-spec)
-	      (reverse dictionary)))))
+              (reverse dictionary)))))
 
 (defun generate-assignments (d-var-spec form)
   (multiple-value-bind (temp-d-var-spec dictionary)
       (fresh-variables d-var-spec)
     `(let* ,(destructure-variables temp-d-var-spec form)
        (setq ,@(loop for (orig-var . temp-var) in dictionary
-		     append `(,orig-var ,temp-var))))))
+                     append `(,orig-var ,temp-var))))))
 
 ;;; Extract variables
 (defun extract-variables (d-var-spec d-type-spec)
   (let ((result '()))
     (labels ((extract-aux (d-var-spec d-type-spec)
-	       (cond ((null d-var-spec)
-		      nil)
-		     ((symbolp d-var-spec)
-		      (push (list d-var-spec (or d-type-spec t)) result))
-		     ((symbolp d-type-spec)
-		      (if (not (consp d-var-spec))
-			  (error 'expected-var-spec-but-found
-				 :found d-var-spec)
-			  (progn (extract-aux (car d-var-spec) d-type-spec)
-				 (extract-aux (cdr d-var-spec) d-type-spec))))
-		     ((not (consp d-var-spec))
-		      (error 'expected-var-spec-but-found
-			     :found d-var-spec))
-		     ((not (consp d-type-spec))
-		      (error 'expected-type-spec-but-found
-			     :found d-type-spec))
-		     (t
-		      (extract-aux (car d-var-spec) (car d-type-spec))
-		      (extract-aux (cdr d-var-spec) (cdr d-type-spec))))))
+               (cond ((null d-var-spec)
+                      nil)
+                     ((symbolp d-var-spec)
+                      (push (list d-var-spec (or d-type-spec t)) result))
+                     ((symbolp d-type-spec)
+                      (if (not (consp d-var-spec))
+                          (error 'expected-var-spec-but-found
+                                 :found d-var-spec)
+                          (progn (extract-aux (car d-var-spec) d-type-spec)
+                                 (extract-aux (cdr d-var-spec) d-type-spec))))
+                     ((not (consp d-var-spec))
+                      (error 'expected-var-spec-but-found
+                             :found d-var-spec))
+                     ((not (consp d-type-spec))
+                      (error 'expected-type-spec-but-found
+                             :found d-type-spec))
+                     (t
+                      (extract-aux (car d-var-spec) (car d-type-spec))
+                      (extract-aux (cdr d-var-spec) (cdr d-type-spec))))))
       (extract-aux d-var-spec d-type-spec)
       result)))
