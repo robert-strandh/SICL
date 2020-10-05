@@ -6,11 +6,12 @@
 
 (defmethod translate-ast
     ((ast ast:fdefinition-ast) lexical-environment)
-  `(env:fdefinition
-    (sicl-environment:client ,*run-time-environment-name*)
-    ,*run-time-environment-name*
-    ,(translate-ast
-      (ast:name-ast ast) lexical-environment)))
+  (let* ((name (ast:value (ast:name-ast ast)))
+         (pair (assoc name *function-cells* :test #'equal)))
+    (when (null pair)
+      (setf pair (cons name (gensym)))
+      (push pair *function-cells*))
+    `(car ,(cdr pair))))
 
 (defmethod translate-ast
     ((ast ast:constant-ast) lexical-environment)
