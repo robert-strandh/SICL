@@ -4,4 +4,4 @@
   (:use #:common-lisp)
   (:export #:remove-useless-instructions
            #:remove-useless-instructions-from
-	   #:instruction-may-be-removed-p))
+           #:instruction-may-be-removed-p))
