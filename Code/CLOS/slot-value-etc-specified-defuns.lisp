@@ -9,7 +9,7 @@
 
 (defun slot-value (object slot-name)
   (with-existing-slot (object slot-name slot slot-value)
-    (slot-value-using-class (class-of object) class object slot)))
+    (slot-value-using-class (class-of object) object slot)))
 
 (defun (setf slot-value) (new-value object slot-name)
   (with-existing-slot (object slot-name slot setf)
