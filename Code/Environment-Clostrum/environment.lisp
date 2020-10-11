@@ -36,12 +36,12 @@
   (client (clostrum:parent environment)))
 
 (defmethod client ((environment trucler-reference:environment))
-  (warn "Function CLIENT called with a lexical environment")
+  #+(or)(warn "Function CLIENT called with a lexical environment")
   (let* ((client (make-instance 'trucler-reference:client))
          (global-environment (trucler:global-environment client environment)))
     (client global-environment)))
 
 (defmethod fdefinition (client (environment trucler-reference:environment) name)
-  (warn "Function FDEFINITION called with a lexical environment and name: ~s" name)
+  #+(or)(warn "Function FDEFINITION called with a lexical environment and name: ~s" name)
   (let ((global-environment (trucler:global-environment client environment)))
     (fdefinition client global-environment name)))
