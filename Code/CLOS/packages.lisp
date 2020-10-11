@@ -77,6 +77,7 @@
    #:with-accessors-expander
    #:defgeneric-expander
    #:defmethod-expander
+   #:parse-defmethod #:canonicalize-specializers
    #:defclass-expander
    ;; Generic functions.
    #:class-direct-subclasses
