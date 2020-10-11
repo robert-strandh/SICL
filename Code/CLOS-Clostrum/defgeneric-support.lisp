@@ -90,15 +90,13 @@
                     '()
                     `(:documentation ,(second documentation-option)))
               :method-combination
-              (sicl-clos:find-method-combination
-               (sicl-clos:class-prototype
+              (find-method-combination
+               (class-prototype
                 (find-class ',generic-function-class-name))
                ',method-combination-name
                ',method-combination-arguments)
-              :generic-function-class
-              (find-class ',generic-function-class-name)
-              :method-class
-              (find-class ',method-class-name)
+              :generic-function-class ',generic-function-class-name
+              :method-class ',method-class-name
               :environment env)))
          ,@(loop for method in methods
                  collect `(defmethod ,name ,@(rest method)))
