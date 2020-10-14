@@ -61,7 +61,7 @@
         append enter-instructions))
 
 (defun layout-program (enter-instruction pane)
-  (loop for hpos = 10 then (+ hpos (+ rack-width horizontal-node-separation))
+  (loop for hpos = 50 then (+ hpos (+ rack-width horizontal-node-separation))
         for rack = (list enter-instruction) then (next-rack rack)
         for dimensions = (loop for inst in rack
                                collect (multiple-value-bind (width height)
