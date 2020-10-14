@@ -8,12 +8,6 @@
              always (null (cleavir-ir:using-instructions output)))))
 
 (defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:save-values-instruction))
-  ;; Remove SAVE-VALUES-INSTRUCTIONs if the saved values are never used.
-  (null (cleavir-ir:using-instructions
-         (first (cleavir-ir:outputs instruction)))))
-
-(defmethod instruction-may-be-removed-p
     ((instruction cleavir-ir:side-effect-mixin))
   nil)
 

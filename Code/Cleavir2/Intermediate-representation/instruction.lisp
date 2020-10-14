@@ -19,8 +19,7 @@
 			 :test #'eq))))
 
 (defmethod (setf inputs) :after (new-inputs instruction)
-  ;; Add this instruction as a using instruction to the existing
-  ;; inputs.
+  ;; Add this instruction as a using instruction to the new inputs.
   (loop for input in (inputs instruction)
 	do (push instruction (using-instructions input))))
 
@@ -55,8 +54,7 @@
 			 :test #'eq))))
 
 (defmethod (setf outputs) :after (new-outputs instruction)
-  ;; Add this instruction as a defining instruction to the existing
-  ;; outputs.
+  ;; Add this instruction as a defining instruction to the new outputs.
   (loop for output in (outputs instruction)
 	do (push instruction (defining-instructions output))))
 
@@ -74,6 +72,25 @@
   (push instruction (defining-instructions new))
   (values))
 
+(defgeneric dynamic-environment-location (instruction))
+
+(defgeneric (setf dynamic-environment-location) (new-location instruction))
+
+(defmethod (setf dynamic-environment-location) :before
+    (new-location instruction)
+  ;; Remove this instruction as a using instruction from the
+  ;; existing dynamic environment.
+  (when (or (slot-boundp instruction '%dynamic-environment-location)
+            (null (dynamic-environment-location instruction)))
+    (let ((location (dynamic-environment-location instruction)))
+      (setf (using-instructions location)
+            (remove instruction (using-instructions location)
+		    :test #'eq)))))
+
+(defmethod (setf dynamic-environment-location) :after (new-location instruction)
+  ;; Add this instruction as a defining instruction to the new dynamic environment.
+  (push instruction (using-instructions new-location)))
+
 (defclass instruction ()
   ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
    (%successors :initform '() :initarg :successors :accessor successors)
@@ -83,7 +100,8 @@
     :initarg :dynamic-environment-location
     :accessor dynamic-environment-location)))
 
-(defmethod initialize-instance :after ((obj instruction) &key input output successor)
+(defmethod initialize-instance :after
+    ((obj instruction) &key input output successor dynamic-environment-location)
   (let ((inputs (if (null input) (inputs obj) (list input)))
         (outputs (if (null output) (outputs obj) (list output)))
         (successors (if (null successor) (successors obj) (list successor))))
@@ -100,6 +118,9 @@
   ;; Add this instruction as a using instruction to its inputs.
   (loop for input in (inputs obj)
 	do (push obj (using-instructions input)))
+  ;; Add this instruction as a using instruction to its dynamic environment.
+  (unless (null dynamic-environment-location)
+    (push obj (using-instructions dynamic-environment-location)))
   ;; Add this instruction as an assigning instruction to its outputs.
   (loop for output in (outputs obj)
 	do (push obj (defining-instructions output)))
