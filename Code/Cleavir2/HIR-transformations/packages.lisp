@@ -3,6 +3,7 @@
 (defpackage #:cleavir-hir-transformations
   (:use #:common-lisp)
   (:export
+   #:eliminate-catches
    #:segregate-only
    #:segregate-lexicals
    #:replace-inputs
