@@ -308,8 +308,7 @@
   (setf (class-default-initargs class) (compute-default-initargs class))
   ;; We set FINALIZED-P to TRUE before allocating the prototype
   ;; instance, because ALLOCATE-INSTANCE checks that the class is
-  ;; finalized and if not, calls FINALIZE-INSTANCE, and we would have
-  ;; an infinite recursion.
+  ;; finalized and if not, signals an error.
   (setf (class-finalized-p class) t)
   (setf (class-prototype class)
         (allocate-class-prototype class)))
