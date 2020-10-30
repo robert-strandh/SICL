@@ -7,7 +7,8 @@
                #:sicl-utilities
                #:sicl-ast-to-hir
                #:sicl-hir-transformations
-               #:sicl-environment)
+               #:sicl-environment
+               #:sicl-data-and-control-flow-support-clostrum)
   :serial t
   :components
   ((:file "packages")
