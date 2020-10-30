@@ -23,17 +23,12 @@
           (remove :method options-and-methods
                   :key #'car :test-not #'eq)))
 
-(defun remove-initial-methods (generic-function)
-  (loop for method in (initial-methods generic-function)
-        do (remove-method generic-function method))
-  (setf (initial-methods generic-function) '()))
-
 ;;; FIXME: We handle the :METHOD option by expanding to a DEFMETHOD,
 ;;; but that is not quite right.  We need to store these methods in a
 ;;; slot of the generic function so that we can remove them when the
 ;;; DEFGENERIC form is reevaluated.
 
-(defun defgeneric-expander (name lambda-list options-and-methods)
+(defun defgeneric-expander (name lambda-list options-and-methods environment)
   (check-defgeneric-options-and-methods options-and-methods)
   (multiple-value-bind (options methods)
       (separate-options-and-methods options-and-methods)
@@ -63,42 +58,41 @@
                  (second method-class-option)))
            (documentation-option
              (assoc :documentation options))
-           (arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
-           (function-type `(function ,arg-type t))
-           (environment-var (gensym)))
-      `(progn (eval-when (:compile-toplevel)
-                (let ((,environment-var (sicl-genv:global-environment)))
-                  (setf (sicl-global-environment:function-lambda-list ',name ,environment-var)
-                        ',lambda-list)
-                  (setf (sicl-global-environment:function-type ',name ,environment-var)
-                        ',function-type)))
-              (eval-when (:load-toplevel :execute)
-                (let* ((env (sicl-global-environment:global-environment))
-                       (fun (ensure-generic-function
-                             ',name
-                             :lambda-list ',lambda-list
-                             ,@(if (null argument-precedence-order)
-                                   '()
-                                   `(:argument-precedence-order ',(rest argument-precedence-order)))
-                             ,@(if (null documentation-option)
-                                   '()
-                                   `(:documentation ,(second documentation-option)))
-                             :method-combination
-                             (sicl-clos:find-method-combination
-                              (sicl-clos:class-prototype
-                               (find-class ',generic-function-class-name))
-                              ',method-combination-name
-                              ',method-combination-arguments)
-                             :generic-function-class
-                             (find-class ',generic-function-class-name)
-                             :method-class
-                             (find-class ',method-class-name)
-                             :environment env)))
-                  (setf (sicl-global-environment:function-lambda-list ',name env)
-                        ',lambda-list)
-                  (setf (sicl-global-environment:function-type ',name env)
-                        ',function-type)
-                  fun))
-              ,@(loop for method in methods
-                      collect `(defmethod ,name ,@(rest method)))
-              (fdefinition ',name)))))
+           (environment-var (gensym))
+           (client-var (gensym)))
+      `(progn
+         (eval-when (:compile-toplevel)
+           (let* ((,environment-var
+                    (sicl-environment:global-environment ,environment))
+                  (client-var (sicl-environment:client ,environment-var)))
+             (setf (sicl-environment:function-description
+                    ,client-var ,environment-var ',name)
+                   (make-instance 'sicl-environment:generic-function-description
+                     :lambda-list ',lambda-list
+                     :class-name ',generic-function-class-name
+                     :method-class-name ',method-class-name
+                     :method-combination-info
+                     '(,method-combination-name ,@method-combination-arguments)))))
+         (eval-when (:load-toplevel :execute)
+           (let* ((env (sicl-environment:global-environment)))
+             (ensure-generic-function
+              ',name
+              :lambda-list ',lambda-list
+              ,@(if (null argument-precedence-order)
+                    '()
+                    `(:argument-precedence-order ',(rest argument-precedence-order)))
+              ,@(if (null documentation-option)
+                    '()
+                    `(:documentation ,(second documentation-option)))
+              :method-combination
+              (find-method-combination
+               (class-prototype
+                (find-class ',generic-function-class-name))
+               ',method-combination-name
+               ',method-combination-arguments)
+              :generic-function-class ',generic-function-class-name
+              :method-class ',method-class-name
+              :environment env)))
+         ,@(loop for method in methods
+                 collect `(defmethod ,name ,@(rest method)))
+         (fdefinition ',name)))))
