@@ -11,10 +11,12 @@
      &rest keys
      &key environment
      &allow-other-keys)
-  (let* ((global-environment (sicl-genv:global-environment environment))
+  (let* ((global-environment (sicl-environment:global-environment environment))
+         (client (sicl-environment:client global-environment))
          (generic-function
-           (if (sicl-genv:fboundp name global-environment)
-               (let ((fun (sicl-genv:fdefinition name global-environment)))
+           (if (sicl-environment:fboundp client global-environment name)
+               (let ((fun (sicl-environment:fdefinition
+                           client global-environment name)))
                  (if (typep fun 'generic-function)
                      fun
                      (error 'type-error
