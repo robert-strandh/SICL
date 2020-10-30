@@ -7,4 +7,4 @@
   (sicl-method-combination:find-method-combination
    method-combination-type-name
    method-combination-options
-   (sicl-genv:global-environment)))
+   (sicl-environment:global-environment)))
