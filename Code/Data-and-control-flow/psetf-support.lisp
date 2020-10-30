@@ -1,13 +1,13 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(defun psetf-expander (environment pairs)
-  (let* ((global-environment (sicl-genv:global-environment environment))
-         (setf-expansions
+(defun psetf-expander (client environment pairs)
+  (let* ((setf-expansions
            ;; Collect the SETF-EXPANSION of each place as a list of the
            ;; values returned by GET-SETF-EXPANSION. 
            (loop for place in pairs by #'cddr
                  collect (multiple-value-list
-                          (sicl-genv:get-setf-expansion place global-environment))))
+                          (sicl-environment:get-setf-expansion
+                           client environment place))))
          (result
            ;; We start by creating the body of the result, which
            ;; contains all the STORE-FORMs, storing the

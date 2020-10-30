@@ -6,4 +6,7 @@
            #:defun-expander
            #:psetf-expander
            #:rotatef-expander
-           #:destructuring-bind-expander))
+           #:destructuring-bind-expander
+           #:special-variable
+           #:constant-variable
+           #:function-cell))
