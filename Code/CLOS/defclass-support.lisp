@@ -276,11 +276,29 @@
                       (append result `(,(car option) ,(cdr option)))))))
     result))
 
-(defun defclass-expander (name superclass-names slot-specifiers options)
-  `(ensure-class ',name
-                 :name ',name
-                 :direct-superclasses
-                 ,(canonicalize-direct-superclass-names superclass-names)
-                 :direct-slots
-                 ,(canonicalize-direct-slot-specs slot-specifiers)
-                 ,@(canonicalize-defclass-options options)))
+(defun defclass-expander
+    (name superclass-names slot-specifiers options environment)
+  (let* ((canonicalized-superclass-names
+           (canonicalize-direct-superclass-names superclass-names))
+         (options (canonicalize-defclass-options options))
+         (quoted-metaclass-name (getf options :metaclass 'standard-class))
+         (env-var (gensym))
+         (client-var (gensym)))
+    `(progn
+       (eval-when (:compile-toplevel)
+         (let* ((,env-var (sicl-environment:global-environment ,environment))
+                (,client-var (sicl-environment:client ,env-var)))
+           (setf (sicl-environment:class-description
+                  ,client-var ,env-var ',name)
+                 (make-instance 'sicl-environment:class-description
+                   :name ',name
+                   :superclass-names ,canonicalized-superclass-names
+                   :metaclass-name ,quoted-metaclass-name))))
+       (eval-when (:load-toplevel :execute)
+         (ensure-class ',name
+                       :name ',name
+                       :direct-superclasses
+                       ,canonicalized-superclass-names
+                       :direct-slots
+                       ,(canonicalize-direct-slot-specs slot-specifiers)
+                       ,@options)))))
