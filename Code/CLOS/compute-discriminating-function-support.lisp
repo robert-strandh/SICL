@@ -253,12 +253,6 @@
 ;;; method or a standard writer method, it replaces it with a method
 ;;; that does a direct instance access according to the relevant class
 ;;; in CLASSES.  Otherwise, it returns the METHOD argument unchanged.
-;;;
-;;; We call the function FIND-ACCESSOR-METHOD-CLASS.  In the final
-;;; system, this function just trampolines to FIND-CLASS.  However,
-;;; during bootstrapping, we need to look for those classes in a
-;;; different environment, so we have a temporary definition of
-;;; FIND-ACCESSOR-METHOD-CLASS during bootstrapping.
 (defun maybe-replace-method (method classes)
   (let ((method-class (class-of method)))
     (flet ((slot-location (direct-slot class)
@@ -269,7 +263,7 @@
                                           :test #'eq)))
                (slot-definition-location effective-slot))))
       (cond ((eq method-class
-                 (find-accessor-method-class 'standard-reader-method))
+                 (find-class 'standard-reader-method))
              (let* ((direct-slot (accessor-method-slot-definition method))
                     (location (slot-location direct-slot (car classes)))
                     (lambda-expression
@@ -280,14 +274,14 @@
                               `(standard-instance-access
                                 (car arguments) ,location)))))
                (make-instance
-                   (find-accessor-method-class 'standard-reader-method)
+                   (find-class 'standard-reader-method)
                  :qualifiers '()
                  :specializers (method-specializers method)
                  :lambda-list (method-lambda-list method)
                  :slot-definition direct-slot
                  :documentation nil
                  :function (compile nil lambda-expression))))
-            ((eq method-class (find-accessor-method-class 'standard-writer-method))
+            ((eq method-class (find-class 'standard-writer-method))
              (let* ((direct-slot (accessor-method-slot-definition method))
                     (location (slot-location direct-slot (cadr classes)))
                     (lambda-expression
@@ -300,7 +294,7 @@
                                       (cadr arguments) ,location)
                                      (car arguments))))))
                (make-instance
-                   (find-accessor-method-class 'standard-writer-method)
+                   (find-class 'standard-writer-method)
                  :qualifiers '()
                  :specializers (method-specializers method)
                  :lambda-list (method-lambda-list method)
@@ -401,15 +395,12 @@
           (compute-applicable-methods-using-classes generic-function classes)
         (when ok
           (when (null applicable-methods)
-            ;; FIXME: Do this better
-            (error "No applicable methods ~s ~s~%"
-                   (generic-function-name generic-function)
-                   arguments))
-          (let* ((effective-method (add-call-cache generic-function
-                                                   classes
-                                                   relevant-classes
-                                                   applicable-methods))
-                 (effective-method-function (compile nil effective-method)))
+            (apply #'no-applicable-method generic-function arguments))
+          (let* ((effective-method-function
+                   (add-call-cache generic-function
+                                   classes
+                                   relevant-classes
+                                   applicable-methods)))
             (set-funcallable-instance-function
              generic-function
              (compute-discriminating-function generic-function))
