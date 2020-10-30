@@ -18,44 +18,24 @@
              (let ((,(car store-vars) ,reader-form))
                ,(if key
                     (if test-p
-                        `(unless (|member test=other key=other|
-                                  'pushnew
-                                  (funcall key ,item-var)
-                                  ,(car store-vars)
-                                  test
-                                  key)
+                        `(unless (member (funcall key ,item-var) ,(car store-vars)
+                                         :test test :key key)
                            (push ,item-var ,(car store-vars)))
                         (if test-not-p
-                            `(unless (|member test-not=other key=other|
-                                      'pushnew
-                                      (funcall key ,item-var)
-                                      ,(car store-vars)
-                                      test-not
-                                      key)
+                            `(unless (member (funcall key ,item-var) ,(car store-vars)
+                                             :test-not test-not :key key)
                                (push ,item-var ,(car store-vars)))
-                            `(unless (|member test=eql key=other|
-                                      'pushnew
-                                      (funcall key ,item-var)
-                                      ,(car store-vars)
-                                      key)
+                            `(unless (member (funcall key ,item-var) ,(car store-vars)
+                                             :key key)
                                (push ,item-var ,(car store-vars)))))
                     (if test-p
-                        `(unless (|member test=other key=identity|
-                                  'pushnew
-                                  ,item-var
-                                  ,(car store-vars)
-                                  test)
+                        `(unless (member ,item-var ,(car store-vars)
+                                         :test test)
                            (push ,item-var ,(car store-vars)))
                         (if test-not-p
-                            `(unless (|member test-not=other key=identity|
-                                      'pushnew
-                                      ,item-var
-                                      ,(car store-vars)
-                                      test-not)
+                            `(unless (member ,item-var ,(car store-vars)
+                                         :test-not test-not)
                                (push ,item-var ,(car store-vars)))
-                            `(unless (|member test=eql key=identity|
-                                      'pushnew
-                                      ,item-var
-                                      ,(car store-vars))
+                            `(unless (member ,item-var ,(car store-vars))
                                (push ,item-var ,(car store-vars))))))
                ,writer-form))))))
