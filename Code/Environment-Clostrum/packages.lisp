@@ -40,6 +40,7 @@
            #:find-method-combination-template
            #:function-cell
            #:variable-cell
+           #:traced-functions
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
