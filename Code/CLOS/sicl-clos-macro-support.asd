@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-clos-macro-support
-  :depends-on (:sicl-global-environment
+  :depends-on (:sicl-environment
                :sicl-clos-package)
   :serial t
   :components
