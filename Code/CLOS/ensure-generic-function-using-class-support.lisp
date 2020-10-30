@@ -6,7 +6,7 @@
      &rest
        all-keyword-arguments
      &key
-       (environment (sicl-genv:global-environment))
+       (environment (sicl-environment:global-environment))
        (generic-function-class
         (find-class 'standard-generic-function t environment))
        (method-class nil method-class-p)
@@ -47,18 +47,20 @@
   (let ((remaining-keys (copy-list all-keyword-arguments)))
     (loop while (remf remaining-keys :generic-function-class))
     (loop while (remf remaining-keys :environment))
-    (setf (sicl-genv:fdefinition function-name environment)
-          (if method-class-p
-              (apply #'make-instance generic-function-class
-                     ;; The AMOP does
-                     :name function-name
-                     :method-class method-class
-                     :method-combination method-combination
-                     remaining-keys)
-              (apply #'make-instance generic-function-class
-                     :name function-name
-                     :method-combination method-combination
-                     remaining-keys)))))
+    (let ((client (sicl-environment:client environment)))
+      (setf (sicl-environment:fdefinition
+             client environment function-name)
+            (if method-class-p
+                (apply #'make-instance generic-function-class
+                       ;; The AMOP does
+                       :name function-name
+                       :method-class method-class
+                       :method-combination method-combination
+                       remaining-keys)
+                (apply #'make-instance generic-function-class
+                       :name function-name
+                       :method-combination method-combination
+                       remaining-keys))))))
 
 (defun ensure-generic-function-using-class-generic-function
     (generic-function
@@ -66,7 +68,7 @@
      &rest
        all-keyword-arguments
      &key
-       (environment (sicl-genv:global-environment))
+       (environment (sicl-environment:global-environment))
        (generic-function-class
         (find-class 'standard-generic-function t environment))
        (method-class nil method-class-p)
