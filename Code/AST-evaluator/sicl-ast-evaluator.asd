@@ -16,7 +16,7 @@
                #:sicl-cons-support-clostrum
                #:sicl-iteration-support
                #:sicl-conditions-support
-               #:sicl-clos-macro-support-clostrum
+               #:sicl-clos-macro-support
                #:sicl-hir-evaluator-clostrum
                #:sicl-run-time
                #:sicl-conditionals-support-clostrum)
