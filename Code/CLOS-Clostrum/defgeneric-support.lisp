@@ -23,11 +23,6 @@
           (remove :method options-and-methods
                   :key #'car :test-not #'eq)))
 
-(defun remove-initial-methods (generic-function)
-  (loop for method in (initial-methods generic-function)
-        do (remove-method generic-function method))
-  (setf (initial-methods generic-function) '()))
-
 ;;; FIXME: We handle the :METHOD option by expanding to a DEFMETHOD,
 ;;; but that is not quite right.  We need to store these methods in a
 ;;; slot of the generic function so that we can remove them when the
