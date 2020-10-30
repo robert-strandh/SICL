@@ -18,7 +18,9 @@
 
 (defclass run-time-environment
     (base-run-time-environment)
-  ((%client :initarg :client :reader client)))
+  ((%client :initarg :client :reader client)
+   (%traced-functions :initform (make-hash-table :test #'equal)
+                      :reader traced-functions)))
 
 (defclass evaluation-environment
     (base-run-time-environment
