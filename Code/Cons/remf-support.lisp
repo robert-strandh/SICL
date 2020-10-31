@@ -1,9 +1,8 @@
 (cl:in-package #:sicl-cons)
 
-(defun remf-expander (env place indicator)
+(defun remf-expander (client env place indicator)
   (multiple-value-bind (vars vals store-vars writer-form reader-form)
-      (let ((global-environment (sicl-genv:global-environment env)))
-        (sicl-genv:get-setf-expansion place global-environment))
+      (sicl-environment:get-setf-expansion client env place)
     (let ((indicator-var (gensym)))
       `(let* (,@(if (null vars)
                     `()
