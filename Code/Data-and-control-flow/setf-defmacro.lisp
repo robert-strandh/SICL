@@ -7,7 +7,7 @@
                                store-variables
                                writer-form
                                reader-form)
-             (sicl-global-environment:get-setf-expansion place env)
+             (get-setf-expansion place env)
            (declare (ignore reader-form))
            `(let* ,(mapcar #'list variables values)
               ;; Optimize a bit when there is only one store variable.
