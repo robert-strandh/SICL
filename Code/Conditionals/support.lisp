@@ -235,16 +235,14 @@
       (cons (list (car vars) (car vals))
             (compute-let*-bindings (cdr vars) (cdr vals)))))
 
-;;; For CCASE, the default is to signal a correctable
-;;; error, allowing a new value to be stored in the
-;;; place passed as argument to CCASE, using the restart
-;;; STORE-VALUE.  We use GET-SETF-EXPANSION so as to
-;;; avoid multiple evaluation of the subforms of the place,
-;;; even though the HyperSpec allows such multiple evaluation.
-(defun ccase-expander (keyplace clauses env)
+;;; For CCASE, the default is to signal a correctable error, allowing
+;;; a new value to be stored in the place passed as argument to CCASE,
+;;; using the restart STORE-VALUE.  We use GET-SETF-EXPANSION so as to
+;;; avoid multiple evaluation of the subforms of the place, even
+;;; though the HyperSpec allows such multiple evaluation.
+(defun ccase-expander (client environment keyplace clauses)
   (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
-      (let ((global-environment (sicl-genv:global-environment env)))
-        (sicl-genv:get-setf-expansion keyplace global-environment))
+      (sicl-environment:get-setf-expansion client environment keyplace)
     (let* ((label (gensym))
            (keys (collect-e/ccase-keys clauses 'ccase))
            (final `(restart-case (error 'ccase-type-error
@@ -350,10 +348,9 @@
 ;;; As with CCASE, the default for CTYPECASE is is to signal a
 ;;; correctable error, and to allow the value to be altered by the
 ;;; STORE-VALUE restart.
-(defun ctypecase-expander (keyplace clauses env)
+(defun ctypecase-expander (client environment keyplace clauses)
   (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
-      (let ((global-environment (sicl-genv:global-environment env)))
-        (sicl-genv:get-setf-expansion keyplace global-environment))
+      (sicl-environment:get-setf-expansion client environment keyplace)
     (let* ((label (gensym))
            (keys (collect-e/ctypecase-keys clauses))
            (final `(restart-case (error 'ctypecase-type-error
