@@ -17,7 +17,7 @@
                #:sicl-iteration-support
                #:sicl-conditions-support
                #:sicl-clos-macro-support
-               #:sicl-hir-evaluator-clostrum
+               #:sicl-hir-evaluator
                #:sicl-run-time
                #:sicl-conditionals-support)
   :serial t
