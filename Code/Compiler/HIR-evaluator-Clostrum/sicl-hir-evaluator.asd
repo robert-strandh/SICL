@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-hir-evaluator-clostrum
+(defsystem #:sicl-hir-evaluator
   :depends-on (#:closer-mop
                #:cleavir2-hir
                #:cleavir2-cst-to-ast
