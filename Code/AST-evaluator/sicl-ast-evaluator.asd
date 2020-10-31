@@ -19,7 +19,7 @@
                #:sicl-clos-macro-support
                #:sicl-hir-evaluator-clostrum
                #:sicl-run-time
-               #:sicl-conditionals-support-clostrum)
+               #:sicl-conditionals-support)
   :serial t
   :components
   ((:file "packages")
