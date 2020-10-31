@@ -5,4 +5,5 @@
   (:export #:method-combination-template
            #:find-method-combination
            #:effective-method-form-function
-           #:define-method-combination-expander))
+           #:define-method-combination-expander
+           #:find-method-combination-template))
