@@ -9,13 +9,11 @@
        
 ;;; We do not support the :ARGUMENTS and :GENERIC-FUNCTION options
 ;;; yet.
-(defun long-form-expander
-    (environment name lambda-list method-group-specifiers body)
+(defun long-form-expander (name lambda-list method-group-specifiers body)
   (let ((lambda-list-variables (lambda-list-variables lambda-list)))
     (multiple-value-bind (declarations documentation forms)
         (cleavir-code-utilities:separate-function-body body)
-      `(let ((template (sicl-genv:find-method-combination-template
-                        ',name (sicl-genv:global-environment))))
+      `(let ((template (find-method-combination-template ',name)))
          (when (null template)
            (setf template
                  (make-instance 'method-combination-template
@@ -30,7 +28,6 @@
                      method-group-specifiers
                      declarations
                      forms)))
-           (setf (sicl-genv:find-method-combination-template
-                  ',name (sicl-genv:global-environment))
+           (setf (find-method-combination-template ',name)
                  template))
          ',name))))
