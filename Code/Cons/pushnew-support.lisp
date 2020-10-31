@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-cons)
 
 (defun pushnew-expander
-    (item place env args key key-p test test-p test-not test-not-p)
+    (client item place env args key key-p test test-p test-not test-not-p)
   (declare (ignorable test test-not))
   (if (and test-p test-not-p)
       (progn (warn 'warn-both-test-and-test-not-given
@@ -9,8 +9,8 @@
              `(error 'both-test-and-test-not-given :name 'pushnew))
       (let ((item-var (gensym)))
         (multiple-value-bind (vars vals store-vars writer-form reader-form)
-            (let ((global-environment (sicl-genv:global-environment env)))
-              (sicl-genv:get-setf-expansion place global-environment))
+            (sicl-environment:get-setf-expansion
+             client env place)
           `(let ((,item-var ,item)
                  ,@(mapcar #'list vars vals)
                  ,@(make-bindings args))
@@ -18,44 +18,24 @@
              (let ((,(car store-vars) ,reader-form))
                ,(if key
                     (if test-p
-                        `(unless (|member test=other key=other|
-                                  'pushnew
-                                  (funcall key ,item-var)
-                                  ,(car store-vars)
-                                  test
-                                  key)
+                        `(unless (member (funcall key ,item-var) ,(car store-vars)
+                                         :test test :key key)
                            (push ,item-var ,(car store-vars)))
                         (if test-not-p
-                            `(unless (|member test-not=other key=other|
-                                      'pushnew
-                                      (funcall key ,item-var)
-                                      ,(car store-vars)
-                                      test-not
-                                      key)
+                            `(unless (member (funcall key ,item-var) ,(car store-vars)
+                                             :test-not test-not :key key)
                                (push ,item-var ,(car store-vars)))
-                            `(unless (|member test=eql key=other|
-                                      'pushnew
-                                      (funcall key ,item-var)
-                                      ,(car store-vars)
-                                      key)
+                            `(unless (member (funcall key ,item-var) ,(car store-vars)
+                                             :key key)
                                (push ,item-var ,(car store-vars)))))
                     (if test-p
-                        `(unless (|member test=other key=identity|
-                                  'pushnew
-                                  ,item-var
-                                  ,(car store-vars)
-                                  test)
+                        `(unless (member ,item-var ,(car store-vars)
+                                         :test test)
                            (push ,item-var ,(car store-vars)))
                         (if test-not-p
-                            `(unless (|member test-not=other key=identity|
-                                      'pushnew
-                                      ,item-var
-                                      ,(car store-vars)
-                                      test-not)
+                            `(unless (member ,item-var ,(car store-vars)
+                                         :test-not test-not)
                                (push ,item-var ,(car store-vars)))
-                            `(unless (|member test=eql key=identity|
-                                      'pushnew
-                                      ,item-var
-                                      ,(car store-vars))
+                            `(unless (member ,item-var ,(car store-vars))
                                (push ,item-var ,(car store-vars))))))
                ,writer-form))))))
