@@ -17,7 +17,7 @@
 ;;; variables, then, it might be possible. 
 
 (defun macroexpand-1
-    (form &optional (env (sicl-global-environment:global-environment)))
+    (form &optional (env (sicl-environment:global-environment)))
   (let ((expander nil))
     (cond ((symbolp form)
 	   (let ((expansion (trucler:symbol-macro-expansion form env)))
