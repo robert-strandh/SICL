@@ -13,7 +13,7 @@
                #:sicl-evaluation-and-compilation-support
                #:sicl-arithmetic
                #:sicl-loop-support
-               #:sicl-cons-support-clostrum
+               #:sicl-cons-support
                #:sicl-iteration-support
                #:sicl-conditions-support
                #:sicl-clos-macro-support
