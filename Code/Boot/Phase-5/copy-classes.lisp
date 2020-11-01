@@ -1,0 +1,13 @@
+(cl:in-package #:sicl-boot-phase-5)
+
+(defun copy-classes (e4 e5)
+  (let ((processedp (make-hash-table :test #'eq))
+        (client4 (env:client e4))
+        (client5 (env:client e5)))
+    (do-all-symbols (symbol)
+      (unless (gethash symbol processedp)
+        (setf (gethash symbol processedp) t)
+        (let ((class (env:find-class client4 e4 symbol)))
+          (unless (null class)
+            (setf (env:find-class client5 e5 symbol)
+                  class)))))))
