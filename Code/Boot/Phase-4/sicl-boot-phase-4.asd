@@ -7,4 +7,6 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "create-additional-generic-functions")
+   (:file "create-additional-classes")
    (:file "boot")))
