@@ -9,5 +9,5 @@
       boot
     (change-class e3 'environment)
     (sicl-boot:create-accessor-defgenerics e5)
-    (sicl-boot:create-mop-classes e5)))
-
+    (sicl-boot:create-mop-classes e5)
+    (create-additional-generic-functions e5)))
