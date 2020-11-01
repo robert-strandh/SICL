@@ -80,5 +80,4 @@
     (ld "Array/setf-vector-fill-pointer-defgeneric.lisp")
     (ld "Package-and-symbol/symbol-name-defgeneric.lisp")
     (ld "Package-and-symbol/symbol-package-defgeneric.lisp")
-    (ld "Arithmetic/sign-and-limb-count-defgeneric.lisp")
     (ld "Compiler/Code-object/generic-functions.lisp")))
