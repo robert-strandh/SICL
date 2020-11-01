@@ -81,6 +81,8 @@
   (import-functions-from-host
    '(;; Numbers
      + - * / < <= = > >= /= floor 1+ 1-
+     plusp minusp
+     logand
      zerop evenp
      ;; CONSes
      cons list list* append make-list copy-list
