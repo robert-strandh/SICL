@@ -46,5 +46,6 @@
          ,code))))
 
 (defun translate-code (client environment cst)
-  (let ((ast (cst-to-ast client cst environment)))
-    (translate-top-level-ast ast)))
+  (let* ((ast1 (cst-to-ast client cst environment))
+         (ast2 (cleavir-ast-transformations:hoist-load-time-value ast1)))
+    (translate-top-level-ast ast2)))
