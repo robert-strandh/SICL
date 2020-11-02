@@ -1,12 +1,6 @@
 (cl:in-package #:sicl-boot-phase-3)
 
 (defun enable-object-allocation (e3)
-  ;; (setf (env:special-operator (env:client e3) e3 'cleavir-primop:nook-write) t)
-  ;; (setf (env:special-operator (env:client e3) e3 'cleavir-primop:nook-read) t)
-  ;; (setf (env:special-operator (env:client e3) e3 'cleavir-primop:standard-object-p) t)
-  ;; (setf (env:special-operator (env:client e3) e3 'cleavir-primop:fixnum-equal) t)
-  ;; (setf (env:special-operator (env:client e3) e3 'cleavir-primop:car) t)
-  ;; (setf (env:special-operator (env:client e3) e3 'cleavir-primop:cdr) t)
   (setf (env:fdefinition (env:client e3) e3 'sicl-clos::allocate-general-instance)
         (lambda (class size)
           (make-instance 'sicl-boot:header
