@@ -6,5 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "enable-object-creation")
    (:file "copy-classes")
+   (:file "update-class-slots")
    (:file "boot")))
