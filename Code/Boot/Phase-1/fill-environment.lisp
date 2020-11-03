@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-0)
+(cl:in-package #:sicl-boot-phase-1)
 
 (defun define-function-global-environment (client environment)
   ;; This function is used by macros in order to find the current

@@ -1,9 +1,10 @@
-(cl:in-package #:sicl-boot-phase-0)
+(cl:in-package #:sicl-boot-phase-1)
 
 (defun boot (boot)
-  (format *trace-output* "Start phase 0~%")
+  (format *trace-output* "Start phase 1~%")
   (with-accessors ((e0 sicl-boot:e0)) boot
-    (change-class e0 'environment)
+    (change-class e0 'environment
+                  :client (make-instance 'client))
     (let ((client (env:client e0)))
       (setf (env:fdefinition client e0 'ast-eval)
             (lambda (ast)

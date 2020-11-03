@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-0)
+(cl:in-package #:sicl-boot-phase-1)
 
 ;;; We need to start using DEFMACRO early on to define macros, and
 ;;; since we don't already have it, we must create it "manually".

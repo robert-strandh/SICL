@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-boot-phase-0
+(defsystem #:sicl-boot-phase-1
   :depends-on (#:sicl-boot-base)
   :serial t
   :components

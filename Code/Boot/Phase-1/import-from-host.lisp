@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-0)
+(cl:in-package #:sicl-boot-phase-1)
 
 (defun import-function (client environment function-name)
   (setf (env:fdefinition client environment function-name)

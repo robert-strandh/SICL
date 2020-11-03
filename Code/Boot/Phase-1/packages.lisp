@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-boot-phase-0
+(defpackage #:sicl-boot-phase-1
   (:use #:common-lisp)
   (:local-nicknames (#:env #:sicl-environment))
   (:import-from #:sicl-boot
