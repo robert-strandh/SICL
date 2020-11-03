@@ -6,26 +6,26 @@
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defmethod sicl-ast-evaluator:translate-ast
-    ((ast cleavir-ast:nook-write-ast) lexical-environment)
+    (client (ast cleavir-ast:nook-write-ast) lexical-environment)
   `(setf (aref (slot-value
                 ,(sicl-ast-evaluator:translate-ast
-                  (cleavir-ast:object-ast ast) lexical-environment)
+                  client (cleavir-ast:object-ast ast) lexical-environment)
                 '%rack)
                ,(sicl-ast-evaluator:translate-ast
-                 (cleavir-ast:nook-number-ast ast) lexical-environment))
+                 client (cleavir-ast:nook-number-ast ast) lexical-environment))
          ,(sicl-ast-evaluator:translate-ast
-           (cleavir-ast:value-ast ast) lexical-environment)))
+           client (cleavir-ast:value-ast ast) lexical-environment)))
 
 (defmethod sicl-ast-evaluator:translate-ast
-    ((ast cleavir-ast:nook-read-ast) lexical-environment)
+    (client (ast cleavir-ast:nook-read-ast) lexical-environment)
   (let ((object-var (gensym))
         (nook-number-var (gensym)))
     `(let ((,nook-number-var
              ,(sicl-ast-evaluator:translate-ast
-               (cleavir-ast:nook-number-ast ast) lexical-environment))
+               client (cleavir-ast:nook-number-ast ast) lexical-environment))
            (,object-var
              ,(sicl-ast-evaluator:translate-ast
-               (cleavir-ast:object-ast ast) lexical-environment)))
+               client (cleavir-ast:object-ast ast) lexical-environment)))
        (if (zerop ,nook-number-var)
            ;; The stamp is asked for
            (flet ((unique-number (class-name)
