@@ -9,7 +9,7 @@
       (setf (env:find-class client e1 't)
             (find-class 't))
       ;; Create classes in E1 that are potential metaclasses for the
-      ;; classes we will create in phase 1.  It doesn't matter much how
+      ;; classes we will create in phase 2.  It doesn't matter much how
       ;; these metaclasses are related by inheritance, so we just make
       ;; them all the same class, i.e. our special metaclass defined
       ;; above.

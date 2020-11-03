@@ -104,7 +104,7 @@
   (load-source-file "CLOS/reinitialize-instance-defmethods.lisp" e4))
 
 ;;; This function defines a version of ENSURE-CLASS to be used in
-;;; phase 3.  The definition of ENSURE-CLASS is made in E5.  This
+;;; phase 4.  The definition of ENSURE-CLASS is made in E5.  This
 ;;; version of ENSURE-CLASS defines a new class in E4.  It also uses
 ;;; E4 to find superclasses of the class to be defined.  E5 is the
 ;;; environment containing the generic functions to which slot reader
@@ -125,7 +125,7 @@
             ;; and we make sure that we always pass the name of a
             ;; metaclass, and never a class metaobject.
             (assert (symbolp metaclass-name))
-            (let (;; In phase 3, the metaclass is a host class to be
+            (let (;; In phase 4, the metaclass is a host class to be
                   ;; found in E3.
                   (metaclass (env:find-class client e3 metaclass-name))
                   ;; The direct superclasses, on the other hand, are to

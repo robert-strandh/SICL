@@ -14,7 +14,7 @@
           (lambda (class)
             (funcall (env:fdefinition (env:client e3) e3 'allocate-instance)
                      class)))
-  ;; These were already loaded in phase 2 because they were needed for
+  ;; These were already loaded in phase 3 because they were needed for
   ;; the finalization of built-in classes.
   ;; (load-source-file "CLOS/class-finalization-defgenerics.lisp" e3)
   ;; (load-source-file "CLOS/class-finalization-defmethods.lisp" e3)

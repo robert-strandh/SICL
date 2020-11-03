@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-phase-2)
 
 ;;; This function defines a version of ENSURE-CLASS to be used in
-;;; phase 1.  The definition of ENSURE-CLASS is made in E3.  This
+;;; phase 2.  The definition of ENSURE-CLASS is made in E3.  This
 ;;; version of ENSURE-CLASS defines a new class in E2.  It also uses
 ;;; E2 to find superclasses of the class to be defined.  E3 is the
 ;;; environment containing the generic functions to which slot reader
