@@ -3,7 +3,7 @@
 (defun prepare-next-phase (e2 e3 e4)
   (setf (env:fdefinition (env:client e4) e4 'sicl-boot:ast-eval)
         (lambda (ast)
-          (let ((code (sicl-ast-evaluator:translate-top-level-ast ast)))
+          (let ((code (sicl-ast-evaluator:translate-top-level-ast (env:client e4) ast)))
             (funcall (compile nil code) e4))))
   (sicl-boot:copy-macro-functions e3 e4)
   (enable-method-combinations e2 e3 e4)

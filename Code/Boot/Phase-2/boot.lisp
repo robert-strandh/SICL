@@ -54,6 +54,6 @@
     (let ((client (env:client e3)))
       (setf (env:fdefinition client e3 'sicl-boot:ast-eval)
             (lambda (ast)
-              (let ((code (sicl-ast-evaluator:translate-top-level-ast ast)))
+              (let ((code (sicl-ast-evaluator:translate-top-level-ast client ast)))
                 (funcall (compile nil code) e3)))))
     (prepare-next-phase boot)))

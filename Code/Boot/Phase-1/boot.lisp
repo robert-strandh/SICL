@@ -10,7 +10,7 @@
     (let ((client (env:client e0)))
       (setf (env:fdefinition client e0 'ast-eval)
             (lambda (ast)
-              (let ((code (sicl-ast-evaluator:translate-top-level-ast ast)))
+              (let ((code (sicl-ast-evaluator:translate-top-level-ast client ast)))
                 (funcall (compile nil code) e0))))
       (setf (env:macro-function client e0 'in-package)
             (lambda (form environment)
