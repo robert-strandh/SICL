@@ -33,7 +33,7 @@
                    (e2 sicl-boot:e2)
                    (e3 sicl-boot:e3)) 
       boot
-    (change-class e2 'environment)
+    (change-class e2 'environment :client (make-instance 'client))
     (import-from-host boot)
     (sicl-boot:copy-macro-functions e0 e3)
     (setf (sicl-boot:overridden-function-cells e3)

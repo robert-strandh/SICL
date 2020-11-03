@@ -16,7 +16,7 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (change-class e4 'environment)
+    (change-class e4 'environment :client (make-instance 'client))
     (setf (sicl-boot:overridden-function-cells e5)
           `((find-class
              . (,(lambda (name)

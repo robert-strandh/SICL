@@ -7,7 +7,7 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (change-class e5 'environment)
+    (change-class e5 'environment :client (make-instance 'client))
     (sicl-boot:create-accessor-defgenerics e5)
     (sicl-boot:create-mop-classes e5)
     (create-additional-generic-functions e5)))

@@ -6,7 +6,7 @@
                    (e3 sicl-boot:e3)
                    (e4 sicl-boot:e4))
       boot
-    (change-class e3 'environment)
+    (change-class e3 'environment :client (make-instance 'client))
     (sicl-boot:create-accessor-defgenerics e3)
     (sicl-boot:create-mop-classes e3)
     (load-source-file "CLOS/class-readers-forward-referenced-class-defmethods.lisp" e3)
