@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-1)
+(cl:in-package #:sicl-boot-phase-2)
 
 (defun import-from-host (boot)
   (with-accessors ((e1 sicl-boot:e1))

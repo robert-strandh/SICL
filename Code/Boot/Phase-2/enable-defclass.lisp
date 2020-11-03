@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-1)
+(cl:in-package #:sicl-boot-phase-2)
 
 ;;; This function defines a version of ENSURE-CLASS to be used in
 ;;; phase 1.  The definition of ENSURE-CLASS is made in E3.  This

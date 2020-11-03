@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-1)
+(cl:in-package #:sicl-boot-phase-2)
 
 ;;; This class will be the metaclass of all the MOP classes defined in
 ;;; E2.  We define it as a subclass of the host
@@ -27,7 +27,7 @@
   t)
 
 (defun boot (boot)
-  (format *trace-output* "Start phase 1~%")
+  (format *trace-output* "Start phase 2~%")
   (with-accessors ((e0 sicl-boot:e0)
                    (e1 sicl-boot:e1)
                    (e2 sicl-boot:e2)

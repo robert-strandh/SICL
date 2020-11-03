@@ -15,7 +15,7 @@
      :validate t
      :if-does-not-exist :ignore)
     (sicl-boot-phase-0:boot boot)
-    (sicl-boot-phase-1:boot boot)
+    (sicl-boot-phase-2:boot boot)
     (sicl-boot-phase-3:boot boot)
     (sicl-boot-phase-4:boot boot)
     (sicl-boot-phase-5:boot boot)

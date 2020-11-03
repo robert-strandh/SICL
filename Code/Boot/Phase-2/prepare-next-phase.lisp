@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-1)
+(cl:in-package #:sicl-boot-phase-2)
 
 (defun prepare-next-phase (boot)
   (with-accessors ((e2 sicl-boot:e2)

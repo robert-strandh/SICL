@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-1)
+(cl:in-package #:sicl-boot-phase-2)
 
 (defun enable-class-initialization (boot)
   (with-accessors ((e3 sicl-boot:e3)) boot
