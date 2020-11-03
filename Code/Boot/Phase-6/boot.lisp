@@ -1,7 +1,7 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun boot (boot)
-  (format *trace-output* "Start phase 5~%")
+  (format *trace-output* "Start phase 6~%")
   (with-accessors ((e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot

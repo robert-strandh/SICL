@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun copy-classes (e4 e5)
   (let ((processedp (make-hash-table :test #'eq))

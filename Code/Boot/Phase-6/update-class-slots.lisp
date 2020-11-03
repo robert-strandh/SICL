@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun update-class-slot (object translation-table)
   (let* ((current-slot-value (slot-value object 'sicl-boot::%class))
