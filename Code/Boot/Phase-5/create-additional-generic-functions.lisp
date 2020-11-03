@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-4)
+(cl:in-package #:sicl-boot-phase-5)
 
 (defun create-additional-generic-functions (e5)
   (load-source-file "Arithmetic/convert-fixnum-to-bignum-defun.lisp" e5)
