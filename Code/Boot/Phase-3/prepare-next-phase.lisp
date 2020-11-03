@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun prepare-next-phase (e2 e3 e4)
   (setf (env:fdefinition (env:client e4) e4 'sicl-boot:ast-eval)
