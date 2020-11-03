@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-4)
 
 (defun define-make-instance (e2)
   ;; We define MAKE-INSTANCE in environment E2 so that it calls the

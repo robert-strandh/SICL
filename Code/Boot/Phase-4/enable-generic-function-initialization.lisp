@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-4)
 
 (defun enable-generic-function-initialization (e2 e3)
   (import-functions-from-host

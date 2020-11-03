@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-4)
 
 (defun enable-defmethod (e3 e4 e5)
   (define-generic-function-class-names e5)
