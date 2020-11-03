@@ -2,10 +2,10 @@
 
 (defvar *run-time-environment-name*)
 
-(defgeneric translate-ast (ast lexical-environment))
+(defgeneric translate-ast (client ast lexical-environment))
 
 (defmethod translate-ast
-    ((ast ast:fdefinition-ast) lexical-environment)
+    (client (ast ast:fdefinition-ast) lexical-environment)
   (let* ((name (ast:value (ast:name-ast ast)))
          (pair (assoc name *function-cells* :test #'equal)))
     (when (null pair)
@@ -14,41 +14,42 @@
     `(car ,(cdr pair))))
 
 (defmethod translate-ast
-    ((ast ast:constant-ast) lexical-environment)
+    (client (ast ast:constant-ast) lexical-environment)
   `',(ast:value ast))
 
 (defmethod translate-ast
-    ((ast ast:lexical-ast) lexical-environment)
+    (client (ast ast:lexical-ast) lexical-environment)
   (find-identifier lexical-environment ast))
 
 (defmethod translate-ast
-    ((ast ast:symbol-value-ast) lexical-environment)
+    (client (ast ast:symbol-value-ast) lexical-environment)
   `(symbol-value
     ,(translate-ast
-      (ast:name-ast ast) lexical-environment)
+      client (ast:name-ast ast) lexical-environment)
     ,*run-time-environment-name*))
 
 (defmethod translate-ast
-    ((ast ast:set-symbol-value-ast) lexical-environment)
+    (client (ast ast:set-symbol-value-ast) lexical-environment)
   `(setf (symbol-value
           ,(translate-ast
-            (ast:name-ast ast) lexical-environment)
+            client (ast:name-ast ast) lexical-environment)
           ,*run-time-environment-name*)
          ,(translate-ast
-           (ast:value-ast ast) lexical-environment)))
+           client (ast:value-ast ast) lexical-environment)))
 
 (defmethod translate-ast
-    ((ast ast:call-ast) lexical-environment)
+    (client (ast ast:call-ast) lexical-environment)
   (let ((arguments-var (gensym)))
     (if (null (cleavir-cst-to-ast:origin ast))
         `(funcall
-          ,(translate-ast (ast:callee-ast ast) lexical-environment)
+          ,(translate-ast client (ast:callee-ast ast) lexical-environment)
           ,@(loop for argument-ast in (ast:argument-asts ast)
                   collect (translate-ast
-                           argument-ast lexical-environment)))
+                           client argument-ast lexical-environment)))
         `(let* ((,arguments-var
                   (list ,@(loop for argument-ast in (ast:argument-asts ast)
                                 collect (translate-ast
+                                         client
                                          argument-ast
                                          lexical-environment))))
                 (sicl-hir-evaluator:*call-stack*
@@ -57,14 +58,14 @@
                           :arguments ,arguments-var)
                         sicl-hir-evaluator:*call-stack*)))
            (apply
-            ,(translate-ast (ast:callee-ast ast) lexical-environment)
+            ,(translate-ast client (ast:callee-ast ast) lexical-environment)
             ,arguments-var)))))
 
 (defmethod translate-ast
-    ((ast ast:function-ast) lexical-environment)
+    (client (ast ast:function-ast) lexical-environment)
   (let* ((lambda-list (ast:lambda-list ast))
          (new-environment (augment-environment lexical-environment lambda-list))
-         (body (translate-ast (ast:body-ast ast) new-environment))
+         (body (translate-ast client (ast:body-ast ast) new-environment))
          (vars
            (remove-duplicates
             (loop for name being each hash-value of (first new-environment)
@@ -92,30 +93,30 @@
          ,body))))
 
 (defmethod translate-ast
-    ((ast ast:progn-ast) lexical-environment)
+    (client (ast ast:progn-ast) lexical-environment)
   `(progn ,@(loop for form-ast in (ast:form-asts ast)
                   collect (translate-ast
-                           form-ast lexical-environment))))
+                           client form-ast lexical-environment))))
 
 (defmethod translate-ast
-    ((ast ast:block-ast) lexical-environment)
+    (client (ast ast:block-ast) lexical-environment)
   (add-identifier lexical-environment ast)
   (let ((name (find-identifier lexical-environment ast)))
     `(with-exit-point (,name)
        (block ,name
          ,(translate-ast
-           (ast:body-ast ast) lexical-environment)))))
+           client (ast:body-ast ast) lexical-environment)))))
 
 (defmethod translate-ast
-    ((ast ast:return-from-ast) lexical-environment)
+    (client (ast ast:return-from-ast) lexical-environment)
   (let ((name (find-identifier lexical-environment (ast:block-ast ast))))
     `(progn (unwind ',name)
             (return-from ,name
               ,(translate-ast
-                (ast:form-ast ast) lexical-environment)))))
+                client (ast:form-ast ast) lexical-environment)))))
 
 (defmethod translate-ast
-    ((ast ast:tagbody-ast) lexical-environment)
+    (client (ast ast:tagbody-ast) lexical-environment)
   (let ((name (gensym)))
     (loop for item-ast in (ast:item-asts ast)
           when (typep item-ast 'ast:tag-ast)
@@ -126,37 +127,37 @@
                   collect (if (typep item-ast 'ast:tag-ast)
                               (ast:name item-ast)
                               (translate-ast
-                               item-ast lexical-environment)))))))
+                               client item-ast lexical-environment)))))))
 
 (defmethod translate-ast
-    ((ast ast:go-ast) lexical-environment)
+    (client (ast ast:go-ast) lexical-environment)
   (let* ((tag-ast (ast:tag-ast ast))
          (name (find-identifier lexical-environment tag-ast)))
     `(progn (unwind ',name)
             (go ,(ast:name tag-ast)))))
 
 (defmethod translate-ast
-    ((ast ast:setq-ast) lexical-environment)
-  `(setq ,(translate-ast (ast:lhs-ast ast) lexical-environment)
-         ,(translate-ast (ast:value-ast ast) lexical-environment)))
+    (client (ast ast:setq-ast) lexical-environment)
+  `(setq ,(translate-ast client (ast:lhs-ast ast) lexical-environment)
+         ,(translate-ast client (ast:value-ast ast) lexical-environment)))
 
 (defmethod translate-ast
-    ((ast ast:unwind-protect-ast) lexical-environment)
+    (client (ast ast:unwind-protect-ast) lexical-environment)
   (let ((thunk-form
           (translate-ast
-           (ast:cleanup-thunk-ast ast) lexical-environment)))
+           client (ast:cleanup-thunk-ast ast) lexical-environment)))
   `(with-unwind-protect
        (,thunk-form)
-     ,(translate-ast (ast:protected-form-ast ast) lexical-environment)
+     ,(translate-ast client (ast:protected-form-ast ast) lexical-environment)
      (funcall ,thunk-form))))
 
 (defmethod translate-ast
-    ((ast ast:if-ast) lexical-environment)
-  `(if ,(translate-ast (ast:test-ast ast) lexical-environment)
-       ,(translate-ast (ast:then-ast ast) lexical-environment)
-       ,(translate-ast (ast:else-ast ast) lexical-environment)))
+    (client (ast ast:if-ast) lexical-environment)
+  `(if ,(translate-ast client (ast:test-ast ast) lexical-environment)
+       ,(translate-ast client (ast:then-ast ast) lexical-environment)
+       ,(translate-ast client (ast:else-ast ast) lexical-environment)))
 
 (defmethod translate-ast
-    ((ast ast:eq-ast) lexical-environment)
-  `(eq ,(translate-ast (ast:arg1-ast ast) lexical-environment)
-       ,(translate-ast (ast:arg2-ast ast) lexical-environment)))
+    (client (ast ast:eq-ast) lexical-environment)
+  `(eq ,(translate-ast client (ast:arg1-ast ast) lexical-environment)
+       ,(translate-ast client (ast:arg2-ast ast) lexical-environment)))

@@ -23,13 +23,13 @@
 ;;; that name.
 (defvar *function-cells*)
 
-(defun translate-top-level-ast (ast)
+(defun translate-top-level-ast (client ast)
   (let* ((table (make-hash-table :test #'eq))
          (lexical-environment (list table))
          (function-cell-finder-var (gensym))
          (*run-time-environment-name* (gensym))
          (*function-cells* '())
-         (code (translate-ast ast lexical-environment)))
+         (code (translate-ast client ast lexical-environment)))
     `(lambda (,*run-time-environment-name*)
        (declare (ignorable ,*run-time-environment-name*))
        (declare (optimize (speed 0) (compilation-speed 3) (debug 0) (safety 3) (space 0)))
@@ -48,4 +48,4 @@
 (defun translate-code (client environment cst)
   (let* ((ast1 (cst-to-ast client cst environment))
          (ast2 (cleavir-ast-transformations:hoist-load-time-value ast1)))
-    (translate-top-level-ast ast2)))
+    (translate-top-level-ast client ast2)))
