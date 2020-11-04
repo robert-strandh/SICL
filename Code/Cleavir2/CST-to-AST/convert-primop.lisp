@@ -447,6 +447,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:CAR.
+
+(defmethod convert-special
+    (client (symbol (eql 'cleavir-primop:standard-object-class-of)) cst environment)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (standard-object-class-of-cst arg-cst) cst
+    (declare (ignore standard-object-class-of-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:standard-object-class-of-ast
+      :standard-object-ast (convert client arg-cst environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:NOOK-READ.
 ;;;
 ;;; This primop takes two arguments.  The first argument is a form
