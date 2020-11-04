@@ -70,6 +70,7 @@
    #:short-float-p-instruction
    #:single-float-p-instruction
    #:standard-object-p-instruction
+   #:standard-object-class-of-instruction
    #:phi-instruction
    #:use-instruction
    #:load-constant-instruction
