@@ -32,8 +32,6 @@
                        (slot-value object 'sicl-boot::%class))
                       ((typep object 'fixnum)
                        (env:find-class (env:client e4) e4 'fixnum))
-                      ((integerp object)
-                       (env:find-class (env:client e4) e4 'integer))
                       ((null object)
                        (env:find-class (env:client e4) e4 'null))
                       ((symbolp object)
