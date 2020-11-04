@@ -20,6 +20,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a STANDARD-OBJECT-CLASS-OF-AST
+
+(define-compile-functional-ast
+    cleavir-ast:standard-object-class-of-ast
+  cleavir-ir:standard-object-class-of-instruction
+  (cleavir-ast:standard-object-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a NOOK-READ-AST
 
 (defmethod compile-ast (client (ast cleavir-ast:nook-read-ast) context)
