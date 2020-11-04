@@ -2,6 +2,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction STANDARD-OBJECT-CLASS-OF-INSTRUCTION.
+;;;
+;;; This instruction takes a single input which is assumed to be a
+;;; standard object, and produces a single output, which is the class
+;;; of the standard object.
+
+(defclass standard-object-class-of-instruction
+    (instruction one-successor-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction NOOK-READ-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed
