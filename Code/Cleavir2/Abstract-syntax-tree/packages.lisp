@@ -90,6 +90,8 @@
    #:float-sqrt-ast
    #:subtype
    #:standard-object-p-ast
+   #:standard-object-class-of-ast
+   #:standard-object-ast
    #:nook-read-ast #:nook-number-ast
    #:nook-write-ast
    #:aref-ast #:aset-ast
