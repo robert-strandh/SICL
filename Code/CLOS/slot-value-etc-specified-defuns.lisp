@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-clos)
 
+(defun find-slot (object slot-name)
+  (let* ((class (class-of object))
+         (slots (class-slots class)))
+    (find slot-name slots :test #'eq :key #'slot-definition-name)))
+
 (defmacro with-existing-slot
     ((object-var slot-name-var slot-var operation) &body body)
   `(let ((,slot-var (find-slot ,object-var ,slot-name-var)))

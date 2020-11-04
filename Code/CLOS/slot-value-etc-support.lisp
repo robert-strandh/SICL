@@ -1,10 +1,5 @@
 (cl:in-package #:sicl-clos)
 
-(defun find-slot (object slot-name)
-  (let* ((class (class-of object))
-         (slots (class-slots class)))
-    (find slot-name slots :test #'eq :key #'slot-definition-name)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SLOT-MISSING.
