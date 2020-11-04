@@ -8,6 +8,7 @@
    #:characterp
    #:single-float-p
    #:standard-object-p
+   #:standard-object-class-of
    #:eq
    #:typeq
    #:car #:cdr #:rplaca #:rplacd
