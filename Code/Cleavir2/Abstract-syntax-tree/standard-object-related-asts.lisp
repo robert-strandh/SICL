@@ -19,6 +19,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class STANDARD-OBJECT-CLASS-OF-AST.
+;;;
+;;; This AST can be used to compute the class of a standard object.
+;;; The child AST must evaluate to a standard object.
+
+(defclass standard-object-class-of-ast (ast one-value-ast-mixin)
+  ((%standard-object-ast :initarg :standard-object-ast
+                         :reader standard-object-ast)))
+
+(cleavir-io:define-save-info standard-object-class-of-ast
+  (:standard-object-ast standard-object-ast))
+
+(defmethod children ((ast standard-object-class-of-ast))
+  (list (standard-object-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class NOOK-READ-AST.
 ;;;
 ;;; This AST can be used to read a nook from a standard object.  It
