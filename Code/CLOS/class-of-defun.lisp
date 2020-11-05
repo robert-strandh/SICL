@@ -1,0 +1,13 @@
+(cl:in-package #:sicl-clos)
+
+(defun class-of (object)
+  (cond ((cleavir-primop:standard-object-p object)
+         (cleavir-primop:standard-object-class-of object))
+        ((cleavir-primop:fixnump object)
+         (load-time-value (find-class 'fixnum)))
+        ((cleavir-primop:consp object)
+         (load-time-value (find-class 'cons)))
+        ((cleavir-primop:single-float-p object)
+         (load-time-value (find-class 'single-float)))
+        ((cleavir-primop:characterp object)
+         (load-time-value (find-class 'character)))))
