@@ -54,7 +54,8 @@
         ((trucler:no-function-description
            (lambda (condition)
              (unless (member (trucler:name condition)
-                             (overridden-function-cells environment)
+                             (overridden-function-cells
+                              (trucler:global-environment client environment))
                              :key #'car :test #'equal)
                (let ((*package* (find-package "KEYWORD")))
                  (warn "Unknown function ~s" (trucler:name condition))))
