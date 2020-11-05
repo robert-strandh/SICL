@@ -9,6 +9,24 @@
                              class))
           (funcall fun class))))))
 
+(defun define-class-of (e4)
+  (setf (env:fdefinition (env:client e4) e4 'class-of)
+        (lambda (object)
+          (cond ((typep object 'sicl-boot::header)
+                 (slot-value object 'sicl-boot::%class))
+                ((typep object 'fixnum)
+                 (env:find-class (env:client e4) e4 'fixnum))
+                ((null object)
+                 (env:find-class (env:client e4) e4 'null))
+                ((symbolp object)
+                 (env:find-class (env:client e4) e4 'symbol))
+                ((characterp object)
+                 (env:find-class (env:client e4) e4 'character))
+                ((consp object)
+                 (env:find-class (env:client e4) e4 'cons))
+                (t
+                 (error "class of ~s asked for~%" object))))))
+
 (defun boot (boot)
   (format *trace-output* "Start phase 4~%")
   (with-accessors ((e0 sicl-boot:e0)
@@ -17,6 +35,7 @@
                    (e5 sicl-boot:e5))
       boot
     (change-class e4 'environment :client (make-instance 'client))
+    (define-class-of e4)
     (setf (sicl-boot:overridden-function-cells e5)
           `((find-class
              . (,(lambda (name)

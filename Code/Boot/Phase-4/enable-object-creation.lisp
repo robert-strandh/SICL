@@ -39,9 +39,6 @@
   (load-source-file "CLOS/shared-initialize-defgenerics.lisp" e4)
   (with-intercepted-function-cells
       (e4
-       (class-of
-        (list (lambda (object)
-                (slot-value object 'sicl-boot::%class))))
        (sicl-clos::shared-initialize-default-using-class
         (env:function-cell
          (env:client e3) e3 'sicl-clos::shared-initialize-default-using-class)))

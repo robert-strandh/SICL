@@ -8,12 +8,7 @@
   (load-source-file "CLOS/sub-specializer-p.lisp" e4))
 
 (defun define-compute-applicable-methods (e4)
-  (with-intercepted-function-cells
-      (e4
-       (class-of
-        (list (lambda (object)
-                (slot-value object 'sicl-boot::%class)))))
-    (load-source-file "CLOS/compute-applicable-methods-support.lisp" e4))
+  (load-source-file "CLOS/compute-applicable-methods-support.lisp" e4)
   (load-source-file "CLOS/compute-applicable-methods-defgenerics.lisp" e4)
   (load-source-file "CLOS/compute-applicable-methods-defmethods.lisp" e4))
 
@@ -26,22 +21,6 @@
   (load-source-file "CLOS/compute-discriminating-function-defgenerics.lisp" e4)
   (with-intercepted-function-cells
       (e4
-       (class-of
-        (list (lambda (object)
-                (cond ((typep object 'sicl-boot::header)
-                       (slot-value object 'sicl-boot::%class))
-                      ((typep object 'fixnum)
-                       (env:find-class (env:client e4) e4 'fixnum))
-                      ((null object)
-                       (env:find-class (env:client e4) e4 'null))
-                      ((symbolp object)
-                       (env:find-class (env:client e4) e4 'symbol))
-                      ((characterp object)
-                       (env:find-class (env:client e4) e4 'character))
-                      ((consp object)
-                       (env:find-class (env:client e4) e4 'cons))
-                      (t
-                       (error "class of ~s asked for~%" object))))))
        ;; FIXME: this one should also assign the slots in the
        ;; function object.
        (sicl-clos:set-funcallable-instance-function
