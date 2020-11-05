@@ -36,10 +36,16 @@
                        (env:find-class (env:client e3) e3 'symbol))
                       ((consp object)
                        (env:find-class (env:client e3) e3 'cons))
+                      ((typep (class-of object)
+                              'sicl-boot-phase-2::funcallable-standard-class)
+                       ;; It is a bridge object, so return its class, which is
+                       ;; then a class in E2.
+                       (class-of object))
                       ((functionp object)
+                       ;; FIXME: find out why this case is necessary.
                        (env:find-class (env:client e3) e3 'function))
                       (t
-                       (class-of object)))))))
+                       (error "Class of ~s was asked for in E3." object)))))))
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e3))
   (load-source-file "CLOS/discriminating-automaton.lisp" e3)
   (define-error-functions '(sicl-clos::compute-test-tree) e3)
