@@ -2,7 +2,7 @@
 
 (defmethod translate-ast
     (client (ast ast:consp-ast) lexical-environment)
-  `(car
+  `(consp
     ,(translate-ast client (ast:object-ast ast) lexical-environment)))
 
 (defmethod translate-ast
