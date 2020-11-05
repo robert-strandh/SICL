@@ -34,8 +34,16 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (change-class e4 'environment :client (make-instance 'client))
-    (define-class-of e4)
+    (change-class e4 'environment
+                  :client (make-instance 'client :e4 e4))
+    (sicl-boot::etrace e4 find-class class-of)
+    (with-intercepted-function-cells
+        (e4
+         (find-class
+          (list (lambda (name)
+                  (env:find-class (env:client e4) e4 name)))))
+      (load-source-file "CLOS/class-of-defun.lisp" e4))
+    ;; (define-class-of e4)
     (setf (sicl-boot:overridden-function-cells e5)
           `((find-class
              . (,(lambda (name)
