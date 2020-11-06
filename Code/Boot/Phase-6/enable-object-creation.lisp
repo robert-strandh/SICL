@@ -12,7 +12,13 @@
   (load-source-file "CLOS/effective-slot-definition-class-defmethods.lisp" e5)
   (load-source-file "CLOS/allocate-instance-support.lisp" e5)
   (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e5)
-  (load-source-file "CLOS/allocate-instance-defmethods.lisp" e5))
+  (load-source-file "CLOS/allocate-instance-defmethods.lisp" e5)
+  (import-functions-from-host
+   '(sicl-loop::list-car sicl-loop::list-cdr)
+   e5)
+  (load-source-file "CLOS/make-instance-support.lisp" e5)
+  (load-source-file "CLOS/make-instance-defgenerics.lisp" e5)
+  (load-source-file "CLOS/make-instance-defmethods.lisp" e5))
 
 (defun enable-object-initialization (e5)
   (setf (env:constant-variable (env:client e5) e5 'sicl-clos::+unbound-slot-value+)
