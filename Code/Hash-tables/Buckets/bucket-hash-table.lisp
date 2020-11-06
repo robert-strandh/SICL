@@ -15,12 +15,16 @@
         (contents '()))
     (lambda ()
       (block hash-table-iterator
+        ;; Look for the next bucket which contains mappings.
         (loop while (null contents)
               when (= position size)
-                do (return-from hash-table-iterator (values nil nil))
+                ;; When we run out of mappings, we return the single value NIL.
+                do (return-from hash-table-iterator nil)
               do (setf contents (aref data position))
                  (incf position))
-        (pop contents)))))
+        ;; Otherwise, we return values T, key and value.
+        (let ((entry (pop contents)))
+          (values t (car entry) (cdr entry)))))))
 
 (defun grow-and-rehash (hash-table)
   (let* ((new-size (if (integerp (hash-table-rehash-size hash-table))
@@ -78,8 +82,7 @@
     (not (null entry))))
 
 (defmethod clrhash ((hash-table bucket-hash-table))
-  (loop for index below (hash-table-size hash-table)
-        do (setf (aref (hash-table-data hash-table) index) nil))
+  (fill (hash-table-data hash-table) '())
   (setf (%bucket-hash-table-count hash-table) 0)
   hash-table)
 
