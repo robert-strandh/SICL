@@ -21,10 +21,8 @@
   (load-source-file "CLOS/make-instance-defmethods.lisp" e5))
 
 (defun enable-object-initialization (e5)
-  (setf (env:constant-variable (env:client e5) e5 'sicl-clos::+unbound-slot-value+)
-        10000000)
-  (load-source-file "CLOS/slot-bound-using-index.lisp" e5)
-  (load-source-file "CLOS/standard-instance-access.lisp" e5))
+  (load-source-file "CLOS/standard-instance-access.lisp" e5)
+  (load-source-file "CLOS/shared-initialize-support.lisp" e5))
 
 (defun enable-object-creation (e5)
   (enable-object-allocation e5)
