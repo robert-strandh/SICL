@@ -21,7 +21,6 @@
   (load-source-file "CLOS/make-instance-defmethods.lisp" e5))
 
 (defun enable-object-initialization (e5)
-  (load-source-file "CLOS/standard-instance-access.lisp" e5)
   (load-source-file "CLOS/shared-initialize-support.lisp" e5))
 
 (defun enable-object-creation (e5)
