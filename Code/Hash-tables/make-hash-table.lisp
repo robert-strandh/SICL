@@ -2,6 +2,11 @@
 
 (defvar *default-hash-table-class*)
 
+(defmethod initialize-instance :after ((hash-table hash-table) &key)
+  (assert (> (hash-table-rehash-size hash-table) 1)
+          ()
+          "The rehash-size must be greater than 1."))
+
 (defun make-hash-table (&rest rest
                         &key (test 'eql) size rehash-size rehash-threshold
                              (class *default-hash-table-class*)
