@@ -10,4 +10,10 @@
     (change-class e5 'environment :client (make-instance 'client))
     (sicl-boot:create-accessor-defgenerics e5)
     (sicl-boot:create-mop-classes e5)
+    (with-intercepted-function-cells
+        (e4
+         (find-class
+          (list (lambda (name)
+                  (env:find-class (env:client e4) e4 name)))))
+      (load-source-file "CLOS/class-of-defun.lisp" e4))
     (create-additional-generic-functions e5)))
