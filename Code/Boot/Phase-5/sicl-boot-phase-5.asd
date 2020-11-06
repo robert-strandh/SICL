@@ -9,4 +9,5 @@
    (:file "environment")
    (:file "create-additional-generic-functions")
    (:file "create-additional-classes")
+   (:file "hir-evaluator-configuration")
    (:file "boot")))
