@@ -9,24 +9,6 @@
                              class))
           (funcall fun class))))))
 
-(defun define-class-of (e4)
-  (setf (env:fdefinition (env:client e4) e4 'class-of)
-        (lambda (object)
-          (cond ((typep object 'sicl-boot::header)
-                 (slot-value object 'sicl-boot::%class))
-                ((typep object 'fixnum)
-                 (env:find-class (env:client e4) e4 'fixnum))
-                ((null object)
-                 (env:find-class (env:client e4) e4 'null))
-                ((symbolp object)
-                 (env:find-class (env:client e4) e4 'symbol))
-                ((characterp object)
-                 (env:find-class (env:client e4) e4 'character))
-                ((consp object)
-                 (env:find-class (env:client e4) e4 'cons))
-                (t
-                 (error "class of ~s asked for~%" object))))))
-
 (defun boot (boot)
   (format *trace-output* "Start phase 4~%")
   (with-accessors ((e0 sicl-boot:e0)
@@ -36,14 +18,12 @@
       boot
     (change-class e4 'environment
                   :client (make-instance 'client :e4 e4))
-    (sicl-boot::etrace e4 find-class class-of)
-    (with-intercepted-function-cells
-        (e4
-         (find-class
-          (list (lambda (name)
-                  (env:find-class (env:client e4) e4 name)))))
-      (load-source-file "CLOS/class-of-defun.lisp" e4))
-    ;; (define-class-of e4)
+    ;; Define CLASS-OF temporarily here.  A production version will be
+    ;; loaded once we have enough classes in E4 to be able to return
+    ;; classes for FIXNUM, SINGLE-FLOAT, CHARACTER, and CONS.
+    (setf (env:fdefinition (env:client e4) e4 'class-of)
+          (lambda (object)
+            (slot-value object 'sicl-boot::%class)))
     (setf (sicl-boot:overridden-function-cells e5)
           `((find-class
              . (,(lambda (name)
