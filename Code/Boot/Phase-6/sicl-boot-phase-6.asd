@@ -8,6 +8,8 @@
   ((:file "packages")
    (:file "enable-slot-value")
    (:file "enable-object-creation")
+   (:file "enable-method-combinations")
+   (:file "enable-generic-function-creation")
    (:file "copy-classes")
    (:file "update-class-slots")
    (:file "boot")))
