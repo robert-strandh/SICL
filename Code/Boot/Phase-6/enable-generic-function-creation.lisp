@@ -18,6 +18,8 @@
   (load-source-file "CLOS/compute-effective-method-defgenerics.lisp" e5)
   (load-source-file "CLOS/compute-effective-method-support.lisp" e5)
   (load-source-file "CLOS/compute-effective-method-defmethods.lisp" e5)
+  (load-source-file "CLOS/no-applicable-method-defgenerics.lisp" e5)
+  (load-source-file "CLOS/no-applicable-method-defmethods.lisp" e5)
   (load-source-file "CLOS/compute-discriminating-function-defgenerics.lisp" e5)
   (load-source-file "CLOS/compute-discriminating-function-support.lisp" e5)
   (load-source-file "CLOS/compute-discriminating-function-support-c.lisp" e5)
