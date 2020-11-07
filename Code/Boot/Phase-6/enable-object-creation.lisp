@@ -5,7 +5,12 @@
    '(sicl-loop::list-car sicl-loop::list-cdr)
    e5)
   (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e5)
-  (load-source-file "CLOS/shared-initialize-support.lisp" e5))
+  (load-source-file "CLOS/shared-initialize-support.lisp" e5)
+  (load-source-file "CLOS/shared-initialize-defgenerics.lisp" e5)
+  (load-source-file "CLOS/shared-initialize-defmethods.lisp" e5)
+  (load-source-file "CLOS/initialize-instance-support.lisp" e5)
+  (load-source-file "CLOS/initialize-instance-defgenerics.lisp" e5)
+  (load-source-file "CLOS/initialize-instance-defmethods.lisp" e5))
 
 (defun enable-object-allocation (e5)
   (setf (env:fdefinition (env:client e5) e5 'sicl-clos::allocate-general-instance)
