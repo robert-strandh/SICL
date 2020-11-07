@@ -10,10 +10,6 @@
   (load-source-file "CLOS/effective-slot-definition-class-support.lisp" e3)
   (load-source-file "CLOS/effective-slot-definition-class-defgeneric.lisp" e3)
   (load-source-file "CLOS/effective-slot-definition-class-defmethods.lisp" e3)
-    (setf (env:fdefinition (env:client e3) e3 'sicl-clos::allocate-class-prototype)
-          (lambda (class)
-            (funcall (env:fdefinition (env:client e3) e3 'allocate-instance)
-                     class)))
   ;; These were already loaded in phase 3 because they were needed for
   ;; the finalization of built-in classes.
   ;; (load-source-file "CLOS/class-finalization-defgenerics.lisp" e3)
