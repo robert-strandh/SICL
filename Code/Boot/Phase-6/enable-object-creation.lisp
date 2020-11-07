@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-boot-phase-6)
 
+(defun enable-object-initialization (e5)
+  (import-functions-from-host
+   '(sicl-loop::list-car sicl-loop::list-cdr)
+   e5)
+  (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e5)
+  (load-source-file "CLOS/shared-initialize-support.lisp" e5))
+
 (defun enable-object-allocation (e5)
   (setf (env:fdefinition (env:client e5) e5 'sicl-clos::allocate-general-instance)
         (lambda (class size)
@@ -13,16 +20,10 @@
   (load-source-file "CLOS/allocate-instance-support.lisp" e5)
   (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e5)
   (load-source-file "CLOS/allocate-instance-defmethods.lisp" e5)
-  (import-functions-from-host
-   '(sicl-loop::list-car sicl-loop::list-cdr)
-   e5)
   (load-source-file "CLOS/make-instance-support.lisp" e5)
   (load-source-file "CLOS/make-instance-defgenerics.lisp" e5)
   (load-source-file "CLOS/make-instance-defmethods.lisp" e5))
 
-(defun enable-object-initialization (e5)
-  (load-source-file "CLOS/shared-initialize-support.lisp" e5))
-
 (defun enable-object-creation (e5)
-  (enable-object-allocation e5)
-  (enable-object-initialization e5))
+  (enable-object-initialization e5)
+  (enable-object-allocation e5))
