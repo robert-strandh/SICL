@@ -311,7 +311,7 @@
   ;; finalized and if not, signals an error.
   (setf (class-finalized-p class) t)
   (setf (class-prototype class)
-        (allocate-class-prototype class)))
+        (allocate-instance class)))
 
 (defun finalize-inheritance-default (class)
   ;; Make sure all the direct superclasses are already finalized.
