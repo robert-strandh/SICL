@@ -12,6 +12,11 @@
   (load-source-file "CLOS/initialize-instance-defgenerics.lisp" e5)
   (load-source-file "CLOS/initialize-instance-defmethods.lisp" e5))
 
+(defun enable-class-finalization (e5)
+  (load-source-file "CLOS/class-finalization-defgenerics.lisp" e5)
+  (load-source-file "CLOS/class-finalization-support.lisp" e5)
+  (load-source-file "CLOS/class-finalization-defmethods.lisp" e5))
+
 (defun enable-object-allocation (e5)
   (setf (env:fdefinition (env:client e5) e5 'sicl-clos::allocate-general-instance)
         (lambda (class size)
@@ -31,4 +36,5 @@
 
 (defun enable-object-creation (e5)
   (enable-object-initialization e5)
+  (enable-class-finalization e5)
   (enable-object-allocation e5))
