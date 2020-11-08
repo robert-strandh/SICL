@@ -1,14 +1,5 @@
 (cl:in-package #:sicl-boot-phase-4)
 
-(defun finalize-inheritance (e3)
-  (let ((fun (env:fdefinition (env:client e3) e3 'sicl-clos:finalize-inheritance)))
-    (do-all-symbols (symbol)
-      (let ((class (env:find-class (env:client e3) e3 symbol)))
-        (unless (or (null class)
-                    (funcall (env:fdefinition (env:client e3) e3 'sicl-clos::class-finalized-p)
-                             class))
-          (funcall fun class))))))
-
 (defun boot (boot)
   (format *trace-output* "Start phase 4~%")
   (with-accessors ((e0 sicl-boot:e0)
