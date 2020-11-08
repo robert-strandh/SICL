@@ -32,10 +32,6 @@
   (load-source-file "CLOS/class-finalization-defgenerics.lisp" e4)
   (with-intercepted-function-cells
       (e4
-       (sicl-clos::allocate-class-prototype
-        (list (lambda (class)
-                (funcall (env:fdefinition (env:client e3) e3 'allocate-instance)
-                         class))))
        (make-instance
            (env:function-cell (env:client e4) e4 'make-instance)))
     (load-source-file "CLOS/class-finalization-support.lisp" e4))
