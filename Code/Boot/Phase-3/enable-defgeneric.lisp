@@ -30,6 +30,8 @@
         (list (lambda (object)
                 (cond ((typep object 'sicl-boot::header)
                        (slot-value object 'sicl-boot::%class))
+                      ((integerp object)
+                       (env:find-class (env:client e3) e3 'fixnum))
                       ((null object)
                        (env:find-class (env:client e3) e3 'null))
                       ((symbolp object)
