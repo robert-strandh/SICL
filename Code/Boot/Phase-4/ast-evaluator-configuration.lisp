@@ -24,6 +24,8 @@
                       (env:find-class client (e4 client) 'null))
                      ((symbolp object)
                       (env:find-class client (e4 client) 'symbol))
+                     ((stringp object)
+                      (env:find-class client (e4 client) 'string))
                      (t
                       (error "Class of ~s asked for in E4" object))))
             ,(sicl-ast-evaluator:translate-ast
