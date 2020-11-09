@@ -56,16 +56,20 @@
 ;;; specializer, and for each EQL specializer, the class of the
 ;;; underlying object is identical to the corresponding argument
 ;;; class.
-(defun maybe-applicable-p (method classes)
+(defun maybe-applicable-p (method classes profile)
   (loop with result = t
         for specializer in (method-specializers method)
         for class in classes
-        do (if (classp specializer)
-               (unless (subclassp class specializer)
-                 (return-from maybe-applicable-p nil))
-               (if (eq (class-of (eql-specializer-object specializer)) class)
-                   (setf result :sometimes)
-                   (return-from maybe-applicable-p nil)))
+        for relevant-p in profile
+        do (cond ((not relevant-p)
+                  nil)
+                 ((classp specializer)
+                  (unless (subclassp class specializer)
+                    (return-from maybe-applicable-p nil)))
+                 ((eq (class-of (eql-specializer-object specializer)) class)
+                  (setf result :sometimes))
+                 (t
+                  (return-from maybe-applicable-p nil)))
         finally (return result)))
 
 ;;; Determine whether a method is applicable to a sequence of
@@ -130,13 +134,14 @@
 (defun compute-applicable-methods-using-classes-default
     (generic-function classes-of-arguments)
   (let* ((lambda-list (generic-function-lambda-list generic-function))
+         (profile (specializer-profile generic-function))
          (precedence-order (generic-function-argument-precedence-order  generic-function))
          (indices (precedence-indices lambda-list precedence-order)))
     (block b
       (values
        (let ((result (sort
                       (loop for method in (generic-function-methods generic-function)
-                            when (let ((a (maybe-applicable-p method classes-of-arguments)))
+                            when (let ((a (maybe-applicable-p method classes-of-arguments profile)))
                                    (if (eq a :sometimes)
                                        (return-from b (values '() nil))
                                        a))

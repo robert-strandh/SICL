@@ -50,7 +50,7 @@
          (classes (loop with remaining = class-cache
                         for p in profile
                         collect (if p (pop remaining) class-t))))
-    (maybe-applicable-p method classes)))
+    (maybe-applicable-p method classes profile)))
 
 (defun compute-congruent-lambda-list (method-lambda-list)
   (let ((result '())
