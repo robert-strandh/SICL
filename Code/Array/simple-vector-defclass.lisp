@@ -1,4 +1,4 @@
 (cl:in-package #:sicl-array)
 
-(defclass simple-vactor (vector array)
+(defclass simple-vector (vector array)
   ())
