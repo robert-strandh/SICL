@@ -18,6 +18,16 @@
   (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e4)
   (load-source-file "CLOS/allocate-instance-defmethods.lisp" e4))
 
+(defun finalize-inheritance (e4)
+  (let ((fun (env:fdefinition (env:client e4) e4 'sicl-clos:finalize-inheritance)))
+    (do-all-symbols (symbol)
+      (let ((class (env:find-class (env:client e4) e4 symbol)))
+        (unless (or (null class)
+                    (funcall (env:fdefinition (env:client e4) e4 'sicl-clos::class-finalized-p)
+                             class))
+          (funcall fun class))))))
+
 (defun enable-object-creation (e4 e5)
   (declare (ignore e5))
-  (enable-object-allocation e4))
+  (enable-object-allocation e4)
+  (finalize-inheritance e4))
