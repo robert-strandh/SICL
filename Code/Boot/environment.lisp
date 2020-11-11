@@ -81,7 +81,7 @@
   (import-functions-from-host
    '(;; Numbers
      + - * / < <= = > >= /= floor 1+ 1-
-     plusp minusp integerp
+     plusp minusp integerp numberp
      logand
      zerop evenp
      ;; CONSes
