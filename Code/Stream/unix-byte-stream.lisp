@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-stream)
 
+(defgeneric file-descriptor (stream))
+
+(defgeneric buffer (stream))
+
 (defclass unix-byte-output-stream ()
   ((%file-descriptor :initarg :file-descriptor :reader file-descriptor)
    (%buffer :initform (make-array 256
