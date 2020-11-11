@@ -10,7 +10,7 @@
 				  :element-type '(unsigned-byte 8)
 				  :fill-pointer 0)
 	    :initarg :buffer
-	    :accessor buffer)))
+	    :reader buffer)))
 
 (defmethod finish-output ((stream unix-byte-output-stream))
   (sicl-posix-high:write
