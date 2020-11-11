@@ -17,16 +17,9 @@
 ;;; finalized, and if not, calls FINALIZE-INHERITANCE.  However, the
 ;;; INITARGS received by ALLOCATE-INSTANCE should be the defaulted
 ;;; initargs, and computing the defaulted initargs requires the class
-;;; to be finalized.  I peek at PCL shows that the class is finalized
+;;; to be finalized.  A peek at PCL shows that the class is finalized
 ;;; in MAKE-INSTANCE, before ALLOCATE-INSTANCE is called, which makes
 ;;; more sense.
-
-(defun allocate-instance-common (class additional-size)
-  (let* ((size (+ (instance-size class) additional-size))
-         (instance (allocate-general-instance class size)))
-    ;; Store the unique number of the class in the instance.
-    (cleavir-primop:nook-write instance +stamp-offset+ (unique-number class))
-    instance))
 
 ;;; This function implements the action of the method on
 ;;; ALLOCATE-INSTANCE, specialized to REGULAR-CLASS.  Every instance
@@ -35,6 +28,10 @@
 ;;; counted among the slots, because they are accessed directly, using
 ;;; offsets.  For that reason, we must allocate more slot storage than
 ;;; there are slots with :INSTANCE allocation.
-(defun allocate-instance-regular-class (class &rest initargs)
-  (declare (ignore initargs))
-  (allocate-instance-common class 2))
+(defun allocate-instance-regular-class
+    (class &key (additional-space 0) &allow-other-keys)
+  (let* ((size (+ (instance-size class) additional-space 2))
+         (instance (allocate-general-instance class size)))
+    ;; Store the unique number of the class in the instance.
+    (cleavir-primop:nook-write instance +stamp-offset+ (unique-number class))
+    instance))
