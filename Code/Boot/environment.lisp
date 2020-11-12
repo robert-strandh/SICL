@@ -101,6 +101,8 @@
      every
      ;; Symbols
      gensym symbolp
+     ;; Characters
+     characterp
      ;; Strings
      stringp
      ;; Types and classes
