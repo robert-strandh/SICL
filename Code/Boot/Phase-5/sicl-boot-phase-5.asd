@@ -11,4 +11,5 @@
    (:file "create-additional-generic-functions")
    (:file "create-additional-classes")
    (:file "hir-evaluator-configuration")
+   (:file "enable-typep")
    (:file "boot")))
