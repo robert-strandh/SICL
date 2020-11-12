@@ -16,11 +16,7 @@
     (not
      (not (typep object (second type-specifier))))
     (satisfies
-     (let* ((global-environment (sicl-environment:global-environment))
-            (client (sicl-environment:client global-environment)))
-       (funcall (sicl-environment:fdefinition
-                 client global-environment (second type-specifier))
-                object)))
+     (funcall (fdefinition (second type-specifier)) object))
     (integer
      (typep-compound-integer object (rest type-specifier)))
     (t
