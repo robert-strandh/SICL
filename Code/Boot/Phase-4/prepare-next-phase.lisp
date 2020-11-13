@@ -37,7 +37,7 @@
           (let* ((cst (cst:cst-from-expression lambda-expression))
                  (ast (cleavir-cst-to-ast:cst-to-ast (env:client e4) cst e4)))
             (ast-eval ast (env:client e4) e4))))
-  (enable-compute-discriminating-function e4)
+  (enable-compute-discriminating-function e3 e4)
   (setf (env:fdefinition (env:client e5) e5 'find-method-combination)
         (lambda (name arguments)
           (funcall (env:fdefinition (env:client e4) e4 'sicl-method-combination:find-method-combination)

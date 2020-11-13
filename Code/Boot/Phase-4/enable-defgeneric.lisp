@@ -17,7 +17,7 @@
   (load-source-file "CLOS/compute-effective-method-defgenerics.lisp" e4)
   (load-source-file "CLOS/compute-effective-method-defmethods.lisp" e4))
 
-(defun define-compute-discriminating-function (e4)
+(defun define-compute-discriminating-function (e3 e4)
   (load-source-file "CLOS/compute-discriminating-function-defgenerics.lisp" e4)
   (with-intercepted-function-cells
       (e4
@@ -25,6 +25,8 @@
        ;; function object.
        (sicl-clos:set-funcallable-instance-function
         (list #'closer-mop:set-funcallable-instance-function))
+       (make-instance
+           (env:function-cell (env:client e3) e3 'make-instance))
        (no-applicable-method
         (list #'no-applicable-method)))
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e4))
@@ -35,12 +37,12 @@
   (load-source-file "CLOS/compute-discriminating-function-support-c.lisp" e4)
   (load-source-file "CLOS/compute-discriminating-function-defmethods.lisp" e4))
 
-(defun enable-compute-discriminating-function (e4)
+(defun enable-compute-discriminating-function (e3 e4)
   (define-classp e4)
   (define-sub-specializer-p e4)
   (define-compute-applicable-methods e4)
   (define-compute-effective-method e4)
-  (define-compute-discriminating-function e4))
+  (define-compute-discriminating-function e3 e4))
 
 (defun enable-defgeneric (e3 e5)
   (let ((client (env:client e5)))
