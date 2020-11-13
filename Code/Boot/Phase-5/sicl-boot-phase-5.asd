@@ -12,4 +12,5 @@
    (:file "create-additional-classes")
    (:file "hir-evaluator-configuration")
    (:file "enable-typep")
+   (:file "enable-array-access")
    (:file "boot")))
