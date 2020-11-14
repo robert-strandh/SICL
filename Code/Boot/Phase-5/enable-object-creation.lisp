@@ -52,7 +52,19 @@
   (load-source-file "CLOS/initialize-instance-defgenerics.lisp" e5)
   (load-source-file "CLOS/initialize-instance-defmethods.lisp" e5))
 
+(defun enable-make-instance (e4 e5)
+  (with-intercepted-function-cells
+      (e4
+       (find-class
+        (env:function-cell (env:client e4) e4 'find-class))
+       (initialize-instance
+        (env:function-cell (env:client e5) e5 'initialize-instance)))
+    (load-source-file "CLOS/make-instance-support.lisp" e4))
+  (load-source-file "CLOS/make-instance-defgenerics.lisp" e4)
+  (load-source-file "CLOS/make-instance-defmethods.lisp" e4))
+
 (defun enable-object-creation (e4 e5)
   (enable-object-allocation e4)
   (finalize-inheritance e4)
-  (enable-object-initialization e4 e5))
+  (enable-object-initialization e4 e5)
+  (enable-make-instance e4 e5))
