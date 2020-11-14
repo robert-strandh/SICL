@@ -32,7 +32,16 @@
                      (typep object (funcall expander type-specifier)))
                     ((not (null type-class))
                      ;; TYPE-SPECIFIER is the name of a class.
-                     (typep-atomic object type-class))
+                     (let ((object-class (class-of object)))
+                       ;; RETURN true if and only if TYPE-SPECIFIER is
+                       ;; a member of the class precedence list of the
+                       ;; class of the object.  This code is
+                       ;; duplicated, but the duplication avoids the check that
+                       ;; the class of the object is a class, and it simplifies
+                       ;; bootstrapping.
+                       (if (member type-class
+                                   (sicl-clos:class-precedence-list object-class))
+                           t nil)))
                     (t
                      ;; TYPE-SPECIFIER has no expander associated with it and it
                      ;; is not also a class.  Furthermore, there was no method
