@@ -32,6 +32,13 @@
                              (cons element set))
                            (cartesian-product (cdr sets))))))
 
+(defun at-least-one-primary-method-p (methods)
+  (loop for method in methods
+        for qualifiers = (method-qualifiers method)
+        when (null qualifiers)
+          return t
+        finally (return nil)))
+
 ;;; CLASSES-OF-METHOD is a list of specializers (which much be classes)
 ;;; of a single method of the generic function.
 (defun add-to-call-history (generic-function classes-of-method profile)
@@ -49,10 +56,11 @@
                                        when flag collect class)
           do (unless (member relevant-classes (call-history generic-function)
                              :key #'class-cache :test #'equal)
-               (add-call-cache generic-function
-                               combination
-                               relevant-classes
-                               methods)))))
+               (when (at-least-one-primary-method-p methods)
+                 (add-call-cache generic-function
+                                 combination
+                                 relevant-classes
+                                 methods))))))
 
 (defun load-call-history (generic-function)
   (setf (call-history generic-function) '())
