@@ -17,6 +17,7 @@
                #:sicl-package-support
                #:sicl-string-support
                #:sicl-character-support
+               #:sicl-type-support
                #:sicl-ast-evaluator
                #:eclector
                #:eclector-concrete-syntax-tree
