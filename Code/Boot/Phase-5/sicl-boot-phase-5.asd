@@ -13,4 +13,5 @@
    (:file "hir-evaluator-configuration")
    (:file "enable-typep")
    (:file "enable-array-access")
+   (:file "enable-slot-value")
    (:file "boot")))

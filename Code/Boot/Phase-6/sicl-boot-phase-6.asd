@@ -6,7 +6,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "enable-slot-value")
    (:file "enable-object-creation")
    (:file "enable-method-combinations")
    (:file "enable-generic-function-creation")
