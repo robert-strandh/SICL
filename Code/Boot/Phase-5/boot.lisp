@@ -46,4 +46,5 @@
                    (ast (cleavir-cst-to-ast:cst-to-ast (env:client e5) cst e5)))
               (ast-eval ast (env:client e5) e5))))
     (enable-typep e5)
-    (enable-array-access e5)))
+    (enable-array-access e5)
+    (finalize-inheritance e4)))

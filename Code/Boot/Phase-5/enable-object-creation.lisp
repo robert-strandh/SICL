@@ -71,6 +71,5 @@
 
 (defun enable-object-creation (e4 e5)
   (enable-object-allocation e4)
-  (finalize-inheritance e4)
   (enable-object-initialization e4 e5)
   (enable-make-instance e4 e5))
