@@ -47,4 +47,6 @@
               (ast-eval ast (env:client e5) e5))))
     (enable-typep e5)
     (enable-array-access e5)
+    (load-source-file "CLOS/class-of-defun.lisp" e5)
+    (enable-slot-value e5)
     (finalize-inheritance e4)))
