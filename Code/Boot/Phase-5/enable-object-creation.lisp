@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-6)
+(cl:in-package #:sicl-boot-phase-5)
 
 (defun enable-object-initialization (e5)
   (import-functions-from-host
