@@ -3,7 +3,4 @@
 (defsystem sicl-printer-support
   :serial t
   :components
-  ((:file "packages")
-   (:file "integer")
-   (:file "ratio")
-   (:file "symbol")))
+  ((:file "packages")))
