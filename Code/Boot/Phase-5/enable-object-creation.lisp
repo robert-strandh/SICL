@@ -18,21 +18,6 @@
   (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e4)
   (load-source-file "CLOS/allocate-instance-defmethods.lisp" e4))
 
-(defun finalize-inheritance (e4)
-  (format *trace-output*
-          "Finalizing all classes in ~a..."
-          (sicl-boot:name e4))
-  (finish-output *trace-output*)
-  (let ((fun (env:fdefinition (env:client e4) e4 'sicl-clos:finalize-inheritance)))
-    (do-all-symbols (symbol)
-      (let ((class (env:find-class (env:client e4) e4 symbol)))
-        (unless (or (null class)
-                    (funcall (env:fdefinition (env:client e4) e4 'sicl-clos::class-finalized-p)
-                             class))
-          (funcall fun class)))))
-  (format *trace-output* "done~%")
-  (finish-output *trace-output*))
-
 (defun enable-object-initialization (e4 e5)
   (setf (env:constant-variable (env:client e4) e4 'sicl-clos::+unbound-slot-value+)
         10000000)

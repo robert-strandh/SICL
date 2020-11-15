@@ -20,6 +20,21 @@
                                   collect (funcall function-cell-function name))
                             (sicl-hir-transformations:constants hir))))))
 
+(defun finalize-inheritance (e4)
+  (format *trace-output*
+          "Finalizing all classes in ~a..."
+          (sicl-boot:name e4))
+  (finish-output *trace-output*)
+  (let ((fun (env:fdefinition (env:client e4) e4 'sicl-clos:finalize-inheritance)))
+    (do-all-symbols (symbol)
+      (let ((class (env:find-class (env:client e4) e4 symbol)))
+        (unless (or (null class)
+                    (funcall (env:fdefinition (env:client e4) e4 'sicl-clos::class-finalized-p)
+                             class))
+          (funcall fun class)))))
+  (format *trace-output* "done~%")
+  (finish-output *trace-output*))
+
 (defun boot (boot)
   (format *trace-output* "Start phase 5~%")
   (with-accessors ((e0 sicl-boot:e0)
