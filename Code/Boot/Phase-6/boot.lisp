@@ -26,7 +26,6 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (enable-method-combinations e5)
     (enable-generic-function-creation e5)
     (copy-classes e4 e5)
     (load-source-file "CLOS/satiation.lisp" e4)))
