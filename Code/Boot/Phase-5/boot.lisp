@@ -64,4 +64,5 @@
     (enable-array-access e5)
     (load-source-file "CLOS/class-of-defun.lisp" e5)
     (enable-slot-value e5)
+    (enable-object-creation e5)
     (finalize-inheritance e4)))
