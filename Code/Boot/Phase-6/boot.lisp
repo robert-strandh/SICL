@@ -31,7 +31,6 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (copy-classes e4 e5)
     (load-source-file "CLOS/standard-instance-access.lisp" e4)
     (load-source-file "CLOS/satiation.lisp" e4)
     (satiate-generic-functions-1 e3 e4 e5)))
