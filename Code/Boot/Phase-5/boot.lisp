@@ -66,4 +66,5 @@
     (enable-slot-value e5)
     (enable-object-creation e5)
     (enable-method-combinations e5)
+    (enable-generic-function-creation e5)
     (finalize-inheritance e4)))
