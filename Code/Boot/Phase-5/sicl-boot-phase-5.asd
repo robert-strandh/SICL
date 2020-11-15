@@ -16,4 +16,5 @@
    (:file "enable-slot-value")
    (:file "enable-object-creation")
    (:file "enable-method-combinations")
+   (:file "enable-generic-function-creation")
    (:file "boot")))
