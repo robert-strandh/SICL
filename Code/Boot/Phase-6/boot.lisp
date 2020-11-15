@@ -1,6 +1,9 @@
 (cl:in-package #:sicl-boot-phase-6)
 
 (defun satiate-generic-functions-1 (e3 e4 e5)
+  (format *trace-output*
+          "Satiating generic functions in E5 using satiation in E4...")
+  (finish-output *trace-output*)
   (let ((client (env:client e5)))
     (do-all-symbols (symbol)
       (when (and (null (env:special-operator client e5 symbol))
@@ -18,7 +21,9 @@
                      (eq (slot-value function 'sicl-boot::%class)
                          (env:find-class client e3 'standard-generic-function)))
             (funcall (env:fdefinition client e4 'sicl-clos::satiate-generic-function)
-                     function)))))))
+                     function))))))
+  (format *trace-output* "done~%")
+  (finish-output *trace-output*))
 
 (defun boot (boot)
   (format *trace-output* "Start phase 6~%")
@@ -27,4 +32,6 @@
                    (e5 sicl-boot:e5))
       boot
     (copy-classes e4 e5)
-    (load-source-file "CLOS/satiation.lisp" e4)))
+    (load-source-file "CLOS/standard-instance-access.lisp" e4)
+    (load-source-file "CLOS/satiation.lisp" e4)
+    (satiate-generic-functions-1 e3 e4 e5)))
