@@ -141,7 +141,8 @@
                             :name name
                             :direct-slots direct-slots
                             :direct-superclasses direct-superclasses))))
-                (setf (env:find-class client e4 class-name) class)))))))
+                (setf (env:find-class client e4 class-name) class)
+                (setf (env:find-class client e5 class-name) class)))))))
 
 (defun enable-defclass (e3 e4 e5)
   (enable-class-initialization e3 e4 e5)
