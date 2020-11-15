@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-6)
+(cl:in-package #:sicl-boot-phase-5)
 
 (defun enable-generic-function-initialization (e5)
   (load-source-file "CLOS/discriminating-automaton.lisp" e5)
