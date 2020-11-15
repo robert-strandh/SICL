@@ -78,7 +78,10 @@
     (funcall (env:fdefinition client environment 'ast-eval) ast)))
 
 (defun load-source-file (relative-pathname environment)
-  (format *trace-output* "Loading file ~a~%" relative-pathname)
+  (format *trace-output*
+          "Loading file ~a into ~a~%"
+          relative-pathname
+          (name environment))
   (let ((absolute-pathname
           (source-relative-to-absolute-pathname relative-pathname))
         (*package* *package*))
