@@ -51,7 +51,7 @@
           (list (lambda (name)
                   (env:find-class (env:client e4) e4 name)))))
       (load-source-file "CLOS/class-of-defun.lisp" e4))
-    (enable-object-creation e4 e5)
+    (enable-object-creation-in-e4 e4 e5)
     (create-additional-generic-functions e5)
     (setf (env:fdefinition (env:client e5) e5 'compile)
           (lambda (x lambda-expression)
