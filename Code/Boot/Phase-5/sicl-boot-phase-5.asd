@@ -15,4 +15,5 @@
    (:file "enable-array-access")
    (:file "enable-slot-value")
    (:file "enable-object-creation")
+   (:file "enable-method-combinations")
    (:file "boot")))
