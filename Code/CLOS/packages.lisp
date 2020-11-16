@@ -123,7 +123,6 @@
    ;; SICL-specific classes
    #:real-class #:regular-class
    ;; SICL-specific functions
-   #:ensure-method
    #:default-superclasses
    #:allocate-general-instance
    #:add-direct-method
