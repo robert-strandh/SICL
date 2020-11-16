@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-symbol)
 
-(defclass symbol (t)
+(defclass symbol ()
   ((%name
     :initarg :name
     :reader symbol-name)
