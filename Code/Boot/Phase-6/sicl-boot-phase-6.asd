@@ -6,5 +6,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "update-class-slots")
+   (:file "update-objects")
    (:file "boot")))
