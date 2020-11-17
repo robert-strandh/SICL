@@ -40,6 +40,13 @@
   (remove-if-not (lambda (x) (typep x 'sicl-boot::header))
                  (find-all-functions e5)))
 
+;;; All SICL objects have a class slot that may contain a non-SICL
+;;; class.  TRANSLATION-TABLE maps such non-SICL classes to
+;;; corresponding SICL-CLASSES.  CLASS-SLOTS-FUNCTION is a function
+;;; that, when applied to a SICL class, returns the list of the
+;;; effective slots of that class.  All SICL objects have a list of
+;;; effective slots in element 1 of the rack, so we update that list
+;;; as well.
 (defun update-object (object translation-table class-slots-function)
   (let ((old-class (slot-value object 'sicl-boot::%class))
         (rack (slot-value object 'sicl-boot::%rack)))
