@@ -94,8 +94,9 @@
            (env:fdefinition
             (env:client e5) e5 'sicl-clos:slot-definition-initfunction))
          (initfunction (funcall initfunction-function slot)))
-    (update-simple-function
-     initfunction translate-table class-slots-function e5)))
+    (unless (null initfunction)
+      (update-simple-function
+       initfunction translate-table class-slots-function e5))))
 
 (defun update-effective-slot
     (slot translate-table class-slots-function e5)
@@ -104,8 +105,9 @@
            (env:fdefinition
             (env:client e5) e5 'sicl-clos:slot-definition-initfunction))
          (initfunction (funcall initfunction-function slot)))
-    (update-simple-function
-     initfunction translate-table class-slots-function e5)))
+    (unless (null initfunction)
+      (update-simple-function
+       initfunction translate-table class-slots-function e5))))
 
 (defun update-class
     (class translate-table class-slots-function e5)
@@ -136,11 +138,11 @@
             (push class result)))))
     result))
 
-(defun update-all-class-slots (e3 e5)
+(defun update-all-objects (e3 e5)
   (let ((table (create-class-translation-table e3 e5))
         (class-slots-function
           (env:fdefinition (env:client e5) e5 'sicl-clos:class-slots)))
     (loop for function in (find-all-sicl-functions e5)
-          do (update-object function table class-slots-function))
+          do (update-function function table class-slots-function e5))
     (loop for class in (find-all-classes e5)
-          do (update-object class table class-slots-function))))
+          do (update-class class table class-slots-function e5))))
