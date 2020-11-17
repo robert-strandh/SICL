@@ -40,6 +40,16 @@
   (remove-if-not (lambda (x) (typep x 'sicl-boot::header))
                  (find-all-functions e5)))
 
+(defun update-object (object translation-table class-slots-function)
+  (let ((old-class (slot-value object 'sicl-boot::%class))
+        (rack (slot-value object 'sicl-boot::%rack)))
+    (unless (typep old-class 'sicl-boot::header)
+      (let ((new-class (gethash old-class translation-table)))
+        (setf (slot-value object 'sicl-boot::%class)
+              new-class)
+        (setf (aref rack 1)
+              (funcall class-slots-function new-class))))))
+
 (defun find-all-classes (e5)
   (let ((result '())
         (visited (make-hash-table :test #'eq)))
