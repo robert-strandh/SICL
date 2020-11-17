@@ -1,9 +1,9 @@
 (cl:in-package #:sicl-boot-phase-6)
 
 (defmacro with-impure-sicl-object (object-var &body body)
-  `(when (typep ,object-var 'sicl-boot::%header)
+  `(when (typep ,object-var 'sicl-boot::header)
      (unless (typep (slot-value ,object-var 'sicl-boot::%class)
-                    'sicl-boot::%header)
+                    'sicl-boot::header)
        ,@body)))
 
 (defun create-class-translation-table (e3 e5)
@@ -45,84 +45,92 @@
 ;;; effective slots in element 1 of the rack, so we update that list
 ;;; as well.
 (defun update-object (object translation-table class-slots-function)
-  (let ((old-class (slot-value object 'sicl-boot::%class))
-        (rack (slot-value object 'sicl-boot::%rack)))
-    (unless (typep old-class 'sicl-boot::header)
-      (let ((new-class (gethash old-class translation-table)))
-        (setf (slot-value object 'sicl-boot::%class)
-              new-class)
-        (setf (aref rack 1)
-              (funcall class-slots-function new-class))))))
+  (with-impure-sicl-object object
+    (let ((old-class (slot-value object 'sicl-boot::%class))
+          (rack (slot-value object 'sicl-boot::%rack)))
+      (unless (typep old-class 'sicl-boot::header)
+        (let ((new-class (gethash old-class translation-table)))
+          (setf (slot-value object 'sicl-boot::%class)
+                new-class)
+          (setf (aref rack 1)
+                (funcall class-slots-function new-class)))))))
 
 (defun update-method
     (method translate-table class-slots-function e5)
   (declare (ignore e5))
-  (update-object method translate-table class-slots-function))
+  (with-impure-sicl-object method
+    (update-object method translate-table class-slots-function)))
 
 (defun update-generic-function
     (function translate-table class-slots-function e5)
-  (update-object function translate-table class-slots-function)
-  (let* ((methods-function
-           (env:fdefinition
-            (env:client e5) e5 'sicl-clos:generic-function-methods))
-         (methods (funcall methods-function function)))
-    (loop for method in methods
-          do (update-method
-              method translate-table class-slots-function e5))))
+  (with-impure-sicl-object function
+    (update-object function translate-table class-slots-function)
+    (let* ((methods-function
+             (env:fdefinition
+              (env:client e5) e5 'sicl-clos:generic-function-methods))
+           (methods (funcall methods-function function)))
+      (loop for method in methods
+            do (update-method
+                method translate-table class-slots-function e5)))))
 
 (defun update-simple-function
     (function translate-table class-slots-function e5)
   (declare (ignore e5))
-  (update-object function translate-table class-slots-function))
+  (with-impure-sicl-object function
+    (update-object function translate-table class-slots-function)))
 
 (defun update-function
     (function translate-table class-slots-function e5)
-  (if (eq (gethash (slot-value function 'sicl-boot::%class) translate-table)
-          (env:find-class (env:client e5) e5 'standard-generic-function))
-      (update-generic-function
-       function translate-table class-slots-function e5)
-      (update-simple-function
-       function translate-table class-slots-function e5)))
+  (with-impure-sicl-object function
+    (if (eq (gethash (slot-value function 'sicl-boot::%class) translate-table)
+            (env:find-class (env:client e5) e5 'standard-generic-function))
+        (update-generic-function
+         function translate-table class-slots-function e5)
+        (update-simple-function
+         function translate-table class-slots-function e5))))
 
 (defun update-direct-slot
     (slot translate-table class-slots-function e5)
-  (update-object slot translate-table class-slots-function)
-  (let* ((initfunction-function
-           (env:fdefinition
-            (env:client e5) e5 'sicl-clos:slot-definition-initfunction))
-         (initfunction (funcall initfunction-function slot)))
-    (unless (null initfunction)
-      (update-simple-function
-       initfunction translate-table class-slots-function e5))))
+  (with-impure-sicl-object slot
+    (update-object slot translate-table class-slots-function)
+    (let* ((initfunction-function
+             (env:fdefinition
+              (env:client e5) e5 'sicl-clos:slot-definition-initfunction))
+           (initfunction (funcall initfunction-function slot)))
+      (unless (null initfunction)
+        (update-simple-function
+         initfunction translate-table class-slots-function e5)))))
 
 (defun update-effective-slot
     (slot translate-table class-slots-function e5)
-  (update-object slot translate-table class-slots-function)
-  (let* ((initfunction-function
-           (env:fdefinition
-            (env:client e5) e5 'sicl-clos:slot-definition-initfunction))
-         (initfunction (funcall initfunction-function slot)))
-    (unless (null initfunction)
-      (update-simple-function
-       initfunction translate-table class-slots-function e5))))
+  (with-impure-sicl-object slot
+    (update-object slot translate-table class-slots-function)
+    (let* ((initfunction-function
+             (env:fdefinition
+              (env:client e5) e5 'sicl-clos:slot-definition-initfunction))
+           (initfunction (funcall initfunction-function slot)))
+      (unless (null initfunction)
+        (update-simple-function
+         initfunction translate-table class-slots-function e5)))))
 
 (defun update-class
     (class translate-table class-slots-function e5)
-  (update-object class translate-table class-slots-function)
-  (let* ((direct-slots-function
-           (env:fdefinition
-            (env:client e5) e5 'sicl-clos:class-direct-slots))
-         (slots (funcall direct-slots-function class)))
-    (loop for slot in slots
-          do (update-direct-slot
-              slot translate-table class-slots-function e5)))
-  (let* ((effective-slots-function
-           (env:fdefinition
-            (env:client e5) e5 'sicl-clos:class-slots))
-         (slots (funcall effective-slots-function class)))
-    (loop for slot in slots
-          do (update-effective-slot
-              slot translate-table class-slots-function e5))))
+  (with-impure-sicl-object class
+    (update-object class translate-table class-slots-function)
+    (let* ((direct-slots-function
+             (env:fdefinition
+              (env:client e5) e5 'sicl-clos:class-direct-slots))
+           (slots (funcall direct-slots-function class)))
+      (loop for slot in slots
+            do (update-direct-slot
+                slot translate-table class-slots-function e5)))
+    (let* ((effective-slots-function
+             (env:fdefinition
+              (env:client e5) e5 'sicl-clos:class-slots))
+           (slots (funcall effective-slots-function class)))
+      (loop for slot in slots
+            do (update-effective-slot
+                slot translate-table class-slots-function e5)))))
 
 (defun find-all-classes (e5)
   (let ((result '())
