@@ -10,4 +10,3 @@
   (load-source-file "CLOS/slot-value-etc-support.lisp" e5)
   (load-source-file "CLOS/slot-value-etc-defmethods.lisp" e5)
   (load-source-file "CLOS/slot-value-etc-specified-defuns.lisp" e5))
-  
