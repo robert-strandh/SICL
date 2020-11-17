@@ -19,15 +19,6 @@
               (setf (gethash e3-class result) e5-class))))))
     result))
 
-(defun update-class-slot (object translation-table)
-  (let* ((current-slot-value (slot-value object 'sicl-boot::%class))
-         (translation (gethash current-slot-value translation-table)))
-    (if (null translation)
-        (format *trace-output*
-                "Class slot ~s of object ~s is not in table~%"
-                object current-slot-value)
-        (setf (slot-value object 'sicl-boot::%class) translation))))
-
 (defun find-all-functions (e5)
   (let ((visited (make-hash-table :test #'eq))
         (result '()))
