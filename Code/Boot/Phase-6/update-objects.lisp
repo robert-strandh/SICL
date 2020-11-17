@@ -1,5 +1,11 @@
 (cl:in-package #:sicl-boot-phase-6)
 
+(defmacro with-impure-sicl-object (object-var &body body)
+  `(when (typep ,object-var 'sicl-boot::%header)
+     (unless (typep (slot-value ,object-var 'sicl-boot::%class)
+                    'sicl-boot::%header)
+       ,@body)))
+
 (defun create-class-translation-table (e3 e5)
   (let ((result (make-hash-table :test #'eq))
         (visited (make-hash-table :test #'eq)))
