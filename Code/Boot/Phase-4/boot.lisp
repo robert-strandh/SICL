@@ -16,10 +16,7 @@
           (lambda (object)
             (slot-value object 'sicl-boot::%class)))
     (setf (sicl-boot:overridden-function-cells e5)
-          `((find-class
-             . (,(lambda (name)
-                   (env:find-class (env:client e4) e4 name))))
-            (make-instance
+          `((make-instance
                 . (,(lambda (name-or-class &rest initargs)
                       (let ((class (if (symbolp name-or-class)
                                        (env:find-class (env:client e3) e3 name-or-class)
