@@ -31,6 +31,10 @@
     (load-source-file "CLOS/compute-discriminating-function-support-c.lisp" e5)
     (load-source-file "CLOS/compute-discriminating-function-defmethods.lisp" e5)
     (load-source-file "CLOS/invalidate-discriminating-function.lisp" e5))
+  (import-functions-from-host
+   '(cleavir-code-utilities:parse-generic-function-lambda-list
+     cleavir-code-utilities:required)
+   e5)
   (load-source-file "CLOS/generic-function-initialization-support.lisp" e5)
   (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e5))
 
