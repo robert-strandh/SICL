@@ -3,11 +3,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function FIND-CLASS.
+;;;
+;;; This function is defined the way it is because we want it to be
+;;; defined in an environment where we will ultimately undefine
+;;; functions with names in the SICL-ENVIRONMENT package.  So the
+;;; function SICL-ENVIRONMENT:FIND-CLASS and the CLIENT object of the
+;;; environment are closed over at load time so that they can be
+;;; undefined after this definition has been loaded.
 
-(defun find-class (symbol &optional (errorp t) environment)
-  (let* ((global-environment (sicl-environment:global-environment environment))
-         (client (sicl-environment:client global-environment))
-         (class (sicl-environment:find-class client global-environment symbol)))
-    (if (and (null class) errorp)
-	(error 'sicl-clos:no-such-class-name :name symbol)
-	class)))
+(setf (fdefinition 'find-class)
+      (load-time-value
+         (let* ((environment (sicl-environment:global-environment))
+                (client (sicl-environment:client environment))
+                (find-class
+                  (fdefinition 'sicl-environment:find-class)))
+           (lambda (symbol &optional (errorp t) environment)
+             (let ((class (funcall find-class client environment symbol)))
+               (if (and (null class) errorp)
+                   (error 'sicl-clos:no-such-class-name :name symbol)
+                   class) )))))
