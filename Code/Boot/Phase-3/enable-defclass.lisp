@@ -55,9 +55,7 @@
        (find-class
         (list (lambda (name)
                 (assert (eq name 't))
-                (env:find-class (env:client e3) e3 't))))
-       (add-method
-        (env:function-cell (env:client e3) e3 'add-method)))
+                (env:find-class (env:client e3) e3 't)))))
     (load-source-file "CLOS/add-accessor-method.lisp" e3))
   (with-intercepted-function-cells
       (e3
