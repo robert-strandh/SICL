@@ -103,6 +103,7 @@
    #:make-instance
    #:ensure-generic-function #:ensure-generic-function-using-class
    #:ensure-class #:ensure-class-using-class
+   #:ensure-method
    #:slot-value #:slot-missing #:slot-boundp #:slot-makunbound
    #:slot-boundp-using-class
    #:slot-makunbound-using-class
