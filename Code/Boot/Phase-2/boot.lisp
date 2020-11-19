@@ -46,8 +46,6 @@
                          (if (and (null result) errorp)
                              (error "no class named ~s in E2" name)
                              result))))))
-            (add-method
-             . (,#'add-method))
             (make-instance
              . (,#'make-instance))))
     (import-functions-from-host '(closer-mop:method-function) e3)

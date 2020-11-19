@@ -32,7 +32,5 @@
                       (let ((class (if (symbolp name-or-class)
                                        (env:find-class (env:client e2) e2 name-or-class)
                                        name-or-class)))
-                        (apply #'make-instance class initargs)))))
-            (add-method
-             . ,(env:function-cell (env:client e3) e3 'add-method))))
+                        (apply #'make-instance class initargs)))))))
     (prepare-next-phase e2 e3 e4)))

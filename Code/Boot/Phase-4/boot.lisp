@@ -22,9 +22,7 @@
                                        (env:find-class (env:client e3) e3 name-or-class)
                                        name-or-class)))
                         (apply (env:fdefinition (env:client e3) e3 'make-instance)
-                               class initargs)))))
-            (add-method
-             . ,(env:function-cell (env:client e4) e4 'add-method))))
+                               class initargs)))))))
     (sicl-boot:create-accessor-defgenerics e4)
     (sicl-boot:create-mop-classes e4)
     ;; I have no idea why this one is needed.
