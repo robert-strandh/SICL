@@ -42,5 +42,5 @@
                 (closer-mop:method-function method)))))
     (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e3))
   (enable-defgeneric e2 e4)
-  (enable-defmethod e3 e4)
+  (enable-defmethod e2 e3 e4)
   (enable-defclass e2 e3 e4))
