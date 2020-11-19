@@ -11,4 +11,4 @@
    (:file "defmethod-support")
    (:file "ensure-class-using-class-support")
    (:file "reader-writer-method-class-defgenerics")
-   (:file "add-accessor-method")))
+   #+(or)(:file "add-accessor-method")))
