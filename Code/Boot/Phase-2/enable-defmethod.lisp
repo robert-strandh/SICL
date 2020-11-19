@@ -40,7 +40,6 @@
                    (slot-definition nil slot-definition-p)
                  &allow-other-keys)
           (assert (or (symbolp name) (consp name)))
-          (assert (symbolp method-class))
           (let* ((ensure-gf (env:fdefinition (env:client e3) e3 'ensure-generic-function))
                  (generic-function
                    (funcall ensure-gf name

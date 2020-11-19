@@ -19,9 +19,11 @@
                    (slot-definition nil slot-definition-p)
                  &allow-other-keys)
           (assert (or (symbolp name) (consp name)))
-          (assert (symbolp method-class))
           (let* ((ensure-gf (env:fdefinition (env:client e4) e4 'ensure-generic-function))
                  (add-method (env:fdefinition (env:client e3) e3 'add-method))
+                 (method-class (if (symbolp method-class)
+                                   (env:find-class (env:client e2) e2 method-class)
+                                   method-class))
                  (generic-function
                    (funcall ensure-gf name
                             :lambda-list lambda-list
@@ -29,15 +31,13 @@
                             :method-class method-class))
                  (method
                    (if slot-definition-p
-                       (make-instance
-                           (env:find-class (env:client e2) e2 method-class)
+                       (make-instance method-class
                          :lambda-list lambda-list
                          :qualifiers qualifiers
                          :specializers (canonicalize-specializers specializers e3)
                          :slot-definition slot-definition
                          :function function)
-                       (make-instance
-                           (env:find-class (env:client e2) e2 method-class)
+                       (make-instance method-class
                          :lambda-list lambda-list
                          :qualifiers qualifiers
                          :specializers (canonicalize-specializers specializers e3)

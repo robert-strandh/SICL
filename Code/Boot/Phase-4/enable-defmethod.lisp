@@ -19,10 +19,13 @@
                    (slot-definition nil slot-definition-p)
                  &allow-other-keys)
           (assert (or (symbolp name) (consp name)))
-          (assert (symbolp method-class))
           (let* ((ensure-gf (env:fdefinition (env:client e5) e5 'ensure-generic-function))
                  (add-method (env:fdefinition (env:client e4) e4 'add-method))
                  (make-instance (env:fdefinition (env:client e3) e3 'make-instance))
+                 (method-class
+                   (if (symbolp method-class)
+                       (env:find-class (env:client e3) e3 method-class)
+                       method-class))
                  (generic-function
                    (funcall ensure-gf name
                             :lambda-list lambda-list
@@ -31,20 +34,19 @@
                  (method
                    (if slot-definition-p
                        (funcall
-                        make-instance
-                        (env:find-class (env:client e3) e3 method-class)
-                         :lambda-list lambda-list
-                         :qualifiers qualifiers
-                         :specializers (canonicalize-specializers specializers e4)
-                         :slot-definition slot-definition
-                         :function function)
+                        make-instance method-class
+                        :lambda-list lambda-list
+                        :qualifiers qualifiers
+                        :specializers (canonicalize-specializers specializers e4)
+                        :slot-definition slot-definition
+                        :function function)
                        (funcall
                         make-instance
-                        (env:find-class (env:client e3) e3 method-class)
-                         :lambda-list lambda-list
-                         :qualifiers qualifiers
-                         :specializers (canonicalize-specializers specializers e4)
-                         :function function))))
+                        method-class
+                        :lambda-list lambda-list
+                        :qualifiers qualifiers
+                        :specializers (canonicalize-specializers specializers e4)
+                        :function function))))
             (funcall add-method generic-function method)
             method))))
 
