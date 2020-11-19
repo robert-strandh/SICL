@@ -22,19 +22,11 @@
                                 function-name)
                       ,@forms))
                  environment)))
-          `(let ((,generic-function-var
-                   (ensure-generic-function
-                    ',function-name
-                    :lambda-list ',lambda-list
-                    :generic-function-class ',generic-function-class-name
-                    :method-class ',method-class-name))
-                 (,method-var
-                   (make-instance ',method-class-name
-                     :lambda-list ',lambda-list
-                     :qualifiers ',qualifiers
-                     :specializers
-                     (list ,@(canonicalize-specializers specializers))
-                     :documentation ',documentation
-                     :function ,method-lambda)))
-             (add-method ,generic-function-var ,method-var)
-             ,method-var))))))
+          `(ensure-method
+            ',function-name
+            :method-class ',method-class-name
+            :lambda-list ',lambda-list
+            :qualifiers ',qualifiers
+            :specializers ',specializers
+            :documentation ',documentation
+            :function ,method-lambda))))))
