@@ -45,9 +45,7 @@
                        (let ((result (env:find-class (env:client e2) e2 name)))
                          (if (and (null result) errorp)
                              (error "no class named ~s in E2" name)
-                             result))))))
-            (make-instance
-             . (,#'make-instance))))
+                             result))))))))
     (import-functions-from-host '(closer-mop:method-function) e3)
     (let ((client (env:client e3)))
       (setf (env:fdefinition client e3 'sicl-boot:ast-eval)

@@ -30,7 +30,10 @@
   ;; component so that we don't have to pull in the entire
   ;; finalization protocol here.
   (load-source-file "CLOS/class-finalization-defgenerics.lisp" e3)
-  (load-source-file "CLOS/class-finalization-support.lisp" e3)
+  (with-intercepted-function-cells
+      (e3
+       (make-instance (list #'make-instance)))
+    (load-source-file "CLOS/class-finalization-support.lisp" e3))
   (with-intercepted-function-cells
       (e3
        (sicl-clos:effective-slot-definition-class
@@ -48,6 +51,7 @@
     (load-source-file "CLOS/reader-writer-method-class-defmethods.lisp" e3))
   (with-intercepted-function-cells
       (e3
+       (make-instance (list #'make-instance))
        (ensure-generic-function
         (list (lambda (function-name &rest ignore)
                 (declare (ignore ignore))
@@ -59,6 +63,7 @@
     (load-source-file "CLOS/add-accessor-method.lisp" e3))
   (with-intercepted-function-cells
       (e3
+       (make-instance (list #'make-instance))
        ;; There is a test to verify that the initfunction of a
        ;; direct-default-initarg is a function, and it always is during
        ;; bootstrapping.

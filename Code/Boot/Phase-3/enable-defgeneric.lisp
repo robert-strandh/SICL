@@ -26,6 +26,7 @@
   (load-source-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
   (with-intercepted-function-cells
       (e3
+       (make-instance (list #'make-instance))
        (class-of
         (list (lambda (object)
                 (cond ((typep object 'sicl-boot::header)
@@ -90,7 +91,10 @@
           (assert (and (consp lambda-expression) (eq (first lambda-expression) 'lambda)))
           (let* ((cst (cst:cst-from-expression lambda-expression))
                  (ast (cleavir-cst-to-ast:cst-to-ast (env:client e3) cst e3)))
-            (ast-eval ast (env:client e3) e3))))
+            (with-intercepted-function-cells
+                (e3
+                 (make-instance (list #'make-instance)))
+              (ast-eval ast (env:client e3) e3)))))
   (setf (env:fdefinition
          (env:client e3) e3 'sicl-clos:set-funcallable-instance-function)
         #'closer-mop:set-funcallable-instance-function)
