@@ -3,6 +3,7 @@
 (defun boot (boot)
   (format *trace-output* "Start phase 4~%")
   (with-accessors ((e0 sicl-boot:e0)
+                   (e2 sicl-boot:e2)
                    (e3 sicl-boot:e3)
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
@@ -35,7 +36,7 @@
     (load-source-file "CLOS/class-readers-forward-referenced-class-defmethods.lisp" e4)
     (load-source-file "CLOS/class-readers-defmethods-before.lisp" e4)
     (sicl-boot:copy-macro-functions e0 e5)
-    (prepare-next-phase e3 e4 e5)
+    (prepare-next-phase e2 e3 e4 e5)
     ;; We must remove the override on METHOD-FUNCTION in E4 before we
     ;; start loading things into E5, because when we start loading
     ;; things in E5, we will call COMPILE in E4 in order to create

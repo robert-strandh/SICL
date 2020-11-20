@@ -20,7 +20,7 @@
                                   collect (funcall function-cell-function name))
                             (sicl-hir-transformations:constants hir))))))
 
-(defun prepare-next-phase (e3 e4 e5)
+(defun prepare-next-phase (e2 e3 e4 e5)
   (setf (env:fdefinition (env:client e5) e5 'sicl-boot:ast-eval)
         (lambda (ast)
           (ast-eval ast (env:client e5) e5)))
@@ -36,7 +36,15 @@
           (assert (and (consp lambda-expression) (eq (first lambda-expression) 'lambda)))
           (let* ((cst (cst:cst-from-expression lambda-expression))
                  (ast (cleavir-cst-to-ast:cst-to-ast (env:client e4) cst e4)))
-            (ast-eval ast (env:client e4) e4))))
+            (with-intercepted-function-cells
+                (e4
+                 (make-instance
+                     (list (lambda (name-or-class &rest initargs)
+                             (let ((class (if (symbolp name-or-class)
+                                              (env:find-class (env:client e2) e2 name-or-class)
+                                              name-or-class)))
+                               (apply #'make-instance class initargs))))))
+              (ast-eval ast (env:client e4) e4)))))
   (enable-compute-discriminating-function e3 e4)
   (setf (env:fdefinition (env:client e5) e5 'find-method-combination)
         (lambda (name arguments)

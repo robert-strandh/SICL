@@ -26,11 +26,5 @@
             ;; But we want the version of SICL-CLOS:METHOD-FUNCTION in
             ;; E3, so we need to override it here.
             (sicl-clos:method-function
-             . ,(env:function-cell (env:client e3) e3 'sicl-clos:method-function))
-            (make-instance
-                . (,(lambda (name-or-class &rest initargs)
-                      (let ((class (if (symbolp name-or-class)
-                                       (env:find-class (env:client e2) e2 name-or-class)
-                                       name-or-class)))
-                        (apply #'make-instance class initargs)))))))
+             . ,(env:function-cell (env:client e3) e3 'sicl-clos:method-function))))
     (prepare-next-phase e2 e3 e4)))
