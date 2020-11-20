@@ -70,7 +70,7 @@
       (load-source-file "CLOS/class-of-defun.lisp" e5)
       (enable-slot-value e5)
       (enable-object-creation e5)
-      (enable-method-combinations e5)
+      (enable-method-combinations e3 e5)
       (enable-generic-function-creation e5)
       (enable-printing e5)
       (finalize-inheritance e4))))

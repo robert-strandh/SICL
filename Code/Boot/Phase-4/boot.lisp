@@ -16,14 +16,6 @@
     (setf (env:fdefinition (env:client e4) e4 'class-of)
           (lambda (object)
             (slot-value object 'sicl-boot::%class)))
-    (setf (sicl-boot:overridden-function-cells e5)
-          `((make-instance
-                . (,(lambda (name-or-class &rest initargs)
-                      (let ((class (if (symbolp name-or-class)
-                                       (env:find-class (env:client e3) e3 name-or-class)
-                                       name-or-class)))
-                        (apply (env:fdefinition (env:client e3) e3 'make-instance)
-                               class initargs)))))))
     (sicl-boot:create-accessor-defgenerics e4)
     (sicl-boot:create-mop-classes e4)
     ;; I have no idea why this one is needed.
