@@ -67,14 +67,30 @@
   (setf (env:fdefinition
          client
          environment
+         'find-class)
+        (lambda (symbol &optional (errorp t) env)
+          (declare (ignore env))
+          (let ((class (env:find-class client environment symbol)))
+            (if (and errorp (null class))
+                (error "no class named ~s in ~s" symbol environment)
+                class))))
+  (setf (env:fdefinition
+         client
+         environment
          'sicl-data-and-control-flow:function-cell)
         (lambda (name)
+          (when (and (eq name 'make-instance)
+                     (eq environment *e5*))
+            (format *trace-output* "****************************** "))
           (let* ((override-entry
                    (find name (overridden-function-cells environment)
                          :key #'car :test #'equal))
                  (result (if (null override-entry)
                              (env:function-cell client environment name)
                              (cdr override-entry))))
+            (when (and (eq name 'make-instance)
+                       (eq environment *e5*))
+              (format *trace-output* "~s~%" (car result)))
             result))))
 
 (defun import-standard-functions (environment)
