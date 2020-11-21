@@ -36,7 +36,10 @@
      cleavir-code-utilities:required)
    e5)
   (load-source-file "CLOS/generic-function-initialization-support.lisp" e5)
-  (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e5))
+  (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e5)
+  (load-source-file "CLOS/ensure-generic-function-using-class-defgenerics.lisp" e5)
+  (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e5)
+  (load-source-file "CLOS/ensure-generic-function-using-class-defmethods.lisp" e5))
 
 (defun enable-generic-function-creation (e5)
   (enable-generic-function-initialization e5))
