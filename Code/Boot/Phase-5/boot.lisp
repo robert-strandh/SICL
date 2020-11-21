@@ -46,8 +46,12 @@
     (with-intercepted-function-cells
         (e5
          (find-class
-          (list (lambda (name)
-                  (env:find-class (env:client e4) e4 name)))))
+          (list (lambda (name &optional (errorp t) environment)
+                  (declare (ignore environment))
+                  (let ((result (env:find-class (env:client e4) e4 name)))
+                    (if (and errorp (null result))
+                        (error "No class named ~s in E5" name)
+                        result))))))
       (sicl-boot:create-accessor-defgenerics e5)
       (sicl-boot:create-mop-classes e5)
       (with-intercepted-function-cells
