@@ -79,18 +79,12 @@
          environment
          'sicl-data-and-control-flow:function-cell)
         (lambda (name)
-          (when (and (eq name 'make-instance)
-                     (eq environment *e5*))
-            (format *trace-output* "****************************** "))
           (let* ((override-entry
                    (find name (overridden-function-cells environment)
                          :key #'car :test #'equal))
                  (result (if (null override-entry)
                              (env:function-cell client environment name)
                              (cdr override-entry))))
-            (when (and (eq name 'make-instance)
-                       (eq environment *e5*))
-              (format *trace-output* "~s~%" (car result)))
             result))))
 
 (defun import-standard-functions (environment)
