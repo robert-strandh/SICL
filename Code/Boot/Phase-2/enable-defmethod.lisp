@@ -19,48 +19,19 @@
                       (values 'standard-generic-function 'standard-method)))
                 (values 'standard-generic-function 'standard-method))))))
 
-(defun canonicalize-specializers (specializers e2)
-  (loop for specializer in specializers
-        collect (cond ((eq specializer 't)
-                       (find-class 't))
-                      ((symbolp specializer)
-                       (env:find-class (env:client e2) e2 specializer))
-                      (t
-                       specializer))))
-
 (defun define-ensure-method (e2 e3)
-  (setf (env:fdefinition (env:client e3) e3 'sicl-clos:ensure-method)
-        (lambda (name
-                 &key
-                   method-class
-                   lambda-list
-                   qualifiers
-                   specializers
-                   function
-                   (slot-definition nil slot-definition-p)
-                 &allow-other-keys)
-          (assert (or (symbolp name) (consp name)))
-          (let* ((ensure-gf (env:fdefinition (env:client e3) e3 'ensure-generic-function))
-                 (generic-function
-                   (funcall ensure-gf name
-                            :lambda-list lambda-list
-                            :generic-function-class 'standard-generic-function
-                            :method-class method-class))
-                 (method
-                   (if slot-definition-p
-                       (make-instance method-class
-                         :lambda-list lambda-list
-                         :qualifiers qualifiers
-                         :specializers (canonicalize-specializers specializers e2)
-                         :slot-definition slot-definition
-                         :function function)
-                       (make-instance method-class
-                         :lambda-list lambda-list
-                         :qualifiers qualifiers
-                         :specializers (canonicalize-specializers specializers e2)
-                         :function function))))
-            (add-method generic-function method)
-            method))))
+  (let ((client (env:client e2)))
+    (with-intercepted-function-cells
+        (e3
+         (typep
+          (env:function-cell client e2 'typep))
+         (add-method
+          (env:function-cell client e2 'add-method))
+         (find-class
+          (env:function-cell client e2 'find-class))
+         (make-instance
+          (env:function-cell client e2 'make-instance)))
+      (load-source-file "CLOS/ensure-method-defun.lisp" e3))))
 
 (defun enable-defmethod (e2 e3)
   (define-generic-function-class-names e3)
