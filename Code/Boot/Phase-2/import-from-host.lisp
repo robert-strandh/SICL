@@ -27,6 +27,9 @@
       ;; Import the class GENERIC-FUNCTION for the purpose of TYPEP.
       (setf (env:find-class client e2 'generic-function)
             (find-class 'generic-function))
+      ;; Import the class SYMBOL for the purpose of TYPEP.
+      (setf (env:find-class client e2 'symbol)
+            (find-class 'symbol))
       ;; Import the class STANDARD-GENERIC-FUNCTION so that we can
       ;; create instance of it.
       (setf (env:find-class client e2 'standard-generic-function)
@@ -37,6 +40,8 @@
             (find-class 'closer-mop:standard-direct-slot-definition))
       (setf (env:find-class client e2 'sicl-clos:specializer)
             (find-class 'closer-mop:specializer))
+      (setf (env:find-class client e2 'sicl-clos:forward-referenced-class)
+            (find-class 'closer-mop:forward-referenced-class))
       (import-functions-from-host '(class-of add-method) e2)
       (setf (env:fdefinition client e2 'sicl-clos:class-precedence-list)
             #'closer-mop:class-precedence-list))))
