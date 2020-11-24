@@ -14,11 +14,8 @@
      &allow-other-keys)
   (declare (ignore generic-function))
   (cond ((symbolp generic-function-class)
-         (let ((class (find-class generic-function-class t environment)))
-           (when (null class)
-             (error 'no-such-generic-function-class
-                    :class-name generic-function-class))
-           (setf generic-function-class class)))
+         (setf generic-function-class class
+               (find-class generic-function-class t environment)))
         ((member (find-class 'generic-function)
                  (class-precedence-list generic-function-class))
          nil)
@@ -73,11 +70,8 @@
      &allow-other-keys)
   (declare (ignore function-name))
   (cond ((symbolp generic-function-class)
-         (let ((class (find-class generic-function-class t environment)))
-           (when (null class)
-             (error "no such generic-function-class ~s"
-                    generic-function-class))
-           (setf generic-function-class class)))
+         (setf generic-function-class class
+               (find-class generic-function-class t environment)))
         ((member (find-class 'generic-function)
                  (class-precedence-list generic-function-class))
          nil)
