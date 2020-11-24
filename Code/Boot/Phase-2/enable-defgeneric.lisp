@@ -13,7 +13,7 @@
 ;;; We can rely entirely on the host to execute the generic-function
 ;;; initialization protocol.
 
-(defun define-ensure-class-using-class (e2 e3)
+(defun define-ensure-generic-function-using-class (e2 e3)
   (let ((client (env:client e3)))
     (setf (env:fdefinition
            client e2 'sicl-clos:ensure-generic-function-using-class)
@@ -38,7 +38,7 @@
                           :datum generic-function-or-nil)))))))
 
 (defun enable-defgeneric (e2 e3)
-  (define-ensure-class-using-class e2 e3)
+  (define-ensure-generic-function-using-class e2 e3)
   (let ((client (env:client e2)))
     (with-intercepted-function-cells
         (e3
