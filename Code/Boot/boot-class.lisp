@@ -6,9 +6,7 @@
    (%e2 :initarg :e2 :accessor e2)
    (%e3 :initarg :e3 :accessor e3)
    (%e4 :initarg :e4 :accessor e4)
-   (%e5 :initarg :e5 :accessor e5)
-   (%e6 :initarg :e6 :accessor e6)
-   (%e7 :initarg :e7 :accessor e7)))
+   (%e5 :initarg :e5 :accessor e5)))
 
 (defvar *e0*)
 (defvar *e1*)
@@ -16,5 +14,3 @@
 (defvar *e3*)
 (defvar *e4*)
 (defvar *e5*)
-(defvar *e6*)
-(defvar *e7*)
