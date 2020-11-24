@@ -35,15 +35,8 @@
       boot
     (change-class e2 'environment :client (make-instance 'client))
     (import-from-host boot)
+    (sicl-boot:copy-macro-functions e0 e2)
     (sicl-boot:copy-macro-functions e0 e3)
-    (setf (sicl-boot:overridden-function-cells e3)
-          `((find-class
-             . (,(lambda (name &optional (errorp t) environment)
-                   (declare (ignore environment))
-                   (let ((result (env:find-class (env:client e2) e2 name)))
-                     (if (and (null result) errorp)
-                         (error "no class named ~s in E2" name)
-                         result)))))))
     (import-functions-from-host '(closer-mop:method-function) e3)
     (let ((client (env:client e3)))
       (setf (env:fdefinition client e3 'sicl-boot:ast-eval)
