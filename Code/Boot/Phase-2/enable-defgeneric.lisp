@@ -20,20 +20,32 @@
 ;;; We can rely entirely on the host to execute the generic-function
 ;;; initialization protocol.
 
-(defun enable-defgeneric (e3)
+(defun enable-defgeneric (e2 e3)
   (let ((client (env:client e3)))
-    (setf (env:fdefinition client e3 'ensure-generic-function)
-          (lambda (function-name &rest arguments &key &allow-other-keys)
-            (let ((args (copy-list arguments)))
-              (loop while (remf args :environment))
-              (loop while (remf args :generic-function-class))
-              (loop while (remf args :method-class))
-              (if (env:fboundp client e3 function-name)
-                  (env:fdefinition client e3 function-name)
-                  (setf (env:fdefinition client e3 function-name)
-                        (apply #'make-instance 'standard-generic-function
-                               :name function-name
-                               :method-combination
-                               (closer-mop:find-method-combination
-                                #'class-name 'standard '())
-                               args))))))))
+    (setf (env:fdefinition
+           client e2 'sicl-clos:ensure-generic-function-using-class)
+          (lambda (generic-function-or-nil
+                   function-name
+                   &rest keys
+                   &key
+                     (generic-function-class 'standard-generic-function)
+                   &allow-other-keys)
+            (loop while (remf keys :environment))
+            (loop while (remf keys :generic-function-class))
+            (cond ((typep generic-function-or-nil 'generic-function)
+                   generic-function-or-nil)
+                  ((null generic-function-or-nil)
+                   (setf (env:fdefinition client e3 function-name)
+                         (apply (env:fdefinition client e2 'make-instance)
+                                generic-function-class
+                                keys)))
+                  (t
+                   (error 'type-error
+                          :expected-type '(or null generic-function)
+                          :datum generic-function-or-nil)))))
+    (with-intercepted-function-cells
+        (e3
+         (sicl-clos:ensure-generic-function-using-class
+          (env:function-cell
+           client e2 'sicl-clos:ensure-generic-function-using-class)))
+      (load-source-file "CLOS/ensure-generic-function-defun.lisp" e3))))
