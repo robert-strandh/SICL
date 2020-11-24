@@ -5,9 +5,9 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "environment")
    (:file "import-from-host")
    (:file "define-defmacro")
    (:file "define-backquote-macro")
    (:file "fill-environment")
-   (:file "environment")
    (:file "boot")))
