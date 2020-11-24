@@ -10,6 +10,7 @@
    #:+unbound-slot-value+
    ;; MOP classes
    #:class #:standard-class #:built-in-class #:structure-class
+   #:forward-referenced-class
    #:funcallable-standard-class
    #:standard-object #:function #:funcallable-standard-object
    #:simple-function
