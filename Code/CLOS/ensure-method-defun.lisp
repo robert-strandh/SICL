@@ -65,7 +65,7 @@
        (generic-function-class
         'standard-generic-function generic-function-class-p)
        (method-class 'standard-method)
-       (lambbda-list nil lambda-list-p)
+       (lambda-list nil lambda-list-p)
        (qualifiers '())
        (specializers nil specializers-p)
        (documentation nil)
@@ -85,13 +85,13 @@
                    generic-function-or-name
                    :lambda-list lambda-list
                    :method-class method-class))))
-        ((method
+        (method
           (make-instance method-class
             :lambda-list lambda-list
             :qualifiers qualifiers
             :specializers (ensure-specializers specializers)
             :documentation documentation
-            :function function))))
+            :function function)))
     (add-method generic-function method)
     method))
 
