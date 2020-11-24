@@ -84,12 +84,14 @@
               ,@(if (null documentation-option)
                     '()
                     `(:documentation ,(second documentation-option)))
-              :method-combination
-              (find-method-combination
-               (class-prototype
-                (find-class ',generic-function-class-name))
-               ',method-combination-name
-               ',method-combination-arguments)
+              ,@(if (null method-combination-option)
+                    '()
+                    `(:method-combination
+                      (find-method-combination
+                       (class-prototype
+                        (find-class ',generic-function-class-name))
+                       ',method-combination-name
+                       ',method-combination-arguments)))
               :generic-function-class ',generic-function-class-name
               :method-class ',method-class-name
               :environment env)))
