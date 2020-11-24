@@ -34,4 +34,7 @@
       ;; When we create class metaobjects, we need to instantiate the
       ;; class STANDARD-DIRECT-SLOT-DEFINITION, so we import it here.
       (setf (env:find-class client e2 'sicl-clos:standard-direct-slot-definition)
-            (find-class 'closer-mop:standard-direct-slot-definition)))))
+            (find-class 'closer-mop:standard-direct-slot-definition))
+      (import-functions-from-host '(class-of) e2)
+      (setf (env:fdefinition client e2 'sicl-clos:class-precedence-list)
+            #'closer-mop:class-precedence-list))))
