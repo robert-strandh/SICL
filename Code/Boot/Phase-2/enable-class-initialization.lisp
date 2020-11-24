@@ -1,5 +1,21 @@
 (cl:in-package #:sicl-boot-phase-2)
 
+;;; The problem we solve with this code is that we create host classes
+;;; using the host MAKE-INSTANCE function.  Doing so will trigger that
+;;; class-initialization protocol.  Part of that protocol involves
+;;; adding slot readers and slot writers to generic functions, and
+;;; those functions are determined by their names.  As part of that
+;;; protocol, those names are used to look up generic functions in the
+;;; host global environment, but that is not what we want.  Our
+;;; generic functions are located in environment E3.  We solve the
+;;; problem by introducing an :AROUND method on the host function
+;;; INITIALIZE-INSTANCE.  This :AROUND method first removes all
+;;; keyword/value pairs with keys :READERS and :WRITERS from all the
+;;; canonical slot specifications, before calling the main method on
+;;; INITIALIZE-INSTANCE, which then prevents methods from being added
+;;; to host generic functions in the host global environment.  Next,
+;;; it adds those readers and writers explicitly to our generic
+;;; functions in E3, using special-purpose code.
 (defun enable-class-initialization (boot)
   (with-accessors ((e3 sicl-boot:e3)) boot
     (defmethod initialize-instance :around ((class funcallable-standard-class)
