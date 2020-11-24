@@ -95,7 +95,13 @@
                  (result (if (null override-entry)
                              (env:function-cell client environment name)
                              (cdr override-entry))))
-            result))))
+            result)))
+  (setf (env:fdefinition
+         client
+         environment
+         'sicl-type:type-expander)
+        (lambda (name)
+          (env:type-expander client environment name))))
 
 (defun import-standard-functions (environment)
   (import-functions-from-host
