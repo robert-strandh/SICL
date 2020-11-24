@@ -24,6 +24,9 @@
       ;; STANDARD-METHOD.  For that reason, we import it from the host.
       (setf (env:find-class client e2 'standard-method)
             (find-class 'standard-method))
+      ;; Import the class GENERIC-FUNCTION for the purpose of TYPEP.
+      (setf (env:find-class client e2 'generic-function)
+            (find-class 'generic-function))
       ;; Import the class STANDARD-GENERIC-FUNCTION so that we can
       ;; create instance of it.
       (setf (env:find-class client e2 'standard-generic-function)
