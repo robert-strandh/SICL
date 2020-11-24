@@ -10,13 +10,6 @@
 ;;; ENSURE-GENERIC-FUNCTION must exist in that environment, which in
 ;;; this case is E3.
 ;;;
-;;; The way we have chosen to do it is to provide a specific
-;;; definition of ENSURE-GENERIC-FUNCTION.  We do not want to use the
-;;; ordinary SICL version of ENSURE-GENERIC-FUNCTION because it
-;;; requires a battery of additional functionality in the form of
-;;; other generic functions.  So to keep things simple, we supply a
-;;; special bootstrapping version of it.
-;;;
 ;;; We can rely entirely on the host to execute the generic-function
 ;;; initialization protocol.
 
