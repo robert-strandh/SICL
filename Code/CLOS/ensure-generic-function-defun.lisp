@@ -9,6 +9,7 @@
 (defun ensure-generic-function
     (name
      &rest keys
+     &key
      &allow-other-keys)
   (let ((generic-function
           (if (fboundp name)
