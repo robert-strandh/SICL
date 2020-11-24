@@ -7,8 +7,9 @@
     (import-functions-from-host
      '(reinitialize-instance)
      e3)
+    (enable-typep e2)
     (enable-object-creation e2)
     (enable-defgeneric e2 e3)
-    (enable-defmethod e2 e3)
     (enable-class-initialization boot)
-    (enable-defclass boot)))
+    (enable-defclass boot)
+    (enable-defmethod e2 e3)))
