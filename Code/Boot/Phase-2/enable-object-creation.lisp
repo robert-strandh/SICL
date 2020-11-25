@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-boot-phase-2)
 
-(defun enable-object-creation (e2)
+(defun enable-object-creation (e1 e2)
   (let ((client (env:client e2)))
-    (setf (env:fdefinition client e2 'make-instance)
+    (setf (env:fdefinition client e1 'make-instance)
           (lambda (class-or-name &rest initargs &key &allow-other-keys)
             (let ((class (if (symbolp class-or-name)
                              (env:find-class client e2 class-or-name)

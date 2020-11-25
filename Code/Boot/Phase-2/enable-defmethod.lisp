@@ -19,7 +19,7 @@
                       (values 'standard-generic-function 'standard-method)))
                 (values 'standard-generic-function 'standard-method))))))
 
-(defun define-ensure-method (e2 e3)
+(defun define-ensure-method (e1 e2 e3)
   (let ((client (env:client e2)))
     (with-intercepted-function-cells
         (e3
@@ -30,12 +30,12 @@
          (find-class
           (env:function-cell client e2 'find-class))
          (make-instance
-          (env:function-cell client e2 'make-instance)))
+          (env:function-cell client e1 'make-instance)))
       (load-source-file "CLOS/ensure-method-defun.lisp" e3))))
 
-(defun enable-defmethod (e2 e3)
+(defun enable-defmethod (e1 e2 e3)
   (define-generic-function-class-names e3)
-  (define-ensure-method e2 e3)
+  (define-ensure-method e1 e2 e3)
   (let ((client (env:client e2)))
     (setf (env:find-class client e2 't)
           (find-class t))

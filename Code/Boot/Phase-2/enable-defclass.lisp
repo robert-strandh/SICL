@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-boot-phase-2)
 
-(defun define-ensure-class-using-class (e2 e3)
+(defun define-ensure-class-using-class (e1 e2 e3)
   (let ((client (env:client e3)))
     (setf (env:fdefinition
            client e2 'sicl-clos:ensure-class-using-class)
@@ -16,7 +16,7 @@
                    class-or-nil)
                   ((null class-or-nil)
                    (setf (env:find-class client e3 class-name)
-                         (apply (env:fdefinition client e2 'make-instance)
+                         (apply (env:fdefinition client e1 'make-instance)
                                 metaclass
                                 :direct-superclasses
                                 (loop for class-or-name in direct-superclasses
@@ -40,8 +40,9 @@
 
 
 (defun enable-defclass (boot)
-  (with-accessors ((e2 sicl-boot:e2)
+  (with-accessors ((e1 sicl-boot:e1)
+                   (e2 sicl-boot:e2)
                    (e3 sicl-boot:e3))
       boot
-    (define-ensure-class-using-class e2 e3)
+    (define-ensure-class-using-class e1 e2 e3)
     (define-ensure-class e2 e3)))
