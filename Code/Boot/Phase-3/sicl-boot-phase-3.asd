@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "enable-object-creation")
    (:file "enable-method-combinations")
    (:file "enable-defgeneric")
    (:file "enable-defmethod")
