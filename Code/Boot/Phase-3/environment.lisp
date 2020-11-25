@@ -4,4 +4,4 @@
   ())
 
 (defclass client (sicl-boot:client)
-  ())
+  ((%e3 :initarg :e3 :reader e3)))
