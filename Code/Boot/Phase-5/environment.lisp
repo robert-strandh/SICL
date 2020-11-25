@@ -4,4 +4,4 @@
   ())
 
 (defclass client (sicl-boot:client)
-  ())
+  ((%e5 :initarg :e5 :reader e5)))
