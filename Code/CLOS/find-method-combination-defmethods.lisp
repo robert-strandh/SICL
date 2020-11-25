@@ -6,5 +6,4 @@
      method-combination-options)
   (sicl-method-combination:find-method-combination
    method-combination-type-name
-   method-combination-options
-   (sicl-environment:global-environment)))
+   method-combination-options))
