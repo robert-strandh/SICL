@@ -10,28 +10,20 @@
   (with-intercepted-function-cells
       (e3
        (make-instance
-           (list (lambda (name-or-class &rest arguments)
-                   (if (eq name-or-class 'method-combination)
-                       (apply #'make-instance
-                              (env:find-class (env:client e2) e2 name-or-class)
-                              arguments)
-                       (apply #'make-instance name-or-class arguments))))))
+        (env:function-cell (env:client e2) e2 'make-instance))
+       (sicl-method-combination:find-method-combination-template
+        (env:function-cell
+         (env:client e4) e4 'sicl-method-combination:find-method-combination-template)))
     (load-source-file "Method-combination/find-method-combination.lisp" e3))
   (load-source-file "Method-combination/define-method-combination-defmacro.lisp" e3)
   (with-intercepted-function-cells
       (e3
        (make-instance
-           (list (lambda (name-or-class &rest arguments)
-                   (if (eq name-or-class 'sicl-method-combination:method-combination-template)
-                       (apply #'make-instance
-                              (env:find-class (env:client e2) e2 name-or-class)
-                              arguments)
-                       (apply #'make-instance name-or-class arguments)))))
-       (find-class (list (lambda (x) (env:find-class (env:client e2) e2 x)))))
-    (load-source-file "CLOS/standard-method-combination.lisp" e3)
-    (setf (env:fdefinition (env:client e4) e4 'sicl-clos:find-method-combination)
-          (lambda (generic-function name arguments)
-            (declare (ignore generic-function))
-            (funcall (env:fdefinition
-                      (env:client e3) e3 'sicl-method-combination:find-method-combination)
-                     name arguments)))))
+        (env:function-cell (env:client e2) e2 'make-instance))
+       ((setf sicl-method-combination:find-method-combination-template)
+        (env:function-cell
+         (env:client e4) e4
+         '(setf sicl-method-combination:find-method-combination-template))))
+    (load-source-file "CLOS/standard-method-combination.lisp" e3))
+  (load-source-file "CLOS/find-method-combination-defgenerics.lisp" e3)
+  (load-source-file "CLOS/find-method-combination-defmethods.lisp" e3))
