@@ -88,8 +88,8 @@
 (defmacro ecase (keyform &rest clauses)
   (ecase-expander keyform clauses))
 
-(defmacro ccase (keyplace &rest clauses &environment env)
-  (ccase-expander keyplace clauses env))
+(defmacro ccase (keyplace &rest clauses)
+  (ccase-expander keyplace clauses))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -101,5 +101,5 @@
 (defmacro etypecase (keyform &rest clauses)
   (etypecase-expander keyform clauses))
 
-(defmacro ctypecase (keyplace &rest clauses &environment env)
-  (ctypecase-expander keyplace clauses env))
+(defmacro ctypecase (keyplace &rest clauses)
+  (ctypecase-expander keyplace clauses))
