@@ -27,8 +27,6 @@
           (env:function-cell client e2 'typep))
          (add-method
           (env:function-cell client e2 'add-method))
-         (find-class
-          (env:function-cell client e2 'find-class))
          (make-instance
           (env:function-cell client e1 'make-instance)))
       (load-source-file "CLOS/ensure-method-defun.lisp" e3))))
