@@ -42,7 +42,8 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (change-class e5 'environment :client (make-instance 'client))
+    (change-class e5 'environment
+                  :client (make-instance 'client :e5 e5))
     (with-intercepted-function-cells
         (e5
          (find-class
