@@ -7,12 +7,11 @@
 (defun define-sub-specializer-p (e3)
   (load-source-file "CLOS/sub-specializer-p.lisp" e3))
 
-(defun define-compute-applicable-methods (e3)
+(defun define-compute-applicable-methods (e3 e4)
   (with-intercepted-function-cells
       (e3
        (class-of
-        (list (lambda (object)
-                (class-of object)))))
+        (env:function-cell (env:client e4) e4 'class-of)))
     (load-source-file "CLOS/compute-applicable-methods-support.lisp" e3))
   (load-source-file "CLOS/compute-applicable-methods-defgenerics.lisp" e3)
   (load-source-file "CLOS/compute-applicable-methods-defmethods.lisp" e3))
@@ -57,30 +56,30 @@
   (load-source-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
   (load-source-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))
 
-(defun ast-eval (ast client environment)
-  (let* ((global-environment (trucler:global-environment client environment))
-         (hir (sicl-ast-to-hir:ast-to-hir client ast))
-         (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
-         (sicl-run-time:*dynamic-environment* '())
-         (function-cell-function
-           (sicl-environment:fdefinition
-            client global-environment 'sicl-data-and-control-flow:function-cell)))
-    (funcall fun
-             (apply #'vector
-                    nil ; Ultimately, replace with code object.
-                    #'sicl-hir-evaluator:enclose
-                    #'sicl-hir-evaluator:initialize-closure
-                    #'cons
-                    nil
-                    (append (loop with names = (sicl-hir-transformations:function-names hir)
-                                  for name in names
-                                  collect (funcall function-cell-function name))
-                            (sicl-hir-transformations:constants hir))))))
+;; (defun ast-eval (ast client environment)
+;;   (let* ((global-environment (trucler:global-environment client environment))
+;;          (hir (sicl-ast-to-hir:ast-to-hir client ast))
+;;          (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
+;;          (sicl-run-time:*dynamic-environment* '())
+;;          (function-cell-function
+;;            (sicl-environment:fdefinition
+;;             client global-environment 'sicl-data-and-control-flow:function-cell)))
+;;     (funcall fun
+;;              (apply #'vector
+;;                     nil ; Ultimately, replace with code object.
+;;                     #'sicl-hir-evaluator:enclose
+;;                     #'sicl-hir-evaluator:initialize-closure
+;;                     #'cons
+;;                     nil
+;;                     (append (loop with names = (sicl-hir-transformations:function-names hir)
+;;                                   for name in names
+;;                                   collect (funcall function-cell-function name))
+;;                             (sicl-hir-transformations:constants hir))))))
 
-(defun enable-compute-discriminating-function (e3)
+(defun enable-compute-discriminating-function (e3 e4)
   (define-classp e3)
   (define-sub-specializer-p e3)
-  (define-compute-applicable-methods e3)
+  (define-compute-applicable-methods e3 e4)
   (define-compute-effective-method e3)
   (import-functions-from-host
    '(no-applicable-method)
@@ -100,23 +99,27 @@
         #'closer-mop:set-funcallable-instance-function)
   (define-compute-discriminating-function e3))
 
-(defun enable-defgeneric (e2 e4)
-  (let ((client (env:client e4)))
-    (setf (env:fdefinition client e4 'ensure-generic-function)
-          (lambda (function-name &rest arguments &key &allow-other-keys)
-            (let ((args (copy-list arguments)))
-              (loop while (remf args :environment))
-              (loop while (remf args :generic-function-class))
-              (loop while (remf args :method-class))
-              (if (env:fboundp client e4 function-name)
-                  (env:fdefinition client e4 function-name)
-                  (setf (env:fdefinition client e4 function-name)
-                        (apply #'make-instance
-                               (env:find-class client e2 'standard-generic-function)
-                               :name function-name
-                               :method-class (env:find-class (env:client e2) e2 'standard-method)
-                               args)))))))
-  (load-source-file "CLOS/defgeneric-defmacro.lisp" e4))
+(defun enable-defgeneric (e2 e3 e4)
+  (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e3)
+  (load-source-file "CLOS/ensure-generic-function-using-class-defgenerics.lisp" e3)
+  (load-source-file "CLOS/ensure-generic-function-using-class-defmethods.lisp" e3)
+  ;; (let ((client (env:client e4)))
+  ;;   (setf (env:fdefinition client e4 'ensure-generic-function)
+  ;;         (lambda (function-name &rest arguments &key &allow-other-keys)
+  ;;           (let ((args (copy-list arguments)))
+  ;;             (loop while (remf args :environment))
+  ;;             (loop while (remf args :generic-function-class))
+  ;;             (loop while (remf args :method-class))
+  ;;             (if (env:fboundp client e4 function-name)
+  ;;                 (env:fdefinition client e4 function-name)
+  ;;                 (setf (env:fdefinition client e4 function-name)
+  ;;                       (apply #'make-instance
+  ;;                              (env:find-class client e2 'standard-generic-function)
+  ;;                              :name function-name
+  ;;                              :method-class (env:find-class (env:client e2) e2 'standard-method)
+  ;;                              args)))))))
+  ;;(load-source-file "CLOS/defgeneric-defmacro.lisp" e4))
+  )
 
 (defun define-generic-function-class-names (e4)
   (setf (env:fdefinition
