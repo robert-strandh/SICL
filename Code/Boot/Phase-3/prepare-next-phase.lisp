@@ -23,6 +23,10 @@
   (import-functions-from-host
    '(shared-initialize initialize-instance)
    e3)
+  (import-functions-from-host
+   '(cleavir-code-utilities:parse-generic-function-lambda-list
+     cleavir-code-utilities:required)
+   e3)
   (load-source-file "CLOS/generic-function-initialization-support.lisp" e3)
   ;; (with-intercepted-function-cells
   ;;     (e3
