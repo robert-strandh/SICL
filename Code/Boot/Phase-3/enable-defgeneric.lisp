@@ -100,7 +100,10 @@
   (define-compute-discriminating-function e3))
 
 (defun enable-defgeneric (e2 e3 e4)
-  (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e3)
+  (with-intercepted-function-cells
+      (e3
+       (make-instance (env:function-cell (env:client e2) e2 'make-instance)))
+    (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e3))
   (load-source-file "CLOS/ensure-generic-function-using-class-defgenerics.lisp" e3)
   (load-source-file "CLOS/ensure-generic-function-using-class-defmethods.lisp" e3)
   ;; (let ((client (env:client e4)))
