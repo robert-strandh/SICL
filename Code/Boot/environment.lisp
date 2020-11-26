@@ -87,6 +87,12 @@
   (setf (env:fdefinition
          client
          environment
+         'find-package)
+        (lambda (name)
+          (env:find-package client environment name)))
+  (setf (env:fdefinition
+         client
+         environment
          'sicl-data-and-control-flow:function-cell)
         (lambda (name)
           (let* ((override-entry
