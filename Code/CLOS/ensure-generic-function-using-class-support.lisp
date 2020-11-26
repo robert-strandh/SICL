@@ -14,7 +14,7 @@
      &allow-other-keys)
   (declare (ignore generic-function))
   (cond ((symbolp generic-function-class)
-         (setf generic-function-class class
+         (setf generic-function-class
                (find-class generic-function-class t environment)))
         ((member (find-class 'generic-function)
                  (class-precedence-list generic-function-class))
@@ -70,7 +70,7 @@
      &allow-other-keys)
   (declare (ignore function-name))
   (cond ((symbolp generic-function-class)
-         (setf generic-function-class class
+         (setf generic-function-class
                (find-class generic-function-class t environment)))
         ((member (find-class 'generic-function)
                  (class-precedence-list generic-function-class))
