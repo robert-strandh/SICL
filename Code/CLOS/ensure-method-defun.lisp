@@ -52,7 +52,7 @@
   (loop for specializer-designator in specializer-designators
         collect (etypecase specializer-designator
                   (specializer
-                   specializer)
+                   specializer-designator)
                   (symbol
                    (find-class specializer-designator))
                   ((cons (eql eql) (cons t null))
