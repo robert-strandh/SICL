@@ -8,42 +8,16 @@
                        specializer))))
 
 (defun define-ensure-method (e2 e3 e4)
-  (setf (env:fdefinition (env:client e4) e4 'sicl-clos:ensure-method)
-        (lambda (name
-                 &key
-                   method-class
-                   lambda-list
-                   qualifiers
-                   specializers
-                   function
-                   (slot-definition nil slot-definition-p)
-                 &allow-other-keys)
-          (assert (or (symbolp name) (consp name)))
-          (let* ((ensure-gf (env:fdefinition (env:client e4) e4 'ensure-generic-function))
-                 (add-method (env:fdefinition (env:client e3) e3 'add-method))
-                 (method-class (if (symbolp method-class)
-                                   (env:find-class (env:client e2) e2 method-class)
-                                   method-class))
-                 (generic-function
-                   (funcall ensure-gf name
-                            :lambda-list lambda-list
-                            :generic-function-class 'standard-generic-function
-                            :method-class method-class))
-                 (method
-                   (if slot-definition-p
-                       (make-instance method-class
-                         :lambda-list lambda-list
-                         :qualifiers qualifiers
-                         :specializers (canonicalize-specializers specializers e3)
-                         :slot-definition slot-definition
-                         :function function)
-                       (make-instance method-class
-                         :lambda-list lambda-list
-                         :qualifiers qualifiers
-                         :specializers (canonicalize-specializers specializers e3)
-                         :function function))))
-            (funcall add-method generic-function method)
-            method))))
+  (let ((client (env:client e3)))
+    (with-intercepted-function-cells
+        (e4
+         (typep
+          (env:function-cell client e3 'typep))
+         (add-method
+          (env:function-cell client e3 'add-method))
+         (make-instance
+          (env:function-cell client e2 'make-instance)))
+      (load-source-file "CLOS/ensure-method-defun.lisp" e4))))
 
 (defun enable-defmethod (e2 e3 e4)
   (define-generic-function-class-names e4)
@@ -68,10 +42,6 @@
   (load-source-file "CLOS/add-remove-method-defgenerics.lisp" e3)
   (with-intercepted-function-cells
       (e3
-       (find-class
-        (list (lambda (name)
-                (assert (eq name 't))
-                (env:find-class (env:client e3) e3 't))))
        (slot-boundp (list #'slot-boundp)))
     (load-source-file "CLOS/add-remove-method-support.lisp" e3))
   (load-source-file "CLOS/add-remove-method-defmethods.lisp" e3)
