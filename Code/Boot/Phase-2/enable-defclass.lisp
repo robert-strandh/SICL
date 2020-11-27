@@ -8,6 +8,7 @@
                    class-name
                    &rest keys
                    &key
+                     name
                      direct-superclasses
                      (metaclass 'standard-class)
                    &allow-other-keys)
@@ -18,6 +19,7 @@
                    (setf (env:find-class client e3 class-name)
                          (apply (env:fdefinition client e1 'make-instance)
                                 metaclass
+                                :name (make-symbol (symbol-name name))
                                 :direct-superclasses
                                 (loop for class-or-name in direct-superclasses
                                       collect (if (symbolp class-or-name)
