@@ -27,6 +27,13 @@
           (env:function-cell client e2 'typep))
          (add-method
           (env:function-cell client e2 'add-method))
+         (find-class
+          (list (lambda (name &rest optionals)
+                  (case name
+                    ((t) (find-class 't))
+                    (null (find-class 'null))
+                    (t (apply (env:fdefinition (env:client e3) e3 'find-class)
+                              name optionals))))))
          (make-instance
           (env:function-cell client e1 'make-instance)))
       (load-source-file "CLOS/ensure-method-defun.lisp" e3))))
@@ -38,9 +45,7 @@
     (setf (env:find-class client e2 't)
           (find-class t))
     (setf (env:fdefinition client e2 'sicl-clos:method-function)
-          (lambda (method)
-            (declare (ignore method))
-            (error "this should not happen")))
+          #'closer-mop:method-function)
     (setf (env:special-operator client e3 'cleavir-primop:multiple-value-call) t))
   (import-functions-from-host
    '(sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
