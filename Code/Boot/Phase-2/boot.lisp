@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-phase-2)
 
 ;;; This class will be the metaclass of all the MOP classes defined in
-;;; E2.  We define it as a subclass of the host
+;;; E3.  We define it as a subclass of the host
 ;;; FUNCALLABLE-STANDARD-CLASS so that instances of it can be used as
 ;;; functions, and so that we avoid any problems with incompatible
 ;;; superclasses and metaclasses.
@@ -17,7 +17,7 @@
   ())
 
 (defmethod print-object ((object funcallable-standard-class) stream)
-  (format stream "<E2 host class ~a>" (class-name object)))
+  (format stream "<E3 host class ~a>" (class-name object)))
 
 ;;; This method is apparently necessary so that we are allowed to
 ;;; make instances of our new class.
