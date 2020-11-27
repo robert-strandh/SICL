@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-boot-phase-3)
 
+(defun finalize-classes (e3)
+  (loop for name in '(standard-generic-function)
+        for class = (env:find-class (env:client e3) e3 name)
+        do (closer-mop:finalize-inheritance class)))
+
 (defun prepare-next-phase (e2 e3 e4)
   (setf (env:fdefinition (env:client e4) e4 'sicl-boot:ast-eval)
         (lambda (ast)
@@ -28,13 +33,13 @@
      cleavir-code-utilities:required)
    e3)
   (load-source-file "CLOS/generic-function-initialization-support.lisp" e3)
-  ;; (with-intercepted-function-cells
-  ;;     (e3
-  ;;      (sicl-clos:method-function
-  ;;       (list (lambda (method)
-  ;;               (closer-mop:method-function method)))))
-  (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e3)
+  (with-intercepted-function-cells
+      (e3
+       (sicl-clos:method-function
+        (env:function-cell (env:client e2) e2 'sicl-clos:method-function)))
+    (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e3))
   (enable-defgeneric e2 e3 e4)
-  ;; (enable-defmethod e2 e3 e4)
+  (enable-defmethod e2 e3 e4)
   ;; (enable-defclass e2 e3 e4))
+  (finalize-classes e3)
   )
