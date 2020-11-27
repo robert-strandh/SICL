@@ -31,6 +31,7 @@
                    (setf (env:fdefinition client e3 function-name)
                          (apply (env:fdefinition client e1 'make-instance)
                                 generic-function-class
+                                :name function-name
                                 keys)))
                   (t
                    (error 'type-error
