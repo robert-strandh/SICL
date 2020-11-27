@@ -104,7 +104,10 @@
         #'closer-mop:class-prototype)
   (with-intercepted-function-cells
       (e3
+       (class-of (env:function-cell (env:client e2) e2 'class-of))
        (make-instance (env:function-cell (env:client e2) e2 'make-instance))
+       (sicl-clos:class-precedence-list
+        (env:function-cell (env:client e2) e2 'sicl-clos:class-precedence-list))
        (sicl-clos:class-prototype
         (env:function-cell (env:client e2) e2 'sicl-clos:class-prototype)))
     (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e3))
@@ -120,21 +123,6 @@
         (env:function-cell
          (env:client e3) e3 'sicl-clos:ensure-generic-function-using-class)))
     (load-source-file "CLOS/ensure-generic-function-defun.lisp" e4))
-  ;; (let ((client (env:client e4)))
-  ;;   (setf (env:fdefinition client e4 'ensure-generic-function)
-  ;;         (lambda (function-name &rest arguments &key &allow-other-keys)
-  ;;           (let ((args (copy-list arguments)))
-  ;;             (loop while (remf args :environment))
-  ;;             (loop while (remf args :generic-function-class))
-  ;;             (loop while (remf args :method-class))
-  ;;             (if (env:fboundp client e4 function-name)
-  ;;                 (env:fdefinition client e4 function-name)
-  ;;                 (setf (env:fdefinition client e4 function-name)
-  ;;                       (apply #'make-instance
-  ;;                              (env:find-class client e2 'standard-generic-function)
-  ;;                              :name function-name
-  ;;                              :method-class (env:find-class (env:client e2) e2 'standard-method)
-  ;;                              args)))))))
   (load-source-file "CLOS/defgeneric-defmacro.lisp" e4))
 
 (defun define-generic-function-class-names (e4)
