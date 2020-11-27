@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-phase-3)
 
 (defun finalize-classes (e3)
-  (loop for name in '(standard-generic-function)
+  (loop for name in '(standard-generic-function symbol)
         for class = (env:find-class (env:client e3) e3 name)
         do (closer-mop:finalize-inheritance class)))
 
@@ -12,7 +12,7 @@
             (funcall (compile nil code) e4))))
   (sicl-boot:copy-macro-functions e3 e4)
   (load-source-file "CLOS/class-of-defun.lisp" e3)
-  (enable-typep e3)
+  (enable-typep e2 e3)
   (enable-object-creation e2 e3)
   (enable-method-combinations e2 e3 e4)
   (setf (env:special-operator (env:client e4) e4 'cleavir-primop:multiple-value-call) t)
