@@ -10,10 +10,11 @@
        method-class
      &allow-other-keys)
   (declare (ignore generic-function-class method-class))
-  (apply #'ensure-generic-function-using-class-null
-         generic-function
-         function-name
-         all-keyword-arguments))
+  (setf (fdefinition function-name)
+        (apply #'ensure-generic-function-using-class-null
+               generic-function
+               function-name
+               all-keyword-arguments)))
 
 (defmethod ensure-generic-function-using-class
     ((generic-function generic-function)

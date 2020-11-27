@@ -44,18 +44,17 @@
   (let ((remaining-keys (copy-list all-keyword-arguments)))
     (loop while (remf remaining-keys :generic-function-class))
     (loop while (remf remaining-keys :environment))
-    (setf (fdefinition function-name)
-          (if method-class-p
-              (apply #'make-instance generic-function-class
-                     ;; The AMOP does
-                     :name function-name
-                     :method-class method-class
-                     :method-combination method-combination
-                     remaining-keys)
-              (apply #'make-instance generic-function-class
-                     :name function-name
-                     :method-combination method-combination
-                     remaining-keys)))))
+    (if method-class-p
+        (apply #'make-instance generic-function-class
+               ;; The AMOP does
+               :name function-name
+               :method-class method-class
+               :method-combination method-combination
+               remaining-keys)
+        (apply #'make-instance generic-function-class
+               :name function-name
+               :method-combination method-combination
+               remaining-keys))))
 
 (defun ensure-generic-function-using-class-generic-function
     (generic-function
