@@ -56,25 +56,25 @@
   (load-source-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
   (load-source-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))
 
-;; (defun ast-eval (ast client environment)
-;;   (let* ((global-environment (trucler:global-environment client environment))
-;;          (hir (sicl-ast-to-hir:ast-to-hir client ast))
-;;          (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
-;;          (sicl-run-time:*dynamic-environment* '())
-;;          (function-cell-function
-;;            (sicl-environment:fdefinition
-;;             client global-environment 'sicl-data-and-control-flow:function-cell)))
-;;     (funcall fun
-;;              (apply #'vector
-;;                     nil ; Ultimately, replace with code object.
-;;                     #'sicl-hir-evaluator:enclose
-;;                     #'sicl-hir-evaluator:initialize-closure
-;;                     #'cons
-;;                     nil
-;;                     (append (loop with names = (sicl-hir-transformations:function-names hir)
-;;                                   for name in names
-;;                                   collect (funcall function-cell-function name))
-;;                             (sicl-hir-transformations:constants hir))))))
+(defun ast-eval (ast client environment)
+  (let* ((global-environment (trucler:global-environment client environment))
+         (hir (sicl-ast-to-hir:ast-to-hir client ast))
+         (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
+         (sicl-run-time:*dynamic-environment* '())
+         (function-cell-function
+           (sicl-environment:fdefinition
+            client global-environment 'sicl-data-and-control-flow:function-cell)))
+    (funcall fun
+             (apply #'vector
+                    nil ; Ultimately, replace with code object.
+                    #'sicl-hir-evaluator:enclose
+                    #'sicl-hir-evaluator:initialize-closure
+                    #'cons
+                    nil
+                    (append (loop with names = (sicl-hir-transformations:function-names hir)
+                                  for name in names
+                                  collect (funcall function-cell-function name))
+                            (sicl-hir-transformations:constants hir))))))
 
 (defun enable-compute-discriminating-function (e3 e4)
   (define-classp e3)
@@ -100,12 +100,26 @@
   (define-compute-discriminating-function e3))
 
 (defun enable-defgeneric (e2 e3 e4)
+  (setf (env:fdefinition (env:client e2) e2 'sicl-clos:class-prototype)
+        #'closer-mop:class-prototype)
   (with-intercepted-function-cells
       (e3
-       (make-instance (env:function-cell (env:client e2) e2 'make-instance)))
+       (make-instance (env:function-cell (env:client e2) e2 'make-instance))
+       (sicl-clos:class-prototype
+        (env:function-cell (env:client e2) e2 'sicl-clos:class-prototype)))
     (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e3))
   (load-source-file "CLOS/ensure-generic-function-using-class-defgenerics.lisp" e3)
-  (load-source-file "CLOS/ensure-generic-function-using-class-defmethods.lisp" e3)
+  (with-intercepted-function-cells
+      (e3
+       ((setf fdefinition)
+        (env:function-cell (env:client e4) e4 '(setf fdefinition))))
+    (load-source-file "CLOS/ensure-generic-function-using-class-defmethods.lisp" e3))
+  (with-intercepted-function-cells
+      (e4
+       (sicl-clos:ensure-generic-function-using-class
+        (env:function-cell
+         (env:client e3) e3 'sicl-clos:ensure-generic-function-using-class)))
+    (load-source-file "CLOS/ensure-generic-function-defun.lisp" e4))
   ;; (let ((client (env:client e4)))
   ;;   (setf (env:fdefinition client e4 'ensure-generic-function)
   ;;         (lambda (function-name &rest arguments &key &allow-other-keys)
@@ -121,8 +135,7 @@
   ;;                              :name function-name
   ;;                              :method-class (env:find-class (env:client e2) e2 'standard-method)
   ;;                              args)))))))
-  ;;(load-source-file "CLOS/defgeneric-defmacro.lisp" e4))
-  )
+  (load-source-file "CLOS/defgeneric-defmacro.lisp" e4))
 
 (defun define-generic-function-class-names (e4)
   (setf (env:fdefinition
