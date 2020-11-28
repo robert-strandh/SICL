@@ -3,10 +3,24 @@
 (defun define-effective-slot-definition-class (e2 e3)
   (setf (env:fdefinition
          (env:client e2) e2 'sicl-clos:effective-slot-definition-class)
-        (lambda (class)
-          (declare (ignore class))
+        (lambda (&rest arguments)
+          (declare (ignore arguments))
           (env:find-class
            (env:client e3) e3 'sicl-clos:standard-effective-slot-definition))))
+
+(defun enable-object-allocation (e3)
+  (setf (env:fdefinition (env:client e3) e3 'sicl-clos::allocate-general-instance)
+        (lambda (class size)
+          (make-instance 'sicl-boot:header
+            :class class
+            :rack (make-array size :initial-element 10000000))))
+  (load-source-file "CLOS/stamp-offset-defconstant.lisp" e3)
+  (load-source-file "CLOS/effective-slot-definition-class-support.lisp" e3)
+  (load-source-file "CLOS/effective-slot-definition-class-defgeneric.lisp" e3)
+  (load-source-file "CLOS/effective-slot-definition-class-defmethods.lisp" e3)
+  (load-source-file "CLOS/allocate-instance-support.lisp" e3)
+  (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e3)
+  (load-source-file "CLOS/allocate-instance-defmethods.lisp" e3))
 
 ;;; This one is needed because we finalize built-in classes as soon as
 ;;; they are initialized.  Perhaps we should extract the only function
@@ -17,8 +31,10 @@
   (load-source-file "CLOS/class-finalization-defgenerics.lisp" e3)
   (with-intercepted-function-cells
       (e3
+       (sicl-clos:class-direct-superclasses
+        (env:function-cell (env:client e3) e3 'sicl-clos:class-direct-superclasses))
        (make-instance
-           (env:function-cell (env:client e2) e2 'make-instance)))
+        (env:function-cell (env:client e2) e2 'make-instance)))
     (load-source-file "CLOS/class-finalization-support.lisp" e3))
   (with-intercepted-function-cells
       (e3
@@ -35,8 +51,8 @@
 (defun define-direct-slot-definition-class (e2 e3)
   (setf (env:fdefinition
          (env:client e2) e2 'sicl-clos:direct-slot-definition-class)
-        (lambda (class)
-          (declare (ignore class))
+        (lambda (&rest arguments)
+          (declare (ignore arguments))
           (env:find-class
            (env:client e3) e3 'sicl-clos:standard-direct-slot-definition))))
 
@@ -80,6 +96,7 @@
         (env:function-cell (env:client e2) e2 'sicl-clos:reader-method-class))
        (sicl-clos:writer-method-class
         (env:function-cell (env:client e2) e2 'sicl-clos:writer-method-class))
+       (find-class (env:function-cell (env:client e4) e4 'find-class))
        (ensure-generic-function
         (env:function-cell (env:client e4) e4 'ensure-generic-function)))
     (load-source-file "CLOS/add-accessor-method.lisp" e3))
@@ -114,10 +131,14 @@
     (load-source-file "CLOS/reinitialize-instance-support.lisp" e3))
   (load-source-file "CLOS/reinitialize-instance-defmethods.lisp" e3))
 
-(defun define-ensure-class-using-class (e2 e3)
+(defun define-ensure-class-using-class (e2 e3 e4)
   (with-intercepted-function-cells
       (e3
-       (make-instance (env:function-cell (env:client e2) e2 'make-instance)))
+       (make-instance (env:function-cell (env:client e2) e2 'make-instance))
+       (find-class
+        (env:function-cell (env:client e4) e4 'find-class))
+       ((setf find-class)
+        (env:function-cell (env:client e4) e4 '(setf find-class))))
     (load-source-file "CLOS/ensure-class-using-class-support.lisp" e3))
   (load-source-file "CLOS/ensure-class-using-class-defgenerics.lisp" e3)
   (load-source-file "CLOS/ensure-class-using-class-defmethods.lisp" e3))
@@ -131,7 +152,8 @@
     (load-source-file "CLOS/ensure-class.lisp" e4)))
 
 (defun enable-defclass (e2 e3 e4)
+  (enable-object-allocation e3)
   (enable-class-finalization e2 e3 e4)
   (enable-class-initialization e2 e3 e4)
-  (define-ensure-class-using-class e2 e3)
+  (define-ensure-class-using-class e2 e3 e4)
   (define-ensure-class e3 e4))
