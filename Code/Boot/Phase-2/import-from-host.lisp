@@ -44,4 +44,6 @@
             (find-class 'closer-mop:forward-referenced-class))
       (import-functions-from-host '(class-of add-method) e2)
       (setf (env:fdefinition client e2 'sicl-clos:class-precedence-list)
-            #'closer-mop:class-precedence-list))))
+            #'closer-mop:class-precedence-list)
+      (setf (env:fdefinition client e2 'sicl-clos:class-direct-superclasses)
+            #'closer-mop:class-direct-superclasses))))
