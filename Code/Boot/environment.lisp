@@ -87,6 +87,14 @@
   (setf (env:fdefinition
          client
          environment
+         '(setf find-class))
+        (lambda (new-class symbol &optional errorp env)
+          (declare (ignore errorp env))
+          (setf (env:find-class client environment symbol)
+                new-class)))
+  (setf (env:fdefinition
+         client
+         environment
          'find-package)
         (lambda (name)
           (env:find-package client environment name)))
