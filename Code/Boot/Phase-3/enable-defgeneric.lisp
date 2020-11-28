@@ -76,7 +76,7 @@
                                   collect (funcall function-cell-function name))
                             (sicl-hir-transformations:constants hir))))))
 
-(defun enable-compute-discriminating-function (e3 e4)
+(defun enable-compute-discriminating-function (e2 e3 e4)
   (define-classp e3)
   (define-sub-specializer-p e3)
   (define-compute-applicable-methods e3 e4)
@@ -92,8 +92,12 @@
                  (ast (cleavir-cst-to-ast:cst-to-ast (env:client e3) cst e3)))
             (with-intercepted-function-cells
                 (e3
-                 (make-instance (list #'make-instance)))
-              (ast-eval ast (env:client e3) e3)))))
+                 (make-instance
+                  (env:function-cell (env:client e2) e2 'make-instance))
+                 (sicl-clos:method-function
+                  (env:function-cell (env:client e2) e2 'sicl-clos:method-function)))
+              (funcall (env:fdefinition (env:client e3) e3 'sicl-boot:ast-eval)
+                       ast)))))
   (setf (env:fdefinition
          (env:client e3) e3 'sicl-clos:set-funcallable-instance-function)
         #'closer-mop:set-funcallable-instance-function)
