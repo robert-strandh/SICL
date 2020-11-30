@@ -26,7 +26,7 @@
 ;;; they are initialized.  Perhaps we should extract the only function
 ;;; that is used by this initialzation to a separate component so that
 ;;; we don't have to pull in the entire finalization protocol here.
-(defun enable-class-finalization (e2 e3 e4)
+(defun enable-class-finalization (e2 e3)
   (define-effective-slot-definition-class e2 e3)
   (load-source-file "CLOS/class-finalization-defgenerics.lisp" e3)
   (with-intercepted-function-cells
@@ -153,7 +153,7 @@
 
 (defun enable-defclass (e2 e3 e4)
   (enable-object-allocation e3)
-  (enable-class-finalization e2 e3 e4)
+  (enable-class-finalization e2 e3)
   (enable-class-initialization e2 e3 e4)
   (define-ensure-class-using-class e2 e3 e4)
   (define-ensure-class e3 e4))
