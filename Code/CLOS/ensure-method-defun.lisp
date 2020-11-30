@@ -3,9 +3,11 @@
 ;;; This function is not required by the standard.
 ;;;
 ;;; GENERIC-FUNCTION is either a generic-function metaobject, or the
-;;; name of a generic function.  If it is a name, then
-;;; ENSURE-GENERIC-FUNCTION is called to turn the name into a generic
-;;; function metaobject.
+;;; name of a generic function.  If it is a name, then FBOUNDP,
+;;; FDEFINITION, etc., are called in order to determine whether a
+;;; generic function with hat name exists.  If it exists, then it is
+;;; used as is.  If not, ENSURE-GENERIC-FUNCTION is called to turn the
+;;; name into a generic function metaobject.
 ;;;
 ;;; GENERIC-FUNCTION-CLASS is either a class metaobject, or the name
 ;;; of a class.  If GENERIC-FUNCTION is a function name and this
@@ -73,27 +75,52 @@
        (slot-definition nil slot-definition-p))
   ;;; FIXME: signal errors as indicated in the comment above.
   (let ((generic-function
-          (if (typep generic-function-or-name 'generic-function)
-              generic-function-or-name
-              (if generic-function-class-p
-                  (ensure-generic-function
-                   generic-function-or-name
-                   :lambda-list lambda-list
-                   :generic-function-class generic-function-class
-                   :method-class method-class)
-                  (ensure-generic-function
-                   generic-function-or-name
-                   :lambda-list lambda-list
-                   :method-class method-class))))
-        (method
-          (make-instance method-class
-            :lambda-list lambda-list
-            :qualifiers qualifiers
-            :specializers (ensure-specializers specializers)
-            :documentation documentation
-            :function function)))
-    (add-method generic-function method)
-    method))
+          (cond ((typep generic-function-or-name 'generic-function)
+                 generic-function-or-name)
+                ((symbolp generic-function-or-name)
+                 (cond ((not (fboundp generic-function-or-name))
+                        nil)
+                       ((special-operator-p generic-function-or-name)
+                        (error 'name-refers-to-a-special-operator
+                               :name generic-function-or-name))
+                       ((not (null (macro-function generic-function-or-name)))
+                        (error 'name-refers-to-a-macro
+                               :name generic-function-or-name))
+                       (t
+                        (fdefinition generic-function-or-name))))
+                ((typep generic-function-or-name
+                        '(cons (eql setf) (cons symbol null)))
+                 (if (fboundp generic-function-or-name)
+                     (fdefinition generic-function-or-name)
+                     nil))
+                (t
+                 (error 'invalid-function-name
+                        :name generic-function-or-name)))))
+    (when (null generic-function)
+      (setf generic-function
+            (if generic-function-class-p
+                (ensure-generic-function
+                 generic-function-or-name
+                 ;; FIXME: This is wrong.  The default values for &key
+                 ;; and &optional must be removed, and the &AUX
+                 ;; variables must all be removed.
+                 :lambda-list (extract-lambda-list lambda-list)
+                 :generic-function-class generic-function-class
+                 :method-class method-class)
+                (ensure-generic-function
+                 generic-function-or-name
+                 ;; FIXME: This too is wrong.
+                 :lambda-list (extract-lambda-list lambda-list)
+                 :method-class method-class))))
+    (let ((method
+            (make-instance method-class
+              :lambda-list (extract-lambda-list lambda-list)
+              :qualifiers qualifiers
+              :specializers (ensure-specializers specializers)
+              :documentation documentation
+              :function function)))
+      (add-method generic-function method)
+      method)))
 
 ;;  LocalWords:  specializer specializers SPECIALIZERS designators
 ;;  LocalWords:  designator metaobject
