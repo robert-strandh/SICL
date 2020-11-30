@@ -19,6 +19,18 @@
      (funcall (fdefinition (second type-specifier)) object))
     (integer
      (typep-compound-integer object (rest type-specifier)))
+    (cons
+     (cond ((null (rest type-specifier))
+            (consp object))
+           ((null (rest (rest type-specifier)))
+            (and (consp object)
+                 (typep (car object) (second type-specifier))))
+           ((null (rest (rest (rest type-specifier))))
+            (and (consp object)
+                 (typep (car object) (second type-specifier))
+                 (typep (cdr object) (third type-specifier))))
+           (t
+            (error "malformed type specifier: ~s" type-specifier))))
     (t
      (error "can't handle type-specifier ~s" type-specifier))))
     
