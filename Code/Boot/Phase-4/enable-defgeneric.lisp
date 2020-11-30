@@ -46,21 +46,30 @@
   (define-compute-effective-method e4)
   (define-compute-discriminating-function e3 e4))
 
-(defun enable-defgeneric (e3 e5)
-  (let ((client (env:client e5)))
-    (setf (env:fdefinition client e5 'ensure-generic-function)
-          (lambda (function-name &rest arguments &key &allow-other-keys)
-            (let ((args (copy-list arguments)))
-              (loop while (remf args :environment))
-              (loop while (remf args :generic-function-class))
-              (if (env:fboundp client e5 function-name)
-                  (env:fdefinition client e5 function-name)
-                  (setf (env:fdefinition client e5 function-name)
-                        (apply (env:fdefinition (env:client e3) e3 'make-instance)
-                               (env:find-class (env:client e3) e3 'standard-generic-function)
-                               :name function-name
-                               :method-class (env:find-class (env:client e3) e3 'standard-method)
-                               args)))))))
+(defun enable-defgeneric (e3 e4 e5)
+  (setf (env:fdefinition (env:client e3) e3 'sicl-clos:class-prototype)
+        #'closer-mop:class-prototype)
+  (with-intercepted-function-cells
+      (e4
+       (class-of (env:function-cell (env:client e3) e3 'class-of))
+       (make-instance (env:function-cell (env:client e3) e3 'make-instance))
+       (sicl-clos:class-precedence-list
+        (env:function-cell (env:client e3) e3 'sicl-clos:class-precedence-list))
+       (sicl-clos:class-prototype
+        (env:function-cell (env:client e3) e3 'sicl-clos:class-prototype)))
+    (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e4))
+  (load-source-file "CLOS/ensure-generic-function-using-class-defgenerics.lisp" e4)
+  (with-intercepted-function-cells
+      (e4
+       ((setf fdefinition)
+        (env:function-cell (env:client e5) e5 '(setf fdefinition))))
+    (load-source-file "CLOS/ensure-generic-function-using-class-defmethods.lisp" e4))
+  (with-intercepted-function-cells
+      (e5
+       (sicl-clos:ensure-generic-function-using-class
+        (env:function-cell
+         (env:client e4) e4 'sicl-clos:ensure-generic-function-using-class)))
+    (load-source-file "CLOS/ensure-generic-function-defun.lisp" e5))
   (load-source-file "CLOS/defgeneric-defmacro.lisp" e5))
 
 (defun define-generic-function-class-names (e5)
