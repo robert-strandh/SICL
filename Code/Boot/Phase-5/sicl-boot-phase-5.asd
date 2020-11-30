@@ -7,7 +7,6 @@
   :components
   ((:file "packages")
    (:file "environment")
-   (:file "enable-object-creation-in-e4")
    (:file "create-additional-generic-functions")
    (:file "create-additional-classes")
    (:file "hir-evaluator-configuration")
