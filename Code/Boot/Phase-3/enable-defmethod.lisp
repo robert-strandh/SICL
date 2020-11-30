@@ -1,12 +1,5 @@
 (cl:in-package #:sicl-boot-phase-3)
 
-(defun canonicalize-specializers (specializers e3)
-  (loop for specializer in specializers
-        collect (cond ((symbolp specializer)
-                       (env:find-class (env:client e3) e3 specializer))
-                      (t
-                       specializer))))
-
 (defun define-ensure-method (e2 e3 e4)
   (setf (env:special-variable (env:client e4) e4 'lambda-list-keywords t)
         '(&optional &reest &body &key &allow-other-keys &aux &whole &environment))
