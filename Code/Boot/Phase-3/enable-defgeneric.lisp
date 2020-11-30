@@ -21,33 +21,11 @@
   (load-source-file "CLOS/compute-effective-method-defgenerics.lisp" e3)
   (load-source-file "CLOS/compute-effective-method-defmethods.lisp" e3))
 
-(defun define-compute-discriminating-function (e3)
+(defun define-compute-discriminating-function (e2 e3)
   (load-source-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
   (with-intercepted-function-cells
       (e3
-       (make-instance (list #'make-instance))
-       (class-of
-        (list (lambda (object)
-                (cond ((typep object 'sicl-boot::header)
-                       (slot-value object 'sicl-boot::%class))
-                      ((integerp object)
-                       (env:find-class (env:client e3) e3 'fixnum))
-                      ((null object)
-                       (env:find-class (env:client e3) e3 'null))
-                      ((symbolp object)
-                       (env:find-class (env:client e3) e3 'symbol))
-                      ((consp object)
-                       (env:find-class (env:client e3) e3 'cons))
-                      ((typep (class-of object)
-                              'sicl-boot-phase-2::funcallable-standard-class)
-                       ;; It is a bridge object, so return its class, which is
-                       ;; then a class in E2.
-                       (class-of object))
-                      ((functionp object)
-                       ;; FIXME: find out why this case is necessary.
-                       (env:find-class (env:client e3) e3 'function))
-                      (t
-                       (error "Class of ~s was asked for in E3." object)))))))
+       (make-instance (env:function-cell (env:client e2) e2 'make-instance)))
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e3))
   (load-source-file "CLOS/discriminating-automaton.lisp" e3)
   (define-error-functions '(sicl-clos::compute-test-tree) e3)
@@ -101,7 +79,7 @@
   (setf (env:fdefinition
          (env:client e3) e3 'sicl-clos:set-funcallable-instance-function)
         #'closer-mop:set-funcallable-instance-function)
-  (define-compute-discriminating-function e3))
+  (define-compute-discriminating-function e2 e3))
 
 (defun enable-defgeneric (e2 e3 e4)
   (setf (env:fdefinition (env:client e2) e2 'sicl-clos:class-prototype)
