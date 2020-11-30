@@ -1,5 +1,38 @@
 (cl:in-package #:sicl-boot-phase-4)
 
+(defun finalize-inheritance (e4)
+  (format *trace-output*
+          "Finalizing all classes in ~a..."
+          (sicl-boot:name e4))
+  (finish-output *trace-output*)
+  (let ((fun (env:fdefinition (env:client e4) e4 'sicl-clos:finalize-inheritance)))
+    (do-all-symbols (symbol)
+      (let ((class (env:find-class (env:client e4) e4 symbol)))
+        (unless (or (null class)
+                    (funcall (env:fdefinition (env:client e4) e4 'sicl-clos::class-finalized-p)
+                             class))
+          (funcall fun class)))))
+  (format *trace-output* "done~%")
+  (finish-output *trace-output*))
+
+(defun enable-object-allocation (e4)
+  (setf (env:fdefinition (env:client e4) e4 'sicl-clos::allocate-general-instance)
+        (lambda (class size)
+          (make-instance 'sicl-boot:header
+            :class class
+            :rack (make-array size :initial-element 10000000))))
+  (load-source-file "CLOS/stamp-offset-defconstant.lisp" e4)
+  (load-source-file "CLOS/effective-slot-definition-class-support.lisp" e4)
+  (load-source-file "CLOS/effective-slot-definition-class-defgeneric.lisp" e4)
+  (load-source-file "CLOS/effective-slot-definition-class-defmethods.lisp" e4)
+  ;; These were already loaded in phase 3 because they were needed for
+  ;; the finalization of built-in classes.
+  ;; (load-source-file "CLOS/class-finalization-defgenerics.lisp" e4)
+  ;; (load-source-file "CLOS/class-finalization-defmethods.lisp" e4)
+  (load-source-file "CLOS/allocate-instance-support.lisp" e4)
+  (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e4)
+  (load-source-file "CLOS/allocate-instance-defmethods.lisp" e4))
+
 (defun ast-eval (ast client environment)
   (let* ((global-environment (trucler:global-environment client environment))
          (hir (sicl-ast-to-hir:ast-to-hir client ast))
@@ -20,16 +53,36 @@
                                   collect (funcall function-cell-function name))
                             (sicl-hir-transformations:constants hir))))))
 
-(defun prepare-next-phase (e2 e3 e4 e5)
+(defun define-ast-eval (e5)
   (setf (env:fdefinition (env:client e5) e5 'sicl-boot:ast-eval)
         (lambda (ast)
-          (ast-eval ast (env:client e5) e5)))
-  (sicl-boot:copy-macro-functions e3 e5)
+          (let* ((client (env:client e5))
+                 (hir (sicl-ast-to-hir:ast-to-hir client ast))
+                 (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
+                 (sicl-run-time:*dynamic-environment* '())
+                 (function-cell-function
+                   (env:fdefinition
+                    client e5 'sicl-data-and-control-flow:function-cell)))
+            (funcall fun
+                     (apply #'vector
+                            nil ; Ultimately, replace with code object.
+                            #'sicl-hir-evaluator:enclose
+                            #'sicl-hir-evaluator:initialize-closure
+                            #'cons
+                            nil
+                            (append (loop with names = (sicl-hir-transformations:function-names hir)
+                                          for name in names
+                                          collect (funcall function-cell-function name))
+                                    (sicl-hir-transformations:constants hir))))))))
+
+(defun prepare-next-phase (e2 e3 e4 e5)
+  (define-ast-eval e5)
+  (sicl-boot:copy-macro-functions e4 e5)
+  (load-source-file "CLOS/class-of-defun.lisp" e4)
+  (enable-typep e3 e4)
   (enable-object-creation e3 e4)
   (enable-method-combinations e3 e4 e5)
   (setf (env:special-operator (env:client e5) e5 'cleavir-primop:multiple-value-call) t)
-  ;; Consider whether this definition, currently global, should be
-  ;; defined with an ovverriding function cell instead.
   (setf (env:fdefinition (env:client e4) e4 'compile)
         (lambda (x lambda-expression)
           (assert (null x))
@@ -39,39 +92,29 @@
             (with-intercepted-function-cells
                 (e4
                  (make-instance
-                     (list (lambda (name-or-class &rest initargs)
-                             (let ((class (if (symbolp name-or-class)
-                                              (env:find-class (env:client e2) e2 name-or-class)
-                                              name-or-class)))
-                               (apply #'make-instance class initargs))))))
-              (ast-eval ast (env:client e4) e4)))))
-  (enable-compute-discriminating-function e3 e4)
-  (setf (env:fdefinition (env:client e5) e5 'find-method-combination)
-        (lambda (name arguments)
-          (funcall (env:fdefinition (env:client e4) e4 'sicl-method-combination:find-method-combination)
-                   name arguments)))
-  (setf (env:macro-function (env:client e5) e5 'sicl-clos:find-method-combination)
-        (lambda (form environment)
-          (declare (ignore environment))
-          `(find-method-combination ,(third form) ,(fourth form))))
+                  (env:function-cell (env:client e3) e3 'make-instance))
+                 (sicl-clos:method-function
+                  (env:function-cell (env:client e3) e3 'sicl-clos:method-function)))
+              (funcall (env:fdefinition (env:client e4) e4 'sicl-boot:ast-eval)
+                       ast)))))
+  (enable-compute-discriminating-function e3 e4 e5)
   (load-source-file "CLOS/defgeneric-support.lisp" e5)
   ;; (import-functions-from-host
   ;;  '(cleavir-code-utilities:parse-generic-function-lambda-list
   ;;    cleavir-code-utilities:required)
   ;;  e4)
-  ;; (setf (env:fdefinition (env:client e4) e4 'sicl-clos:set-funcallable-instance-function)
-  ;;       #'closer-mop:set-funcallable-instance-function)
   (with-intercepted-function-cells
       (e4
        (sicl-clos:set-funcallable-instance-function
         (list #'closer-mop:set-funcallable-instance-function)))
     (load-source-file "CLOS/invalidate-discriminating-function.lisp" e4))
-  (import-functions-from-host
-   '(cleavir-code-utilities:parse-generic-function-lambda-list
-     cleavir-code-utilities:required)
-   e4)
+  ;; (import-functions-from-host
+  ;;  '(cleavir-code-utilities:parse-generic-function-lambda-list
+  ;;    cleavir-code-utilities:required)
+  ;;  e4)
   (load-source-file "CLOS/generic-function-initialization-support.lisp" e4)
   (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e4)
-  (enable-defgeneric e3 e5)
-  (enable-defmethod e3 e4 e5)
-  (enable-defclass e3 e4 e5))
+  ;; (enable-defgeneric e3 e5)
+  ;; (enable-defmethod e3 e4 e5)
+  ;; (enable-defclass e3 e4 e5))
+  )
