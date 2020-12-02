@@ -38,6 +38,7 @@
   (load-source-file "CLOS/add-remove-method-defgenerics.lisp" e4)
   (with-intercepted-function-cells
       (e4
+       (find-class (env:function-cell (env:client e5) e5 'find-class))
        (env:function-cell (env:client e3) e3 'slot-boundp))
     (load-source-file "CLOS/add-remove-method-support.lisp" e4))
   (load-source-file "CLOS/add-remove-method-defmethods.lisp" e4)
