@@ -33,7 +33,7 @@
                               (env:client *e3*)
                               *e3*
                               'sicl-clos::unique-number)
-                             (env:find-class (env:client *e3*) *e3* class-name))))
+                             (env:find-class (env:client *e4*) *e4* class-name))))
              (typecase ,object-var
                   (null (unique-number 'null))
                   (symbol (unique-number 'symbol))
@@ -57,7 +57,7 @@
                                  client
                                   *e3*
                                  'sicl-clos::unique-number)
-                                (env:find-class client *e3* class-name))))
+                                (env:find-class client *e4* class-name))))
                 (typecase (sicl-hir-evaluator:input 0)
                   (null (unique-number 'null))
                   (symbol (unique-number 'symbol))
