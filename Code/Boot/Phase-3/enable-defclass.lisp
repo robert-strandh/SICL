@@ -40,7 +40,9 @@
       (e3
        (sicl-clos:effective-slot-definition-class
         (env:function-cell
-         (env:client e2) e2 'sicl-clos:effective-slot-definition-class)))
+         (env:client e2) e2 'sicl-clos:effective-slot-definition-class))
+       (sicl-clos:method-function
+        (env:function-cell (env:client e2) e2 'sicl-clos:method-function)))
     (load-source-file "CLOS/class-finalization-defmethods.lisp" e3)))
 
 (defun define-add-remove-direct-subclass (e3)
