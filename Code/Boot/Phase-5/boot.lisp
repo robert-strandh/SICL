@@ -20,21 +20,6 @@
                                   collect (funcall function-cell-function name))
                             (sicl-hir-transformations:constants hir))))))
 
-(defun finalize-inheritance (e4)
-  (format *trace-output*
-          "Finalizing all classes in ~a..."
-          (sicl-boot:name e4))
-  (finish-output *trace-output*)
-  (let ((fun (env:fdefinition (env:client e4) e4 'sicl-clos:finalize-inheritance)))
-    (do-all-symbols (symbol)
-      (let ((class (env:find-class (env:client e4) e4 symbol)))
-        (unless (or (null class)
-                    (funcall (env:fdefinition (env:client e4) e4 'sicl-clos::class-finalized-p)
-                             class))
-          (funcall fun class)))))
-  (format *trace-output* "done~%")
-  (finish-output *trace-output*))
-
 (defun boot (boot)
   (format *trace-output* "Start phase 5~%")
   (with-accessors ((e0 sicl-boot:e0)
@@ -44,38 +29,30 @@
       boot
     (change-class e5 'environment
                   :client (make-instance 'client :e5 e5))
-    (with-intercepted-function-cells
-        (e5
-         (find-class
-          (list (lambda (name &optional (errorp t) environment)
-                  (declare (ignore environment))
-                  (let ((result (env:find-class (env:client e4) e4 name)))
-                    (if (and errorp (null result))
-                        (error "No class named ~s in E5" name)
-                        result))))))
-      (sicl-boot:create-accessor-defgenerics e5)
-      (sicl-boot:create-mop-classes e5)
-      (with-intercepted-function-cells
-          (e4
-           (find-class
-            (list (lambda (name)
-                    (env:find-class (env:client e4) e4 name)))))
-        (load-source-file "CLOS/class-of-defun.lisp" e4))
-      (enable-object-creation-in-e4 e4 e5)
-      (create-additional-generic-functions e5)
-      (setf (env:fdefinition (env:client e5) e5 'compile)
-            (lambda (x lambda-expression)
-              (assert (null x))
-              (assert (and (consp lambda-expression) (eq (first lambda-expression) 'lambda)))
-              (let* ((cst (cst:cst-from-expression lambda-expression))
-                     (ast (cleavir-cst-to-ast:cst-to-ast (env:client e5) cst e5)))
-                (ast-eval ast (env:client e5) e5))))
-      (enable-typep e5)
-      (enable-array-access e5)
-      (load-source-file "CLOS/class-of-defun.lisp" e5)
-      (enable-slot-value e5)
-      (enable-object-creation e5)
-      (enable-method-combinations e3 e5)
-      (enable-generic-function-creation e5)
-      (enable-printing e5)
-      (finalize-inheritance e4))))
+    ;; (sicl-boot:create-accessor-defgenerics e5)
+    ;; (sicl-boot:create-mop-classes e5)
+    ;; (with-intercepted-function-cells
+    ;;     (e4
+    ;;      (find-class
+    ;;       (list (lambda (name)
+    ;;               (env:find-class (env:client e4) e4 name)))))
+    ;;   (load-source-file "CLOS/class-of-defun.lisp" e4))
+    ;; (enable-object-creation-in-e4 e4 e5)
+    ;; (create-additional-generic-functions e5)
+    ;; (setf (env:fdefinition (env:client e5) e5 'compile)
+    ;;       (lambda (x lambda-expression)
+    ;;         (assert (null x))
+    ;;         (assert (and (consp lambda-expression) (eq (first lambda-expression) 'lambda)))
+    ;;         (let* ((cst (cst:cst-from-expression lambda-expression))
+    ;;                (ast (cleavir-cst-to-ast:cst-to-ast (env:client e5) cst e5)))
+    ;;           (ast-eval ast (env:client e5) e5))))
+    ;; (enable-typep e5)
+    ;; (enable-array-access e5)
+    ;; (load-source-file "CLOS/class-of-defun.lisp" e5)
+    ;; (enable-slot-value e5)
+    ;; (enable-object-creation e5)
+    ;; (enable-method-combinations e3 e5)
+    ;; (enable-generic-function-creation e5)
+    ;; (enable-printing e5)
+    ;; (finalize-inheritance e4)))
+    ))
