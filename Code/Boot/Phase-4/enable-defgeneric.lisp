@@ -21,15 +21,20 @@
   (load-source-file "CLOS/compute-effective-method-defgenerics.lisp" e4)
   (load-source-file "CLOS/compute-effective-method-defmethods.lisp" e4))
 
-(defun define-compute-discriminating-function (e3 e4)
+(defun define-compute-discriminating-function (e3 e4 e5)
   (load-source-file "CLOS/compute-discriminating-function-defgenerics.lisp" e4)
+  (with-intercepted-function-cells
+      (e4
+       (class-of (env:function-cell (env:client e3) e3 'class-of))
+       (make-instance (env:function-cell (env:client e3) e3 'make-instance)))
+    (load-source-file "CLOS/maybe-replace-method.lisp" e4))
   (with-intercepted-function-cells
       (e4
        ;; FIXME: this one should also assign the slots in the
        ;; function object.
        (sicl-clos:set-funcallable-instance-function
         (list #'closer-mop:set-funcallable-instance-function))
-       (make-instance (env:function-cell (env:client e3) e3 'make-instance))
+       (class-of (env:function-cell (env:client e5) e5 'class-of))
        (no-applicable-method (list #'no-applicable-method)))
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e4))
   (load-source-file "CLOS/discriminating-automaton.lisp" e4)
@@ -44,11 +49,9 @@
   (define-sub-specializer-p e4)
   (define-compute-applicable-methods e4 e5)
   (define-compute-effective-method e4)
-  (define-compute-discriminating-function e3 e4))
+  (define-compute-discriminating-function e3 e4 e5))
 
 (defun enable-defgeneric (e3 e4 e5)
-  (setf (env:fdefinition (env:client e3) e3 'sicl-clos:class-prototype)
-        #'closer-mop:class-prototype)
   (with-intercepted-function-cells
       (e4
        (class-of (env:function-cell (env:client e3) e3 'class-of))
