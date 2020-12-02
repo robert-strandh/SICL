@@ -21,11 +21,16 @@
   (load-source-file "CLOS/compute-effective-method-defgenerics.lisp" e3)
   (load-source-file "CLOS/compute-effective-method-defmethods.lisp" e3))
 
-(defun define-compute-discriminating-function (e2 e3)
+(defun define-compute-discriminating-function (e2 e3 e4)
   (load-source-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
   (with-intercepted-function-cells
       (e3
+       (class-of (env:function-cell (env:client e2) e2 'class-of))
        (make-instance (env:function-cell (env:client e2) e2 'make-instance)))
+    (load-source-file "CLOS/maybe-replace-method.lisp" e3))
+  (with-intercepted-function-cells
+      (e3
+       (class-of (env:function-cell (env:client e4) e4 'class-of)))
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e3))
   (load-source-file "CLOS/discriminating-automaton.lisp" e3)
   (define-error-functions '(sicl-clos::compute-test-tree) e3)
@@ -79,7 +84,7 @@
   (setf (env:fdefinition
          (env:client e3) e3 'sicl-clos:set-funcallable-instance-function)
         #'closer-mop:set-funcallable-instance-function)
-  (define-compute-discriminating-function e2 e3))
+  (define-compute-discriminating-function e2 e3 e4))
 
 (defun enable-defgeneric (e2 e3 e4)
   (setf (env:fdefinition (env:client e2) e2 'sicl-clos:class-prototype)
