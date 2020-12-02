@@ -20,6 +20,10 @@
       (e3
        (make-instance
         (env:function-cell (env:client e2) e2 'make-instance))
+       (sicl-method-combination:find-method-combination-template
+        (env:function-cell
+         (env:client e4) e4
+         'sicl-method-combination:find-method-combination-template))
        ((setf sicl-method-combination:find-method-combination-template)
         (env:function-cell
          (env:client e4) e4
