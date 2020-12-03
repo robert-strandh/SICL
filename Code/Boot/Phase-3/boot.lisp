@@ -10,6 +10,7 @@
                   :client (make-instance 'client :e3 e3))
     (sicl-boot:create-accessor-defgenerics e3)
     (sicl-boot:create-mop-classes e3)
+    (setf (env:find-class (env:client e3) e3 'symbol) (find-class 'symbol))
     (load-source-file "CLOS/class-readers-forward-referenced-class-defmethods.lisp" e3)
     (load-source-file "CLOS/class-readers-defmethods-before.lisp" e3)
     (sicl-boot:copy-macro-functions e0 e4)
