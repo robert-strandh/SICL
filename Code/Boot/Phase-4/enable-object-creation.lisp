@@ -32,9 +32,9 @@
         (env:function-cell (env:client e4) e4 'find-class))
        (initialize-instance
         (env:function-cell (env:client e4) e4 'initialize-instance)))
-    (load-source-file "CLOS/make-instance-support.lisp" e3))
-  (load-source-file "CLOS/make-instance-defgenerics.lisp" e3)
-  (load-source-file "CLOS/make-instance-defmethods.lisp" e3))
+    (load-source-file "CLOS/make-instance-support.lisp" e3)
+    (load-source-file "CLOS/make-instance-defgenerics.lisp" e3)
+    (load-source-file "CLOS/make-instance-defmethods.lisp" e3)))
 
 (defun enable-slot-value (e3 e4)
   (load-source-file "CLOS/slot-value-etc-defgenerics.lisp" e3)
