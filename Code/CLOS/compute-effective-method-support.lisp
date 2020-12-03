@@ -37,18 +37,19 @@
 (defun wrap-in-make-method-macrolet
     (form method-class arguments-var next-methods-var)
   `(macrolet ((make-method (make-method-form)
-                `(make-instance ,',method-class
-                   :qualifiers '()
-                   :lambda-list '()
-                   :specializers '()
-                   :function
-                   ,(wrap-in-call-method-macrolet
-                     (wrap-make-method-form make-method-form
-                                            ',arguments-var
-                                            t
-                                            ',next-methods-var)
-                     ',arguments-var
-                     ',next-methods-var))))
+                (make-instance ,method-class
+                  :qualifiers '()
+                  :lambda-list '()
+                  :specializers '()
+                  :function
+                  (lambda (,arguments-var ,next-methods-var)
+                    ,(wrap-in-call-method-macrolet
+                      (wrap-make-method-form 'make-method-form
+                                             arguments-var
+                                             t
+                                             next-methods-var)
+                      arguments-var
+                      next-methods-var)))))
      ,form))
 
 (defun wrap-method-combination-form (form method-class)
