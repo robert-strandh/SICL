@@ -51,17 +51,17 @@
   (load-source-file "CLOS/reader-writer-method-class-defgenerics.lisp" e3)
   (load-source-file "CLOS/reader-writer-method-class-defmethods.lisp" e3))
 
-(defun define-default-superclasses (e3 e4)
-  (load-source-file "CLOS/default-superclasses-defgeneric.lisp" e3)
+(defun define-default-superclasses (e4 e5)
+  (load-source-file "CLOS/default-superclasses-defgeneric.lisp" e4)
   (with-intercepted-function-cells
-      (e3
-       (find-class (env:function-cell (env:client e4) e4 'find-class)))
-    (load-source-file "CLOS/default-superclasses-defmethods.lisp" e3)))
+      (e4
+       (find-class (env:function-cell (env:client e5) e5 'find-class)))
+    (load-source-file "CLOS/default-superclasses-defmethods.lisp" e4)))
 
 (defun enable-class-initialization (e3 e4 e5)
   (define-add-remove-direct-subclass e4)
   (define-direct-slot-definition-class e3 e4)
-  (define-default-superclasses e3 e4)
+  (define-default-superclasses e4 e5)
   (define-reader-writer-method-class e3 e4)
   (with-intercepted-function-cells
       (e4
