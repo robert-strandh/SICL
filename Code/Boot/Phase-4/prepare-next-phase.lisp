@@ -75,7 +75,7 @@
                                           collect (funcall function-cell-function name))
                                     (sicl-hir-transformations:constants hir))))))))
 
-(defun prepare-next-phase (e3 e4 e5)
+(defun prepare-next-phase (e2 e3 e4 e5)
   (define-ast-eval e5)
   (sicl-boot:copy-macro-functions e4 e5)
   (load-source-file "CLOS/class-of-defun.lisp" e4)
@@ -87,33 +87,37 @@
         (lambda (x lambda-expression)
           (assert (null x))
           (assert (and (consp lambda-expression) (eq (first lambda-expression) 'lambda)))
+          (format *trace-output*
+                  "Compiling in E4: ~s~%" lambda-expression)
           (let* ((cst (cst:cst-from-expression lambda-expression))
                  (ast (cleavir-cst-to-ast:cst-to-ast (env:client e4) cst e4)))
             (with-intercepted-function-cells
                 (e4
                  (make-instance
-                  (env:function-cell (env:client e3) e3 'make-instance))
+                  (env:function-cell (env:client e2) e2 'make-instance))
+                 ;; (make-instance
+                 ;;  (env:function-cell (env:client e3) e3 'make-instance))
                  (sicl-clos:method-function
                   (env:function-cell (env:client e3) e3 'sicl-clos:method-function)))
               (funcall (env:fdefinition (env:client e4) e4 'sicl-boot:ast-eval)
                        ast)))))
   (enable-compute-discriminating-function e3 e4 e5)
   (load-source-file "CLOS/defgeneric-support.lisp" e5)
-  ;; (import-functions-from-host
-  ;;  '(cleavir-code-utilities:parse-generic-function-lambda-list
-  ;;    cleavir-code-utilities:required)
-  ;;  e4)
   (with-intercepted-function-cells
       (e4
        (sicl-clos:set-funcallable-instance-function
         (list #'closer-mop:set-funcallable-instance-function)))
     (load-source-file "CLOS/invalidate-discriminating-function.lisp" e4))
-  ;; (import-functions-from-host
-  ;;  '(cleavir-code-utilities:parse-generic-function-lambda-list
-  ;;    cleavir-code-utilities:required)
-  ;;  e4)
+  (import-functions-from-host
+   '(cleavir-code-utilities:parse-generic-function-lambda-list
+     cleavir-code-utilities:required)
+   e4)
   (load-source-file "CLOS/generic-function-initialization-support.lisp" e4)
-  (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e4)
+  (with-intercepted-function-cells
+      (e4
+       (sicl-clos:method-function
+        (env:function-cell (env:client e3) e3 'sicl-clos:method-function)))
+    (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e4))
   (enable-defgeneric e3 e4 e5)
   (enable-defmethod e3 e4 e5)
   (enable-defclass e3 e4 e5)
