@@ -72,24 +72,17 @@
           (env:find-class
            (env:client e3) e3 'sicl-clos:standard-writer-method))))
 
-(defun define-default-superclasses (e2 e3)
-  (setf (env:fdefinition (env:client e2) e2 'sicl-clos:default-superclasses)
-        (lambda (class)
-          (cond ((eq class
-                     (env:find-class (env:client e3) e3 'standard-class))
-                 (list (env:find-class (env:client e3) e3 'standard-object)))
-                ((eq class
-                     (env:find-class
-                      (env:client e3) e3 'sicl-clos:funcallable-standard-class))
-                 (list (env:find-class
-                        (env:client e3) e3 'sicl-clos:funcallable-standard-object)))
-                (t
-                 '())))))
+(defun define-default-superclasses (e3 e4)
+  (load-source-file "CLOS/default-superclasses-defgeneric.lisp" e3)
+  (with-intercepted-function-cells
+      (e3
+       (find-class (env:function-cell (env:client e4) e4 'find-class)))
+    (load-source-file "CLOS/default-superclasses-defmethods.lisp" e3)))
 
 (defun enable-class-initialization (e2 e3 e4)
   (define-add-remove-direct-subclass e3)
   (define-direct-slot-definition-class e2 e3)
-  (define-default-superclasses e2 e3)
+  (define-default-superclasses e3 e4)
   (define-reader-writer-method-class e2 e3)
   (with-intercepted-function-cells
       (e3
@@ -108,9 +101,9 @@
        (sicl-clos:direct-slot-definition-class
         (env:function-cell (env:client e2) e2
                            'sicl-clos:direct-slot-definition-class))
-       (sicl-clos:default-superclasses
-        (env:function-cell (env:client e2) e2
-                           'sicl-clos:default-superclasses))
+       ;; (sicl-clos:default-superclasses
+       ;;  (env:function-cell (env:client e2) e2
+       ;;                     'sicl-clos:default-superclasses))
        (functionp (list (constantly t)))
        ;; There is a test to verify that each direct superclass is a class
        ;; and it always is during bootstrapping.
