@@ -12,15 +12,35 @@
         (list (lambda (object)
                 (slot-value object 'sicl-boot::%class)))))
     (load-source-file "CLOS/slot-value-etc-support.lisp" e3))
-  (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e3)
-  (load-source-file "CLOS/shared-initialize-support.lisp" e3)
-  (load-source-file "CLOS/shared-initialize-defgenerics.lisp" e4)
+  (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e4)
+  (import-functions-from-host
+   '(sicl-loop::list-car sicl-loop::list-cdr)
+   e4)
   (with-intercepted-function-cells
       (e4
-       (sicl-clos::shared-initialize-default-using-class
+       (sicl-clos:slot-definition-name
         (env:function-cell
-         (env:client e3) e3 'sicl-clos::shared-initialize-default-using-class)))
-    (load-source-file "CLOS/shared-initialize-defmethods.lisp" e4))
+         (env:client e3) e3 'sicl-clos:slot-definition-name))
+       (sicl-clos:slot-definition-initargs
+        (env:function-cell
+         (env:client e3) e3 'sicl-clos:slot-definition-initargs))
+       (sicl-clos:slot-definition-initfunction
+        (env:function-cell
+         (env:client e3) e3 'sicl-clos:slot-definition-initfunction))
+       (sicl-clos::slot-boundp-using-class-default
+        (env:function-cell
+         (env:client e3) e3 'sicl-clos::slot-boundp-using-class-default))
+       ((setf sicl-clos::slot-value-using-class-default)
+        (env:function-cell
+         (env:client e3) e3 '(setf sicl-clos::slot-value-using-class-default)))
+       ((setf sicl-clos::standard-instance-access)
+        (env:function-cell
+         (env:client e3) e3 '(setf sicl-clos::standard-instance-access)))
+       (sicl-clos:class-slots
+        (env:function-cell (env:client e3) e3 'sicl-clos:class-slots)))
+    (load-source-file "CLOS/shared-initialize-support.lisp" e4))
+  (load-source-file "CLOS/shared-initialize-defgenerics.lisp" e4)
+  (load-source-file "CLOS/shared-initialize-defmethods.lisp" e4)
   (load-source-file "CLOS/initialize-instance-support.lisp" e4)
   (load-source-file "CLOS/initialize-instance-defgenerics.lisp" e4)
   (load-source-file "CLOS/initialize-instance-defmethods.lisp" e4))
