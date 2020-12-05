@@ -54,7 +54,6 @@
 (defun enable-defgeneric (e3 e4 e5)
   (with-intercepted-function-cells
       (e4
-       (class-of (env:function-cell (env:client e3) e3 'class-of))
        (make-instance (env:function-cell (env:client e3) e3 'make-instance))
        (sicl-clos:class-precedence-list
         (env:function-cell (env:client e3) e3 'sicl-clos:class-precedence-list))
