@@ -320,7 +320,9 @@
 (defun default-discriminating-function (generic-function arguments profile)
   (let* ((required-argument-count (length profile))
          (required-arguments (subseq arguments 0 required-argument-count))
-         (classes (mapcar #'class-of required-arguments))
+         (classes (loop for argument in required-arguments
+                        for p in profile
+                        collect (if p (class-of argument) (find-class 't))))
          (relevant-classes (loop for class in classes
                                  for p in profile
                                  when p
