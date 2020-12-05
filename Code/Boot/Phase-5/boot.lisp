@@ -31,7 +31,7 @@
     (change-class e5 'environment
                   :client (make-instance 'client :e5 e5))
     (sicl-boot:create-accessor-defgenerics e5)
-    ;; (sicl-boot:create-mop-classes e5)
+    (sicl-boot:create-mop-classes e5)
     ;; (with-intercepted-function-cells
     ;;     (e4
     ;;      (find-class
