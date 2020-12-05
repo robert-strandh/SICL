@@ -21,7 +21,7 @@
                        `(funcall ,(compile
                                    nil
                                    `(lambda ()
-                                      ,(wrap-in-call-method-macrolet (second method) arguments-var)))))
+                                      ,(wrap-in-call-method-macrolet (second method) ,arguments-var)))))
                       ((not (consp method))
                        `(funcall ,(method-function method)
                                  ,',arguments-var
