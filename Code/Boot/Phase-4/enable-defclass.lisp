@@ -44,12 +44,9 @@
   (load-source-file "CLOS/direct-slot-definition-class-defmethods.lisp" e3))
 
 (defun define-reader-writer-method-class (e3 e4)
-  (with-intercepted-function-cells
-      (e3
-       (find-class (env:function-cell (env:client e4) e4 'find-class)))
-    (load-source-file "CLOS/reader-writer-method-class-support.lisp" e3))
-  (load-source-file "CLOS/reader-writer-method-class-defgenerics.lisp" e3)
-  (load-source-file "CLOS/reader-writer-method-class-defmethods.lisp" e3))
+  (load-source-file "CLOS/reader-writer-method-class-support.lisp" e4)
+  (load-source-file "CLOS/reader-writer-method-class-defgenerics.lisp" e4)
+  (load-source-file "CLOS/reader-writer-method-class-defmethods.lisp" e4))
 
 (defun define-default-superclasses (e4 e5)
   (load-source-file "CLOS/default-superclasses-defgeneric.lisp" e4)
@@ -66,10 +63,6 @@
   (with-intercepted-function-cells
       (e4
        (make-instance (env:function-cell (env:client e3) e3 'make-instance))
-       (sicl-clos:reader-method-class
-        (env:function-cell (env:client e3) e3 'sicl-clos:reader-method-class))
-       (sicl-clos:writer-method-class
-        (env:function-cell (env:client e3) e3 'sicl-clos:writer-method-class))
        (find-class (env:function-cell (env:client e5) e5 'find-class))
        (ensure-generic-function
         (env:function-cell (env:client e5) e5 'ensure-generic-function)))
@@ -80,9 +73,6 @@
        (sicl-clos:direct-slot-definition-class
         (env:function-cell (env:client e3) e3
                            'sicl-clos:direct-slot-definition-class))
-       (sicl-clos:default-superclasses
-        (env:function-cell (env:client e3) e3
-                           'sicl-clos:default-superclasses))
        (functionp (list (constantly t)))
        ;; There is a test to verify that each direct superclass is a class
        ;; and it always is during bootstrapping.
