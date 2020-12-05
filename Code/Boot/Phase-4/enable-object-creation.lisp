@@ -61,6 +61,8 @@
   (load-source-file "CLOS/slot-value-etc-defmethods.lisp" e3)
   (with-intercepted-function-cells
       (e4
+       (sicl-clos:slot-definition-name
+        (env:function-cell (env:client e3) e3 'sicl-clos:slot-definition-name))
        (sicl-clos:class-slots
         (env:function-cell (env:client e3) e3 'sicl-clos:class-slots))
        (sicl-clos:slot-definition-name
