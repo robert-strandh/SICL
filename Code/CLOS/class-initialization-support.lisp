@@ -91,7 +91,8 @@
   (loop for canonicalized-slot-specification in direct-slots
         collect (apply #'make-instance
                        (apply #'direct-slot-definition-class
-                              class canonicalized-slot-specification)
+                              (class-of class)
+                              canonicalized-slot-specification)
                        canonicalized-slot-specification)))
 
 (defun add-as-subclass-to-superclasses (class direct-superclasses)
