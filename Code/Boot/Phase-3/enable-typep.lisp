@@ -1,8 +1,6 @@
 (cl:in-package #:sicl-boot-phase-3)
 
 (defun enable-typep (e2 e3)
-  ;; FIXME: define functions SYMBOL-PACKAGE and FIND-PACKAGE in the
-  ;; environment so that they exist at this point.
   (define-error-functions '(typep symbol-package find-package) e3)
   (with-intercepted-function-cells
       (e3
