@@ -18,16 +18,14 @@
      (ast cleavir-ast:standard-object-class-of-ast)
      lexical-environment)
   `(funcall ,(lambda (object)
-               (cond ((typep object 'sicl-boot::header)
-                      (slot-value object 'sicl-boot::%class))
-                     ((null object)
+               (cond ((null object)
                       (env:find-class client (e3 client) 'null))
                      ((symbolp object)
                       (env:find-class client (e3 client) 'symbol))
                      ((stringp object)
                       (env:find-class client (e3 client) 'string))
                      (t
-                      (error "Class of ~s asked for in E3" object))))
+                      (class-of object))))
             ,(sicl-ast-evaluator:translate-ast
               client
               (cleavir-ast:standard-object-ast ast)
