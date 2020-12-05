@@ -77,7 +77,8 @@
         (t
          (error "generic function class must be a class or a name")))
   (unless (eq generic-function-class (class-of generic-function))
-    (error "classes don't agree"))
+    (error "classes don't agree ~s and ~s of ~s"
+           generic-function-class (class-of generic-function) generic-function))
   (when method-class-p
     (cond ((symbolp method-class)
            (let ((class (find-class method-class t environment)))
