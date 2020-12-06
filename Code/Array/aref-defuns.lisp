@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-array)
 
 (defun aref (array &rest subscripts)
-  (apply #'row-major-aref array subscripts))
+  (row-major-aref array (apply #'array-row-major-index array subscripts)))
 
 (defun (setf aref) (new-element array &rest subscripts)
-  (apply #'(setf row-major-aref) new-element subscripts))
+  (setf (row-major-aref array (apply #'array-row-major-index array subscripts))
+        new-element))
