@@ -19,4 +19,4 @@
             do (error 'index-must-be-non-negative-and-less-than-dimension
                       :array array
                       :index-number index-number)
-          finally (return result))
+          finally (return result))))
