@@ -17,4 +17,5 @@
    (:file "enable-method-combinations")
    (:file "enable-generic-function-creation")
    (:file "enable-printing")
+   (:file "prepare-next-phase")
    (:file "boot")))
