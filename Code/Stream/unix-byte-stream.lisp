@@ -4,13 +4,8 @@
 
 (defgeneric buffer (stream))
 
-(defclass unix-byte-output-stream ()
-  ((%file-descriptor :initarg :file-descriptor :reader file-descriptor)
-   (%buffer :initform (make-array 256
-				  :element-type '(unsigned-byte 8)
-				  :fill-pointer 0)
-	    :initarg :buffer
-	    :reader buffer)))
+(defclass unix-byte-output-stream (stream buffered-output-stream-mixin)
+  ((%file-descriptor :initarg :file-descriptor :reader file-descriptor)))
 
 (defmethod finish-output ((stream unix-byte-output-stream))
   (sicl-posix-high:write
