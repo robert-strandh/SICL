@@ -12,10 +12,10 @@
 
 (defgeneric close (stream))
 
-(defgeneric finish-output (stream))
+(defgeneric stream-finish-output (stream))
 
-(defgeneric force-output (stream))
+(defgeneric stream-force-output (stream))
 
-(defgeneric clear-output (stream))
+(defgeneric stream-clear-output (stream))
 
-(defgeneric write-byte (integer stream))
+(defgeneric stream-write-byte (stream integer))
