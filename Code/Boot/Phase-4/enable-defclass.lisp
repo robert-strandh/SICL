@@ -25,9 +25,8 @@
     (load-source-file "CLOS/class-finalization-support.lisp" e4))
   (with-intercepted-function-cells
       (e4
-       (sicl-clos:effective-slot-definition-class
-        (env:function-cell
-         (env:client e3) e3 'sicl-clos:effective-slot-definition-class)))
+       (sicl-clos:method-function
+        (env:function-cell (env:client e3) e3 'sicl-clos:method-function)))
     (load-source-file "CLOS/class-finalization-defmethods.lisp" e4)))
 
 (defun define-add-remove-direct-subclass (e4)
