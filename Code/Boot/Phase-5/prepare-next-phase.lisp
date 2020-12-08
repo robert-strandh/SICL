@@ -38,5 +38,5 @@
   (enable-compute-discriminating-function e4 e5)
   (enable-generic-function-creation e5)
   ;; (enable-printing e5)
-  #+(or)(finalize-classes e4 e5))
+  (finalize-classes e4 e5))
 
