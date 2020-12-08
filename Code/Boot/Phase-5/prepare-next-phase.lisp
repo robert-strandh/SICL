@@ -38,5 +38,7 @@
   (enable-compute-discriminating-function e4 e5)
   (enable-generic-function-creation e5)
   ;; (enable-printing e5)
-  (finalize-classes e4 e5))
+  (finalize-classes e4 e5)
+  (define-error-functions '(sicl-clos::all-descendants sicl-clos::cartesian-product) e4)
+  (load-source-file "CLOS/satiation.lisp" e4))
 
