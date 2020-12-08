@@ -16,6 +16,8 @@
   (finish-output *trace-output*))
 
 (defun satiate-generic-functions (e4 e5)
+  (format *trace-output* "Satiating all generic functions in ~a..." (sicl-boot:name e5))
+  (finish-output *trace-output*)
   (let ((processed (make-hash-table :test #'eq))
         (client (env:client e5))
         (satiation-function
@@ -38,7 +40,9 @@
             (when (and (typep fun 'sicl-boot::header)
                        (eq (slot-value fun 'sicl-boot::%class)
                            generic-function-class))
-              (funcall satiation-function fun))))))))
+              (funcall satiation-function fun)))))))
+  (format *trace-output* "done~%")
+  (finish-output *trace-output*))
 
 (defun prepare-next-phase (e3 e4 e5)
   (load-source-file "CLOS/class-of-defun.lisp" e5)
@@ -65,5 +69,6 @@
   ;; (enable-printing e5)
   (finalize-classes e4 e5)
   (define-error-functions '(sicl-clos::all-descendants sicl-clos::cartesian-product) e4)
-  (load-source-file "CLOS/satiation.lisp" e4))
+  (load-source-file "CLOS/satiation.lisp" e4)
+  (satiate-generic-functions e4 e5))
 
