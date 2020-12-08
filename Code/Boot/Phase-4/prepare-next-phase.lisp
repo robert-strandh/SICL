@@ -83,14 +83,12 @@
         (lambda (x lambda-expression)
           (assert (null x))
           (assert (and (consp lambda-expression) (eq (first lambda-expression) 'lambda)))
-          (let* ((cst (cst:cst-from-expression lambda-expression))
-                 (ast (cleavir-cst-to-ast:cst-to-ast (env:client e4) cst e4)))
-            (with-intercepted-function-cells
-                (e4
-                 (make-instance
-                  (env:function-cell (env:client e2) e2 'make-instance))
-                 (sicl-clos:method-function
-                  (env:function-cell (env:client e3) e3 'sicl-clos:method-function)))
+          (with-intercepted-function-cells
+              (e4
+               (make-instance
+                   (env:function-cell (env:client e3) e3 'make-instance)))
+            (let* ((cst (cst:cst-from-expression lambda-expression))
+                   (ast (cleavir-cst-to-ast:cst-to-ast (env:client e4) cst e4)))
               (funcall (env:fdefinition (env:client e4) e4 'sicl-boot:ast-eval)
                        ast)))))
   (enable-compute-discriminating-function e3 e4 e5)
