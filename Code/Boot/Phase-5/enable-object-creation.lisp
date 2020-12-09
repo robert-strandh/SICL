@@ -13,16 +13,24 @@
   (load-source-file "CLOS/initialize-instance-defgenerics.lisp" e5)
   (load-source-file "CLOS/initialize-instance-defmethods.lisp" e5))
 
-(defun enable-make-instance (e4 e5)
-  (with-intercepted-function-cells
-      (e4
-       (find-class
-        (env:function-cell (env:client e5) e5 'find-class))
-       (initialize-instance
-        (env:function-cell (env:client e5) e5 'initialize-instance)))
-    (load-source-file "CLOS/make-instance-support.lisp" e4)
-    (load-source-file "CLOS/make-instance-defgenerics.lisp" e4)
-    (load-source-file "CLOS/make-instance-defmethods.lisp" e4)))
+(defun enable-object-allocation (e5)
+  (setf (env:fdefinition (env:client e5) e5 'sicl-clos::allocate-general-instance)
+        (lambda (class size)
+          (make-instance 'sicl-boot:header
+            :class class
+            :rack (make-array size :initial-element 10000000))))
+  (load-source-file "CLOS/stamp-offset-defconstant.lisp" e5)
+  (load-source-file "CLOS/effective-slot-definition-class-support.lisp" e5)
+  (load-source-file "CLOS/effective-slot-definition-class-defgeneric.lisp" e5)
+  (load-source-file "CLOS/effective-slot-definition-class-defmethods.lisp" e5)
+  (load-source-file "CLOS/allocate-instance-support.lisp" e5)
+  (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e5)
+  (load-source-file "CLOS/allocate-instance-defmethods.lisp" e5))
+
+(defun enable-make-instance (e5)
+  (load-source-file "CLOS/make-instance-support.lisp" e5)
+  (load-source-file "CLOS/make-instance-defgenerics.lisp" e5)
+  (load-source-file "CLOS/make-instance-defmethods.lisp" e5))
 
 (defun enable-slot-value (e5)
   (setf (env:constant-variable
@@ -38,5 +46,5 @@
 (defun enable-object-creation (e4 e5)
   (enable-slot-value e5)
   (enable-object-initialization e5)
-  ;; (enable-make-instance e4 e5))
-  )
+  (enable-object-allocation e5)
+  (enable-make-instance e5))
