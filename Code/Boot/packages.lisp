@@ -7,8 +7,9 @@
            #:name
            #:client
            #:boot
-           #:e0 #:e1 #:e2 #:e3 #:e4 #:e5 #:e6 #:e7
-           #:*e0* #:*e1* #:*e2* #:*e3* #:*e4* #:*e5* #:*e6* #:*e7*
+           #:repl
+           #:e0 #:e1 #:e2 #:e3 #:e4 #:e5
+           #:*e0* #:*e1* #:*e2* #:*e3* #:*e4* #:*e5*
            #:import-functions-from-host
            #:define-error-functions
            #:compile-source-file
