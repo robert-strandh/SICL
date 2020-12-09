@@ -48,7 +48,7 @@
   (load-source-file "CLOS/slot-value-etc-defmethods.lisp" e5)
   (load-source-file "CLOS/slot-value-etc-specified-defuns.lisp" e5))
 
-(defun enable-object-creation (e4 e5)
+(defun enable-object-creation (e5)
   (enable-slot-value e5)
   (enable-object-initialization e5)
   (enable-object-allocation e5)
