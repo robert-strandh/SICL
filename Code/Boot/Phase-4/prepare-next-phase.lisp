@@ -15,20 +15,6 @@
   (format *trace-output* "done~%")
   (finish-output *trace-output*))
 
-(defun enable-object-allocation (e4)
-  (setf (env:fdefinition (env:client e4) e4 'sicl-clos::allocate-general-instance)
-        (lambda (class size)
-          (make-instance 'sicl-boot:header
-            :class class
-            :rack (make-array size :initial-element 10000000))))
-  (load-source-file "CLOS/stamp-offset-defconstant.lisp" e4)
-  (load-source-file "CLOS/effective-slot-definition-class-support.lisp" e4)
-  (load-source-file "CLOS/effective-slot-definition-class-defgeneric.lisp" e4)
-  (load-source-file "CLOS/effective-slot-definition-class-defmethods.lisp" e4)
-  (load-source-file "CLOS/allocate-instance-support.lisp" e4)
-  (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e4)
-  (load-source-file "CLOS/allocate-instance-defmethods.lisp" e4))
-
 (defun ast-eval (ast client environment)
   (let* ((global-environment (trucler:global-environment client environment))
          (hir (sicl-ast-to-hir:ast-to-hir client ast))
@@ -71,7 +57,7 @@
                                           collect (funcall function-cell-function name))
                                     (sicl-hir-transformations:constants hir))))))))
 
-(defun prepare-next-phase (e2 e3 e4 e5)
+(defun prepare-next-phase (e3 e4 e5)
   (define-ast-eval e5)
   (sicl-boot:copy-macro-functions e4 e5)
   (load-source-file "CLOS/class-of-defun.lisp" e4)
