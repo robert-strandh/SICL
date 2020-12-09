@@ -114,6 +114,8 @@
     (load-source-file "CLOS/ensure-class.lisp" e5)))
 
 (defun enable-defclass (e3 e4 e5)
+  ;; This one is needed in order to make a class prototype of a class
+  ;; in E5.
   (enable-object-allocation e4)
   (enable-class-finalization e3 e4)
   (enable-class-initialization e3 e4 e5)
