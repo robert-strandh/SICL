@@ -25,7 +25,6 @@
   (load-source-file "CLOS/compute-discriminating-function-defgenerics.lisp" e4)
   (with-intercepted-function-cells
       (e4
-       (class-of (env:function-cell (env:client e3) e3 'class-of))
        (make-instance (env:function-cell (env:client e3) e3 'make-instance)))
     (load-source-file "CLOS/maybe-replace-method.lisp" e4))
   (with-intercepted-function-cells
