@@ -17,6 +17,7 @@
    (:file "enable-generic-function-creation")
    (:file "enable-printing")
    (:file "enable-defgeneric")
+   (:file "enable-defmethod")
    (:file "create-cyclic-graph")
    (:file "prepare-next-phase")
    (:file "boot")))
