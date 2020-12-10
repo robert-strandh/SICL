@@ -66,6 +66,7 @@
   (enable-method-combinations e5)
   (enable-compute-discriminating-function e5)
   (enable-generic-function-creation e5)
+  (enable-defmethod e5)
   ;; (enable-printing e5)
   (finalize-classes e4 e5)
   (define-error-functions '(sicl-clos::all-descendants sicl-clos::cartesian-product) e4)
