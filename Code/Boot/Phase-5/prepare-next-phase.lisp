@@ -70,5 +70,7 @@
   (finalize-classes e4 e5)
   (define-error-functions '(sicl-clos::all-descendants sicl-clos::cartesian-product) e4)
   (load-source-file "CLOS/satiation.lisp" e4)
-  (satiate-generic-functions e4 e5))
+  (load-source-file "CLOS/standard-instance-access.lisp" e4)
+  (satiate-generic-functions e4 e5)
+  (update-all-objects e4 e5))
 
