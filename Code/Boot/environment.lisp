@@ -52,10 +52,15 @@
         (lambda (value name set-if-assigned-p)
           (setf (env:special-variable client environment name set-if-assigned-p)
                 value)))
+  ;; FIXME: replace with correct versions that access the dynamic environment.
   (setf (env:fdefinition
          client environment 'symbol-value)
         (lambda (name)
           (sicl-ast-evaluator::symbol-value name environment)))
+  (setf (env:fdefinition
+         client environment '(setf symbol-value))
+        (lambda (value name)
+          (setf (sicl-ast-evaluator::symbol-value name environment) value)))
   (setf (env:fdefinition
          client environment '(setf sicl-data-and-control-flow:constant-variable))
         (lambda (value name)
