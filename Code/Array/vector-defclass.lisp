@@ -6,5 +6,5 @@
 (defclass vector (array sequence)
   ((%fill-pointer
     :initform nil
-    :initarg :fill-pinter
+    :initarg :fill-pointer
     :accessor vector-fill-pointer)))
