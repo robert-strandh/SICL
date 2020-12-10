@@ -18,6 +18,7 @@
    (:file "enable-printing")
    (:file "enable-defgeneric")
    (:file "enable-defmethod")
+   (:file "enable-defclass")
    (:file "create-cyclic-graph")
    (:file "prepare-next-phase")
    (:file "boot")))
