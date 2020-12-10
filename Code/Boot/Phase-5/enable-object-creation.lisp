@@ -1,7 +1,6 @@
 (cl:in-package #:sicl-boot-phase-5)
 
 (defun enable-object-initialization (e5)
-  (load-source-file "CLOS/standard-instance-access.lisp" e5)
   (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e5)
   (import-functions-from-host
    '(sicl-loop::list-car sicl-loop::list-cdr)
