@@ -19,3 +19,5 @@
 (defgeneric stream-clear-output (stream))
 
 (defgeneric stream-write-byte (stream integer))
+
+(defgeneric stream-write-char (stream character))
