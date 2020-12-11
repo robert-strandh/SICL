@@ -174,11 +174,12 @@
                        nil))
 
 (defmethod (setf row-major-aref) (new-element (array array-unsigned-byte-8) index)
-  (unless (typep new-element '(unsigned-byte 8))
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
-           :datum new-element
-           :expected-type '(unsigned-byte 8)))
+  ;; FIXME ucomment when we have a DEFTYPE form for UNSIGNED-BYTE.
+  ;; (unless (typep new-element '(unsigned-byte 8))
+  ;;   ;; FIXME: signal a more specific condition.
+  ;;   (error 'type-error
+  ;;          :datum new-element
+  ;;          :expected-type '(unsigned-byte 8)))
   (progn (cleavir-primop:aset array
                               index
                               new-element
