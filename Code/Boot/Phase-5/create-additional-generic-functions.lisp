@@ -28,4 +28,6 @@
   (load-source-file "Arithmetic/generic-round-defgeneric.lisp" e5)
   (load-source-file "Arithmetic/generic-round-defmethods.lisp" e5)
   (load-source-file "Arithmetic/generic-truncate-defgeneric.lisp" e5)
-  (load-source-file "Arithmetic/generic-truncate-defmethods.lisp" e5))
+  (load-source-file "Arithmetic/generic-truncate-defmethods.lisp" e5)
+  (load-source-file "CLOS/validate-superclass-defgenerics.lisp" e5)
+  (load-source-file "CLOS/validate-superclass-defmethods.lisp" e5))
