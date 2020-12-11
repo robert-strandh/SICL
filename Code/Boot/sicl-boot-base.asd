@@ -19,6 +19,7 @@
                #:sicl-character-support
                #:sicl-type-support
                #:sicl-printer-support
+               #:sicl-stream-support
                #:sicl-ast-evaluator
                #:eclector
                #:eclector-concrete-syntax-tree
