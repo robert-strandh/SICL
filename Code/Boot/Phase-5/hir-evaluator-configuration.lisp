@@ -19,3 +19,31 @@
                   (t
                    (error "Class of ~s asked for in E5" object)))))
     (sicl-hir-evaluator:successor 0)))
+
+(defmethod sicl-hir-evaluator:instruction-thunk
+    ((client client)
+     (instruction cleavir-ir:aref-instruction)
+     lexical-environment)
+  (if (equal (cleavir-ir:element-type instruction) '(unsigned-byte 8))
+      (sicl-hir-evaluator:make-thunk (client instruction lexical-environment :inputs 2 :outputs 1)
+        (setf (sicl-hir-evaluator:output 0)
+              (let ((rack (slot-value (sicl-hir-evaluator:input 0) 'sicl-boot::%rack)))
+                (multiple-value-bind (word-index byte-index)
+                    (floor (sicl-hir-evaluator:input 1) 8)
+                  (ldb (byte 8 (* 8 byte-index)) (aref rack (+ word-index 4))))))
+        (sicl-hir-evaluator:successor 0))
+      (call-next-method)))
+
+(defmethod sicl-hir-evaluator:instruction-thunk
+    ((client client)
+     (instruction cleavir-ir:aset-instruction)
+     lexical-environment)
+  (if (equal (cleavir-ir:element-type instruction) '(unsigned-byte 8))
+      (sicl-hir-evaluator:make-thunk (client instruction lexical-environment :inputs 3 :outputs 0)
+        (let ((rack (slot-value (sicl-hir-evaluator:input 0) 'sicl-boot::%rack)))
+          (multiple-value-bind (word-index byte-index)
+              (floor (sicl-hir-evaluator:input 1) 8)
+            (setf (ldb (byte 8 (* 8 byte-index)) (aref rack (+ word-index 4)))
+                  (sicl-hir-evaluator:input 2))))
+        (sicl-hir-evaluator:successor 0))
+      (call-next-method)))
