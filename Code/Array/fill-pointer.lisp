@@ -13,7 +13,7 @@
                :expected-type 'vector)
         fill-pointer)))
 
-(defmethod (setf fill-pointer) :around (new-fill-pointer (vector vector))
+(defmethod (setf fill-pointer) (new-fill-pointer (vector vector))
   (cond ((null (vector-fill-pointer vector))
          ;; FIXME: signal a more specific condition
          (error 'type-error
@@ -24,7 +24,7 @@
                 :datum new-fill-pointer
                 :expected-type 'integer))
         ((or (minusp new-fill-pointer)
-             (> new-fill-pointer) (array-total-size vector))
+             (> new-fill-pointer (array-total-size vector)))
          (error 'type-error
                 :datum new-fill-pointer
                 :expected-type `(integer 0 ,(array-total-size vector))))
