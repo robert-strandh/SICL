@@ -6,5 +6,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "enable-printing")
    (:file "update-objects")
    (:file "boot")))
