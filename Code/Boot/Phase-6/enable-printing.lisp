@@ -26,4 +26,7 @@
 
 (defun enable-printing (e5)
   (define-posix-write e5)
+  (load-source-file "Stream/generic-functions.lisp" e5)
+  (load-source-file "Array/vector-push-defun.lisp" e5)
+  (load-source-file "Stream/stream.lisp" e5)
   (load-source-file "Printer/variables.lisp" e5))
