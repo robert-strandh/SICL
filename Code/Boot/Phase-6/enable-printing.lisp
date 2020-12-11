@@ -25,4 +25,5 @@
                 (finish-output stream)))))))
 
 (defun enable-printing (e5)
+  (define-posix-write e5)
   (load-source-file "Printer/variables.lisp" e5))
