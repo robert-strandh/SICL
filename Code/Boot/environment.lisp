@@ -127,7 +127,7 @@
    '(;; Numbers
      + - * / < <= = > >= /= floor 1+ 1-
      plusp minusp integerp numberp
-     logand
+     logand logior ash
      zerop evenp
      ;; CONSes
      cons list list* append make-list copy-list
@@ -147,7 +147,7 @@
      ;; Symbols
      gensym symbolp
      ;; Characters
-     characterp
+     characterp char-code code-char
      ;; Strings
      stringp
      ;; Types and classes
