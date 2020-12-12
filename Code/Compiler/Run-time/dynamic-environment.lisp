@@ -56,3 +56,23 @@
                   (eq name (name entry)))
           return entry
         finally (return nil)))
+
+(defun symbol-value (name global-variable-cell)
+  (let* ((entry (find-special-variable-entry *dynamic-environment* name))
+         (value (if (null entry) (car global-variable-cell) (value entry))))
+    (if (eq value (cdr global-variable-cell))
+        (error 'unbound-variable :name name)
+        value)))
+
+(defun (setf symbol-value) (new-value name global-variable-cell)
+  (let ((entry (find-special-variable-entry *dynamic-environment* name)))
+    (if (null entry)
+        (setf (car global-variable-cell) new-value)
+        (setf (value entry) new-value))))
+
+(defun makunbound (name global-variable-cell)
+  (let ((entry (find-special-variable-entry *dynamic-environment* name)))
+    (if (null entry)
+        (setf (car global-variable-cell) (cdr global-variable-cell))
+        (setf (value entry) (cdr global-variable-cell))))
+  name)
