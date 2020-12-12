@@ -71,7 +71,13 @@
            (methods (funcall methods-function function)))
       (loop for method in methods
             do (update-method
-                method translate-table class-slots-function e5)))))
+                method translate-table class-slots-function e5)))
+    ;; FIXME: Thre is no slot writer for the slot METHOD-CLASS, so we
+    ;; would have to call REINITIALIZE-INSTANCE.  I am not sure at
+    ;; this point that it would be possible.
+    (let ((rack (slot-value function 'sicl-boot::%rack)))
+      (setf (aref rack 10)
+            (gethash (aref rack 10) translate-table)))))
 
 (defun update-simple-function
     (function translate-table class-slots-function e5)
@@ -143,6 +149,28 @@
             (push class result)))))
     result))
 
+(defun update-method-combination-template
+    (template translate-table class-slots-function e5)
+  (with-impure-sicl-object template
+    (update-object template translate-table class-slots-function)
+    (let* ((variants-function
+             (env:fdefinition
+              (env:client e5) e5 'sicl-method-combination::variants))
+           (variants (funcall variants-function template)))
+      (loop for variant in variants
+            do (update-object variant translate-table class-slots-function)))))
+
+(defun find-all-method-combination-templates (e5)
+  (let ((result '())
+        (visited (make-hash-table :test #'eq)))
+    (do-all-symbols (symbol)
+      (unless (gethash symbol visited)
+        (setf (gethash symbol visited) t)
+        (let ((template (env:find-method-combination-template symbol e5)))
+          (unless (null template)
+            (push template result)))))
+    result))
+
 (defun update-all-objects (e4 e5)
   (let ((table (create-class-translation-table e4 e5))
         (class-slots-function
@@ -150,4 +178,7 @@
     (loop for function in (find-all-sicl-functions e5)
           do (update-function function table class-slots-function e5))
     (loop for class in (find-all-classes e5)
-          do (update-class class table class-slots-function e5))))
+          do (update-class class table class-slots-function e5))
+    (loop for template in (find-all-method-combination-templates e5)
+          do (update-method-combination-template
+              template table class-slots-function e5))))
