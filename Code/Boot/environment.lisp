@@ -158,7 +158,7 @@
      ;; For debugging
      format
      ;; Conditions
-     error)
+     error break)
    environment))
 
 (defun define-setf-functions (environment)
