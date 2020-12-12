@@ -27,4 +27,5 @@
            (stream-write-byte output-stream (logior m1 (logand (ash code -6) m2)))
            (stream-write-byte output-stream (logior m1 (logand code m2)))))))
 
-           
+(defmethod stream-finish-output ((stream character-to-binary-output-stream))
+  (stream-finish-output (binary-stream stream)))
