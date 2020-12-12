@@ -2,6 +2,8 @@
 
 (defpackage #:sicl-run-time
   (:use #:common-lisp)
+  (:shadow #:symbol-value
+           #:makunbound)
   (:export #:*dynamic-environment*
            #:block/tagbody-entry
            #:stack-pointer
