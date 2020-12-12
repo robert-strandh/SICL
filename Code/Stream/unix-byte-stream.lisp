@@ -2,8 +2,6 @@
 
 (defgeneric file-descriptor (stream))
 
-(defgeneric buffer (stream))
-
 (defclass unix-byte-output-stream (stream buffered-output-stream-mixin)
   ((%file-descriptor :initarg :file-descriptor :reader file-descriptor)))
 
