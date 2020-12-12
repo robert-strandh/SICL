@@ -77,4 +77,6 @@
   (update-all-objects e4 e5)
   (load-source-file "CLOS/ensure-generic-function-defun.lisp" e5)
   (load-source-file "CLOS/ensure-method-defun.lisp" e5)
-  (load-source-file "CLOS/ensure-class.lisp" e5))
+  (load-source-file "CLOS/ensure-class.lisp" e5)
+  (load-source-file "CLOS/satiation.lisp" e5)
+  (satiate-generic-functions e5 e5))
