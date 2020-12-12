@@ -114,6 +114,9 @@
                              (env:function-cell client environment name)
                              (cdr override-entry))))
             result)))
+  (setf (env:fdefinition client environment 'sicl-symbol:variable-cell)
+        (lambda (name)
+          (env:variable-cell client environment name)))
   (setf (env:fdefinition
          client
          environment
