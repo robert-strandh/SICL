@@ -61,4 +61,5 @@
            #:copy-symbol
            #:gensym
            #:*gensym-counter*
-           #:gentemp))
+           #:gentemp
+           #:variable-cell))
