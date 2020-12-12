@@ -32,6 +32,7 @@ to their target counterparts as follows:
 \item A target \texttt{character} is represented as a host character.
 \item A target \texttt{cons} cell is represented as a host
   \texttt{cons} cell.
+\item A target \texttt{symbol} is represented as a host symbol.
 \item A target standard object is represented as a host
   \texttt{standard-object} for the \emph{header} and a host
   \texttt{simple-vector} for the \emph{rack}.
@@ -42,7 +43,7 @@ to their target counterparts as follows:
 
 \section{Global environments for bootstrapping}
 
-During different stages of bootstrapping, a particular \emph{name} (of
+During different phases of bootstrapping, a particular \emph{name} (of
 a function, class, etc) must be associated with different objects.  As
 a trivial example, the function \texttt{allocate-object} in the host
 system is used to allocate all standard objects.  But
@@ -88,11 +89,9 @@ An image I is said to be \emph{viable} if and only if it is possible
 to obtain a complete \commonlisp{} system by starting with I and loading a
 sequence of ordinary compiled files.
 
-\section{Bootstrapping stages}
+\section{Bootstrapping phases}
 
-\subsection{Stage 1, bootstrapping CLOS}
-
-\subsubsection{Definitions}
+\subsection{Definitions}
 
 \begin{definition}
 A \emph{simple instance} is an instance of some class, but that is
@@ -195,14 +194,13 @@ The \emph{method function} of a bridge method is an ordinary host
 function.
 \end{definition}
 
-\subsubsection{Preparation}
+\subsection{Preparation}
 
-In addition to the host environment, eight different \sysname{}
+In addition to the host environment, five different \sysname{}
 first-class environments are involved in the bootstrapping procedure.
-We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, $E_4$, $E_5$,
-$E_6$, and $E_7$.
+We shall refer to them as $E_1$, $E_2$, $E_3$, $E_4$, and $E_5$.
 
-\subsubsection{Phase 0}
+\subsection{Phase 0}
 
 In phase $0$, we load enough functionality into environment $E0$ to be
 able to compile source files into \emph{fasl} files.  This
@@ -218,7 +216,7 @@ Any code can be compiled, provided that the macros that are called by
 the code are defined in environment $E_0$.  In particular, code that
 defines macros can be compiled into \texttt{fasl}s.
 
-\subsubsection{Phase 1}
+\subsection{Phase 1}
 
 We define a class named
 \texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
@@ -282,7 +280,7 @@ In environment $E_1$, we define the following classes:
   metaobjects for the classes that we create in environment $E_2$.
 \end{itemize}
 
-\subsubsection{Phase 2}
+\subsection{Phase 2}
 
 The purpose of phase~2 is:
 
@@ -371,7 +369,7 @@ Phase~2 is divided into two steps:
   specialized to these classes.
 \end{enumerate}
 
-\subsubsection{Phase 3}
+\subsection{Phase 3}
 
 The purpose of phase~3 is to create a hierarchy of bridge classes that
 has the same structure as the hierarchy of MOP classes.
@@ -399,7 +397,7 @@ Creating bridge classes this way will also instantiate the host class
 
 In this phase, we also prepare for the creation of ersatz instances.
 
-\subsubsection{Phase 4}
+\subsection{Phase 4}
 
 The purpose of this phase is to create ersatz generic functions and
 ersatz classes, by instantiating bridge classes.  
@@ -411,7 +409,7 @@ ersatz instances \emph{impure}.  We also have a set of ersatz generic
 functions (mainly accessors) that are ersatz instances like all the
 others.
 
-\subsubsection{Phase 5}
+\subsection{Phase 5}
 
 The first step of this phase is to finalize all the ersatz classes
 that were created in phase 4.  Finalization will create ersatz
@@ -424,9 +422,9 @@ opposed to the objects created in phase~4, the objects created in this
 phase are \emph{pure} ersatz objects, in that the class slot of the
 header object is also an ersatz object, albeit impure.
 
-\subsubsection{Phase 6}
+\subsection{Phase 6}
 
-\subsubsection{Phase 7}
+\subsection{Phase 7}
 
 The purpose of this phase is to create ersatz instances for all
 objects that are needed in order to obtain a viable image, including: 
@@ -442,17 +440,17 @@ objects that are needed in order to obtain a viable image, including:
 \item ersatz instances of those classes.
 \end{itemize}
 
-\subsubsection{Phase 8}
+\subsection{Phase 8}
 
 The purpose of this phase is to replace all the host instances that
 have been used so far as part of the entire ersatz structure, such as
 symbols, lists, and integers by their ersatz counterparts.
 
-\subsubsection{Phase 9}
+\subsection{Phase 9}
 
 The purpose of this phase is to take the simulated graph of objects
 used so far and transfer it to a \emph{memory image}.  
 
-\subsubsection{Phase 10}
+\subsection{Phase 10}
 
 Finally, the memory image is written to a binary file. 
