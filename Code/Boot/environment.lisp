@@ -52,7 +52,6 @@
         (lambda (value name set-if-assigned-p)
           (setf (env:special-variable client environment name set-if-assigned-p)
                 value)))
-  ;; FIXME: replace with correct versions that access the dynamic environment.
   (setf (env:fdefinition
          client environment 'symbol-value)
         (lambda (name)
