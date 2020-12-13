@@ -194,6 +194,13 @@
       (setf (env:special-operator client environment symbol)
             '(special t)))))
 
+(defun import-run-time-functions (environment)
+  (import-functions-from-host
+   '(sicl-run-time:symbol-value
+     (setf sicl-run-time:symbol-value)
+     sicl-run-time:makunbound)
+   environment))
+
 (defmethod initialize-instance :after ((environment environment) &key)
   (let ((client (env:client environment)))
     (setf (env:fdefinition client environment 'env:global-environment)
@@ -204,6 +211,7 @@
     (setf (env:fdefinition client environment 'env:client)
           #'env:client)
     (import-standard-functions environment)
+    (import-run-time-functions environment)
     (setf (env:fdefinition client environment 'funcall)
           (lambda (function-designator &rest arguments)
             (let ((function (if (symbolp function-designator)
