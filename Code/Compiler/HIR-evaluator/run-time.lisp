@@ -36,45 +36,9 @@
     (replace static-environment static-environment-values
              :start1 sicl-compiler:+first-constant-index+)))
 
-(defun symbol-value-function (global-environment)
-  (lambda (symbol)
-    (loop with client = (env:client global-environment)
-          for entry in sicl-run-time:*dynamic-environment*
-          when (and (typep entry 'sicl-run-time:special-variable-entry)
-                    (eq (sicl-run-time:name entry) symbol))
-            return (sicl-run-time:value entry)
-          finally
-             (multiple-value-bind (value boundp)
-                 (env:special-variable client global-environment symbol)
-               (if boundp
-                   (return value)
-                   (multiple-value-bind (value boundp)
-                       (env:constant-variable client global-environment symbol)
-                     (if boundp
-                         (return value)
-                         (error "Unbound variable ~s" symbol))))))))
-
-(defun set-symbol-value-function (global-environment)
-  (lambda (value symbol)
-    (loop with client = (env:client global-environment)
-          for entry in sicl-run-time:*dynamic-environment*
-          when (and (typep entry 'sicl-run-time:special-variable-entry)
-                    (eq (sicl-run-time:name entry) symbol))
-            do (setf (sicl-run-time:value entry) value)
-               (return-from set-symbol-value-function value)
-          finally
-             ;; FIXME, make sure it is special.
-             (setf (env:special-variable client global-environment symbol t)
-                   value)
-             (return value))))
-
 (defun fill-environment (environment)
   (let ((client (env:client environment)))
     (setf (env:fdefinition client environment 'enclose)
           #'enclose)
     (setf (env:fdefinition client environment 'initialize-closure)
-          #'initialize-closure)
-    (setf (env:fdefinition client environment 'symbol-value)
-          (symbol-value-function environment))
-    (setf (env:fdefinition client environment '(setf symbol-value))
-          (set-symbol-value-function environment))))
+          #'initialize-closure)))
