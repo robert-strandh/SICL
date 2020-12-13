@@ -23,19 +23,25 @@
 
 (defmethod translate-ast
     (client (ast ast:symbol-value-ast) lexical-environment)
-  `(symbol-value
-    ,(translate-ast
-      client (ast:name-ast ast) lexical-environment)
-    ,*run-time-environment-name*))
+  (let ((name (translate-ast client (ast:name-ast ast) lexical-environment)))
+    `(sicl-run-time:symbol-value
+      ,name
+      (sicl-environment:variable-cell
+       ,client
+       ,*run-time-environment-name*
+       ,name))))
 
 (defmethod translate-ast
     (client (ast ast:set-symbol-value-ast) lexical-environment)
-  `(setf (symbol-value
-          ,(translate-ast
-            client (ast:name-ast ast) lexical-environment)
-          ,*run-time-environment-name*)
-         ,(translate-ast
-           client (ast:value-ast ast) lexical-environment)))
+  (let ((name (translate-ast client (ast:name-ast ast) lexical-environment)))
+    `(setf (sicl-run-time:symbol-value
+            ,name
+            (sicl-environment:variable-cell
+             ,client
+             ,*run-time-environment-name*
+             ,name))
+           ,(translate-ast
+             client (ast:value-ast ast) lexical-environment))))
 
 (defmethod translate-ast
     (client (ast ast:call-ast) lexical-environment)
