@@ -2,7 +2,7 @@
 
 (defun define-ensure-method (e2 e3 e4)
   (setf (env:special-variable (env:client e4) e4 'lambda-list-keywords t)
-        '(&optional &reest &body &key &allow-other-keys &aux &whole &environment))
+        '(&optional &rest &body &key &allow-other-keys &aux &whole &environment))
   (load-source-file "CLOS/lambda-list-functions.lisp" e4)
   (let ((client (env:client e3)))
     (with-intercepted-function-cells
