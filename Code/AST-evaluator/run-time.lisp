@@ -1,28 +1,5 @@
 (cl:in-package #:sicl-ast-evaluator)
 
-(defun symbol-value (name global-environment)
-  (loop for entry in sicl-run-time:*dynamic-environment*
-        when (and (typep entry 'sicl-run-time:special-variable-entry)
-                  (eq name (sicl-run-time:name entry)))
-          return (sicl-run-time:value entry)
-        finally (multiple-value-bind (boundp value)
-                    (env:special-variable
-                     (env:client global-environment) global-environment name)
-                  (if boundp
-                      (return value)
-                      (error "unbound variable ~s" name)))))
-
-(defun (setf symbol-value) (value name global-environment)
-  (loop for entry in sicl-run-time:*dynamic-environment*
-        when (and (typep entry 'sicl-run-time:special-variable-entry)
-                  (eq name (sicl-run-time:name entry)))
-          do (setf (sicl-run-time:value entry) value)
-          and return value
-        finally (setf (env:special-variable
-                       (env:client global-environment) global-environment name t)
-                      value)
-                (return value)))
-
 (defmacro with-variable-bound ((name-form value-form) &body body)
   `(let ((sicl-run-time:*dynamic-environment*
            (cons (make-instance 'sicl-run-time:special-variable-entry
