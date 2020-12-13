@@ -20,4 +20,6 @@
            #:unwind
            #:initialize-values
            #:call-with-values
-           #:find-special-variable-entry))
+           #:find-special-variable-entry
+           #:symbol-value
+           #:makunbound))
