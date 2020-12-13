@@ -158,7 +158,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a symbol that has a definition as a special variable.
-;;; We do this by generating a call to SYMBOL-VALUE.
+;;; We do this by generating a SYMBOL-VALUE-AST.
 
 (defmethod convert-special-variable (client cst info global-environment)
   (declare (ignore global-environment))
