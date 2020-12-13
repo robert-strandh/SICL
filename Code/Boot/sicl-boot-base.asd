@@ -21,6 +21,7 @@
                #:sicl-printer-support
                #:sicl-stream-support
                #:sicl-ast-evaluator
+               #:sicl-cst-to-ast
                #:eclector
                #:eclector-concrete-syntax-tree
                #:cleavir-io
