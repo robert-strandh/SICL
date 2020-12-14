@@ -103,6 +103,18 @@
           (source-relative-to-absolute-pathname relative-pathname)))
     (load-source-file-common absolute-pathname environment)))
 
+(defun asdf-system-files (asdf-system-name)
+  (labels ((files (component)
+             (if (typep component 'asdf/lisp-action:cl-source-file)
+                 (list component)
+                 (reduce #'append
+                         (mapcar #'files (asdf/component:module-components component))))))
+    (files (asdf:find-system asdf-system-name))))
+
+(defun asdf-system-absolute-file-names (asdf-system-name)
+  (loop for file in (asdf-system-files asdf-system-name)
+        collect (namestring (asdf/component:component-pathname file))))
+
 (defun compile-source-file (relative-pathname environment)
   (let ((absolute-pathname
           (source-relative-to-absolute-pathname relative-pathname)))
