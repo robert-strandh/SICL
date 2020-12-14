@@ -21,3 +21,5 @@
 (defgeneric stream-write-byte (stream integer))
 
 (defgeneric stream-write-char (stream character))
+
+(defgeneric stream-write-string (stream string &optional start end))
