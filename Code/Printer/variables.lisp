@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-printer)
 
-(defvar *print-array t)
+(defvar *print-array* t)
 
 (defvar *print-base* 10)
 
@@ -29,3 +29,7 @@
 (defvar *print-readably* nil)
 
 (defvar *print-right-margin* nil)
+
+;;; FIXME: The value of this variable should be a pprint dispatch
+;;; table.
+(defvar *print-pprint-dispatch* nil)
