@@ -5,6 +5,24 @@
   (stream-write-char output-stream character)
   character)
 
+(defun terpri (&optional (output-stream *standard-output*))
+  (write-char #\Newline output-stream))
+
+(defun write-string
+    (string
+     &optional (output-stream *standard-output*)
+     &key (start 0) (end nil))
+  (stream-write-string output-stream string start end)
+  string)
+
+(defun write-line
+    (string
+     &optional (output-stream *standard-output*)
+     &key (start 0) (end nil))
+  (stream-write-string output-stream string start end)
+  (terpri output-stream)
+  string)
+
 (defun write-byte (byte stream)
   (stream-write-byte stream byte)
   byte)
