@@ -143,7 +143,7 @@
      ;; Characters
      characterp char-code code-char
      ;; Strings
-     stringp
+     stringp char
      ;; Types and classes
      coerce
      ;; Sequence
