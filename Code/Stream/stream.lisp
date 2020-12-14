@@ -65,6 +65,11 @@
     (fundamental-output-stream fundamental-character-stream)
   ())
 
+(defmethod stream-write-string (stream string &optional (start 0) (end nil))
+  (loop with end = (if (null end) (length string) end)
+        for index from start below end
+        do (stream-write-char stream (char string index))))
+
 (defclass fundamental-binary-input-stream
     (fundamental-input-stream fundamental-binary-stream)
   ())
