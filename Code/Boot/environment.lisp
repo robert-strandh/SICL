@@ -225,6 +225,12 @@
      environment)
     (setf (env:special-variable client environment '*trace-output* t)
           *trace-output*)
+    ;; Make DEFPACKAGE create a package in the host environment
+    (setf (env:macro-function client environment 'defpackage)
+          (lambda (form env)
+            (declare (ignore env))
+            (eval form)
+            nil))
     ;; Make it possible to inspect from the REPL
     (import-functions-from-host '(clouseau:inspect) environment)))
 
