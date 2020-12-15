@@ -19,6 +19,8 @@
             (find-class 'funcallable-standard-class))
       (setf (env:find-class client e2 'sicl-clos:built-in-class)
             (find-class 'funcallable-standard-class))
+      (setf (env:find-class client e2 'structure-class)
+            (find-class 'funcallable-standard-class))
       ;; We need to create methods on host generic functions such as
       ;; SHARED-INITIALIZE, so we need to instantiate the host class
       ;; STANDARD-METHOD.  For that reason, we import it from the host.
