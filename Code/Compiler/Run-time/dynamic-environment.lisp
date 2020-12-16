@@ -70,6 +70,12 @@
         (setf (car global-variable-cell) new-value)
         (setf (value entry) new-value))))
 
+(defun boundp (name global-variable-cell)
+  (let ((entry (find-special-variable-entry *dynamic-environment* name)))
+    (if (null entry)
+        (not (eq (car global-variable-cell) (cdr global-variable-cell)))
+        (not (eq (value entry) (cdr global-variable-cell))))))
+
 (defun makunbound (name global-variable-cell)
   (let ((entry (find-special-variable-entry *dynamic-environment* name)))
     (if (null entry)
