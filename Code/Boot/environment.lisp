@@ -190,6 +190,7 @@
   (import-functions-from-host
    '(sicl-run-time:symbol-value
      (setf sicl-run-time:symbol-value)
+     sicl-run-time:boundp
      sicl-run-time:makunbound)
    environment))
 
