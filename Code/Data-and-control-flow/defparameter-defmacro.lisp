@@ -14,4 +14,6 @@
                   ,client-var ,env-var ',name)
                  (make-instance 'sicl-environment:special-variable-description))))
        (eval-when (:load-toplevel :execute)
-         (setf (special-variable ',name t) ,initial-value)))))
+         (setf (special-variable ',name nil) nil)
+         (setf (symbol-value ',name) ,initial-value)
+         ',name))))
