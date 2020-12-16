@@ -1,7 +1,6 @@
 (cl:in-package #:sicl-boot-phase-5)
 
 (defun create-additional-generic-functions (e5)
-  (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e5)
   (load-source-file "Arithmetic/convert-fixnum-to-bignum-defun.lisp" e5)
   (load-source-file "Arithmetic/binary-add-defgeneric.lisp" e5)
   (load-source-file "Arithmetic/binary-add-defmethods.lisp" e5)

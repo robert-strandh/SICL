@@ -30,6 +30,7 @@
       boot
     (change-class e5 'environment
                   :client (make-instance 'client :e5 e5))
+    (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e5)
     (sicl-boot:create-accessor-defgenerics e5)
     (sicl-boot:create-mop-classes e5)
     (create-additional-generic-functions e5)

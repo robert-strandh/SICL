@@ -9,6 +9,7 @@
     (change-class e3 'environment
                   :client (make-instance 'client :e3 e3))
     (load-source-file "Structure/packages.lisp" e3)
+    (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e3)
     (sicl-boot:create-accessor-defgenerics e3)
     (sicl-boot:create-mop-classes e3)
     (setf (env:find-class (env:client e3) e3 'symbol) (find-class 'symbol))

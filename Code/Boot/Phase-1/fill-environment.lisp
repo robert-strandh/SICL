@@ -123,6 +123,7 @@
       (ld "Data-and-control-flow/defconstant-defmacro.lisp")
       (ld "Data-and-control-flow/defvar-defmacro.lisp")
       (ld "Data-and-control-flow/defparameter-defmacro.lisp")
+      (ld "Package-and-symbol/symbol-value-etc-defuns.lisp")
       (ld "Evaluation-and-compilation/macroexpand-hook-defparameter.lisp")
       (ld "Evaluation-and-compilation/macroexpand-1-defun.lisp")
       (host-load "Evaluation-and-compilation/declaim-support.lisp")
