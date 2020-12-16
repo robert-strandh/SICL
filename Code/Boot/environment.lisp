@@ -121,8 +121,8 @@
    '(;; Numbers
      + - * / < <= = > >= /= floor 1+ 1-
      plusp minusp integerp numberp
-     logand logior ash
-     zerop evenp
+     logand logior ash integer-length
+     zerop evenp max expt
      ;; CONSes
      cons list list* append make-list copy-list
      consp atom listp null endp
@@ -143,7 +143,7 @@
      ;; Characters
      characterp char-code code-char
      ;; Strings
-     stringp char
+     stringp char schar
      ;; Types and classes
      coerce
      ;; Sequence
