@@ -3,7 +3,8 @@
 (defpackage #:sicl-run-time
   (:use #:common-lisp)
   (:shadow #:symbol-value
-           #:makunbound)
+           #:makunbound
+           #:boundp)
   (:export #:*dynamic-environment*
            #:block/tagbody-entry
            #:stack-pointer
@@ -22,4 +23,5 @@
            #:call-with-values
            #:find-special-variable-entry
            #:symbol-value
-           #:makunbound))
+           #:makunbound
+           #:boundp))
