@@ -9,3 +9,8 @@
 
 (defmethod symbol-name ((symbol host-null))
   (host-symbol-name symbol))
+
+(defclass host-string (string) ())
+
+(defmethod array-dimensions ((string host-string))
+  (host-array-dimensions string))
