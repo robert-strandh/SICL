@@ -122,7 +122,7 @@
      + - * / < <= = > >= /= floor 1+ 1-
      plusp minusp integerp numberp
      logand logior ash integer-length
-     zerop evenp max expt
+     zerop evenp max expt abs
      ;; CONSes
      cons list list* append make-list copy-list
      consp atom listp null endp
@@ -141,7 +141,7 @@
      ;; Symbols
      gensym symbolp
      ;; Characters
-     characterp char-code code-char
+     characterp char-code code-char char= char-name standard-char-p
      ;; Strings
      stringp char schar
      ;; Types and classes
@@ -217,12 +217,15 @@
                                 (env:fdefinition client environment function-designator)
                                 function-designator)))
               (apply #'apply function arguments))))
+    (setf (env:fdefinition client environment 'host-symbol-name)
+          #'symbol-name)
     (define-special-operators environment)
     (define-primops environment)
     (define-setf-functions environment)
     (define-environment-functions client environment)
     (import-functions-from-host
-     '(cleavir-code-utilities:proper-list-p)
+     '(cleavir-code-utilities:proper-list-p
+       cleavir-code-utilities:list-structure)
      environment)
     (setf (env:special-variable client environment '*trace-output* t)
           *trace-output*)
