@@ -37,7 +37,7 @@
              (typecase ,object-var
                   (null (unique-number 'host-null))
                   (symbol (unique-number 'host-symbol))
-                  (string (unique-number 'string))
+                  (string (unique-number 'host-string))
                   (header
                    (aref (slot-value ,object-var '%rack) 0))
                   (t (error "Can't compute the stamp of ~s" ,object-var))))
@@ -61,7 +61,7 @@
                 (typecase (sicl-hir-evaluator:input 0)
                   (null (unique-number 'host-null))
                   (symbol (unique-number 'host-symbol))
-                  (string (unique-number 'string))
+                  (string (unique-number 'host-string))
                   (header
                    (let ((rack (slot-value (sicl-hir-evaluator:input 0) '%rack)))
                      (aref rack 0)))
