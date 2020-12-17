@@ -219,6 +219,8 @@
               (apply #'apply function arguments))))
     (setf (env:fdefinition client environment 'host-symbol-name)
           #'symbol-name)
+    (setf (env:fdefinition client environment 'host-array-dimensions)
+          #'array-dimensions)
     (define-special-operators environment)
     (define-primops environment)
     (define-setf-functions environment)
