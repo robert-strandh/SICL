@@ -35,8 +35,8 @@
                               'sicl-clos::unique-number)
                              (env:find-class (env:client *e4*) *e4* class-name))))
              (typecase ,object-var
-                  (null (unique-number 'null))
-                  (symbol (unique-number 'symbol))
+                  (null (unique-number 'host-null))
+                  (symbol (unique-number 'host-symbol))
                   (string (unique-number 'string))
                   (header
                    (aref (slot-value ,object-var '%rack) 0))
@@ -59,8 +59,8 @@
                                  'sicl-clos::unique-number)
                                 (env:find-class client *e4* class-name))))
                 (typecase (sicl-hir-evaluator:input 0)
-                  (null (unique-number 'null))
-                  (symbol (unique-number 'symbol))
+                  (null (unique-number 'host-null))
+                  (symbol (unique-number 'host-symbol))
                   (string (unique-number 'string))
                   (header
                    (let ((rack (slot-value (sicl-hir-evaluator:input 0) '%rack)))
