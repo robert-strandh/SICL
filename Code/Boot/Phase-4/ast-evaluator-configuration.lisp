@@ -21,9 +21,9 @@
                (cond ((typep object 'sicl-boot::header)
                       (slot-value object 'sicl-boot::%class))
                      ((null object)
-                      (env:find-class client (e4 client) 'null))
+                      (env:find-class client (e4 client) 'sicl-boot::host-null))
                      ((symbolp object)
-                      (env:find-class client (e4 client) 'symbol))
+                      (env:find-class client (e4 client) 'sicl-boot::host-symbol))
                      ((stringp object)
                       (env:find-class client (e4 client) 'string))
                      (t
