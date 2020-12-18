@@ -1,6 +1,4 @@
-;;;; src/conditions.lisp
-
-(in-package #:portable-condition-system)
+(in-package #:sicl-conditions)
 
 ;;; Condition signaling
 

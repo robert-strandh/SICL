@@ -1,4 +1,4 @@
-(cl:in-package #:portable-condition-system)
+(cl:in-package #:sicl-conditions)
 
 ;;; Definition of RESTART as a standard class.
 
