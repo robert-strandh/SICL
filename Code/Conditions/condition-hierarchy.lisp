@@ -14,6 +14,10 @@
 
 (define-condition style-warning (warning) ())
 
+(defgeneric simple-condition-format-control (simple-condition))
+
+(defgeneric simple-condition-format-arguments (simple-condition))
+
 (defun report-simple-condition (condition stream)
   (let ((format-control (simple-condition-format-control condition))
         (format-args (simple-condition-format-arguments condition)))
@@ -36,6 +40,10 @@
 
 (define-condition storage-condition (serious-condition) ())
 
+(defgeneric type-error-datum (type-error))
+
+(defgeneric type-error-expected-type (type-error))
+
 (defun report-type-error (condition stream)
   (format stream "~@<The value ~@:_~2@T~S ~@:_is not of type ~@:_~2@T~S.~:@>"
           (type-error-datum condition)
@@ -51,6 +59,8 @@
 (define-condition control-error (error) ())
 
 (define-condition program-error (error) ())
+
+(defgeneric cell-error-name (cell-error))
 
 (define-condition cell-error (error)
   ((name :reader cell-error-name :initarg :name)))
@@ -68,6 +78,8 @@
 
 (define-condition undefined-function (cell-error) ()
   (:report report-undefined-function))
+
+(defgeneric unbound-slot-instance (unbound-slot))
 
 (defun report-unbound-slot (condition stream)
   (format stream "The slot ~S is unbound in ~S."
@@ -112,6 +124,8 @@
 
 ;;; Non-standard condition types
 
+(defgeneric restart-not-found-restart-name (restart-not-found))
+
 (define-condition restart-not-found (control-error)
   ((restart-name :reader restart-not-found-restart-name :initarg :restart-name))
   (:report (lambda (condition stream)
@@ -120,6 +134,10 @@
 
 (define-condition abort-failure (control-error) ()
   (:report "An ABORT restart failed to transfer control."))
+
+(defgeneric case-failure-name (case-failure))
+
+(defgeneric case-failure-possibilities (case-failure))
 
 (defun report-case-failure (condition stream)
   (format stream "~S fell through ~S expression.~%Wanted one of ~:S."
