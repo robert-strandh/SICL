@@ -5,6 +5,9 @@
 (defmethod symbol-name ((symbol host-symbol))
   (host-symbol-name symbol))
 
+(defmethod symbol-package ((symbol host-symbol))
+  (host-symbol-package symbol))
+
 (defclass host-null (null) ())
 
 (defmethod symbol-name ((symbol host-null))
@@ -14,3 +17,10 @@
 
 (defmethod array-dimensions ((string host-string))
   (host-array-dimensions string))
+
+(defclass host-package (package) ())
+
+(defgeneric package-name (package))
+
+(defmethod package-name ((package host-package))
+  (host-package-name package))
