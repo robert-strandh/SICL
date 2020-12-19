@@ -16,6 +16,8 @@
                    (env:find-class client (e5 client) 'sicl-boot::host-symbol))
                   ((stringp object)
                    (env:find-class client (e5 client) 'sicl-boot::host-string))
+                  ((packagep object)
+                   (env:find-class client (e5 client) 'sicl-boot::host-package))
                   (t
                    (error "Class of ~s asked for in E5" object)))))
     (sicl-hir-evaluator:successor 0)))
