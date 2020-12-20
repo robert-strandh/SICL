@@ -272,7 +272,12 @@
             (eval form)
             nil))
     ;; Make it possible to inspect from the REPL
-    (import-functions-from-host '(clouseau:inspect) environment)))
+    (import-functions-from-host '(clouseau:inspect) environment)
+    ;; Fake PROGV for now.
+    (setf (env:macro-function (env:client environment) environment 'progv)
+          (lambda (form env)
+            (declare (ignore env))
+            (cons 'progn (rest form))))))
 
 (defmethod print-object ((object environment) stream)
   (print-unreadable-object (object stream)
