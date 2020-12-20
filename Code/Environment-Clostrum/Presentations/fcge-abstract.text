@@ -1,0 +1,8 @@
+At the European Lisp Symposium in 2015, we presented a paper entitled
+"First-class Global Environments in Common Lisp".  There are several
+possible use cases for such environments.  In this presentation, we
+investigate the use of such environments at run time for so-called
+"sandboxing", i.e., to allow only a pre-selected set of functionalities
+to be visible to application code.  In particular, we demonstrate the
+main idea that allows such environments to be used with no performance
+loss in almost all cases.

@@ -1,0 +1,83 @@
+Slide 8:
+
+1.  For instance, we do not want code that is downloaded from
+Quicklisp to be able to insert a Trojan Horse into the code generator
+of the compiler.
+
+2. For example, there is occasionally a conflict between external
+systems.  A user might want to install a system A and a system B, but
+A and B both use a system C but require different versions of C.
+
+Sandboxing can solve this problem by putting A and B in
+separate First-Class Global Environments, each with a separate version
+of C in it.  The main functionality of A and B can then be imported to
+the current work environment of the user, without the functionality of
+C being visible there.  So there is no conflict between the different
+versions of C.
+
+3. The most common idea of "sandboxing" is that it should be possible
+for some possibly malignant external agent to use the system without
+making the system unusable.  Making such a thing possible requires a
+lot more mechanisms than the one I present here.  
+
+By "safe" I mean that the system should remain in a internally
+coherent state.  When this criterion is violated, at best the system
+crashes, and in the worst case, it silently gives the wrong answer.
+
+If the code generator is altered, incorrect executable code could be
+generated, thereby violating this requirement. 
+
+
+Slide 11.
+
+As we can see in the definition of FOO it has two literals used as
+data, and one fixed function name.
+
+Slide 12.
+
+The function template is not related to any particular environment in
+anyway.  It contains the compiled code, the literals from the source,
+and the function NAMES used in that source.
+
+Slide 13
+
+A function object is created from the function template by replacing
+the function NAMES in the template by references to CELLs in the
+environment.
+
+We say that a function is "tied" to an environment whenever its
+external references, in this case the function name BAR, are relative
+to a particular first-class global environment.  
+
+Notice that "tying" has nothing to do with making the function
+available in the environment.  There is no reference FROM the
+environment TO the function.
+
+Whenever a function template is tied to a particular environment, if
+it refers to a function that does not yet have a cell for it, a new
+cell is created and initialized to a function that signals an error if
+invoked.  In this case, since BAR has not been defined yet, an attempt
+to call FOO will result in an error being signaled.
+
+The call to bar involves accessing the cell contents (in our case
+taking the CAR), and calling it.  The name BAR is not involved in this
+process.  In a typical implementation there would be no cell, and it
+would be the symbol BAR that is used as the indirection instead.
+
+Slide 14.
+
+When the function (setf fdefinition) is executed, the function becomes
+PRESENT in the environment.  Presence is orthogonal to the concept of
+"tying".
+
+Slide 15.
+
+If BAR is subsequently redefined, thanks to the indirection through
+the cell, FOO will invoke the new version, as the semantics dictate.
+
+slide 16.
+
+Imagine for instance that FOO is really the function COMPILE, and that
+BAR is part of the code generator.  As we can see, while the function
+COMPILE is present in environment 2, the code generator is not.
+
