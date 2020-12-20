@@ -20,6 +20,32 @@
     (client (environment environment))
   environment)
 
+(defun define-macroexpand (environment)
+  (setf (env:fdefinition (env:client environment) environment 'macroexpand-1)
+        (lambda (form &optional (env environment))
+          (etypecase form
+            ((cons symbol)
+             (let ((expander (trucler:macro-function (car form) env)))
+               (if (null expander)
+                   (values form nil)
+                   (values (funcall expander form env) t))))
+            (symbol
+             (let ((expansion (trucler:symbol-macro-expansion form env)))
+               (if (eq expansion form)
+                   (values form nil)
+                   (values expansion t)))))))
+    (setf (env:fdefinition (env:client environment) environment 'macroexpand)
+        (lambda (form &optional (env environment))
+          (let ((result form)
+                (e-p nil))
+            (loop do (multiple-value-bind (expansion expanded-p)
+                         (funcall (env:fdefinition (env:client environment) environment 'macroexpand-1)
+                                  result env)
+                       (if expanded-p
+                           (setf result expansion
+                                 e-p t)
+                           (return (values result e-p)))))))))
+
 (defun define-environment-functions (client environment)
   (setf (env:fdefinition client environment 'fboundp)
         (lambda (name)
@@ -114,7 +140,8 @@
          environment
          'sicl-type:type-expander)
         (lambda (name)
-          (env:type-expander client environment name))))
+          (env:type-expander client environment name)))
+  (define-macroexpand environment))
 
 (defun import-standard-functions (environment)
   (import-functions-from-host
