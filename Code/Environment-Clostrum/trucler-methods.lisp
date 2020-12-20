@@ -156,10 +156,23 @@
 (defmethod trucler:macro-function (name (env compilation-environment))
   (macro-function (client env) env name))
 
+(defmethod trucler:macro-function (name (env base-run-time-environment))
+  (macro-function (client env) env name))
+
 (defmethod trucler:compiler-macro-function (name (env compilation-environment))
   (compiler-macro-function (client env) env name))
 
+(defmethod trucler:compiler-macro-function (name (env base-run-time-environment))
+  (compiler-macro-function (client env) env name))
+
 (defmethod trucler:symbol-macro-expansion (name (env compilation-environment))
+  (multiple-value-bind (expander expansion)
+      (symbol-macro (client env) env name)
+    (if (null expander)
+        name
+        expansion)))
+
+(defmethod trucler:symbol-macro-expansion (name (env base-run-time-environment))
   (multiple-value-bind (expander expansion)
       (symbol-macro (client env) env name)
     (if (null expander)
