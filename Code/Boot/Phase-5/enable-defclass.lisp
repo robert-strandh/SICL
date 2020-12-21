@@ -25,7 +25,10 @@
   (define-default-superclasses e5)
   (define-reader-writer-method-class e5)
   (load-source-file "CLOS/add-accessor-method.lisp" e5)
-  (load-source-file "CLOS/class-initialization-support.lisp" e5)
+  (with-intercepted-function-cells
+      (e5
+       (functionp (list (constantly t))))
+    (load-source-file "CLOS/class-initialization-support.lisp" e5))
   (load-source-file "CLOS/class-initialization-defmethods.lisp" e5)
   (load-source-file "CLOS/reinitialize-instance-defgenerics.lisp" e5)
   (load-source-file "CLOS/reinitialize-instance-support.lisp" e5)
