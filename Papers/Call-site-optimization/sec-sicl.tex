@@ -1,0 +1,65 @@
+\section{Main features of the \sicl{} system}
+\label{sec-sicl-features}
+
+\sicl{}%
+\footnote{https://github.com/robert-strandh/SICL}
+is a system that is written entirely in \commonlisp{}.  Thanks
+to the particular bootstrapping technique
+\cite{durand_irene_2019_2634314} that we developed for \sicl{}, most
+parts of the system can use the entire language for their
+implementation.  We thus avoid having to keep track of what particular
+subset of the language is allowed for the implementation of each
+module.
+
+We have multiple objectives for the \sicl{} system, including
+exemplary maintainability and good performance.  However, the most
+important objective in the context of this paper is \emph{support for
+  excellent debugging tools}.  We think it is going to be difficult to
+adapt existing \commonlisp{} implementations to support the kind of
+application debugging that we consider essential for good programmer
+productivity.
+
+Another main objective of the \sicl{} system is \emph{safety}.  In
+this context, by this term we mean that the system must always be in a
+coherent internal state.  When a system becomes unsafe, it may
+\emph{crash}, or (worse) silently produce the wrong answer.
+
+There are many situations described in the \commonlisp{} standard that
+have undefined or unspecified behavior, such as:
+
+\begin{enumerate}
+\item Many times when a standard function is called with some argument
+  that is not of the type indicated by the corresponding dictionary
+  entry in the \commonlisp{} standard document, the behavior is
+  undefined, allowing the implementation to avoid potentially costly
+  tests for exceptional situations.
+\item When a non-local transfer is attempted to an exit point that has
+  been ``abandoned'', the standard does not require this situation to
+  be detected, making it possible for the system to crash or (worse)
+  give the wrong result.
+\item When some entity is declared \texttt{dynamic-extent}, but some
+  necessary condition for this declaration is violated, the
+  implementation is again not required to detect the problem, again
+  potentially resulting in a crash or an incorrect computation.
+\end{enumerate}
+
+Fortunately, most potential situations of this type are not taken
+advantage of by a typical \commonlisp{} implementation in order to
+improve performance, but some are.  We think that the spirit of the
+\commonlisp{} standard is to have a safe language, and that many of
+these situations of undefined or unspecified behavior exist only to
+avoid significantly more work for the system maintainers at the time
+the standard was established.
+
+For that reason, in the \sicl{} system, we do not intend to take
+advantage of these situations to make the system unsafe for the
+purpose of better performance, even though we might have to work
+somewhat harder in order to maintain good performance in all
+situations.
+
+Many debugging techniques can make the system unsafe.  For example, if
+the debugger allows the user to arbitrarily change the value of a
+lexical variable, the new value might violate some assumption made by
+the compiler for the program point in question.  Such a violation is
+very likely to make the system unsafe.  The work described in this
+paper is designed to keep the system safe.

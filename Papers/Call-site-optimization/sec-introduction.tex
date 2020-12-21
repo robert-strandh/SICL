@@ -1,0 +1,43 @@
+\section{Introduction}
+\label{sec-introduction}
+
+Function calls in a dynamic language like \commonlisp{} can be
+significantly more expensive in terms of processor cycles than
+function calls in a typical static language.  There are several
+reasons for this additional cost:
+
+\begin{enumerate}
+\item Functions can be removed or redefined at run-time, and callers
+  must take such updates into account, requiring some indirection that
+  can be modified at run-time.
+\item \commonlisp{} has a rich function-call protocol with optional
+  parameters and keyword parameters.  Keyword parameters, in
+  particular, require some considerable parsing for every function
+  call to a function that has such parameters.
+\item In general, a function that can only honor its contract for
+  certain types of its arguments must check such types for each call.
+\item Generic functions can be dynamically updated by the addition or
+  removal of methods.
+\end{enumerate}
+
+In a typical \commonlisp{} implementation, item number 1 is handled by
+an indirection in the form of a slot in the symbol naming the
+function, requiring a memory access.  On modern processors a memory
+access can be significantly more costly than, say, a register
+operation.
+
+Item number 2 can be mitigated by the use of compiler macros.
+Essentially, the creator of a function with a non-trivial lambda list
+can also create special versions of this function for various argument
+lists.  A call with an argument list that is recognized by the
+compiler macro can then be replaced by a call to such a special
+version, presumably with a simpler lambda list.
+
+Item number 3 can be handled by inlining, allowing the compiler to
+take advantage of type inference and type declarations to determine
+that some type checks can be elided.  However, inlining has the
+disadvantage that a redefinition of the callee will not automatically
+be taken into account, and requiring the caller to be recompiled for
+the redefinition to be effective.
+
+

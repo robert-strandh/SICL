@@ -1,0 +1,74 @@
+\documentclass[format=sigconf]{acmart}
+\usepackage[utf8]{inputenc}
+
+\def\inputfig#1{\input #1}
+\def\inputtex#1{\input #1}
+\def\inputal#1{\input #1}
+\def\inputcode#1{\input #1}
+
+\inputtex{logos.tex}
+\inputtex{refmacros.tex}
+\inputtex{other-macros.tex}
+
+\acmConference[ELS'21]{the 14th European Lisp Symposium}{April 27--28 2021}{%
+  Online}
+%\acmISBN{978-2-9557474-3-8}
+\acmISBN{}
+\acmDOI{10.5281/zenodo.3747548}
+\startPage{1}
+\setcopyright{rightsretained}
+\copyrightyear{2020}
+
+\begin{document}
+\title{Call-site optimization for Common Lisp}
+
+\author{Robert Strandh}
+\email{robert.strandh@u-bordeaux.fr}
+
+\affiliation{
+  \institution{LaBRI, University of Bordeaux}
+  \streetaddress{351 cours de la libération}
+  \city{Talence}
+  \country{France}}
+
+\begin{abstract}
+Call site optimization. bla bla
+\end{abstract}
+
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
+<concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011041.10011048</concept_id>
+<concept_desc>Software and its engineering~Runtime environments</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+\ccsdesc[500]{Software and its engineering~Runtime environments}
+
+\keywords{\clos{}, \commonlisp{}, Compilation, Debugging}
+
+\maketitle
+
+
+\inputtex{sec-introduction.tex}
+\inputtex{sec-previous.tex}
+\inputtex{sec-sicl.tex}
+\inputtex{sec-our-method.tex}
+\inputtex{sec-benefits.tex}
+\inputtex{sec-disadvantages.tex}
+\inputtex{sec-conclusions.tex}
+\inputtex{sec-acknowledgments.tex}
+
+\bibliographystyle{plainnat}
+%\bibliographystyle{abbrv}
+\bibliography{call-site-optimization}
+\end{document}
