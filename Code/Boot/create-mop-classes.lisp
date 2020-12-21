@@ -30,6 +30,7 @@
     (ld "CLOS/standard-class-defclass.lisp")
     (ld "CLOS/funcallable-standard-class-defclass.lisp")
     (ld "Structure/structure-class-defclass.lisp")
+    (ld "Conditions/condition-class-defclass.lisp")
     (ld "CLOS/built-in-class-defclass.lisp")
     (ld "CLOS/funcallable-standard-object-defclass.lisp")
     (ld "CLOS/simple-function-defclass.lisp")
