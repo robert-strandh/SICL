@@ -84,11 +84,11 @@
 ;;;   2. An effective method cache, containing the effective method
 ;;;      function to invoke for calls with corresponding to the
 ;;;      classes in the class cache.  This item is located in the
-;;;      CADDR of the list representing the call history entry.
+;;;      CADR of the list representing the call history entry.
 ;;;
 ;;;   3. An applicable method cache, containing a list of the
 ;;;      applicable methods that make up the effective method for this
-;;;      call.  This item is located in the CDDDR of the list
+;;;      call.  This item is located in the CDDR of the list
 ;;;      representing the call cache.
 
 (defun make-call-cache
