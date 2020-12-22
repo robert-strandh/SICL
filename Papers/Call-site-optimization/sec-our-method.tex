@@ -1,4 +1,30 @@
 \section{Our technique}
 \label{sec-our-technique}
 
-Our technique
+For the purpose of this work, we define a \emph{function call} to be
+the code that accomplishes the following tasks:
+
+\begin{enumerate}
+\item It accesses the arguments to be passed to the callee from the
+  places they have been stored after computation, and puts the
+  arguments in the places that the callee expects them.
+\item It accesses the function object associated with the name at the
+  call site and stores it in some temporary location.
+\item From the function object, it accesses the static environment to
+  be passed to the code of the callee.
+\item Also from the function object, it accesses the \emph{entry
+  point} of the function, i.e., typically the address of the first
+  instruction of the code of the callee.
+\item It transfers control to the entry point, using an instruction
+  that saves the return address for use by the callee to return to the
+  caller.
+\end{enumerate}
+
+In a typical implementation, a function call is generated when the
+code of the caller is compiled, and it then never changes.  For this
+permanent code to work, a particular \emph{call protocol} must be
+observed, and that protocol must be independent of the callee, as the
+callee may change after the caller has been compiled.
+
+With our suggested method, the function call is created by the
+callee.
