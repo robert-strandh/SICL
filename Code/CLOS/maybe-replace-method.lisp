@@ -29,6 +29,7 @@
                  :qualifiers '()
                  :specializers (method-specializers method)
                  :lambda-list (method-lambda-list method)
+                 :slot-location location
                  :slot-definition direct-slot
                  :documentation nil
                  :function (compile nil lambda-expression))))
@@ -49,6 +50,7 @@
                  :qualifiers '()
                  :specializers (method-specializers method)
                  :lambda-list (method-lambda-list method)
+                 :slot-location location
                  :slot-definition direct-slot
                  :documentation nil
                  :function (compile nil lambda-expression))))
