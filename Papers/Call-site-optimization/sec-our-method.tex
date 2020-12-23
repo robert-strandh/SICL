@@ -27,4 +27,7 @@ observed, and that protocol must be independent of the callee, as the
 callee may change after the caller has been compiled.
 
 With our suggested method, the function call is created by the
-callee.
+callee.  The code emitted by the caller for a function call consists
+of a single unconditional \emph{jump} instruction.  The target address
+in that instruction is altered by the callee according to its
+structure.
