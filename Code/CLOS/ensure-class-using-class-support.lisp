@@ -131,7 +131,7 @@
        (metaclass nil metaclass-p)
        &allow-other-keys)
   (unless metaclass-p
-    (error "metaclass must be given when ensuring a forward-referenced class"))
+    (setf metaclass 'standard-class))
   (cond ((symbolp metaclass)
          (setf metaclass (find-class metaclass)))
         ((typep metaclass 'class)
