@@ -6,4 +6,12 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
+    (setf (env:fdefinition (env:client e5) e5 'sicl-clos::update-header)
+          (lambda (to from)
+            (setf (slot-value to 'sicl-boot::%class)
+                  (slot-value from 'sicl-boot::%class))
+            (setf (slot-value to 'sicl-boot::%rack)
+                  (slot-value from 'sicl-boot::%rack))))
+    (load-source-file "CLOS/update-instance-defgenerics.lisp" e5)
+    (load-source-file "CLOS/change-class-defgenerics.lisp" e5)
     (enable-printing e5)))
