@@ -261,6 +261,17 @@
   (let ((df (compute-discriminating-function generic-function)))
     (set-funcallable-instance-function generic-function df)))
 
+(defun method-equal (method1 method2)
+  (or (eq method1 method2)
+      (and (typep method1 'standard-accessor-method)
+           (typep method2 'standard-accessor-method)
+           (eql (slot-location method1)
+                (slot-location method2)))))
+
+(defun methods-equal (methods1 methods2)
+  (and (= (length methods1) (length methods2))
+       (every #'method-equal methods1 methods2)))
+
 ;;; This function takes a generic function, a list of classes of all
 ;;; the required arguments, a list of relevant classes (i.e., classes
 ;;; of the arguments that have parameters that are specialized upon),
@@ -277,9 +288,10 @@
 (defun add-call-cache
     (generic-function classes relevant-classes applicable-methods)
   (let* ((call-history (call-history generic-function))
-         (call-cache (car (member applicable-methods call-history
+         (final-methods (final-methods applicable-methods classes))
+         (call-cache (car (member final-methods call-history
                                   :key #'applicable-method-cache
-                                  :test #'equal)))
+                                  :test #'methods-equal)))
          (method-combination
            (generic-function-method-combination generic-function)))
     (if (null call-cache)
@@ -289,23 +301,23 @@
                  (compute-effective-method
                   generic-function
                   method-combination
-                  (final-methods applicable-methods classes)))
+                  final-methods))
                (effective-method-function (compile nil effective-method)))
           ;; Add a new call cache to the call history.
           (setf (call-history generic-function)
                 (cons (make-call-cache relevant-classes
-                                       applicable-methods
+                                       final-methods
                                        effective-method-function)
                       call-history))
           effective-method-function)
         ;; We already have a call cache with the same applicable
         ;; method cache.  Create an entry that reuses the existing
         ;; applicable method cache and the existing effective method.
-        (let ((applicable-methods (applicable-method-cache call-cache))
+        (let ((final-methods (applicable-method-cache call-cache))
               (effective-method-function (effective-method-cache call-cache)))
           (setf (call-history generic-function)
                 (cons (make-call-cache relevant-classes
-                                       applicable-methods
+                                       final-methods
                                        effective-method-function)
                       call-history))
           effective-method-function))))
