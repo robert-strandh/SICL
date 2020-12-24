@@ -51,6 +51,15 @@ extraneous return values do not need to be computed at all.  As with
 arguments, return values can be unboxed, again avoiding costly memory
 allocations.
 
+When the callee is a generic function, a specialized discriminating
+function can often be created, provided that enough type information
+is provided by the caller for the arguments that correspond to
+specializers of some methods of the generic function.  In the extreme
+(but common) case where the callee is a slot accessor and the class of
+the specialized argument is know, the snippet can contain the full
+code to access the slot, without any need to call a particular method
+function.
+
 Often, \emph{inlining} is used to improve the performance of function
 calls, either by the application programmer or by the system itself.
 But inlining some function necessarily increases the code size of each
