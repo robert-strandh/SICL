@@ -1,3 +1,16 @@
 \section{Previous work}
 
-previous work
+To our knowledge, little or no work on call-site optimization has been
+done in the context of \commonlisp{}.  The unique features of
+\commonlisp{} such as generic functions with arbitrary method
+combinations and multiple dispatch make the task very difficult.
+
+One technique that is fairly common is \emph{inline caching},
+pioneered by Smalltalk \cite{Deutsch:1984:ES}.  This technique is used
+to avoid repeated method selection in a particular call site.  The key
+observation is that, for a particular call site, often the same method
+is concerned each time the call is made.  By caching the latest
+method, keyed by the distinguished class argument, a costlier
+computation can often be avoided.  This technique requires a cache
+stored in memory, and memory accesses can be very costly on modern
+processors.
