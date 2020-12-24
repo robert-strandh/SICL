@@ -1,3 +1,17 @@
 \section{Conclusions and future work}
 
-Some conclusion
+We have presented a very general technique for call-site
+optimization.  Our technique subsumes (entirely or partly) several
+other techniques such as inlining, compiler macros, sealing.
+
+Our technique is very general, and promises several advantages to
+function-call performance that can not easily be obtained with other
+techniques.  The flip side is that our technique is fairly complicated
+and requires significant support from both the compiler and the memory
+manager.
+
+Furthermore, we have not implemented the suggested technique, and the
+state of the \sicl{} system is not yet such that it can be done soon.
+The most urgent future work, then, is to create a native \sicl{}
+executable.  We are probably several months away before this work can
+be accomplished.

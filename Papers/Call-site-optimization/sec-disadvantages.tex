@@ -1,3 +1,16 @@
 \section{Disadvantages of our technique}
 
-Disadvantages
+The proposed technique is fairly complicated.  In order for all the
+advantages to be had, the callee must be represented in such a way
+that multiple versions can be created, depending on different
+information provided by each callee.  On the other hand, most of the
+benefit of this technique can be obtained with a limited amount of
+such flexibility.  Bypassing argument parsing in the presence of
+optional or keyword parameters will already provide great benefits.
+
+The garbage collector must not reclaim snippets that are currently in
+use, and ``in use'' can mean that a callee has an activation record on
+the call stack, so that the snippet can not be reclaimed until the
+activation record is removed from the stack.  This requirement will
+require a modification to the garbage collector, and code for garbage
+collectors is notoriously hard to get right.
