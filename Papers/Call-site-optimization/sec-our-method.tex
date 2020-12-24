@@ -30,4 +30,35 @@ With our suggested method, the function call is created by the
 callee.  The code emitted by the caller for a function call consists
 of a single unconditional \emph{jump} instruction.  The target address
 in that instruction is altered by the callee according to its
-structure.
+structure.  The code for the function call is contained in an object
+that we call a \emph{snippet}.  The callee allocates an appropriate
+snippet in the global heap as describe in \refSec{sec-sicl-features},
+at some available location, and the unconditional jump instruction of
+the caller is modified so that it performs a jump to the first
+instruction of the snippet.  When the callee changes in some way, a
+new snippet is allocated and the jump instruction is altered to refer
+to the position of the new snippet.  The old snippet is then subject
+to garbage collection like any other object.
+
+When a modification is made to a callee that alters its semantics,
+care must be taken so as to respect the overall semantics of all
+callers.  In particular, a callee can be removed using
+\texttt{fmakunbound} or entirely replaced using \texttt{(setf
+  fdefinition)}.  In that case, the following steps are taken in
+order:
+
+\begin{enumerate}
+\item First, a new snippet is allocated for each caller, and the
+  unconditional jump instruction is modified to refer to the new
+  snippet.  This snippet contains code for the full function-call
+  protocol in that it puts the arguments in the places defined by that
+  protocol, and in that it accesses the callee using an indirection
+  through the function cell.
+\item Next, the callee is atomically replaced by a new function, or
+  entirely removed by a single modification to the contents of the
+  function cell.
+\item The new function is attached to the list of call sites, and,
+  depending on the nature of the new function, new snippets can then
+  be allocated in order to improve performance of calls to the new
+  function.
+\end{enumerate}
