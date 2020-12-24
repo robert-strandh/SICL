@@ -40,6 +40,33 @@ new snippet is allocated and the jump instruction is altered to refer
 to the position of the new snippet.  The old snippet is then subject
 to garbage collection like any other object.
 
+In order for the callee to be able to adapt the snippet to its
+requirements, the caller, when loaded into the executing image, must
+provide information about its call sites to the system.  Each call
+site contains information such as:
+
+\begin{itemize}
+\item The number of arguments.
+\item The type of each argument.  If the type is not known, it is
+  indicated as \texttt{t}.  When an argument is a literal object, its
+  type is indicated as \texttt{(eql ...)}.
+\item For each argument, whether the argument is boxed or unboxed.
+\item For each argument, its location.  The location can be a register
+  or a stack position in the form of an offset from a frame pointer.
+\item The number of required return values, or an indication that all
+  return values are required, no matter the number.
+\item In case of a fixed number of return values, for each such value,
+  whether it should be boxed or unboxed.
+\item Indication as to whether the call is a \emph{tail call}, in
+  which case the snippet should deallocate the frame before
+  returning.
+\end{itemize}
+
+A callee can take advantage of this information to customize the
+call.  The default action is to generate a snippet that implements the
+full function-call protocol, without taking into account information
+about the types of the arguments.
+
 When a modification is made to a callee that alters its semantics,
 care must be taken so as to respect the overall semantics of all
 callers.  In particular, a callee can be removed using
