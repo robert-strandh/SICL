@@ -18,14 +18,15 @@ computation can often be avoided.
 \subsection{Ctors}
 \label{sec-previous-ctors}
 
-The SBCL implementation of the \commonlisp{} language uses a technique
-that they call \emph{ctors} that can be used for call-site
-optimization of certain functions.  In particular, in SBCL the
-technique is used for the function \texttt{make-instance} which is
-often called with a literal class name and literal keywords for the
-initialization arguments.  When the name of the class to instantiate
-is a literal, several steps in the object-initialization protocol can
-be simplified.
+The CMUCL implementation of the \commonlisp{} language uses a
+technique that they call \emph{ctors} that can be used for call-site
+optimization of certain functions.  This optimization was introduced
+by Gerd Moellmann in 2002, and has since been includes also in SBCL,
+which is a derivative of CMUCL.  In particular, in CMUCL the technique
+is used for the function \texttt{make-instance} which is often called
+with a literal class name and literal keywords for the initialization
+arguments.  When the name of the class to instantiate is a literal,
+several steps in the object-initialization protocol can be simplified.
 
 Most importantly, checking the validity of the initialization
 arguments can be done once and for all, subject only to added or
@@ -33,14 +34,14 @@ removed methods on the functions \texttt{initialize-instance} and
 \texttt{shared-initialize} and to updates to the class being
 instantiated.
 
-SBCL accomplishes the optimization by replacing the original call to
-\texttt{make-instance} by a call to a \emph{funcallable object} that
-is specific to the name of the class and the literal keyword arguments
-given.  The \emph{funcallable instance function} of the funcallable
-object is updated as a result of added or removed methods and modified
-classes as mentioned.
+CMUCL accomplishes the optimization by replacing (using a compiler
+macro) the original call to \texttt{make-instance} by a call to a
+\emph{funcallable object} that is specific to the name of the class
+and the literal keyword arguments given.  The \emph{funcallable
+  instance function} of the funcallable object is updated as a result
+of added or removed methods and modified classes as mentioned.
 
 Since the optimization is done as a source-code transformation, it is
 applicable only to standard functions that can not change later on.
 
-%%  LocalWords:  funcallable ctors Smalltalk SBCL
+%%  LocalWords:  funcallable ctors Smalltalk SBCL CMUCL
