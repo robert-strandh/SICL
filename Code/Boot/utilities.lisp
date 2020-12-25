@@ -174,6 +174,41 @@
                  do (prin1 result *query-io*)
                     (terpri *query-io*))))
 
+(defun repl2 (environment)
+  (let ((client (env:client environment)))
+    (load-asdf-system '#:sicl-conditions environment)
+    (setf (env:fdefinition client environment 'find-class)
+          (lambda (name &optional (errorp t) env)
+            (declare (ignore env))
+            (let ((class (env:find-class client environment name)))
+              (when (and (null class) errorp)
+                (funcall (env:fdefinition client environment 'error)
+                         'sicl-clos::no-such-class-name
+                         :name
+                         name))
+              class)))
+    (setf (env:fdefinition client environment 'invoke-debugger)
+          (lambda (condition)
+            (declare (ignore condition))
+            (sicl-boot-backtrace-inspector:inspect sicl-hir-evaluator:*call-stack*)))
+    (loop with results = nil
+          with princ = (env:fdefinition client environment 'princ)
+          with prin1 = (env:fdefinition client environment 'prin1)
+          with terpri = (env:fdefinition client environment 'terpri)
+          with finish-output = (env:fdefinition client environment 'finish-output)
+          for ignore = (progn (funcall princ (package-name *package*))
+                              (funcall princ ">> ")
+                              (funcall finish-output))
+          for form = (eclector.reader:read *query-io*)
+          for cst = (cst:cst-from-expression form)
+          do (setf results
+                   (multiple-value-list
+                    (cleavir-cst-to-ast:cst-eval client cst environment)))
+             (loop for result in results
+                   do (funcall prin1 result)
+                      (funcall terpri))
+             (funcall finish-output))))
+
 (defmacro with-intercepted-function-cells
     ((environment-form &body clauses) &body body)
   (let ((function-cells-temp-var (gensym))
