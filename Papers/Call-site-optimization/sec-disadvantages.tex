@@ -7,6 +7,13 @@ information provided by each callee.  On the other hand, most of the
 benefit of this technique can be obtained with a limited amount of
 such flexibility.  Bypassing argument parsing in the presence of
 optional or keyword parameters will already provide great benefits.
+For this benefit to be as useful as possible, it is advantageous to
+compile a callee in two parts; one part that allows for its parameters
+to be positioned in any places (registers or stack frame locations)
+that makes the remaining code as fast as possible, and one part that
+parses arguments from their default locations into those places.  The
+callee can then generate code for the snippets that moves the
+arguments passed by the caller to those final places.
 
 The garbage collector must not reclaim snippets that are currently in
 use, and ``in use'' can mean that a callee has an activation record on
@@ -14,3 +21,5 @@ the call stack, so that the snippet can not be reclaimed until the
 activation record is removed from the stack.  This requirement will
 require a modification to the garbage collector, and code for garbage
 collectors is notoriously hard to get right.
+
+%%  LocalWords:  callee
