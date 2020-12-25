@@ -74,11 +74,13 @@ Compared to the so-called \emph{ctor} technique describe in
 \refSec{sec-previous-ctors}, our technique is more general, since it
 does not involve any source-code transformations.  Thus, it can be
 used with functions defined by the application programmer, and that
-can change at any point after the callee has been compiled.  However,
-our technique in itself can of course not accomplish the entire
-optimization machinery required to optimize a function such as
-\texttt{make-instance}, as knowledge of its semantics is required for
-such optimization.
+can change at any point after the callee has been compiled.
+Furthermore, the \emph{ctor} technique still requires at least one,
+probably two, indirections (one to access the funcallable object and
+another one to access the entry point).  However, our technique in
+itself can of course not accomplish the entire optimization machinery
+required to optimize a function such as \texttt{make-instance}, as
+knowledge of its semantics is required for such optimization.
 
 %%  LocalWords:  inlining callee specializers accessor unboxed ctor
-%%  LocalWords:  ctors
+%%  LocalWords:  ctors funcallable indirections
