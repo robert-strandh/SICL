@@ -37,11 +37,11 @@
            (method-combination-name
              (if (null method-combination-option)
                  'standard
-                 (first method-combination-option)))
+                 (second method-combination-option)))
            (method-combination-arguments
              (if (null method-combination-option)
                  '()
-                 (rest method-combination-option)))
+                 (rest (rest method-combination-option))))
            (argument-precedence-order
              (assoc :argument-precedence-order options))
            (generic-function-class-option
