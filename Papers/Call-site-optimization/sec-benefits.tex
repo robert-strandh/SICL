@@ -68,4 +68,17 @@ such that the caller must be recompiled for a modified callee to be
 taken into account.  Our technique can often provide enough
 performance improvement to make inlining unnecessary.  Total code size
 will then be smaller, and the disadvantage of inlining with respect to
-calle redefinition is eliminated.
+callee redefinition is eliminated.
+
+Compared to the so-called \emph{ctor} technique describe in
+\refSec{sec-previous-ctors}, our technique is more general, since it
+does not involve any source-code transformations.  Thus, it can be
+used with functions defined by the application programmer, and that
+can change at any point after the callee has been compiled.  However,
+our technique in itself can of course not accomplish the entire
+optimization machinery required to optimize a function such as
+\texttt{make-instance}, as knowledge of its semantics is required for
+such optimization.
+
+%%  LocalWords:  inlining callee specializers accessor unboxed ctor
+%%  LocalWords:  ctors
