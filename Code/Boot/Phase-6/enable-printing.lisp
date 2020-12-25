@@ -34,4 +34,5 @@
   (load-source-file "Stream/character-to-binary-output-stream.lisp" e5)
   (load-source-file "Stream/standard-stream-instances.lisp" e5)
   (load-source-file "Stream/standard-io-functions.lisp" e5)
-  (load-source-file "Printer/variables.lisp" e5))
+  (load-source-file "Printer/variables.lisp" e5)
+  (sicl-boot::load-asdf-system '#:incless-intrinsic e5))
