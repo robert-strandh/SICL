@@ -20,7 +20,7 @@
                    :name ',name
                    :documentation ,documentation
                    :variant-signature-determiner
-                   (lambda ,lambda-list-variables
+                   (lambda ,lambda-list
                      (list ,@lambda-list-variables))
                    :effective-method-form-function
                    ,(long-form-lambda
