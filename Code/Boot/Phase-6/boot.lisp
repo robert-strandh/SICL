@@ -15,4 +15,5 @@
     (load-source-file "CLOS/update-instance-defgenerics.lisp" e5)
     (load-source-file "CLOS/change-class-defgenerics.lisp" e5)
     (load-source-file "CLOS/built-in-method-combinations.lisp" e5)
-    (enable-printing e5)))
+    (enable-printing e5)
+    (enable-conditions e5)))

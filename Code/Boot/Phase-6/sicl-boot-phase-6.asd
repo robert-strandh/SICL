@@ -7,4 +7,5 @@
   :components
   ((:file "packages")
    (:file "enable-printing")
+   (:file "enable-conditions")
    (:file "boot")))
