@@ -160,7 +160,7 @@
           (source-relative-to-absolute-pathname relative-filename)))
     (load absolute-filename)))
 
-(defun repl (environment)
+(defun old-repl (environment)
   (loop with results = nil
         with client = (env:client environment)
         for ignore = (progn (format *query-io* "~a>> " (package-name *package*))
@@ -174,23 +174,8 @@
                  do (prin1 result *query-io*)
                     (terpri *query-io*))))
 
-(defun repl2 (environment)
+(defun repl (environment)
   (let ((client (env:client environment)))
-    (load-asdf-system '#:sicl-conditions environment)
-    (setf (env:fdefinition client environment 'find-class)
-          (lambda (name &optional (errorp t) env)
-            (declare (ignore env))
-            (let ((class (env:find-class client environment name)))
-              (when (and (null class) errorp)
-                (funcall (env:fdefinition client environment 'error)
-                         'sicl-clos::no-such-class-name
-                         :name
-                         name))
-              class)))
-    (setf (env:fdefinition client environment 'invoke-debugger)
-          (lambda (condition)
-            (declare (ignore condition))
-            (sicl-boot-backtrace-inspector:inspect sicl-hir-evaluator:*call-stack*)))
     (loop with results = nil
           with princ = (env:fdefinition client environment 'princ)
           with prin1 = (env:fdefinition client environment 'prin1)
