@@ -105,10 +105,14 @@
 
 (defun asdf-system-files (asdf-system-name)
   (labels ((files (component)
-             (if (typep component 'asdf/lisp-action:cl-source-file)
-                 (list component)
-                 (reduce #'append
-                         (mapcar #'files (asdf/component:module-components component))))))
+             (typecase component
+               (asdf/lisp-action:cl-source-file
+                (list component))
+               (asdf/component:static-file
+                '())
+               (t
+                (reduce #'append
+                        (mapcar #'files (asdf/component:module-components component)))))))
     (files (asdf:find-system asdf-system-name))))
 
 (defun asdf-system-absolute-file-names (asdf-system-name)
