@@ -333,6 +333,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile an UNWIND-PROTECT-AST
+
+(defmethod compile-ast (client (ast cleavir-ast:unwind-protect-ast) context)
+  (let ((thunk-temp (cleavir-ir:new-temporary))
+        (dynenv-out
+          (cleavir-ir:make-lexical-location (gensym "unwind-protect"))))
+    (compile-ast
+     client
+     (cleavir-ast:cleanup-thunk-ast ast)
+     (clone-context
+      context
+      :result thunk-temp
+      :successor
+      (make-instance 'cleavir-ir:unwind-protect-instruction
+        :input thunk-temp
+        :output dynenv-out
+        :successor
+        (compile-ast
+         client
+         (cleavir-ast:protected-form-ast ast)
+         (clone-context
+          context
+          :dynamic-environment-location dynenv-out)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a CALL-AST.
 
 (defmethod compile-ast (client (ast cleavir-ast:call-ast) context)
