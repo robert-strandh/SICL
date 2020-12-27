@@ -61,6 +61,7 @@
    #:catch-instruction
    #:unwind-instruction #:destination #:unwind-index
    #:bind-instruction
+   #:unwind-protect-instruction
    #:eq-instruction
    #:consp-instruction
    #:fixnump-instruction
