@@ -397,3 +397,20 @@
 
 (defclass load-constant-instruction (instruction one-successor-mixin)
   ((%location-info :initarg :location-info :reader location-info)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction UNWIND-PROTECT-INSTRUCTION.
+;;;
+;;; This instruction has one input, which contains a thunk.  It has a
+;;; single DYNAMIC-ENVIRONMENT-OUTPUT.  The dynamic environment of
+;;; that output is the dynamic environment of the instruction itself,
+;;; augmented with an UNWIND-PROTECT entry.  The protected forms of
+;;; the UNWIND-PROTECT form are compiled in the augmented dynamic
+;;; environment.
+
+(defclass unwind-protct-instruction (instruction one-successor-mixin)
+  ())
+
+(defmethod dynamic-environment-output ((instruction unwind-protect-instruction))
+  (first (outputs instruction)))
