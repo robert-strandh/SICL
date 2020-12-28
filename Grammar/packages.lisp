@@ -2,4 +2,10 @@
 
 (defpackage structure-grammar
   (:use #:common-lisp)
-  (:export))
+  (:shadow
+   #:or
+   #:*
+   #:+)
+  (:export
+   #:or
+   #:suite))
