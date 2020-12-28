@@ -1,0 +1,128 @@
+Input is parsed from a STREAM.  A stream supports operations like
+FIRST, REST, NULL, ENDP which are non-destructive.  An element of a
+stream is either a TOKEN or another STREAM.  The second case typically
+happens when a nested list is found in some input.  When the parser
+encounters a stream as an element, it recursively parses the stream
+element.
+
+A RULE has the following possible forms:
+
+  (<left-hand-side> <- <item>+)
+
+  (<left-hand-side> <- <item>+ . <item>)
+
+A <left-hand-side> has the following form:
+
+  [<class-name> <option>*]
+
+an <item> has the following possible forms:
+
+  [<class-name> <option>* <item>*]
+
+  (<item>*)
+
+The last form means the item is a nested stream to be parsed
+recursively.
+
+The internal representation of an item or a left-hand side is an
+instance of a subclass of the class ITEM.  The exact subclass is
+determined by the <class-name> and the <option>s are given as initargs
+to the instantiation of the ITEM class. 
+
+The <class-name> of a <left-hand-slide> is a subclass of NON-TERMINAL,
+and the <class-name> of an <item> is a subclass either of TERMINAL or
+NON-TERMINAL.  The class NON-TERMINAL has a reader :CHILDREN that will
+contain a list of things constructed from the <item>s in the right
+hand side. 
+
+The result of a successful parse according to a particular rule is
+list.  By default, it is a singleton list consisting of an instance of
+the class named <class-name> of the left hand side.  The result of a
+parse of a stream is a list of a list of the nested parse results.
+
+Built-in non-terminals:
+
+  [or <item>+]
+
+This non-terminal returns the first successful parse of one of the
+items.
+
+  [suite :from <min> :to <max> <item>]
+
+This non-terminal returns a list of parse results.  A value of NIL for
+<max> means unbounded. 
+
+  [* <item>]
+
+This non terminal is a subclass of SUITE with DEFAULT-INITARGS :FROM 0
+:TO NIL.
+
+  [+ <item>]
+  
+This non terminal is a subclass of SUITE with DEFAULT-INITARGS :FROM 1
+:TO NIL.
+
+  [? <item>]
+
+This non terminal is a subclass of SUITE with DEFAULT-INITARGS :FROM 0
+:TO 1.
+
+
+
+Examples:
+-------------------------------------------
+([ordinary-lambda-list] <-
+   [ordinary-required-parameter-group]
+   [? [ordinary-optional-parameter-group]]
+   [? [ordinary-keyword-parameter-group]]
+   [? [aux-parameter-group]])
+
+([ordinary-required-parameter-group] <-
+   [* [ordinary-required-parameter]])
+
+([ordinary-optional-parameter-group] <-
+   [lambda-list-keyword :value &optional]
+   [* [ordinary-optional-parameter]])
+   
+([ordinary-optional-parameter] <-
+   [or [variable]
+       ([variable [? [form] [? [variable]]]])])
+
+([ordinary-keyword-parameter-group] <-
+   [lambda-list-keyword :value &key]
+   [* [ordinary-keyword-parameter]]
+   [? [lambda-list-keyword :value &allow-other-keys]])
+
+([ordinary-keyword-parameter] <-
+    [or [variable]
+        ([or [variable]
+             ([keyword-name] [variable])]
+         [? [initform] [? variable]])])
+
+([aux-parameter-group] <-
+    [lambda-list-keyword :value &aux]
+    [* [aux-parameter]])
+
+([aux-parameter] <-
+    [or [variable]
+        ([variable] [? [form]])])
+-------------------------------------------
+([let-special-form] <-
+    [literal :value let]
+    [bindings]
+    [declarations]
+    [* [form]])
+
+([bindings] <-
+    ([* [binding]]))
+
+([binding] <-
+    [or [symbol]
+        ([symbol] [? [form]])])
+
+([declarations] <-
+    [* [declaration]])
+
+([declaration] <-
+    ([literal :value declare]
+     ...))
