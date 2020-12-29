@@ -723,7 +723,7 @@
   (cond ((and
 	  ;; there is a keyword yet to be processed.
 	  (not (null (cdr positions)))
-	  ;; that keyword is &environment.
+	  ;; that keyword is &rest or &body
 	  (or (eq (elt lambda-list (car positions)) '&rest)
 	      (eq (elt lambda-list (car positions)) '&body)))
 	 ;; The arity has already been checked so we know there is
@@ -734,6 +734,20 @@
 	     (error 'rest/body-must-be-followed-by-variable
 		    :code lambda-list))
 	   (values arg (cdr positions))))
+	(t
+	 (values :none positions))))
+
+(defun parse-destructuring-rest/body (lambda-list positions)
+  (cond ((and
+	  ;; there is a keyword yet to be processed.
+	  (not (null (cdr positions)))
+	  ;; that keyword is &rest or &body
+	  (or (eq (elt lambda-list (car positions)) '&rest)
+	      (eq (elt lambda-list (car positions)) '&body)))
+	 ;; The arity has already been checked so we know there is
+	 ;; something after it, but we don't know what.
+	 (let ((arg (elt lambda-list (1+ (car positions)))))
+	   (values (parse-pattern arg) (cdr positions))))
 	(t
 	 (values :none positions))))
 
@@ -953,7 +967,7 @@
 		(setf (values (environment result) positions)
 		      (parse-environment lambda-list positions)))
 	      (setf (values (rest-body result) positions)
-		    (parse-rest/body lambda-list positions))
+		    (parse-destructuring-rest/body lambda-list positions))
 	      ;; The environment may follow the rest/body.
 	      (when (eq (environment result) :none)
 		(setf (values (environment result) positions)
@@ -1041,7 +1055,7 @@
 		    (parse-all-optionals
 		     lambda-list positions #'parse-destructuring-optional))
 	      (setf (values (rest-body result) positions)
-		    (parse-rest/body lambda-list positions))
+		    (parse-destructuring-rest/body lambda-list positions))
 	      (setf (values (keys result) positions)
 		    (parse-all-keys
 		     lambda-list positions #'parse-destructuring-key))
