@@ -6,6 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "enable-deftype")
    (:file "enable-printing")
    (:file "enable-conditions")
    (:file "boot")))
