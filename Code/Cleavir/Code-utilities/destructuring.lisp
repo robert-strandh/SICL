@@ -660,21 +660,25 @@
 	 (form-var (whole parsed-lambda-list))
 	 (final-form-var (if (eq form-var :none) (gensym) form-var))
 	 (args-var (gensym)))
-    (multiple-value-bind (bindings ignored-variables)
-	(destructure-lambda-list parsed-lambda-list args-var)
-      `(lambda (,final-form-var ,final-env-var)
-	 ;; If the lambda list does not contain &environment, then
-	 ;; we IGNORE the GENSYMed parameter to avoid warnings.
-	 ;; If the lambda list does contain &environment, we do
-	 ;; not want to make it IGNORABLE because we would want a
-	 ;; warning if it is not used then.
-	 ,@(if (eq env-var :none)
-	       `((declare (ignore ,final-env-var)))
-	       `())
-	 (let ((,args-var (cdr ,final-form-var)))
-	   (let* ,bindings
-	     (declare (ignore ,@ignored-variables))
-	     ,@body))))))
+    (multiple-value-bind (declarations documentation forms)
+        (separate-function-body body)
+      (multiple-value-bind (bindings ignored-variables)
+          (destructure-lambda-list parsed-lambda-list args-var)
+        `(lambda (,final-form-var ,final-env-var)
+           ,@(if (null documentation) '() (list documentation))
+           ;; If the lambda list does not contain &environment, then
+           ;; we IGNORE the GENSYMed parameter to avoid warnings.
+           ;; If the lambda list does contain &environment, we do
+           ;; not want to make it IGNORABLE because we would want a
+           ;; warning if it is not used then.
+           ,@(if (eq env-var :none)
+                 `((declare (ignore ,final-env-var)))
+                 `())
+           (let ((,args-var (cdr ,final-form-var)))
+             (let* ,bindings
+               (declare (ignore ,@ignored-variables))
+               ,@declarations
+               ,@forms)))))))
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
