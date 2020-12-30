@@ -170,12 +170,13 @@
      ;; Characters
      characterp char-code code-char char= char-name standard-char-p
      ;; Strings
-     stringp char schar
+     stringp char schar string
      ;; Types and classes
      coerce
      ;; Sequence
      elt length count reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
+     nreverse replace
      ;; For debugging
      format
      ;; Conditions
@@ -261,7 +262,10 @@
     (define-environment-functions client environment)
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p
-       cleavir-code-utilities:list-structure)
+       cleavir-code-utilities:list-structure
+       cleavir-code-utilities:optionals
+       cleavir-code-utilities:rest-body
+       cleavir-code-utilities:parse-define-modify-macro-lambda-list)
      environment)
     (setf (env:special-variable client environment '*trace-output* t)
           *trace-output*)
