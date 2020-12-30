@@ -104,16 +104,10 @@
     (load-source-file-common absolute-pathname environment)))
 
 (defun asdf-system-files (asdf-system-name)
-  (labels ((files (component)
-             (typecase component
-               (asdf/lisp-action:cl-source-file
-                (list component))
-               (asdf/component:static-file
-                '())
-               (t
-                (reduce #'append
-                        (mapcar #'files (asdf/component:module-components component)))))))
-    (files (asdf:find-system asdf-system-name))))
+  (loop with system = (asdf:find-system asdf-system-name)
+        for component in (asdf/plan:required-components system)
+        when (typep component 'asdf/lisp-action:cl-source-file)
+          collect component))
 
 (defun asdf-system-absolute-file-names (asdf-system-name)
   (loop for file in (asdf-system-files asdf-system-name)
