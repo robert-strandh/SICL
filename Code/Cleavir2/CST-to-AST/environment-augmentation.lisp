@@ -136,7 +136,7 @@
   environment)
 
 ;;; Augment the environment with an OPTIMIZE specifier.
-(defun augment-environment-with-optimize (client optimize environment)
+(defun augment-environment-with-single-optimize (client optimize environment)
   (let ((quality (if (symbolp optimize) optimize (first optimize)))
         (value (if (symbolp optimize) 3 (second optimize))))
     (ecase quality
@@ -145,6 +145,14 @@
       (safety (trucler:add-safety client environment value))
       (space (trucler:add-space client environment value))
       (debug (trucler:add-debug client environment value)))))
+
+(defun augment-environment-with-optimize (client optimize environment)
+  (let ((result environment))
+    (loop for single-optimize in optimize
+          do (setf result
+                   (augment-environment-with-single-optimize
+                    client single-optimize result)))
+    result))
 
 ;;; Extract any OPTIMIZE information from a set of canonicalized
 ;;; declaration specifiers.
