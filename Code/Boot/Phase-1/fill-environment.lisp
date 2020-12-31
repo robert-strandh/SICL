@@ -89,6 +89,8 @@
       ;; using the host compiler.  By loading the definition of
       ;; DEFMACRO again, we fix this "problem".
       (ld "Evaluation-and-compilation/defmacro-defmacro.lisp")
+      ;; We might as well also define DEFINE-COMPILER-MACRO here.
+      (ld "Evaluation-and-compilation/define-compiler-macro-defmacro.lisp")
       ;; Up to this point, the macro function of the macro LAMBDA was
       ;; compiled using the host compiler.  Now that we have the final
       ;; version of the macro DEFMACRO, we can reload the file
