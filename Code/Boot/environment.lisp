@@ -62,6 +62,15 @@
         (lambda (name &optional env)
           (assert (null env))
           (env:macro-function client environment name)))
+  (setf (env:fdefinition
+         client environment '(setf sicl-data-and-control-flow:setf-expander))
+        (lambda (setf-expander name)
+          (setf (env:setf-expander client environment name)
+                setf-expander)))
+  (setf (env:fdefinition
+         client environment 'sicl-data-and-control-flow:setf-expander)
+        (lambda (name)
+          (env:setf-expander client environment name)))
   (setf (env:fdefinition client environment '(setf compiler-macro-function))
         (lambda (compiler-macro-function name &optional env)
           (assert (null env))
