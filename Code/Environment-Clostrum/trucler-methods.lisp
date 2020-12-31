@@ -85,15 +85,15 @@
     (client (environment compilation-environment) tag)
   nil)
 
-;; (defmethod trucler:describe-optimize
-;;     (client (environment compilation-environment))
-;;   (let ((policy (policy environment)))
-;;     (make-instance 'trucler:optimize-description
-;;       :speed (cleavir-policy:policy-value policy 'speed)
-;;       :compilation-speed (cleavir-policy:policy-value policy 'compilation-speed)
-;;       :debug (cleavir-policy:policy-value policy 'debug)
-;;       :space (cleavir-policy:policy-value policy 'space)
-;;       :safety (cleavir-policy:policy-value policy 'safety))))
+;;; FIXME: do this better
+(defmethod trucler:describe-optimize
+    (client (environment base-run-time-environment))
+  (make-instance  'trucler:optimize-description
+    :speed 0
+    :compilation-speed 0
+    :debug 3
+    :space 0
+    :safety 3))
 
 ;;; Augmentation Functions
 
