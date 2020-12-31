@@ -6,6 +6,7 @@
            #:defun-expander
            #:psetf-expander
            #:rotatef-expander
+           #:setf-expander
            #:destructuring-bind-expander
            #:special-variable
            #:constant-variable
