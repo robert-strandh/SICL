@@ -25,4 +25,5 @@
     (setf (env:fdefinition (env:client e5) e5 '(setf documentation))
           (lambda (new-value x doc-type)
             (declare (ignore x doc-type))
-            new-value))))
+            new-value))
+    (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)))
