@@ -207,7 +207,7 @@
                   (forms (cdr clause)))
               (if (and (atom keys)
                        (not (null keys)))
-                  `(if (eql ,variable ,keys)
+                  `(if (eql ,variable ',keys)
                        (progn ,@forms)
                        ,(expand-e/ccase-clauses (cdr clauses) variable final name))
                   `(if (or ,@(eql-ify keys variable))
