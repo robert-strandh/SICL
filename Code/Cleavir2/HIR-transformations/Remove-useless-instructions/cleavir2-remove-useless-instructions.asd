@@ -24,7 +24,7 @@
 ;;;; matter what function is called.
 
 (defsystem #:cleavir2-remove-useless-instructions
-  :depends-on (#:cleavir2-hir)
+  :depends-on (#:cleavir-hir)
   :serial t
   :components
   ((:file "packages")

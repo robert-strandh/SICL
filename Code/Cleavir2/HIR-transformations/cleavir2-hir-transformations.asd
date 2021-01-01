@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir2-hir-transformations
-  :depends-on (:cleavir2-hir :cleavir-meter)
+  :depends-on (:cleavir-hir :cleavir-meter)
   :serial t
   :components
   ((:file "packages")

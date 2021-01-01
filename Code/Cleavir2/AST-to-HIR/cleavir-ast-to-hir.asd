@@ -10,7 +10,7 @@
   :depends-on (#:acclimation
                #:stealth-mixin
                #:cleavir-ast
-               #:cleavir2-hir
+               #:cleavir-hir
                #:cleavir-cst-to-ast
                #:cleavir2-primop)
   :serial t

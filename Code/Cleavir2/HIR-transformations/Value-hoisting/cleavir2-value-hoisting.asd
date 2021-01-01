@@ -2,7 +2,7 @@
 
 (defsystem :cleavir2-value-hoisting
   :depends-on (:acclimation
-               :cleavir2-hir
+               :cleavir-hir
                :cleavir2-hir-transformations)
   :serial t
   :components

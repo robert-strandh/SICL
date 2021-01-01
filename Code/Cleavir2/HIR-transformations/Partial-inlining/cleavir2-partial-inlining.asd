@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir2-partial-inlining
-  :depends-on (:cleavir2-hir
+  :depends-on (:cleavir-hir
                :cleavir2-hir-transformations
                :cleavir2-remove-useless-instructions)
   :serial t

@@ -5,4 +5,4 @@
   :serial t
   :components
   ((:file "general")
-   (:file "graphviz-drawing")))
+   (:file "stack-instructions")))

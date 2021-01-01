@@ -1,10 +1,10 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:cleavir2-ir-visualizer
-  :depends-on (#:cleavir2-ir
-               #:cleavir2-hir
-               #:cleavir2-mir
-               #:cleavir2-lir
+(defsystem #:cleavir-ir-visualizer
+  :depends-on (#:cleavir-ir
+               #:cleavir-hir
+               #:cleavir-mir
+               #:cleavir-lir
                #:mcclim
                #:clouseau)
   :serial t

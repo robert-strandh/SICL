@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-argument-processing
-  :depends-on (:cleavir2-hir)
+  :depends-on (:cleavir-hir)
   :serial t
   :components
   ((:file "packages")
