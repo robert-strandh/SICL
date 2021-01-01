@@ -40,6 +40,7 @@
      (instruction cleavir-ir:multiple-value-call-instruction)
      lexical-environment)
   (make-thunk (client instruction lexical-environment :inputs 3)
+    (input 0) ; Avoid an unused variable warning.
     (setf *global-values-location*
           (multiple-value-list
            (apply (input 1) (input 2))))

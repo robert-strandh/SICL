@@ -10,4 +10,3 @@
                     :thunk (input 0))
                   dynamic-environment))
       (successor 0)))
-      

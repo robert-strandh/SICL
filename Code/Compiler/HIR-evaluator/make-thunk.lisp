@@ -97,6 +97,8 @@
                    (setf ,self-gensym ,thunk-gensym)
                    (setf (gethash ,instruction *instruction-thunks*)
                          ,thunk-gensym)
+                   ,client ; Touch the client to avoid warnings when there
+                           ; are zero successors.
                    ,@(loop for successor-gensym in successor-gensyms
                            for successor-thunk-gensym in successor-thunk-gensyms
                            collect

@@ -9,6 +9,7 @@
          (successors (cleavir-ir:successors destination))
          (successor #'dummy-successor))
     (prog1 (make-thunk (client instruction lexical-environment :inputs 2 :successors 0)
+             (input 0) ; Avoid an unused variable warning.
              (throw (input 1) successor))
       (setf successor
             (instruction-thunk client (nth unwind-index successors) lexical-environment)))))
