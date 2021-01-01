@@ -2,7 +2,7 @@
 
 (defsystem #:cleavir2-value-hoisting-test
   :depends-on (#:cleavir-ast
-               #:cleavir2-cst-to-ast
+               #:cleavir-cst-to-ast
                #:cleavir-ast-to-hir
                #:cleavir2-value-hoisting)
 

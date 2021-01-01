@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:cleavir2-cst-to-ast
+(defsystem #:cleavir-cst-to-ast
   :depends-on (#:concrete-syntax-tree
                #:concrete-syntax-tree-destructuring
                #:cleavir-ast

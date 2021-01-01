@@ -11,7 +11,7 @@
                #:stealth-mixin
                #:cleavir-ast
                #:cleavir2-hir
-               #:cleavir2-cst-to-ast
+               #:cleavir-cst-to-ast
                #:cleavir2-primop)
   :serial t
   :components

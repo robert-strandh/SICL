@@ -5,7 +5,7 @@
                #:sicl-method-combination-support
                #:concrete-syntax-tree
                #:cleavir-ast
-               #:cleavir2-cst-to-ast
+               #:cleavir-cst-to-ast
                #:cleavir2-primop
                #:sicl-hir-evaluator)
   :components
