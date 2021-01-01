@@ -1,10 +1,10 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:cleavir2-value-hoisting-test
+(defsystem #:cleavir-value-hoisting-test
   :depends-on (#:cleavir-ast
                #:cleavir-cst-to-ast
                #:cleavir-ast-to-hir
-               #:cleavir2-value-hoisting)
+               #:cleavir-value-hoisting)
 
   :serial t
   :components

@@ -23,7 +23,7 @@
 ;;;; specialized to FUNCALL-INSTRUCTION currently returns NIL no
 ;;;; matter what function is called.
 
-(defsystem #:cleavir2-remove-useless-instructions
+(defsystem #:cleavir-remove-useless-instructions
   :depends-on (#:cleavir-hir)
   :serial t
   :components

@@ -4,8 +4,8 @@
   :depends-on (#:cleavir-cst-to-ast
                #:cleavir-ast-to-hir
                #:cleavir-hir-transformations
-               #:cleavir2-remove-useless-instructions
-               #:cleavir2-partial-inlining
+               #:cleavir-remove-useless-instructions
+               #:cleavir-partial-inlining
                #:sicl-hir-transformations
                #:sicl-argument-processing)
   :serial t

@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :cleavir2-value-hoisting
+(defsystem :cleavir-value-hoisting
   :depends-on (:acclimation
                :cleavir-hir
                :cleavir-hir-transformations)
