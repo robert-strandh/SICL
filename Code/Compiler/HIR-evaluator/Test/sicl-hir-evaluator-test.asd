@@ -4,7 +4,7 @@
   :depends-on (#:sicl-boot-phase-0
                #:sicl-method-combination-support
                #:concrete-syntax-tree
-               #:cleavir2-ast
+               #:cleavir-ast
                #:cleavir2-cst-to-ast
                #:cleavir2-primop
                #:sicl-hir-evaluator)

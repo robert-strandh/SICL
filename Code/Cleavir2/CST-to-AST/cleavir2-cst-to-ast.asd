@@ -3,7 +3,7 @@
 (defsystem #:cleavir2-cst-to-ast
   :depends-on (#:concrete-syntax-tree
                #:concrete-syntax-tree-destructuring
-               #:cleavir2-ast
+               #:cleavir-ast
                #:cleavir-ast-transformations
                #:cleavir2-primop
                #:trucler-reference

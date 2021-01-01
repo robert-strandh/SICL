@@ -9,7 +9,7 @@
 (defsystem #:cleavir-ast-to-hir
   :depends-on (#:acclimation
                #:stealth-mixin
-               #:cleavir2-ast
+               #:cleavir-ast
                #:cleavir2-hir
                #:cleavir2-cst-to-ast
                #:cleavir2-primop)
