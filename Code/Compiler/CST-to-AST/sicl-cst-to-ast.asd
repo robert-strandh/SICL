@@ -4,7 +4,7 @@
   :depends-on (#:sicl-primop
                #:sicl-ast
                #:sicl-client
-               #:cleavir2-cst-to-ast)
+               #:cleavir-cst-to-ast)
   :serial t
   :components
   ((:file "packages")

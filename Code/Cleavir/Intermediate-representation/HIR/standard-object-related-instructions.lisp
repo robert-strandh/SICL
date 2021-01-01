@@ -2,79 +2,39 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction SLOT-READ-INSTRUCTION.
+;;; Instruction STANDARD-OBJECT-CLASS-OF-INSTRUCTION.
+;;;
+;;; This instruction takes a single input which is assumed to be a
+;;; standard object, and produces a single output, which is the class
+;;; of the standard object.
+
+(defclass standard-object-class-of-instruction
+    (instruction one-successor-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction NOOK-READ-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed
-;;; to be a standard instance.  The second is assumed to be a FIXNUM
-;;; and represents the index in the instance of the slot to be read.
+;;; to be a standard object.  The second is assumed to be a FIXNUM
+;;; and represents the index in the object of the nook to be read.
 ;;; This instruction produces a single output, which is the contents
-;;; of the SLOT.
+;;; of the NOOK.
 
-(defclass slot-read-instruction (one-successor-mixin instruction)
+(defclass nook-read-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-slot-read-instruction (input1 input2 output successor)
-  (make-instance 'slot-read-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction SLOT-WRITE-INSTRUCTION
+;;; Instruction NOOK-WRITE-INSTRUCTION
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
-;;; to be a standard instance.  The second is assumed to be a FIXNUM
-;;; and represents the index in the instance of the slot to be
+;;; to be a standard object.  The second is assumed to be a FIXNUM
+;;; and represents the index in the object of the nook to be
 ;;; written.  The third is the value to write.  This instruction
-;;; replaces the contents of the slot with the new value.
+;;; replaces the contents of the nook with the new value.
 
-(defclass slot-write-instruction
-    (one-successor-mixin side-effect-mixin instruction)
+(defclass nook-write-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-slot-write-instruction (input1 input2 input3 successor)
-  (make-instance 'slot-write-instruction
-    :inputs (list input1 input2 input3)
-    :outputs '()
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction FUNCALLABLE-SLOT-READ-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be a funcallable instance.  The second is assumed to be a FIXNUM
-;;; and represents the index in the instance of the slot to be read.
-;;; This instruction produces a single output, which is the contents
-;;; of the SLOT.
-
-(defclass funcallable-slot-read-instruction (one-successor-mixin instruction)
-  ())
-
-(defun make-funcallable-slot-read-instruction (input1 input2 output successor)
-  (make-instance 'funcallable-slot-read-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction FUNCALLABLE-SLOT-WRITE-INSTRUCTION
-;;;
-;;; This instruction takes three inputs.  The first input is assumed
-;;; to be a funcallable instance.  The second is assumed to be a FIXNUM
-;;; and represents the index in the instance of the slot to be
-;;; written.  The third is the value to write.  This instruction
-;;; replaces the contents of the slot with the new value.
-
-(defclass funcallable-slot-write-instruction
-    (one-successor-mixin side-effect-mixin instruction)
-  ())
-
-(defun make-funcallable-slot-write-instruction (input1 input2 input3 successor)
-  (make-instance 'funcallable-slot-write-instruction
-    :inputs (list input1 input2 input3)
-    :outputs '()
-    :successors (list successor)))
-

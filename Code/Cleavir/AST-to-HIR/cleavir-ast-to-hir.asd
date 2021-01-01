@@ -6,17 +6,25 @@
 ;;;; instruction of the instruction graph resulting from the
 ;;;; compilation of the entire AST.
 
-(defsystem :cleavir-ast-to-hir
-  :depends-on (:acclimation
-	       :cleavir-ast :cleavir-hir :cleavir-primop)
+(defsystem #:cleavir-ast-to-hir
+  :depends-on (#:acclimation
+               #:stealth-mixin
+               #:cleavir-ast
+               #:cleavir-hir
+               #:cleavir-cst-to-ast
+               #:cleavir-primop)
   :serial t
   :components
   ((:file "packages")
    (:file "context")
    (:file "conditions")
    (:file "condition-reporters-english")
+   (:file "utilities")
+   (:file "compile-ast")
    (:file "compile-general-purpose-asts")
+   (:file "compile-multiple-value-related-asts")
    (:file "compile-fixnum-related-asts")
+   (:file "compile-character-related-asts")
    (:file "compile-simple-float-related-asts")
    (:file "compile-cons-related-asts")
    (:file "compile-standard-object-related-asts")

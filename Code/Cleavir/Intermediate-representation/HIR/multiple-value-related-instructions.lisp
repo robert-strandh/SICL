@@ -4,97 +4,64 @@
 ;;;
 ;;; Instruction MULTIPLE-TO-FIXED-INSTRUCTION.
 ;;;
-;;; This instruction takes a single input of type VALUES-LOCATION and
-;;; a list of outputs that are LEXICAL-LOCATIONs.  The purpose is to
-;;; assign multiple values to one or more ordinary lexical locations.
-;;; The assignment is done so that if fewer ordinary lexical locations
-;;; are required than there are values contained in the
-;;; VALUES-LOCATION, then the remaining values are ignored, and if
-;;; more ordinary lexical locations are required than there are values
-;;; contained in the VALUES-LOCATION, then the remaining ordinary
-;;; lexical locations are assigned to NIL.
+;;; This instruction takes zero inputs and a list of outputs that are
+;;; LEXICAL-LOCATIONs.  The purpose is to assign multiple values taken
+;;; from the global values location to one or more ordinary lexical
+;;; locations.  The assignment is done so that if fewer ordinary
+;;; lexical locations are required than there are values contained in
+;;; the global values location, then the remaining values are ignored,
+;;; and if more ordinary lexical locations are required than there are
+;;; values contained in the global values location, then the remaining
+;;; ordinary lexical locations are assigned to NIL.
 
-(defclass multiple-to-fixed-instruction (one-successor-mixin instruction)
+(defclass multiple-to-fixed-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-multiple-to-fixed-instruction
-    (input outputs &optional (successor nil successor-p))
-  (make-instance 'multiple-to-fixed-instruction
-    :inputs (list input)
-    :outputs outputs
-    :successors (if successor-p (list successor) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FIXED-TO-MULTIPLE-INSTRUCTION.
 ;;;
 ;;; This instruction takes a list of inputs that are LEXICAL-LOCATIONs
-;;; and a single output of type VALUES-LOCATION.  The purpose is to
-;;; assign one or more values, each contained in a LEXICAL-LOCATION to
-;;; a location containing multiple values.  The assignment is done so
-;;; that all the inputs are preserved, and the number of inputs is
-;;; kept with the output.
+;;; and a zero outputs.  The purpose is to assign one or more values,
+;;; each contained in a LEXICAL-LOCATION to a the global values
+;;; location.  The assignment is done so that all the inputs are
+;;; preserved, and the number of inputs is kept with the global values
+;;; location.
 
-(defclass fixed-to-multiple-instruction (one-successor-mixin instruction)
+(defclass fixed-to-multiple-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-fixed-to-multiple-instruction
-    (inputs output &optional (successor nil successor-p))
-  (make-instance 'fixed-to-multiple-instruction
-    :inputs inputs
-    :outputs (list output)
-    :successors (if successor-p (list successor) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction MULTIPLE-VALUE-CALL-INSTRUCTION.
 ;;;
-;;; The first input of this instruction is an ordinary lexical
-;;; location.  The remaining inputs are of type VALUES-LOCATION, and
-;;; each represents multiple values returned form the evaluation of
-;;; some form.  This instruction has a single output, also of the type
-;;; VALUES-LOCATION.
+;;; This instruction has two inputs. The first input is a lexical
+;;; location holding a function to call.  The second input holds all
+;;; the values to be passed as arguments to the function being called.
+;;; The values returned by the function call are stored in the global
+;;; values location.
 
 (defclass multiple-value-call-instruction
-    (one-successor-mixin abstract-call-instruction)
+    (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-multiple-value-call-instruction
-    (inputs output &optional (successor nil successor-p)
-                     (attributes (cleavir-attributes:default-attributes)))
-  (make-instance 'multiple-value-call-instruction
-    :inputs inputs
-    :outputs (list output)
-    :successors (if successor-p (list successor) '())
-    :attributes attributes))
-
-(defmethod callee ((call multiple-value-call-instruction))
-  (first (inputs call)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction THE-VALUES-INSTRUCTION.
 ;;;
-;;; This is like THE-INSTRUCTION, but takes a VALUES-LOCATION
-;;; as input instead of a lexical one, and correspondingly, a
-;;; (decomposed) values type instead of a single-value type.
-;;; A separate instruction is useful because values locations can
-;;; have an unknown or varying number of values.
+;;; This instruction is like THE-INSTRUCTION, but takes a multiple
+;;; value inputs stored in the global values location, rather than the
+;;; lexical locations that the THE-INSTRUCTION takes.  This
+;;; instruction also has a (decomposed) values type instead of a
+;;; single-value type.  A separate instruction is useful because the
+;;; global values location can have an unknown or varying number of
+;;; values.
 
-(defclass the-values-instruction (one-successor-mixin instruction)
+(defclass the-values-instruction (instruction one-successor-mixin)
   ((%required-types :initarg :required :reader required-types)
    (%optional-types :initarg :optional :reader optional-types)
    (%rest-type :initarg :rest :reader rest-type)))
-
-(defun make-the-values-instruction (input successor
-				    required optional rest)
-  (make-instance 'the-values-instruction
-    :inputs (list input)
-    :outputs '()
-    :successors (list successor)
-    :required required
-    :optional optional
-    :rest rest))
 
 (defmethod clone-initargs append ((instruction the-values-instruction))
   (list :required (required-types instruction)
@@ -106,35 +73,50 @@
 ;;; Instruction SAVE-VALUES-INSTRUCTION.
 ;;;
 ;;; This instruction has a single output which is a lexical location
-;;; holding a the dynamic environment.  The instruction takes the
+;;; holding the augmented dynamic environment.  The instruction takes the
 ;;; values in the global values location and creates a new values
 ;;; entry to be the top of the dynamic environment.  The output holds
 ;;; the augmented dynamic environment.
 
-;;; FIXME: this instruction should not be a subclass of
-;;; SIDE-EFFECT-MIXIN.  It is temporarily the case until we fix
-;;; REMOVE-USELESS-INSTRUCTIONS to take dynamic environment locations
-;;; into account.  Right now, the output of this instruction is
-;;; considered not used, so the instruction gets removed.
+(defclass save-values-instruction (instruction one-successor-mixin)
+  ())
 
-(defclass save-values-instruction
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction RESTORE-VALUES-INSTRUCTION.
+;;;
+;;; This instruction has no inputs and no outputs.  It takes the top
+;;; entry of the dynamic environment stored in the
+;;; DYNAMIC-ENVIRONMENT-LOCATION of this instruction, and stores that
+;;; entry in the global values location.
+
+(defclass restore-values-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction LOAD-VALUES-INSTRUCTION.
+;;; Instruction INITIALIZE-VALUES-INSTRUCTION.
 ;;;
-;;; This instruction has no inputs. It reads the values entry on the
-;;; top of the dynamic environment, and fills the global values
-;;; location with those values.
-;;;
-;;; Note that this instruction only reads from the dynamic
-;;; environment, and does not "pop" the top entry. This should be
-;;; done by a LOCAL-UNWIND-INSTRUCTION instead. These concerns are
-;;; separate so that code can unwind without restoring the values,
-;;; e.g. in (block nil (multiple-value-prog1 form1 (return form2))).
+;;; This instruction has no inputs and a single output.  It is used in
+;;; association with the MULTIPLE-VALUE-CALL-INSTRUCTION to initialize
+;;; a suite of multiple values in a lexical location.  After the
+;;; evaluation of each sub-form of the MULTIPLE-VALUE-CALL form, an
+;;; APPEND-VALUES-INSTRUCTION takes the values of the sub-form and
+;;; appends them to the accumulated values in the lexical output.
 
-(defclass load-values-instruction
-    (instruction one-successor-mixin side-effect-mixin)
+(defclass initialize-values-instruction (instruction one-successor-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction APPEND-VALUES-INSTRUCTION.
+;;;
+;;; This instruction has no inputs and a single output.  It is used in
+;;; association with the MULTIPLE-VALUE-CALL-INSTRUCTION to append the
+;;; values in the global values location to the suite of values
+;;; accumulated in the lexical location that is the output of this
+;;; instruction.
+
+(defclass append-values-instruction (instruction one-successor-mixin)
   ())

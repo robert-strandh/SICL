@@ -5,6 +5,10 @@
   :serial t
   :components
   ((:file "utilities")
-   (:file "general")
-   (:file "conditions")
-   (:file "graphviz-drawing")))
+   (:file "data")
+   (:file "memory-access-instructions")
+   (:file "integer-arithmetic-instructions")
+   (:file "shift-instructions")
+   (:file "bitwise-instructions")
+   (:file "sign-extend-instruction")
+   (:file "conditions")))

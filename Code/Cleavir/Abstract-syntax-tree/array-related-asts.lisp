@@ -13,7 +13,7 @@
 ;;; are boxed or not (if not, an additional BOX-INSTRUCTION will
 ;;; be added at the output)
 
-(defclass aref-ast (one-value-ast-mixin ast)
+(defclass aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%element-type :initarg :element-type :reader element-type)
@@ -34,17 +34,18 @@
 ;;;
 ;;; Class ASET-AST.
 ;;;
-;;; This AST represents all cases of writing an element to an array where enough information about the array is known. The
-;;; INDEX-AST is an AST that evaluates to a row-major index into the
-;;; array that is the value of ARRAY-AST.  The ELEMENT-AST evaluates
-;;; to the element to be written, and that element must be of a type
-;;; that is acceptable to store in the array, according to how the
-;;; array is specialized. SIMPLE-P is whether the array is actually
-;;; simple and ELEMENT-TYPE is its actual element-type. BOXED-P
-;;; indicates whether the values in the array are boxed or not (if
-;;; not an additional UNBOX-INSTRUCTION will be added at the input)
+;;; This AST represents all cases of writing an element to an array
+;;; where enough information about the array is known. The INDEX-AST
+;;; is an AST that evaluates to a row-major index into the array that
+;;; is the value of ARRAY-AST.  The ELEMENT-AST evaluates to the
+;;; element to be written, and that element must be of a type that is
+;;; acceptable to store in the array, according to how the array is
+;;; specialized. SIMPLE-P is whether the array is actually simple and
+;;; ELEMENT-TYPE is its actual element-type. BOXED-P indicates whether
+;;; the values in the array are boxed or not (if not an additional
+;;; UNBOX-INSTRUCTION will be added at the input)
 
-(defclass aset-ast (no-value-ast-mixin ast)
+(defclass aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%element-ast :initarg :element-ast :reader element-ast)

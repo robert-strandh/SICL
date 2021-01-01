@@ -9,6 +9,9 @@
 ;;; predecessor.  For every existing predecessor P of E, P will become
 ;;; a predecessor of N and N will replace E as a successor of P.
 (defun insert-instruction-before (new existing)
+  (reinitialize-instance new
+    :dynamic-environment-location
+    (dynamic-environment-location existing))
   (setf (predecessors new) (predecessors existing))
   (loop for pred in (predecessors existing)
 	do (nsubstitute new existing (successors pred) :test #'eq))
@@ -21,6 +24,9 @@
 ;;; the sole predecessor of N, and E2 becomes the sole successor of N.
 ;;; N replaces E2 as a successor of E1, and E1 as a predecessor of E2.
 (defun insert-instruction-between (new existing1 existing2)
+  (reinitialize-instance new
+    :dynamic-environment-location
+    (dynamic-environment-location existing2))
   (setf (predecessors new) (list existing1))
   (setf (successors new) (list existing2))
   (nsubstitute new existing2 (successors existing1))
@@ -38,8 +44,20 @@
 ;;; predecessors of I become the predecessors of S.
 ;;; If it so happens that I = S, the behavior is a bit different.
 ;;; For each predecessor P of I, P replaces I as a successor of P.
-(defun delete-instruction/nosync (instruction)
+(defun delete-instruction (instruction)
+  (assert (= (length (successors instruction)) 1))
+  ;; Remove the instruction from datum records; this will spare us
+  ;; a reinitialize-data.
+  (loop for input in (inputs instruction)
+        do (setf (using-instructions input)
+                 (remove instruction (using-instructions input))))
+  (setf (using-instructions (dynamic-environment-location instruction))
+        (remove instruction (using-instructions
+                             (dynamic-environment-location instruction))))
   (setf (inputs instruction) '())
+  (loop for output in (outputs instruction)
+        do (setf (defining-instructions output)
+                 (remove instruction (defining-instructions output))))
   (setf (outputs instruction) '())
   ;; Delete the instruction from the control flow graph.
   (let ((successor (car (successors instruction)))
@@ -69,26 +87,11 @@
                   ;; multiple times in case some of our predecessors are already a
                   ;; predecessors of our successor.
                   (setf (predecessors successor)
-                        (delete instruction (predecessors successor)
+                        (remove instruction (predecessors successor)
                                 :test #'eq))
                   (loop for predecessor in predecessors
                         do (pushnew predecessor (predecessors successor)
                                     :test #'eq))))))))
-
-(defun delete-instruction (instruction)
-  (assert (= (length (successors instruction)) 1))
-  ;; Remove the instruction from datum records; this will spare us
-  ;; a reinitialize-data.
-  (loop for input in (inputs instruction)
-        do (setf (using-instructions input)
-                 (delete instruction (using-instructions input))))
-  (loop for output in (outputs instruction)
-        do (setf (defining-instructions output)
-                 (delete instruction (defining-instructions output))))
-  (setf (using-instructions (dynamic-environment instruction))
-        (delete instruction (using-instructions
-                             (dynamic-environment instruction))))
-  (delete-instruction/nosync instruction))
 
 ;;; Replace an instruction I with an instruction S, with respect to
 ;;; forward control flow.
@@ -132,7 +135,7 @@
      (loop for datum in (inputs instruction)
 	   do (push instruction (using-instructions datum)))
      (push instruction
-           (using-instructions (dynamic-environment instruction)))
+           (using-instructions (dynamic-environment-location instruction)))
      (loop for datum in (outputs instruction)
 	   do (push instruction (defining-instructions datum))))
    initial-instruction))

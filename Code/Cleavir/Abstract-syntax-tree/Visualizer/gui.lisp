@@ -12,23 +12,6 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
-(defgeneric label (ast))
-
-(defmethod label (ast)
-  (cleavir-ast-graphviz::label ast))
-
-(defmethod label ((ast cleavir-ast:constant-fdefinition-ast))
-  "c-fdef")
-
-(defmethod label ((ast cleavir-ast:fdefinition-ast))
-  "fdef")
-
-(defmethod label ((ast cleavir-ast:constant-ast))
-  "const")
-
-(defmethod label ((ast cleavir-ast:load-time-value-ast))
-  "l-t-v")
-
 (defgeneric ast-width (pane ast))
 
 (defmethod ast-width :around (pane ast)
@@ -36,12 +19,6 @@
 
 (defmethod ast-width (pane ast)
   (+ 5 (nth-value 0 (clim:text-size pane (label ast)))))
-
-(defmethod ast-width (pane (ast cleavir-ast:constant-fdefinition-ast))
-  (let* ((width1 (nth-value 0 (clim:text-size pane (label ast))))
-         (function-name (format nil "~S" (cleavir-ast:name ast)))
-         (width2 (nth-value 0 (clim:text-size pane function-name))))
-    (+ 5 (max width1 width2))))
 
 (defgeneric ast-height (pane ast))
 
@@ -51,45 +28,41 @@
 (defmethod ast-height (pane ast)
   (+ 5 (nth-value 1 (clim:text-size pane (label ast)))))
 
-(defmethod ast-height (pane (ast cleavir-ast:constant-fdefinition-ast))
-  (let* ((height1 (nth-value 1 (clim:text-size pane "c-fdef")))
-         (function-name (format nil "~S" (cleavir-ast:name ast)))
-         (height2 (nth-value 1 (clim:text-size pane function-name))))
-    (+ 10 height1 height2)))
+(defgeneric line-thickness (ast))
+
+(defmethod line-thickness (ast)
+  (declare (ignore ast))
+  1)
 
 (defgeneric draw (ast pane x y))
 
 (defmethod draw (ast pane x y)
   (let ((width (ast-width pane ast))
-        (height (ast-height pane ast)))
+        (height (ast-height pane ast))
+        (pen-color clim:+black+)
+        (line-thickness (line-thickness ast)))
     (clim:with-output-as-presentation (pane ast 'cleavir-ast:ast)
-      (clim:draw-rectangle* pane x y (+ x width) (+ y height) :filled nil)
+      (clim:draw-rectangle* pane
+                            x y (+ x width) (+ y height)
+                            :ink (background-color ast)
+                            :filled t)
+      (clim:draw-rectangle* pane
+                            x y (+ x width) (+ y height)
+                            :line-thickness line-thickness
+                            :ink pen-color
+                            :filled nil)
       (clim:draw-text* pane (label ast)
                        (+ x (/ width 2)) (+ y (/ height 2))
                        :align-x :center :align-y :center))))
 
-(defmethod draw ((ast cleavir-ast:constant-fdefinition-ast) pane x y)
-  (let* ((width (ast-width pane ast))
-         (height (ast-height pane ast))
-         (function-name (format nil "~S" (cleavir-ast:name ast))))
-    (clim:with-output-as-presentation (pane ast 'cleavir-ast:ast)
-      (clim:draw-rectangle* pane x y (+ x width) (+ y height) :filled nil)
-      (clim:draw-text* pane "c-fdef"
-                       (+ x (/ width 2)) (+ y (/ height 3))
-                       :align-x :center :align-y :center)
-      (clim:draw-text* pane function-name
-                       (+ x (/ width 2)) (+ y (* height 2/3))
-                       :align-x :center :align-y :center))))
-
-
-(defun display-layout (table pane layout)
+(defun display-layout (pane layout)
   (unless (indirect-p layout)
     (let* ((position (position layout))
            (x (+ (x position) 10))
            (y (+ (y position) 10)))
       (draw (ast layout) pane x y)
       (loop for child in (children layout)
-            do (display-layout table pane child)))))
+            do (display-layout pane child)))))
 
 (defun compute-positions (layout)
   (let ((table (make-hash-table :test #'eq)))
@@ -155,23 +128,27 @@
   (let* ((ast (ast frame))
          (layout (make-layout pane ast))
          (table (compute-positions layout)))
-    (display-layout table pane layout)
+    (display-layout pane layout)
     (draw-edges table pane layout)
     ;; (clim:with-output-as-presentation (pane layout 'layout)
     ;;   (clim:draw-rectangle* pane 500 500 600 600 :ink clim:+red+))
     layout))
                  
-(defun visualize (ast)
-  (clim:run-frame-top-level
-   (clim:make-application-frame 'visualizer :ast ast)))
+(defun visualize (ast &key new-process-p)
+  (let ((frame (clim:make-application-frame 'visualizer :ast ast)))
+    (flet ((run ()
+             (clim:run-frame-top-level frame)))
+      (if new-process-p
+          (clim-sys:make-process #'run)
+          (run)))))
 
 (define-visualizer-command (com-quit :name t) ()
   (clim:frame-exit clim:*application-frame*))
 
 (define-visualizer-command (com-inspect-ast :name t)
     ((ast 'cleavir-ast:ast))
-  (clouseau:inspector ast))
+  (clouseau:inspect ast))
 
 (define-visualizer-command (com-inspect-layout :name t)
     ((layout 'layout))
-  (clouseau:inspector layout))
+  (clouseau:inspect layout))

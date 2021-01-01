@@ -2,19 +2,30 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class CONSP-AST.
+;;;
+;;; This AST can be used by implementations that identify CONS cells
+;;; by pointer tags.  It can only occur as the test of an IF-AST.
+
+(defclass consp-ast (ast boolean-ast-mixin)
+  ((%object-ast :initarg :object-ast :reader object-ast)))
+
+(cleavir-io:define-save-info consp-ast
+  (:object-ast object-ast))
+
+(defmethod children ((ast consp-ast))
+  (list (object-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CAR-AST.
 ;;;
 ;;; This AST can be used to implement the function CAR.  However, it
 ;;; does not correspond exactly to the function CAR, because the value
 ;;; of the single child must be a CONS cell. 
 
-(defclass car-ast (one-value-ast-mixin ast)
+(defclass car-ast (ast one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
-
-(defun make-car-ast (cons-ast &key origin (policy *policy*))
-  (make-instance 'car-ast
-    :origin origin :policy policy
-    :cons-ast cons-ast))
 
 (cleavir-io:define-save-info car-ast
   (:cons-ast cons-ast))
@@ -30,13 +41,8 @@
 ;;; does not correspond exactly to the function CDR, because the value
 ;;; of the single child must be a CONS cell. 
 
-(defclass cdr-ast (one-value-ast-mixin ast)
+(defclass cdr-ast (ast one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
-
-(defun make-cdr-ast (cons-ast &key origin (policy *policy*))
-  (make-instance 'cdr-ast
-    :origin origin :policy policy
-    :cons-ast cons-ast))
 
 (cleavir-io:define-save-info cdr-ast
   (:cons-ast cons-ast))
@@ -54,15 +60,9 @@
 ;;; generate any value.  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass rplaca-ast (no-value-ast-mixin ast)
+(defclass rplaca-ast (ast no-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
-
-(defun make-rplaca-ast (cons-ast object-ast &key origin (policy *policy*))
-  (make-instance 'rplaca-ast
-    :origin origin :policy policy
-    :cons-ast cons-ast
-    :object-ast object-ast))
 
 (cleavir-io:define-save-info rplaca-ast
   (:cons-ast cons-ast)
@@ -81,15 +81,9 @@
 ;;; generate any value.  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass rplacd-ast (no-value-ast-mixin ast)
+(defclass rplacd-ast (ast no-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
-
-(defun make-rplacd-ast (cons-ast object-ast &key origin (policy *policy*))
-  (make-instance 'rplacd-ast
-    :origin origin :policy policy
-    :cons-ast cons-ast
-    :object-ast object-ast))
 
 (cleavir-io:define-save-info rplacd-ast
   (:cons-ast cons-ast)

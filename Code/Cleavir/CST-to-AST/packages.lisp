@@ -2,8 +2,8 @@
 
 (defpackage #:cleavir-cst-to-ast
   (:use #:common-lisp)
+  (:shadow #:eval)
   (:export #:cst-to-ast
-           #:*compiler*
            #:convert
            #:convert-constant
            #:convert-constant-to-immediate
@@ -11,15 +11,14 @@
            #:convert-special-binding
            #:convert-special-variable
            #:convert-variable
-	   #:convert-function-reference
+           #:convert-function-reference
            #:convert-called-function-reference
-	   #:convert-global-function-reference
+           #:convert-global-function-reference
            #:convert-code
            #:convert-setq-special-variable
            #:convert-setq
            #:convert-let
            #:convert-let*
-           #:type-wrap
            #:process-parameter-groups
            #:process-parameter-group
            #:process-parameters-in-group
@@ -28,22 +27,20 @@
            #:entry-from-parameter
            #:entries-from-parameter-group
            #:lambda-list-from-parameter-group
+           #:eval #:cst-eval
+           #:origin
            ;; Names of conditions.
            #:compilation-condition
            #:compilation-program-error
            #:compilation-warning
            #:compilation-style-warning
            #:run-time-program-error
-           #:incorrect-number-of-arguments-error
-           #:incorrect-number-of-arguments-warning
-           #:incorrect-number-of-arguments-style-warning
+           #:incorrect-number-of-arguments
            #:values-&rest-syntax
            #:ignored-variable-referenced
            #:block-name-must-be-a-symbol
            #:form-must-be-proper-list
            #:situations-must-be-proper-list
-           #:case-must-be-proper-list
-           #:case-keys-must-be-proper-list
            #:invalid-eval-when-situation
            #:local-function-definition-must-be-proper-list
            #:lambda-must-be-proper-list
@@ -64,9 +61,12 @@
            #:function-name-names-local-macro
            #:function-name-names-special-operator
            #:no-default-method
-           #:default-case-missing
            #:lambda-call-first-symbol-not-lambda
            #:malformed-lambda-list
+           #:too-many-arguments-warning
+           #:too-many-arguments-style-warning
+           #:not-enough-arguments-warning
+           #:not-enough-arguments-style-warning
            #:odd-keyword-portion-warning
            #:odd-keyword-portion-style-warning
            #:macroexpansion-error
@@ -76,8 +76,7 @@
            #:compiler-macro-expansion-warning
            #:compiler-macro-expansion-style-warning
            #:eval-error #:eval-warning #:eval-style-warning
-           ;; Miscellaneous helper.
-           #:with-current-source-form
+           #:process-progn
            ;; Condition readers.
            #:cst
            #:original-condition
@@ -87,4 +86,5 @@
            #:consider-global
            #:consider-special
            #:substitute #:substitute-cst
-           #:signal-original-condition))
+           #:signal-original-condition
+           #:check-simple-primop-syntax))

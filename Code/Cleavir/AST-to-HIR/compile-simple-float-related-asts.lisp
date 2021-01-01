@@ -1,5 +1,23 @@
 (in-package #:cleavir-ast-to-hir)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a SINGLE-FLOAT-P-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:single-float-p-ast) context)
+  (assert-context ast context 0 2)
+  (let ((temp (make-temp)))
+    (compile-ast
+     client
+     (cleavir-ast:object-ast ast)
+     (clone-context
+      context
+      :result temp
+      :successor
+      (make-instance 'cleavir-ir:single-float-p-instruction
+        :input temp
+        :successors (successors context))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Utility function for compiling a list of ASTs that are arguments
@@ -7,23 +25,25 @@
 ;;; compiled in a context with a single successor and a single result.
 
 (defun compile-and-unbox-arguments
-    (arguments temps element-type successor context)
+    (client arguments temps element-type successor context)
   (loop with succ = successor
-	for arg in (reverse arguments)
-	for temp in (reverse temps)
-	for inter = (make-temp)
-	do (setf succ
-		 (make-instance 'cleavir-ir:unbox-instruction
-		   :element-type element-type
-		   :inputs (list inter)
-		   :outputs (list temp)
-		   :successors (list succ)))
-	   (setf succ
-		 (compile-ast arg
-                              (clone-context context
-                                             :results `(,inter)
-                                             :successors `(,succ))))
-	finally (return succ)))
+        for arg in (reverse arguments)
+        for temp in (reverse temps)
+        for inter = (make-temp)
+        do (setf succ
+                 (make-instance 'cleavir-ir:unbox-instruction
+                   :element-type element-type
+                   :inputs (list inter)
+                   :outputs (list temp)
+                   :successors (list succ)))
+           (setf succ
+                 (compile-ast client
+                              arg
+                              (clone-context
+                                   context
+                                   :result inter
+                                   :successor succ)))
+        finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -31,7 +51,7 @@
 
 (defmacro compile-simple-float-arithmetic-ast
     (ast-class instruction-class)
-  `(defmethod compile-ast ((ast ,ast-class) context)
+  `(defmethod compile-ast (client (ast ,ast-class) context)
      (let* ((arguments (cleavir-ast:children ast))
             (temps (make-temps arguments))
             (temp (cleavir-ir:new-temporary))
@@ -41,6 +61,7 @@
                          :outputs (results context)
                          :successors (successors context))))
        (compile-and-unbox-arguments
+        client
         arguments
         temps
         (cleavir-ast:subtype ast)
@@ -78,12 +99,13 @@
 
 (defmacro compile-simple-float-comparison-ast
     (ast-class instruction-class input-transformer)
-  `(defmethod compile-ast ((ast ,ast-class) context)
+  `(defmethod compile-ast (client (ast ,ast-class) context)
      (assert-context ast context 0 2)
      (let* ((subtype (cleavir-ast:subtype ast))
             (arguments (cleavir-ast:children ast))
             (temps (make-temps arguments)))
        (compile-and-unbox-arguments
+        client
         arguments
         temps
         subtype
@@ -118,28 +140,28 @@
 ;;;
 ;;; Compile a COERCE-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:coerce-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:coerce-ast) context)
   (let ((from (cleavir-ast:from-type ast)) (to (cleavir-ast:to-type ast))
         (arg (cleavir-ast:arg-ast ast))
         (input (cleavir-ir:new-temporary))
         (unboxed-input (cleavir-ir:new-temporary))
         (unboxed-output (cleavir-ir:new-temporary)))
     (compile-ast
+     client
      arg
      (clone-context
       context
-      :results (list input)
-      :successors
-      (list
-       (make-instance 'cleavir-ir:unbox-instruction
-         :element-type from
-         :inputs (list input)
-         :outputs (list unboxed-input)
-         :successors (list (cleavir-ir:make-coerce-instruction
-                             from to
-                             unboxed-input unboxed-output
-                             (make-instance 'cleavir-ir:box-instruction
-                               :element-type to
-                               :inputs (list unboxed-output)
-                               :outputs (results context)
-                               :successors (successors context))))))))))
+      :result input
+      :successor
+      (make-instance 'cleavir-ir:unbox-instruction
+        :element-type from
+        :inputs (list input)
+        :outputs (list unboxed-input)
+        :successors (list (make-instance 'cleavir-ir:coerce-instruction
+                            :from from :to to
+                            :input unboxed-input :output unboxed-output
+                            :successor (make-instance 'cleavir-ir:box-instruction
+                                         :element-type to
+                                         :inputs (list unboxed-output)
+                                         :outputs (results context)
+                                         :successors (successors context)))))))))

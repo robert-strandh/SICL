@@ -10,6 +10,12 @@
    #:compile-ast
    #:translate-lambda-list
    #:compile-function
-   #:context #:clone-context
+   #:context
    #:compile-arguments
-   #:invocation))
+   #:invocation
+   #:results
+   #:successors
+   #:clone-context
+   #:dynamic-environment-location
+   #:origin
+   #:assert-context))

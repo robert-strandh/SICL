@@ -8,14 +8,8 @@
 ;;; CONS cell, and produces a single output, which is the contents of
 ;;; the CAR of the cons cell.
 
-(defclass car-instruction (one-successor-mixin instruction)
+(defclass car-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-car-instruction (input output successor)
-  (make-instance 'car-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -25,14 +19,8 @@
 ;;; CONS cell, and produces a single output, which is the contents of
 ;;; the CDR of the cons cell.
 
-(defclass cdr-instruction (one-successor-mixin instruction)
+(defclass cdr-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-cdr-instruction (input output successor)
-  (make-instance 'cdr-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -44,14 +32,8 @@
 ;;; the second input. 
 
 (defclass rplaca-instruction
-    (one-successor-mixin side-effect-mixin instruction)
+    (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-rplaca-instruction (input1 input2 successor)
-  (make-instance 'rplaca-instruction
-    :inputs (list input1 input2)
-    :outputs '()
-    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -63,11 +45,5 @@
 ;;; the second input. 
 
 (defclass rplacd-instruction
-    (one-successor-mixin side-effect-mixin instruction)
+    (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-rplacd-instruction (input1 input2 successor)
-  (make-instance 'rplacd-instruction
-    :inputs (list input1 input2)
-    :outputs '()
-    :successors (list successor)))

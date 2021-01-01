@@ -30,26 +30,35 @@
 ;;;
 ;;; More specific but still general conditions.
 
-;;; Conditions of this type are signalled when the number of arguments
-;;; can be determined to be incorrect at compile time, i.e. for special
-;;; operators, primitive operators, and calls to known functions.
-;;;
-;;; EXPECTED-MIN is the minimum number of arguments allowed for the
-;;; operator and it is a non-negative integer.  EXPECTED-MAX is the
-;;; maximum number of arguments allowed for this operator, and is
-;;; either a non-negative integer, or NIL, meaning that the operator
-;;; can take an arbitrary number of arguments.  OBSERVED is the number
-;;; of arguments actually supplied.
-(define-condition incorrect-number-of-arguments
+(define-condition argument-mismatch
     (acclimation:condition)
-  ((%expected-min :initarg :expected-min :initform nil :reader expected-min)
-   (%expected-max :initarg :expected-max :initform nil :reader expected-max)
-   (%observed :initarg :observed :reader observed)))
+  ((%expected-min :initarg :expected-min :reader expected-min)
+   (%expected-max :initarg :expected-max :reader expected-max)))
+
+(define-condition argument-mismatch-warning
+    (argument-mismatch compilation-warning)
+  ;; The type is canonicalized.
+  ((%callee-ftype :initarg :callee-ftype :reader callee-ftype)))
+
+(define-condition argument-mismatch-style-warning
+    (argument-mismatch compilation-style-warning)
+  ;; FIXME: might include a "reason" field for when there's more
+  ;; than one possible way to signal this.
+  ())
+
+;;; These three are further specialized with the above two below.
+(define-condition too-many-arguments
+    (argument-mismatch)
+  ())
+
+(define-condition not-enough-arguments
+    (argument-mismatch)
+  ())
 
 ;;; The class of conditions signaled when an odd number of
 ;;; arguments is passed to the &key portion of a lambda list.
 (define-condition odd-keyword-portion
-    (acclimation:condition)
+    (argument-mismatch)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -63,37 +72,21 @@
   ((%expr :initarg :expr :reader expr)
    (%origin :initarg :origin :reader origin)))
 
-;;; This condition is signaled when an incorrect number of arguments
-;;; stops the compiler, e.g. in the case of a special operator.
-(define-condition incorrect-number-of-arguments-error
-    (compilation-program-error incorrect-number-of-arguments)
-  ())
-
-;;; This condition is signaled when an incorrect number of arguments
-;;; will result in undefined behavior at runtime, e.g. for a standard
-;;; function or function with explicit type declaration.
-(define-condition incorrect-number-of-arguments-warning
-    (compilation-warning incorrect-number-of-arguments)
-  ())
-
-;;; This condition is signaled when an incorrect number of arguments
-;;; can be determined by the compiler, but it's possible there will
-;;; be no issue, e.g. for a function that may be redefined later.
-(define-condition incorrect-number-of-arguments-style-warning
-    (compilation-style-warning incorrect-number-of-arguments)
-  ())
-
-;;; See odd-keyword-portion.
-(define-condition odd-keyword-portion-warning
-    (compilation-warning odd-keyword-portion)
-  ())
-
-;;; This condition is signaled when a function call has an odd number
-;;; of arguments in the &key portion, but it's possible there will be
-;;; no issue due to redefinitions etc.
-(define-condition odd-keyword-portion-style-warning
-    (compilation-style-warning odd-keyword-portion)
-  ())
+;;; This condition is signaled when the number of arguments can be
+;;; determined to be incorrect at compile time, i.e. for special
+;;; operators, primitive operators, and calls to standard functions.
+;;;
+;;; EXPECTED-MIN is the minimum number of arguments allowed for the
+;;; operator and it is a non-negative integer.  EXPECTED-MAX is the
+;;; maximum number of arguments allowed for this operator, and is
+;;; either a non-negative integer, or NIL, meaning that the operator
+;;; can take an arbitrary number of arguments.  OBSERVED is the number
+;;; of arguments actually supplied.
+(define-condition incorrect-number-of-arguments
+    (compilation-program-error)
+  ((%expected-min :initarg :expected-min :reader expected-min)
+   (%expected-max :initarg :expected-max :reader expected-max)
+   (%observed :initarg :observed :reader observed)))
 
 ;;; This condition is signaled when a values type has erroneous
 ;;; syntax around &rest.
@@ -122,16 +115,6 @@
 ;;; This condition is signaled when the first argument to EVAL-WHEN is
 ;;; not a proper list.
 (define-condition situations-must-be-proper-list
-    (compilation-program-error)
-  ())
-
-;;; This condition is signaled when a case in CLEAVIR-PRIMOP:CASE is
-;;; not a proper list.
-(define-condition case-must-be-proper-list
-    (compilation-program-error)
-  ())
-
-(define-condition case-keys-must-be-proper-list
     (compilation-program-error)
   ())
 
@@ -226,13 +209,6 @@
     (compilation-program-error)
   ())
 
-;;; This condition is signaled when a SPECIAL declaration is
-;;; encountered, but one of the variables it applies to is a symbol
-;;; macro.
-(define-condition special-symbol-macro
-    (compilation-program-error)
-  ())
-
 ;;; This condition is signaled when a symbol in a variable position is
 ;;; encountered during compilation, but it does not have a definition
 ;;; in the environment in which the symbol is compiled.
@@ -295,10 +271,48 @@
 (define-condition malformed-lambda-list (compilation-program-error)
   ())
 
-;;; This condition is isgnaled when a CLEAVIR-PRIMOP:CASE form
-;;; lacks a default case.
-(define-condition default-case-missing (compilation-program-error)
+;;; This condition is signaled when a function of known type is
+;;; called with too many arguments.
+(define-condition too-many-arguments-warning
+    (too-many-arguments argument-mismatch-warning)
   ())
+
+;;; This condition is called when a function is called with too
+;;; many arguments, but we only know that for other reasons. For
+;;; example, from an inline definition. Technically the programmer
+;;; could redefine the function to make the call okay.
+(define-condition too-many-arguments-style-warning
+    (too-many-arguments argument-mismatch-style-warning)
+  ())
+
+;;; This condition is signaled when a function of known type is
+;;; called with too few arguments.
+(define-condition not-enough-arguments-warning
+    (not-enough-arguments argument-mismatch-warning)
+  ())
+
+;;; See too-many-arguments-style-warning.
+(define-condition not-enough-arguments-style-warning
+    (not-enough-arguments argument-mismatch-style-warning)
+  ())
+
+;;; See odd-keyword-portion.
+(define-condition odd-keyword-portion-warning
+    (odd-keyword-portion argument-mismatch-warning)
+  ())
+
+(define-condition odd-keyword-portion-style-warning
+    (odd-keyword-portion argument-mismatch-style-warning)
+  ())
+
+(define-condition circular-dependencies-in-creation-form
+    (compilation-program-error acclimation:condition)
+  ((%object :initarg :object :reader object)
+   (%creation-form :initarg :creation-form :reader creation-form)))
+
+(define-condition object-not-externalizable
+    (compilation-program-error acclimation:condition)
+  ((%object :initarg :object :reader object)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -316,7 +330,7 @@
     (let ((muffle t))
       (restart-case
           (warn condition-type
-                :cst (find-source-cst cst)
+                :cst cst
                 :condition condition)
         (signal-original-condition ()
           :report "Let the originally signaled condition propagate."
@@ -328,7 +342,7 @@
   (lambda (condition)
     (restart-case
         (error condition-type
-               :cst (find-source-cst cst)
+               :cst cst
                :condition condition)
       (signal-original-condition ()
         :report "Let the originally signaled condition propagate."))))
@@ -337,14 +351,15 @@
 ;;; caught conditions in the given classes.
 (defmacro with-encapsulated-conditions
     ((cst error-type warning-type style-warning-type) &body body)
-  `(let ((*current-source-forms* nil))
-     (handler-bind
-         ((style-warning
-            (warning-encapsulator ,cst ',style-warning-type))
-          ((and warning (not style-warning))
-            (warning-encapsulator ,cst ',warning-type))
-          (error (error-encapsulator ,cst ',error-type)))
-       ,@body)))
+  (let ((cstg (gensym "CST")))
+    `(let ((,cstg ,cst))
+       (handler-bind
+           ((style-warning
+              (warning-encapsulator ,cstg ',style-warning-type))
+            ((and warning (not style-warning))
+              (warning-encapsulator ,cstg ',warning-type))
+            (error (error-encapsulator ,cstg ',error-type)))
+         ,@body))))
 
 ;;; This condition is signaled when a macroexpander signals
 ;;; an error.

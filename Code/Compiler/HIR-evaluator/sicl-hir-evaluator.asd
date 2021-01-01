@@ -2,8 +2,8 @@
 
 (defsystem #:sicl-hir-evaluator
   :depends-on (#:closer-mop
-               #:cleavir2-hir
-               #:cleavir2-cst-to-ast
+               #:cleavir-hir
+               #:cleavir-cst-to-ast
                #:sicl-utilities
                #:sicl-ast-to-hir
                #:sicl-hir-transformations

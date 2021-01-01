@@ -1,19 +1,20 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defgeneric convert (cst environment system))
+(defgeneric convert (client cst environment))
 
-(defgeneric convert-cst (cst info environment system))
+(defgeneric convert-cst (client cst info environment))
 
-(defgeneric convert-special (head cst environment system))
+(defgeneric convert-special (client head cst environment))
 
 (defgeneric convert-special-binding
-    (variable value-ast next-ast env system))
+    (client variable value-ast next-ast environment))
 
-(defgeneric convert-lambda-call (cst env system))
+(defgeneric convert-lambda-call (client cst environment))
 
-(defgeneric convert-code (lambda-list body-cst env system &key block-name-cst origin))
+(defgeneric convert-code
+    (client lambda-list body-cst environment &key block-name-cst))
 
-(defgeneric convert-variable (cst environment system))
+(defgeneric convert-variable (client cst environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -27,43 +28,45 @@
 ;;; INFO instance is not a GLOBAL-FUNCTION-INFO or a
 ;;; LOCAL-FUNCTION-INFO.  Client code can override the default
 ;;; behavior by adding methods to this function, specialized to the
-;;; particular system defined by that client code.
+;;; particular client defined by that client code.
 
-(defgeneric convert-function-reference (cst info env system))
+(defgeneric convert-function-reference (client cst info environment))
 
-(defgeneric convert-called-function-reference (cst info env system))
+(defgeneric convert-called-function-reference (client cst info environment))
 
 (defgeneric items-from-parameter-group (parameter-group))
 
-(defgeneric convert-global-function-reference (cst info global-env system))
+(defgeneric convert-global-function-reference (client cst info global-env))
 
-(defgeneric convert-special-variable (cst info global-env system))
+(defgeneric convert-special-variable (client cst info global-env))
 
-(defgeneric convert-setq (var-cst form-cst info env system))
+(defgeneric convert-setq (client var-cst form-cst info environment))
 
 (defgeneric convert-setq-special-variable
-    (var-cst form-ast info global-env system))
+    (client var-cst form-ast info global-env))
 
-(defgeneric convert-let (cst environment system))
+(defgeneric convert-let (client cst environment))
 
-(defgeneric convert-let* (cst environment system))
+(defgeneric convert-let* (client cst environment))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; This function returns the contents of the ORIGIN slot of an AST.
+(defgeneric origin (ast))
+
+;;; Returns whether OBJECT is so simple that we never need to hoist it.
+(defgeneric trivial-constant-p (client object))
+
+;;; Returns up to two values, where the first value is a list of equal
+;;; keys, and where the second value is a list of equalp keys.
 ;;;
-;;; Generic function TYPE-WRAP.
-;;;
-;;; Given an AST and a values ctype, returns a new AST that incorporates
-;;; the information that the AST's value will be of that ctype, in some
-;;; client-defined fashion. For example it could execute a type check,
-;;; or puts in a type declaration (a the-ast), or it could just return
-;;; the AST as-is, ignoring the information.
-;;; There is a default method that returns the AST as-is.
-;;;
-;;; KLUDGE: The origin of the given AST should probably be used,
-;;; rather than being explicitly passed as an argument, but this will
-;;; not be correct for lexical ASTs. Similarly for policies.
+;;; Two objects o1 and o2 are considered similar if their equal keys have a
+;;; common element in the sense of EQUAL, or if their equalp keys have a
+;;; common element in the sense of EQUALP.  Clients that want to write
+;;; additional methods for this function are encouraged to have a look at
+;;; the auxiliary functions EQUAL-REPRESENTATION and EQUALP-REPRESENTATION.
+(defgeneric similarity-keys (client literal-object))
 
-(defgeneric type-wrap (ast ctype origin environment system)
-  (:method (ast ctype origin environment system)
-    (declare (ignore ctype origin environment system))
-    ast))
+;;; Similar to CL:MAKE-LOAD-FORM, but with an additional client argument.
+;;; Another difference to CL:MAKE-LOAD-FORM is that OBJECT is not
+;;; necessarily a generalized instance of STANDARD-OBJECT,
+;;; STRUCTURE-OBJECT, or CONDITION.
+(defgeneric make-load-form-using-client (client object environment))

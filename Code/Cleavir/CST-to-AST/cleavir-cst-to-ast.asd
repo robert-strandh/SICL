@@ -1,16 +1,14 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :cleavir-cst-to-ast
-  :depends-on (:concrete-syntax-tree
-               :concrete-syntax-tree-destructuring
-               :cleavir-code-utilities
-               :cleavir-ast
-	       :cleavir-ast-transformations
-	       :cleavir-primop
-	       :cleavir-environment
-	       :cleavir-compilation-policy
-               :cleavir-ctype
-               :acclimation)
+(defsystem #:cleavir-cst-to-ast
+  :depends-on (#:concrete-syntax-tree
+               #:concrete-syntax-tree-destructuring
+               #:cleavir-ast
+               #:cleavir-ast-transformations
+               #:cleavir-primop
+               #:trucler-reference
+               #:stealth-mixin
+               #:acclimation)
   :serial t
   :components
   ((:file "packages")
@@ -19,6 +17,7 @@
    (:file "environment-augmentation")
    (:file "environment-query")
    (:file "variables")
+   (:file "eval")
    (:file "generic-functions")
    (:file "convert-function-reference")
    (:file "convert-special-binding")
@@ -40,4 +39,7 @@
    (:file "convert-special")
    (:file "convert-primop")
    (:file "convert-cst")
+   (:file "similarity-keys")
+   (:file "make-load-form-using-client")
+   (:file "trivial-constant-p")
    (:file "cst-to-ast")))

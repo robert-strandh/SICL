@@ -1,38 +1,23 @@
 (cl:in-package #:cleavir-ir)
 
-(defmacro define-simple-one-arg-float-instruction (name make-name)
+(defmacro define-simple-one-arg-float-instruction (name)
   `(progn
-     (defclass ,name (one-successor-mixin instruction)
+     (defclass ,name (instruction one-successor-mixin)
        ((%subtype :initarg :subtype :reader subtype)))
-     (defun ,make-name (input output successor)
-       (make-instance ',name
-         :inputs (list input)
-         :outputs (list output)
-         :successors (list successor)))
      (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
 
-(defmacro define-simple-two-arg-float-instruction (name make-name)
+(defmacro define-simple-two-arg-float-instruction (name)
   `(progn
-     (defclass ,name (one-successor-mixin instruction)
+     (defclass ,name (instruction one-successor-mixin)
        ((%subtype :initarg :subtype :reader subtype)))
-     (defun ,make-name (input1 input2 output successor)
-       (make-instance ',name
-         :inputs (list input1 input2)
-         :outputs (list output)
-         :successors (list successor)))
      (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
 
-(defmacro define-simple-float-comparison-instruction (name make-name)
+(defmacro define-simple-float-comparison-instruction (name)
   `(progn
-     (defclass ,name (multiple-successors-mixin instruction)
+     (defclass ,name (instruction multiple-successors-mixin)
        ((%subtype :initarg :subtype :reader subtype)))
-     (defun ,make-name (input1 input2 successor1 successor2)
-       (make-instance ',name
-         :inputs (list input1 input2)
-         :outputs '()
-         :successors (list successor1 successor2)))
      (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
 
@@ -44,7 +29,7 @@
 ;;; unboxed elements of the given SUBTYPE. Its single
 ;;; unboxed output is of that same type as well.
 
-(define-simple-two-arg-float-instruction float-add-instruction make-float-add-instruction)
+(define-simple-two-arg-float-instruction float-add-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -54,7 +39,7 @@
 ;;; unboxed elements of the given SUBTYPE. Its single
 ;;; unboxed output is of that same type as well.
 
-(define-simple-two-arg-float-instruction float-sub-instruction make-float-sub-instruction)
+(define-simple-two-arg-float-instruction float-sub-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -64,7 +49,7 @@
 ;;; unboxed elements of the given SUBTYPE. Its single
 ;;; unboxed output is of that same type as well.
 
-(define-simple-two-arg-float-instruction float-mul-instruction make-float-mul-instruction)
+(define-simple-two-arg-float-instruction float-mul-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -74,7 +59,7 @@
 ;;; unboxed elements of the given SUBTYPE. Its single
 ;;; unboxed output is of that same type as well.
 
-(define-simple-two-arg-float-instruction float-div-instruction make-float-div-instruction)
+(define-simple-two-arg-float-instruction float-div-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -87,7 +72,7 @@
 ;;; than the second one, otherwise the second
 ;;; successor is chosen.
 
-(define-simple-float-comparison-instruction float-less-instruction make-float-less-instruction)
+(define-simple-float-comparison-instruction float-less-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -100,7 +85,7 @@
 ;;; equal to the second one, otherwise the second
 ;;; successor is chosen.
 
-(define-simple-float-comparison-instruction float-not-greater-instruction make-float-not-greater-instruction)
+(define-simple-float-comparison-instruction float-not-greater-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -113,7 +98,7 @@
 ;;; second one, otherwise the second
 ;;; successor is chosen.
 
-(define-simple-float-comparison-instruction float-equal-instruction make-float-equal-instruction)
+(define-simple-float-comparison-instruction float-equal-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -124,7 +109,7 @@
 ;;; output is an unboxed element of the same type,
 ;;; the sine of the input.
 
-(define-simple-one-arg-float-instruction float-sin-instruction make-float-sin-instruction)
+(define-simple-one-arg-float-instruction float-sin-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -135,7 +120,7 @@
 ;;; output is an unboxed element of the same type,
 ;;; the square root of the input.
 
-(define-simple-one-arg-float-instruction float-cos-instruction make-float-cos-instruction)
+(define-simple-one-arg-float-instruction float-cos-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -146,7 +131,7 @@
 ;;; output is an unboxed element of the same type,
 ;;; the square root of the input.
 
-(define-simple-one-arg-float-instruction float-sqrt-instruction make-float-sqrt-instruction)
+(define-simple-one-arg-float-instruction float-sqrt-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -157,17 +142,9 @@
 ;;; value of its TO-TYPE with the same mathematical value as the input.
 
 (defclass coerce-instruction
-    (one-successor-mixin instruction)
+    (instruction one-successor-mixin)
   ((%from-type :initarg :from :reader from-type)
    (%to-type :initarg :to :reader to-type)))
 
-(defun make-coerce-instruction
-    (from to input output successor)
-  (make-instance 'coerce-instruction
-    :from from :to to
-    :inputs (list input)
-    :outputs (list output)
-    :successors (list successor)))
-
 (defmethod clone-initargs append ((instruction coerce-instruction))
-  (list :from (from-type instruction) :to (to-type instruction)))
+  (list :from-type (from-type instruction) :to-type (to-type instruction)))

@@ -12,39 +12,37 @@
 ;;;
 ;;; Compile an AREF-AST
 
-(defmethod compile-ast ((ast cleavir-ast:aref-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:aref-ast) context)
   (assert-context ast context 1 1)
   (let* ((array-temp (make-temp))
-	 (index-temp (make-temp))
-	 (type (cleavir-ast:element-type ast))
-	 (unboxed (if (cleavir-ast:boxed-p ast)
-		      (results context)
-		      ;; need an additional boxing step.
-		      (list (make-temp))))
-	 (succ (if (cleavir-ast:boxed-p ast)
-		   (successors context)
-		   (list (box-for-type type unboxed context)))))
+         (index-temp (make-temp))
+         (type (cleavir-ast:element-type ast))
+         (unboxed (if (cleavir-ast:boxed-p ast)
+                      (results context)
+                      ;; need an additional boxing step.
+                      (list (make-temp))))
+         (succ (if (cleavir-ast:boxed-p ast)
+                   (successors context)
+                   (list (box-for-type type unboxed context)))))
     (compile-ast
+     client
      (cleavir-ast:array-ast ast)
      (clone-context
       context
-      :results
-      (list array-temp)
-      :successors
-      (list (compile-ast
-	     (cleavir-ast:index-ast ast)
-	     (clone-context
-              context
-              :results
-              (list index-temp)
-              :successors
-              (list (make-instance 'cleavir-ir:aref-instruction
-                      :element-type type
-                      :simple-p (cleavir-ast:simple-p ast)
-                      :boxed-p (cleavir-ast:boxed-p ast)
-                      :inputs (list array-temp index-temp)
-                      :outputs unboxed
-                      :successors succ)))))))))
+      :result array-temp
+      :successor (compile-ast
+                  client
+                  (cleavir-ast:index-ast ast)
+                  (clone-context
+                   context
+                   :result index-temp
+                   :successor (make-instance 'cleavir-ir:aref-instruction
+                                :element-type type
+                                :simple-p (cleavir-ast:simple-p ast)
+                                :boxed-p (cleavir-ast:boxed-p ast)
+                                :inputs (list array-temp index-temp)
+                                :outputs unboxed
+                                :successors succ)))))))
 
 (defun unbox-for-type (type input output successor)
   (make-instance 'cleavir-ir:unbox-instruction
@@ -57,51 +55,47 @@
 ;;;
 ;;; Compile an ASET-AST
 
-(defmethod compile-ast ((ast cleavir-ast:aset-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:aset-ast) context)
   (let* ((array-temp (make-temp))
-	 (index-temp (make-temp))
-	 (element-temp (make-temp))
-	 (type (cleavir-ast:element-type ast))
-	 (aset (make-instance 'cleavir-ir:aset-instruction
-		 :element-type type
-		 :simple-p (cleavir-ast:simple-p ast)
-		 :boxed-p (cleavir-ast:boxed-p ast)
-		 :inputs (list array-temp index-temp element-temp)
-		 :outputs (results context)
-		 :successors (successors context))))
+         (index-temp (make-temp))
+         (element-temp (make-temp))
+         (type (cleavir-ast:element-type ast))
+         (aset (make-instance 'cleavir-ir:aset-instruction
+                 :element-type type
+                 :simple-p (cleavir-ast:simple-p ast)
+                 :boxed-p (cleavir-ast:boxed-p ast)
+                 :inputs (list array-temp index-temp element-temp)
+                 :outputs (results context)
+                 :successors (successors context))))
     (compile-ast
+     client
      (cleavir-ast:array-ast ast)
      (clone-context
       context
-      :results
-      (list array-temp)
-      :successors
-      (list
-       (compile-ast
-	(cleavir-ast:index-ast ast)
-	(clone-context
-         context
-         :results
-	 (list index-temp)
-         :successors
-	 (list
-	  (compile-ast
-	   (cleavir-ast:element-ast ast)
-	   (if (cleavir-ast:boxed-p ast)
-	       ;; simple case: no unbox required
-	       (clone-context
+      :result array-temp
+      :successor
+      (compile-ast
+       client
+       (cleavir-ast:index-ast ast)
+       (clone-context
+        context
+        :result index-temp
+        :successor
+        (compile-ast
+         client
+         (cleavir-ast:element-ast ast)
+         (if (cleavir-ast:boxed-p ast)
+             ;; simple case: no unbox required
+             (clone-context
+              context
+              :result element-temp
+              :successor  aset)
+             ;; if we have to unbox the new value first, compile
+             ;; the element-ast in a context where the successor
+             ;; is an unboxer and the output is a different temp.
+             (let ((boxed-temp (make-temp)))
+               (clone-context
                 context
-                :results (list element-temp)
-                :successors (list aset))
-	       ;; if we have to unbox the new value first, compile
-	       ;; the element-ast in a context where the successor
-	       ;; is an unboxer and the output is a different temp.
-	       (let ((boxed-temp (make-temp)))
-                 (clone-context
-                  context
-                  :results
-                  (list boxed-temp)
-                  :successors
-		  (list
-		   (unbox-for-type type boxed-temp
-				   element-temp aset))))))))))))))
+                :result boxed-temp
+                :successor (unbox-for-type type boxed-temp
+                                           element-temp aset)))))))))))

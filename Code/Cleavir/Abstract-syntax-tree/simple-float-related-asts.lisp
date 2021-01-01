@@ -1,8 +1,25 @@
 (cl:in-package #:cleavir-ast)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SINGLE-FLOAT-P-AST.
+;;;
+;;; This AST can be used by implementations that represent single
+;;; floats as immediate objects with tags.  It can only occur as the
+;;; test of an IF-AST.
+
+(defclass single-float-p-ast (ast boolean-ast-mixin)
+  ((%object-ast :initarg :object-ast :reader object-ast)))
+
+(cleavir-io:define-save-info single-float-p-ast
+  (:object-ast object-ast))
+
+(defmethod children ((ast single-float-p-ast))
+  (list (object-ast ast)))
+
 (defmacro define-simple-one-arg-float-ast (name)
   `(progn 
-     (defclass ,name (one-value-ast-mixin ast)
+     (defclass ,name (ast one-value-ast-mixin)
        ((%subtype :initarg :subtype :reader subtype)
         (%arg-ast :initarg :arg-ast :reader arg-ast)))
 
@@ -15,7 +32,7 @@
 
 (defmacro define-simple-two-arg-float-ast (name)
   `(progn 
-     (defclass ,name (one-value-ast-mixin ast)
+     (defclass ,name (ast one-value-ast-mixin)
        ((%subtype :initarg :subtype :reader subtype)
         (%arg1-ast :initarg :arg1-ast :reader arg1-ast)
         (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
@@ -30,7 +47,7 @@
 
 (defmacro define-simple-float-comparison-ast (name)
   `(progn 
-     (defclass ,name (boolean-ast-mixin ast)
+     (defclass ,name (ast boolean-ast-mixin)
        ((%subtype :initarg :subtype :reader subtype)
         (%arg1-ast :initarg :arg1-ast :reader arg1-ast)
         (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
@@ -206,15 +223,10 @@
 ;;; This AST can be used to convert a number of one type into another
 ;;; type. Both types are compile-time constants.
 
-(defclass coerce-ast (one-value-ast-mixin ast)
+(defclass coerce-ast (ast one-value-ast-mixin)
   ((%from-type :initarg :from :reader from-type)
    (%to-type :initarg :to :reader to-type)
    (%arg-ast :initarg :arg-ast :reader arg-ast)))
-
-(defun make-coerce-ast (from to arg-ast &key origin (policy *policy*))
-  (make-instance 'coerce-ast
-    :origin origin :policy policy
-    :from from :to to :arg-ast arg-ast))
 
 (cleavir-io:define-save-info coerce-ast
   (:from from-type)

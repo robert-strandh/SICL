@@ -1,30 +1,39 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-special :before (operator cst environment system)
+(defmethod convert-special :before (client operator cst environment)
   (when (and *compile-time-too*
              *current-form-is-top-level-p*
              (not (member operator
                           '(progn locally macrolet symbol-macrolet eval-when))))
-    (cst-eval cst environment system)))
+    (cst-eval client cst environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting QUOTE.
 
-(defmethod convert-special
-    ((symbol (eql 'quote)) cst env system)
+(defmethod convert-special (client (symbol (eql 'quote)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
   (cst:db s (quote-cst const-cst) cst
     (declare (ignore quote-cst))
-    (convert-constant const-cst env system)))
+    ;; Frequently, the constant itself appears unquoted in source
+    ;; code, such as when it is the argument to a macro that then
+    ;; quotes it.  In that case, the entire form will not have any
+    ;; source information, but the constant itself will.  In this
+    ;; situation, we take the source information from the constant
+    ;; itself so that we have some idea of the origin it.
+    (let ((*origin* (if (null (cst:source cst))
+                        (cst:source const-cst)
+                        (cst:source cst))))
+      (convert-constant client
+                        const-cst
+                        environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting BLOCK.
 
-(defmethod convert-special
-    ((symbol (eql 'block)) cst env system)
+(defmethod convert-special (client (symbol (eql 'block)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (block name-cst . body-cst) cst
@@ -32,20 +41,20 @@
     (let ((name (cst:raw name-cst)))
       (unless (symbolp name)
         (error 'block-name-must-be-a-symbol :cst name-cst))
-      (let* ((ast (cleavir-ast:make-block-ast
-                   nil :origin origin))
-             (new-env (cleavir-env:add-block env name ast)))
+      (let* ((ast (cleavir-ast:make-ast 'cleavir-ast:block-ast))
+             (new-environment
+               (trucler:add-block client environment name ast)))
         (setf (cleavir-ast:body-ast ast)
-              (process-progn (convert-sequence body-cst new-env system)
-                             origin))
+              (process-progn (convert-sequence client
+                                               body-cst
+                                               new-environment)))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting RETURN-FROM.
 
-(defmethod convert-special
-    ((symbol (eql 'return-from)) cst env system)
+(defmethod convert-special (client (symbol (eql 'return-from)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (return-from-cst block-name-cst . rest-csts) cst
@@ -53,34 +62,35 @@
     (let ((block-name (cst:raw block-name-cst)))
       (unless (symbolp block-name)
         (error 'block-name-must-be-a-symbol :cst block-name-cst))
-      (flet ((find-info (block-name)
-               (cleavir-env:block-info env block-name)))
-        (let ((info (find-info block-name))
+      (flet ((find-description (block-name)
+               (trucler:describe-block client environment block-name)))
+        (let ((info (find-description block-name))
               (value-cst (if (cst:null rest-csts)
                              (make-atom-cst nil origin)
                              (cst:first rest-csts))))
           (loop while (null info)
-                do (restart-case (error 'cleavir-env:no-block-info
-                                        :name block-name
-                                        :origin (cst:source block-name-cst))
+                do (restart-case (error 'trucler:no-block-description :cst cst)
                      (substitute (new-block-name)
                        :report (lambda (stream)
                                  (format stream "Substitute a different name."))
                        :interactive (lambda ()
                                       (format *query-io* "Enter new name: ")
                                       (list (read *query-io*)))
-                       (setq info (find-info new-block-name)))
+                       (setq info (find-description new-block-name)))
                      (continue ()
                        ;; In order to recover from the error, we ignore
                        ;; the RETURN-FROM form and only compile the return
                        ;; value form (or NIL if no return value form was
                        ;; present).
                        (return-from convert-special
-                         (convert value-cst env system)))))
-          (cleavir-ast:make-return-from-ast
-           (cleavir-env:identity info)
-           (convert value-cst env system)
-           :origin origin))))))
+                         (convert client
+                                  value-cst
+                                  environment)))))
+          (cleavir-ast:make-ast 'cleavir-ast:return-from-ast
+           :block-ast (trucler:identity info)
+           :form-ast (convert client
+                      value-cst
+                      environment)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -103,22 +113,23 @@
                                       compile load eval)))
                  (error 'invalid-eval-when-situation :cst situation-cst))))))
 
-(defmethod convert-special
-    ((symbol (eql 'eval-when)) cst environment system)
+(defmethod convert-special (client (symbol (eql 'eval-when)) cst environment)
   (check-eval-when-syntax cst)
   (with-preserved-toplevel-ness
     (cst:db s (eval-when-cst situations-cst . body-cst) cst
       (declare (ignore eval-when-cst))
       (let ((situations (cst:raw situations-cst)))
-        (if (or (eq *compiler* 'cl:compile)
-                (eq *compiler* 'cl:eval)
+        (if (or (not *use-file-compilation-semantics-p*)
                 (not *current-form-is-top-level-p*))
             (if (or (member :execute situations)
                     (member 'cl:eval situations))
                 (process-progn
-                 (convert-sequence body-cst environment system)
-                 s)
-                (convert (make-atom-cst nil s) environment system))
+                 (convert-sequence client
+                                   body-cst
+                                   environment))
+                (convert client
+                         (make-atom-cst nil s)
+                         environment))
             (cond ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  Yes  ---  ---
@@ -137,7 +148,9 @@
                          *compile-time-too*))
                    (let ((*compile-time-too* t))
                      (process-progn
-                      (convert-sequence body-cst environment system))))
+                      (convert-sequence client
+                                        body-cst
+                                        environment))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; No   Yes  Yes  NCT
@@ -158,7 +171,9 @@
                                   (member 'eval situations)))))
                    (let ((*compile-time-too* nil))
                      (process-progn
-                      (convert-sequence body-cst environment system))))
+                      (convert-sequence client
+                                        body-cst
+                                        environment))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  No   ---  ---
@@ -175,13 +190,17 @@
                          (or (member :execute situations)
                              (member 'eval situations))
                          *compile-time-too*))
-                   (cst-eval
-                    (cst:cons (make-atom-cst 'progn s) body-cst
-                              :source s)
-                    environment system)
-                   (convert (make-atom-cst nil s) environment system))
+                   (cst-eval client
+                             (cst:cons (make-atom-cst 'progn s)
+                                       body-cst)
+                             environment)
+                   (convert client
+                            (make-atom-cst nil s)
+                            environment))
                   (t
-                   (convert (make-atom-cst nil s) environment system))))))))
+                   (convert client
+                            (make-atom-cst nil s)
+                            environment))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -195,61 +214,40 @@
       function-name
       (cst:second function-name)))
 
-;;; Take an environment and a CST representing a single local function
-;;; definition.  Return a new environment which is like the one passed
-;;; as an argument, except the it has been augmented by the name of
-;;; the local function.
-(defun augment-environment-from-fdef (environment definition-cst)
-  (let ((name-cst (cst:first definition-cst)))
-    (augment-environment-with-local-function-name name-cst environment)))
-
-;;; Take an environment, a CST representing a list of function
-;;; definitions, and return a new environment which is like the one
-;;; passed as an argument, except that is has been augmented by the
-;;; local function names in the list.
-(defun augment-environment-from-fdefs (environment definitions-cst)
-  (loop with result = environment
-        for remaining = definitions-cst then (cst:rest remaining)
-        until (cst:null remaining)
-        do (let ((definition-cst (cst:first remaining)))
-             (setf result
-                   (augment-environment-from-fdef result definition-cst)))
-        finally (return result)))
-
 ;;; Given an environment and the name of a function, return the
 ;;; LEXICAL-AST that will have the function with that name as a value.
 ;;; It is known that the environment contains an entry corresponding
 ;;; to the name given as an argument.
-(defun function-lexical (environment name)
-  (cleavir-env:identity (cleavir-env:function-info environment name)))
+(defun function-lexical (client environment name)
+  (trucler:identity (trucler:describe-function client environment name)))
 
 ;;; Convert a local function definition.
-(defun convert-local-function (definition-cst operator environment system)
+(defun convert-local-function (client definition-cst environment)
   ;; FIXME: The error message if this check fails needs improvement.
   (check-argument-count definition-cst 1 nil)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
     (unless (proper-function-name-p name-cst)
-      (error 'function-name-must-be-proper-function-name
-             :cst name-cst))
+      (error 'function-name-must-be-proper-function-name :cst name-cst))
     (let ((block-name-cst (block-name-from-function-name name-cst)))
-      (convert-code lambda-list-cst
+      (convert-code client lambda-list-cst
                     body-cst
                     environment
-                    system
-                    :name (list operator (cst:raw name-cst))
-                    :block-name-cst block-name-cst
-                    :origin origin))))
+                    :block-name-cst block-name-cst))))
 
 ;;; Convert a CST representing a list of local function definitions.
-(defun convert-local-functions (definitions-cst operator environment system)
+(defun convert-local-functions (client definitions-cst environment)
   (loop for remaining = definitions-cst
           then (cst:rest remaining)
         until (cst:null remaining)
         collect (let* ((def-cst (cst:first remaining))
+                       (*origin* (cst:source def-cst))
                        (fun (convert-local-function
-                             def-cst operator environment system))
-                       ;; compute these after calling convert-local-function
-                       ;; so that we know def-cst is actually a list.
+                             client
+                             def-cst
+                             environment))
+                       ;; Compute these after calling
+                       ;; CONVERT-LOCAL-FUNCTION so that we know
+                       ;; def-cst is actually a list.
                        (name-cst (cst:first def-cst))
                        (name (cst:raw name-cst)))
                   (cons name fun))))
@@ -258,11 +256,11 @@
 ;;; each function in a list of function ASTs to its associated
 ;;; LEXICAL-AST.  FUNCTIONS is a list of CONS cells.  Each CONS cell
 ;;; has a function name in its CAR and an AST in its CDR.
-(defun compute-function-init-asts (functions env)
+(defun compute-function-init-asts (client functions environment)
   (loop for (name . fun-ast) in functions
-        collect (cleavir-ast:make-setq-ast
-                 (function-lexical env name)
-                 fun-ast)))
+        collect (cleavir-ast:make-ast 'cleavir-ast:setq-ast
+                  :lhs-ast (function-lexical client environment name)
+                  :value-ast fun-ast)))
 
 (defun check-function-bindings (bindings operator)
   (check-cst-proper-list bindings 'bindings-must-be-proper-list
@@ -274,7 +272,7 @@
             'local-function-definition-must-be-proper-list)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
-(defmethod convert-special ((symbol (eql 'flet)) cst env system)
+(defmethod convert-special (client (symbol (eql 'flet)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
@@ -283,28 +281,38 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations
-                system (cleavir-env:declarations env) declaration-csts))
-             (defs (convert-local-functions definitions-cst symbol env system))
-             (new-env (augment-environment-from-fdefs env definitions-cst))
+               ;; FIXME: replace the second argument with the result
+               ;; of calling DECLARATIONS in the global environment,
+               ;; once that protocol is in place.
+               (cst:canonicalize-declarations client '() declaration-csts))
+             (defs (convert-local-functions client
+                                            definitions-cst
+                                            environment))
+             (new-environment
+               (augment-environment-from-fdefs client
+                                               environment
+                                               definitions-cst))
              (init-asts
-               (compute-function-init-asts defs new-env))
-             (final-env (augment-environment-with-declarations
-                         new-env system canonical-declaration-specifiers)))
+               (compute-function-init-asts client
+                                           defs
+                                           new-environment))
+             (final-environment
+               (augment-environment-with-declarations
+                client new-environment canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence forms-cst final-env system)
-                   origin)))
-         origin)))))
+                   (convert-sequence client
+                                     forms-cst
+                                     final-environment)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LABELS.
 
-(defmethod convert-special ((symbol (eql 'labels)) cst env system)
+(defmethod convert-special (client (symbol (eql 'labels)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
@@ -313,21 +321,30 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations
-                system (cleavir-env:declarations env) declaration-csts))
-             (new-env (augment-environment-from-fdefs env definitions-cst))
-             (defs (convert-local-functions definitions-cst symbol new-env system))
+               ;; FIXME: replace the second argument with the result
+               ;; of calling DECLARATIONS in the global environment,
+               ;; once that protocol is in place.
+               (cst:canonicalize-declarations client '() declaration-csts))
+             (new-environment
+               (augment-environment-from-fdefs client
+                                               environment
+                                               definitions-cst))
+             (defs (convert-local-functions client
+                                            definitions-cst
+                                            new-environment))
              (init-asts
-               (compute-function-init-asts defs new-env))
-             (final-env (augment-environment-with-declarations
-                         new-env system canonical-declaration-specifiers)))
+               (compute-function-init-asts client defs new-environment))
+             (final-environment
+               (augment-environment-with-declarations
+                client new-environment canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
+                 ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence forms-cst final-env system)
-                   origin)))
-         origin)))))
+                   (convert-sequence client
+                                     forms-cst
+                                     final-environment)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -344,8 +361,7 @@
     (or (symbolp raw)
         (integerp raw))))
 
-(defmethod convert-special
-    ((symbol (eql 'tagbody)) cst env system)
+(defmethod convert-special (client (symbol (eql 'tagbody)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (tagbody-cst . body-cst) cst
     (declare (ignore tagbody-cst))
@@ -354,91 +370,122 @@
                   until (cst:null rest)
                   when (tagp (cst:first rest))
                     collect (let ((tag-cst (cst:first rest)))
-                              (cleavir-ast:make-tag-ast
-                               (cst:raw tag-cst)
-                               :origin (cst:source tag-cst)))))
-          (new-env env))
+                              (cleavir-ast:make-ast 'cleavir-ast:tag-ast
+                                :name (cst:raw tag-cst)))))
+          (new-environment environment))
       (loop for ast in tag-asts
-            do (setf new-env (cleavir-env:add-tag
-                              new-env (cleavir-ast:name ast) ast)))
+            do (setf new-environment
+                     (trucler:add-tag
+                      client new-environment (cleavir-ast:name ast) ast)))
       (let ((item-asts (loop for rest = body-cst then (cst:rest rest)
                              until (cst:null rest)
                              collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
-                                           (convert item-cst new-env system))))))
+                                           (convert client
+                                                    item-cst
+                                                    new-environment))))))
         (process-progn
-         (list (cleavir-ast:make-tagbody-ast item-asts :origin origin)
-               (convert-constant (make-atom-cst nil origin) env system))
-         origin)))))
+         (list (cleavir-ast:make-ast 'cleavir-ast:tagbody-ast
+                 :item-asts item-asts)
+               (let ((*origin* origin))
+                 (convert-constant client
+                                   (make-atom-cst nil origin)
+                                   environment))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting GO.
 
-(defmethod convert-special
-    ((symbol (eql 'go)) cst env system)
-  (declare (ignore system))
+(defmethod convert-special (client (symbol (eql 'go)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
-    (let ((info (tag-info env tag-cst)))
-      (cleavir-ast:make-go-ast
-       (cleavir-env:identity info)
-       :origin origin))))
+    (let ((info (describe-tag client environment (cst:raw tag-cst))))
+      (cleavir-ast:make-ast 'cleavir-ast:go-ast
+        :tag-ast (trucler:identity info)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting IF.
 
-(defun boolify (test-ast origin env system)
-  (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
-      test-ast
-      (cleavir-ast:make-neq-ast
-       test-ast
-       (convert-constant (make-atom-cst nil origin)
-                         env system)
-       :origin origin)))
-
-(defmethod convert-special ((symbol (eql 'if)) cst env system)
+(defmethod convert-special (client (symbol (eql 'if)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 3)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
-    (let ((test-ast (convert test-cst env system))
-          (true-ast (convert then-cst env system))
+    (let ((test-ast (convert client
+                             test-cst
+                             environment))
+          (true-ast (convert client
+                             then-cst
+                             environment))
           (false-ast (if (cst:null tail-cst)
-                         (convert-constant (make-atom-cst nil origin)
-                                           env system)
+                         (convert-constant client
+                                           (make-atom-cst nil origin)
+                                           environment)
                          (cst:db s (else-cst) tail-cst
-                                 (convert else-cst env system)))))
-      (cleavir-ast:make-if-ast
-       (boolify test-ast origin env system)
-       true-ast false-ast :origin origin))))
+                           (convert client
+                                    else-cst
+                                    environment)))))
+      (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
+          (cleavir-ast:make-ast 'cleavir-ast:if-ast
+           :test-ast test-ast
+           :then-ast true-ast
+           :else-ast false-ast)
+          (cleavir-ast:make-ast 'cleavir-ast:if-ast
+           :test-ast
+           (cleavir-ast:make-ast 'cleavir-ast:eq-ast
+            :arg1-ast test-ast
+            :arg2-ast (convert-constant client
+                       (make-atom-cst nil origin)
+                       environment))
+           :then-ast false-ast
+           :else-ast true-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LOAD-TIME-VALUE.
 
-(defmethod convert-special ((symbol (eql 'load-time-value)) cst env system)
-  (declare (ignore system))
+(defmethod convert-special (client (symbol (eql 'load-time-value)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
-    (cleavir-ast:make-load-time-value-ast
-     (cst:raw form-cst)
-     (if (cst:null remaining-cst)
-         nil
-         (let ((read-only-p (cst:raw (cst:first remaining-cst))))
-           (if (member read-only-p '(nil t))
-               read-only-p
-               ;; The HyperSpec specifically requires a "boolean"
-               ;; and not a "generalized boolean".
-               (error 'read-only-p-must-be-boolean
-                      :cst (cst:first remaining-cst)))))
-     :origin origin)))
+    ;; FIXME: We only check whether the read-only-p flag is well formed,
+    ;; but we don't use it for anything.
+    (unless (cst:null remaining-cst)
+      (let ((read-only-p (cst:raw (cst:first remaining-cst))))
+        (if (member read-only-p '(nil t))
+            read-only-p
+            ;; The HyperSpec specifically requires a "boolean"
+            ;; and not a "generalized boolean".
+            (error 'read-only-p-must-be-boolean
+                   :cst (cst:first remaining-cst)))))
+    ;; LOAD-TIME-VALUE forms are treated differently, depending on whether
+    ;; we are performing file compilation, or whether we are using
+    ;; CL:COMPILE.  In the former case, we must arrange that the execution
+    ;; of the form occurs at load time in a null lexical environment.  In
+    ;; the latter case, the form is evaluated in a null lexical environment
+    ;; at compile time, and the result is used instead as a literal object.
+    (if *use-file-compilation-semantics-p*
+        (let ((lexical-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
+                             :name (gensym))))
+          (push (cleavir-ast:make-ast 'cleavir-ast:setq-ast
+                  :lhs-ast lexical-ast
+                  :value-ast
+                  (convert
+                   client
+                   form-cst
+                   (trucler:global-environment client environment)))
+                *prologue*)
+          lexical-ast)
+        (convert-constant
+         client
+         (cst:cst-from-expression
+          (cst-eval client form-cst environment))
+         environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -447,12 +494,14 @@
 ;;; According to section 3.2.3.1 of the HyperSpec, PROGN processes
 ;;; its subforms the same way as the form itself.
 
-(defmethod convert-special ((symbol (eql 'progn)) cst env system)
+(defmethod convert-special (client (symbol (eql 'progn)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
       (declare (ignore progn-cst))
-      (process-progn (convert-sequence form-csts env system) origin))))
+      (process-progn (convert-sequence client
+                                       form-csts
+                                       environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -464,78 +513,83 @@
 ;;; Given the CST for a MACROLET definition and an environment, return
 ;;; a macro expander (or macro function) for the definition.
 ;;; FIXME: check syntax.
-(defun expander (definition-cst environment system)
+
+;;; FIXME: Once we have a CST version of PARSE-MACRO we should use it
+;;; instead, and then call CST-EVAL on the resulting lambda expression.
+(defun expander (client definition-cst environment)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
-    (let ((lambda-expression (cst:parse-macro system
+    (let ((lambda-expression (cst:parse-macro client
                                               name-cst
                                               lambda-list-cst
                                               (cst:raw body-cst)
                                               environment)))
-      (cleavir-env:eval lambda-expression
-                        (cleavir-env:compile-time environment)
-                        environment))))
+      (eval client
+            lambda-expression
+            (trucler:restrict-for-macrolet-expander client environment)))))
 
-(defmethod convert-special
-    ((symbol (eql 'macrolet)) cst env system)
+(defmethod convert-special (client (symbol (eql 'macrolet)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (macrolet-cst definitions-cst . body-cst) cst
     (declare (ignore macrolet-cst))
-    (check-function-bindings definitions-cst 'macrolet)
-    (let ((new-env env))
+    (unless (cst:proper-list-p definitions-cst)
+      (error 'macrolet-definitions-must-be-proper-list :cst definitions-cst))
+    (let ((new-environment environment))
       (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
             do (let* ((definition-cst (cst:first remaining))
                       (name-cst (cst:first definition-cst))
                       (name (cst:raw name-cst))
-                      (expander (expander definition-cst env system)))
-                 (setf new-env
-                       (cleavir-env:add-local-macro new-env name expander))))
+                      (expander (expander client definition-cst environment)))
+                 (setf new-environment
+                       (trucler:add-local-macro client new-environment name expander))))
       (with-preserved-toplevel-ness
-        (convert (cst:cons (make-atom-cst 'locally origin) body-cst
-                           :source origin)
-                 new-env
-                 system)))))
+        (convert client
+                 (cst:cons (make-atom-cst 'locally origin)
+                           body-cst)
+                 new-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting SYMBOL-MACROLET.
 
-(defmethod convert-special
-    ((head (eql 'symbol-macrolet)) cst env system)
+(defmethod convert-special (client (head (eql 'symbol-macrolet)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (symbol-macrolet-cst definitions-cst . body-cst) cst
     (declare (ignore symbol-macrolet-cst))
-    (let ((new-env env))
+    (let ((new-environment environment))
       (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
             do (cst:db definition-origin (name-cst expansion-cst)
                    (cst:first remaining)
                  (let ((name (cst:raw name-cst))
                        (expansion (cst:raw expansion-cst)))
-                   (setf new-env
-                         (cleavir-env:add-local-symbol-macro
-                          new-env name expansion)))))
+                   (setf new-environment
+                         (trucler:add-local-symbol-macro
+                          client new-environment name expansion)))))
       (with-preserved-toplevel-ness
-        (convert (cst:cons (make-atom-cst 'locally origin)
+        (convert client
+                 (cst:cons (make-atom-cst 'locally origin)
                            body-cst
                            :source origin)
-                 new-env system)))))
+                 new-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FUNCTION.
 ;;;
 
-(defun convert-named-function (name-cst environment system)
-  (let ((info (function-info environment name-cst)))
-    (convert-function-reference name-cst info environment system)))
+(defun convert-named-function (client name-cst environment)
+  (let ((info (describe-function client environment (cst:raw name-cst))))
+    (convert-function-reference client name-cst info environment)))
 
-(defun convert-lambda-function (lambda-form-cst env system)
-  (convert-code (cst:second lambda-form-cst)
-                (cst:rest (cst:rest lambda-form-cst)) env system
-                :origin (cst:source lambda-form-cst)))
+(defun convert-lambda-function (client lambda-form-cst environment)
+  (convert-code
+   client
+   (cst:second lambda-form-cst)
+   (cst:rest (cst:rest lambda-form-cst))
+   environment))
 
 (defun check-function-syntax (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
@@ -553,46 +607,129 @@
            (error 'function-argument-must-be-function-name-or-lambda-expression
                   :cst function-name-cst)))))
 
-(defmethod convert-special ((symbol (eql 'function)) cst env system)
+(defmethod convert-special (client (symbol (eql 'function)) cst environment)
   (check-function-syntax cst)
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function-cst))
     (let ((result (if (proper-function-name-p name-cst)
-                      (convert-named-function name-cst env system)
-                      (convert-lambda-function name-cst env system))))
+                      (convert-named-function client
+                                              name-cst
+                                              environment)
+                      (convert-lambda-function client
+                                               name-cst
+                                               environment))))
       (reinitialize-instance result :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting THE.
-;;;
 
-(defmethod convert-special
-    ((symbol (eql 'the)) cst environment system)
+;;; Given a type in values position (i.e. argument to THE or return
+;;; value of a function type), return three values: a list of REQUIRED
+;;; types, a list of OPTIONAL types, and a REST type, and whether a
+;;; REST was present.  e.g. (values integer &optional cons &rest
+;;; symbol) => (INTEGER), (CONS), SYMBOL, T
+
+(defun parse-values-type (values-type)
+  (let ((original-values-type values-type))
+    (cond
+      ((and (consp values-type) (eq (car values-type) 'values))
+       (setf values-type (rest values-type))
+       (values
+        (loop while (and (consp values-type)
+                         (not (find (car values-type)
+                                    '(&optional &rest))))
+              collect (pop values-type))
+        (when (eq (car values-type) '&optional)
+          (pop values-type)
+          (loop while (and (consp values-type)
+                           (not (eq (car values-type) '&rest)))
+                collect (pop values-type)))
+        (when (eq (car values-type) '&rest)
+          (unless (null (cddr values-type))
+            (error 'values-&rest-syntax :expr original-values-type))
+          (second values-type))
+        (eq (car values-type) '&rest)))
+      (t (values (list values-type) nil nil nil)))))
+
+;;; Given results from parse-values-type, insert "fudginess" for
+;;; CL:THE semantics. The fudginess is in the number of values: the
+;;; form in a THE can return a different number of values than are
+;;; specified in the type, but we would like to represent types more
+;;; exactly for analysis.
+(defun fudge-values-type (req opt rest restp)
+  ;; to allow too many values, just force a &rest iff unspecified
+  (unless restp (setf rest 't))
+  ;; too few values is more difficult
+  ;; any values not returned by the THE form are considered NIL,
+  ;; so if a "required" type includes NIL it could also be no-value
+  ;; and on the flipside, if a type does NOT include NIL the form
+  ;; must actually return a value for it.
+  ;; Therefore, we can just make all types on the end of REQ that
+  ;; do not include NIL optional.
+  ;; A further complication is that, since this is compile-time,
+  ;; some types may not be defined enough for TYPEP to work
+  ;; (e.g. SATISFIES with an undefined function) as mentioned in
+  ;; CLHS deftype. Therefore we use SUBTYPEP instead of TYPEP.
+  ;; We have, also according to that page, the opportunity to
+  ;; signal a warning and ignore the declaration instead, but
+  ;; that requires more intimacy with the implementation type
+  ;; system than we presently have.
+  (let* ((lastpos (position-if-not
+                   (lambda (type)
+                     (multiple-value-bind (subtype-p valid-p)
+                         (subtypep 'null type)
+                       (or subtype-p (not valid-p))))
+                   req
+                   :from-end t))
+         ;; if we found something, we need the next position
+         ;; for the next bit. if we didn't, zero
+         ;; E.g. (values integer list) => lastpos = 1
+         (lastpos (if lastpos (1+ lastpos) 0))
+         ;; and new-opt = (list)
+         (new-opt (nthcdr lastpos req))
+         ;; and new-req = (integer)
+         (new-req (ldiff req new-opt)))
+    (setf req new-req
+          opt (append new-opt opt)))
+  (values req opt rest))
+
+;;; the-values-components: compose the above two functions.
+(defun the-values-components (values-type)
+  (multiple-value-call #'fudge-values-type
+    (parse-values-type values-type)))
+
+(defmethod convert-special (client (symbol (eql 'the)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
   (cst:db origin (the-cst value-type-cst form-cst) cst
     (declare (ignore the-cst))
-    (type-wrap (convert form-cst environment system)
-               (cleavir-env:parse-values-type-specifier
-                (cst:raw value-type-cst)
-                environment system)
-               origin environment system)))
+    (multiple-value-bind (req opt rest)
+        (the-values-components (cst:raw value-type-cst))
+      ;; We don't bother collapsing THE forms for user code.
+      (cleavir-ast:make-ast 'cleavir-ast:the-ast
+        :form-ast (convert client form-cst environment)
+        :required req
+        :optional opt
+        :rest rest))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting MULTIPLE-VALUE-PROG1.
 
 (defmethod convert-special
-    ((symbol (eql 'multiple-value-prog1)) cst environment system)
+    (client (symbol (eql 'multiple-value-prog1)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-prog1-cst first-cst . rest-cst) cst
     (declare (ignore multiple-value-prog1-cst))
-    (cleavir-ast:make-multiple-value-prog1-ast
-     (convert first-cst environment system)
-     (convert-sequence rest-cst environment system)
-     :origin origin)))
+    (cleavir-ast:make-ast 'cleavir-ast:multiple-value-prog1-ast
+      :first-form-ast (convert client
+                       first-cst
+                       environment)
+      :form-asts (convert-sequence client
+                  rest-cst
+                  environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -602,36 +739,43 @@
 ;;; Implementations should probably convert this in terms of
 ;;; CLEAVIR-PRIMOP:MULTIPLE-VALUE-CALL.
 (defmethod convert-special
-    ((symbol (eql 'multiple-value-call)) cst environment system)
-  (declare (ignore environment system))
+    (client (symbol (eql 'multiple-value-call)) cst environment)
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :cst cst))
 
-(defmethod convert-special
-    ((symbol (eql 'unwind-protect)) cst environment system)
-  (declare (ignore environment system))
+(defmethod convert-special (client (symbol (eql 'unwind-protect)) cst environment)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (cst:db origin (unwind-protect-cst protected-form-cst . cleanup-form-csts) cst
+    (declare (ignore unwind-protect-cst))
+    (let ((cleanup-thunk-cst
+            (cst:cons (cst:cst-from-expression 'lambda)
+                      (cst:cons (cst:cst-from-expression '())
+                            cleanup-form-csts))))
+      (cleavir-ast:make-ast 'cleavir-ast:unwind-protect-ast
+        :protected-form-ast (convert client
+                             protected-form-cst
+                             environment)
+        :cleanup-thunk-ast (convert client
+                            cleanup-thunk-cst
+                            environment)))))
+
+(defmethod convert-special (client (symbol (eql 'catch)) cst environment)
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :cst cst))
 
-(defmethod convert-special
-    ((symbol (eql 'catch)) cst environment system)
-  (declare (ignore environment system))
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (error 'no-default-method :operator symbol :cst cst))
-
-(defmethod convert-special
-    ((symbol (eql 'throw)) cst environment system)
-  (declare (ignore environment system))
+(defmethod convert-special (client (symbol (eql 'throw)) cst environment)
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
   (error 'no-default-method :operator symbol :cst cst))
 
-(defmethod convert-special
-    ((symbol (eql 'progv)) cst environment system)
-  (declare (ignore environment system))
+(defmethod convert-special (client (symbol (eql 'progv)) cst environment)
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 nil)
   (error 'no-default-method :operator symbol :cst cst))
@@ -641,8 +785,7 @@
 ;;; Converting SETQ.
 ;;;
 
-(defmethod convert-special
-    ((symbol (eql 'setq)) cst environment system)
+(defmethod convert-special (client (symbol (eql 'setq)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (unless (oddp (length (cst:raw cst)))
     (error 'setq-must-have-even-number-of-arguments :cst cst))
@@ -653,43 +796,48 @@
                             do (error 'setq-var-must-be-symbol
                                       :cst variable-cst)
                           collect (convert-elementary-setq
-                                   variable-cst form-cst environment system))))
-    (process-progn form-asts (cst:source cst))))
+                                   client
+                                   variable-cst
+                                   form-cst
+                                   environment))))
+    (process-progn form-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LET.
 ;;;
 
-(defmethod convert-special
-    ((symbol (eql 'let)) cst environment system)
-  (convert-let cst environment system))
+(defmethod convert-special (client (symbol (eql 'let)) cst environment)
+  (convert-let client cst environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LET*.
 ;;;
 
-(defmethod convert-special
-    ((symbol (eql 'let*)) cst environment system)
-  (convert-let* cst environment system))
+(defmethod convert-special (client (symbol (eql 'let*)) cst environment)
+  (convert-let* client cst environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LOCALLY.
 ;;;
 
-(defmethod convert-special
-    ((symbol (eql 'locally)) cst environment system)
+(defmethod convert-special (client (symbol (eql 'locally)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (locally-cst . body-forms-cst) cst
     (declare (ignore locally-cst))
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations
-                system (cleavir-env:declarations environment) declaration-csts))
-             (new-env (augment-environment-with-declarations
-                       environment system canonical-declaration-specifiers)))
+               ;; FIXME: replace the second argument with the result
+               ;; of calling DECLARATIONS in the global environment,
+               ;; once that protocol is in place.
+               (cst:canonicalize-declarations client '() declaration-csts))
+             (new-environment
+               (augment-environment-with-declarations
+                client environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
-          (process-progn (convert-sequence forms-cst new-env system) origin))))))
+          (process-progn (convert-sequence client
+                                           forms-cst
+                                           new-environment)))))))

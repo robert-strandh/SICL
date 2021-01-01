@@ -1,8 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem sicl-hir-transformations
-  :depends-on (#:cleavir2-hir
-               #:cleavir2-ast-to-hir
+  :depends-on (#:cleavir-hir
+               #:cleavir-ast-to-hir
                #:sicl-compiler-base
                #:sicl-run-time)
   :serial t

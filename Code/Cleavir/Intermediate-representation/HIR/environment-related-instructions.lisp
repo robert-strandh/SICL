@@ -7,14 +7,9 @@
 ;;; This instruction takes as the first input, a lexical location
 ;;; holding the output of an ENCLOSE-INSTRUCTION.  The rest of the
 ;;; inputs initialize the closure with their values.
-(defclass initialize-closure-instruction (one-successor-mixin
-                                          side-effect-mixin instruction)
+(defclass initialize-closure-instruction (instruction one-successor-mixin
+                                          side-effect-mixin)
   ())
-
-(defun make-initialize-closure-instruction (closure values)
-  (make-instance 'initialize-closure-instruction
-    :inputs (list* closure values)
-    :outputs '()))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -24,15 +19,9 @@
 ;;; a lexical location that will hold the cell being created by the
 ;;; instruction.
 
-(defclass create-cell-instruction (one-successor-mixin
-                                   allocation-mixin instruction)
+(defclass create-cell-instruction (instruction one-successor-mixin
+                                   allocation-mixin)
   ())
-
-(defun make-create-cell-instruction (output &optional successor)
-  (make-instance 'create-cell-instruction
-    :inputs '()
-    :outputs (list output)
-    :successors (if (null successor) nil (list successor))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -52,15 +41,8 @@
 ;;; instruction has a single output, which is a dynamic lexical
 ;;; location.
 
-(defclass fetch-instruction (one-successor-mixin instruction)
+(defclass fetch-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-fetch-instruction
-    (env-input index-input output &optional successor)
-  (make-instance 'fetch-instruction
-    :inputs (list env-input index-input)
-    :outputs (list output)
-    :successors (if (null successor) nil (list successor))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,14 +58,8 @@
 ;;; single output, namely a dynamic lexical location to hold the value
 ;;; of the variable.
 
-(defclass read-cell-instruction (one-successor-mixin instruction)
+(defclass read-cell-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-read-cell-instruction (input output &optional successor)
-  (make-instance 'read-cell-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (if (null successor) nil (list successor))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -98,14 +74,8 @@
 ;;; input is a constant input or a dynamic lexical input holding the
 ;;; value to write to the cell.  This instruction has no outputs.
 
-(defclass write-cell-instruction (one-successor-mixin side-effect-mixin instruction)
+(defclass write-cell-instruction (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-write-cell-instruction (cell-input value-input &optional successor)
-  (make-instance 'write-cell-instruction
-    :inputs (list cell-input value-input)
-    :outputs '()
-    :successors (if (null successor) nil (list successor))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -124,13 +94,8 @@
 ;;; dynamic lexical location remains valid and is subject to register
 ;;; allocation.
 
-(defclass add-activation-record-instruction (one-successor-mixin instruction)
+(defclass add-activation-record-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-add-activation-record-instruction (env-input size-input env-output)
-  (make-instance 'add-activation-record-instruction
-    :inputs (list env-input size-input)
-    :outputs (list env-output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -147,13 +112,8 @@
 ;;; that the input dynamic lexical location remains valid and is
 ;;; subject to register allocation.
 
-(defclass remove-activation-record-instruction (one-successor-mixin instruction)
+(defclass remove-activation-record-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-remove-activation-record-instruction (env-input env-output)
-  (make-instance 'remove-activation-record-instruction
-    :inputs (list env-input)
-    :outputs (list env-output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -171,15 +131,8 @@
 ;;; output is a dynamic lexical location.
 
 (defclass load-from-static-environment-instruction
-    (one-successor-mixin instruction)
+    (instruction one-successor-mixin)
   ())
-
-(defun make-load-from-static-environment-instruction
-    (env-input offset-input output)
-  (make-instance 'load-from-static-environment-instruction
-    :inputs (list env-input offset-input)
-    :outputs (list output)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -198,11 +151,5 @@
 ;;; to be copied.
 
 (defclass store-to-static-environment-instruction
-    (one-successor-mixin instruction)
+    (instruction one-successor-mixin)
   ())
-
-(defun make-store-to-static-environment-instruction
-    (env-input offset-input value-input)
-  (make-instance 'store-to-static-environment-instruction
-    :inputs (list env-input offset-input value-input)
-    :outputs '()))

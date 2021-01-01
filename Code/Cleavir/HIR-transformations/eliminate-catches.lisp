@@ -15,16 +15,17 @@
      (lambda (instruction)
        ;; Update instruction dynenvs by zooming up the nesting until a
        ;; live dynenv is reached.
-       (do* ((dynenv (cleavir-ir:dynamic-environment instruction)
-                     (cleavir-ir:dynamic-environment dynenv-definer))
+       (do* ((dynenv (cleavir-ir:dynamic-environment-location instruction)
+                     (cleavir-ir:dynamic-environment-location dynenv-definer))
              (dynenv-definer (first (cleavir-ir:defining-instructions dynenv))
                              (first (cleavir-ir:defining-instructions dynenv))))
            ((not (dead-catch-p dynenv-definer))
-            (setf (cleavir-ir:dynamic-environment instruction) dynenv)))
+            (setf (cleavir-ir:dynamic-environment-location instruction) dynenv)))
        (when (dead-catch-p instruction)
          (push instruction death)))
      initial-instruction)
     (dolist (catch death)
       ;; Modify the flow graph.
       (cleavir-ir:bypass-instruction (first (cleavir-ir:successors catch)) catch))
+    (cleavir-ir:reinitialize-data initial-instruction)
     death))

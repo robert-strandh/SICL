@@ -80,7 +80,7 @@
 ;;;; parent.
 
 (defsystem :cleavir-ir
-  :depends-on (:cleavir-attributes :cleavir-meter)
+  :depends-on (:cleavir-meter)
   :serial t
   :components
   ((:file "packages")
@@ -89,7 +89,6 @@
    (:file "graph-modifications")
    (:file "instruction-mixin-classes")
    (:file "graph-instructions")
-   (:file "graphviz-drawing")
    (:file "map-instructions-arbitrary-order")
    (:file "set-predecessors")
    (:file "map-instructions")

@@ -9,4 +9,6 @@
   ((:file "packages")
    (:file "profiles")
    (:file "layout")
+   (:file "color")
+   (:file "labels")
    (:file "gui")))

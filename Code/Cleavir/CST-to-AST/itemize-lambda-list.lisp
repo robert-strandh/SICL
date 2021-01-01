@@ -29,8 +29,7 @@
 
 (defmethod items-from-parameter-group
     ((parameter-group cst:aux-parameter-group))
-  (loop for parameter in (cst:parameters parameter-group)
-        collect (list (cst:name parameter))))
+  '())
 
 ;;; Given a parsed lambda list, return a list of items.  There are as
 ;;; many items in the list as there are bindings in the lambda list.

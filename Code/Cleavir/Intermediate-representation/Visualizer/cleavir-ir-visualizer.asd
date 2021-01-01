@@ -3,6 +3,8 @@
 (defsystem #:cleavir-ir-visualizer
   :depends-on (#:cleavir-ir
                #:cleavir-hir
+               #:cleavir-mir
+               #:cleavir-lir
                #:mcclim
                #:clouseau)
   :serial t
@@ -15,5 +17,6 @@
    (:file "datum-position")
    (:file "datum-layout")
    (:file "control-arc-layout")
+   (:file "label")
    (:file "gui")
    (:file "commands")))

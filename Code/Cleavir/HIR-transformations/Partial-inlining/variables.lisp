@@ -35,6 +35,12 @@
 ;;; This variable contains the function DAG.
 (defvar *function-dag*)
 
+;;; This variable contains the map of ENCLOSE-INSTRUCTIONs to their destinies.
+(defvar *destinies-map*)
+
+;;; This variable keeps track of which INSTRUCTIONs affect the destinies-map.
+(defvar *destinies-worklist*)
+
 ;;; This variable keeps a list of all binding assignments introduced
 ;;; by the inliner.
 (defvar *binding-assignments*)

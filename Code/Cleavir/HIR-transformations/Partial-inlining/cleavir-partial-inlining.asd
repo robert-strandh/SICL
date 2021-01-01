@@ -14,5 +14,4 @@
    (:file "copy-function")
    (:file "inline-one-instruction")
    (:file "inline-function")
-   (:file "contify")
    (:file "full-inlining-pass")))

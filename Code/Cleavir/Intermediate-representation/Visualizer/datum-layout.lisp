@@ -11,7 +11,7 @@
         (- (datum-vertical-position (aref data (1+ index))) 31)))
 
 (defun fix-overlap-by-moving-down (data index)
-  (loop for i from index below (1- (length data))
+  (loop for i from index below (length data)
         while (overlap-with-next-p data (1- i))
         do (move-datum-down-to-avoid-overlap data i)))
 

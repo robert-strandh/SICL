@@ -3,16 +3,29 @@
 (defpackage #:cleavir-primop
   (:use)
   (:export
-   #:eq #:typeq #:typew #:the-typew #:case
+   #:fixnump
+   #:consp
+   #:characterp
+   #:single-float-p
+   #:standard-object-p
+   #:standard-object-class-of
+   #:eq
+   #:typeq
    #:car #:cdr #:rplaca #:rplacd
    #:fixnum-arithmetic
    #:fixnum-add
    #:fixnum-sub
+   #:fixnum-multiply
+   #:fixnum-divide
    #:fixnum-less
    #:fixnum-not-greater
    #:fixnum-greater
    #:fixnum-not-less
    #:fixnum-equal
+   #:fixnum-logand
+   #:fixnum-logior
+   #:fixnum-logxor
+   #:fixnum-lognot
    ;; Each of these operations takes a type argument in addition to
    ;; the normal argument(s) of the corresponding Common Lisp
    ;; function.  That type argument is the first one, and it is not
@@ -30,17 +43,16 @@
    #:float-cos
    #:float-sqrt
    #:coerce
-   #:slot-read #:slot-write
-   #:funcallable-slot-read #:funcallable-slot-write
+   #:nook-read #:nook-write
    #:aref #:aset
    #:call-with-variable-bound
    #:let-uninitialized
-   #:the
    #:funcall
    #:multiple-value-call
-   #:multiple-value-extract
    #:multiple-value-setq
    #:values
    #:unreachable
    #:ast
-   #:cst-to-ast))
+   #:cst-to-ast
+   #:char-code
+   #:code-char))

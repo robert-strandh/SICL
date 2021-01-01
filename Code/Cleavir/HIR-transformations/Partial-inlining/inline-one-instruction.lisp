@@ -10,10 +10,6 @@
 ;;; introduced cells are read-only locations.
 (defclass binding-assignment-instruction (cleavir-ir:assignment-instruction) ())
 
-;;; Don't do anything with binding assignments. We don't want to
-;;; disappear them.
-(defmethod copy-propagate-instruction ((instruction binding-assignment-instruction)))
-
 ;;; Remove data references to old enter and call instructions for.
 (defun disconnect-enter-call-data (enter-instruction call-instruction)
   (dolist (input (cleavir-ir:inputs call-instruction))
@@ -77,14 +73,6 @@
   (let ((new (find-in-mapping mapping output)))
     (cond ((not (null new)) new)
           ((not (local-location-p output)) output)
-          ;; NOTE/FIXME?: Values locations are not made into parameters.
-          ;; Therefore if inlining is stopped while a values location is live,
-          ;; the HIR will not be consistent.
-          ((typep output 'cleavir-ir:values-location)
-           (setf new (cleavir-ir:make-values-location))
-           (add-to-mapping mapping output new)
-           (setf (location-owner new) *target-enter-instruction*)
-           new)
           (t (setf new (cleavir-ir:make-lexical-location
                         (cleavir-ir:name output)))
              (add-to-mapping mapping output new)
@@ -105,6 +93,12 @@
     (setf (instruction-owner result) *target-enter-instruction*)
     result))
 
+(defmethod copy-instruction :around ((instruction cleavir-ir:funcall-instruction) mapping)
+  (let* ((result (call-next-method)))
+    (pushnew instruction *destinies-worklist*)
+    (pushnew result *destinies-worklist*)
+    result))
+
 (defmethod copy-instruction :around ((instruction binding-assignment-instruction) mapping)
   (let ((copy (call-next-method)))
     (push copy *binding-assignments*)
@@ -115,8 +109,9 @@
     :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
     :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
     :predecessors nil :successors nil
-    :dynamic-environment (translate-input
-                          (cleavir-ir:dynamic-environment instruction) mapping)))
+    :dynamic-environment-location
+    (translate-input
+     (cleavir-ir:dynamic-environment-location instruction) mapping)))
 
 (defmethod copy-instruction ((instruction cleavir-ir:enclose-instruction) mapping)
   (let ((new-enclose
@@ -125,8 +120,11 @@
            :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
            :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
            :predecessors nil :successors nil
-           :dynamic-environment (translate-input
-                                 (cleavir-ir:dynamic-environment instruction) mapping))))
+           :dynamic-environment-location
+           (translate-input
+            (cleavir-ir:dynamic-environment-location instruction) mapping))))
+    (pushnew instruction *destinies-worklist*)
+    (pushnew new-enclose *destinies-worklist*)
     ;; We hook things up like this so that the function DAG can be updated correctly.
     (setf (cleavir-ir:code new-enclose)
           (copy-function (cleavir-ir:code instruction) new-enclose mapping))
@@ -139,12 +137,12 @@
         ;; so the UNWIND-INSTRUCTION must be reduced to a LOCAL-UNWIND-INSTRUCTION.
         (let ((target (nth (cleavir-ir:unwind-index instruction)
                            (cleavir-ir:successors destination)))
-              (cleavir-ir:*origin* (cleavir-ir:origin instruction))
-              (cleavir-ir:*policy* (cleavir-ir:policy instruction))
-              (cleavir-ir:*dynamic-environment*
-                (translate-input (cleavir-ir:dynamic-environment instruction)
+              (dynamic-environment-location
+                (translate-input (cleavir-ir:dynamic-environment-location instruction)
                                  mapping)))
-          (cleavir-ir:make-local-unwind-instruction target))
+          (make-instance 'cleavir-ir:nop-instruction
+            :successor target
+            :dynamic-environment-location dynamic-environment-location))
         ;; We are still actually unwinding, but need to ensure the
         ;; DESTINATION is hooked up correctly.
         (let* ((inputs (cleavir-ir:inputs instruction))
@@ -154,18 +152,18 @@
           (cleavir-ir:clone-instruction instruction
             :inputs new-inputs :outputs nil
             :predecessors nil :successors nil
-            :dynamic-environment (translate-input
-                                  (cleavir-ir:dynamic-environment instruction) mapping)
+            :dynamic-environment-location
+            (translate-input
+             (cleavir-ir:dynamic-environment-location instruction) mapping)
             :destination destination)))))
 
 ;;; See INLINE-ONE-INSTRUCTION method, below.
 (defmethod copy-instruction ((instruction cleavir-ir:return-instruction) mapping)
-  (let ((cleavir-ir:*origin* (cleavir-ir:origin instruction))
-        (cleavir-ir:*policy* (cleavir-ir:policy instruction))
-        (cleavir-ir:*dynamic-environment*
+  (let ((dynamic-environment-location
           (translate-input
-           (cleavir-ir:dynamic-environment instruction) mapping)))
-    (cleavir-ir:make-nop-instruction nil)))
+           (cleavir-ir:dynamic-environment-location instruction) mapping)))
+    (make-instance 'cleavir-ir:nop-instruction
+      :dynamic-environment-location dynamic-environment-location)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -238,40 +236,38 @@
          (alt-successors (rest (cleavir-ir:successors successor-instruction)))
          (new-closures (loop for succ in alt-successors
                              collect (cleavir-ir:new-temporary)))
-         (new-calls (loop with cleavir-ir:*origin* = (cleavir-ir:origin call-instruction)
-                          with cleavir-ir:*policy* = (cleavir-ir:policy call-instruction)
-                          with cleavir-ir:*dynamic-environment*
-                            = (cleavir-ir:dynamic-environment call-instruction)
+         (new-calls (loop with dynamic-environment-location
+                            = (cleavir-ir:dynamic-environment-location call-instruction)
                           for succ in alt-successors
                           for new-closure in new-closures
                           collect
                           ;; The new CALL-INSTRUCTION is like the previous one, except that
                           ;; the first input is the new closure to be called.
-                          (cleavir-ir:make-funcall-instruction
-                           (cons new-closure (rest (cleavir-ir:inputs call-instruction)))
-                           (cleavir-ir:outputs call-instruction)
-                           (first (cleavir-ir:successors call-instruction)))))
-         (new-enters (loop with cleavir-ir:*origin* = (cleavir-ir:origin enter-instruction)
-                           with cleavir-ir:*policy* = (cleavir-ir:policy enter-instruction)
-                           with cleavir-ir:*dynamic-environment*
-                             = (cleavir-ir:dynamic-environment enter-instruction)
+                          (make-instance 'cleavir-ir:funcall-instruction
+                            :inputs (cons new-closure (rest (cleavir-ir:inputs call-instruction)))
+                            :outputs (cleavir-ir:outputs call-instruction)
+                            :successor (first (cleavir-ir:successors call-instruction))
+                            :dynamic-environment-location dynamic-environment-location)))
+         (new-enters (loop with dynamic-environment-location
+                             = (cleavir-ir:dynamic-environment-location enter-instruction)
                            for succ in alt-successors
                            collect
-                           (cleavir-ir:make-enter-instruction
-                            (cleavir-ir:lambda-list enter-instruction)
-                            cleavir-ir:*dynamic-environment*
-                            :successor succ
-                            :origin (cleavir-ir:origin enter-instruction))))
-         (new-encloses (loop with cleavir-ir:*origin* = (cleavir-ir:origin enclose-instruction)
-                             with cleavir-ir:*policy* = (cleavir-ir:policy enclose-instruction)
-                             with cleavir-ir:*dynamic-environment*
-                               = (cleavir-ir:dynamic-environment enclose-instruction)
+                           (make-instance 'cleavir-ir:enter-instruction
+                            :lambda-list (cleavir-ir:lambda-list enter-instruction)
+                            :dynamic-environment-location dynamic-environment-location
+                            :successor succ)))
+         (new-encloses (loop with dynamic-environment-location
+                               = (cleavir-ir:dynamic-environment-location enclose-instruction)
                              for succ in alt-successors
                              for closure in new-closures
                              for call in new-calls
                              for enter in new-enters
                              collect
-                             (cleavir-ir:make-enclose-instruction closure call enter))))
+                             (make-instance 'cleavir-ir:enclose-instruction
+                               :output closure
+                               :successor call
+                               :code enter
+                               :dynamic-environment-location dynamic-environment-location))))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (add-multiple-successor-instruction-before-instruction
      new-instruction enclose-instruction (list* enclose-instruction new-encloses))

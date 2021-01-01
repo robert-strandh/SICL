@@ -19,8 +19,7 @@
 			 :test #'eq))))
 
 (defmethod (setf inputs) :after (new-inputs instruction)
-  ;; Add this instruction as a using instruction to the existing
-  ;; inputs.
+  ;; Add this instruction as a using instruction to the new inputs.
   (loop for input in (inputs instruction)
 	do (push instruction (using-instructions input))))
 
@@ -55,8 +54,7 @@
 			 :test #'eq))))
 
 (defmethod (setf outputs) :after (new-outputs instruction)
-  ;; Add this instruction as a defining instruction to the existing
-  ;; outputs.
+  ;; Add this instruction as a defining instruction to the new outputs.
   (loop for output in (outputs instruction)
 	do (push instruction (defining-instructions output))))
 
@@ -74,32 +72,40 @@
   (push instruction (defining-instructions new))
   (values))
 
-;;; Default value, since it can be shared by several instructions
-;;; during generation, similar to the AST case.
-(defvar *policy*)
+(defgeneric dynamic-environment-location (instruction))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Variable *ORIGIN*. Default for :origin initarg.
-;;; This is useful because almost every instruction needs an origin, but they're
-;;; shared very heavily and generated all over the place.
+(defgeneric (setf dynamic-environment-location) (new-location instruction))
 
-(defvar *origin*)
+(defmethod (setf dynamic-environment-location) :before
+    (new-location instruction)
+  ;; Remove this instruction as a using instruction from the
+  ;; existing dynamic environment.
+  (when (or (slot-boundp instruction '%dynamic-environment-location)
+            (null (dynamic-environment-location instruction)))
+    (let ((location (dynamic-environment-location instruction)))
+      (setf (using-instructions location)
+            (remove instruction (using-instructions location)
+		    :test #'eq)))))
 
-;;; Default value
-(defvar *dynamic-environment*)
+(defmethod (setf dynamic-environment-location) :after (new-location instruction)
+  ;; Add this instruction as a defining instruction to the new dynamic environment.
+  (push instruction (using-instructions new-location)))
 
 (defclass instruction ()
   ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
    (%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :accessor inputs)
    (%outputs :initform '() :initarg :outputs :accessor outputs)
-   (%policy :initform *policy* :initarg :policy :accessor policy)
-   (%dynamic-environment :initform *dynamic-environment*
-                         :initarg :dynamic-environment :accessor dynamic-environment)
-   (%origin :initform (if (boundp '*origin*) *origin* nil) :initarg :origin :accessor origin)))
+   (%dynamic-environment-location
+    :initarg :dynamic-environment-location
+    :accessor dynamic-environment-location)))
 
-(defmethod initialize-instance :after ((obj instruction) &key)
+(defmethod initialize-instance :after
+    ((obj instruction) &key input output successor dynamic-environment-location)
+  (let ((inputs (if (null input) (inputs obj) (list input)))
+        (outputs (if (null output) (outputs obj) (list output)))
+        (successors (if (null successor) (successors obj) (list successor))))
+    (reinitialize-instance obj :inputs inputs :outputs outputs :successors successors))
   (unless (and (listp (successors obj))
 	       (every (lambda (successor)
 			(typep successor 'instruction))
@@ -112,6 +118,9 @@
   ;; Add this instruction as a using instruction to its inputs.
   (loop for input in (inputs obj)
 	do (push obj (using-instructions input)))
+  ;; Add this instruction as a using instruction to its dynamic environment.
+  (unless (null dynamic-environment-location)
+    (push obj (using-instructions dynamic-environment-location)))
   ;; Add this instruction as an assigning instruction to its outputs.
   (loop for output in (outputs obj)
 	do (push obj (defining-instructions output)))
@@ -129,9 +138,7 @@
         :outputs (outputs instruction)
         :predecessors (predecessors instruction)
         :successors (successors instruction)
-        :dynamic-environment (dynamic-environment instruction)
-        :origin (origin instruction)
-        :policy (policy instruction)))
+        :dynamic-environment-location (dynamic-environment-location instruction)))
 
 (defun clone-instruction (instruction &rest initargs &key &allow-other-keys)
   (apply #'make-instance (class-of instruction) (append initargs (clone-initargs instruction))))

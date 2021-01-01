@@ -89,8 +89,8 @@
                :sicl-conditions-support
                :sicl-environment-support
                :closer-mop
-               :cleavir2-cst-to-ast
-               :cleavir2-ast-transformations
+               :cleavir-cst-to-ast
+               :cleavir-ast-transformations
                :cleavir-meter
                :sicl-evaluation-and-compilation-support
                :sicl-data-and-control-flow-support

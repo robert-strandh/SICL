@@ -5,7 +5,7 @@
 (defmethod instruction-may-be-removed-p (instruction)
   (and (= (length (cleavir-ir:successors instruction)) 1)
        (loop for output in (cleavir-ir:outputs instruction)
-	     always (null (cleavir-ir:using-instructions output)))))
+             always (null (cleavir-ir:using-instructions output)))))
 
 (defmethod instruction-may-be-removed-p
     ((instruction cleavir-ir:side-effect-mixin))

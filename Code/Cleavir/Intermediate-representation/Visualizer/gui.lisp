@@ -25,7 +25,7 @@
 (defun node-label (node)
   (if (typep node 'cleavir-ir:enter-instruction)
       "enter"
-      (cleavir-ir-graphviz:label node)))
+      (label node)))
 
 (defun node-width (node pane)
   (+ (clim:text-size pane (node-label node)) 5))
@@ -61,7 +61,7 @@
         append enter-instructions))
 
 (defun layout-program (enter-instruction pane)
-  (loop for hpos = 10 then (+ hpos (+ rack-width horizontal-node-separation))
+  (loop for hpos = 50 then (+ hpos (+ rack-width horizontal-node-separation))
         for rack = (list enter-instruction) then (next-rack rack)
         for dimensions = (loop for inst in rack
                                collect (multiple-value-bind (width height)
@@ -115,7 +115,7 @@
                           minimize (instruction-horizontal-position instruction)))
           (min-vpos (loop for instruction in instructions
                           minimize (instruction-vertical-position instruction))))
-      (let ((hpos (+ min-hpos 120)))
+      (let ((hpos (+ min-hpos 300)))
         (setf (datum-position datum) (cons hpos (/ (+ max-vpos min-vpos) 2)))))))
 
 (defun layout-inputs-and-outputs (instruction)
@@ -193,19 +193,12 @@
                        :align-x :center :align-y :center
                        :ink clim:+dark-green+))))
 
-(defmethod draw-datum ((datum cleavir-ir:values-location) pane)
+(defmethod draw-datum ((datum cleavir-ir:constant-input) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos
                      (floor datum-width 2) (floor datum-height 2)
-                     :filled nil)
-    (clim:with-text-size (pane :small)
-      (clim:draw-text* pane "values"
-                       hpos vpos
-                       :align-x :center :align-y :center
-                       :ink clim:+dark-blue+))))
-
-(defmethod draw-datum ((datum cleavir-ir:constant-input) pane)
-  (multiple-value-bind (hpos vpos) (datum-position datum)
+                     :ink clim:+pink+
+                     :filled t)
     (clim:draw-oval* pane hpos vpos
                      (floor datum-width 2) (floor datum-height 2)
                      :filled nil)
@@ -217,12 +210,16 @@
                          :align-x :center :align-y :center
                        :ink clim:+dark-blue+)))))
 
-(defmethod draw-datum ((datum cleavir-ir:load-time-value-input) pane)
+(defmethod draw-datum ((datum cleavir-ir:immediate-input) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos
                      (floor datum-width 2) (floor datum-height 2)
+                     :ink clim:+yellow+
+                     :filled t)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
                      :filled nil)
-    (let ((label (princ-to-string (cleavir-ir:form datum))))
+    (let ((label (princ-to-string (cleavir-ir:value datum))))
       (clim:with-text-size (pane :small)
         (clim:draw-text* pane
                          (subseq label 0 (min 15 (length label)))
@@ -230,17 +227,57 @@
                          :align-x :center :align-y :center
                        :ink clim:+dark-blue+)))))
 
+(defmethod draw-datum ((datum cleavir-ir:raw-integer) pane)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :ink clim:+light-green+
+                     :filled t)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)))
+
+(defmethod draw-datum ((datum cleavir-ir:register-location) pane)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :ink clim:+light-blue+
+                     :filled t)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)
+    (clim:with-text-size (pane :small)
+      (clim:draw-text* pane
+                       (cleavir-ir:name datum)
+                       hpos vpos
+                       :align-x :center :align-y :center
+                       :ink clim:+dark-blue+))))
+
+(defvar *dynamic-environment-locations*)
+
 (defun draw-data (pane)
   (loop for datum being each hash-key of *data-position-table*
-        do (draw-datum datum pane)
-           (loop for instruction in (cleavir-ir:defining-instructions datum)
-                 do (draw-data-edge instruction datum pane clim:+red+))
-           (loop for instruction in (cleavir-ir:using-instructions datum)
-                 do (draw-data-edge instruction datum pane clim:+dark-green+))))
+        do (unless (member datum *dynamic-environment-locations*)
+             (draw-datum datum pane)
+             (loop for instruction in (cleavir-ir:defining-instructions datum)
+                   do (draw-data-edge instruction datum pane clim:+red+))
+             (loop for instruction in (cleavir-ir:using-instructions datum)
+                   do (draw-data-edge instruction datum pane clim:+dark-green+)))))
+
+(defun find-all-dynamic-environment-locations (initial-instruction)
+  (let ((result '()))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (pushnew (cleavir-ir:dynamic-environment-location instruction)
+                result))
+     initial-instruction)
+    result))
 
 (defun display-hir (frame pane)
   (let ((*instruction-position-table* (make-hash-table :test #'eq))
-        (*data-position-table* (make-hash-table :test #'eq)))
+        (*data-position-table* (make-hash-table :test #'eq))
+        (*dynamic-environment-locations*
+          (find-all-dynamic-environment-locations (initial-instruction frame))))
     (multiple-value-bind (*base-width* *base-height*)
         (clim:text-size pane "enclose")
       (layout-program (initial-instruction frame) pane)
@@ -250,8 +287,13 @@
       (draw-data pane)
       (draw-arcs pane (make-arcs pane *instruction-position-table*)))))
 
-(defun visualize (initial-instruction)
+(defun visualize (initial-instruction &key new-process-p)
   (cleavir-ir:reinitialize-data initial-instruction)
-  (clim:run-frame-top-level
-   (clim:make-application-frame 'visualizer
-                                :initial-instruction initial-instruction)))
+  (let ((frame (clim:make-application-frame
+                'visualizer
+                :initial-instruction initial-instruction)))
+    (flet ((run ()
+             (clim:run-frame-top-level frame)))
+      (if new-process-p
+          (clim-sys:make-process #'run)
+          (run)))))

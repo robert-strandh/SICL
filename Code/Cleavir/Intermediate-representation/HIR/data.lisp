@@ -7,7 +7,7 @@
 ;;; Only Common Lisp objects are used as data in the high-level
 ;;; intermediate representation, but they can be BOXED or UNBOXED. 
 ;;;
-;;; Three kinds of data are possible in the high-level intermediate
+;;; Two kinds of data are possible in the high-level intermediate
 ;;; representation:
 ;;;
 ;;;   * CONSTANT-INPUT.  This type of data can only be used as input
@@ -17,11 +17,6 @@
 ;;;   * LEXICAL-LOCATION.  This type of data can be used both as input
 ;;;     and output to instructions.  It holds a single Lisp datum, but
 ;;;     that datum can be BOXED or UNBOXED.
-;;;
-;;;   * VALUES-LOCATION.  This type of data can be used both as input
-;;;     and output to instructions.  It holds a an arbitrary number of
-;;;     Lisp values.  The number of values it holds is statically
-;;;     unknown.
 ;;;
 ;;; An instruction I REFERS TO a lexical location L if and only if L
 ;;; is either one of the inputs or one of the outputs of I.
@@ -78,25 +73,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum class VALUES-LOCATION.
-
-(defclass values-location (datum)
-  ())
-
-(defun make-values-location ()
-  (make-instance 'values-location))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Helper function VARIABLE-P.
-
-(declaim (inline variable-p))
-(defun variable-p (datum)
-  (typep datum '(or lexical-location
-                    values-location)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Datum class IMMEDIATE-INPUT.
 ;;;
 ;;; The IMMEDIATE-INPUT datum corresponds to a raw machine interger
@@ -116,16 +92,3 @@
 (defun make-immediate-input (value)
   (make-instance 'immediate-input
     :value value))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class LOAD-TIME-VALUE-INPUT.
-
-(defclass load-time-value-input (datum)
-  ((%form :initarg :form :reader form)
-   (%read-only-p :initarg :read-only-p :reader read-only-p)))
-
-(defun make-load-time-value-input (form &optional read-only-p)
-  (make-instance 'load-time-value-input
-    :form form
-    :read-only-p read-only-p))

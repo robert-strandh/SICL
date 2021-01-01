@@ -31,7 +31,7 @@
 
 (define-visualizer-command (com-inspect-instruction :name t)
     ((instruction 'cleavir-ir:instruction))
-  (clouseau:inspector instruction))
+  (clouseau:inspect instruction))
 
 (clim:define-presentation-to-command-translator inspect-instruction
     (cleavir-ir:instruction
@@ -99,7 +99,7 @@
 
 (define-visualizer-command (com-inspect-datum :name t)
     ((instruction 'cleavir-ir:datum))
-  (clouseau:inspector instruction))
+  (clouseau:inspect instruction))
 
 (clim:define-presentation-to-command-translator inspect-datum
     (cleavir-ir:datum

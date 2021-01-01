@@ -1,8 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-hir-to-mir
-  :depends-on (#:cleavir2-hir
-               #:cleavir2-mir
+  :depends-on (#:cleavir-hir
+               #:cleavir-mir
                #:sicl-compiler-base)
   :serial t
   :components

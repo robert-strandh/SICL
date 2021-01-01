@@ -12,7 +12,7 @@
 ;;; The index is row-major.
 ;;; There is a single output, the read value.
 
-(defclass aref-instruction (one-successor-mixin instruction)
+(defclass aref-instruction (instruction one-successor-mixin)
   ((%element-type :initarg :element-type :reader element-type)
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))
@@ -33,7 +33,7 @@
 ;;; No outputs.
 
 (defclass aset-instruction
-    (one-successor-mixin side-effect-mixin instruction)
+    (instruction one-successor-mixin side-effect-mixin)
   ((%element-type :initarg :element-type :reader element-type)
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))

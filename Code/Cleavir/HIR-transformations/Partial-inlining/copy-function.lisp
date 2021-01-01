@@ -5,8 +5,6 @@
 (defun ensure-copy (mapping datum new-owner)
   (or (find-in-mapping mapping datum)
       (let ((new (typecase datum
-                   (cleavir-ir:values-location
-                    (cleavir-ir:make-values-location))
                    (cleavir-ir:lexical-location
                     (cleavir-ir:make-lexical-location
                      (cleavir-ir:name datum)))
@@ -75,7 +73,7 @@
           (translate-outputs-for-copy (cleavir-ir:outputs enter)
                                       external-map internal-map stack))
     ;; Make sure the dynamic environment of the enter is correct as well.
-    (setf (cleavir-ir:dynamic-environment *new-enter*)
+    (setf (cleavir-ir:dynamic-environment-location *new-enter*)
           ;; This output will have been translated same as the others.
           (cleavir-ir:dynamic-environment-output *new-enter*))
     ;; First loop: Copy all instructions in the function, but leave
@@ -85,14 +83,18 @@
        (unless (eq instruction enter) ; FIXME: Ugly.
          (let* ((inputs (cleavir-ir:inputs instruction))
                 (outputs (cleavir-ir:outputs instruction))
-                (dynamic-environment (cleavir-ir:dynamic-environment instruction))
+                (dynamic-environment (cleavir-ir:dynamic-environment-location instruction))
                 (new-inputs (translate-inputs-for-copy inputs external-map internal-map stack))
                 (new-outputs (translate-outputs-for-copy outputs external-map internal-map stack))
                 (new-dynamic-environment
                   (translate-input-for-copy dynamic-environment external-map internal-map stack))
                 (copy (cleavir-ir:clone-instruction instruction
                         :inputs new-inputs :outputs new-outputs
-                        :dynamic-environment new-dynamic-environment)))
+                        :dynamic-environment-location new-dynamic-environment)))
+           (typecase instruction
+             ((or cleavir-ir:enclose-instruction cleavir-ir:funcall-instruction)
+              (pushnew instruction *destinies-worklist*)
+              (pushnew copy *destinies-worklist*)))
            (disconnect-predecessor copy)
            (push copy copies)
            (setf (instruction-owner copy) *new-enter*)

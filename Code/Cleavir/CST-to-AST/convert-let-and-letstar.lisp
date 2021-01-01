@@ -19,7 +19,7 @@
              (not (cst:null (cst:rest (cst:rest cst)))))
          (error 'binding-must-have-length-one-or-two :cst cst))
         (t
-         (error 'variable-must-be-a-symbol :cst (cst:first cst)))))
+         (error 'variable-must-be-a-symbol :cst cst))))
 
 ;;; Check the syntax of the bindings of a LET or a LET* form.  If the
 ;;; syntax is incorrect, signal an error and propose a restart for
@@ -34,7 +34,7 @@
 ;;; We convert a LET form CST by transforming it into an equivalent
 ;;; LAMBDA form CST.
 
-(defmethod convert-let (cst environment system)
+(defmethod convert-let (client cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (let-cst bindings-cst . body-forms-cst) cst
@@ -51,24 +51,23 @@
                                             (make-atom-cst nil origin)
                                             (cst:second binding-cst))))
            (lambda-form-cst
-             (make-instance 'cst:cons-cst
+             (cleavir-ast:make-ast 'cst:cons-cst
                :raw `((lambda ,(mapcar #'cst:raw variable-csts)
                         ,@(cst:raw body-forms-cst))
                       ,(mapcar #'cst:raw initform-csts))
                :source origin
                :first (cst:cons (make-atom-cst 'lambda origin)
                                 (cst:cons (cst:cstify variable-csts)
-                                          body-forms-cst)
-                                :source origin)
+                                          body-forms-cst))
                :rest (cst:cstify initform-csts))))
-      (convert lambda-form-cst environment system))))
+      (convert client lambda-form-cst environment))))
 
 ;;; We convert a LET* form CST by transforming it into nested LET form
 ;;; CSTs and then converting those instead.  This is not trivial,
 ;;; because we need to associate the right declarations with the
 ;;; corresponding LET form CST.
 
-(defmethod convert-let* (cst environment system)
+(defmethod convert-let* (client cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (let*-cst bindings-cst . body-forms-cst) cst
@@ -77,8 +76,10 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations
-                system (cleavir-env:declarations environment) declaration-csts))
+               ;; FIXME: replace the second argument with the result
+               ;; of calling DECLARATIONS in the global environment,
+               ;; once that protocol is in place.
+              (cst:canonicalize-declarations client '() declaration-csts))
              (binding-csts (cst:listify bindings-cst))
              (variable-csts
                (loop for binding-cst in binding-csts
@@ -100,8 +101,7 @@
                                              :source origin))
                                         :source origin)
                 for binding-cst in (reverse binding-csts)
-                for declaration-cst-groups in (reverse item-specific-dspecs)
-                for declaration-csts = (first declaration-cst-groups)
+                for declaration-csts in (reverse item-specific-dspecs)
                 do (setf result
                          (cst:cons
                           (make-atom-cst 'let origin)
@@ -114,4 +114,4 @@
                                          result))
                                     :source origin)
                           :source origin))
-                finally (return (convert result environment system))))))))
+                finally (return (convert client result environment))))))))

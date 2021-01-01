@@ -23,9 +23,3 @@
 (cleavir-io:define-save-info scope-ast
   (:child-ast child-ast)
   (:variable-ast variable-ast))
-
-(defun make-scope-ast (variable-ast child-ast &key origin (policy *policy*))
-  (make-instance 'scope-ast
-    :origin origin :policy policy
-    :variable-ast variable-ast
-    :child-ast child-ast))

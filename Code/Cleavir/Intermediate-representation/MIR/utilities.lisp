@@ -1,46 +1,113 @@
 (cl:in-package #:cleavir-ir)
 
-;;; For many of the instruction, client code has the choice between
-;;; giving a list of inputs, outputs, or successors, and giving them
-;;; as two keyword arguments.  The following utilities check that it
-;;; is not the case that both a list and individual keyword arguments
-;;; are supplied.  It also checks that, if a list was not given, both
-;;; individual keyword arguments was provided.
+(defun all (&rest arguments)
+  (notany #'null arguments))
 
-(defun construct-inputs (i i-p i1 i1-p i2 i2-p)
-  (cond (i-p
-	 (when  (or i1-p i2-p)
-	   (error 'input-inputs-mutually-exclusive))
-	 i)
-	((or (not i1-p) (not i2-p))
-	 (error 'both-individual-inputs-must-be-given))
-	(t
-	 (list i1 i2))))
+(defun none (&rest arguments)
+  (every #'null arguments))
 
-(defun construct-output (o o-p)
-  (if (not o-p)
-      (error 'output-must-be-given)
-      (list o)))
+(defun all-or-none (&rest arguments)
+  (or (apply #'all arguments)
+      (apply #'none arguments)))
 
-(defun construct-successors (s s-p s1 s1-p s2 s2-p)
-  (cond (s-p
-	 (when  (or s1-p s2-p)
-	   (error 'successor-successors-mutually-exclusive))
-	 s)
-	((or (and s1-p (not s2-p))
-	     (and (not s1-p) s2-p))
-	 (error 'both-or-no-individual-successors-must-be-given))
-	(t
-	 (list s1 s2))))
+(defun combine (combination &rest arguments)
+  (if (apply #'none arguments)
+      combination
+      (copy-list arguments)))
 
-(defun construct-successors-bis (s s-p s1 s1-p s2 s2-p)
-  (cond (s-p
-	 (when  (or s1-p s2-p)
-	   (error 'successor-successors-mutually-exclusive))
-	 s)
-	((and (not s1-p) s2-p)
-	 (error 'successor1-must-be-given))
-	(s2-p
-	 (list s1 s2))
-	(t
-	 (list s1))))
+;;; This macro looks a bit messy.  The reason for that is that I could
+;;; not figure out a better way of accomplishing what it does.
+;;;
+;;; Essentially, we want to simulate the possibility of giving keyword
+;;; aguments naming individual inputs, outputs, and successors when an
+;;; instruction is created or when it has its class changed.  The best
+;;; way of doing that seemed to have an :AROUND method on
+;;; SHARED-INITIALIZE that checks whether one of these individual
+;;; keyword arguments has been given, and if so, translates them to a
+;;; list of inputs, outputs, or successors, before calling
+;;; CALL-NEXT-METHOD.
+;;;
+;;; Things get complicated though, because if neither (say) any
+;;; individual input name was given, NOR the :INPUTS keyword argument,
+;;; then CALL-NEXT-METHOD should not be given an explicit :INPUTS,
+;;; so as to preserve the existing slot value.
+;;;
+;;; The best thing I could think of was to distinguish eight cases
+;;; depending on whether any individual input argument, any individual
+;;; output argument, and any individual successor was given, and for
+;;; each of the eight cases, call CALL-NEXT-METHOD differently.
+;;;
+;;; Also we do some error checking.  If any individual keyword
+;;; argument was given, then they must all be given, and the aggregate
+;;; one must not be given.
+;;;
+;;; Although this macro is a bit messy, it saves a lot of code
+;;; elsewhere.  So until I can think of a better way of doing it, I
+;;; still think it is a win.
+(defmacro normalize-arguments
+    (instruction-class-name input-names output-names successor-names)
+  `(defmethod shared-initialize :around
+     ((instruction ,instruction-class-name)
+      slot-names
+      &rest keys
+      &key
+      (inputs nil inputs-p) ,@input-names
+      (outputs nil outputs-p) ,@output-names
+      (successors nil successors-p) ,@successor-names)
+     (declare (ignore inputs outputs successors))
+     (cond ((or ,@input-names)
+            (assert (and ,@input-names))
+            (assert (not inputs-p))
+            (cond ((or ,@output-names)
+                   (assert (and ,@output-names))
+                   (assert (not outputs-p))
+                   (cond ((or ,@successor-names)
+                          (assert (and ,@successor-names))
+                          (assert (not successors-p))
+                          (apply #'call-next-method instruction slot-names
+                                 :inputs (list ,@input-names)
+                                 :outputs (list ,@output-names)
+                                 :successors (list ,@successor-names)
+                                 keys))
+                         (t
+                          (apply #'call-next-method instruction slot-names
+                                 :inputs (list ,@input-names)
+                                 :outputs (list ,@output-names)
+                                 keys))))
+                  (t
+                   (cond ((or ,@successor-names)
+                          (assert (and ,@successor-names))
+                          (assert (not successors-p))
+                          (apply #'call-next-method instruction slot-names
+                                 :inputs (list ,@input-names)
+                                 :successors (list ,@successor-names)
+                                 keys))
+                         (t
+                          (apply #'call-next-method instruction slot-names
+                                 :inputs (list ,@input-names)
+                                 keys))))))
+           (t
+            (cond ((or ,@output-names)
+                   (assert (and ,@output-names))
+                   (assert (not outputs-p))
+                   (cond ((or ,@successor-names)
+                          (assert (and ,@successor-names))
+                          (assert (not successors-p))
+                          (apply #'call-next-method instruction slot-names
+                                 :outputs (list ,@output-names)
+                                 :successors (list ,@successor-names)
+                                 keys))
+                         (t
+                          (apply #'call-next-method instruction slot-names
+                                 :outputs (list ,@output-names)
+                                 keys))))
+                  (t
+                   (cond ((or ,@successor-names)
+                          (assert (and ,@successor-names))
+                          (assert (not successors-p))
+                          (apply #'call-next-method instruction slot-names
+                                 :successors (list ,@successor-names)
+                                 keys))
+                         (t
+                          (apply #'call-next-method instruction slot-names
+                                 keys)))))))))
