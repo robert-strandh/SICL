@@ -4,7 +4,7 @@
   :depends-on (#:concrete-syntax-tree
                #:concrete-syntax-tree-destructuring
                #:cleavir2-ast
-               #:cleavir2-ast-transformations
+               #:cleavir-ast-transformations
                #:cleavir2-primop
                #:trucler-reference
                #:stealth-mixin
