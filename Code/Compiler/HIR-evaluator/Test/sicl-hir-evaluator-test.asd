@@ -6,7 +6,7 @@
                #:concrete-syntax-tree
                #:cleavir-ast
                #:cleavir-cst-to-ast
-               #:cleavir2-primop
+               #:cleavir-primop
                #:sicl-hir-evaluator)
   :components
   ((:file "packages")
