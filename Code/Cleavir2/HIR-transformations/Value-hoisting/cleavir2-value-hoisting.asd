@@ -3,7 +3,7 @@
 (defsystem :cleavir2-value-hoisting
   :depends-on (:acclimation
                :cleavir-hir
-               :cleavir2-hir-transformations)
+               :cleavir-hir-transformations)
   :serial t
   :components
   ((:file "packages")

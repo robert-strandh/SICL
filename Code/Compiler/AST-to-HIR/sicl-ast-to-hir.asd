@@ -3,7 +3,7 @@
 (defsystem #:sicl-ast-to-hir
   :depends-on (#:cleavir-cst-to-ast
                #:cleavir-ast-to-hir
-               #:cleavir2-hir-transformations
+               #:cleavir-hir-transformations
                #:cleavir2-remove-useless-instructions
                #:cleavir2-partial-inlining
                #:sicl-hir-transformations

@@ -2,7 +2,7 @@
 
 (defsystem :cleavir2-partial-inlining
   :depends-on (:cleavir-hir
-               :cleavir2-hir-transformations
+               :cleavir-hir-transformations
                :cleavir2-remove-useless-instructions)
   :serial t
   :components
