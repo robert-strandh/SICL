@@ -5,5 +5,5 @@
   :serial t
   :components
   ((:file "packages-extrinsic")
-   (:file "bucket-hash-table-defclass-extrinsic")
+   (:file "bucket-hash-table-defclass")
    (:file "bucket-hash-table")))
