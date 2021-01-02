@@ -137,7 +137,7 @@
          environment
          'find-package)
         (lambda (name)
-          (env:find-package client environment name)))
+          (env:find-package client environment (string name))))
   (setf (env:fdefinition
          client
          environment
