@@ -22,6 +22,7 @@ versions.
 [the Eclector repository]:https://github.com/s-expressionists/Eclector
 [the Trucler repository]:https://github.com/s-expressionists/Trucler
 [the Clostrum repository]:https://github.com/s-expressionists/Clostrum
+[the Incless repository]:https://github.com/s-expressionists/incless
 
    * A recent 64-bit version of SBCL
    * The system "cluster" from [the Cluster repository]
@@ -29,6 +30,7 @@ versions.
    * The system "eclector", from [the Eclector repository]
    * The system "trucler-reference", from [the Trucler repository]
    * The system "clostrum", from [the Clostrum repository]
+   * The system "incless-intrinsic", from [the Incless repository]
 
 2. Clone the [source] with `git`:
 
