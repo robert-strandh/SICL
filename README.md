@@ -32,6 +32,8 @@ versions.
    * The system "clostrum", from [the Clostrum repository]
    * The system "incless-intrinsic", from [the Incless repository]
 
+The bash script `get-dependencies.sh` will do this work for you.
+
 2. Clone the [source] with `git`:
 
    ```
