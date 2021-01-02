@@ -26,4 +26,12 @@
           (lambda (new-value x doc-type)
             (declare (ignore x doc-type))
             new-value))
-    (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)))
+    (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)
+    ;; Fake this macro for now
+    (setf (env:macro-function (env:client e5) e5 'with-standard-io-syntax)
+          (lambda (form environment)
+            (declare (ignore environment))
+            `(progn ,@(rest form))))
+    (load-source-file "Data-and-control-flow/setf-defmacro.lisp" e5)
+    (load-source-file "Data-and-control-flow/values-define-setf-expander.lisp" e5)
+    (import-functions-from-host '(intern) e5)))
