@@ -169,10 +169,10 @@
      logand logior ash integer-length
      zerop evenp max expt abs
      ;; CONSes
-     cons list list* append make-list copy-list
+     cons list list* append nconc make-list copy-list
      consp atom listp null endp
      car cdr caar cadr cdar cddr
-     caaar caadr cadar caddr cdaar cdadr cddar cdddr
+     caaar caadr cadar caddr cdaar cdadr cddar cdddr nthcdr
      first second third fourth fifth nth rest
      rplaca rplacd
      member
@@ -194,7 +194,7 @@
      ;; Sequence
      elt length count reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
-     nreverse replace
+     nreverse replace delete
      ;; For debugging
      format
      ;; Conditions
@@ -218,6 +218,9 @@
     (setf (env:fdefinition client environment '(setf nth))
           (lambda (new-value n list)
             (setf (nth n list) new-value)))
+    (setf (env:fdefinition client environment '(setf elt))
+          (lambda (new-value sequence index)
+            (setf (elt sequence index) new-value)))
     (setf (env:fdefinition client environment '(setf gethash))
           (lambda (new-value key table)
             (setf (gethash key table) new-value)))))
