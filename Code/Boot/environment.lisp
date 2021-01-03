@@ -87,6 +87,13 @@
   (setf (env:fdefinition client environment 'fdefinition)
         (lambda (name)
           (env:fdefinition client environment name)))
+  (setf (env:fdefinition client environment '(setf symbol-function))
+        (lambda (function name)
+          (setf (env:fdefinition client environment name)
+                function)))
+  (setf (env:fdefinition client environment 'symbol-function)
+        (lambda (name)
+          (env:fdefinition client environment name)))
   (setf (env:fdefinition client environment 'get-setf-expansion)
         (lambda (place &optional env)
           (declare (ignore env))
@@ -166,8 +173,8 @@
    '(;; Numbers
      + - * / < <= = > >= /= floor 1+ 1-
      plusp minusp integerp numberp
-     logand logior ash integer-length
-     zerop evenp max expt abs
+     logand logior logxor ash integer-length
+     zerop evenp max expt abs ldb byte
      ;; CONSes
      cons list list* append nconc make-list copy-list
      consp atom listp null endp
@@ -178,11 +185,13 @@
      member
      mapcar mapc
      getf
-     assoc set-difference set-exclusive-or union adjoin
+     assoc rassoc set-difference set-exclusive-or union adjoin
      last butlast
      ;; Data and control flow
      apply not eq eql equal values
      every
+     ;; Evaluation and compilation
+     constantp
      ;; Symbols
      gensym symbolp
      ;; Characters
@@ -220,10 +229,7 @@
             (setf (nth n list) new-value)))
     (setf (env:fdefinition client environment '(setf elt))
           (lambda (new-value sequence index)
-            (setf (elt sequence index) new-value)))
-    (setf (env:fdefinition client environment '(setf gethash))
-          (lambda (new-value key table)
-            (setf (gethash key table) new-value)))))
+            (setf (elt sequence index) new-value)))))
 
 (defun define-special-operators (environment)
   (let ((client (env:client environment)))
