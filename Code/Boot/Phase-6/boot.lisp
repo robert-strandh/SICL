@@ -34,4 +34,9 @@
             `(progn ,@(rest form))))
     (load-source-file "Data-and-control-flow/setf-defmacro.lisp" e5)
     (load-source-file "Data-and-control-flow/values-define-setf-expander.lisp" e5)
+    (define-error-functions
+        '(sicl-hash-table:equal-hash sicl-hash-table:equalp-hash)
+      e5)
+    (sicl-boot::load-asdf-system '#:sicl-hash-table-base e5)
+    (sicl-boot::load-asdf-system '#:sicl-hash-table e5)
     (import-functions-from-host '(intern) e5)))
