@@ -174,7 +174,7 @@
      + - * / < <= = > >= /= floor 1+ 1-
      plusp minusp integerp numberp
      logand logior logxor ash integer-length
-     zerop evenp max expt abs ldb byte
+     zerop evenp max expt abs ldb byte random
      ;; CONSes
      cons list list* append nconc make-list copy-list
      consp atom listp null endp
