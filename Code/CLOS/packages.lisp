@@ -28,6 +28,8 @@
    #:standard-effective-slot-definition
    #:standard-reader-method
    #:standard-writer-method
+   ;; Accessors for generial standard objects.
+   #:hash-code
    ;; Accessors for method metaobjects.
    #:method-function
    #:method-generic-function
