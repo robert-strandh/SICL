@@ -32,7 +32,7 @@
               (let ((rack (slot-value (sicl-hir-evaluator:input 0) 'sicl-boot::%rack)))
                 (multiple-value-bind (word-index byte-index)
                     (floor (sicl-hir-evaluator:input 1) 8)
-                  (ldb (byte 8 (* 8 byte-index)) (aref rack (+ word-index 4))))))
+                  (ldb (byte 8 (* 8 byte-index)) (aref rack (+ word-index 5))))))
         (sicl-hir-evaluator:successor 0))
       (call-next-method)))
 
@@ -45,7 +45,7 @@
         (let ((rack (slot-value (sicl-hir-evaluator:input 0) 'sicl-boot::%rack)))
           (multiple-value-bind (word-index byte-index)
               (floor (sicl-hir-evaluator:input 1) 8)
-            (setf (ldb (byte 8 (* 8 byte-index)) (aref rack (+ word-index 4)))
+            (setf (ldb (byte 8 (* 8 byte-index)) (aref rack (+ word-index 5)))
                   (sicl-hir-evaluator:input 2))))
         (sicl-hir-evaluator:successor 0))
       (call-next-method)))

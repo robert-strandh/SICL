@@ -76,8 +76,8 @@
     ;; would have to call REINITIALIZE-INSTANCE.  I am not sure at
     ;; this point that it would be possible.
     (let ((rack (slot-value function 'sicl-boot::%rack)))
-      (setf (aref rack 10)
-            (gethash (aref rack 10) translate-table)))))
+      (setf (aref rack 11)
+            (gethash (aref rack 11) translate-table)))))
 
 (defun update-simple-function
     (function translate-table class-slots-function e5)
