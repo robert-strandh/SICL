@@ -21,9 +21,16 @@ reasons for this additional cost:
   have to be allocated on the heap, though so-called NaN-boxing%
   \footnote{Add a reference} can
   eliminate that particular case.  Full-word integers still require
-  boxing, however.
+  boxing, however.  Similarly, boxing is required for values returned
+  by a function.
 \item Generic functions can be dynamically updated by the addition or
   removal of methods.
+\item The fact that a function can return multiple values requires the
+  callee to return an additional information about the number of
+  return values, and callers that accept multiple values must retrieve
+  this information in order to access the return values, and use
+  default values when it expects more values than the callee
+  returned.
 \end{enumerate}
 
 In a typical \commonlisp{} implementation, item number 1 is handled by
@@ -52,3 +59,5 @@ beginning of this section.  We plan to incorporate this technique in
 the \sicl{}%
 \footnote{https://github.com/robert-strandh/SICL}
 implementation of the \commonlisp{} language.
+
+%%  LocalWords:  callee
