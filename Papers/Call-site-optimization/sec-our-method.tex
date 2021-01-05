@@ -57,6 +57,8 @@ site contains information such as:
   return values are required, no matter the number.
 \item In case of a fixed number of return values, for each such value,
   whether it should be boxed or unboxed.
+\item Also, in case of a fixed number of return values, for each such
+  value, the location where the caller expects the value.
 \item Indication as to whether the call is a \emph{tail call}, in
   which case the snippet should deallocate the frame before
   returning.
