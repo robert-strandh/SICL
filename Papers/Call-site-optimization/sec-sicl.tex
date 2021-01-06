@@ -21,6 +21,7 @@ global heap do not move, and that all executable code is allocated in
 that global heap.
 
 The fact that code does not move is beneficial for the instruction
-cache, but it crucially allows us to allocate different objects in the
-global heap containing machine instructions, and to use fixed relative
-addresses to refer to one such object from another such object.
+cache; moreover it crucially allows us to allocate different objects
+in the global heap containing machine instructions, and to use fixed
+relative addresses to refer to one such object from another such
+object.
