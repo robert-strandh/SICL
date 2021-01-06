@@ -18,6 +18,9 @@ the code that accomplishes the following tasks:
 \item It transfers control to the entry point, using an instruction
   that saves the return address for use by the callee to return to the
   caller.
+\item Upon callee return, it accesses the return values from the places
+  they have been stored by the callee, and puts those values in the
+  places where the caller requires them for further computation.
 \end{enumerate}
 
 In a typical implementation, a function call is generated when the
@@ -91,3 +94,5 @@ order:
   be allocated in order to improve performance of calls to the new
   function.
 \end{enumerate}
+
+%%  LocalWords:  callee
