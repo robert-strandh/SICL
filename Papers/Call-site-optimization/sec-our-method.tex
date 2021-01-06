@@ -68,7 +68,11 @@ the function indirectly, either through a symbol object (as most
 environments \cite{Strandh:2015:ELS:Environments}.  The default
 snippet is illustrated in \refFig{fig-default-snippet}.  The default
 snippet is also used when the definition of the callee changes, as
-described below.
+described below.  A default snippet for each call site can either be
+kept around, or allocated as needed.  The former situation is
+advantageous for a callee with many call sites and for callees that
+are frequently redefined, as it decreases the time to load a new
+version of the callee.
 
 \begin{figure}
 \begin{center}
@@ -116,12 +120,12 @@ callers.  In particular, a callee can be removed using
 order:
 
 \begin{enumerate}
-\item First, a new snippet is allocated for each caller, and the
-  unconditional jump instruction is modified to refer to the new
-  snippet.  This snippet contains code for the full function-call
-  protocol in that it puts the arguments in the places defined by that
-  protocol, and in that it accesses the callee using an indirection
-  through the function cell.
+\item First, a default snippet is allocated for each caller, or the
+  kept default snippet is reused.  The unconditional jump instruction
+  is modified to refer to the default snippet.  As previously
+  explained, this snippet contains code for the full function-call
+  protocol, and in particular, it accesses the callee using an
+  indirection through the function cell.
 \item Next, the callee is atomically replaced by a new function, or
   entirely removed by a single modification to the contents of the
   function cell.
@@ -131,4 +135,14 @@ order:
   function.
 \end{enumerate}
 
-%%  LocalWords:  callee
+The thread responsible for redefining the callee blocks until step 1
+is accomplished.  Without this blocking, some callers may get the old
+version of the callee and some others the new version, thereby
+violating the overall semantics of a function redefinition.
+
+Step 3, on the other hand can be accomplished asynchronously, and even
+in parallel with caller threads, provided that appropriate
+synchronization prevents subsequent simultaneous redefinitions of the
+callee.
+
+%%  LocalWords:  callee redefinitions
