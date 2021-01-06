@@ -38,7 +38,8 @@ that we call a \emph{snippet}.  The callee allocates an appropriate
 snippet in the global heap as describe in \refSec{sec-sicl-features},
 at some available location, and the unconditional jump instruction of
 the caller is modified so that it performs a jump to the first
-instruction of the snippet.
+instruction of the snippet.  The constellation of caller, callee, and
+snippet is illustrated in \refFig{fig-snippet}.
 
 \begin{figure}
 \begin{center}
@@ -48,12 +49,34 @@ instruction of the snippet.
 Caller, callee, and snippet in the global heap.}
 \end{figure}
 
-
-
 When the callee changes in some way, a
 new snippet is allocated and the jump instruction is altered to refer
 to the position of the new snippet.  The old snippet is then subject
 to garbage collection like any other object.
+
+When code containing a caller is loaded into the global environment,
+and that caller contains a call site that refers to a function that is
+not defined at the time the caller is loaded, a \emph{default snippet}
+is created.  The default snippet contains the same instructions that a
+traditional compiler would create for a call to a function that might
+be redefined in the future.  Thus, the default snippet contains code
+to put parameters in places dictated by the calling conventions, and
+it accesses return values from predefined places.  It also accesses
+the function indirectly, either through a symbol object (as most
+\commonlisp{} systems probably do) or through a separate
+\emph{function cell} as described in our paper on first-class global
+environments \cite{Strandh:2015:ELS:Environments}.  The default
+snippet is illustrated in \refFig{fig-default-snippet}.  The default
+snippet is also used when the definition of the callee changes, as
+described below.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-default-snippet.pdf_t}
+\end{center}
+\caption{\label{fig-default-snippet}
+Default snippet.}
+\end{figure}
 
 In order for the callee to be able to adapt the snippet to its
 requirements, the caller, when loaded into the executing image, must
@@ -61,6 +84,7 @@ provide information about its call sites to the system.  Each call
 site contains information such as:
 
 \begin{itemize}
+\item The name of the callee.
 \item The number of arguments.
 \item The type of each argument.  If the type is not known, it is
   indicated as \texttt{t}.  When an argument is a literal object, its
