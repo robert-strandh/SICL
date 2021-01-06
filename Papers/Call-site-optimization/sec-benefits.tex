@@ -19,19 +19,20 @@ modified.  As a result, no indirection is required.  Furthermore, in
 indirection from the \emph{header object} to the so-called \emph{rack}
 where the entry point is stored.
 
-Furthermore, argument parsing can be greatly simplified.  Even in the
-simple case where all parameters are required, it is no longer
-necessary for the caller to pass the argument count, nor for the
-callee to check that it corresponds to the number of parameters.  But
-the advantages are even greater in the presence of optional parameters
-and in particular for keyword parameters.  In a typical call with
-keyword parameters, the keywords are literals.  The argument list can
-then be parsed once and for all when the snippet is created, and the
-arguments can be directly copied to the locations required by the
-callee.  This possibility largely eliminates the need for separate
-compiler macros, as the purpose of a compiler macro is precisely to
-take advantage of some known structure of the list of argument, in
-order to substitute a call to a specialized version of the callee.
+A more significant benefit than saving an indirection is that argument
+parsing can be greatly simplified.  Even in the simple case where all
+parameters are required, it is no longer necessary for the caller to
+pass the argument count, nor for the callee to check that it
+corresponds to the number of parameters.  But the advantages are even
+greater in the presence of optional parameters and in particular for
+keyword parameters.  In a typical call with keyword parameters, the
+keywords are literals.  The argument list can then be parsed once and
+for all when the snippet is created, and the arguments can be directly
+copied to the locations required by the callee.  This possibility
+largely eliminates the need for separate compiler macros, as the
+purpose of a compiler macro is precisely to take advantage of some
+known structure of the list of argument, in order to substitute a call
+to a specialized version of the callee.
 
 The specialized function call can admit unboxed arguments.  Avoiding
 boxing is particularly useful for applications that manipulate
@@ -53,7 +54,7 @@ allocations.
 
 When the callee is a generic function, a specialized discriminating
 function can often be created, provided that enough type information
-is provided by the caller for the arguments that correspond to
+is made available by the caller for the arguments that correspond to
 specializers of some methods of the generic function.  In the extreme
 (but common) case where the callee is a slot accessor and the class of
 the specialized argument is know, the snippet can contain the full
