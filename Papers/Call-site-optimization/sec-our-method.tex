@@ -38,7 +38,19 @@ that we call a \emph{snippet}.  The callee allocates an appropriate
 snippet in the global heap as describe in \refSec{sec-sicl-features},
 at some available location, and the unconditional jump instruction of
 the caller is modified so that it performs a jump to the first
-instruction of the snippet.  When the callee changes in some way, a
+instruction of the snippet.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-snippet.pdf_t}
+\end{center}
+\caption{\label{fig-snippet}
+Caller, callee, and snippet in the global heap.}
+\end{figure}
+
+
+
+When the callee changes in some way, a
 new snippet is allocated and the jump instruction is altered to refer
 to the position of the new snippet.  The old snippet is then subject
 to garbage collection like any other object.
