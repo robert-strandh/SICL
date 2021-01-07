@@ -12,17 +12,16 @@ reasons for this additional cost:
   can be modified at run-time.
 \item \commonlisp{} has a rich function-call protocol with optional
   parameters and keyword parameters.  Keyword parameters, in
-  particular, require some considerable parsing for every
+  particular, require some considerable run-time parsing for every
   call to a function that has such parameters.
 \item In general, a function that can honor its contract only for
   certain types of its arguments must check such types for each call.
 \item All objects must be \emph{boxed} in order to be used as function
-  arguments.  In particular, IEEE double-float values will typically
+  arguments.  For example, IEEE double-float values will typically
   have to be allocated on the heap, though so-called NaN-boxing%
-  \footnote{Add a reference} can
-  eliminate that particular case.  Full-word integers still require
-  boxing, however.  Similarly, boxing is required for values returned
-  by a function.
+  \footnote{Add a reference} can eliminate that particular case.
+  Full-word integers still require boxing, however.  Similarly, boxing
+  is required for values returned by a function.
 \item Generic functions can be dynamically updated by the addition or
   removal of methods.
 \item The fact that a function can return multiple values requires the
@@ -36,8 +35,7 @@ reasons for this additional cost:
 In a typical \commonlisp{} implementation, item number~1 is handled by
 an indirection in the form of a slot in the symbol naming the
 function, requiring a memory access.  On modern processors a memory
-access can be significantly more costly than, say, a register
-operation.
+indirect branch is significantly more costly than a direct branch.
 
 Item number 2 can be mitigated by the use of compiler macros.
 Essentially, the creator of a function with a non-trivial lambda list
@@ -52,6 +50,13 @@ that some type checks can be elided.  However, inlining has the
 disadvantage that a redefinition of the callee will not automatically
 be taken into account, and requiring the caller to be recompiled for
 the redefinition to be effective.
+
+The main difference between function redefinition and generic-function
+updates is that a generic function consists of independent
+\emph{effective methods}, only one of which is applicable for a
+particular call.  To determine which effective method is applicable,
+in the general case some significant \emph{generic dispatch}, based on
+the type or the identity of arguments, may be required.
 
 In this paper, we propose a very general technique for call-site
 optimization that can handle many of the issues listed at the
