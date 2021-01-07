@@ -29,17 +29,18 @@ permanent code to work, a particular \emph{call protocol} must be
 observed, and that protocol must be independent of the callee, as the
 callee may change after the caller has been compiled.
 
-With our suggested method, the function call is created by the
-callee.  The code emitted by the caller for a function call consists
-of a single unconditional \emph{jump} instruction.  The target address
-in that instruction is altered by the callee according to its
-structure.  The code for the function call is contained in an object
-that we call a \emph{snippet}.  The callee allocates an appropriate
-snippet in the global heap as describe in \refSec{sec-sicl-features},
-at some available location, and the unconditional jump instruction of
-the caller is modified so that it performs a jump to the first
-instruction of the snippet.  The constellation of caller, callee, and
-snippet is illustrated in \refFig{fig-snippet}.
+With our suggested method, the function call is created by the callee.
+The code emitted by the caller for a function call consists of a
+single unconditional \emph{jump} instruction.  The target address in
+that instruction is altered by the callee according to its structure.
+The code for the function call is contained in an object that we call
+a \emph{trampoline snippet}, or just \emph{snippet} for short.  The
+callee allocates an appropriate snippet in the global heap as describe
+in \refSec{sec-sicl-features}, at some available location, and the
+unconditional jump instruction of the caller is modified so that it
+performs a jump to the first instruction of the snippet.  The
+constellation of caller, callee, and snippet is illustrated in
+\refFig{fig-snippet}.
 
 \begin{figure}
 \begin{center}
