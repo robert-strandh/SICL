@@ -40,7 +40,9 @@ in \refSec{sec-sicl-features}, at some available location, and the
 unconditional jump instruction of the caller is modified so that it
 performs a jump to the first instruction of the snippet.  The
 constellation of caller, callee, and snippet is illustrated in
-\refFig{fig-snippet}.
+\refFig{fig-snippet}.  We omitted an explicit indication of a control
+transfer from the snippet to the callee code, because such a control
+transfer is not always required.
 
 \begin{figure}
 \begin{center}
