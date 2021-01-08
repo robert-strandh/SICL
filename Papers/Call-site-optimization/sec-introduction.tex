@@ -49,7 +49,7 @@ Item number 3 can be handled by inlining, allowing the compiler to
 take advantage of type inference and type declarations to determine
 that some type checks can be elided.  However, inlining has the
 disadvantage that a redefinition of the callee will not automatically
-be taken into account, and requiring the caller to be recompiled for
+be taken into account, thereby requiring the caller to be recompiled for
 the redefinition to be effective.
 
 The main difference between function redefinition and generic-function
