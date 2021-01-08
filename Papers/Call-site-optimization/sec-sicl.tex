@@ -11,14 +11,15 @@ module.
 
 We have multiple objectives for the \sicl{} system, including
 exemplary maintainability and good performance.  However, the most
-important objective in the context of this paper is the design of the
-garbage collector.  Our design is based on that of a concurrent
-generational collector for the ML language \cite{Doligez:1993:CGG}.
-We use a \emph{nursery} generation for each thread, and a global heap
-for shared objects.  For the purpose of the current work, the
-important feature of the garbage collector is that the objects in the
-global heap do not move, and that all executable code is allocated in
-that global heap.
+important objective in the context of this paper is that the design of
+the garbage collector is such that executable instructions do not move
+as a result of a collection cycle.  Our design is based on that of a
+concurrent generational collector for the ML language
+\cite{Doligez:1993:CGG}.  We use a \emph{nursery} generation for each
+thread, and a global heap for shared objects.  So, for the purpose of
+the current work, the important feature of the garbage collector is
+that the objects in the global heap do not move, and that all
+executable code is allocated in that global heap.
 
 The fact that code does not move is beneficial for the instruction
 cache; moreover it crucially allows us to allocate different objects
