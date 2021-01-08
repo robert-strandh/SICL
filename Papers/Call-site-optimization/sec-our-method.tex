@@ -102,7 +102,9 @@ site contains information such as:
 \item The number of required return values, or an indication that all
   return values are required, no matter the number.
 \item In case of a fixed number of return values, for each such value,
-  whether it should be boxed or unboxed.
+  some limited information of the \emph{type} of each value.  See
+  below for a more elaborate explanation of the restrictions involved
+  for this information.
 \item Also, in case of a fixed number of return values, for each such
   value, the location where the caller expects the value.
 \item Indication as to whether the call is a \emph{tail call}, in
@@ -114,6 +116,30 @@ A callee can take advantage of this information to customize the
 call.  The default action is to generate a snippet that implements the
 full function-call protocol, without taking into account information
 about the types of the arguments.
+
+While our technique allows for information provided by the caller to
+be taken into account by the callee in various ways, the opposite
+direction is not generally possible.  The reason is that the callee
+can change or be redefined in arbitrary ways, and the caller code is
+fixed, so it can not adapt to such changes in the callee.  The
+only place where some limited amount of adaptation is possible is in
+the snippet, after the callee code returns.
+
+A direct consequence to this one-directional dependency is that the
+caller can not, in general, dictate the type of the return values.
+The current callee will produce the values that its code dictates, no
+matter what the caller needs.  However, it is quite advantageous to be
+able to return unboxed values of certain types; in particular
+full-word floating point numbers.  For that reason, we allow some
+restricted type information to be provided by the caller.
+Thus, if the caller indicates a type other than \texttt{t} for some
+return value, it has to be one of a small number of fixed types, for
+example \texttt{double-float}, \texttt{character},
+\texttt{(signed-byte 64)} and \texttt{(unsigned-byte 64)} (assuming a
+64-bit architecture.  When one of these types is indicated by the
+caller, the meaning is that the caller requires an unboxed value of
+this type.  Then, if the callee cannot supply such a value, code is
+generated in the snippet to signal an error.
 
 When a modification is made to a callee that alters its semantics,
 care must be taken so as to respect the overall semantics of all
