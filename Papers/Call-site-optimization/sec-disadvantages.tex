@@ -22,4 +22,15 @@ activation record is removed from the stack.  This requirement will
 require a modification to the garbage collector, and code for garbage
 collectors is notoriously hard to get right.
 
+The technique involves the creation of two unconditional \emph{jump}
+instructions; one from the core code of the caller to the snippet and
+another one from the snippet back to the core code of the caller.
+These additional instructions must be executed, which may use up
+processor cycles.  However, on most modern processors, unconditional
+jumps are very fast.
+
+Finally, there may be some slightly increased probability of
+contention in the instruction cache, due to the fact that snippets are
+allocated wherever the global memory manager can fit them.
+
 %%  LocalWords:  callee
