@@ -94,16 +94,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function FDEFINITION.
-
-(defun fdefinition (function-name)
-  (declare (type function-name function-name))
-  (sicl-genv:fdefinition
-   function-name
-   (load-time-value (sicl-genv:global-environment))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function (SETF FDEFINITION).
 
 (defun (setf fdefinition) (new-definition function-name)
