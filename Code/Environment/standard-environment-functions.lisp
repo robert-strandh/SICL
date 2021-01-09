@@ -49,41 +49,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function BOUNDP.
-;;;
-;;; According to the HyperSpec, this function should return any true
-;;; value if the name is bound in the global environment and false
-;;; otherwise.  We return T when the symbol is bound.  
-;;;
-;;; The HyperSpec does not say whether the name of a constant variable
-;;; is considered to be bound.  We think it is reasonable to consider
-;;; it bound in this case.  They HyperSpec also does not say whether
-;;; the name of a global symbol macro is considered to be bound.
-;;; Again, we think it is reasonable to consider this to be the case,
-;;; if for nothing else, then for symmetry with fboundp.
-;;;
-;;; The symbol is bound as a special variable if it is both the case
-;;; that a special variable entry exists for it AND the storage cell
-;;; of that entry does not contain +unbound+.
-
-(defun boundp (symbol)
-  (sicl-genv:boundp
-   symbol
-   (load-time-value (sicl-genv:global-environment))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function MAKUNBOUND.
-;;;
-;;; Since we consider a name bound if it names a constant variable, or
-;;; if it names a global symbol macro, we must decide what to do in
-;;; those cases.  It would be embarassing for someone to call
-;;; MAKUNBOUND successfully and then have BOUNDP return true.  What we
-;;; do is to remove the symbol macro if any, and signal an error if an
-;;; attempt is made to make a constant variable unbound.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function (SETF FDEFINITION).
 
 (defun (setf fdefinition) (new-definition function-name)
