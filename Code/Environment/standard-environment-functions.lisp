@@ -84,16 +84,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function FMAKUNBOUND.
-
-(defun fmakunbound (function-name)
-  (declare (type function-name function-name))
-  (sicl-genv:fmakunbound
-   function-name
-   (load-time-value (sicl-genv:global-environment))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function (SETF FDEFINITION).
 
 (defun (setf fdefinition) (new-definition function-name)
