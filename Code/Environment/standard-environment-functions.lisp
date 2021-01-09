@@ -74,13 +74,3 @@
   (setf (sicl-genv:compiler-macro-function
          name (sicl-genv:global-environment environment))
 	new-definition))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function (SETF FIND-CLASS).
-
-(defun (setf find-class) (new-class symbol &optional errorp environment)
-  (declare (ignore errorp))
-  (let ((global-environment (sicl-genv:global-environment environment)))
-    (setf (sicl-genv:find-class symbol global-environment)
-          new-class)))
