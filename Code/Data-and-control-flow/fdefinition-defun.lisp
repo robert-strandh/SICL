@@ -1,7 +1,9 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(defun fdefinition (function-name)
-  (sicl-global-environment:fdefinition
-   function-name
-   (load-time-value
-    (sicl-global-environment:global-environment))))
+(let* ((environment (sicl-environment:global-environment))
+       (client (sicl-environment:client environment))
+       (fdefinition (fdefinition 'sicl-environment:fdefinition)))
+  (defun fdefinition (function-name)
+    ;; We call IDENTITY because we want only the first value returned
+    ;; by the environment function.
+    (identity (funcall fdefinition client environment function-name))))
