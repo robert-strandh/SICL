@@ -36,19 +36,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function CONSTANTP.
-
-(defun constantp (form &optional (environment (sicl-genv:global-environment)))
-  (or (and (not (symbolp form))
-	   (not (consp form)))
-      (keywordp form)
-      (and (symbolp form)
-	   (nth-value 1 (sicl-genv:constant-variable form environment)))
-      (and (consp form)
-	   (eq (car form) 'quote))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function SPECIAL-OPERATOR-P.
 
 (defun special-operator-p (symbol)
