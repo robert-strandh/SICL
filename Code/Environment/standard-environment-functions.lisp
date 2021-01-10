@@ -36,16 +36,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function SPECIAL-OPERATOR-P.
-
-(defun special-operator-p (symbol)
-  (declare (type symbol symbol))
-  (sicl-genv:special-operator
-   symbol
-   (load-time-value (sicl-genv:global-environment))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function COMPILER-MACRO-FUNCTION.
 
 (defun compiler-macro-function (name &optional environment)
