@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-global-environment)
+(cl:in-package #:sicl-evaluation-and-compilation)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -29,7 +29,7 @@
   
 (defun proclaim (declaration-specifier)
   (case (car declaration-specifier)
-    (cl:declaration
+    (declaration
      (mapc #'proclaim-declaration
 	   (cdr declaration-specifier)))
     (ftype
