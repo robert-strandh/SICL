@@ -1,20 +1,16 @@
 (cl:in-package #:sicl-evaluation-and-compilation)
 
-(defun macro-function
-    (symbol &optional (environment (sicl-genv:global-environment)))
-  (trucler:macro-function symbol environment))
+(let ((global-environment (sicl-environment:global-environment)))
+  (defun macro-function (symbol &optional (environment global-environment))
+    (trucler:macro-function symbol environment)))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function (SETF MACRO-FUNCTION).
-;;;
-;;; The HyperSpec says that the consequences are undefined if a
-;;; non-nil environment is given.  We define those consequences to be
-;;; that the environment is considered to be a first-class global
-;;; environment.
-
-(defun (setf macro-function)
-    (new-function symbol &optional (environment (sicl-genv:global-environment)))
-  (setf (sicl-genv:macro-function symbol environment)
-	new-function))
+(let* ((global-environment sicl-environment:global-environment)
+       (client (sicl-environment:client global-environment))
+       (setf-macro-function-function
+         (sicl-environment:fdefinition
+          client global-environment '(setf macro-function))))
+  (defun (setf macro-function)
+      (new-function symbol &optional environment)
+    (assert (null environment))
+    (funcall setf-macro-function-function
+             new-function client global-environment)))
