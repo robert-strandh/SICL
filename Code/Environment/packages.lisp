@@ -3,7 +3,3 @@
 (defpackage #:sicl-standard-environment-functions
   (:shadow #:variable)
   (:use #:common-lisp))
-
-(defpackage #:sicl-standard-environment-macros
-  (:use #:common-lisp)
-  (:export #:define-compiler-macro-expander))
