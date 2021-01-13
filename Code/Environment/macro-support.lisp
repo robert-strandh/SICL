@@ -27,20 +27,6 @@
 ;;;; the standard environment-accessing functions do not have to exist
 ;;;; in the extrinsic compiler. 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro DEFTYPE.
-
-(defun deftype-expander (name lambda-list body)
-  `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf (sicl-genv:type-expander
-            ',name
-            (load-time-value (sicl-genv:global-environment)))
-           (function ,(cleavir-code-utilities:parse-deftype 
-                       name
-                       lambda-list
-                       body)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro DEFINE-COMPILER-MACRO.

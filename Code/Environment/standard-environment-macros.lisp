@@ -27,13 +27,6 @@
 ;;;; the standard environment-accessing functions do not have to exist
 ;;;; in the extrinsic compiler. 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro DEFTYPE.
-
-(defmacro deftype (name lambda-list &body body)
-  (deftype-expander name lambda-list body))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro DEFINE-COMPILER-MACRO.
