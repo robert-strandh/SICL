@@ -29,47 +29,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro DEFVAR.
-;;;
-;;; The HyperSpec says that when DEFVAR is processed as a top-level
-;;; form, then the rest of the compilation must treat the variable as
-;;; special, but the initial-value form must not be evaluated, and
-;;; there must be no assignment of any value to the variable.
-;;;
-;;; This is not the final version of DEFVAR, because we ignore the
-;;; documentation for now.
-
-(defun defvar-expander (name initial-value initial-value-p documentation)
-  (declare (ignore documentation))
-  (if initial-value-p
-      `(progn
-         (eval-when (:compile-toplevel)
-           (setf (sicl-genv:special-variable
-                  ',name
-                  (load-time-value (sicl-genv:global-environment))
-                  nil)
-                 nil)
-           ',name)
-         (eval-when (:load-toplevel :execute)
-           (unless (sicl-genv:boundp
-                    ',name
-                    (load-time-value (sicl-genv:global-environment)))
-             (setf (sicl-genv:special-variable
-                    ',name
-                    (load-time-value (sicl-genv:global-environment))
-                    t)
-                   ,initial-value))
-           ',name))
-      `(eval-when (:compile-toplevel :load-toplevel :execute)
-         (setf (sicl-genv:special-variable
-                ',name
-                (load-time-value (sicl-genv:global-environment))
-                nil)
-               nil)
-         ',name)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro DEFPARAMETER.
 ;;;
 ;;; The HyperSpec says that when DEFPARAMETER is processed as a

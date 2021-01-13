@@ -29,22 +29,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro DEFVAR.
-;;;
-;;; The HyperSpec says that when DEFVAR is processed as a top-level
-;;; form, then the rest of the compilation must treat the variable as
-;;; special, but the initial-value form must not be evaluated, and
-;;; there must be no assignment of any value to the variable.
-;;;
-;;; This is not the final version of DEFVAR, because we ignore the
-;;; documentation for now.
-
-(defmacro defvar
-    (name &optional (initial-value nil initial-value-p) documentation)
-  (defvar-expander name initial-value initial-value-p documentation))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro DEFPARAMETER.
 ;;;
 ;;; The HyperSpec says that when DEFPARAMETER is processed as a
