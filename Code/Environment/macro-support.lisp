@@ -29,33 +29,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro DEFPARAMETER.
-;;;
-;;; The HyperSpec says that when DEFPARAMETER is processed as a
-;;; top-level form, then the rest of the compilation must treat the
-;;; variable as special, but the initial-value form must not be
-;;; evaluated, and there must be no assignment of any value to the
-;;; variable.
-;;;
-;;; This is not the final version of DEFPARAMETER, because we ignore
-;;; the documentation for now.
-
-(defun defparameter-expander (env name initial-value documentation)
-  (declare (ignore documentation))
-  `(progn
-     (eval-when (:compile-toplevel)
-       (setf (sicl-genv:special-variable ',name ,env nil)
-             nil))
-     (eval-when (:load-toplevel :execute)
-       (setf (sicl-genv:special-variable
-              ',name
-              (load-time-value (sicl-genv:global-environment))
-              t)
-             ,initial-value)
-       ',name)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro DEFTYPE.
 
 (defun deftype-expander (name lambda-list body)

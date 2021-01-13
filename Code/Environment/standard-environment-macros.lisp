@@ -29,23 +29,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro DEFPARAMETER.
-;;;
-;;; The HyperSpec says that when DEFPARAMETER is processed as a
-;;; top-level form, then the rest of the compilation must treat the
-;;; variable as special, but the initial-value form must not be
-;;; evaluated, and there must be no assignment of any value to the
-;;; variable.
-;;;
-;;; This is not the final version of DEFPARAMETER, because we ignore
-;;; the documentation for now.
-
-(defmacro defparameter
-    (&environment env name initial-value &optional documentation)
-  (defparameter-expander env name initial-value documentation))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro DEFTYPE.
 
 (defmacro deftype (name lambda-list &body body)

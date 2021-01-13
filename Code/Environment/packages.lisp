@@ -6,7 +6,5 @@
 
 (defpackage #:sicl-standard-environment-macros
   (:use #:common-lisp)
-  (:export #:defconstant-expander
-           #:defparameter-expander
-           #:deftype-expander
+  (:export #:deftype-expander
            #:define-compiler-macro-expander))
