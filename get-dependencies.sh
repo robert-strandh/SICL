@@ -13,9 +13,9 @@ https://github.com/s-expressionists/Clostrum
 https://github.com/s-expressionists/incless
 "
 
-PROJECTS_DIRECTORY=${1:-"~/quicklisp/local-projects/"}
+PROJECTS_DIRECTORY=${1:-"$HOME/quicklisp/local-projects/"}
 
-if [ ! -d $PROJECTS_DIRECTORY ]; then
+if [ ! -d "$PROJECTS_DIRECTORY" ]; then
     cat <<EOF
 Usage: $0 [PROJECTS_DIRECTORY].
 
@@ -26,7 +26,7 @@ EOF
     exit 1
 fi
 
-pushd $PROJECTS_DIRECTORY
+pushd "$PROJECTS_DIRECTORY"
 
 for url in $DEPENDENCIES; do
     repository_name=`basename $url`
