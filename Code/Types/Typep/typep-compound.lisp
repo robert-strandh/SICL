@@ -32,5 +32,9 @@
            (t
             (error "malformed type specifier: ~s" type-specifier))))
     (t
-     (error "can't handle type-specifier ~s" type-specifier))))
-    
+     (let ((expander (type-expander (first type-specifier))))
+       (if (null expander)
+           (error "can't handle type-specifier ~s" type-specifier)
+           ;; We found an expander.  Expand TYPE-SPECIFIER and call
+           ;; TYPEP recursively with the expanded type specifier.
+           (typep object (funcall expander type-specifier)))))))
