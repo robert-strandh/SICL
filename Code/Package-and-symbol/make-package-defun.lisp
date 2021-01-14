@@ -7,10 +7,9 @@
   (let* ((name-string (string name))
          (nickname-strings (mapcar #'string nicknames))
          (all-name-strings (cons name-string nickname-strings))
-         (environment (sicl-genv:global-environment))
          (existing-packages
            (loop for name in all-name-strings
-                 for package = (sicl-genv:find-package name environment)
+                 for package = (find-package name)
                  unless (null package)
                    collect package)))
     (loop until (null existing-packages)
@@ -29,6 +28,5 @@
                      ;; import and check for errors.
                      :use-list use)))
       (loop for name in all-name-strings
-            do (setf (sicl-genv:find-package name environment)
-                     package))
+            do (setf (find-package name) package))
       package)))
