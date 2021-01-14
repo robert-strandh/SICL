@@ -20,7 +20,7 @@ if [ ! -d "$PROJECTS_DIRECTORY" ]; then
 Usage: $0 [PROJECTS_DIRECTORY].
 
 You did not supply a directory to download dependencies into;
-the default diretory "$PROJECTS_DIRECTORY" does not exist.
+the default directory "$PROJECTS_DIRECTORY" does not exist.
 
 EOF
     exit 1
