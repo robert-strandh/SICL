@@ -28,3 +28,27 @@
 ;;; method-combination class in ENVIRONMENT.
 
 (defgeneric (setf find-method-combination-template) (new-template symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function STRUCTURE-DESCRIPTION.
+;;;
+;;; Return the structure description of a defstruct definition for
+;;; which a :type was specified.
+;;; If no typed structure with the given name exists, NIL is returned.
+;;;
+;;; (Defstruct definitions without :type, i.e. structure-objects,
+;;;  shouldn't need this accessor, as the information is apparent
+;;;  in the class.)
+
+(defgeneric structure-description (name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF STRUCTURE-DESCRIPTION).
+;;;
+;;; Set the structure description (explained above).
+;;;
+;;; FIXME: Should redefinition be banned? CLHS leaves undefined.
+
+(defgeneric (setf structure-description) (description name environment))

@@ -5,7 +5,11 @@
   (;; This slot holds an EQ hash table, mapping symbols to
    ;; method-combination templates.
    (%method-combination-templates :initform (make-hash-table :test #'eq)
-                                  :accessor method-combination-templates)))
+                                  :accessor method-combination-templates)
+   ;; The typed structure namespace, which is separate from
+   ;; both the class and type namespaces, and only used by defstruct.
+   (%structure-entries :initform (make-hash-table :test #'eq)
+                       :accessor structure-entries)))
 
 (defmethod find-method-combination-template
     (symbol (env base-run-time-environment))
@@ -15,6 +19,13 @@
     (new-template symbol (env base-run-time-environment))
   (setf (gethash symbol (method-combination-templates env)) new-template)
   new-template)
+
+(defmethod structure-description (name (env base-run-time-environment))
+  (gethash name (structure-entries env)))
+
+(defmethod (setf structure-description)
+    (type name (env base-run-time-environment))
+  (setf (gethash name (structure-entries env)) type))
 
 (defclass run-time-environment
     (base-run-time-environment)

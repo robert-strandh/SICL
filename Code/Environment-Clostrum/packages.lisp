@@ -38,6 +38,7 @@
            #:type
            #:value
            #:find-method-combination-template
+           #:structure-description
            #:function-cell
            #:variable-cell
            #:traced-functions
