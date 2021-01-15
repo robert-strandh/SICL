@@ -23,6 +23,10 @@
 (defun load-acclimation (e5)
   (load-asdf-system '#:acclimation e5))
 
+(defun load-trucler (e5)
+  (load-asdf-system '#:trucler-base e5)
+  (load-asdf-system '#:trucler-reference e5))
+
 (defun boot (boot)
   (format *trace-output* "Start phase 6~%")
   (with-accessors ((e3 sicl-boot:e3)
@@ -62,4 +66,5 @@
     (import-functions-from-host '(intern) e5)
     (load-alexandria e5)
     (load-clostrum e5)
-    (load-acclimation e5)))
+    (load-acclimation e5)
+    (load-trucler e5)))
