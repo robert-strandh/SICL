@@ -1,5 +1,8 @@
 (cl:in-package #:sicl-boot-phase-6)
 
+(defun load-alexandria (e5)
+  (load-asdf-system '#:alexandria e5))
+
 (defun boot (boot)
   (format *trace-output* "Start phase 6~%")
   (with-accessors ((e3 sicl-boot:e3)
@@ -36,4 +39,5 @@
     (load-source-file "Data-and-control-flow/values-define-setf-expander.lisp" e5)
     (sicl-boot::load-asdf-system '#:sicl-hash-table-base e5)
     (sicl-boot::load-asdf-system '#:sicl-hash-table e5)
-    (import-functions-from-host '(intern) e5)))
+    (import-functions-from-host '(intern) e5)
+    (load-alexandria e5)))
