@@ -176,7 +176,7 @@
      logand logior logxor ash integer-length
      zerop evenp max expt abs ldb byte random
      ;; CONSes
-     cons list list* append nconc make-list copy-list
+     cons list list* append nconc make-list copy-list subst
      consp atom listp null endp
      car cdr caar cadr cdar cddr
      caaar caadr cadar caddr cdaar cdadr cddar cdddr nthcdr
