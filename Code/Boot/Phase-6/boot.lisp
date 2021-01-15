@@ -20,6 +20,9 @@
   (load-asdf-system '#:clostrum e5)
   (load-asdf-system '#:clostrum/virtual e5))
 
+(defun load-acclimation (e5)
+  (load-asdf-system '#:acclimation e5))
+
 (defun boot (boot)
   (format *trace-output* "Start phase 6~%")
   (with-accessors ((e3 sicl-boot:e3)
@@ -58,4 +61,5 @@
     (sicl-boot::load-asdf-system '#:sicl-hash-table e5)
     (import-functions-from-host '(intern) e5)
     (load-alexandria e5)
-    (load-clostrum e5)))
+    (load-clostrum e5)
+    (load-acclimation e5)))
