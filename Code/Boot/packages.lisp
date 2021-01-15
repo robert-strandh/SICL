@@ -14,6 +14,7 @@
            #:define-error-functions
            #:compile-source-file
            #:load-source-file
+           #:load-asdf-system
            #:ast-eval
            #:load-fasl
            #:copy-macro-functions
