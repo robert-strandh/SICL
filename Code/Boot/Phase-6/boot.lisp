@@ -3,6 +3,23 @@
 (defun load-alexandria (e5)
   (load-asdf-system '#:alexandria e5))
 
+(defun load-clostrum (e5)
+  ;; FIXME: undefine all environment functions here.
+  (env:fmakunbound (env:client e5) e5 'env:type-expander)
+  ;; Since we are not using file-compilation semantics, Clostrum is
+  ;; not definining these variables.
+  (setf (env:special-variable
+         (env:client e5) e5 'clostrum-implementation::*run-time-operators* t)
+        '())
+  (setf (env:special-variable
+         (env:client e5) e5 'clostrum-implementation::*run-time-accessors* t)
+        '())
+  (setf (env:special-variable
+         (env:client e5) e5 'clostrum-implementation::*compilation-operators* t)
+        '())
+  (load-asdf-system '#:clostrum e5)
+  (load-asdf-system '#:clostrum/virtual e5))
+
 (defun boot (boot)
   (format *trace-output* "Start phase 6~%")
   (with-accessors ((e3 sicl-boot:e3)
@@ -40,4 +57,5 @@
     (sicl-boot::load-asdf-system '#:sicl-hash-table-base e5)
     (sicl-boot::load-asdf-system '#:sicl-hash-table e5)
     (import-functions-from-host '(intern) e5)
-    (load-alexandria e5)))
+    (load-alexandria e5)
+    (load-clostrum e5)))
