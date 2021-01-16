@@ -208,7 +208,7 @@
      ;; Sequence
      elt length count reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
-     nreverse replace delete
+     nreverse replace delete copy-seq mismatch
      ;; For debugging
      format
      ;; Conditions
