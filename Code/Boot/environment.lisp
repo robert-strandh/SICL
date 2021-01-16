@@ -178,6 +178,7 @@
      plusp minusp integerp numberp
      logand logior logxor ash integer-length
      zerop evenp max min expt abs ldb byte random
+     mod truncate
      log sqrt
      ;; CONSes
      cons list list* append nconc make-list copy-list subst
