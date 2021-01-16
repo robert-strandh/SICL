@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-boot-phase-6)
 
 (defun load-alexandria (e5)
+  (load-source-file "Data-and-control-flow/psetq-defmacro.lisp" e5)
   (load-asdf-system '#:alexandria e5))
 
 (defun load-clostrum (e5)
