@@ -177,7 +177,7 @@
      + - * / < <= = > >= /= floor 1+ 1-
      plusp minusp integerp numberp
      logand logior logxor ash integer-length
-     zerop evenp max expt abs ldb byte random
+     zerop evenp max min expt abs ldb byte random
      log sqrt
      ;; CONSes
      cons list list* append nconc make-list copy-list subst
@@ -192,7 +192,7 @@
      assoc rassoc set-difference set-exclusive-or union adjoin
      last butlast
      ;; Data and control flow
-     apply not eq eql equal values constantly identity
+     apply not eq eql equal values constantly identity some
      every
      ;; Evaluation and compilation
      constantp
