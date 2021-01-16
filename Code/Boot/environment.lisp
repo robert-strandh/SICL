@@ -191,7 +191,7 @@
      assoc rassoc set-difference set-exclusive-or union adjoin
      last butlast
      ;; Data and control flow
-     apply not eq eql equal values
+     apply not eq eql equal values constantly
      every
      ;; Evaluation and compilation
      constantp
