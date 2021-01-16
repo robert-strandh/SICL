@@ -12,7 +12,8 @@
            ;; We start by creating the body of the result, which
            ;; contains all the STORE-FORMs, storing the
            ;; STORE-VARIABLEs in the respecctive place.
-           (append (loop for setf-expansion in setf-expansions
+           (append '(progn)
+                   (loop for setf-expansion in setf-expansions
                          for store-form = (fourth setf-expansion)
                          collect store-form)
                    ;; The HyperSpec says that PSETF returns NIL, so we
