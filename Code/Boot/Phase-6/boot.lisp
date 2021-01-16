@@ -8,6 +8,7 @@
   (loop for name in '(env:type-expander
                       env:fdefinition)
         do (env:fmakunbound (env:client e5) e5 name))
+  (load-source-file "Cons/getf-define-setf-expander.lisp" e5)
   ;; Since we are not using file-compilation semantics, Clostrum is
   ;; not definining these variables.
   (setf (env:special-variable
