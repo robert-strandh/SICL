@@ -160,6 +160,9 @@
   (setf (env:fdefinition client environment 'sicl-symbol:variable-cell)
         (lambda (name)
           (env:variable-cell client environment name)))
+  (import-functions-from-host
+   '(env:fdefinition)
+   environment)
   (setf (env:fdefinition
          client
          environment
