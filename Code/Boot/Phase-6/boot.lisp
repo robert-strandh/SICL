@@ -5,7 +5,9 @@
 
 (defun load-clostrum (e5)
   ;; FIXME: undefine all environment functions here.
-  (env:fmakunbound (env:client e5) e5 'env:type-expander)
+  (loop for name in '(env:type-expander
+                      env:fdefinition)
+        do (env:fmakunbound (env:client e5) e5 name))
   ;; Since we are not using file-compilation semantics, Clostrum is
   ;; not definining these variables.
   (setf (env:special-variable
