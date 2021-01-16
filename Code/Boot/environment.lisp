@@ -191,7 +191,7 @@
      assoc rassoc set-difference set-exclusive-or union adjoin
      last butlast
      ;; Data and control flow
-     apply not eq eql equal values constantly
+     apply not eq eql equal values constantly identity
      every
      ;; Evaluation and compilation
      constantp
@@ -200,7 +200,7 @@
      ;; Characters
      characterp char-code code-char char= char-name standard-char-p
      ;; Strings
-     stringp char schar string
+     stringp char schar string string=
      ;; Types and classes
      coerce
      ;; Sequence
