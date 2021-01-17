@@ -2,6 +2,7 @@
 
 (defclass top-level-enter-instruction (cleavir-ir:top-level-enter-instruction)
   ((%constants :initform '() :accessor constants)
+   (%named-call-instructions :initform '() :accessor named-call-instructions)
    (%function-names :initform '() :accessor function-names)))
 
 (defgeneric trivial-constant-p (constant))
