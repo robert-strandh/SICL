@@ -141,7 +141,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class CALL-AST. 
+;;; Class CALL-AST.
 ;;;
 ;;; A CALL-AST represents a function call.  
 
@@ -155,6 +155,29 @@
 
 (defmethod children ((ast call-ast))
   (list* (callee-ast ast) (argument-asts ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class NAMED-CALL-AST.
+;;;
+;;; This AST is similar to the CALL-AST.  It can be used by clients
+;;; code that want to have a special representation for a function
+;;; call where the function is explicitly named, as is the case for
+;;; function-call forms.  This AST differs from the CALL-AST, in that
+;;; it does not have a CALLEE child.  Instead, it has a NAME slot that
+;;; is not an AST, and which contains the name of the function to
+;;; call.
+
+(defclass named-call-ast (ast)
+  ((%callee-name :initarg :callee-name :reader callee-name)
+   (%argument-asts :initarg :argument-asts :reader argument-asts)))
+
+(cleavir-io:define-save-info named-call-ast
+  (:callee-name callee-name)
+  (:argument-asts argument-asts))
+
+(defmethod children ((ast named-call-ast))
+  (argument-asts ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
