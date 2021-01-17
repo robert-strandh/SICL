@@ -162,11 +162,10 @@
 ;;;
 ;;; This AST is similar to the CALL-AST.  It can be used by clients
 ;;; code that want to have a special representation for a function
-;;; call where the function is explicitly named, as is the case for
-;;; function-call forms.  This AST differs from the CALL-AST, in that
-;;; it does not have a CALLEE child.  Instead, it has a NAME slot that
-;;; is not an AST, and which contains the name of the function to
-;;; call.
+;;; call to a global function that is explicitly named.  This AST
+;;; differs from the CALL-AST, in that it does not have a CALLEE
+;;; child.  Instead, it has a NAME slot that is not an AST, and which
+;;; contains the name of the function to call.
 
 (defclass named-call-ast (ast)
   ((%callee-name :initarg :callee-name :reader callee-name)
