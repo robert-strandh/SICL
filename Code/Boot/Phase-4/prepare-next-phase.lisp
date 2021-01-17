@@ -15,26 +15,6 @@
   (format *trace-output* "done~%")
   (finish-output *trace-output*))
 
-(defun ast-eval (ast client environment)
-  (let* ((global-environment (trucler:global-environment client environment))
-         (hir (sicl-ast-to-hir:ast-to-hir client ast))
-         (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
-         (sicl-run-time:*dynamic-environment* '())
-         (function-cell-function
-           (sicl-environment:fdefinition
-            client global-environment 'sicl-data-and-control-flow:function-cell)))
-    (funcall fun
-             (apply #'vector
-                    nil ; Ultimately, replace with code object.
-                    #'sicl-hir-evaluator:enclose
-                    #'sicl-hir-evaluator:initialize-closure
-                    #'cons
-                    nil
-                    (append (loop with names = (sicl-hir-transformations:function-names hir)
-                                  for name in names
-                                  collect (funcall function-cell-function name))
-                            (sicl-hir-transformations:constants hir))))))
-
 (defun define-ast-eval (e5)
   (setf (env:fdefinition (env:client e5) e5 'sicl-boot:ast-eval)
         (lambda (ast)
