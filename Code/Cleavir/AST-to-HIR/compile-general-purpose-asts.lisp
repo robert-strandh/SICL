@@ -400,7 +400,8 @@
        client
        args
        temps
-       (make-instance 'cleavir-ir:funcall-instruction
+       (make-instance 'cleavir-ir:named-call-instruction
+         :callee-name (cleavir-ast:callee-name ast)
          :inputs inputs
          :successors
          (if (eq results :values)
