@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "breakpoint-instruction")
+   (:file "named-call-instruction")
    (:file "dynamic-environment")
    (:file "stack")))
 
