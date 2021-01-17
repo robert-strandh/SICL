@@ -384,6 +384,31 @@
                      :outputs results
                      :successor (first successors)))))
        context))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a NAMED-CALL-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:named-call-ast) context)
+  (with-accessors ((results results)
+                   (successors successors))
+      context
+    (assert-context ast context nil 1)
+    (let* ((args (cleavir-ast:argument-asts ast))
+           (temps (make-temps args))
+           (inputs temps))
+      (compile-arguments
+       client
+       args
+       temps
+       (make-instance 'cleavir-ir:funcall-instruction
+         :inputs inputs
+         :successors
+         (if (eq results :values)
+             successors
+             (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                     :outputs results
+                     :successor (first successors)))))
+       context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
