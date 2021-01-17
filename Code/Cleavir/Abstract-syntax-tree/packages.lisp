@@ -23,6 +23,7 @@
    #:value-ast
    #:info
    #:call-ast #:callee-ast #:argument-asts
+   #:named-call-ast #:callee-name
    #:block-ast #:body
    #:function-ast #:lambda-list
    #:top-level-function-ast #:forms
