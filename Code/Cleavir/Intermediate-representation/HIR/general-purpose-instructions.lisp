@@ -84,6 +84,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction NAMED-CALL-INSTRUCTION.
+;;;
+;;; This instruction can be used by clients that want a specific
+;;; representation for function calls where the callee is a global
+;;; function that is explicitly named in source code.  This
+;;; instruction differs from the FUNCALL-INSTRUCTION in that it has no
+;;; input for the callee; only for the arguments.  Instead, the name
+;;; of the callee is stored in a slot of the instruction.
+
+(defclass named-call-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ((%callee-name :initarg :callee-name :reader callee-name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction RETURN-INSTRUCTION.
 
 (defclass return-instruction
