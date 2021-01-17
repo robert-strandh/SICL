@@ -50,6 +50,7 @@
    #:funcall-instruction
    #:funcall-no-return-instruction
    #:tailcall-instruction
+   #:named-call-instruction #:callee-name
    #:return-instruction
    #:enclose-instruction #:code #:initializer
    #:initialize-closure-instruction
