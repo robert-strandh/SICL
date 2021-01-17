@@ -3,6 +3,7 @@
 (defpackage sicl-hir-transformations
   (:use #:common-lisp)
   (:export #:hoist-fdefinitions
+           #:find-named-call-instructions
            #:name
            #:eliminate-create-cell-instructions
            #:eliminate-fetch-instructions
