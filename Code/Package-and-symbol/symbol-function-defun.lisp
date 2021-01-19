@@ -2,4 +2,4 @@
 
 (defun symbol-function (symbol)
   (check-type symbol symbol)
-  (fdefiniition symbol))
+  (fdefinition symbol))
