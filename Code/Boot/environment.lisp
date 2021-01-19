@@ -190,7 +190,8 @@
      member
      mapcar mapc
      getf
-     assoc rassoc set-difference set-exclusive-or union adjoin
+     assoc rassoc acons
+     set-difference set-exclusive-or union adjoin
      last butlast
      ;; Data and control flow
      apply not eq eql equal values constantly identity some
