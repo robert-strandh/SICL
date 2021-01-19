@@ -258,6 +258,12 @@
      sicl-run-time:makunbound)
    environment))
 
+(defun define-constants (client environment)
+  (setf (env:constant-variable client environment 'most-positive-fixnum)
+        (1- (expt 2 63)))
+  (setf (env:constant-variable client environment 'most-negative-fixnum)
+        (- (expt 2 63))))
+
 (defmethod initialize-instance :after ((environment environment) &key)
   (let ((client (env:client environment)))
     (setf (env:fdefinition client environment 'env:global-environment)
@@ -293,6 +299,7 @@
     (define-primops environment)
     (define-setf-functions environment)
     (define-environment-functions client environment)
+    (define-constants client environment)
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p
        cleavir-code-utilities:list-structure
