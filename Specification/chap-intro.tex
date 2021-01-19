@@ -2,20 +2,24 @@
 \chapter{Introduction}
 \pagenumbering{arabic}%
 
-\sysname{} (which doesn't mean anything in particular; pronounce it
-like ``sickle'') is a project with the purpose of creating a
-collection of highly-portable high-performance ``modules'' for
-developers of Common Lisp systems.  Such modules include ``standard
-libraries'' such as high-level functions that operate on lists,
-high-level functions that operate on sequences, the \texttt{format}
-function, the \texttt{loop} macro, the \texttt{read} function, the
-\emph{pretty printer}, etc.  Other planned modules include a module
-that provides localized docstrings for all of Common Lisp.
+\sysname{} (which stands for SICL Implements Common Lisp%
+\footnote{Thanks to Michał "phoe" Herda for suggesting this
+  interpretation.}, pronounce it like ``sickle'') is a project with
+the purpose of creating a collection of highly-portable
+high-performance ``modules'' for developers of Common Lisp systems.
+Such modules include ``standard libraries'' such as high-level
+functions that operate on lists, high-level functions that operate on
+sequences, the \texttt{format} function, the \texttt{loop} macro, the
+\texttt{read} function, the \emph{pretty printer}, etc.
 
 However, the modules are not limited to functionality that is directly
 provided by the \commonlisp{} language specification.  An existing
-module defines a \clos{} protocol for managing first-class global
-environments, and another defines such a protocol for managing
+module%
+\footnote{https://github.com/s-expressionists/Clostrum},
+defines a \clos{} protocol for managing first-class global
+environments, and another%
+\footnote{https://github.com/s-expressionists/Trucler}
+defines such a protocol for managing
 the contents of the compilation environment during the early phases of
 compilation.
 
@@ -23,10 +27,7 @@ Furthermore, even though these modules are part of the \sysname{}
 \emph{project}, they may not be present in the \sysname{}
 \emph{repository}.  Whenever a module is sufficiently independent of
 the rest of the \sysname{} code base, we try to extract it into a
-separate, independently maintained repository.  A module for reading
-\commonlisp{} source code as a \emph{concrete syntax tree} and a
-highly programmable version of the \commonlisp{} \texttt{read}
-function have already been extracted this way.
+separate, independently maintained repository.
 
 Initially, we planned to decrease the interdependence of modules as
 much as possible by creating a partial order between the modules,
