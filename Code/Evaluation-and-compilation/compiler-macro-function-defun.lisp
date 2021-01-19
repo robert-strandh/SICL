@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-evaluation-and-compilation)
 
-(let* ((global-environment (sicl-environment:global-environment environment))
+(let* ((global-environment (sicl-environment:global-environment))
        (client (sicl-environment:client global-environment))
        (compiler-macro-function-function
          (fdefinition 'sicl-environment:compiler-macro-function)))
