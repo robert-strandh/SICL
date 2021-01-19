@@ -66,6 +66,8 @@
             `(progn ,@(rest form))))
     (load-source-file "Data-and-control-flow/setf-defmacro.lisp" e5)
     (load-source-file "Data-and-control-flow/values-define-setf-expander.lisp" e5)
+    (load-source-file "Evaluation-and-compilation/compiler-macro-function-defun.lisp" e5)
+    (load-source-file "Evaluation-and-compilation/setf-compiler-macro-function-defun.lisp" e5)
     (sicl-boot::load-asdf-system '#:sicl-hash-table-base e5)
     (sicl-boot::load-asdf-system '#:sicl-hash-table e5)
     (import-functions-from-host '(intern) e5)
