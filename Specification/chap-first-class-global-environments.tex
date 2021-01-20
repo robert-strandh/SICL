@@ -55,5 +55,14 @@ provides several important features:
   hold implementation-specific information provided by the compiler
   during the compilation process, and queried by other parts of the
   compiler so as to provide feedback to the user in the form of errors
-  or warnings. 
+  or warnings.
 \end{itemize}
+
+Furthermore, \clostrum{} environments can be configured in multiple
+\emph{layers}, so as to allow for \emph{incremental deltas}.  This
+feature could be used in a text editor for parsing the contents of a
+text buffer containing \commonlisp{} code.  When the buffer contents
+is modified, side effects on the global environment by the old
+contents can be undone by simply abandoning the upper layers while
+preserving the environment contents associated with the code preceding
+the modification.
