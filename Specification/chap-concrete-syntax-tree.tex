@@ -40,3 +40,10 @@ that \texttt{cons} cell in the input is reused in the reconstructed
 concrete syntax tree.  For atoms, the problem is harder.  The concrete
 syntax tree module uses some heuristics to provide a plausible
 reconstruction.
+
+The concrete syntax tree module also contains a parser for lambda
+lists, represented as concrete syntax trees.  This parser uses the
+Earley parsing technique, which we believe is a good fit for parsing
+S-expressions.  However, the way the parser is expressed is currently
+not satisfactory.  We are looking for alternative ways of expressing
+parsers on S-expressions.
