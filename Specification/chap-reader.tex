@@ -1,5 +1,105 @@
 \chapter{Reader}
+\label{chap-reader}
 
-This entire chapter is obsolete.  We intend to use the
-implementation-independent reader Eclector, available at
-https://github.com/robert-strandh/Eclector.
+The \commonlisp{} reader is a prime candidate for an
+implementation-independent module.  We extracted the \sysname{} reader
+to an independent repository under the name \eclector{}%
+\footnote{https://github.com/robert-strandh/Eclector}, now maintained
+by Jan Moringen.
+
+Aside from correctness, one of the main objectives of \eclector{} is
+the ability for client code to customize its behavior.  This
+customization is accomplished by the following technique:
+
+\begin{itemize}
+\item Standard entry points such as \texttt{read} are implemented as a
+  simple \texttt{trampoline} to a generic function that takes an
+  additional \emph{client} parameter.  The object passed to the
+  generic function for this argument is the value of the special
+  variable \texttt{*client*}.
+\item The main generic function calls other generic functions for
+  every aspect of the reader algorithm, each of which also has a
+  \emph{client} parameter, so that each of these functions will
+  receive the value of the \texttt{*client*} special variable as it
+  was when the main entry point was invoked.
+\item The default value of the \texttt{*client*} special variable is
+  \texttt{nil}, and default methods that implement the reader
+  algorithm do not specialize to the \texttt{client} parameter.
+\item Client code will bind \texttt{*client*} to some standard object
+  of its choice.
+\item Clients that need to alter the default behavior of \eclector{}
+  can write primary or auxiliary methods on the relevant generic
+  functions for the aspect that needs to be customized.  These methods
+  will specialize the \emph{client} parameter to the class of their
+  chosen standard object.
+\end{itemize}
+
+Some examples of the aspects that can be customized are:
+
+\begin{itemize}
+\item The interpretation of tokens.  By default, tokens are
+  interpreted according to section 2.3 of the \commonlisp{} standard,
+  but this behavior is not always wanted by clients.
+\item The creation of symbols.  By default, symbols are created
+  according to section 2.3.4 of the \commonlisp{} standard, but there
+  are many situations where this behavior is not appropriate.  As an
+  example, client code may want to avoid that symbols are
+  \emph{interned} in its packages.
+\end{itemize}
+
+Another main objective of \eclector{} is excellent condition
+handling.  A \commonlisp{} reader is an excellent example of one of
+the design goals of the \commonlisp{} condition system, i.e., where
+low-level code detects a situation that it does not know how to
+handle, because there are several possible choices.  The high-level
+code that invoked the low-level code must make that decision.  Thus,
+\eclector{} signals a condition and proposes one or more
+\emph{restarts} that high-level code can invoke.  To make this
+mechanism as useful as possible, \eclector{} signals specific
+conditions for each such situations, thereby allowing client code to
+take the appropriate action.
+
+While an implementation-independent version of the \commonlisp{}
+reader was the initial goal of the \sysname{} reader and then of
+\eclector{}, we quickly saw other uses for this module.  As it turns
+out, many situations require an that behaves in a way similar to the
+\commonlisp{} \texttt{read} function, but with some additional twist
+to it.  For that reason, \eclector{} contains two additional systems
+that take advantage of the design of of this module:
+
+\begin{itemize}
+\item A reader producing \emph{concrete syntax trees}.
+\item A reader producing \emph{parse results}.
+\end{itemize}
+
+As explained in \refChap{chap-concrete-syntax-tree}, a \emph{concrete
+  syntax tree} is a data structure that wraps an ordinary S-expression
+in a standard object so that additional information can be provided
+\emph{about} the S-expression.  In particular, the wrapper object can
+contain information about \emph{source location} of the S-expression.
+
+\eclector{} has a system that reads input and returns it as a concrete
+syntax tree.  This features contains additional generic functions that
+can be customized by client code:
+
+\begin{itemize}
+\item Client code can define the representation of a \emph{source
+  position}.  By default, \eclector{} calls the function
+  \texttt{file-position} and uses the value as a source position.
+  Client code can customize this feature in many ways, including the
+  use of a Gray stream with its own representation of position.
+\item Client code can also define the representation of an
+  \emph{interval}, i.e., two source positions, one for the start of an
+  expression and another for the end of that expression.  By default,
+  \eclector{} creates a CONS cell containing the two individual
+  positions.
+\end{itemize}
+
+The entry point for the standard reader and the entry point for
+creating a concrete syntax tree both ignore syntactic features that
+are not returned by a conforming \texttt{read} function.  Such
+features include \emph{comments} (both line comments and block
+comments) and expressions that were excluded based on \emph{reader
+  conditionals}.  Sometimes, however, such syntactic features are
+important, for example in a text editor that uses the reader to parse
+the contents of a \commonlisp{} code buffer.
