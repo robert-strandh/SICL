@@ -1,0 +1,34 @@
+\chapter{Lexical compile-time environments}
+
+A \commonlisp{} compiler must maintain a compile-time environment that
+evolves during the compilations process.  Nested constructs such as
+\texttt{let} and \texttt{labels} create new entries that are valid as
+long as the construct is in scope. The module named \trucler{}%
+\footnote{https://github.com/s-expressionists/Trucler} provides this
+functionality.
+
+\trucler{} provides a \clos{} \emph{protocol} for querying and
+augmenting lexical environments.  The functionality provide has the
+same purpose as the functions documented in section 8.5 of the second
+edition of ``Common Lisp the language'' by Guy Steele.  However the
+functionality documented there is insufficient (it does not contain
+information introduced by \texttt{block} and \texttt{tagbody} special
+operators, for instance), and not extensible (because it relies on a
+fixed number of return values).  In contrast, the protocol provided by
+\trucler{} allows client code to customize the behavior.  For that
+purpose, \trucler{} methods have a \emph{client} parameter that is
+provided by client code.  Default \trucler{} methods do not specialize
+to this parameter, but client code can provide primary or auxiliary
+methods that do specialize to that parameter, making these methods
+applicable only for that client.
+
+\trucler{} provides a \emph{reference} implementation that can be used
+by new \commonlisp{} implementations.  But \trucler{} has the
+possibility of using client-specific environment with its protocol.
+This feature allows the creation of compilers that can be used in
+different \commonlisp{} implementations without the need to adapt the
+environment-manipulation code to each implementation.  Furthermore,
+\trucler{} provides two such \emph{native} implementations, namely for
+\sbcl{} and \ccl{}.  We welcome contributions to \trucler{} in the
+form of more such native implementations.
+
