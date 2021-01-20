@@ -1,2 +1,42 @@
 \chapter{Concrete syntax tree}
 \label{chap-concrete-syntax-tree}
+
+The Concrete Syntax Tree%
+\footnote{https://github.com/s-expressionists/Concrete-Syntax-Tree}
+module was designed to solve the problem of \emph{source tracking},
+i.e., the association of some source code with some concept of
+\emph{location} of that code in a source file.
+
+This module handles the problem by wrapping S-expressions in standard
+objects that can contain this additional information.  The standard
+object in question mimics two kinds of S-expressions, namely
+\texttt{cons} cells and \emph{atoms}.  Operations are provided by this
+module to take the \texttt{first} and the \texttt{rest} of a standard
+object that representes a \texttt{cons} cell, and to return the
+\emph{raw} contents of a concrete syntax tree, i.e., the underlying
+S-expression.
+
+Furthermore, this module provides a certain number of higher-level
+utilities for manipulating concrete syntax trees.  For example, it
+contains a lambda-list parser for lambda lists that are represented as
+concrete syntax trees.
+
+A particularly important utility is one that \emph{reconstructs} a
+concrete syntax tree from two arguments, namely a concrete syntax tree
+and an S-expression.  This utility can be used in a compiler for macro
+expansion.  \commonlisp{} macro expansion is specified to work on
+S-expressions.  The problem, then, is to preserve source information
+across macro expansion.  A compiler would then take a concrete syntax
+tree, retrieve the raw underlying S-expression and pass that
+S-expression to the macro function.  The macro function returns
+another S-expression that typically contains some nodes of the
+original S-expression and some nodes that were introduced by the macro
+function.  The reconstruction utility tries to match nodes in the
+output to nodes in the input, and construct a concrete syntax tree
+from the result.  For \texttt{cons} cells, the task is fairly simple.
+If the \emph{same} (as determined by \texttt{eq}) \texttt{cons} cell
+exists in the input and in the output, the concrete syntax tree for
+that \texttt{cons} cell in the input is reused in the reconstructed
+concrete syntax tree.  For atoms, the problem is harder.  The concrete
+syntax tree module uses some heuristics to provide a plausible
+reconstruction.
