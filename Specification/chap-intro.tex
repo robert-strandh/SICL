@@ -66,11 +66,9 @@ a combination of characteristics:
   own, implementation-specific code. 
 
   Upper layers contain code that is not performance critical.  This
-  code is written entirely in Common Lisp.  To avoid circular
-  references, we specify what lower-level Common Lisp primitives can
-  be used to write functions in the upper layer.  If done well, code
-  in this layer could be used by all free Common Lisp implementations,
-  which could save considerable maintenance effort.  Examples of
+  code is written entirely in Common Lisp.  If done well, code in this
+  layer could be used by all free Common Lisp implementations, which
+  could save considerable maintenance effort.  Examples of
   functionality in this layer would be formatted output,
   pretty-printing, and macros that can expand to portable Common Lisp
   code.
@@ -79,12 +77,7 @@ a combination of characteristics:
   obtain performance, but where the tuning can be handled by writing
   different versions of the code for different cases.  For instance,
   functions that work on all kinds of sequences might have special
-  versions for lists and vectors.  Similarly, such functions might
-  have special versions for common values of the \texttt{:test} (such
-  as the Common Lisp functions \texttt{\#'eq}, \texttt{\#'eql}, etc.)
-  and \texttt{:key} arguments (such as \texttt{\#'identity},
-  \texttt{\#'car}, etc).  These special cases should be handled by
-  using compiler macros.
+  versions for lists and vectors.
 
   Lower layers have to rely more and more on implementation-specific
   details, and require the introduction of implementation-specific
