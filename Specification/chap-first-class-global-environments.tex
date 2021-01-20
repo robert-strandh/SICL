@@ -1,0 +1,59 @@
+\chapter{First-class global environments}
+
+Most \commonlisp{} implementations do not have an explicit
+(first-class) representation for the global environments, and most
+\commonlisp{} implementations have a single global environment.  This
+environment is \emph{spread out} all over the system.  The
+\texttt{symbol} objects of such an implementation may contain a slot
+for a function named by that symbol and perhaps a slot for the global
+value of a variable named by that symbol.  The mapping from class
+names to class objects can also be represented as a slot in the symbol
+object, but is more likely represented separately in a hash table.
+Similarly, method combinations, \texttt{setf} expanders, and other
+mappings from names to objects may be represented in yet another way.
+
+\sysname{} uses \emph{first-class global environments} for all these
+mappings.  There are several reasons for this way of representing
+environments:
+
+\begin{itemize}
+\item It allows for multiple global environments, which in turn
+  provides solutions to a number of common problems.  For example,
+  several different versions of a system can be loaded simultaneously,
+  provided that each version is loaded into a separate environment.
+\item It becomes possible (and easy) to distinguish the three types of
+  global environments that the \commonlisp{} standard allows (and
+  sometimes encourages), namely run-time environments, evaluation
+  environments, and compilation environments.
+\item During bootstrapping of \sysname{} using a \emph{host}
+  \commonlisp{} system, \sysname{} objects and mappings can be
+  isolated from host objects and mappings by the use of first-class
+  environments.
+\end{itemize}
+
+First-class environments also allow for other features such as
+\emph{sandboxing} that are not directly used by \sysname{}.
+
+This module has been extracted to a separate repository by the name of
+\clostrum{}%
+\footnote{https://github.com/s-expressionists/Clostrum} and it
+provides several important features:
+
+\begin{itemize}
+\item The run-time environment is operated upon by a number of generic
+  functions that mimic standard \commonlisp{} functions such as
+  \texttt{fdefinition}, \texttt{macro-function}, etc., except that
+  these functions have an additional parameter named \emph{client}.
+  Client code can provide primary or auxiliary methods that specialize
+  to some client-provided class, so as to override or extend the
+  behavior of the default methods provided by \clostrum{}.
+\item The evaluation environment is similar to the run-time
+  environment, but also provides trampoline methods that calls the
+  same generic function in the run-time environment whenever some
+  object is not found in the evaluation environment.
+\item The compilation environment is different, and can be used to
+  hold implementation-specific information provided by the compiler
+  during the compilation process, and queried by other parts of the
+  compiler so as to provide feedback to the user in the form of errors
+  or warnings. 
+\end{itemize}
