@@ -1,12 +1,14 @@
 \chapter{Printer}
 
-A large part of the printer can be written portably without
-performance penalty.  We intend to supply standard methods for
-\texttt{print-object}, and code for functions such as \texttt{princ},
-\texttt{prin1}, and \texttt{print}. 
+The printer module, named \incless{} has been extracted to a separate
+repository%
+\footnote{https://github.com/s-expressionists/Incless}.
+It currently provides definitions of standard functions such as
+\texttt{print}, \texttt{princ}, \texttt{print-object}, etc.  It does
+not directly provide methods on \texttt{print-object} for different
+classes of objects, because we want it to be possible for client code
+to customize this behavior.  Instead, the default method on
+\texttt{print-object} trampolines to a generic function named
+\texttt{print-object-using-client} which has an additional
+\emph{client} parameter.
 
-Initially, we were planning to use the method created by Burger and Dybvig
-\cite{Burger:1996:PFN:231379.231397} to print floating-point numbers
-so that they can be read back to the exact same number.  But more
-recent work \cite{Adams:2018:RFF:3296979.3192369} claims even better
-techniques.  We need to compare these new techniques.
