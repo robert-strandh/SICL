@@ -1,45 +1,27 @@
 \chapter{Hash tables}
 
+This module was written by Hayley Patton.
+
 \section{Package}
 
 The package for all symbols in this chapter is \texttt{sicl-hash-table}.
 
 \section{Protocol}
 
-Every class in this section has \texttt{built-in-class} as its
-metaclass.
-
-\Defclass {hash-table}
-
-This class is the base class of all hash tables.  It is a subclass of
-the class \texttt{t}.
-
+Most of the standard functions on hash tables are implemented as
+generic functions:
 
 {\small\Defgeneric {hash-table-p} {hash-table}
 }
 
-This generic function returns a generalized Boolean value, where a
-\textsl{true} value indicates that \textit{hash-table} is an instance
-of the class \texttt{hash-table}, and \textsl{false} indicates that
-\textit{hash-table} is \emph{not} an instance of the class
-\texttt{hash-table}.
-
 {\small\Defgeneric {hash-table-count} {hash-table}
 }
 
-This generic function returns a non-negative integer indicating the
-number of entries in \textit{hash-table}.
+{\small\Defgeneric {hash-table-rehash-size} {hash-table}
+}
 
 {\small\Defgeneric {gethash} {key hash-table \optional default}
 }
-
-This generic function returns two values.  The first value is the
-value in \textit{hash-table} associated with \textit{key}, or
-\texttt{nil} if no value in \textit{hash-table} is associated with
-\textit{key}.  The second value is a generalized Boolean value, where
-a \textsl{true} value indicates that the first value is indeed present
-in \textit{hash-table}, and \textsl{false} indicates that no value is
-associated with \textit{key} in \textit{hash-table}.
 
 {\small\Defgeneric {(setf gethash)} {new-value key hash-table \optional default}
 }
@@ -50,79 +32,20 @@ associated with \textit{key} in \textit{hash-table}.
 {\small\Defgeneric {remhash} {key hash-table}
 }
 
-This generic function removes the entry associated with \textit{key}
-in \textit{hash-table}.  It returns a \textsl{true} value an entry
-associated with \textit{key} existed and was removed.  Otherwise,
-it returns \textsl{false}.
+\section{Base class}
+
+\Defclass {hash-table}
+
+This class is the base class of all hash tables.  It is a subclass of
+the class \texttt{standard-object}.
 
 \section{Implementation}
-
-\Defclass {eq-hash-table-mixin}
-
-This mixin class is a superclass of every hash tables class that uses
-\texttt{eq} as its test function.  It is a subclass of the class
-\texttt{t}.
-
-{\small\Defmethod {hash-table-test} {(hash-table {\tt eq-hash-table-mixin})}
-}
-
-This method returns the symbol \texttt{eq}.
-
-\Defclass {eql-hash-table-mixin}
-
-This mixin class is a superclass of every hash tables class that uses
-\texttt{eql} as its test function.  It is a subclass of the class
-\texttt{t}.
-
-{\small\Defmethod {hash-table-test} {(hash-table {\tt eql-hash-table-mixin})}
-}
-
-This method returns the symbol \texttt{eql}.
-
-\Defclass {equal-hash-table-mixin}
-
-This mixin class is a superclass of every hash tables class that uses
-\texttt{equal} as its test function.  It is a subclass of the class
-\texttt{t}.
-
-{\small\Defmethod {hash-table-test} {(hash-table {\tt equal-hash-table-mixin})}
-}
-
-This method returns the symbol \texttt{equal}.
-
-\Defclass {equalp-hash-table-mixin}
-
-This mixin class is a superclass of every hash tables class that uses
-\texttt{equalp} as its test function.  It is a subclass of the class
-\texttt{t}.
-
-{\small\Defmethod {hash-table-test} {(hash-table {\tt equalp-hash-table-mixin})}
-}
-
-This method returns the symbol \texttt{equalp}.
-
-\Defclass {standard-hash-table}
-
-This class is a subclass of the class \texttt{hash-table}.
-
-\Definitarg {:contents}
-
-This initialization argument is accepted by all instances of
-\texttt{standard-hash-table}
-
-{\small\Defgeneric {contents} {standard-hash-table}
-}
-
-Given an instance of the class \texttt{standard-hash-table}, this
-generic function returns the value that was supplied as the
-\texttt{:contents} initialization argument when the instance was
-created.
 
 \subsection{Hash table implemented as a list of entries}
 
 \Defclass {list-hash-table}
 
-This class is a subclass of the class \texttt{standard-hash-table}.
+This class is a subclass of the class \texttt{hash-table}.
 It provides and implementation of the protocol where the entries are
 stored as an association list where the key is the \texttt{car} of the
 element in the list and the value is the \texttt{cdr} of the element
@@ -137,10 +60,17 @@ This method calls the generic function \texttt{contents} with
 \texttt{hash-table}.  It also calls the generic function
 \texttt{hash-table-test} with \textit{hash-table} as an argument to
 obtain a function to be used to compare the keys of the entries to
-\texttt{key}.  It then calls the standard \commonlisp function
+\texttt{key}.  It then calls the standard \commonlisp{} function
 \texttt{assoc}, passing it \textit{key}, the list of entries, and the
 test function as the value of the keyword argument \texttt{:test}.  If
 the call returns a non-\texttt{nil} value (i.e. a valid entry), then
 the method returns two values, the \texttt{cdr} of that entry and
 \texttt{t}.  Otherwise, the method return \texttt{nil} and
 \texttt{nil}.
+
+\subsection{Hash table implemented as a vector of buckets}
+
+\Defclass {bucket-hash-table}
+
+This class is a subclass of \texttt{hash-table}.  The implementation
+uses a vector of buckets.
