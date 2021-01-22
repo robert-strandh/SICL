@@ -1,30 +1,36 @@
 \chapter{Sequence functions}
 
-This module provides high-performance implementations of the
-functions in the ``sequences'' chapter of the \hs{}.  High
-performance will be obtained by identifying important special cases
-such as the use of \texttt{:test} function \texttt{eq}, or
-\texttt{equal}, or the use of a \texttt{:key} of \texttt{identity}. 
+This module was written entirely by Marco Heisig.  It provides
+high-performance implementations of the functions in the ``sequences''
+chapter of the \hs{}.  High performance is obtained by identifying
+important special cases such as the use of \texttt{:test} function
+\texttt{eq}, or \texttt{equal}, or the use of a \texttt{:key} of
+\texttt{identity}.  These special cases are handled by macros
+according to the technique described by our 2017 ELS paper
+\cite{Durand:2017:ELS:Sequence}.
 
-\section{Current state}
+In addition to the technique described in that paper, Marco Heisig
+decided to write the sequence functions as generic functions,
+specialized to the type of the sequence argument.  Many
+implementations have specialized versions of vectors, based on element
+type, and a method specialized this way can often be significantly
+faster than code that uses a generic \texttt{vector} type.  In order
+to account for the different set of vector subclasses available in
+different \commonlisp{} implementations, a macro
+\texttt{replicate-for-each-vector-class} is used to generate a method
+for each such subclass.  Client code can customize this module by
+defining this macro according to its set of vector subclasses.
 
-In an attempt to make the functions as fast as possible, we created
-lots of different specialized versions for common cases of keyword
-arguments.  Preliminary tests show that we improve on the speed
-compared to existing commonly used implementations of \commonlisp{}.
-However, the existence of all those special cases also makes the
-module hard to read and difficult to test.
-
-For that reason, we plan to rewrite this module, using an alternative
-strategy.
+This module can be used as an ``extrinsic'' module, i.e., it can be
+loaded into an existing \commonlisp{} implementation without
+clobbering the native sequence functions of that implementation.  This
+feature has been used to compare the performance of the functions in
+this module to that of the native sequence functions of \sbcl{}, and
+the result is very encouraging, in that many functions in this module
+are as fast, or faster, than the native \sbcl{} equivalents.
 
 \section{Future work}
 \label{sec-sequence-functions-future-work}
-
-Work is in progress using the techniques in our paper at ELS 2017
-\cite{Durand:2017:ELS:Sequence}.  These techniques work well for most
-of the sequence functions such as \texttt{find}, \texttt{position},
-etc.
 
 Concerning the \emph{sorting functions} (i.e., \texttt{sort} and
 \texttt{stable-sort}) there is an interesting challenge with respect
@@ -36,3 +42,5 @@ but some research (\cite{Huang:1990:FSM:898863},
 possible to obtain an in-place stable version of mergesort.  Since
 mergesort is typically significantly faster than quicksort, this would
 be a worthwhile direction to pursue.
+
+%%  LocalWords:  subclasses
