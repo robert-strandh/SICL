@@ -29,19 +29,21 @@ this module to that of the native sequence functions of \sbcl{}, and
 the result is very encouraging, in that many functions in this module
 are as fast, or faster, than the native \sbcl{} equivalents.
 
+The \texttt{sort} functions in this module use the technique described
+in a paper by Kim and Kutzner \cite{10.1007/978-3-540-30140-0_63}.
+This technique is based on merging.
+
 \section{Future work}
 \label{sec-sequence-functions-future-work}
 
 Concerning the \emph{sorting functions} (i.e., \texttt{sort} and
-\texttt{stable-sort}) there is an interesting challenge with respect
-to finding a stable sorting algorithm for vectors that uses little
-extra space.  The naive version of mergesort uses $O(n)$ extra space,
-but some research (\cite{Huang:1990:FSM:898863},
-\cite{Huang:1988:PIM:42392.42403},
-\cite{Katajainen:1996:PIM:642136.642138}) indicates that it is
-possible to obtain an in-place stable version of mergesort.  Since
-mergesort is typically significantly faster than quicksort, this would
-be a worthwhile direction to pursue.
+\texttt{stable-sort}), there is a challenge.  The current
+implementation uses a merging technique where no additional space is
+required.  However, the current implementation is not as fast as
+traditional merging with O(n) extra space.  So the question is whether
+there is an intermediate solution where a small amount of additional
+space is used whenever there is such space available, for example on
+the stack.
 
 Currently, this module is located in the \texttt{Code/Sequence}
 directory of the \sysname{} repository, but we may extract it to a
