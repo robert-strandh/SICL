@@ -6,5 +6,5 @@
            #:eq-hash #:equal-hash #:equalp-hash
            #:%hash-table-test
            #:hashing-hash-table #:hash-table-hash-function #:hash-table-offset
-           #:find-hash-function #:sxhash
+           #:find-hash-function #:sxhash #:hash
            #:make-hash-table-iterator))
