@@ -20,7 +20,13 @@ generic functions:
 {\small\Defgeneric {hash-table-count} {hash-table}
 }
 
+{\small\Defgeneric {hash-table-size} {hash-table}
+}
+
 {\small\Defgeneric {hash-table-rehash-size} {hash-table}
+}
+
+{\small\Defgeneric {hash-table-rehash-threshold} {hash-table}
 }
 
 {\small\Defgeneric {gethash} {key hash-table \optional default}
@@ -34,6 +40,44 @@ generic functions:
 
 {\small\Defgeneric {remhash} {key hash-table}
 }
+
+{\small\Defgeneric {clrhash} {hash-table}
+}
+
+{\small\Defgeneric {maphash} {hash-table}
+}
+
+Some additional generic functions are provided, which should be implemented
+by a hash table implementation:
+
+\Defgeneric {make-hash-table-iterator} {hash-table}
+
+Return a function which implements the iterator of
+\cl{with-hash-table-iterator}.
+
+Furthermore, some generic functions will be useful for implementing a hash
+table:
+
+\Defgeneric {hash-table-hash-function} {hash-table}
+
+Return a function which accepts an \term{offset value} of type
+\cl{(unsigned-byte 64)}, and a key to hash, returning a hash of type
+\cl{(unsigned-byte 64)}.
+
+A random offset is generated per hash table, and is used to avoid an
+\term{algorithmic complexity attack}, where an adversary could (indirectly)
+insert keys that they know will all collide, greatly slowing down an
+application. It is expected that this offset will be used to perturb the
+hashes generated, perhaps by being used as the initial state of a hashing
+algorithm.
+
+\Defgeneric {\%hash-table-test} {hash-table}
+
+Return the test function used for comparing keys. This function is necessary
+because \cl{hash-table-test} must return a symbol which designates a
+standardized test function, and not the function itself; however, an
+implementor of a hash table is likely to want to avoid accessing the global
+environment when probing keys.
 
 \section{Base class}
 
