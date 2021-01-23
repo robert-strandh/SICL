@@ -10,7 +10,7 @@ represent four different \emph{tags} as follows:
 \item \texttt{000}, \texttt{010}, \texttt{100}, \texttt{110}.  These
   tags are used for fixnums.  The bits except the last one represent
   integer in two's complement representation.  On a 64-bit machine, a
-  fixnum is thus in the interval $[2^{-62}, 2^{62} - 1]$.
+  fixnum is thus in the interval $[-2^{-62}, 2^{62} - 1]$.
 \item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
   pointer to a \texttt{cons} cell is thus a pointer aligned to a
   double word to which the machine integer $1$ has been added.  See
@@ -33,8 +33,9 @@ represent four different \emph{tags} as follows:
   argument.
 \end{itemize}
 
-On a 64-bit machine, floats of type \texttt{short-float} and
-\texttt{single-float} are represented as immediate values.
+On a 64-bit machine, floats of type \texttt{single-float} are
+represented as immediate values.  We currently do not plan a separate
+type for short floats.
 
 \section{Immediate objects}
 \label{sec-data-representation-immediate-objects}
@@ -47,7 +48,7 @@ of immediate objects, giving the following five low bits:
 \item \texttt{00011}.  This tag is used for Unicode characters.  When
   shifted five positions to the right, the value gives the Unicode
   code point.
-\item \texttt{01011}.  This tag is used short floats.
+\item \texttt{01011}.  This tag is unused.
 \item \texttt{10011}.  This tag is used for single floats (64-bit
   platforms only).
 \item \texttt{11011}.  This tag is unused.
@@ -306,7 +307,7 @@ been instantiated.
 \section{Instances of built-in classes}
 
 The only direct instances of built-in classes are fixnums, characters,
-short floats, single floats, and \texttt{cons} cells.
+single floats, and \texttt{cons} cells.
 
 \subsection{Instances of \texttt{sequence}}
 
