@@ -1,0 +1,40 @@
+\chapter{Compiler phases -- \cleavir{}}
+
+\cleavir{} is a collection of modules that can be used to build a
+\commonlisp{} compiler.  It currently contains modules for the
+following functionalities:
+
+\begin{itemize}
+\item Definitions of classes and generic functions for representing
+  and manipulating abstract syntax trees (ASTs).  An AST can be seen
+  as a representation (as standard objects) of source code that has
+  been \emph{minimally compiled}%
+  \footnote{See section 3.2.2.2 of the \commonlisp{} standard},
+  meaning that macros and compiler macros have been expanded, so that
+  the meaning of the AST no longer depends on a particular
+  environment.
+\item Definitions of generic functions for translating a concrete
+  syntax tree (see \refChap{chap-concrete-syntax-tree}) to an abstract
+  syntax tree.
+\item Definitions of classes and generic functions for representing
+  and manipulating intermediate code in the form of a \emph{graph of
+    instructions}, similar to the intermediate code used in compilers
+  for more traditional languages.
+\item Definitions of generic functions for translating an abstract
+  syntax tree to an instruction graph.
+\end{itemize}
+
+Currently, two versions of \cleavir{} exists.
+
+The more advanced version has been extracted to a separate repository%
+\footnote{https://github.com/s-expressionists/Cleavir}, and is
+maintained and improved by Alex Wood and Charles Zhang.  It is being
+used in the main compiler of the \clasp{} implementation of
+\commonlisp{}.
+
+A more primitive version is located in the directory
+\texttt{Code/Cleavir} of the \sysname{} repository.  The main reason
+for the existence of this module is to provide a stable basis for the
+\sysname{} compiler while \sysname{} is still frequently modified in
+many ways.  The ultimate goal is to abandon this version in favor of
+the extracted one.
