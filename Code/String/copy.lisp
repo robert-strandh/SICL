@@ -16,10 +16,7 @@
 
 (cl:in-package #:sicl-string)
 
-;;; Extract an interval from a simple string to a fresh copy.  We
-;;; assume that the caller has checked that the STRING is a simple
-;;; string, and that START and END are valid bounding indices for
-;;; STRING.
+;;; Extract an interval from a simple string to a fresh copy.
 (defun extract-interval-simple (string start end)
   (assert (simple-string-p string))
   (assert (>= start 0))
