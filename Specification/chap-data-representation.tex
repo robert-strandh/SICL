@@ -3,16 +3,17 @@
 
 \section{Low-level tag bits}
 
-The three least significant bits of a machine word are used to
-represent four different \emph{tags} as follows:
+The three least significant bits of a machine word contain a
+\emph{major tag} that is used to represent four different object types
+as follows:
 
 \begin{itemize}
 \item \texttt{000}, \texttt{010}, \texttt{100}, \texttt{110}.  These
   tags are used for fixnums.  The bits except the last one represent
-  integer in two's complement representation.  On a 64-bit machine, a
-  fixnum is thus in the interval $[-2^{-62}, 2^{62} - 1]$.
+  an integer in two's complement representation.  On a 64-bit machine,
+  a fixnum is thus in the interval $[-2^{-62}, 2^{62} - 1]$.
 \item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
-  pointer to a \texttt{cons} cell is thus a pointer aligned to a
+  pointer to a \texttt{cons} cell is thus a pointer, aligned to a
   double word to which the machine integer $1$ has been added.  See
   \refSec{sec-data-representation-cons-cells} for more information
   about the representation of \texttt{cons} cells.
@@ -41,17 +42,18 @@ type for short floats.
 \label{sec-data-representation-immediate-objects}
 
 Immediate objects are all objects with \texttt{011} in the lower three
-bits.  Two more bits are used to distinguish between different kinds
-of immediate objects, giving the following five low bits:
+bits.  Two more bits are used for a \emph{minor tag} to distinguish
+between different kinds of immediate objects, giving the following
+five low bits:
 
 \begin{itemize}
 \item \texttt{00011}.  This tag is used for Unicode characters.  When
   shifted five positions to the right, the value gives the Unicode
   code point.
-\item \texttt{01011}.  This tag is unused.
+\item \texttt{01011}.  This tag is currently unused.
 \item \texttt{10011}.  This tag is used for single floats (64-bit
   platforms only).
-\item \texttt{11011}.  This tag is unused.
+\item \texttt{11011}.  This tag is currently unused.
 \end{itemize}
 
 \subsection{Characters}
@@ -117,7 +119,7 @@ initially obtain a pointer to the rack and then do the
 index check, the computation of the offset, and the access without
 risking any interference.  No locking is therefore required.  Another
 example is a \emph{generic function}.  When a method is added or
-deleted, or when a new sequence of argument classes is seen, the
+deleted, or when a new suite of argument classes is seen, the
 generic function must be destructively updated.  Normally, this
 operation would require some locking primitive in order to prevent
 other threads from invoking a partially updated generic function.  In
