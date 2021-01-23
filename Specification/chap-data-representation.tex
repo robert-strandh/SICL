@@ -90,68 +90,56 @@ always contains a tagged pointer to a \emph{class} object (which is
 another standard object).  The second word contains a tagged pointer
 (with tag $111$) to the first word of the rack.
 
-The first entry of the rack of every standard object is a
-small fixnum called the \emph{stamp} of the standard object.  The
-stamp is the \emph{unique class number} of the class of the general
-instance as it was when the instance was created.  The main purpose of
-this information is to be used in \emph{generic function dispatch}.
-It is also used to determine whether a standard object is an obsolete
-instance (in this case the stamp of the standard object will not be
-the same as the \emph{current} unique class number of the class of the
-standard object).  Standard objects that can become obsolete are
-said to be \emph{flexible}.
-
-One advantage of representing standard objects this way is that the
-rack is \emph{internally consistent}.  To explain what we
-mean by this concept, let us take an \emph{adjustable array} as an
-example.  The implementation of \texttt{aref} must check that the
-indices are valid, compute the offset of the element and then access
-the element.  But in the presence of threads, between the index check
-and the access, some other thread might have adjusted the array so
-that the indices are no longer valid.  In most implementations, to
+One advantage of representing standard objects this way is that we can
+make sure that the rack is \emph{internally consistent}.  To explain
+what we mean by this concept, let us take an \emph{adjustable array}
+as an example.  The implementation of \texttt{aref} must check that
+the indices are valid, compute the offset of the element and then
+access the element.  But in the presence of threads, between the index
+check and the access, some other thread might have adjusted the array
+so that the indices are no longer valid.  In most implementations, to
 ensure that \texttt{aref} is \emph{thread safe}, it is necessary to
 prevent other threads from intervening between the index check and the
 access, for instance by using a \emph{lock}.  In \sysname{}, adjusting
-the array involves creating a new rack with new dimensions,
-and then with a single store instruction associate the new rack
-with the array.  The implementation of \texttt{aref} would then
-initially obtain a pointer to the rack and then do the
-index check, the computation of the offset, and the access without
-risking any interference.  No locking is therefore required.  Another
-example is a \emph{generic function}.  When a method is added or
-deleted, or when a new suite of argument classes is seen, the
-generic function must be destructively updated.  Normally, this
-operation would require some locking primitive in order to prevent
-other threads from invoking a partially updated generic function.  In
-\sysname{}, to update a generic function this way, a new rack
-would be allocated and the modifications would be made there,
-leaving the original generic function intact until the final
-instruction to store a reference to the the new rack in the
-header object.
+the array involves creating a new rack with new dimensions, and then
+with a single store instruction associate the new rack with the array.
+The implementation of \texttt{aref} would then initially obtain a
+pointer to the rack and then do the index check, the computation of
+the offset, and the access without risking any interference.  No
+locking is therefore required.  Another example is a \emph{generic
+  function}.  When a method is added or deleted, or when a new suite
+of argument classes is seen, the generic function must be
+destructively updated.  Normally, this operation would require some
+locking primitive in order to prevent other threads from invoking a
+partially updated generic function.  In \sysname{}, to update a
+generic function this way, a new rack would be allocated and the
+modifications would be made there, leaving the original generic
+function intact until the final instruction to store a reference to
+the the new rack in the header object.
 
-A standard object can be \emph{rigid} or \emph{flexible}.  A rigid
-instance is an instance of a class that can not change, typically a
-system class.  A flexible instance is an instance of a class that may
-be modified, makings its instances \emph{obsolete}.  In \sysname{},
-structure objects are flexible too.
+The first entry of the rack of every standard object is a small fixnum
+called the \emph{stamp} of the standard object.  The stamp is the
+\emph{unique class number} of the class of the object, as it was when
+the object was created.  The main purpose of this information is to
+be used in \emph{generic function dispatch}.  It is also used to
+determine whether a standard object is an obsolete instance (in this
+case the stamp of the standard object will not be the same as the
+\emph{current} unique class number of the class of the standard
+object).  An instance becomes obsolete as a result of changes to its
+class.  And a class is changed as a result of passing it to
+\texttt{reinitialize-instance}.  Some classes can not be
+reinitialized, in which case its instances can not become obsolete.
 
-In the following sections we give the details of the representation
-for all possible standard objects.
-
-\section{Flexible instances}
-\label{sec-data-representation-flexible-instances}
-
-A flexible instance must allow for its class to be redefined, making
-it necessary for the instance to be updated before being used again.  The
-standard specifically allows for these updates to be delayed and not
-happen as a direct result of the class redefinition.  They must happen
-before an attempt is made to access some slot (or some other
-information about the slots) of the instance.  It is undesirable to
-make all instances directly accessible from the class, because
-such a solution would waste space and would have to make sure that
-memory leaks are avoided.  We must thus take into account the presence
-of \emph{obsolete instance} in the system, i.e. instances that must
-be \emph{updated} at some later point in time.
+An obsolete instance must be updated before its contents can be
+accessed.  The standard specifically allows for these updates to be
+delayed and not happen as a direct result of the class redefinition.
+They must happen before an attempt is made to access some slot (or
+some other information about the slots) of the instance.  It is
+undesirable to make all instances directly accessible from the class,
+because such a solution would waste space and would have to make sure
+that memory leaks are avoided.  We must thus take into account the
+presence of obsolete instance in the system, and update them if an
+when an attempt is made to access their contents.
 
 The solution is to store some kind of \emph{version} information in
 the rack so that when an attempt is made to access an
@@ -177,7 +165,7 @@ object is obsolete, the contents of the first word of the rack
 (i.e. the \emph{stamp}) is compared to the \emph{class unique number}
 of the class of the object.  However, this test is performed
 automatically in most cases, because when an obsolete object is passed
-as an argument to a generic function, the \emph{automation} of the
+as an argument to a generic function, the \emph{automaton} of the
 discriminating function of the generic function will fail to find an
 effective method, triggering an update of the object.
 \seesec{sec-generic-function-dispatch-the-discriminating-function}
@@ -211,6 +199,11 @@ function, whenever a new discriminating function is \emph{installed},
 the \emph{entry point} and the \emph{static environment} are copied
 from the discriminating function to the corresponding slots of the
 generic function itself.
+
+Every \sysname{} function is a funcallable standard object.  If it is
+an ordinary (i.e., not generic) function, it is an instance of the
+class \texttt{simple-function} which is a subclass of
+\texttt{funcallable-standard-object}.
 
 \section{Code objects}
 \label{data-representation-code-objects}
