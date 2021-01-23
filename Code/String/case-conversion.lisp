@@ -2,16 +2,16 @@
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
-;;;; all rights reserved. 
+;;;; all rights reserved.
 ;;;;
-;;;; Permission is hereby granted to use this software for any 
+;;;; Permission is hereby granted to use this software for any
 ;;;; purpose, including using, modifying, and redistributing it.
 ;;;;
 ;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
+;;;; this software assumes any responsibility of the consequences.
 
 ;;;; This file is part of the string module of the SICL project.
-;;;; See the file SICL.text for a description of the project. 
+;;;; See the file SICL.text for a description of the project.
 ;;;; See the file string.text for a description of the module.
 
 (cl:in-package #:sicl-string)
@@ -44,18 +44,6 @@
 	  do (setf (schar string i) (char-upcase (schar string i)))))
   string)
 
-(defun nstring-upcase-general (string start end)
-  (assert (stringp string))
-  (assert (>= start 0))
-  (assert (<= end (length string)))
-  (assert (<= start end))
-  (locally (declare (type string string)
-		    (type fixnum start end)
-		    (optimize (speed 3) (safety 0) (debug 0)))
-    (loop for i of-type fixnum from start below end
-	  do (setf (char string i) (char-upcase (char string i)))))
-  string)
-
 (defun nstring-upcase (string &key (start 0) end)
   (declare (type string string))
   (let ((length (length string)))
@@ -64,9 +52,7 @@
     (cond ((typep string 'simple-base-string)
 	   (nstring-upcase-simple-base string start end))
 	  ((simple-string-p string)
-	   (nstring-upcase-simple string start end))
-	  (t
-	   (nstring-upcase-general string start end))))
+	   (nstring-upcase-simple string start end))))
   string)
 
 (defun string-upcase (string-designator &key (start 0) end)
@@ -102,18 +88,6 @@
 	  do (setf (schar string i) (char-downcase (schar string i)))))
   string)
 
-(defun nstring-downcase-general (string start end)
-  (assert (stringp string))
-  (assert (>= start 0))
-  (assert (<= end (length string)))
-  (assert (<= start end))
-  (locally (declare (type string string)
-		    (type fixnum start end)
-		    (optimize (speed 3) (safety 0) (debug 0)))
-    (loop for i of-type fixnum from start below end
-	  do (setf (char string i) (char-downcase (char string i)))))
-  string)
-
 (defun nstring-downcase (string &key (start 0) end)
   (declare (type string string))
   (let ((length (length string)))
@@ -122,9 +96,7 @@
     (cond ((typep string 'simple-base-string)
 	   (nstring-downcase-simple-base string start end))
 	  ((simple-string-p string)
-	   (nstring-downcase-simple string start end))
-	  (t
-	   (nstring-downcase-general string start end))))
+	   (nstring-downcase-simple string start end))))
   string)
 
 (defun string-downcase (string-designator &key (start 0) end)
@@ -176,26 +148,6 @@
 		   (setf state t)))))
   string)
 
-(defun nstring-capitalize-general (string start end)
-  (assert (stringp string))
-  (assert (>= start 0))
-  (assert (<= end (length string)))
-  (assert (<= start end))
-  (locally (declare (type string string)
-		    (type fixnum start end)
-		    (optimize (speed 3) (safety 0) (debug 0)))
-    (loop with state = nil
-	  for i of-type fixnum from start below end
-	  for char = (char string i)
-	  do (if state
-		 (if (alphanumericp char)
-		     (setf (char string i) (char-downcase char))
-		     (setf state nil))
-		 (when (alphanumericp char)
-		   (setf (char string i) (char-upcase char))
-		   (setf state t)))))
-  string)
-
 (defun nstring-capitalize (string &key (start 0) end)
   (declare (type string string))
   (let ((length (length string)))
@@ -204,9 +156,7 @@
     (cond ((typep string 'simple-base-string)
 	   (nstring-capitalize-simple-base string start end))
 	  ((simple-string-p string)
-	   (nstring-capitalize-simple string start end))
-	  (t
-	   (nstring-capitalize-general string start end))))
+	   (nstring-capitalize-simple string start end))))
   string)
 
 (defun string-capitalize (string-designator &key (start 0) end)
