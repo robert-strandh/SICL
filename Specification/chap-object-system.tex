@@ -103,12 +103,11 @@ definition of the class.  Furthermore, the version information must
 contain enough information of the class as it was when the instance
 was created to determine whether slots have been added or removed.
 
-In \sysname{} the first location of the rack of each
-standard-object contains a \emph{stamp}, which is the unique number
-of the class as it was when the instance was created.  In addition,
-if the instance is \emph{flexible}, it also contains a reference to the
-\emph{list of effective slots} of the class as it was when the
-instance was created.  This method makes the rack of the
+In \sysname{} the first location of the rack of each standard-object
+contains a \emph{stamp}, which is the unique number of the class as it
+was when the instance was created.  In addition, it contains a
+reference to the \emph{list of effective slots} of the class as it was
+when the instance was created.  This technique makes the rack of the
 instance completely self contained.  It allows the garbage collector
 to trace the obsolete instance, or update it before tracing.  It
 allows for an inspector to inspect the obsolete instance if this
