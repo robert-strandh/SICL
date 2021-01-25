@@ -170,6 +170,14 @@ discriminating function of the generic function will fail to find an
 effective method, triggering an update of the object.
 \seesec{sec-generic-function-dispatch-the-discriminating-function}
 
+The third word of a standard instance is a \emph{hash code} that is
+used when the object is part of a key of a hash table.  Contrary to
+the stamp and the list of slots, the hash code is a slot with a slot
+readier named \texttt{sicl-clos:hash-code}.
+
+Together, we sometimes refer to these three words as the \emph{prefix}
+of the rack.
+
 \section{Funcallable standard objects}
 \label{sec-data-representation-funcallable-standard-objects}
 
