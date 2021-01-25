@@ -20,21 +20,21 @@
     (form &optional (env (sicl-environment:global-environment)))
   (let ((expander nil))
     (cond ((symbolp form)
-	   (let ((expansion (trucler:symbol-macro-expansion form env)))
-	     (unless (eq form expansion)
-	       (setf expander
-		     (lambda (form environment)
-		       (declare (ignore form environment))
-		       expansion)))
-	     (values expansion (not (eq form expansion)))))
-	  ((and (consp form) (symbolp (car form)))
-	   (setf expander (trucler:macro-function (car form) env)))
-	  (t
-	   nil))
+           (let ((expansion (trucler:symbol-macro-expansion form env)))
+             (unless (eq form expansion)
+               (setf expander
+                     (lambda (form environment)
+                       (declare (ignore form environment))
+                       expansion)))
+             (values expansion (not (eq form expansion)))))
+          ((and (consp form) (symbolp (car form)))
+           (setf expander (trucler:macro-function (car form) env)))
+          (t
+           nil))
     (if (null expander)
-	(values form nil)
-	(values (funcall (coerce *macroexpand-hook* 'function)
-			 expander
-			 form
-			 env)
-		t))))
+        (values form nil)
+        (values (funcall (coerce *macroexpand-hook* 'function)
+                         expander
+                         form
+                         env)
+                t))))

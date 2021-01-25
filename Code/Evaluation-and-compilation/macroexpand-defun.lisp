@@ -26,10 +26,10 @@
   (multiple-value-bind (expansion expanded-p)
       (macroexpand-1 form environment)
     (if expanded-p
-	(loop while (multiple-value-bind (new-expansion expanded-p)
-			(macroexpand-1 expansion environment)
-		      (setf expansion new-expansion)
-		      expanded-p)
-	      finally (return (values expansion t)))
-	(values form nil))))
+        (loop while (multiple-value-bind (new-expansion expanded-p)
+                        (macroexpand-1 expansion environment)
+                      (setf expansion new-expansion)
+                      expanded-p)
+              finally (return (values expansion t)))
+        (values form nil))))
 
