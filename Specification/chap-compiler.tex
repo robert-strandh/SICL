@@ -121,15 +121,9 @@ the entire source code in the file.
 Once the CST has been produced by \eclector{}, it is converted to an
 \emph{abstract syntax tree}, or AST for short.  This conversion
 involves the use of a \emph{global environment} as defined in
-\refSec{sec-the-global-environment} and of lexical environments that
-evolve during the compilation procedure.
-
-For the lexical environments during compilation, \sysname{} uses a
-library called \emph{Trucler}%
-\footnote{https://github.com/s-expressionists/Trucler} which provides
-a modern version of the environment-related functions defined in
-the second edition of ``Common Lisp, the Language''
-\cite{Steele:1990:CLL:95411}.
+\refChap{chap-first-class-global-environments} and of lexical
+environments that evolve during the compilation procedure, as describe
+in \refChap{chap-lexical-compile-time-environments}.
 
 In the AST, all macro calls have been expanded, and all other aspects
 of the compilation environment have been taken into account.  For that
