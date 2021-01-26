@@ -72,13 +72,13 @@ On a 64-bit platform, a single float corresponds to a single-precision
 IEEE floating-point value.  The value is stored in the
 most-significant half of the word.
 
-\section{Representation of \texttt{cons} cells}
+\section{\texttt{cons} cells}
 \label{sec-data-representation-cons-cells}
 
 A \texttt{cons} cell is represented as two consecutive machine
 words aligned on a double-word boundary.
 
-\section{Representation of standard objects}
+\section{Standard objects}
 \label{sec-data-representation-standard-object}
 
 Recall that a \emph{standard object} is a heap allocated object that
@@ -317,12 +317,13 @@ but in other places it explicitly allows for other subtypes of
 \footnote{See the definition of the system class \texttt{sequence}.}
 The general consensus seems to be that other subtypes are allowed.
 
-\subsection{Arrays}
+\section{Arrays}
 \label{sec-data-representation-arrays}
 
-Arrays are standard objects.  As a consequence, the exact layout of
-the rack of an array is determined by the MOP machinery for computing
-the slots when the class is finalized.  All arrays are simple.
+Arrays are standard objects, and \texttt{array} is a standard class.
+As a consequence, the exact layout of the rack of an array is
+determined by the MOP machinery for computing the slots when the class
+is finalized.  All arrays are simple.
 
 Every array class has a slot \texttt{dimensions} that contains a list
 of dimensions.  The length of the list is the \emph{rank} of the
@@ -357,7 +358,7 @@ to access it, \texttt{row-major-aref} and \texttt{(setf
   row-major-aref)} are \emph{generic functions} that specialize on the
 type of the array.
 
-\subsubsection{System class \texttt{vector}}
+\subsection{System class \texttt{vector}}
 
 A vector is a one-dimensional array.  As such, a vector has a rack
 where \texttt{dimensions} slot contains a proper list of a single
@@ -367,15 +368,15 @@ fixnum.
 All vectors have a slot for the \emph{fill pointer}.  This slot
 contains \texttt{nil} for vectors without a fill pointer.
 
-\subsubsection{System class \texttt{string}}
+\subsection{System class \texttt{string}}
 
 Tentatively, we think that there is no need to optimize strings that
 contain only characters that could be represented in a single byte.
 
-\subsection{Symbols}
+\section{Symbols}
 
-A symbol is a standard object.  It has slots containing the following
-data:
+A symbol is a standard object, and \texttt{symbol} is a standard
+class.  A symbol has slots containing the following data:
 
 \begin{enumerate}
 \item The \emph{name} of the symbol.  The value of this slot is a
@@ -393,9 +394,10 @@ Notice also that the symbol does not contain the \emph{property list}
 associated with it.  This information is also kept separately in an
 explicit \emph{global environment} object.
 
-\subsection{Packages}
+\section{Packages}
 
-A package is a standard object with the following slots:
+A package is a standard object (and \texttt{package} is a standard
+class) with the following slots:
 
 \begin{enumerate}
 \item The \emph{name} of the package.  The value of this slot is a
@@ -416,11 +418,16 @@ is a proper list of packages that use this package.
   slot is a proper list of symbols.
 \end{enumerate}
 
-\subsection{Hash tables}
+\section{Hash tables}
 
-\subsection{Streams}
+Hash tables are standard objects and \texttt{hash-table} is a standard
+class. 
 
-\subsection{Functions}
+\section{Streams}
+
+Streams are standard objects and \texttt{stream} is a standard class.
+
+\section{Functions}
 \label{sec-data-representation-functions}
 
 Ordinary (non-generic) SICL functions are instances of the class named
@@ -505,3 +512,16 @@ can occur:
   unless the \texttt{speed} optimize quality is high, because it makes
   it impossible to redefine a single function in a compilation unit.
 \end{itemize}
+
+\section{Structures}
+
+Structures are standard objects.  The class \texttt{structure-object}
+is a subclass of \texttt{standard-object}.  The class
+\texttt{structure-object} is an instance of the class
+\texttt{structure-class}.
+
+\section{Conditions}
+
+Conditions are standard objects.  The class \texttt{condition} is a
+subclass of \texttt{standard-object}.  The class \texttt{condition} is
+an instance of the class \texttt{sicl-clos:condition-class}.
