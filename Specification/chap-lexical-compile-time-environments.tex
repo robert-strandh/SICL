@@ -1,4 +1,5 @@
 \chapter{Lexical compile-time environments}
+\label{chap-lexical-compile-time-environments}
 
 A \commonlisp{} compiler must maintain a compile-time environment that
 evolves during the compilations process.  Nested constructs such as
@@ -10,17 +11,18 @@ functionality.
 \trucler{} provides a \clos{} \emph{protocol} for querying and
 augmenting lexical environments.  The functionality provide has the
 same purpose as the functions documented in section 8.5 of the second
-edition of ``Common Lisp the language'' by Guy Steele.  However the
-functionality documented there is insufficient (it does not contain
-information introduced by \texttt{block} and \texttt{tagbody} special
-operators, for instance), and not extensible (because it relies on a
-fixed number of return values).  In contrast, the protocol provided by
-\trucler{} allows client code to customize the behavior.  For that
-purpose, \trucler{} methods have a \emph{client} parameter that is
-provided by client code.  Default \trucler{} methods do not specialize
-to this parameter, but client code can provide primary or auxiliary
-methods that do specialize to that parameter, making these methods
-applicable only for that client.
+edition of ``Common Lisp the language'' by Guy Steele
+\cite{Steele:1990:CLL:95411}.  However the functionality documented
+there is insufficient (it does not contain information introduced by
+\texttt{block} and \texttt{tagbody} special operators, for instance),
+and not extensible (because it relies on a fixed number of return
+values).  In contrast, the protocol provided by \trucler{} allows
+client code to customize the behavior.  For that purpose, \trucler{}
+methods have a \emph{client} parameter that is provided by client
+code.  Default \trucler{} methods do not specialize to this parameter,
+but client code can provide primary or auxiliary methods that do
+specialize to that parameter, making these methods applicable only for
+that client.
 
 \trucler{} provides a \emph{reference} implementation that can be used
 by new \commonlisp{} implementations.  But \trucler{} has the
