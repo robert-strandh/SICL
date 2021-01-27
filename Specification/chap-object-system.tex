@@ -16,16 +16,15 @@ The AMOP stipulates the existence of four class metaclasses, namely:
   created by \texttt{defclass}.  It is also the metaclass for all
   classes in the metaobject protocol except \texttt{t},
   \texttt{function}, \texttt{generic-function}, and
-  \texttt{standard-generic-function}. 
+  \texttt{standard-generic\-function}.
 \item \href{http://www.metamodular.com/CLOS-MOP/class-funcallable-standard-class.html}
 {\texttt{funcallable-standard-class}}.
 This is the metaclass for
-\href{http://www.metamodular.com/CLOS-MOP/class-generic-function.html}
-{\texttt{generic-function}}, 
-and 
-\href{http://www.metamodular.com/CLOS-MOP/class-standard-generic-function.html}
-{\texttt{standard-generic-function}},
-and of course for user-defined subclasses of those classes. 
+\texttt{funcallable\-standard-object},
+and of course for subclasses of that class such as
+\texttt{generic-function},
+and
+\texttt{standard-generic-function},
 \item \href{http://www.metamodular.com/CLOS-MOP/class-built-in-class.html}
 {\texttt{built-in-class}}.  
 This is the metaclass for all built-in
