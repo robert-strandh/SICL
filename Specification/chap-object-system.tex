@@ -51,14 +51,14 @@ correspond to any classes.%
   unique numbers of the classes, compacting the sequence, but that
   probably will not be necessary.}
 
-Every \emph{standard-object}%
-\footnote{Recall that a \emph{standard-object} is an instance
+Every \emph{standard object}%
+\footnote{Recall that a \emph{standard object} is an instance
   allocated on the heap, excluding \texttt{cons}
   cells. \seechap{chap-data-representation}} contains a \emph{stamp},
 which is the unique number of its class as it was when the instance
 was created.  This number is always the first element of the rack of
 the standard-object.  Even though some system classes can not be
-redefined, standard-objects that are instance of system classes
+redefined, standard objects that are instance of system classes
 contain a stamp.
 
 \subsection{Standard classes}
