@@ -26,6 +26,9 @@ bit-level parallelism while scanning the metadata table.")
 (defun bytes (byte word)
   (zeroes (logxor word (* byte +low-bits+))))
 
+(defun writable (word)
+  (logand (* +empty-metadata+ +low-bits+) word))
+
 (defmacro do-matches ((position bit-mask) &body body)
   (let ((bit-mask-gensym (gensym "BIT-MASK")))
     `(let ((,bit-mask-gensym ,bit-mask))
@@ -47,7 +50,7 @@ bit-level parallelism while scanning the metadata table.")
 
 (declaim (inline (setf metadata) (setf %metadata)
                  metadata %metadata
-                 metadata-group))
+                 metadata-group group-metadata))
 
 (defun (setf %metadata) (new-byte vector word-position byte-position)
   (declare (metadata-vector vector)
@@ -78,3 +81,8 @@ bit-level parallelism while scanning the metadata table.")
   (declare (metadata-vector vector)
            (vector-index position))
   (the metadata (aref vector position)))
+
+(defun group-metadata (word position)
+  (declare (metadata word)
+           ((mod 8) position))
+  (ldb (byte 8 (* 8 position)) word))

@@ -31,29 +31,31 @@
           (hash-table-metadata table) (make-metadata-vector size))))
 
 (declaim (inline split-hash cheap-mod))
-(defun split-hash (hash-table key)
-  (let ((hash (sicl-hash-table:hash hash-table key)))
-    (floor hash 256)))
+(defun split-hash (hash)
+  (floor hash 256))
 
 (defun cheap-mod (number divisor)
   "A cheap and usually incorrect MOD, which works when DIVISOR is a power of two."
   (logand number (1- divisor)))
 
-(declare (inline call-with-key-index)) 
-(defun call-with-key-index (key metadata data size continuation)
+(declaim (inline call-with-key-index call-with-write-index)) 
+(defun call-with-key-index (key hash-table metadata data size continuation)
   "Call CONTINUATION with each matching group, group position, offset in the group and actual position.
 Compare this to WITH-ENTRY in the bucket hash table."
-  (multiple-value-bind (h1 h2) (split-hash hash-table key)
-    (let* ((groups   (/ size +metadata-entries-per-word+))
-           (probe-group (cheap-mod h1 size))
-           (test     (%hash-table-test hash-table)))
+  (declare (optimize (speed 3))
+           (function continuation))
+  (multiple-value-bind (h1 h2)
+      (split-hash (sicl-hash-table:hash hash-table key))
+    (let* ((groups      (floor size +metadata-entries-per-word+))
+           (probe-group (cheap-mod h1 groups))
+           (test        (%hash-table-test hash-table)))
       (declare (metadata-vector metadata)
                (simple-vector   data)
                (function        test)
                (fixnum          size probe-group))
       (loop
-        (let ((probe-word (metadata-group probe-group))
-              (base-position (* probe-position +metadata-entries-per-word+)))
+        (let ((probe-word (metadata-group metadata probe-group))
+              (base-position (* probe-group +metadata-entries-per-word+)))
           (do-matches (offset (bytes h2 probe-word))
             (let* ((position (+ offset base-position))
                    (stored-key (key data position)))
@@ -66,30 +68,32 @@ Compare this to WITH-ENTRY in the bucket hash table."
           (when (matches-p (bytes +empty-metadata+ probe-word))
             (return-from call-with-key-index))
           ;; Otherwise, try the next group.
-          (setf probe-group (cheap-mod (1+ probe-group) size)))))))
+          (setf probe-group (cheap-mod (1+ probe-group) groups)))))))
 
-(defvar *ignored* (gensym "IGNORED"))
-(defmacro with-key-index ((key metadata data size)
-                          (&key (group-position *ignored*)
-                                (offset *ignored*)
-                                (group *ignored*)
-                                (position *ignored*))
+(defmacro with-key-index ((key hash-table metadata data size)
+                          (&key (probe-word (gensym) p-w-p)
+                                (group-position (gensym) g-p-p)
+                                (offset (gensym) o-p)
+                                (position (gensym) p-p)
+                                (scanner 'call-with-key-index))
                           &body body)
-  (flet ((,continuation (,group-position ,offset ,group ,position)
-           ,@(if (member *ignored* (list group-position offset group position))
-                 `((declare (ignorable ,*ignored*)))
-                 '())
-           ,@body))
-    (declare (inline ,continuation)
-             (dynamic-extent #',continuation))
-    (call-with-key-index ,key ,metadata ,data ,size
-                         #',continuation)))
+  (let ((continuation (gensym "CONTINUATION")))
+    `(flet ((,continuation (,probe-word ,group-position ,offset ,position)
+              ,@(loop for supplied-p in (list p-w-p g-p-p o-p p-p)
+                      for variable   in (list probe-word group-position offset position)
+                      unless supplied-p
+                        collect `(declare (ignore ,variable)))
+              ,@body))
+       (declare (inline ,continuation)
+                (dynamic-extent #',continuation))
+       (,scanner ,key ,hash-table ,metadata ,data ,size
+                 #',continuation))))
 
 (defmethod gethash (key (hash-table linear-probing-hash-table) &optional default)
   (let* ((metadata (hash-table-metadata hash-table))
          (data     (hash-table-data hash-table))
          (size     (hash-table-size hash-table)))
-    (with-key-index (key metadata data size)
+    (with-key-index (key hash-table metadata data size)
       (:position position)
       (return-from gethash (values (value data position) t)))
     (values default nil)))
@@ -98,17 +102,59 @@ Compare this to WITH-ENTRY in the bucket hash table."
   (let* ((metadata (hash-table-metadata hash-table))
          (data     (hash-table-data hash-table))
          (size     (hash-table-size hash-table)))
-    (with-key-index (key metadata data size)
+    (with-key-index (key hash-table metadata data size)
       (:probe-word probe-word :position position)
       (cond
-        ((no-matches-p (bytes +empty-metadata+ probe-word))
+        ((not (matches-p (bytes +empty-metadata+ probe-word)))
          ;; If the group is full of entries and/or tombstones, then we have to
          ;; add another tombstone.
          (setf (metadata metadata position) +tombstone-metadata+))
         (t
          ;; Otherwise, we can keep this entry empty.
-         (setf (metadata metadata position) +empty-metadata+)))
+         (setf (metadata metadata position) +empty-metadata+)
+         (decf (hash-table-count-with-tombstones hash-table))))
       (setf (key data position)   nil
             (value data position) nil)
+      (decf (%hash-table-count hash-table))
       (return-from remhash t))
     nil))
+
+(defmethod (setf gethash) (new-value key hash-table &optional default)
+  (declare (ignore default))
+  (let* ((metadata (hash-table-metadata hash-table))
+         (data     (hash-table-data hash-table))
+         (size     (hash-table-size hash-table))
+         (hash     (sicl-hash-table:hash hash-table key)))
+    (multiple-value-bind (h1 h2) (split-hash hash)
+      (let* ((groups      (floor size +metadata-entries-per-word+))
+             (probe-group (cheap-mod h1 groups))
+             (test        (%hash-table-test hash-table)))
+        (declare (metadata-vector metadata)
+                 (simple-vector   data)
+                 (function        test)
+                 (fixnum          size probe-group))
+        (loop
+          (let ((probe-word (metadata-group metadata probe-group))
+                (base-position (* probe-group +metadata-entries-per-word+)))
+            ;; First, try to find a binding to replace.
+            (do-matches (offset (bytes h2 probe-word))
+              (let* ((position (+ offset base-position))
+                     (stored-key (key data position)))
+                (when (or (eq key stored-key)
+                          (funcall test key stored-key))
+                  (setf (value data position) new-value)
+                  (return-from gethash new-value))))
+            ;; Then try to find an empty or tombstone value to write into.
+            (do-matches (offset (writable probe-word))
+              (let* ((position (+ offset base-position)))
+                (setf (key   data position) key
+                      (value data position) new-value
+                      (hash  data position) hash
+                      (metadata metadata position) h2)
+                (incf (%hash-table-count hash-table))
+                (when (= +empty-metadata+
+                         (group-metadata probe-word offset))
+                  (incf (hash-table-count-with-tombstones hash-table)))
+                (return-from gethash new-value)))
+            ;; Otherwise, try the next group.
+            (setf probe-group (cheap-mod (1+ probe-group) groups))))))))

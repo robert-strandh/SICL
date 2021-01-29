@@ -6,8 +6,8 @@
          (optimize (speed 3)))
 (defun %fnv-1a (last-hash byte)
   (declare ((unsigned-byte 8) byte)
-           ((unsigned-byte 64) last-hash))
-  (ldb (byte 64 0)
+           ((unsigned-byte 62) last-hash))
+  (ldb (byte 62 0)
        (logxor (* last-hash +fnv-prime+)
                byte)))
 

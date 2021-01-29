@@ -2,7 +2,7 @@
 
 (defclass linear-probing-hash-table (hashing-hash-table)
   ((size :initarg :size
-         :initform 256
+         :initform 64
          :accessor %hash-table-size
          :reader hash-table-size)
    (metadata :accessor hash-table-metadata)
