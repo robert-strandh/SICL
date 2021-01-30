@@ -8,7 +8,7 @@
     (change-class e1 'environment
                   :client (make-instance 'client))
     (let ((client (env:client e0)))
-      (setf (env:fdefinition client e0 'ast-eval)
+      (setf (env:fdefinition client e0 'sicl-boot:ast-eval)
             (lambda (ast)
               (let ((code (sicl-ast-evaluator:translate-top-level-ast client ast)))
                 (funcall (compile nil code) e0))))

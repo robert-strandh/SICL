@@ -5,7 +5,6 @@
   (:local-nicknames (#:env #:sicl-environment))
   (:import-from #:sicl-boot
                 #:host-load
-                #:ast-eval
                 #:compile-source-file
                 #:load-source-file
                 #:load-fasl
