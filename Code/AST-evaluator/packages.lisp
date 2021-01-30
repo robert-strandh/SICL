@@ -8,4 +8,5 @@
                     (#:ast #:cleavir-ast))
   (:export #:translate-top-level-ast
            #:translate-ast
+           #:eval-ast
            #:eval))
