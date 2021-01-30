@@ -46,6 +46,35 @@
             ,arguments-var)))))
 
 (defmethod translate-ast
+    (client (ast ast:named-call-ast) lexical-environment)
+  (let* ((name (cleavir-ast:callee-name ast))
+         (pair (assoc name *function-cells* :test #'equal)))
+    (when (null pair)
+      (setf pair (cons name (gensym)))
+      (push pair *function-cells*))
+    (let ((arguments-var (gensym)))
+      (if (null (cleavir-cst-to-ast:origin ast))
+          `(funcall
+            (car ,(cdr pair))
+            ,@(loop for argument-ast in (ast:argument-asts ast)
+                    collect (translate-ast
+                             client argument-ast lexical-environment)))
+          `(let* ((,arguments-var
+                    (list ,@(loop for argument-ast in (ast:argument-asts ast)
+                                  collect (translate-ast
+                                           client
+                                           argument-ast
+                                           lexical-environment))))
+                  (sicl-hir-evaluator:*call-stack*
+                    (cons (make-instance 'sicl-hir-evaluator:call-stack-entry
+                            :origin ',(cleavir-cst-to-ast:origin ast)
+                            :arguments ,arguments-var)
+                          sicl-hir-evaluator:*call-stack*)))
+             (apply
+              (car ,(cdr pair))
+              ,arguments-var))))))
+
+(defmethod translate-ast
     (client (ast ast:function-ast) lexical-environment)
   (let* ((lambda-list (ast:lambda-list ast))
          (new-environment (augment-environment lexical-environment lambda-list))
