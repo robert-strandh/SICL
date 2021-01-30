@@ -112,6 +112,9 @@
      :callee-ast function-ast
      :argument-asts argument-asts)))
 
+(defun make-global-call (client cst info environment argument-cst)
+  (make-call client cst info environment argument-cst))
+
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
 ;;; function-call form.  INFO is the info instance returned form a
@@ -127,7 +130,7 @@
         (notinline (eq 'notinline (trucler:inline info))))
     (if (or notinline (null compiler-macro))
         ;; There is no compiler macro.  Create the call.
-        (make-call client cst info environment (cst:rest cst))
+        (make-global-call client cst info environment (cst:rest cst))
         ;; There is a compiler macro.  We must see whether it will
         ;; accept or decline.
         (let ((expanded-form
@@ -137,7 +140,7 @@
               ;; declined.  We are left with function-call form.
               ;; Create the call, just as if there were no compiler
               ;; macro present.
-              (make-call client cst info environment (cst:rest cst))
+              (make-global-call client cst info environment (cst:rest cst))
               ;; If the two are not EQ, this means that the compiler
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
