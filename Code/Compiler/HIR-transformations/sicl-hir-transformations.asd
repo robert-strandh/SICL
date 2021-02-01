@@ -18,7 +18,7 @@
    (:file "eliminate-create-cell")
    (:file "eliminate-fetch")
    (:file "eliminate-cell-access")
-   (:file "hoist-constant-inputs")
+   (:file "process-constant-inputs")
    (:file "eliminate-fixed-to-multiple")
    (:file "eliminate-multiple-to-fixed")
    (:file "eliminate-append-values")
