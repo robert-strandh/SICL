@@ -17,14 +17,7 @@
 (defmethod trivial-constant-p ((constant character))
   (< (char-code constant) #.(expt 2 29)))
 
-;;; This function should be renamed.  It used to be the case that
-;;; constants were hoisted to the top level so that they became part
-;;; of the static environment of the top-level function.  Then,
-;;; constants used by nested functions were transmitted through the
-;;; static environments when closures for those nested functions were
-;;; created.  But we changed the handling of constants.
-;;;
-;;; They will now be allocated in a vector on the global heap.  Since
+;;; Constants will be allocated in a vector on the global heap.  Since
 ;;; the global heap does not move objects, the distance between a
 ;;; particular constant and the instruction that needs it does not
 ;;; change.  So we can use PC-relative addressing to load the
