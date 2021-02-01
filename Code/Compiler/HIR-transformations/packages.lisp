@@ -12,7 +12,7 @@
            #:constants
            #:function-names
            #:top-level-enter-instruction
-           #:hoist-constant-inputs
+           #:process-constant-inputs
            #:eliminate-fixed-to-multiple-instructions
            #:eliminate-multiple-to-fixed-instructions
            #:preprocess-unwind-instructions

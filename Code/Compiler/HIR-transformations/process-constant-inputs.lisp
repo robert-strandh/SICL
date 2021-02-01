@@ -47,7 +47,7 @@
 ;;; constants as LOAD-TIME-VALUEs.  The difference then would be that
 ;;; true constants would then be created at load time, rather than
 ;;; when the AST is read by the reader.
-(defun hoist-constant-inputs (initial-instruction)
+(defun process-constant-inputs (initial-instruction)
   (with-accessors ((constants constants))
       initial-instruction
     (cleavir-ir:map-instructions-arbitrary-order
