@@ -9,6 +9,6 @@
    (%callee-saves-stack-maps
     :initarg :callee-saves-stack-maps
     :reader callee-saves-stack-maps)
-   (%constants :initarg :constants :reader constants)
+   (%constants :initform '() :initarg :constants :accessor constants)
    (%function-names :initarg :function-names :reader function-names)
    (%hir :initarg :hir :reader hir)))
