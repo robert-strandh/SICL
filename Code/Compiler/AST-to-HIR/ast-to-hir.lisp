@@ -1,10 +1,6 @@
 (cl:in-package #:sicl-ast-to-hir)
 
 (defun ast-to-hir (client ast)
-  ;; Wrap the AST in a FUNCTION-AST that will be called at load time
-  ;; with a single argument, namely a function that, given a function
-  ;; name, returns the function cell from the environment the code
-  ;; will be loaded into.
   (let* ((cleavir-cst-to-ast::*origin* nil)
          (hoisted-ast (cleavir-ast-transformations:hoist-load-time-value ast))
          (wrapped-ast (make-instance 'cleavir-ast:function-ast
