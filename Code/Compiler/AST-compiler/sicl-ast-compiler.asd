@@ -11,4 +11,5 @@
                #:sicl-code-object)
   :serial t
   :components
-  ((:file "ast-compiler")))
+  ((:file "process-constant-inputs")
+   (:file "ast-compiler")))
