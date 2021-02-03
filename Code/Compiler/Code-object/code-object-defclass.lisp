@@ -29,14 +29,14 @@
 (defgeneric (setf ir) (ir code-object))
 
 (defclass code-object ()
-  ((%instructions :initarg :instructions :accessor instructions)
-   (%frame-maps :initarg :frame-maps :accessor frame-maps)
+  ((%instructions :initform '() :accessor instructions)
+   (%frame-maps :initform '() :accessor frame-maps)
    (%callee-saves-register-maps
-    :initarg :callee-saves-register-maps
+    :initform '()
     :accessor callee-saves-register-maps)
    (%callee-saves-stack-maps
-    :initarg :callee-saves-stack-maps
+    :initform '()
     :accessor callee-saves-stack-maps)
    (%constants :initform '() :initarg :constants :accessor constants)
-   (%function-names :initarg :function-names :accessor function-names)
+   (%function-names :initform '() :accessor function-names)
    (%ir :initarg :ir :accessor ir)))
