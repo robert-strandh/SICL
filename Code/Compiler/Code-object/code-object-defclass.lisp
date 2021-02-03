@@ -20,6 +20,10 @@
 
 (defgeneric (setf constants) (constants code-object))
 
+(defgeneric call-sites (code-object))
+
+(defgeneric (setf call-sites) (call-sites code-object))
+
 (defgeneric function-names (code-object))
 
 (defgeneric (setf function-names) (function-names code-object))
@@ -46,6 +50,7 @@
     :initform '()
     :accessor callee-saves-stack-maps)
    (%constants :initform '() :initarg :constants :accessor constants)
+   (%call-sites :initform '() :accessor call-sites)
    (%function-names :initform '() :accessor function-names)
    (%ast :initarg :ast :accessor ast)
    (%ir :initarg :ir :accessor ir)
