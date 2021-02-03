@@ -1,5 +1,13 @@
 (cl:in-package #:sicl-compiler)
 
+(defgeneric instruction (call-site))
+
+(defgeneric name (call-site))
+
+(defclass call-site ()
+  ((%instruction :initarg :instruction :reader instruction)
+   (%name :initarg :name :reader name)))
+
 (defgeneric instructions (code-object))
 
 (defgeneric (setf instructions) (instructions code-object))
