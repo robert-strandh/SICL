@@ -6,4 +6,3 @@
      (when (typep instruction 'cleavir-ir:named-call-instruction)
        (push instruction (named-call-instructions top-level-enter-instruction))))
    top-level-enter-instruction))
-
