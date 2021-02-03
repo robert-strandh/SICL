@@ -1,20 +1,40 @@
 (cl:in-package #:sicl-compiler)
 
 (defun compile-ast (client ast)
-  (let ((hir1 (sicl-ast-to-hir:ast-to-hir client ast))
-        #+(or)(hir2 (sicl-ast-to-hir:ast-to-hir client ast)))
-    ;; (sicl-hir-transformations:eliminate-append-values-instructions hir2)
-    ;; (sicl-hir-to-mir:hir-to-mir client hir2)
-    ;; (sicl-mir-to-lir:mir-to-lir client hir2)
-    (multiple-value-bind (instructions label-map)
-        (values nil nil)
-        ;; (cluster:assemble (sicl-code-generation:generate-code hir2))
-      (declare (ignore label-map))
-      (make-instance 'code-object
-        :instructions instructions
-        :frame-maps nil
-        :callee-saves-register-maps nil
-        :callee-saves-stack-maps nil
-        :constants (sicl-hir-transformations:constants hir1)
-        :function-names (sicl-hir-transformations:function-names hir1)
-        :hir hir1))))
+  (let* ((cleavir-cst-to-ast::*origin* nil)
+         (hoisted-ast (cleavir-ast-transformations:hoist-load-time-value ast))
+         (wrapped-ast (make-instance 'cleavir-ast:function-ast
+                        :lambda-list '()
+                        :body-ast hoisted-ast))
+         (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
+         (code-object
+           (make-instance 'code-object
+             :ir hir)))
+    (cleavir-partial-inlining:do-inlining hir)
+    (sicl-argument-processing:process-parameters hir)
+    (sicl-hir-transformations:preprocess-catch-instructions hir)
+    (sicl-hir-transformations:preprocess-bind-instructions hir)
+    (sicl-hir-transformations:preprocess-initialize-values-instructions hir)
+    (sicl-hir-transformations:preprocess-multiple-value-call-instructions hir)
+    (sicl-hir-transformations:preprocess-unwind-instructions hir)
+    (sicl-hir-transformations:find-named-call-instructions  hir)
+    (sicl-hir-transformations:hoist-fdefinitions hir)
+    (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
+    (sicl-hir-transformations:eliminate-multiple-to-fixed-instructions hir)
+    (sicl-hir-transformations:process-constant-inputs hir)
+    (cleavir-hir-transformations::process-captured-variables hir)
+    ;; Replacing aliases does not appear to have a great effect when
+    ;; code generation is disabled.  Try removing this commented line
+    ;; when code generation is again enabled.
+    ;; (cleavir-hir-transformations:replace-aliases hir)
+    (sicl-hir-transformations:eliminate-create-cell-instructions hir)
+    (sicl-hir-transformations:eliminate-fetch-instructions hir)
+    (sicl-hir-transformations:eliminate-read-cell-instructions hir)
+    (sicl-hir-transformations:eliminate-write-cell-instructions hir)
+    (cleavir-remove-useless-instructions:remove-useless-instructions hir)
+    ;; (sicl-hir-transformations:eliminate-append-values-instructions hir)
+    ;; (sicl-hir-to-mir:hir-to-mir client hir)
+    ;; (sicl-mir-to-lir:mir-to-lir client hir)
+    ;; (multiple-value-bind (instructions label-map)
+    ;;   (cluster:assemble (sicl-code-generation:generate-code hir2))
+    code-object))
