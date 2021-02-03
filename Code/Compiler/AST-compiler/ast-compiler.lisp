@@ -9,6 +9,7 @@
          (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
          (code-object
            (make-instance 'code-object
+             :ast ast
              :ir hir)))
     (cleavir-partial-inlining:do-inlining hir)
     (sicl-argument-processing:process-parameters hir)
