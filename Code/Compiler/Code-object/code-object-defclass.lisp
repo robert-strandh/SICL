@@ -24,6 +24,10 @@
 
 (defgeneric (setf function-names) (function-names code-object))
 
+(defgeneric ast (code-object))
+
+(defgeneric (setf ast) (ast code-object))
+
 (defgeneric ir (code-object))
 
 (defgeneric (setf ir) (ir code-object))
@@ -43,5 +47,6 @@
     :accessor callee-saves-stack-maps)
    (%constants :initform '() :initarg :constants :accessor constants)
    (%function-names :initform '() :accessor function-names)
+   (%ast :initarg :ast :accessor ast)
    (%ir :initarg :ir :accessor ir)
    (%hir-thunks :initform nil :accessor hir-thunks)))
