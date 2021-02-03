@@ -28,6 +28,10 @@
 
 (defgeneric (setf ir) (ir code-object))
 
+(defgeneric hir-thunks (code-object))
+
+(defgeneric (setf hir-thunks) (hir-thunks code-object))
+
 (defclass code-object ()
   ((%instructions :initform '() :accessor instructions)
    (%frame-maps :initform '() :accessor frame-maps)
@@ -39,4 +43,5 @@
     :accessor callee-saves-stack-maps)
    (%constants :initform '() :initarg :constants :accessor constants)
    (%function-names :initform '() :accessor function-names)
-   (%ir :initarg :ir :accessor ir)))
+   (%ir :initarg :ir :accessor ir)
+   (%hir-thunks :initform nil :accessor hir-thunks)))
