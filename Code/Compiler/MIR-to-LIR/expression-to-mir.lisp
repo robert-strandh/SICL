@@ -14,6 +14,7 @@
                   (cleavir-cst-to-ast:cst-to-ast
                    client cst environment
                    :file-compilation-semantics t))))
-         (hir (sicl-ast-to-hir:ast-to-hir client ast))
+         (code-object (sicl-compiler:compile-ast client ast))
+         (hir (sicl-compiler:ir code-object))
          (mir (sicl-hir-to-mir:hir-to-mir client hir)))
     mir))
