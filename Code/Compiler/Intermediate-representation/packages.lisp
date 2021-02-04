@@ -4,7 +4,8 @@
   (:use #:common-lisp)
   (:export
    #:breakpoint-instruction
-   #:named-call-instruction #:function-cell-cell
+   #:named-call-mixin #:function-cell-cell
+   #:named-call-instruction
    #:debug-information
    #:dynamic-environment-instruction
    #:caller-stack-pointer-instruction
