@@ -33,6 +33,8 @@
     (sicl-hir-transformations:eliminate-read-cell-instructions hir)
     (sicl-hir-transformations:eliminate-write-cell-instructions hir)
     (cleavir-remove-useless-instructions:remove-useless-instructions hir)
+    (setf (hir-thunks code-object)
+          (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
     ;; (sicl-hir-transformations:eliminate-append-values-instructions hir)
     ;; (sicl-hir-to-mir:hir-to-mir client hir)
     ;; (sicl-mir-to-lir:mir-to-lir client hir)
