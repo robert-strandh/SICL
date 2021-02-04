@@ -39,26 +39,6 @@
   (load-source-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
   (load-source-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))
 
-(defun ast-eval (ast client environment)
-  (let* ((global-environment (trucler:global-environment client environment))
-         (hir (sicl-ast-to-hir:ast-to-hir client ast))
-         (fun (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
-         (sicl-run-time:*dynamic-environment* '())
-         (function-cell-function
-           (sicl-environment:fdefinition
-            client global-environment 'sicl-data-and-control-flow:function-cell)))
-    (funcall fun
-             (apply #'vector
-                    nil ; Ultimately, replace with code object.
-                    #'sicl-hir-evaluator:enclose
-                    #'sicl-hir-evaluator:initialize-closure
-                    #'cons
-                    nil
-                    (append (loop with names = (sicl-hir-transformations:function-names hir)
-                                  for name in names
-                                  collect (funcall function-cell-function name))
-                            (sicl-hir-transformations:constants hir))))))
-
 (defun enable-compute-discriminating-function (e2 e3 e4)
   (define-classp e3)
   (define-sub-specializer-p e3)
