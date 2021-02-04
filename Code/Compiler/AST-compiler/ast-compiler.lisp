@@ -18,7 +18,6 @@
     (sicl-hir-transformations:preprocess-initialize-values-instructions hir)
     (sicl-hir-transformations:preprocess-multiple-value-call-instructions hir)
     (sicl-hir-transformations:preprocess-unwind-instructions hir)
-    (sicl-hir-transformations:find-named-call-instructions  hir)
     (hoist-fdefinitions code-object)
     (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
     (sicl-hir-transformations:eliminate-multiple-to-fixed-instructions hir)
