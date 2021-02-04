@@ -5,8 +5,7 @@
          (sicl-run-time:*dynamic-environment* '())
          (function-cell-function
            (sicl-environment:fdefinition
-            client environment 'sicl-data-and-control-flow:function-cell))
-         (hir (ir code-object)))
+            client environment 'sicl-data-and-control-flow:function-cell)))
     (funcall (hir-thunks code-object)
              (apply #'vector
                     ;; FIXME: remove this element.
@@ -16,7 +15,7 @@
                     #'sicl-hir-evaluator:initialize-closure
                     #'cons
                     nil
-                    (append (loop with names = (sicl-hir-transformations:function-names hir)
+                    (append (loop with names = (function-names code-object)
                                   for name in names
                                   collect (funcall function-cell-function name))
-                            (sicl-hir-transformations:constants hir))))))
+                            (constants code-object))))))
