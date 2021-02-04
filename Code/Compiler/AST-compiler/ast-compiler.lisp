@@ -19,10 +19,10 @@
     (sicl-hir-transformations:preprocess-multiple-value-call-instructions hir)
     (sicl-hir-transformations:preprocess-unwind-instructions hir)
     (sicl-hir-transformations:find-named-call-instructions  hir)
-    (sicl-hir-transformations:hoist-fdefinitions hir)
+    (hoist-fdefinitions code-object)
     (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
     (sicl-hir-transformations:eliminate-multiple-to-fixed-instructions hir)
-    (sicl-hir-transformations:process-constant-inputs hir)
+    (process-constant-inputs code-object)
     (cleavir-hir-transformations::process-captured-variables hir)
     ;; Replacing aliases does not appear to have a great effect when
     ;; code generation is disabled.  Try removing this commented line
