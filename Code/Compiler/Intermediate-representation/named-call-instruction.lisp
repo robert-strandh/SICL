@@ -1,8 +1,9 @@
 (cl:in-package #:sicl-ir)
 
 ;;; This instruction class adds a slot to the ordinary
-;;; NAMED-CALL-INSTRUCTION for the purpose of the HIR evaluator.  This
-;;; slot serves the purpose of a double indirection.
+;;; NAMED-CALL-INSTRUCTION and similar instructions for the purpose of
+;;; the HIR evaluator.  This slot serves the purpose of a double
+;;; indirection.
 ;;;
 ;;; When the HIR evaluator processes instructions, the code object has
 ;;; not yet been tied to any environment, so the function cells are
@@ -20,7 +21,11 @@
 ;;; store a CONS cell in the new slot.  When the code object is tied
 ;;; to the environment, we store the function cell in the CAR of this
 ;;; cell.
-(defclass named-call-instruction (cleavir-ir:named-call-instruction)
+(defclass named-call-mixin ()
   ((%function-cell-cell
     :initarg :function-cell-cell
     :reader function-cell-cell)))
+
+(defclass named-call-instruction
+    (cleavir-ir:named-call-instruction named-call-mixin)
+  ())
