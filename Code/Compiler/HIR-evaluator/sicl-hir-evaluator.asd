@@ -31,5 +31,4 @@
    (:file "bind-instruction")
    (:file "unwind-protect-instruction")
    (:file "enclose-instruction")
-   (:file "breakpoint-instruction")
-   (:file "cst-eval")))
+   (:file "breakpoint-instruction")))
