@@ -13,7 +13,6 @@
    (:file "preprocess-bind")
    (:file "preprocess-initialize-values")
    (:file "preprocess-multiple-value-call")
-   (:file "hoist-fdefinitions")
    (:file "find-named-call-instructions")
    (:file "eliminate-create-cell")
    (:file "eliminate-fetch")
