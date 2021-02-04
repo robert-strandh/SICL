@@ -61,7 +61,8 @@
     (client
      (instruction sicl-ir:named-call-instruction)
      lexical-environment)
-  (let* ((input-indices
+  (let* ((function-cell-cell (sicl-ir:function-cell-cell instruction))
+         (input-indices
            (loop for input in (cleavir-ir:inputs instruction)
                  collect (ensure-lref input lexical-environment))))
     (macrolet ((fixed-arity-call (arity)
@@ -77,7 +78,7 @@
                             (multiple-value-list
                              (let* ((*call-stack* (cons call-stack-entry *call-stack*)))
                                (funcall
-                                (car (sicl-ir:function-cell instruction))
+                                (caar function-cell-cell)
                                 ,@(loop for lref below arity collect `(input ,lref))))))
                       (successor 0)))))
       (case (length (cleavir-ir:inputs instruction))
@@ -103,7 +104,7 @@
                    (multiple-value-list
                     (let ((*call-stack* (cons call-stack-entry *call-stack*)))
                       (apply #'funcall
-                             (car (sicl-ir:function-cell instruction))
+                             (caar function-cell-cell)
                              (loop for input-lref in input-indices
                                    collect (lref input-lref))))))
              (successor 0))))))))
