@@ -3,6 +3,7 @@
 (defsystem #:sicl-ast-compiler
   :depends-on (#:sicl-ast-to-hir
                #:sicl-hir-transformations
+               #:sicl-hir-evaluator
                #:sicl-hir-to-mir
                #:sicl-mir-to-lir
                #:sicl-code-generation
@@ -14,4 +15,5 @@
   ((:file "process-constant-inputs")
    (:file "hoist-fdefinitions")
    (:file "ast-compiler")
-   (:file "tie-code-object")))
+   (:file "tie-code-object")
+   (:file "cst-eval")))
