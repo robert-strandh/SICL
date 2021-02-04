@@ -17,4 +17,5 @@
            #:constants
            #:function-names
            #:hir
-           #:compile-ast))
+           #:compile-ast
+           #:tie-code-object))
