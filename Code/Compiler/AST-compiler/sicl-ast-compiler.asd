@@ -13,4 +13,5 @@
   :components
   ((:file "process-constant-inputs")
    (:file "hoist-fdefinitions")
-   (:file "ast-compiler")))
+   (:file "ast-compiler")
+   (:file "tie-code-object")))
