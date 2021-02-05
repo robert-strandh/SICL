@@ -6,6 +6,7 @@
    #:breakpoint-instruction
    #:named-call-mixin #:function-cell-cell
    #:named-call-instruction
+   #:catch-instruction
    #:debug-information
    #:dynamic-environment-instruction
    #:caller-stack-pointer-instruction
