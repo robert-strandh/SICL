@@ -82,7 +82,7 @@
                                 ,@(loop for lref below arity collect `(input ,lref))))))
                       (successor 0)))))
       (case (length (cleavir-ir:inputs instruction))
-        (0 (error "Funcall instruction with zero inputs."))
+        (0 (fixed-arity-call 0))
         (1 (fixed-arity-call 1))
         (2 (fixed-arity-call 2))
         (3 (fixed-arity-call 3))
