@@ -61,7 +61,7 @@
   (make-instance 'cluster:code-command
     :mnemonic "JMP"
     :operands
-    (find-instruction-label (first successors))))
+    (find-instruction-label (first (cleavir-ir:successors instruction)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:catch-instruction) next)
