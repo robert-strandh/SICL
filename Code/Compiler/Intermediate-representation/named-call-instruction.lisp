@@ -26,6 +26,9 @@
     :initarg :function-cell-cell
     :reader function-cell-cell)))
 
+(defmethod cleavir-ir:clone-initargs append ((instruction named-call-mixin))
+  (list :function-cell-cell (function-cell-cell instruction)))
+
 (defclass named-call-instruction
     (cleavir-ir:named-call-instruction named-call-mixin)
   ())
