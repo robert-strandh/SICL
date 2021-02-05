@@ -97,6 +97,9 @@
     (instruction one-successor-mixin side-effect-mixin)
   ((%callee-name :initarg :callee-name :reader callee-name)))
 
+(defmethod clone-initargs append ((instruction named-call-instruction))
+  (list :callee-name (callee-name instruction)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction RETURN-INSTRUCTION.
