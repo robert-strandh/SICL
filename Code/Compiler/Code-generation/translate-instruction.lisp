@@ -53,12 +53,15 @@
     :operands
     (list (translate-datum (first (cleavir-ir:inputs instruction))))))
 
+;;; The label to which we jump is bogus, because it is going to be set
+;;; by the call-site manager.  But we need to give some operand to
+;;; make-instance, so we take what we have.
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:catch-instruction))
   (make-instance 'cluster:code-command
-    :mnemonic "CALL"
+    :mnemonic "JMP"
     :operands
-    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+    (find-instruction-label (first successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:catch-instruction) next)
