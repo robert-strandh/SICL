@@ -32,3 +32,7 @@
 (defclass named-call-instruction
     (cleavir-ir:named-call-instruction named-call-mixin)
   ())
+
+(defclass catch-instruction
+    (cleavir-ir:catch-instruction named-call-mixin)
+  ())
