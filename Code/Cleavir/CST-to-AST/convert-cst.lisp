@@ -113,7 +113,10 @@
      :argument-asts argument-asts)))
 
 (defun make-global-call (client cst info environment argument-cst)
-  (make-call client cst info environment argument-cst))
+  (declare (ignore info))
+  (cleavir-ast:make-ast 'cleavir-ast:named-call-ast
+    :callee-name (cst:raw (cst:first cst))
+    :argument-asts (convert-sequence client argument-cst environment)))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
