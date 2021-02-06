@@ -18,8 +18,6 @@
    (:file "integer-arithmetic")
    (:file "tag-test")
    (:file "funcall")
-   (:file "catch")
-   (:file "bind")
    (:file "unwind")
    (:file "save-restore-multiple-values")
    (:file "initialize-values")
