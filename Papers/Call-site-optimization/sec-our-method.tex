@@ -1,6 +1,8 @@
 \section{Our technique}
 \label{sec-our-technique}
 
+\subsection{Function call}
+
 For the purpose of this work, we define a \emph{function call} to be
 the code that accomplishes the following tasks:
 
@@ -29,7 +31,30 @@ permanent code to work, a particular \emph{call protocol} must be
 observed, and that protocol must be independent of the callee, as the
 callee may change after the caller has been compiled.
 
-With our suggested method, the function call is created by the callee.
+Our technique optimizes function calls to functions in the
+\emph{global environment} such that the \emph{name} of the callee is
+known statically, i.e. at compile time.  There are three different
+types of forms that correspond to this description:
+
+\begin{enumerate}
+\item A function form where the operator is a symbol naming a function
+  in the global environment, and that does not correspond to any of
+  the following two form types.  We use the term \emph{ordinary
+    function form} for this case.
+\item A function form where the operator is the symbol
+  \texttt{funcall} and the first argument is either a literal symbol
+  or a \texttt{function} special form.
+\item A function form where the operator is the symbol
+  \texttt{apply} and the first argument is either a literal symbol
+  or a \texttt{function} special form.
+\end{enumerate}
+
+With our suggested technique, for these three different form types,
+the function call is created by the callee.  We discuss each form type
+separately.
+
+\subsection{Ordinary function form}
+
 The code emitted by the caller for a function call consists of a
 single unconditional \emph{jump} instruction.  The target address in
 that instruction is altered by the callee according to its structure.
@@ -173,5 +198,72 @@ Step 3, on the other hand can be accomplished asynchronously, and even
 in parallel with caller threads, provided that appropriate
 synchronization prevents subsequent simultaneous redefinitions of the
 callee.
+
+\subsection{\texttt{funcall} with known function name}
+
+There are two subcases for this type of form:
+
+\begin{enumerate}
+\item The first argument is a special form \texttt{quote} with the
+  argument being a symbol.  This case can occur as a result of the
+  programmer wanting to avoid capture of the function name, and make
+  sure the name refers to the function with that name in the global
+  environment.  It can also occur in the expansion of a macro form.
+\item The first argument is a special form \texttt{function}.  This
+  case typically occurs as a result of expanding a \texttt{setf} macro
+  form and the function name is then of the form \texttt{(setf
+  }\textit{symbol}\texttt{)}.  The expansion uses \texttt{funcall}
+  simply because a function name of this form can not be used as the
+  operator of a function form.  This case can also occur in the
+  expansion of a macro form.
+\end{enumerate}
+
+To handle this case, the compiler treats the symbol \texttt{funcall}
+as a special operator.  If the first argument corresponds to any of
+the two subcases, then the call is treated in the same way as an
+ordinary function form.  Otherwise it generates a call to the function
+\texttt{funcall}.
+
+\subsection{\texttt{apply} with known function name}
+
+As with \texttt{funcall}, the same two subcases exist for
+\texttt{apply}, and for the same reason.  Again, the compiler treats
+the symbol \texttt{apply} as a special operator and generates a call
+to the function \texttt{apply} whenever the first argument is neither
+the special form \texttt{quote} nor the special form
+\texttt{function}.
+
+However, the case of \texttt{apply} is of course more complex than
+that of \texttt{funcall}.  Recall that \texttt{apply} takes at least
+two arguments.  The first argument is a function designator as with
+\texttt{funcall}.  The remaining arguments represent a
+\emph{spreadable argument list designator}, which means that the last
+argument is treated as a list of objects, and the arguments to the
+callee are the objects in that list, preceded by the remaining
+arguments to \texttt{apply}, in the order that they appear.
+
+A very common subcase of this case is a call to \texttt{apply} with
+exactly two arguments.  It is used when the execution of some code
+results in a list of objects, and these objects must be passed as the
+arguments to some function, in the order that they appear in the
+list.  For this subcase, our technique can be used to avoid the
+indirection to find the callee entry point as usual.  But it can also
+be used to access the callee arguments directly from the list of
+objects, so as to avoid unpacking the list to locations dictated by
+the full call protocol.
+
+A more interesting subcase is that of some intermediate function
+wanting to override some, but not all of the keyword arguments that it
+was passed, before calling the callee.  The remaining arguments to
+\texttt{apply} are then typically keyword/value pairs.  Our technique
+can then be used to avoid scanning the last argument to \texttt{apply}
+for these keyword arguments.  Recall that the standard allows for
+multiple occurrences of the same keyword argument in an argument list,
+and that the first occurrence is then the one that is used.
+
+Call-site information resulting from a call to \texttt{apply} must be
+indicated as such, so that the call-site manager can process the
+arguments as a spreadable argument list designator, rather than as an
+ordinary suite of arguments.
 
 %%  LocalWords:  callee redefinitions
