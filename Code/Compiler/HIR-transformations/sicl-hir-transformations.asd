@@ -9,7 +9,6 @@
   :components
   ((:file "packages")
    (:file "preprocess-unwind")
-   (:file "preprocess-bind")
    (:file "preprocess-initialize-values")
    (:file "preprocess-multiple-value-call")
    (:file "eliminate-create-cell")
