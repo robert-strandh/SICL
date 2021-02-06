@@ -13,7 +13,6 @@
              :ir hir)))
     (cleavir-partial-inlining:do-inlining hir)
     (sicl-argument-processing:process-parameters hir)
-    (sicl-hir-transformations:preprocess-bind-instructions hir)
     (sicl-hir-transformations:preprocess-initialize-values-instructions hir)
     (sicl-hir-transformations:preprocess-multiple-value-call-instructions hir)
     (sicl-hir-transformations:preprocess-unwind-instructions hir)
