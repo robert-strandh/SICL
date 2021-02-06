@@ -8,11 +8,10 @@
           (ensure-lref
            (cleavir-ir:dynamic-environment-output instruction)
            lexical-environment)))
-    (make-thunk (client instruction lexical-environment :inputs 3)
-      (input 0) ; Avoid an unused variable warning.
+    (make-thunk (client instruction lexical-environment :inputs 2)
       (setf (lref output-index)
             (cons (make-instance 'sicl-run-time:special-variable-entry
-                    :name (input 1)
-                    :value (input 2))
+                    :name (input 0)
+                    :value (input 1))
                   dynamic-environment))
       (successor 0))))
