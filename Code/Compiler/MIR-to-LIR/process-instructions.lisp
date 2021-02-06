@@ -6,10 +6,6 @@
 
 (defgeneric process-instruction (instruction lexical-locations))
 
-(defmethod process-instruction :after (instruction lexical-location)
-  (assert (notany #'lexical-p (cleavir-ir:inputs instruction)))
-  (assert (notany #'lexical-p (cleavir-ir:outputs instruction))))
-
 (defmethod process-instruction
     ((instruction cleavir-ir:enter-instruction) lexical-locations)
   (setf (cleavir-ir:outputs instruction) '()))
@@ -24,6 +20,14 @@
 
 (defmethod process-instruction
     ((instruction sicl-ir:breakpoint-instruction) lexical-locations)
+  nil)
+
+(defmethod process-instruction
+    ((instruction sicl-ir:catch-instruction) lexical-locations)
+  nil)
+
+(defmethod process-instruction
+    ((instruction sicl-ir:bind-instruction) lexical-locations)
   nil)
 
 ;;; Return a list of instructions that, when executed, loads the
