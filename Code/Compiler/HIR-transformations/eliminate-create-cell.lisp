@@ -1,42 +1,12 @@
 (cl:in-package #:sicl-hir-transformations)
 
-(defun eliminate-create-cell-instruction (instruction owner)
-  (let* ((static-environment-location (cleavir-ir:static-environment owner))
-         (nil-location
-           (make-instance 'cleavir-ir:lexical-location :name (gensym "nil")))
-         (cons-function-offset-input
-           (make-instance 'cleavir-ir:constant-input
-             :value sicl-compiler:+cons-function-index+))
-         (nil-offset-input
-           (make-instance 'cleavir-ir:constant-input
-             :value sicl-compiler:+nil-index+))
-         (cons-function-location
-           (make-instance 'cleavir-ir:lexical-location
-             :name (gensym "consfun"))))
+(defun eliminate-create-cell-instruction (instruction)
+  (let* ((nil-constant
+           (make-instance 'cleavir-ir:constant-input :value 'nil)))
     (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:aref-instruction
-       :boxed-p t
-       :simple-p t
-       :element-type t
-       :inputs (list static-environment-location cons-function-offset-input)
-       :output cons-function-location
-       :successor instruction)
-     instruction)
-    (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:aref-instruction
-       :boxed-p t
-       :simple-p t
-       :element-type t
-       :inputs (list static-environment-location nil-offset-input)
-       :output nil-location
-       :successor instruction)
-     instruction)
-    (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:funcall-instruction
-       :inputs (list
-                cons-function-location
-                nil-location
-                nil-location)
+     (make-instance 'cleavir-ir:named-call-instruction
+       :callee-name 'cons
+       :inputs (list nil-constant nil-constant)
        :successor instruction)
      instruction)
     (change-class instruction 'cleavir-ir:return-value-instruction
@@ -44,8 +14,8 @@
                                   :value 0)))))
 
 (defun eliminate-create-cell-instructions (initial-instruction)
-  (cleavir-ir:map-instructions-with-owner
-   (lambda (instruction owner)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
      (when (typep instruction 'cleavir-ir:create-cell-instruction)
-       (eliminate-create-cell-instruction instruction owner)))
+       (eliminate-create-cell-instruction instruction)))
    initial-instruction))
