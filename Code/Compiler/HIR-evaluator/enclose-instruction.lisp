@@ -12,7 +12,9 @@
            (cleavir-ir:initializer instruction))
          (env-length
            ;; Don't count the closure object input.
-           (length (rest (cleavir-ir:inputs initializer)))))
+           (if (null initializer)
+               0
+               (length (rest (cleavir-ir:inputs initializer))))))
     (prog1 (make-thunk (client instruction lexical-environment :inputs 0 :outputs 1)
              (let ((static-environment (lref static-environment-lref)))
                (setf (output 0)
