@@ -2,12 +2,10 @@
 
 (defun check-maximum-argument-count (argument-count-location
                                      maximum-argument-count
-                                     dynamic-environment-location
-                                     error-function-location)
+                                     dynamic-environment-location)
   (let* ((maximum-argument-count-input (make-instance 'cleavir-ir:constant-input
                                          :value maximum-argument-count))
          (error (call-error 'too-many-arguments
-                            error-function-location
                             dynamic-environment-location
                             (make-instance 'cleavir-ir:constant-input :value :argument-count)
                             argument-count-location

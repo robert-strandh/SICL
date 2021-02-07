@@ -2,7 +2,6 @@
 
 (defun check-even-number-of-keyword-arguments (argument-count-location
                                                dynamic-environment-location
-                                               error-function-location
                                                first-index)
   (let* ((remaining-argument-count-location
            (make-instance 'cleavir-ir:lexical-location :name (gensym "rem-ac")))
@@ -19,7 +18,6 @@
                 :dynamic-environment-location dynamic-environment-location))
          (error-branch
            (call-error 'odd-number-of-keyword-arguments
-                       error-function-location
                        dynamic-environment-location
                        (make-instance 'cleavir-ir:constant-input :value :argument-count)
                        remaining-argument-count-location)))
@@ -44,7 +42,6 @@
 (defun check-keywords-valid (keywords
                              argument-count-location
                              dynamic-environment-location
-                             error-function-location
                              first-index)
   (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name (gensym "keyword")))
          (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
@@ -55,7 +52,6 @@
                 :dynamic-environment-location dynamic-environment-location))
          (first
            (call-error 'invalid-keyword
-                       error-function-location
                        dynamic-environment-location
                        (make-instance 'cleavir-ir:constant-input :value :keyword)
                        keyword-location)))
@@ -243,7 +239,6 @@
 (defun process-keyword-arguments (parameters
                                   argument-count-location
                                   dynamic-environment-location
-                                  error-function-location
                                   first-index
                                   allow-other-keys-p)
   (let* ((nop (make-instance 'cleavir-ir:nop-instruction
@@ -255,7 +250,6 @@
             (check-keywords-valid (mapcar #'first parameters)
                                   argument-count-location
                                   dynamic-environment-location
-                                  error-function-location
                                   first-index)
           (setf (cleavir-ir:successors last-a)
                 (list nop))
@@ -282,7 +276,6 @@
     (multiple-value-bind (first-d last-d)
         (check-even-number-of-keyword-arguments argument-count-location
                                                 dynamic-environment-location
-                                                error-function-location
                                                 first-index)
       (setf (cleavir-ir:successors last-d)
             (list first))

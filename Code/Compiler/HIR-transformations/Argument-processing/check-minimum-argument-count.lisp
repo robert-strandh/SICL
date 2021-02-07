@@ -2,12 +2,10 @@
 
 (defun check-minimum-argument-count (argument-count-location
                                      minimum-argument-count
-                                     dynamic-environment-location
-                                     error-function-location)
+                                     dynamic-environment-location)
   (let* ((minimum-argument-count-input (make-instance 'cleavir-ir:constant-input
                                          :value minimum-argument-count))
          (error (call-error 'too-few-arguments
-                            error-function-location
                             dynamic-environment-location
                             (make-instance 'cleavir-ir:constant-input :value :argument-count)
                             argument-count-location

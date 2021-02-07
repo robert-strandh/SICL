@@ -54,8 +54,6 @@
          (more-arguments-branch successor)
          (argument-count-location
            (make-instance 'cleavir-ir:lexical-location :name (gensym "argc")))
-         (error-function-location
-           (make-instance 'cleavir-ir:lexical-location :name (gensym "err-fun")))
          (dynamic-environment-location
            (cleavir-ir:dynamic-environment-location enter-instruction)))
     (setf (cleavir-ir:predecessors successor) '())
@@ -73,7 +71,6 @@
              key-parameters
              argument-count-location
              dynamic-environment-location
-             error-function-location
              (+ (length required-parameters) (length optional-parameters))
              allow-other-keys-p)
           (setf (cleavir-ir:successors last)
@@ -120,8 +117,7 @@
             (check-maximum-argument-count
              argument-count-location
              (+ (length required-parameters) (length optional-parameters))
-             dynamic-environment-location
-             error-function-location)
+             dynamic-environment-location)
           (setf (cleavir-ir:successors last)
                 (list more-arguments-branch))
           (setf more-arguments-branch first)))
@@ -130,8 +126,7 @@
             (check-minimum-argument-count
              argument-count-location
              (length required-parameters)
-             dynamic-environment-location
-             error-function-location)
+             dynamic-environment-location)
           (setf (cleavir-ir:successors last)
                 (list more-arguments-branch))
           (setf more-arguments-branch first)))
@@ -139,12 +134,6 @@
             (make-instance 'cleavir-ir:compute-argument-count-instruction
               :inputs '()
               :output argument-count-location
-              :successor more-arguments-branch
-              :dynamic-environment-location dynamic-environment-location))
-      (setf more-arguments-branch
-            (make-instance 'cleavir-ir:fdefinition-instruction
-              :input (make-instance 'cleavir-ir:constant-input :value 'error)
-              :output error-function-location
               :successor more-arguments-branch
               :dynamic-environment-location dynamic-environment-location))
       (setf (cleavir-ir:successors enter-instruction)
