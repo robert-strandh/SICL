@@ -84,6 +84,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class LOAD-CONSTANT-AST.
+;;;
+;;; This class can be used by client code that wants to load constants
+;;; through some kind of action.  The LOCATION-INFO can be any object.
+
+(defclass load-constant-ast
+    (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  ((%location-info :initarg :location-info :reader location-info)))
+
+(cleavir-io:define-save-info load-constant-ast
+  (:location-info location-info))
+
+(defmethod children ((ast load-constant-ast))
+  (declare (ignorable ast))
+  '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LEXICAL-AST.
 ;;; 
 ;;; A LEXICAL-AST represents a reference to a lexical variable.  Such
