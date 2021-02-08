@@ -15,6 +15,7 @@
    #:side-effect-free-p
    #:constant-ast #:value
    #:immediate-ast
+   #:load-constant-ast #:location-info
    #:lexical-ast
    #:symbol-value-ast
    #:set-symbol-value-ast
