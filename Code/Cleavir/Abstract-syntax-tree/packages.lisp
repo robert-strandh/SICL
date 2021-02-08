@@ -14,6 +14,7 @@
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
    #:constant-ast #:value
+   #:immediate-ast
    #:lexical-ast
    #:symbol-value-ast
    #:set-symbol-value-ast
