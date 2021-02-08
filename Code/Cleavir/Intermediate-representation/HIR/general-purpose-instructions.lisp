@@ -416,6 +416,9 @@
 (defclass load-constant-instruction (instruction one-successor-mixin)
   ((%location-info :initarg :location-info :reader location-info)))
 
+(defmethod clone-initargs append ((instruction load-constant-instruction))
+  (list :location-info (location-info instruction)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction UNWIND-PROTECT-INSTRUCTION.
