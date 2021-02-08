@@ -807,9 +807,27 @@
                    (successors successors))
       context
     (make-instance 'cleavir-ir:assignment-instruction
-     :input (cleavir-ir:make-constant-input (cleavir-ast:value ast))
-     :output (first results)
-     :successor (first successors))))
+      :input (cleavir-ir:make-constant-input (cleavir-ast:value ast))
+      :output (first results)
+      :successor (first successors))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a LOAD-CONSTANT-AST.
+;;;
+;;; The LOAD-CONSTANT-AST is a subclass of ONE-VALUE-AST-MIXIN, so the
+;;; :AROUND method on COMPILE-AST has adapted the context so that it
+;;; has a single result.
+
+(defmethod compile-ast (client (ast cleavir-ast:load-constant-ast) context)
+  (with-accessors ((results results)
+                   (successors successors))
+      context
+    (make-instance 'cleavir-ir:load-constant-instruction
+      :location-info (cleavir-ast:location-info ast)
+      :inputs '()
+      :output (first results)
+      :successor (first successors))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -824,9 +842,9 @@
                    (successors successors))
       context
     (make-instance 'cleavir-ir:assignment-instruction
-     :input (cleavir-ir:make-immediate-input (cleavir-ast:value ast))
-     :output (first results)
-     :successor (first successors))))
+      :input (cleavir-ir:make-immediate-input (cleavir-ast:value ast))
+      :output (first results)
+      :successor (first successors))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
