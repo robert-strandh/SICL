@@ -58,6 +58,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class IMMEDIATE-AST.
+;;;
+;;; This class is similar to CONSTANT-AST. It represents Lisp
+;;; constants in source code that are known to be possible to
+;;; represent as immediate objects in native code.
+;;;
+;;; ASTs of this class are typically introduced in later stages of
+;;; compilation, where the AST is adapted to a particular backend.
+;;; Then instances of CONSTANT-AST are either replaced by code to
+;;; build a constant that is too complex to be an immediate, or they
+;;; have their class changed to IMMEDIATE-AST.
+
+(defclass immediate-ast (ast
+                        one-value-ast-mixin
+                        side-effect-free-ast-mixin)
+  ((%value :initarg :value :reader value)))
+
+(cleavir-io:define-save-info immediate-ast
+  (:value value))
+
+(defmethod children ((ast immediate-ast))
+  (declare (ignorable ast))
+  '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LEXICAL-AST.
 ;;; 
 ;;; A LEXICAL-AST represents a reference to a lexical variable.  Such
