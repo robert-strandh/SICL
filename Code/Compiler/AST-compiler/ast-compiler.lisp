@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-compiler)
 
 (defun compile-ast (client ast)
+  (eliminate-fdefinition-asts ast)
   (let* ((cleavir-cst-to-ast::*origin* nil)
          (hoisted-ast (cleavir-ast-transformations:hoist-load-time-value ast))
          (wrapped-ast (make-instance 'cleavir-ast:function-ast
