@@ -35,7 +35,6 @@
    (lambda (instruction)
      (when (or (typep instruction 'cleavir-ir:funcall-instruction)
                (typep instruction 'cleavir-ir:bind-instruction)
-               (typep instruction 'cleavir-ir:unwind-instruction)
                (typep instruction 'cleavir-ir:initialize-values-instruction))
        (expand-one-funcall-instruction instruction)))
    top-level-enter-instruction))
