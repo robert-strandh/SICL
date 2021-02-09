@@ -40,3 +40,7 @@
 (defclass bind-instruction
     (cleavir-ir:bind-instruction named-call-mixin)
   ())
+
+(defclass unwind-instruction
+    (cleavir-ir:unwind-instruction named-call-mixin)
+  ())
