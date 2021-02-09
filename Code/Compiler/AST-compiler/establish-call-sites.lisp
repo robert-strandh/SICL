@@ -27,5 +27,13 @@
         (push (make-instance 'call-site
                 :name 'sicl-run-time:augment-with-special-variable-entry
                 :instruction instruction)
+              (call-sites code-object)))
+       (cleavir-ir:unwind-instruction
+        (change-class instruction
+                      'sicl-ir:unwind-instruction
+                      :function-cell-cell (list nil))
+        (push (make-instance 'call-site
+                :name 'sicl-run-time:unwind
+                :instruction instruction)
               (call-sites code-object)))))
    (ir code-object)))
