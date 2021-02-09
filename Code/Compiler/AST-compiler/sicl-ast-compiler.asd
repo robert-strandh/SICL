@@ -15,6 +15,7 @@
   ((:file "process-constant-inputs")
    (:file "hoist-fdefinitions")
    (:file "establish-call-sites")
+   (:file "eliminate-fdefinition-asts")
    (:file "ast-compiler")
    (:file "tie-code-object")
    (:file "cst-eval")))
