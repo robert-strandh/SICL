@@ -10,6 +10,7 @@
    #:bind-instruction
    #:unwind-instruction
    #:initialize-values-instruction
+   #:multiple-value-call-instruction
    #:debug-information
    #:dynamic-environment-instruction
    #:caller-stack-pointer-instruction
