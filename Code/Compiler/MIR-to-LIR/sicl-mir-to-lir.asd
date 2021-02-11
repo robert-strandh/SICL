@@ -19,7 +19,6 @@
    (:file "tag-test")
    (:file "funcall")
    (:file "save-restore-multiple-values")
-   (:file "initialize-values")
    (:file "multiple-value-call")
    (:file "return")
    (:file "return-values")
