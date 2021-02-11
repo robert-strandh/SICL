@@ -8,7 +8,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "preprocess-initialize-values")
    (:file "preprocess-multiple-value-call")
    (:file "eliminate-create-cell")
    (:file "eliminate-fetch")
