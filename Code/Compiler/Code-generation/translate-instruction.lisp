@@ -102,6 +102,6 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:initialize-values-instruction))
   (make-instance 'cluster:code-command
-    :mnemonic "CALL"
+    :mnemonic "JMP"
     :operands
     (list (translate-datum (first (cleavir-ir:inputs instruction))))))
