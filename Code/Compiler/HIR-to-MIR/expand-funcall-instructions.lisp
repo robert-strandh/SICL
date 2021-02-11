@@ -34,7 +34,6 @@
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
      (when (or (typep instruction 'cleavir-ir:funcall-instruction)
-               (typep instruction 'cleavir-ir:bind-instruction)
-               (typep instruction 'cleavir-ir:initialize-values-instruction))
+               (typep instruction 'cleavir-ir:bind-instruction))
        (expand-one-funcall-instruction instruction)))
    top-level-enter-instruction))
