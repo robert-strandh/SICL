@@ -44,5 +44,13 @@
                 ;; FIXME: Call a better function.
                 :name 'error
                 :instruction instruction)
+              (call-sites code-object)))
+       (cleavir-ir:multiple-value-call-instruction
+        (change-class instruction
+                      'sicl-ir:multiple-value-call-instruction
+                      :function-cell-cell (list nil))
+        (push (make-instance 'call-site
+                :name 'sicl-run-time:call-with-values
+                :instruction instruction)
               (call-sites code-object)))))
    (ir code-object)))
