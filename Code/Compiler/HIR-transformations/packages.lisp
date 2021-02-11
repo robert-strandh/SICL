@@ -14,6 +14,5 @@
            #:process-constant-inputs
            #:eliminate-fixed-to-multiple-instructions
            #:eliminate-multiple-to-fixed-instructions
-           #:preprocess-initialize-values-instructions
            #:preprocess-multiple-value-call-instructions
            #:eliminate-append-values-instructions))
