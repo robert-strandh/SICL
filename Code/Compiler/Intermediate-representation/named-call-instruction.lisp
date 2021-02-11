@@ -44,3 +44,7 @@
 (defclass unwind-instruction
     (cleavir-ir:unwind-instruction named-call-mixin)
   ())
+
+(defclass initialize-values-instruction
+    (cleavir-ir:initialize-values-instruction named-call-mixin)
+  ())
