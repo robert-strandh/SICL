@@ -35,5 +35,14 @@
         (push (make-instance 'call-site
                 :name 'sicl-run-time:unwind
                 :instruction instruction)
+              (call-sites code-object)))
+       (cleavir-ir:initialize-values-instruction
+        (change-class instruction
+                      'sicl-ir:initialize-values-instruction
+                      :function-cell-cell (list nil))
+        (push (make-instance 'call-site
+                ;; FIXME: Call a better function.
+                :name 'error
+                :instruction instruction)
               (call-sites code-object)))))
    (ir code-object)))
