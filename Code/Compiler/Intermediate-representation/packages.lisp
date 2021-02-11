@@ -9,6 +9,7 @@
    #:catch-instruction
    #:bind-instruction
    #:unwind-instruction
+   #:initialize-values-instruction
    #:debug-information
    #:dynamic-environment-instruction
    #:caller-stack-pointer-instruction
