@@ -32,23 +32,3 @@
 (defclass named-call-instruction
     (cleavir-ir:named-call-instruction named-call-mixin)
   ())
-
-(defclass catch-instruction
-    (cleavir-ir:catch-instruction named-call-mixin)
-  ())
-
-(defclass bind-instruction
-    (cleavir-ir:bind-instruction named-call-mixin)
-  ())
-
-(defclass unwind-instruction
-    (cleavir-ir:unwind-instruction named-call-mixin)
-  ())
-
-(defclass initialize-values-instruction
-    (cleavir-ir:initialize-values-instruction named-call-mixin)
-  ())
-
-(defclass multiple-value-call-instruction
-    (cleavir-ir:multiple-value-call-instruction named-call-mixin)
-  ())
