@@ -23,11 +23,11 @@
   nil)
 
 (defmethod process-instruction
-    ((instruction sicl-ir:catch-instruction) lexical-locations)
+    ((instruction cleavir-ir:catch-instruction) lexical-locations)
   nil)
 
 (defmethod process-instruction
-    ((instruction sicl-ir:bind-instruction) lexical-locations)
+    ((instruction cleavir-ir:bind-instruction) lexical-locations)
   nil)
 
 ;;; Return a list of instructions that, when executed, loads the
