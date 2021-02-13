@@ -5,5 +5,4 @@
                #:sicl-ast
                #:sicl-ir)
   :components
-  ((:file "packages")
-   (:file "static-environment")))
+  ((:file "packages")))
