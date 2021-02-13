@@ -14,15 +14,9 @@
                  (setf (car cell)
                        (funcall function-cell-function name))))
     (funcall (hir-thunks code-object)
-             (apply #'vector
-                    ;; FIXME: remove this element.
-                    nil
-                    ;; FIXME: get these functions from the environment.
-                    #'sicl-hir-evaluator:enclose
-                    #'sicl-hir-evaluator:initialize-closure
-                    #'cons
-                    nil
-                    (append (loop with names = (function-names code-object)
-                                  for name in names
-                                  collect (funcall function-cell-function name))
-                            (constants code-object))))))
+             (vector
+              ;; FIXME: remove this element.
+              nil
+              ;; FIXME: get these functions from the environment.
+              #'sicl-hir-evaluator:enclose
+              #'sicl-hir-evaluator:initialize-closure))))
