@@ -19,7 +19,7 @@
              (let ((static-environment (lref static-environment-lref)))
                (setf (output 0)
                      (enclose enter-fn
-                              (aref static-environment sicl-compiler:+code-object-index+)
+                              nil
                               env-length
                               (lexical-locations)))
                (successor 0)))
