@@ -1,7 +1,6 @@
 (cl:in-package #:sicl-hir-to-mir)
 
 (defun convert-one-function (client enter-instruction)
-  (eliminate-enclose-instructions client enter-instruction)
   (let ((instructions '()))
     (cleavir-ir:map-local-instructions
      (lambda (instruction)
