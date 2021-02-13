@@ -2,8 +2,6 @@
 
 (defparameter +code-object-index+ 0)
 
-(defparameter +enclose-function-index+ 1)
-
 (defparameter +cons-function-index+ 3)
 
 (defparameter +nil-index+ 4)
