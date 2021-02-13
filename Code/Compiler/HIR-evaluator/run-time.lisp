@@ -11,8 +11,6 @@
                     :environment static-environment)))
     (setf (svref static-environment sicl-compiler:+code-object-index+)
           code-object)
-    (setf (svref static-environment sicl-compiler:+enclose-function-index+)
-          #'enclose)
     (setf (svref static-environment sicl-compiler:+cons-function-index+)
           #'cons)
     (setf (svref static-environment sicl-compiler:+nil-index+)
