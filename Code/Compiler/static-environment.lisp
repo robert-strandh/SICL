@@ -4,8 +4,6 @@
 
 (defparameter +enclose-function-index+ 1)
 
-(defparameter +initialize-closure-function-index+ 2)
-
 (defparameter +cons-function-index+ 3)
 
 (defparameter +nil-index+ 4)
