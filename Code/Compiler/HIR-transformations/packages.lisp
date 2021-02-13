@@ -8,7 +8,6 @@
            #:eliminate-fetch-instructions
            #:eliminate-read-cell-instructions
            #:eliminate-write-cell-instructions
-           #:constants
            #:function-names
            #:top-level-enter-instruction
            #:process-constant-inputs
