@@ -2,10 +2,7 @@
 
 (defpackage #:sicl-compiler
   (:use #:common-lisp)
-  (:export #:+code-object-index+
-           #:+cons-function-index+
-           #:+nil-index+
-           #:+first-constant-index+
+  (:export #:+first-constant-index+
            #:debug-information
            #:code-object
            #:instructions
