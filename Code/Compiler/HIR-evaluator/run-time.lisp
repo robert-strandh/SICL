@@ -13,8 +13,6 @@
           code-object)
     (setf (svref static-environment sicl-compiler:+enclose-function-index+)
           #'enclose)
-    (setf (svref static-environment sicl-compiler:+initialize-closure-function-index+)
-          #'initialize-closure)
     (setf (svref static-environment sicl-compiler:+cons-function-index+)
           #'cons)
     (setf (svref static-environment sicl-compiler:+nil-index+)
