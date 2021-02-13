@@ -6,7 +6,7 @@
 
 (defun enclose (entry-point static-environment-length lexical-locations)
   (let* ((static-environment
-           (make-array (+ sicl-compiler:+first-constant-index+ static-environment-length)))
+           (make-array static-environment-length))
          (closure (make-instance 'hir-closure
                     :environment static-environment)))
     (closer-mop:set-funcallable-instance-function
@@ -23,8 +23,7 @@
   (check-type closure hir-closure)
   (let ((static-environment (environment closure)))
     (declare (simple-vector static-environment))
-    (replace static-environment static-environment-values
-             :start1 sicl-compiler:+first-constant-index+)))
+    (replace static-environment static-environment-values)))
 
 (defun fill-environment (environment)
   (let ((client (env:client environment)))

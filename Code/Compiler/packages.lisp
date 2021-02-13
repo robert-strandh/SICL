@@ -2,8 +2,7 @@
 
 (defpackage #:sicl-compiler
   (:use #:common-lisp)
-  (:export #:+first-constant-index+
-           #:debug-information
+  (:export #:debug-information
            #:code-object
            #:instructions
            #:frame-maps
