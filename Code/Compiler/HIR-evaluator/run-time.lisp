@@ -9,12 +9,6 @@
            (make-array (+ sicl-compiler:+first-constant-index+ static-environment-length)))
          (closure (make-instance 'hir-closure
                     :environment static-environment)))
-    (setf (svref static-environment sicl-compiler:+code-object-index+)
-          code-object)
-    (setf (svref static-environment sicl-compiler:+cons-function-index+)
-          #'cons)
-    (setf (svref static-environment sicl-compiler:+nil-index+)
-          nil)
     (closer-mop:set-funcallable-instance-function
      closure
      (lambda (&rest args)
