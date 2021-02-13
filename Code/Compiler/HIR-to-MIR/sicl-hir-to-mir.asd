@@ -19,6 +19,5 @@
    (:file "augment-catch-instruction")
    (:file "augment-bind-instruction")
    (:file "augment-initialize-values-instruction")
-   (:file "eliminate-enclose-instructions")
    (:file "gather-enter-instructions")
    (:file "hir-to-mir")))
