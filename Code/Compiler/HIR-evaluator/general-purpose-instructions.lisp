@@ -192,7 +192,7 @@
 
 (defmethod instruction-thunk
     (client
-     (instruction cleavir-ir:load-constant-instruction)
+     (instruction sicl-ir:load-constant-instruction)
      lexical-environment)
   (let ((constant (cdr (cleavir-ir:location-info instruction))))
     (make-thunk (client instruction lexical-environment :outputs 1)
