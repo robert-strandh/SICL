@@ -3,6 +3,7 @@
 (defpackage #:sicl-ir
   (:use #:common-lisp)
   (:export
+   #:load-constant-instruction #:constants
    #:breakpoint-instruction
    #:named-call-mixin #:function-cell-cell
    #:named-call-instruction
