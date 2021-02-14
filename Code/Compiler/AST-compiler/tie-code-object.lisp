@@ -13,10 +13,4 @@
                      (name (name call-site)))
                  (setf (car cell)
                        (funcall function-cell-function name))))
-    (funcall (hir-thunks code-object)
-             (vector
-              ;; FIXME: remove this element.
-              nil
-              ;; FIXME: get these functions from the environment.
-              #'sicl-hir-evaluator:enclose
-              #'sicl-hir-evaluator:initialize-closure))))
+    (funcall (hir-thunks code-object) nil)))
