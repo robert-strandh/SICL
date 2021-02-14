@@ -54,7 +54,7 @@
                     (let ((temp (make-instance 'cleavir-ir:lexical-location
                                   :name (gensym))))
                       (cleavir-ir:insert-instruction-before
-                       (make-instance 'cleavir-ir:load-constant-instruction
+                       (make-instance 'sicl-ir:load-constant-instruction
                          :location-info (cons pos value)
                          :output temp)
                        instruction)
