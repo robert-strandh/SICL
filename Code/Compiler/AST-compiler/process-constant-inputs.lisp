@@ -35,7 +35,7 @@
 ;;; constants as LOAD-TIME-VALUEs.  The difference then would be that
 ;;; true constants would then be created at load time, rather than
 ;;; when the AST is read by the reader.
-(defun process-constant-inputs (code-object)
+(defun process-constant-inputs (code-object offset)
   (with-accessors ((constants constants)
                    (initial-instruction ir))
       code-object
@@ -55,7 +55,7 @@
                                   :name (gensym))))
                       (cleavir-ir:insert-instruction-before
                        (make-instance 'sicl-ir:load-constant-instruction
-                         :location-info pos
+                         :location-info (+ pos offset)
                          :output temp)
                        instruction)
                       (setf (first remaining) temp))))))
