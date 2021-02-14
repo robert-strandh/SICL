@@ -194,7 +194,8 @@
     (client
      (instruction sicl-ir:load-constant-instruction)
      lexical-environment)
-  (let ((constant (cdr (cleavir-ir:location-info instruction))))
+  (let ((index (car (cleavir-ir:location-info instruction)))
+        (constants (sicl-ir:constants instruction)))
     (make-thunk (client instruction lexical-environment :outputs 1)
-      (setf (output 0) constant)
+      (setf (output 0) (aref constants index))
       (successor 0))))
