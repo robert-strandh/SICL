@@ -28,7 +28,7 @@
     (sicl-hir-transformations:eliminate-fetch-instructions hir)
     (sicl-hir-transformations:eliminate-read-cell-instructions hir)
     (sicl-hir-transformations:eliminate-write-cell-instructions hir)
-    (process-constant-inputs code-object)
+    (process-constant-inputs code-object 0)
     (let ((constants-vector (coerce (constants code-object) 'simple-vector)))
       (cleavir-ir:map-instructions-arbitrary-order
        (lambda (instruction)
