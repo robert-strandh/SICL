@@ -4,8 +4,11 @@
   (eliminate-fdefinition-asts ast)
   (let* ((cleavir-cst-to-ast::*origin* nil)
          (hoisted-ast (cleavir-ast-transformations:hoist-load-time-value ast))
+         (parameter-ast
+           (make-instance 'cleavir-ast:lexical-ast
+             :name (gensym)))
          (wrapped-ast (make-instance 'cleavir-ast:function-ast
-                        :lambda-list '()
+                        :lambda-list (list parameter-ast)
                         :body-ast hoisted-ast))
          (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
          (code-object
