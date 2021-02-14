@@ -55,7 +55,7 @@
                                   :name (gensym))))
                       (cleavir-ir:insert-instruction-before
                        (make-instance 'sicl-ir:load-constant-instruction
-                         :location-info (cons pos value)
+                         :location-info pos
                          :output temp)
                        instruction)
                       (setf (first remaining) temp))))))
