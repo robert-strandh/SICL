@@ -9,5 +9,5 @@
 
 (defmethod cleavir-ir:clone-initargs append
     ((instruction load-constant-instruction))
-  (list :constants (constants instruction)))
+  (list :constants nil))
 
