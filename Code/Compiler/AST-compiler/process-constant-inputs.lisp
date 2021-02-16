@@ -19,22 +19,26 @@
 ;;; constant.  This way is now reflected in HIR by the use of the
 ;;; LOAD-CONSTANT-INSTRUCTION.
 ;;;
-;;; We make the LOCATION-INFO of the LOAD-CONSTANT-INSTRUCTION a CONS
-;;; of two things.  The first thing is the position of the constant in
-;;; what will ultimately become the vector, but during HIR
-;;; transformations, it is a list contained in the
-;;; TOP-LEVEL-ENTER-INSTRUCTION.  This position information is used
-;;; when HIR is transformed into MIR, LIR, etc.  The second thing is
-;;; the constant itself, and it is used only by the HIR evaluator.
+;;; We make the LOCATION-INFO of the LOAD-CONSTANT-INSTRUCTION the
+;;; index of the vector of constants where the constant is to be
+;;; loaded from.  We accumulate the constants we see into a list so
+;;; that we can determine whether some constant has been seen before,
+;;; and then we reuse it and its index in the vector.  Later, the
+;;; vector of constants is stored in the LOAD-CONSTANT-INSTRUCTION, so
+;;; that the HIR evaluator ca access it from there at the given index.
 ;;;
-;;; The idea is to handle LOAD-TIME-VALUE in a similar way, but we
-;;; haven't worked out the details yet.  Again a
-;;; LOAD-CONSTANT-INSTRUCTION would be used, but constant to load
-;;; would be computed by the top-level function and inserted into the
-;;; vector.  An alternative would be to treat all non-trivial
-;;; constants as LOAD-TIME-VALUEs.  The difference then would be that
-;;; true constants would then be created at load time, rather than
-;;; when the AST is read by the reader.
+;;; The OFFSET parameter is the number of LOAD-TIME-VALUEs that have
+;;; been hoisted.  The value of each LOAD-TIME-VALUE-FORM is stored in
+;;; the first part of the vector of constants, so the constants
+;;; created by the reader are stored in the second part, beginning at
+;;; index OFFSET.
+;;;
+;;; We store the list of constants we have seen in the code object.
+;;; Later, this list will be stored in the second half of the
+;;; constants vector and the entire vector will be passed to the
+;;; top-level function as an argument, wheen the code object is tied
+;;; to some environment.
+
 (defun process-constant-inputs (code-object offset)
   (with-accessors ((constants constants)
                    (initial-instruction ir))
