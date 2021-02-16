@@ -57,6 +57,14 @@
         (catch 'return
           (loop (setf thunk (funcall thunk lexical-locations))))))))
 
+;;; The top-level HIR function is not subject to argument processing,
+;;; because we completely control how it is called.  Instead, we just
+;;; pass it a single required parameter, namely a vector to be filled
+;;; in with values of LOAD-TIME-VALUE forms and constants created by
+;;; the reader.  The parameter LEXICAL-LOCATION is the third output of
+;;; the ENTER-INSTRUCTION.  (FIXME: should we access it as the first
+;;; element of the lambda list instead?)
+
 (defun top-level-hir-to-host-function (client enter-instruction)
   (let* ((*instruction-thunks* (make-hash-table :test #'eq))
          (lexical-environment (make-lexical-environment))
