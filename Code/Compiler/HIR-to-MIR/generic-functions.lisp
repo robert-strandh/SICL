@@ -35,6 +35,10 @@
     cleavir-ir:negate-instruction
     cleavir-ir:fixnump-instruction
     cleavir-ir:consp-instruction
+    sicl-ir:load-constant-instruction
+    sicl-ir:named-call-instruction
+    cleavir-ir:enclose-instruction
+    cleavir-ir:initialize-closure-instruction
     ;; FIXME: these instructions should be processed
     cleavir-ir:fixnum-divide-instruction))
 
