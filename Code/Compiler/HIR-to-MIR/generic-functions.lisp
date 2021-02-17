@@ -40,6 +40,11 @@
     cleavir-ir:enclose-instruction
     cleavir-ir:initialize-closure-instruction
     ;; FIXME: these instructions should be processed
+    cleavir-ir:standard-object-p-instruction
+    cleavir-ir:single-float-p-instruction
+    cleavir-ir:characterp-instruction
+    cleavir-ir:standard-object-class-of-instruction
+    cleavir-ir:fixnum-multiply-instruction
     cleavir-ir:fixnum-divide-instruction))
 
 (defmethod process-instruction (client instruction)
