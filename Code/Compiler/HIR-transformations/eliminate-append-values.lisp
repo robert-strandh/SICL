@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-hir-transformations)
 
+;;; When we start, the CAR of the cell in the VALUES-LOCATION contains
+;;; a pointer to the cell where we should start adding values.  So the
+;;; first instruction is to load the CAR of the cell in the
+;;; VALUES-LOCATION into the CELL-LOCATION.
 (defun make-initial-instructions
     (successor
      values-location
@@ -25,6 +29,11 @@
     :dynamic-environment-location dynamic-environment-location
     :successor successor))
 
+;;; The final instruction sets the CAR of the cell in the
+;;; VALUES-LOCATION to the CELL-LOCATION, thereby either indicating
+;;; the start cell for the next APPEND-VALUES-INSTRUCTION, or
+;;; indicating the end of the list of arguments to supply to the
+;;; function invoked by MULTIPLE-VALUE-CALL.
 (defun make-final-instruction
     (successor values-location cell-location dynamic-environment-location)
   (make-instance 'cleavir-ir:rplaca-instruction
@@ -41,20 +50,28 @@
      dynamic-environment-location)
   (let ((temp-location (make-instance 'cleavir-ir:lexical-location
                          :name (gensym "temp"))))
+    ;; Check whether there are more values to access.
     (make-instance 'cleavir-ir:unsigned-less-instruction
       :inputs (list index-input value-count-location)
       :dynamic-environment-location dynamic-environment-location
       :successors
       (list
+       ;; This branch is taken when there are more values to access.
+       ;; Access the value indicated by INDEX-INPUT, and put it in a
+       ;; temporary location.
        (make-instance 'cleavir-ir:return-value-instruction
          :input index-input
          :output temp-location
          :dynamic-environment-location dynamic-environment-location
          :successor
+         ;; The put the value in the temporary location in the CAR of
+         ;; the cell indicated by CELL-LOCATION.
          (make-instance 'cleavir-ir:rplaca-instruction
            :inputs (list cell-location temp-location)
            :dynamic-environment-location dynamic-environment-location
            :successor
+           ;; Finally, advance the CELL-LOCATION to the next cell in
+           ;; the list.
            (make-instance 'cleavir-ir:cdr-instruction
              :input cell-location
              :output cell-location
@@ -89,6 +106,10 @@
       :dynamic-environment-location dynamic-environment-location
       :successor test)))
 
+;;; This function is charged with computing a sequence of instructions
+;;; that are meant to replace a single APPEND-VALUES-INSTRUCTION.  It
+;;; returns the first instruction and the last instruction of the
+;;; sequence as two values.
 (defun make-replacement
     (successor
      values-location
