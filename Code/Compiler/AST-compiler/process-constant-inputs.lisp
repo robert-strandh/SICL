@@ -7,7 +7,7 @@
   nil)
 
 (defmethod trivial-constant-p ((constant integer))
-  (<= #.(- (expt 2 31)) #. (1- (expt 2 31))))
+  (<= #.(- (expt 2 31)) constant #.(1- (expt 2 31))))
 
 (defmethod trivial-constant-p ((constant character))
   (< (char-code constant) #.(expt 2 29)))
