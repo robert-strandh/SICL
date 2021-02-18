@@ -10,6 +10,7 @@
            #:callee-saves-stack-maps
            #:constants
            #:function-names
+           #:ir
            #:hir
            #:compile-ast
            #:tie-code-object))
