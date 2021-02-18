@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-hir-to-mir)
 
-(defgeneric process-instruction (client instruction))
+(defgeneric process-instruction (client instruction code-object))
 
 (defparameter *unprocessed-instruction-types*
   '(or
@@ -47,12 +47,12 @@
     cleavir-ir:fixnum-multiply-instruction
     cleavir-ir:fixnum-divide-instruction))
 
-(defmethod process-instruction (client instruction)
+(defmethod process-instruction (client instruction code-object)
   (declare (ignore client))
   (unless (typep instruction *unprocessed-instruction-types*)
     (error "Don't know how to handle instruction ~s" instruction)))
 
-(defmethod process-instruction :before (client instruction)
+(defmethod process-instruction :before (client instruction code-object)
   (declare (ignore client))
   (let ((successors (cleavir-ir:successors instruction)))
     (when (and (= (length successors) 2)

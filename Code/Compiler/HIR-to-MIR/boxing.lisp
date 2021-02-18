@@ -48,7 +48,7 @@
                   :inputs (list word-location-2 tag-input))))
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:box-instruction))
+    (client (instruction cleavir-ir:box-instruction) code-object)
   (let ((element-type (cleavir-ir:element-type instruction)))
     (cond ((member element-type
                    '(bit
@@ -95,7 +95,7 @@
                   :input word-location)))
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:unbox-instruction))
+    (client (instruction cleavir-ir:unbox-instruction) code-object)
   (let ((element-type (cleavir-ir:element-type instruction)))
     (cond ((member element-type
                    '(bit

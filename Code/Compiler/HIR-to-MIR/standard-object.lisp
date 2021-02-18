@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-hir-to-mir)
 
 (defmethod  process-instruction
-    (client (instruction cleavir-ir:nook-read-instruction))
+    (client (instruction cleavir-ir:nook-read-instruction) code-object)
   (destructuring-bind (object-location slot-number-location)
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
@@ -15,7 +15,7 @@
                     :address slot-location))))
 
 (defmethod  process-instruction
-    (client (instruction cleavir-ir:nook-write-instruction))
+    (client (instruction cleavir-ir:nook-write-instruction) code-object)
   (destructuring-bind (object-location slot-number-location value-location)
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
