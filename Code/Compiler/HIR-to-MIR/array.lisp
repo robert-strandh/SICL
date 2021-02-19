@@ -4,6 +4,7 @@
   (cond ((equal element-type 't) 3)
         ((equal element-type 'character) 3)
         ((equal element-type 'double-float) 3)
+        ((equal element-type 'single-float) 2)
         ((equal element-type '(signed-byte 8)) 0)
         ((equal element-type '(unsigned-byte 8)) 0)
         ((equal element-type '(signed-byte 16)) 1)
