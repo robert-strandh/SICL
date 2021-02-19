@@ -11,6 +11,8 @@
         ((equal element-type '(unsigned-byte 16)) 1)
         ((equal element-type '(signed-byte 32)) 2)
         ((equal element-type '(unsigned-byte 32)) 2)
+        ((equal element-type '(signed-byte 64)) 3)
+        ((equal element-type '(unsigned-byte 64)) 3)
         (t (error "not simple ~s" element-type))))
 
 (defun process-simple-aref-instruction (instruction)
