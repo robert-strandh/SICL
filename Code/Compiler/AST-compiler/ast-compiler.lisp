@@ -16,6 +16,8 @@
                (make-instance 'code-object
                  :ast ast
                  :ir hir)))
+        (adjust-array (constants code-object) load-time-value-count
+                      :fill-pointer t)
         (cleavir-partial-inlining:do-inlining hir)
         (sicl-argument-processing:process-parameters hir)
         (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
@@ -29,18 +31,13 @@
         (sicl-hir-transformations:eliminate-fetch-instructions hir)
         (sicl-hir-transformations:eliminate-read-cell-instructions hir)
         (sicl-hir-transformations:eliminate-write-cell-instructions hir)
-        (process-constant-inputs code-object load-time-value-count)
-        (let* ((constants-list (constants code-object))
-               (constants-vector
-                 (make-array (+ load-time-value-count (length constants-list)))))
-          (replace constants-vector constants-list
-                   :start1 load-time-value-count)
+        (process-constant-inputs code-object)
+        (let ((constants (constants code-object)))
           (cleavir-ir:map-instructions-arbitrary-order
            (lambda (instruction)
              (when (typep instruction 'sicl-ir:load-constant-instruction)
-               (setf (sicl-ir:constants instruction) constants-vector)))
-           hir)
-          (setf (constants code-object) constants-vector))
+               (setf (sicl-ir:constants instruction) constants)))
+           hir))
         (cleavir-remove-useless-instructions:remove-useless-instructions hir)
         (establish-call-sites code-object)
         (setf (hir-thunks code-object)
