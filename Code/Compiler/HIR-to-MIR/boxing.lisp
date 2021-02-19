@@ -65,6 +65,40 @@
            (box-signed-integer instruction))
           ((eq element-type 'single-float)
            (box-single-float instruction))
+          ((eq element-type 'double-float)
+           (let* ((dynamic-environment
+                    (cleavir-ir:dynamic-environment-location instruction))
+                  (double-float-constant-location
+                    (make-instance 'cleavir-ir:lexical-location
+                      :name (gensym)))
+                  (object-location
+                    (make-instance 'cleavir-ir:lexical-location
+                      :name (gensym)))
+                  (call-instruction
+                    (make-instance 'cleavir-ir:named-call-instruction
+                      :dynamic-environment-location dynamic-environment
+                      :callee-name 'make-instance
+                      :input double-float-constant-location)))
+             (sicl-compiler:establish-call-site instruction code-object)
+             (cleavir-ir:insert-instruction-before
+              (make-instance 'cleavir-ir:load-constant-instruction
+                :dynamic-environment-location dynamic-environment
+                :output double-float-constant-location
+                :location-info
+                (sicl-compiler:ensure-constant code-object 'double-float))
+              instruction)
+             (cleavir-ir:insert-instruction-before call-instruction instruction)
+             (cleavir-ir:insert-instruction-before
+              (make-instance 'cleavir-ir:return-value-instruction
+                :dynamic-environment-location dynamic-environment
+                :input (make-instance 'cleavir-ir:immediate-input :value 0)
+                :output (first (cleavir-ir:outputs instruction)))
+              instruction)
+             (change-class instruction 'cleavir-ir:nook-write-instruction
+                           :inputs (list object-location
+                                         (make-instance 'cleavir-ir:immediate-input
+                                           :value 3)
+                                         (first (cleavir-ir:inputs instruction))))))
           (t
            (error "Don't know how to box ~s" element-type)))))
 
