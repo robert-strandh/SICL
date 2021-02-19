@@ -9,6 +9,7 @@
            #:callee-saves-register-maps
            #:callee-saves-stack-maps
            #:constants
+           #:ensure-constant
            #:function-names
            #:ir
            #:hir
