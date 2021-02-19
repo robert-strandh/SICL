@@ -43,7 +43,7 @@
         (setf (hir-thunks code-object)
               (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
         (sicl-hir-transformations:eliminate-append-values-instructions hir)
-        ;; (sicl-hir-to-mir:hir-to-mir client code-object)
+        (sicl-hir-to-mir:hir-to-mir client code-object)
         ;; (sicl-mir-to-lir:mir-to-lir client hir)
         ;; (multiple-value-bind (instructions label-map)
         ;;   (cluster:assemble (sicl-code-generation:generate-code hir2))
