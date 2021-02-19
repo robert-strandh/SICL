@@ -113,7 +113,7 @@
        :successor instruction)
      instruction)
     (change-class instruction 'cleavir-ir:assignment-instruction
-                  :input word-location)))
+                  :inputs (list word-location))))
 
 (defun unbox-single-float (instruction)
   (let ((word-location (make-instance 'cleavir-ir:raw-integer :size 64))
@@ -126,7 +126,7 @@
        :successor instruction)
      instruction)
     (change-class instruction 'cleavir-ir:assignment-instruction
-                  :input (list word-location))))
+                  :inputs (list word-location))))
 
 (defmethod process-instruction
     (client (instruction cleavir-ir:unbox-instruction) code-object)
