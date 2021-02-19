@@ -39,6 +39,7 @@
     sicl-ir:named-call-instruction
     cleavir-ir:enclose-instruction
     cleavir-ir:initialize-closure-instruction
+    cleavir-ir:unwind-protect-instruction
     ;; FIXME: these instructions should be processed
     cleavir-ir:standard-object-p-instruction
     cleavir-ir:single-float-p-instruction
