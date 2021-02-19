@@ -10,6 +10,7 @@
            #:callee-saves-stack-maps
            #:constants
            #:ensure-constant
+           #:establish-call-site
            #:function-names
            #:ir
            #:hir
