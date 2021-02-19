@@ -39,10 +39,8 @@
 ;;; top-level function as an argument, wheen the code object is tied
 ;;; to some environment.
 
-(defun process-constant-inputs (code-object offset)
-  (with-accessors ((constants constants)
-                   (initial-instruction ir))
-      code-object
+(defun process-constant-inputs (code-object)
+  (let ((initial-instruction (ir code-object)))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
        (loop for remaining = (cleavir-ir:inputs instruction) then (rest remaining)
@@ -51,15 +49,12 @@
              do (when (and (typep input 'cleavir-ir:constant-input)
                            (not (trivial-constant-p (cleavir-ir:value input))))
                   (let* ((value (cleavir-ir:value input))
-                         (pos (position value constants)))
-                    (when (null pos)
-                      (setf pos (length constants))
-                      (setf constants (append constants (list value))))
+                         (pos (ensure-constant code-object value)))
                     (let ((temp (make-instance 'cleavir-ir:lexical-location
                                   :name (gensym))))
                       (cleavir-ir:insert-instruction-before
                        (make-instance 'sicl-ir:load-constant-instruction
-                         :location-info (+ pos offset)
+                         :location-info pos
                          :output temp)
                        instruction)
                       (setf (first remaining) temp))))))
