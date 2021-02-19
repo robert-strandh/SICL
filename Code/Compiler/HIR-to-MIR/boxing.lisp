@@ -126,7 +126,7 @@
        :successor instruction)
      instruction)
     (change-class instruction 'cleavir-ir:assignment-instruction
-                  :input word-location)))
+                  :input (list word-location))))
 
 (defmethod process-instruction
     (client (instruction cleavir-ir:unbox-instruction) code-object)
@@ -143,5 +143,10 @@
            (unbox-integer instruction))
           ((eq element-type 'single-float)
            (unbox-single-float instruction))
+          ((eq element-type 'double-float)
+           (change-class instruction 'cleavir-ir:nook-read-instruction
+                         :inputs (list (first (cleavir-ir:inputs instruction))
+                                       (make-instance 'cleavir-ir:immediate-input
+                                         :value 3))))
           (t
            (error "Don't know how to unbox ~s" element-type)))))
