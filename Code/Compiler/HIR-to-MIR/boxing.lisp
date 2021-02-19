@@ -99,6 +99,25 @@
                                          (make-instance 'cleavir-ir:immediate-input
                                            :value 3)
                                          (first (cleavir-ir:inputs instruction))))))
+          ((or (equal element-type '(signed-byte 64))
+               (equal element-type '(unsigned-byte 64)))
+           (let ((dynamic-environment
+                   (cleavir-ir:dynamic-environment-location instruction))
+                 (message-constant-location
+                   (make-instance 'cleavir-ir:lexical-location
+                     :name (gensym))))
+             (cleavir-ir:insert-instruction-before
+              (make-instance 'cleavir-ir:load-constant-instruction
+                :dynamic-environment-location dynamic-environment
+                :output message-constant-location
+                :location-info
+                (sicl-compiler:ensure-constant
+                 code-object "Can't box ((un)signed-byte 65) yet"))
+              instruction)
+             (change-class instruction 'cleavir-ir:named-call-instruction
+                           :dynamic-environment-location dynamic-environment
+                           :callee-name 'error
+                           :inputs (list message-constant-location))))
           (t
            (error "Don't know how to box ~s" element-type)))))
 
@@ -144,6 +163,13 @@
           ((eq element-type 'single-float)
            (unbox-single-float instruction))
           ((eq element-type 'double-float)
+           (change-class instruction 'cleavir-ir:nook-read-instruction
+                         :inputs (list (first (cleavir-ir:inputs instruction))
+                                       (make-instance 'cleavir-ir:immediate-input
+                                         :value 3))))
+          ((or (equal element-type '(signed-byte 64))
+               (equal element-type '(unsigned-byte 64)))
+           ;; FIXME: What does it mean to unbox a (signed-byte 64)?
            (change-class instruction 'cleavir-ir:nook-read-instruction
                          :inputs (list (first (cleavir-ir:inputs instruction))
                                        (make-instance 'cleavir-ir:immediate-input
