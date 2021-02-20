@@ -14,7 +14,7 @@
     (dynamic-environment-location existing))
   (setf (predecessors new) (predecessors existing))
   (loop for pred in (predecessors existing)
-	do (nsubstitute new existing (successors pred) :test #'eq))
+        do (nsubstitute new existing (successors pred) :test #'eq))
   (setf (successors new) (list existing))
   (setf (predecessors existing) (list new)))
 
@@ -61,7 +61,7 @@
   (setf (outputs instruction) '())
   ;; Delete the instruction from the control flow graph.
   (let ((successor (car (successors instruction)))
-	(predecessors (predecessors instruction)))
+        (predecessors (predecessors instruction)))
     (cond ((eq successor instruction)
            ;; We have a loop.
            (loop for predecessor in predecessors
@@ -101,12 +101,12 @@
 ;;; dominated by S, so you'll probably have to set-predecessors etc.
 (defun bypass-instruction (new existing)
   (setf (inputs existing) '()
-	(outputs existing) '())
+        (outputs existing) '())
   (loop for predecessor in (predecessors existing)
-	;; hook up the successors of P
-	do (nsubstitute new existing (successors predecessor))
-	;; and the predecessors of S
-	do (pushnew predecessor (predecessors new))))
+        ;; hook up the successors of P
+        do (nsubstitute new existing (successors predecessor))
+        ;; and the predecessors of S
+        do (pushnew predecessor (predecessors new))))
 
 ;;; When there has been some significant modifications to an
 ;;; instruction graph, it is possible that some instructions that are
@@ -121,11 +121,11 @@
   (map-instructions-arbitrary-order
    (lambda (instruction)
      (loop for datum in (inputs instruction)
-	   do (setf (using-instructions datum) '())
-	      (setf (defining-instructions datum) '()))
+           do (setf (using-instructions datum) '())
+              (setf (defining-instructions datum) '()))
      (loop for datum in (outputs instruction)
-	   do (setf (using-instructions datum) '())
-	      (setf (defining-instructions datum) '())))
+           do (setf (using-instructions datum) '())
+              (setf (defining-instructions datum) '())))
    initial-instruction)
   ;; In the second pass, we add each instruction as a using
   ;; instruction of its inputs, and a defining instruction of its
@@ -133,9 +133,9 @@
   (map-instructions-arbitrary-order
    (lambda (instruction)
      (loop for datum in (inputs instruction)
-	   do (push instruction (using-instructions datum)))
+           do (push instruction (using-instructions datum)))
      (push instruction
            (using-instructions (dynamic-environment-location instruction)))
      (loop for datum in (outputs instruction)
-	   do (push instruction (defining-instructions datum))))
+           do (push instruction (defining-instructions datum))))
    initial-instruction))

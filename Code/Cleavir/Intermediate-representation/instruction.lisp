@@ -14,14 +14,14 @@
   ;; Remove this instruction as a using instruction from the existing
   ;; inputs.
   (loop for input in (inputs instruction)
-	do (setf (using-instructions input)
-		 (remove instruction (using-instructions input)
-			 :test #'eq))))
+        do (setf (using-instructions input)
+                 (remove instruction (using-instructions input)
+                         :test #'eq))))
 
 (defmethod (setf inputs) :after (new-inputs instruction)
   ;; Add this instruction as a using instruction to the new inputs.
   (loop for input in (inputs instruction)
-	do (push instruction (using-instructions input))))
+        do (push instruction (using-instructions input))))
 
 ;;; The operation (setf inputs (substitute new old inputs)) is quite
 ;;; common, so we provide a function for it. Both for cleanliness and
@@ -49,14 +49,14 @@
   ;; Remove this instruction as a defining instruction from the
   ;; existing outputs.
   (loop for output in (outputs instruction)
-	do (setf (defining-instructions output)
-		 (remove instruction (defining-instructions output)
-			 :test #'eq))))
+        do (setf (defining-instructions output)
+                 (remove instruction (defining-instructions output)
+                         :test #'eq))))
 
 (defmethod (setf outputs) :after (new-outputs instruction)
   ;; Add this instruction as a defining instruction to the new outputs.
   (loop for output in (outputs instruction)
-	do (push instruction (defining-instructions output))))
+        do (push instruction (defining-instructions output))))
 
 ;; Like the above.
 (defgeneric substitute-output (new old instruction)
@@ -85,7 +85,7 @@
     (let ((location (dynamic-environment-location instruction)))
       (setf (using-instructions location)
             (remove instruction (using-instructions location)
-		    :test #'eq)))))
+                    :test #'eq)))))
 
 (defmethod (setf dynamic-environment-location) :after (new-location instruction)
   ;; Add this instruction as a defining instruction to the new dynamic environment.
@@ -107,26 +107,26 @@
         (successors (if (null successor) (successors obj) (list successor))))
     (reinitialize-instance obj :inputs inputs :outputs outputs :successors successors))
   (unless (and (listp (successors obj))
-	       (every (lambda (successor)
-			(typep successor 'instruction))
-		      (successors obj)))
+               (every (lambda (successor)
+                        (typep successor 'instruction))
+                      (successors obj)))
     (error "successors must be a list of instructions"))
   (assert (and (listp (inputs obj))
-	       (every (lambda (input) (typep input 'datum)) (inputs obj))))
+               (every (lambda (input) (typep input 'datum)) (inputs obj))))
   (assert (and (listp (outputs obj))
-	       (every (lambda (output) (typep output 'datum)) (outputs obj))))
+               (every (lambda (output) (typep output 'datum)) (outputs obj))))
   ;; Add this instruction as a using instruction to its inputs.
   (loop for input in (inputs obj)
-	do (push obj (using-instructions input)))
+        do (push obj (using-instructions input)))
   ;; Add this instruction as a using instruction to its dynamic environment.
   (unless (null dynamic-environment-location)
     (push obj (using-instructions dynamic-environment-location)))
   ;; Add this instruction as an assigning instruction to its outputs.
   (loop for output in (outputs obj)
-	do (push obj (defining-instructions output)))
+        do (push obj (defining-instructions output)))
   ;; Add this instruction as a successor of its predecessors.
   (loop for successor in (successors obj)
-	do (push obj (predecessors successor))))
+        do (push obj (predecessors successor))))
 
 ;;; Returns an initialization args list suitable for MAKE-INSTANCE to reproduce
 ;;; the given instruction. Sssssort of like CLEAVIR-IO:SAVE-INFO.
