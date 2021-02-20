@@ -12,7 +12,7 @@
                byte)))
 
 (defun fnv-1a (last-hash &rest bytes)
-  (declare ((unsigned-byte 64) last-hash))
+  (declare ((unsigned-byte 62) last-hash))
   (reduce #'%fnv-1a bytes :initial-value last-hash))
 
 (define-compiler-macro fnv-1a (last-hash &rest bytes)

@@ -77,7 +77,7 @@
   (let ((ht (make-hash-table)))
     (setf (gethash 'foo ht) 100)
     (setf (gethash 'bar ht) 200)
-    (let ((results))
+    (let ((results '()))
       (with-hash-table-iterator (next-entry ht)
         (loop as result = (multiple-value-list (next-entry))
               until (not (first result))

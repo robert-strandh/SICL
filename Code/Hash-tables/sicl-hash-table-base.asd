@@ -7,5 +7,6 @@
    (:file "hash-table-defclass")
    (:file "generic-functions")
    (:file "sxhash")
+   (:file "sxhash-intrinsic")
    (:file "hashing-hash-table")
    (:file "make-hash-table")))
