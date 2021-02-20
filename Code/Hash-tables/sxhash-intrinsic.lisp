@@ -30,7 +30,7 @@
        (macrolet ((it ()
                     `(fnv-1a last-hash 5
                              ,@(loop for byte below 8
-                                     collect (ldb (byte 8 ,(* byte 8))
-                                                  hash)))))
+                                     collect `(ldb (byte 8 ,(* byte 8))
+                                                   hash)))))
          (it))))
     (t last-hash)))
