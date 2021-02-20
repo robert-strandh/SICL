@@ -7,9 +7,9 @@
    #:make-hash-table #:hash-table-p
    #:hash-table-count #:hash-table-rehash-threshold #:hash-table-rehash-size
    #:hash-table-size #:hash-table-test #:%hash-table-test
-   #:gethash #:remhash #:clrhash
+   #:gethash #:remhash #:clrhash #:maphash
    #:with-hash-table-iterator
    #:find-hash-function
-   #:maphash)
+   #:hash-table-hash-function #:hash-table-offset)
   (:use #:common-lisp)
   (:export #:bucket-hash-table))

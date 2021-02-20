@@ -34,13 +34,16 @@
     (integer   (fnv-1a last-hash
                        3
                        (ldb (byte 8 0) object)
-                       (ldb (byte 8 8) object)))
+                       (ldb (byte 8 8) object)
+                       (ldb (byte 8 16) object)
+                       (ldb (byte 8 24) object)))
     (float     (multiple-value-bind (significand exponent)
                    (integer-decode-float object)
                  (fnv-1a last-hash
                          4
                          (ldb (byte 8 0) significand)
                          (ldb (byte 8 8) significand)
+                         (ldb (byte 8 16) significand)
                          (ldb (byte 8 0) exponent))))
     ;; The element-type of an array won't change.
     (array     (fnv-1a (equal-hash last-hash (array-element-type object))

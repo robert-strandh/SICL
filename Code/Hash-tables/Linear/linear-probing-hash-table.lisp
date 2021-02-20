@@ -43,7 +43,7 @@
   "A cheap and usually incorrect MOD, which works when DIVISOR is a power of two."
   (logand number (1- divisor)))
 
-(declaim (notinline call-with-key-index))
+(declaim (inline call-with-key-index))
 (defun call-with-key-index (key hash-table metadata data size continuation)
   "Call CONTINUATION with each matching group, group position, offset in the group and actual position.
 Compare this to WITH-ENTRY in the bucket hash table."
@@ -185,7 +185,8 @@ Compare this to WITH-ENTRY in the bucket hash table."
 (defun maybe-resize (hash-table count count-with-tombstones size)
   ;; We resize (or compact) when size - 1 = count-with-tombstones, i.e.
   ;; there are no empty mappings now.
-  (when (or (< (* size (hash-table-rehash-threshold hash-table)) count-with-tombstones)
+  (when (or (> count-with-tombstones
+               (* size (hash-table-rehash-threshold hash-table)))
             (= (1- size) count-with-tombstones))
     (let* (;; If the actual entry count is greater than REHASH-THRESHOLD, then
            ;; grow, else just copy to remove tombstones.

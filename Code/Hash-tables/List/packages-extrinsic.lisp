@@ -7,7 +7,7 @@
    #:make-hash-table #:hash-table-p
    #:hash-table-count #:hash-table-rehash-threshold #:hash-table-rehash-size
    #:hash-table-size #:hash-table-test #:%hash-table-test
-   #:puthash #:gethash #:remhash #:clrhash
+   #:gethash #:remhash #:clrhash
    #:with-hash-table-iterator
    #:maphash)
   (:use #:common-lisp)
