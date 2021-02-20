@@ -1,28 +1,28 @@
 (cl:in-package #:sicl-linear-probing-hash-table)
 
-(deftype storage-vector ()
+(deftype data-vector ()
   `(simple-array t 1))
 
-(macrolet ((define-storage-accessor (accessor-name offset)
+(macrolet ((define-data-accessor (accessor-name offset)
              `(progn
                 (declaim (inline ,accessor-name (setf ,accessor-name)))
                 (defun ,accessor-name (vector n)
-                  (declare (storage-vector vector))
+                  (declare (data-vector vector))
                   (aref vector (+ ,offset (* n 3))))
                 (defun (setf ,accessor-name) (new-value vector n)
                   (setf (aref vector (+ ,offset (* n 3)))
                         new-value)))))
-  (define-storage-accessor hash 0)
-  (define-storage-accessor key 1)
-  (define-storage-accessor value 2))
+  (define-data-accessor hash 0)
+  (define-data-accessor key 1)
+  (define-data-accessor value 2))
 
 (defconstant +empty+ '+empty+)
-(defun make-storage-vector (size)
-  "Create a storage vector for a hash table of a given size."
-  (let ((storage (make-array (* size 3) :initial-element +empty+)))
+(defun make-data-vector (size)
+  "Create a data vector for a hash table of a given size."
+  (let ((data (make-array (* size 3) :initial-element +empty+)))
     (dotimes (n size)
-      (setf (hash storage n) 0))
-    storage))
+      (setf (hash data n) 0))
+    data))
 
 (defun nearest-allowed-size (size)
   (max +metadata-entries-per-word+
@@ -31,7 +31,7 @@
 
 (defmethod initialize-instance :after ((table linear-probing-hash-table) &key)
   (let ((size (nearest-allowed-size (hash-table-size table))))
-    (setf (hash-table-data table) (make-storage-vector size)
+    (setf (hash-table-data table) (make-data-vector size)
           (hash-table-metadata table) (make-metadata-vector size))))
 
 (declaim (inline split-hash cheap-mod))
@@ -194,7 +194,7 @@ Compare this to WITH-ENTRY in the bucket hash table."
                          (* size 2)
                          size))
            (new-metadata (make-metadata-vector new-size))
-           (new-data     (make-storage-vector  new-size)))
+           (new-data     (make-data-vector  new-size)))
       (copy-table-data (hash-table-metadata hash-table)
                        (hash-table-data hash-table)
                        size
@@ -206,7 +206,7 @@ Compare this to WITH-ENTRY in the bucket hash table."
 
 (defun copy-table-data (old-metadata old-data old-size new-metadata new-data new-size)
   (declare (metadata-vector old-metadata new-metadata)
-           (storage-vector old-data new-data))
+           (data-vector old-data new-data))
   (dotimes (group-number (floor old-size +metadata-entries-per-word+))
     (declare (group-index group-number))
     (do-matches (offset (has-value (metadata-group old-metadata group-number)))
@@ -236,7 +236,7 @@ Compare this to WITH-ENTRY in the bucket hash table."
 (defmethod clrhash ((hash-table linear-probing-hash-table))
   (let ((size (hash-table-size hash-table)))
     (setf (hash-table-metadata hash-table) (make-metadata-vector size)
-          (hash-table-data hash-table)     (make-storage-vector size)
+          (hash-table-data hash-table)     (make-data-vector size)
           (%hash-table-count hash-table) 0
           (hash-table-tombstone-count hash-table) 0))
   hash-table)
