@@ -7,8 +7,8 @@
          :reader hash-table-size)
    (metadata :accessor hash-table-metadata)
    (data     :accessor hash-table-data)
-   (count-with-tombstones :initform 0
-                          :accessor hash-table-count-with-tombstones)
+   (tombstone-count :initform 0
+                    :accessor hash-table-tombstone-count)
    (count :initform 0
           :accessor %hash-table-count
           :reader hash-table-count)))

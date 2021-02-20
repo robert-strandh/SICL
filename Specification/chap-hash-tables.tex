@@ -61,8 +61,8 @@ table:
 \Defgeneric {hash-table-hash-function} {hash-table}
 
 Return a function which accepts an \term{offset value} of type
-\cl{(unsigned-byte 64)}, and a key to hash, returning a hash of type
-\cl{(unsigned-byte 64)}.
+\cl{(and unsigned-byte fixnum)}, and a key to hash, returning a hash of type
+\cl{(and unsigned-byte fixnum)}.
 
 A random offset is generated per hash table, and is used to avoid an
 \term{algorithmic complexity attack}, where an adversary could (indirectly)

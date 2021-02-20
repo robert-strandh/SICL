@@ -8,6 +8,8 @@ bit-level parallelism while scanning the metadata table.")
   `(unsigned-byte ,(* +metadata-entries-per-word+ 8)))
 (deftype metadata-vector ()
   `(simple-array metadata 1))
+(deftype group-index ()
+  `(integer 0 ,(floor array-total-size-limit +metadata-entries-per-word+)))
 
 (defconstant +empty-metadata+     #x80
   "The metadata byte stored for an empty entry.")
@@ -17,17 +19,25 @@ bit-level parallelism while scanning the metadata table.")
 (defconstant +high-bits+ #x8080808080808080)
 (defconstant +low-bits+  #x0101010101010101)
 
-(declaim (inline zeroes bytes matches-p))
+(declaim (inline zeroes bytes matches-p writable mask-h2))
 (defun zeroes (word)
   (logand (lognot word)
           (- word +low-bits+)
           +high-bits+))
 
-(defun bytes (byte word)
-  (zeroes (logxor word (* byte +low-bits+))))
-
 (defun writable (word)
   (logand (* +empty-metadata+ +low-bits+) word))
+
+(defun has-value (word)
+  (logxor +high-bits+ (logand +high-bits+ word)))
+
+(defun mask-h2 (h2)
+  (declare ((unsigned-byte 8) h2))
+  (logand #x7f h2))
+
+(defun bytes (byte word)
+  (declare ((unsigned-byte 8) byte))
+  (zeroes (logxor word (* byte +low-bits+))))
 
 (defmacro do-matches ((position bit-mask) &body body)
   (let ((bit-mask-gensym (gensym "BIT-MASK")))

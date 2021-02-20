@@ -5,7 +5,7 @@
                           #:make-hash-table #:hash-table-p
                           #:hash-table-count #:hash-table-rehash-threshold #:hash-table-rehash-size
                           #:hash-table-size #:hash-table-test
-                          #:puthash #:gethash #:remhash #:clrhash
+                          #:gethash #:remhash #:clrhash
                           #:with-hash-table-iterator
                           #:maphash))
 
@@ -85,6 +85,12 @@
       (assert-true (or (equal results '((t foo 100) (t bar 200)))
                        (equal results '((t bar 200) (t foo 100))))))))
 
+;;; We don't have to use the values provided to grow hash tables.
+;;; Quoth the HyperSpec on hash-table-rehash-size: "However, this
+;;; value is only advice to the implementation; the actual amount by
+;;; which the hash-table will grow upon rehash is
+;;; implementation-dependent. "
+#+(or)
 (define-test rehashing
   (let ((ht (make-hash-table :size 2 :rehash-size 3)))
     (setf (gethash 'foo ht) 100)

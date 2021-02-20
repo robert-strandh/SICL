@@ -10,7 +10,8 @@
   ((hash-function :initarg :hash-function
                   :accessor %hash-table-hash-function
                   :reader hash-table-hash-function)
-   (offset :initform (random (expt 2 62))
+   (offset :initarg :hash-offset
+           :initform (random (expt 2 62))
            :reader hash-table-offset)))
 
 (defmethod initialize-instance :after ((table hashing-hash-table) &key)
