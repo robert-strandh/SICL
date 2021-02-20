@@ -241,3 +241,14 @@ Compare this to WITH-ENTRY in the bucket hash table."
           (%hash-table-count hash-table) 0
           (hash-table-tombstone-count hash-table) 0))
   hash-table)
+
+(defmethod make-hash-table-iterator ((hash-table linear-probing-hash-table))
+  (let ((position 0)
+        (data (hash-table-data hash-table))
+        (size (hash-table-size hash-table)))
+    (lambda ()
+      (if (= position size)
+          (values nil)
+          (multiple-value-prog1
+              (values t (key data position) (value data position))
+            (incf position))))))
