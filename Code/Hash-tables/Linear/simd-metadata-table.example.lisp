@@ -4,14 +4,14 @@ a single instruction-multiple data instruction set for probing.")
 
 (cl:in-package #:sicl-linear-probing-hash-table)
 
-(defconstant +metadata-entries-per-word+ 32
+(defconstant +metadata-entries-per-group+ 32
   "The number of metadata entries we store per group.")
-(deftype metadata ()
+(deftype metadata-group ()
   `(simd:byte-pack 32))
 (deftype metadata-vector ()
   `(simple-array metadata 1))
 (deftype group-index ()
-  `(integer 0 ,(floor array-total-size-limit +metadata-entries-per-word+)))
+  `(integer 0 ,(floor array-total-size-limit +metadata-entries-per-group+)))
 (deftype vector-index ()
   `(and fixnum unsigned-byte))
 
@@ -22,23 +22,23 @@ a single instruction-multiple data instruction set for probing.")
 
 (declaim (inline bytes matches-p writable mask-h2))
 
-(defun writable (word)
+(defun writable (group)
   "Return matches for metadata bytes we can put new mappings in."
-  (simd:non-zero-bytes (simd:logand word (simd:broadcast +empty-metadata+))))
+  (simd:non-zero-bytes (simd:logand group (simd:broadcast +empty-metadata+))))
 
-(defun has-value (word)
+(defun has-value (group)
   "Return matches for metadata bytes that already have mappings."
-  (simd:zero-bytes (simd:logand word (simd:broadcast +empty-metadata+))))
+  (simd:zero-bytes (simd:logand group (simd:broadcast +empty-metadata+))))
 
 (defun mask-h2 (h2)
   "Mask off part of the H2 hash, for use as metadata."
   (declare ((unsigned-byte 8) h2))
   (logand #x7f h2))
 
-(defun bytes (byte word)
+(defun bytes (byte group)
   "Return matches for a byte in a metadata group."
   (declare ((unsigned-byte 8) byte))
-  (simd:equal-bytes (simd:broadcast byte) word))
+  (simd:equal-bytes (simd:broadcast byte) group))
 
 (defmacro do-matches ((position bit-mask) &body body)
   "Evaluate BODY with POSITION bound to every match in the provided BIT-MASK."

@@ -25,27 +25,16 @@
 (define-test setf-gethash
   (let ((ht-eql (make-hash-table))
         (ht-equal (make-hash-table :test #'equal)))
-    (assert-equal (hash-table-count ht-eql))
+    (assert-number-equal 0 (hash-table-count ht-eql))
     (setf (gethash "foobar" ht-eql) 100)
     (assert-number-equal 1 (hash-table-count ht-eql))
     (setf (gethash "foobar" ht-equal) 100)
-    ;; SBCL appears to coalesce all "foobar" literal strings into one string,
-    ;; so this test doesn't make sense.
-    #+(or)
     (multiple-value-bind (value found-p)
-        (gethash "foobar" ht-eql)
-      (is eql nil value)
-      (is eql nil found-p))
+        (gethash (copy-seq "foobar") ht-eql)
+      (assert-equal nil value)
+      (assert-false found-p))
     (multiple-value-bind (value found-p)
         (gethash "foobar" ht-equal)
-      (assert-equal 100 value)
-      (assert-true found-p))))
-
-(define-test setf-gethash
-  (let ((ht (make-hash-table)))
-    (setf (gethash 'foobar ht) 100)
-    (multiple-value-bind (value found-p)
-        (gethash 'foobar ht)
       (assert-equal 100 value)
       (assert-true found-p))))
 
