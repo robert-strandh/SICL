@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-register-allocation)
 
+(defgeneric unique-number (location-information))
+
+(defgeneric liveness (location-information))
+
 (defclass location-information ()
   (;; This slot contains a hash table that maps every lexical
    ;; location to a unique small non-negative integer.  The table is
