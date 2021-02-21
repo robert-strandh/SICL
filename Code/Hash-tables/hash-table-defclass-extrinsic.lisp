@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-hash-table)
 
 (defclass hash-table ()
-  ((%test :initarg :test
-          :initform 'eql
+  ((%test :initform #'eql
+          :accessor %%hash-table-test
           :reader %hash-table-test)
    (%rehash-size :initarg :rehash-size
                  :initform 1.5

@@ -5,7 +5,7 @@
                           #:make-hash-table #:hash-table-p
                           #:hash-table-count #:hash-table-rehash-threshold #:hash-table-rehash-size
                           #:hash-table-size #:hash-table-test
-                          #:puthash #:gethash #:remhash #:clrhash
+                          #:gethash #:remhash #:clrhash
                           #:with-hash-table-iterator
                           #:maphash))
 
@@ -25,27 +25,16 @@
 (define-test setf-gethash
   (let ((ht-eql (make-hash-table))
         (ht-equal (make-hash-table :test #'equal)))
-    (assert-equal (hash-table-count ht-eql))
+    (assert-number-equal 0 (hash-table-count ht-eql))
     (setf (gethash "foobar" ht-eql) 100)
     (assert-number-equal 1 (hash-table-count ht-eql))
     (setf (gethash "foobar" ht-equal) 100)
-    ;; SBCL appears to coalesce all "foobar" literal strings into one string,
-    ;; so this test doesn't make sense.
-    #+(or)
     (multiple-value-bind (value found-p)
-        (gethash "foobar" ht-eql)
-      (is eql nil value)
-      (is eql nil found-p))
+        (gethash (copy-seq "foobar") ht-eql)
+      (assert-equal nil value)
+      (assert-false found-p))
     (multiple-value-bind (value found-p)
         (gethash "foobar" ht-equal)
-      (assert-equal 100 value)
-      (assert-true found-p))))
-
-(define-test setf-gethash
-  (let ((ht (make-hash-table)))
-    (setf (gethash 'foobar ht) 100)
-    (multiple-value-bind (value found-p)
-        (gethash 'foobar ht)
       (assert-equal 100 value)
       (assert-true found-p))))
 
@@ -77,7 +66,7 @@
   (let ((ht (make-hash-table)))
     (setf (gethash 'foo ht) 100)
     (setf (gethash 'bar ht) 200)
-    (let ((results))
+    (let ((results '()))
       (with-hash-table-iterator (next-entry ht)
         (loop as result = (multiple-value-list (next-entry))
               until (not (first result))
@@ -85,6 +74,12 @@
       (assert-true (or (equal results '((t foo 100) (t bar 200)))
                        (equal results '((t bar 200) (t foo 100))))))))
 
+;;; We don't have to use the values provided to grow hash tables.
+;;; Quoth the HyperSpec on hash-table-rehash-size: "However, this
+;;; value is only advice to the implementation; the actual amount by
+;;; which the hash-table will grow upon rehash is
+;;; implementation-dependent. "
+#+(or)
 (define-test rehashing
   (let ((ht (make-hash-table :size 2 :rehash-size 3)))
     (setf (gethash 'foo ht) 100)

@@ -55,21 +55,8 @@ by a hash table implementation:
 Return a function which implements the iterator of
 \cl{with-hash-table-iterator}.
 
-Furthermore, some generic functions will be useful for implementing a hash
+Furthermore, some functions will be useful for implementing a hash
 table:
-
-\Defgeneric {hash-table-hash-function} {hash-table}
-
-Return a function which accepts an \term{offset value} of type
-\cl{(unsigned-byte 64)}, and a key to hash, returning a hash of type
-\cl{(unsigned-byte 64)}.
-
-A random offset is generated per hash table, and is used to avoid an
-\term{algorithmic complexity attack}, where an adversary could (indirectly)
-insert keys that they know will all collide, greatly slowing down an
-application. It is expected that this offset will be used to perturb the
-hashes generated, perhaps by being used as the initial state of a hashing
-algorithm.
 
 \Defgeneric {\%hash-table-test} {hash-table}
 
@@ -79,12 +66,53 @@ standardized test function, and not the function itself; however, an
 implementor of a hash table is likely to want to avoid accessing the global
 environment when probing keys.
 
-\section{Base class}
+\Defun {find-hash-function} {name}
+
+Return a hash function for the standardized hash table test function
+designated by the symbol \cl{name}, or signal an error.
+
+\section{Base classes}
 
 \Defclass {hash-table}
 
 This class is the base class of all hash tables.  It is a subclass of
 the class \texttt{standard-object}.
+
+\Defclass {hashing-hash-table}
+
+This class provides accessors common for all hash tables which hash
+the keys used.  It is a subclass of the class \cl{hash-table}.
+
+\section{Hashing hash table protocol}
+
+\Defgeneric {hash-table-hash-function} {hash-table}
+
+\Definitarg {:hash-function}
+
+Return a function which accepts a non-negative fixnum \term{offset value}
+and a key object to hash, returning a non-negative fixnum hash.
+
+The hash function defaults to
+\cl{(find-hash-function (hash-table-test hash-table))}.
+
+\Defgeneric {hash-table-offset} {hash-table}
+
+\Definitarg {:hash-offset}
+
+The random offset used for hashing with this hash table.  A random
+offset is used to avoid an \term{algorithmic complexity attack}, where
+an adversary could (indirectly) insert keys that they know will all
+collide in the hash table, greatly slowing down an application.  It is
+expected that this offset will be used to perturb the hashes
+generated, perhaps by being used as the initial state of a hashing
+algorithm.
+
+As such, this offset must not be exposed to an untrusted user; but the
+offset can be fixed and read for debugging purposes.
+
+\Defgeneric {hash} {hash-table key}
+
+Return the hash of the provided key, specific to the provided hash table.
 
 \section{Implementation}
 
@@ -121,3 +149,13 @@ the method returns two values, the \texttt{cdr} of that entry and
 
 This class is a subclass of \texttt{hash-table}.  The implementation
 uses a vector of buckets.
+
+\subsection{Hash table implemented using linear probing}
+
+\Defclass {linear-probing-hash-table}
+
+This class is a subclass of \texttt{hash-table}.  The implementation
+uses linear probing, based on the cache-aware hash table designed by
+Matt Kulukundis and described in a CppCon talk entitled
+``Designing a Fast, Efficient, Cache-friendly Hash Table, Step by Step''
+\url{https://www.youtube.com/watch?v=ncHmEUmJZf4}.
