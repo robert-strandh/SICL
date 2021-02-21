@@ -5,5 +5,6 @@
   (:export #:*default-hash-table-class*
            #:eq-hash #:equal-hash #:equalp-hash
            #:%hash-table-test
-           #:find-hash-function #:sxhash
+           #:hashing-hash-table #:hash-table-hash-function #:hash-table-offset
+           #:find-hash-function #:sxhash #:hash
            #:make-hash-table-iterator))

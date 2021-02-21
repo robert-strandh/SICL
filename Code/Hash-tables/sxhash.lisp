@@ -6,13 +6,13 @@
          (optimize (speed 3)))
 (defun %fnv-1a (last-hash byte)
   (declare ((unsigned-byte 8) byte)
-           ((unsigned-byte 64) last-hash))
-  (ldb (byte 64 0)
+           ((unsigned-byte 62) last-hash))
+  (ldb (byte 62 0)
        (logxor (* last-hash +fnv-prime+)
                byte)))
 
 (defun fnv-1a (last-hash &rest bytes)
-  (declare ((unsigned-byte 64) last-hash))
+  (declare ((unsigned-byte 62) last-hash))
   (reduce #'%fnv-1a bytes :initial-value last-hash))
 
 (define-compiler-macro fnv-1a (last-hash &rest bytes)
@@ -34,13 +34,16 @@
     (integer   (fnv-1a last-hash
                        3
                        (ldb (byte 8 0) object)
-                       (ldb (byte 8 8) object)))
+                       (ldb (byte 8 8) object)
+                       (ldb (byte 8 16) object)
+                       (ldb (byte 8 24) object)))
     (float     (multiple-value-bind (significand exponent)
                    (integer-decode-float object)
                  (fnv-1a last-hash
                          4
                          (ldb (byte 8 0) significand)
                          (ldb (byte 8 8) significand)
+                         (ldb (byte 8 16) significand)
                          (ldb (byte 8 0) exponent))))
     ;; The element-type of an array won't change.
     (array     (fnv-1a (equal-hash last-hash (array-element-type object))
