@@ -3,4 +3,5 @@
 (defsystem #:sicl-register-allocation
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "location-information")))
