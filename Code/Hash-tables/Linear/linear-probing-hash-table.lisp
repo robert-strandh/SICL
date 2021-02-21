@@ -48,7 +48,10 @@
   "Call CONTINUATION with each matching group, group position, offset in the group and actual position.
 Compare this to WITH-ENTRY in the bucket hash table."
   (declare (optimize (speed 3))
-           (function continuation))
+           (function continuation)
+           (metadata-vector metadata)
+           (data-vector data)
+           (fixnum size))
   (multiple-value-bind (h1 h2)
       (split-hash (sicl-hash-table:hash hash-table key))
     (let* ((groups      (floor size +metadata-entries-per-word+))
@@ -97,6 +100,7 @@ Compare this to WITH-ENTRY in the bucket hash table."
                             #',continuation))))
 
 (defmethod gethash (key (hash-table linear-probing-hash-table) &optional default)
+  (declare (optimize (speed 3)))
   (let* ((metadata (hash-table-metadata hash-table))
          (data     (hash-table-data hash-table))
          (size     (hash-table-size hash-table)))
@@ -106,6 +110,7 @@ Compare this to WITH-ENTRY in the bucket hash table."
     (values default nil)))
 
 (defmethod remhash (key (hash-table linear-probing-hash-table))
+  (declare (optimize (speed 3)))
   (let* ((metadata (hash-table-metadata hash-table))
          (data     (hash-table-data hash-table))
          (size     (hash-table-size hash-table)))
@@ -150,15 +155,15 @@ Compare this to WITH-ENTRY in the bucket hash table."
                   (return-from add-mapping (values t nil))))))
           ;; Then try to find an empty or tombstone value to write into.
           (do-matches (offset (writable probe-word))
-            (let* ((position (+ offset base-position)))
+            (let* ((position (+ offset base-position))
+                   (old-metadata (metadata metadata position)))
               (setf (key   data position) key
                     (value data position) new-value
                     (hash  data position) hash
                     (metadata metadata position) (mask-h2 h2))
               (return-from add-mapping
                 (values nil
-                        (= +empty-metadata+
-                           (group-metadata probe-word offset))))))
+                        (= +empty-metadata+ old-metadata)))))
           (setf probe-group (cheap-mod (1+ probe-group) groups)))))))
 
 (defmethod (setf gethash) (new-value key hash-table &optional default)

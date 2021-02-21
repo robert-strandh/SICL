@@ -10,6 +10,8 @@ bit-level parallelism while scanning the metadata table.")
   `(simple-array metadata 1))
 (deftype group-index ()
   `(integer 0 ,(floor array-total-size-limit +metadata-entries-per-word+)))
+(deftype vector-index ()
+  `(and fixnum unsigned-byte))
 
 (defconstant +empty-metadata+     #x80
   "The metadata byte stored for an empty entry.")
@@ -26,20 +28,25 @@ bit-level parallelism while scanning the metadata table.")
           +high-bits+))
 
 (defun writable (word)
+  "Return matches for metadata bytes we can put new mappings in."
   (logand (* +empty-metadata+ +low-bits+) word))
 
 (defun has-value (word)
+  "Return matches for metadata bytes that already have mappings."
   (logxor +high-bits+ (logand +high-bits+ word)))
 
 (defun mask-h2 (h2)
+  "Mask off part of the H2 hash, for use as metadata."
   (declare ((unsigned-byte 8) h2))
   (logand #x7f h2))
 
 (defun bytes (byte word)
+  "Return matches for a byte in a metadata group."
   (declare ((unsigned-byte 8) byte))
   (zeroes (logxor word (* byte +low-bits+))))
 
 (defmacro do-matches ((position bit-mask) &body body)
+  "Evaluate BODY with POSITION bound to every match in the provided BIT-MASK."
   (let ((bit-mask-gensym (gensym "BIT-MASK")))
     `(let ((,bit-mask-gensym ,bit-mask))
        (unless (zerop ,bit-mask-gensym)
@@ -50,6 +57,7 @@ bit-level parallelism while scanning the metadata table.")
                do (setf matches (ash matches -8)))))))
 
 (defun matches-p (bit-mask)
+  "Are there any matches in BIT-MASK?"
   (plusp bit-mask))
 
 (defun make-metadata-vector (size)
@@ -60,7 +68,7 @@ bit-level parallelism while scanning the metadata table.")
 
 (declaim (inline (setf metadata) (setf %metadata)
                  metadata %metadata
-                 metadata-group group-metadata))
+                 metadata-group))
 
 (defun (setf %metadata) (new-byte vector word-position byte-position)
   (declare (metadata-vector vector)
@@ -73,6 +81,7 @@ bit-level parallelism while scanning the metadata table.")
   (ldb (byte 8 (* 8 byte-position)) (aref vector word-position)))
 
 (defun (setf metadata) (new-byte vector position)
+  "Set a metadata byte."
   (declare (metadata-vector vector)
            (vector-index position)
            ((unsigned-byte 8) new-byte))
@@ -81,18 +90,17 @@ bit-level parallelism while scanning the metadata table.")
     (setf (%metadata vector word-position byte-position) new-byte)))
 
 (defun metadata (vector position)
+  "Retrieve a metadata byte."
   (declare (metadata-vector vector)
            (vector-index position))
   (multiple-value-bind (word-position byte-position)
       (floor position +metadata-entries-per-word+)
     (%metadata vector word-position byte-position)))
 
-(defun metadata-group (vector position)
+(defun metadata-group (vector n)
+  "Retrieve the Nth metadata group from a vector. 
+Note that N has a length of a group; on a 8-element-per-group implementation, 
+(metadata-group V 1) retrieves the 8th through 15th metadata bytes of V."
   (declare (metadata-vector vector)
-           (vector-index position))
-  (the metadata (aref vector position)))
-
-(defun group-metadata (word position)
-  (declare (metadata word)
-           ((mod 8) position))
-  (ldb (byte 8 (* 8 position)) word))
+           (group-index n))
+  (the metadata (aref vector n)))

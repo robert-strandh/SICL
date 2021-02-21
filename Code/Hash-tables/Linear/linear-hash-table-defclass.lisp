@@ -12,6 +12,3 @@
    (count :initform 0
           :accessor %hash-table-count
           :reader hash-table-count)))
-
-(deftype vector-index ()
-  `(and fixnum unsigned-byte))
