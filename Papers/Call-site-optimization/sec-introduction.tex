@@ -19,8 +19,8 @@ reasons for this additional cost:
   certain types of its arguments must check such types for each call.
 \item All objects must be \emph{boxed} in order to be used as function
   arguments.  For example, IEEE double-float values will typically
-  have to be allocated on the heap, though so-called NaN-boxing%
-  \footnote{Add a reference} can eliminate that particular case.
+  have to be allocated on the heap, though so-called NaN-boxing
+  \cite{Gudeman93representingtype} can eliminate that particular case.
   Full-word integers still require boxing, however.  Similarly, boxing
   is required for values returned by a function.
 \item Generic functions can be dynamically updated by the addition or
