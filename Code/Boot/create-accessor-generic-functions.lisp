@@ -13,7 +13,6 @@
     (ld "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp")
     (ld "CLOS/specializer-direct-methods-defgeneric.lisp")
     (ld "CLOS/setf-specializer-direct-methods-defgeneric.lisp")
-    (ld "CLOS/eql-specializer-object-defgeneric.lisp")
     (ld "CLOS/unique-number-defgeneric.lisp")
     (ld "CLOS/class-name-defgeneric.lisp")
     (ld "CLOS/class-direct-subclasses-defgeneric.lisp")
