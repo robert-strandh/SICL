@@ -1,8 +1,7 @@
 (cl:in-package #:sicl-argument-processing)
 
-(defun check-even-number-of-keyword-arguments (argument-count-location
-                                               dynamic-environment-location
-                                               first-index)
+(defun check-even-number-of-keyword-arguments
+    (argument-count-location dynamic-environment-location first-index)
   (let* ((remaining-argument-count-location
            (make-instance 'cleavir-ir:lexical-location :name (gensym "rem-ac")))
          (quotient-location
@@ -39,10 +38,8 @@
               :dynamic-environment-location dynamic-environment-location))
       (values first nop))))
 
-(defun check-keywords-valid (keywords
-                             argument-count-location
-                             dynamic-environment-location
-                             first-index)
+(defun check-keywords-valid
+    (keywords argument-count-location dynamic-environment-location first-index)
   (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name (gensym "keyword")))
          (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
          (index-location (make-instance 'cleavir-ir:lexical-location :name (gensym "index")))
@@ -86,9 +83,8 @@
               :dynamic-environment-location dynamic-environment-location)))
     (values first nop)))
 
-(defun check-for-allow-other-keys (argument-count-location
-                                   dynamic-environment-location
-                                   first-index)
+(defun check-for-allow-other-keys
+    (argument-count-location dynamic-environment-location first-index)
   (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name (gensym "keyword")))
          (value-location (make-instance 'cleavir-ir:lexical-location :name (gensym "value")))
          (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
@@ -153,12 +149,13 @@
             :dynamic-environment-location dynamic-environment-location))
     (values first nop-false nop-true)))
 
-(defun initialize-one-keyword-parameter (keyword
-                                         argument-count-location
-                                         keyword-value-location
-                                         supplied-p-location
-                                         dynamic-environment-location
-                                         first-index)
+(defun initialize-one-keyword-parameter
+    (keyword
+     argument-count-location
+     keyword-value-location
+     supplied-p-location
+     dynamic-environment-location
+     first-index)
   (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name (gensym "keyword")))
          (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
          (index-location (make-instance 'cleavir-ir:lexical-location :name (gensym "index")))
@@ -236,11 +233,12 @@
               :dynamic-environment-location dynamic-environment-location))
       (values first nop))))
 
-(defun process-keyword-arguments (parameters
-                                  argument-count-location
-                                  dynamic-environment-location
-                                  first-index
-                                  allow-other-keys-p)
+(defun process-keyword-arguments
+    (parameters
+     argument-count-location
+     dynamic-environment-location
+     first-index
+     allow-other-keys-p)
   (let* ((nop (make-instance 'cleavir-ir:nop-instruction
                 :dynamic-environment-location dynamic-environment-location))
          (first nil))

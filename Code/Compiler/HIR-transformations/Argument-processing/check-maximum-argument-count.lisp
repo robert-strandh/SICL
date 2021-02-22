@@ -1,8 +1,7 @@
 (cl:in-package #:sicl-argument-processing)
 
-(defun check-maximum-argument-count (argument-count-location
-                                     maximum-argument-count
-                                     dynamic-environment-location)
+(defun check-maximum-argument-count
+    (argument-count-location maximum-argument-count dynamic-environment-location)
   (let* ((maximum-argument-count-input (make-instance 'cleavir-ir:constant-input
                                          :value maximum-argument-count))
          (error (call-error 'too-many-arguments
