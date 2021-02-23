@@ -615,7 +615,11 @@ information:
   \begin{itemize}
   \item A specific register.  This possibility is used when the
     variable is next needed at a program point for which the register
-    assignment has already been accomplished.
+    assignment has already been accomplished.  It is also used when a
+    variable is needed as an argument to a
+    \texttt{funcall-instruction} (so that the function is unknown).
+    Then the standard call protocol must be respected, and that
+    protocol requires arguments to be in specific locations.
   \item The symbol \texttt{:callee-saves}.  This possibility is used
     when the variable is next needed past a
     \texttt{funcall-instruction}.
