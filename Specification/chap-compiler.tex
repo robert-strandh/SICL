@@ -663,7 +663,21 @@ registers, but we are trying to simplify the task.
 
 \begin{legal}
 \item $a$ is an immediate operand.  $b$ is on the stack.
+  \begin{legal}
+  \item $I$ is commutative. Swap the inputs and handle the resulting
+    case.
+  \item $I$ is not commutative.  Allocate a register for $a$, say
+    $r$.  Insert an assignment instruction that assigns $a$ to $r$.
+    Handle the resulting case.
+  \end{legal}
 \item $a$ is an immediate operand.  $b$ is in a register, say $s$.
+  \begin{legal}
+  \item $I$ is commutative. Swap the inputs and handle the resulting
+    case.
+  \item $I$ is not commutative.  Allocate a register for $a$, say
+    $r$.  Insert an assignment instruction that assigns $a$ to $r$.
+    Handle the resulting case.
+  \end{legal}
 \item $b$ is an immediate operand.  $a$ is on the stack.
 \item $b$ is an immediate operand.  $a$ is in a register, say $r$.
 \item $a$ and $b$ are both on the stack.
