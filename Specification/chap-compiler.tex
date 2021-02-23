@@ -643,7 +643,35 @@ determine a register assignment B after the execution if I.
 Processing the instruction may involve altering it, but also perhaps
 inserting new instructions before it and after it.
 
-Let us assume x86-style instructions of the form $x \leftarrow x\thinspace op\thinspace y$.
+Let us assume that we have a MIR instruction of the form $c \leftarrow
+a\thinspace op\thinspace b$, where $a$, $b$, and $c$ are lexical
+variables, and let us assume for the moment that the LIR instruction
+is an x86-style target instruction of the form $x \leftarrow
+x\thinspace op\thinspace y$, where $x$ and $y$ are registers.  In
+reality, many instructions accept memory locations in addition to
+registers, but we are trying to simplify the task.
+
+\begin{enumerate}
+\item $a$ and $b$ are both in registers, say $r$ and $s$ respectively.
+  \begin{enumerate}
+  \item $a = c$, i.e., $a$ and $c$ are the same lexical variable.
+    Then the register allocation does not change.  But if $a$ is also
+    available in a stack location, then the stack information is
+    removed in the new assignment.
+  \item $a \not = c$, but $b = c$.
+    \begin{enumerate}
+    \item The instruction $I$ is commutative.  Then swap the inputs
+      and handle it as the previous case.
+    \item The instruction $I$ is not commutative.  This case is
+      treated the same way as if $b \not = c$.
+    \end{enumerate}
+  \item $a$, $b$, and $c$ are all distinct.
+    \begin{enumerate}
+    \item $a$ is dead after $I$.  Then make $c$ be assigned to $r$
+      after $I$.
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
 
 {\small
 \begin{verbatim}
