@@ -607,14 +607,15 @@ information:
 
 \begin{itemize}
 \item The live variable itself.
-\item A dedicated stack location to save it in, should that be necessary.
+\item A bitmap representing occupied stack locations.
 \item An estimated \emph{distance} until it is going to be needed (in
   a register) next.
 \item A \emph{location} where it is needed next.  There are three
   possible values for this location:
   \begin{itemize}
   \item A specific register.  This possibility is used when the
-    variable is next needed as a register argument in a function call.
+    variable is next needed at a program point for which the register
+    assignment has already been accomplished.
   \item The symbol \texttt{:callee-saves}.  This possibility is used
     when the variable is next needed past a
     \texttt{funcall-instruction}.
@@ -624,9 +625,8 @@ information:
   \end{itemize}
 \item A set of locations where it is currently available.  This set is
   represented as a list.  An element of the set can be a specific
-  register, or the symbol \texttt{:stack} meaning that it is available
-  in its dedicated stack location.  This set has at least one element
-  in it.
+  register, or a specific stack location.  This set has at least one
+  element in it.
 \end{itemize}
 
 There are two aspects to this technique.  The first aspect is the
@@ -642,6 +642,8 @@ executing some instruction I.  We want to process this instruction and
 determine a register assignment B after the execution if I.
 Processing the instruction may involve altering it, but also perhaps
 inserting new instructions before it and after it.
+
+Let us assume x86-style instructions of the form $x \leftarrow x\thinspace op\thinspace y$.
 
 {\small
 \begin{verbatim}
