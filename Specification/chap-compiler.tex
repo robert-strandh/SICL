@@ -679,6 +679,22 @@ registers, but we are trying to simplify the task.
     Handle the resulting case.
   \end{legal}
 \item $b$ is an immediate operand.  $a$ is on the stack.
+  \begin{legal}
+  \item Next time $c$ is needed, it is needed in a specific register,
+    say $t$.
+    \begin{legal}
+    \item $t$ is not assigned to any variable.  Insert and instruction
+      to load $a$ into $t$.  Assign $t$ to $c$.
+    \item $t$ is already assigned to some variable $v$.
+      \begin{legal}
+      \item $v$ is needed sooner than $c$.  Allocate a new register,
+        say $u$, and assign it to $c$.  Insert an instruction for
+        loading $a$ into $u$.
+      \item $c$ is needed sooner than $v$.
+      \end{legal}
+    \end{legal}
+  \item Next time $c$ is needed, it can be in any register.
+  \end{legal}
 \item $b$ is an immediate operand.  $a$ is in a register, say $r$.
 \item $a$ and $b$ are both on the stack.
 \item $a$ is in a register, say $r$.  $b$ is on the stack.
