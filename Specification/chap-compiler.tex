@@ -22,7 +22,7 @@ different compilers:
 \begin{itemize}
 \item The \emph{file compiler}.  This compiler is invoked by
   \texttt{compile-file}.  It takes a \commonlisp{} source file and generates a
-  file containing object code (a so-called \emph{fasl} file). 
+  file containing object code (a so-called \emph{fasl} file).
 \item The \emph{lambda expression compiler}.  This compiler is invoked
   when \texttt{compile} is called with arguments \texttt{nil} and a
   \emph{lambda expression}, and by \texttt{coerce} to convert a lambda
@@ -31,7 +31,7 @@ different compilers:
     object}.
 \item The \emph{top-level expression compiler}.  This compiler is
   invoked by \texttt{eval}.  It produces a function with no parameters
-  which is then immediately \emph{called} by \texttt{eval}.  
+  which is then immediately \emph{called} by \texttt{eval}.
 \end{itemize}
 
 In addition to these use cases, we also distinguish between different
@@ -39,7 +39,7 @@ compilers along an orthogonal dimension:
 
 \begin{itemize}
 \item A \emph{native} compiler is a compiler that produces code for
-  its host \commonlisp{} system. 
+  its host \commonlisp{} system.
 \item An \emph{extrinsic} compiler is a compiler that produces code
   for a \commonlisp{} system other than its host system.  An extrinsic
   compiler is also known as a \emph{cross compiler}.
@@ -47,7 +47,7 @@ compilers along an orthogonal dimension:
 
 We now have potentially 6 different compilers.  Specific issues
 related to cross compilation are discussed in
-\refChap{chap-cross-compilation}. 
+\refChap{chap-cross-compilation}.
 
 \section{Compilation phases}
 
@@ -651,79 +651,71 @@ x\thinspace op\thinspace y$, where $x$ and $y$ are registers.  In
 reality, many instructions accept memory locations in addition to
 registers, but we are trying to simplify the task.
 
-\begin{enumerate}
-\item $a$ and $b$ are both in registers, say $r$ and $s$ respectively.
-  \begin{enumerate}
-  \item $a = c$, i.e., $a$ and $c$ are the same lexical variable.
-    Then the register allocation does not change.  But if $a$ is also
-    available in a stack location, then the stack information is
-    removed in the new assignment.
-  \item $a \not = c$, but $b = c$.
-    \begin{enumerate}
-    \item The instruction $I$ is commutative.  Then swap the inputs
-      and handle it as the previous case.
-    \item The instruction $I$ is not commutative.  This case is
-      treated the same way as if $b \not = c$.
-    \end{enumerate}
-  \item $a$, $b$, and $c$ are all distinct.
-    \begin{enumerate}
+\setlistdepth{20}
+
+\newlist{legal}{enumerate}{20}
+\setlist[legal]{label*=\arabic*.}
+\renewlist{legal}{enumerate}{20}
+
+\begin{legal}
+\item $a$ is an immediate operand.  $b$ is on the stack.
+\item $a$ is an immediate operand.  $b$ is in a register, say $s$.
+\item $b$ is an immediate operand.  $a$ is on the stack.
+\item $b$ is an immediate operand.  $a$ is in a register, say $r$.
+\item $a$ and $b$ are both on the stack.
+\item $a$ is in a register, say $r$.  $b$ is on the stack.
+\item $b$ is in a register, say $s$.  $a$ is on the stack.
+\item $a$ and $b$ are both in register, say $r$ and $s$ respectively.
+  \begin{legal}
+  \item $a$, $b$ and $c$ are all distinct.
+    \begin{legal}
     \item $a$ is dead after $I$.  Then make $c$ be assigned to $r$
       after $I$.
-    \end{enumerate}
-  \end{enumerate}
-\end{enumerate}
+    \item $a$ is live after $I$.
+      \begin{legal}
+      \item $a$ is needed soon after $I$.
+        \begin{legal}
+        \item $c$ is needed soon after $I$.
+          \begin{legal}
+          \item $c$ is needed in a specific register, say $t$.
+            \begin{legal}
+            \item $t$ is not currently assigned.  Assign it to $c$.
+              Insert and instruction before $I$ that copies $r$ into
+              $t$.
+            \item $t$ is currently assigned to some variable $v$.
+              \begin{legal}
+              \item $v$ is needed sooner than $c$.  Allocate a new
+                register, say $u$ and assign it to $c$.  Insert and
+                instruction before $I$ that copies $r$ into $u$.
+              \item $c$ is needed sooner than $v$.  Reassign $t$ to
+                $c$.  Insert and instruction before $I$ that copies
+                $r$ into $t$.
+              \end{legal}
+            \end{legal}
+          \item $c$ is needed but it can be in any register.  Allocate
+            a new register, say $t$, and assign it to $c$.  Insert an
+            instruction before $I$ that copies $r$ to $t$.
+          \end{legal}
+        \item $c$ is not needed soon after $I$.  Allocate a new
+          register, say $t$, and assign it to $c$.  Insert an
+          instruction before $I$ that copies $r$ to $t$.
+        \end{legal}
+      \item $a$ is not needed soon after $I$.
+        \begin{legal}
+        \item $a$ is also on the stack.  Reassign $r$ to $c$.
+        \item $a$ is not on the stack.  Spill it, then reassign $r$ to
+          $c$.
+        \end{legal}
+      \end{legal}
+    \end{legal}
+  \item $a = b$, but $c$ is different.
+  \item $a = c$, but $b$ is different.
+  \item $b = c$, but $a$ is different.
+  \item $a = b = c$.
+  \end{legal}
+\end{legal}
 
-{\small
-\begin{verbatim}
-case register-type
-  assignment-instruction v2 <- v1
-    if v1 is already in a register R:
-    then
-      if v1 is dead after I:
-      then
-        . Change I to a nop-instruction.
-        . Make R a member of the entry
-          for v2 after I
-      else
-        if a register S of the type
-        needed for v2 is available:
-        then
-          . Make S a member of the entry
-            for v2 after I.
-        else
-          . Find all variables v such that
-            a register S of the right type
-            is in the set of v.
-          . Between v2 and all the v,
-            determine which one is
-            needed furthest in the future.
-          if that variable is v:
-          then
-            . Change I to a MOV instruction
-              moving R to the privileged
-              stack location for v2.
-          else
-            . Let v0 be the variable that
-              is needed furthest in the
-              future and let S0 be its
-              associated register.
-            if the privileged stack location
-            when v0 is not in its set:
-              . Emit a MOV instruction before I,
-                using S0 as a source and the
-                privileged stack location as its
-                destination.
-              . Add the privileged stack location
-                to the set for v0.
-            . Change I to a MOV instruction with
-              R being the source and S0 being
-              the destination.
-            . Remove S0 from the set associated
-              with v0.
-    else v1 is not in a register
-\end{verbatim}}
-
-\subsection{Code generation} 
+\subsection{Code generation}
 
 \subsection{Access to special variables and global functions}
 
@@ -738,7 +730,7 @@ must be searched for first.  There are many cases, however, where the
 compiler can detect that multiple accesses to some special variable
 must refer to the same value cell.  In that case, the (pointer to the)
 value cell is a candidate for register allocation, and computing it is
-loop invariant. 
+loop invariant.
 
 When it comes to the \emph{contents} of the value cell, however, the
 situation is more complicated because of the possibility that multiple
@@ -759,7 +751,7 @@ itself is a candidate for register allocation.  Even if accesses are
 part of a loop, in some cases the value can be cached in a register.
 The necessary condition for such register allocation is that the loop
 provably \emph{terminates} and that there is no externally detectable
-activity between consecutive accesses. 
+activity between consecutive accesses.
 
 The situation for global functions is similar to that of special
 variables, except simpler since no special binding can exist for such
@@ -767,7 +759,7 @@ accesses.  While it is not very probable that anyone attempts to use
 global functions for synchronization purposes, this can not be
 excluded either.  An exception to the rule is when the global function
 is a standard \commonlisp{} function, in which case it can not be replaced, so
-it is safe to cache the function in a register. 
+it is safe to cache the function in a register.
 
 \subsection{Access to array elements}
 
@@ -786,19 +778,19 @@ the compiler might access the rack only once and cache it
 in a register.  This optimization is possible even in a loop, as long
 as the compiler can prove that the loop eventually terminates, and as
 long as there is no externally detectable activity between the
-accesses. 
+accesses.
 
 \subsection{Access to slots of standard objects}
 
 \section{Random thoughts}
 
 The compiler should be as portable as possible.  It should use
-portable Common Lisp for as many of the passes as possible.  
+portable Common Lisp for as many of the passes as possible.
 
 The compiler should keep information about which registers are live,
 and how values are represented in live registers, for all values of
 the program counter.  This information is used by the garbage
 collector to determine what registers should be scanned, and how.   It
-is also used by the debugger.  
+is also used by the debugger.
 
 %%  LocalWords:  disjunction
