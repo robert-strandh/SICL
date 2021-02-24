@@ -662,6 +662,24 @@ location.
 \setlist[legal]{label*=\arabic*.}
 \renewlist{legal}{enumerate}{20}
 
+First, the following steps are executed in order:
+
+\begin{legal}
+\item If $a$ is an immediate input, and $I$ is commutative, then $a$
+  and $b$ are swapped.
+\item If either:
+  \begin{legal}
+  \item $b$ is an immediate input,
+  \item $b$ is already assigned to a register, or
+  \item $b$ is assigned only to a stack location, $I$ permits a memory
+    location as its second operand, and the next use of $b$ is far in
+    the future,
+  \end{legal}
+  then no further processing is done for $b$.
+\item Otherwise, a register is allocated for $b$ as a second operand,
+  as described below.
+\end{legal}
+
 \begin{legal}
 \item $a$ is an immediate operand.  $b$ is on the stack.
   \begin{legal}
