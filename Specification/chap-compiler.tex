@@ -648,12 +648,13 @@ Processing the instruction may involve altering it, but also perhaps
 inserting new instructions before it and after it.
 
 Let us assume that we have a MIR instruction of the form $c \leftarrow
-a\thinspace op\thinspace b$, where $a$, $b$, and $c$ are lexical
-variables, and let us assume for the moment that the LIR instruction
-is an x86-style target instruction of the form $x \leftarrow
-x\thinspace op\thinspace y$, where $x$ and $y$ are registers.  In
-reality, many instructions accept memory locations in addition to
-registers, but we are trying to simplify the task.
+a\thinspace op\thinspace b$, where $c$ is a lexical variable, and $a$,
+and $b$ are either lexical variables or immediate inputs.  We further
+assume that at least one of $a$ and $b$ is not an immediate input.
+Our task is to generate one or more x86-style LIR instructions of the
+form $x \leftarrow x\thinspace op\thinspace y$, where $x$ is a
+register, and $y$ is either a register, an immediate input, or a stack
+location.
 
 \setlistdepth{20}
 
@@ -691,9 +692,44 @@ registers, but we are trying to simplify the task.
         say $u$, and assign it to $c$.  Insert an instruction for
         loading $a$ into $u$.
       \item $c$ is needed sooner than $v$.
+        \begin{legal}
+        \item Next time $v$ is needed, it is needed in some specific
+          register $w$.
+          \begin{legal}
+          \item $w = t$.  Allocate a new register $u$ and assign it to
+            $v$.  Insert an instruction assigning $t$ to $u$.  Insert
+            an instruction for loading $a$ into $t$.  Assign $t$ to
+            $v$.
+          \item $w \not = t$.
+            \begin{legal}
+            \item $w$ is not currently assigned to any variable.
+              Insert an instruction for copying $t$ to $w$.  Assign
+              $w$ to $v$.  Insert an instruction for loading $a$ into
+              $t$.  Reassign $t$ to $c$.
+            \item $w$ is currently assigned to a variable $p$.
+              \begin{legal}
+              \item $p$ is also present on the stack.  Insert an
+                instruction copying $t$ to $w$.  Reassign $w$ to $v$.
+                Insert an instruction for loading $a$ into $t$.
+                Assign $t$ to $c$.
+              \item $p$ is not present on the stack.  Insert an
+                instruction for spilling $w$ to the stack. Insert an
+                instruction copying $t$ to $w$.  Reassign $w$ to $v$.
+                Insert an instruction for loading $a$ into $t$.
+                Assign $t$ to $c$.
+              \end{legal}
+            \end{legal}
+          \end{legal}
+        \item Next time $v$ is needed, it can be in any register.
+          Allocate a new register $u$.  Insert an instruction copying
+          $t$ to $u$.  Assign $u$ to $v$.  Insert an instruction for
+          loading $a$ into $t$.  Reassign $t$ to $c$.
+        \end{legal}
       \end{legal}
     \end{legal}
-  \item Next time $c$ is needed, it can be in any register.
+  \item Next time $c$ is needed, it can be in any register.  Allocate
+    a new register $u$.  Assign it to $c$.  Insert an instruction for
+    loading $a$ into $u$.
   \end{legal}
 \item $b$ is an immediate operand.  $a$ is in a register, say $r$.
 \item $a$ and $b$ are both on the stack.
