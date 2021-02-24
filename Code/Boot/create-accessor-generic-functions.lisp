@@ -35,7 +35,6 @@
     (ld "CLOS/setf-class-slots-defgeneric.lisp")
     (ld "CLOS/class-prototype-defgeneric.lisp")
     (ld "CLOS/setf-class-prototype-defgeneric.lisp")
-    (ld "CLOS/environment-defgenerics.lisp")
     (ld "CLOS/dependents-defgeneric.lisp")
     (ld "CLOS/setf-dependents-defgeneric.lisp")
     (ld "CLOS/generic-function-name-defgeneric.lisp")
