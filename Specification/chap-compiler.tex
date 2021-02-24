@@ -678,6 +678,16 @@ First, the following steps are executed in order:
   then no further processing is done for $b$.
 \item Otherwise, a register is allocated for $b$ as a second operand,
   as described below.
+\item If either:
+  \begin{legal}
+  \item $a$ is an immediate input,
+  \item $a$ is assigned only to a stack location and the next use of
+    $a$ is far in the future, or
+  \item $a$ is assigned only to a stack location and $a = c$,
+  \end{legal}
+  then a register, say $r$, is allocated for $c$ using the
+  \emph{independent allocation case} described below.  Then an
+  instruction is inserted before $I$ that assigns $a$ to $r$.
 \end{legal}
 
 \begin{legal}
