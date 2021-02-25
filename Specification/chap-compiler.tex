@@ -659,7 +659,16 @@ location.
 \setlistdepth{20}
 
 \newlist{legal}{enumerate}{20}
-\setlist[legal]{label*=\arabic*.}
+%\setlist[legal]{label*=\arabic*.}
+\setlist[legal,1]{label=\arabic*.}
+\setlist[legal,2]{label=\alph*.}
+\setlist[legal,3]{label=\roman*.}
+\setlist[legal,4]{label=\Alph*.}
+\setlist[legal,5]{label=\Roman*.}
+\setlist[legal,6]{label=\arabic*.}
+\setlist[legal,7]{label=\alph*.}
+\setlist[legal,8]{label=\roman*.}
+\setlist[legal,9]{label=\Alph*.}
 \renewlist{legal}{enumerate}{20}
 
 First, the following steps are executed in order:
