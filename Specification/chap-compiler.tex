@@ -758,7 +758,8 @@ Following are the instructions used when $a$ and $b$ are both assigned
 to registers, say $r$ and $s$ respectively:
 
 \begin{legal}
-\item $a$, $b$ and $c$ are all distinct.
+\item Either $a$, $b$ and $c$ are all distinct, or $a = b$, but $c$ is
+  different.
   \begin{legal}
   \item $a$ is dead after $I$.  Then make $c$ be assigned to $r$
     after $I$.
@@ -813,7 +814,6 @@ to registers, say $r$ and $s$ respectively:
       \end{legal}
     \end{legal}
   \end{legal}
-\item $a = b$, but $c$ is different.
 \item $a = c$, but $b$ is different.
 \item $b = c$, but $a$ is different.
 \item $a = b = c$.
