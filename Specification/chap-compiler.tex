@@ -814,9 +814,21 @@ to registers, say $r$ and $s$ respectively:
       \end{legal}
     \end{legal}
   \end{legal}
-\item $a = c$, but $b$ is different.
+\item $a = c$, but $b$ is different, or $a = b = c$. Nothing needs to
+  be done.
 \item $b = c$, but $a$ is different.
-\item $a = b = c$.
+  \begin{legal}
+  \item $a$ is dead after $I$.  Reassign $r$ to $c$.
+  \item $a$ is needed far in the future.
+    \begin{legal}
+    \item $a$ is also assigned to a stack location.  Reassign $r$ to $c$.
+    \item $a$ is not assigned to a stack location.  Spill $a$ to a
+      stack location.  Then reassign $r$ to $c$.
+    \end{legal}
+  \item $a$ is needed soon after $I$.  Allocate a new register, say
+    $t$.  Insert an instruction to copy $r$ to $t$.  Assign $t$ to
+    $a$.  Reassign $r$ to $c$.
+  \end{legal}
 \end{legal}
 
 \subsection{Code generation}
