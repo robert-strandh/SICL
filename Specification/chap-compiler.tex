@@ -671,9 +671,12 @@ First, the following steps are executed in order:
   \begin{legal}
   \item $b$ is an immediate input,
   \item $b$ is already assigned to a register, or
-  \item $b$ is assigned only to a stack location, $I$ permits a memory
-    location as its second operand, and the next use of $b$ is far in
-    the future,
+    \begin{legal}
+    \item $b$ is assigned only to a stack location,
+    \item $I$ permits a memory location as its second operand, and
+    \item either $b$ is dead after $I$ or the next use of $b$ is far
+      in the future,
+    \end{legal}
   \end{legal}
   then no further processing is done for $b$.
 \item Otherwise, a register is allocated for $b$ as a second operand,
@@ -688,6 +691,66 @@ First, the following steps are executed in order:
   then a register, say $r$, is allocated for $c$ using the
   \emph{independent allocation case} described below.  Then an
   instruction is inserted before $I$ that assigns $a$ to $r$.
+\end{legal}
+
+Allocating a register for the second operand ($b$) when it has been
+determined that it has to be in a register, and it is currently either
+an immediate input or it is assigned only to a stack location.  The
+following instructions are used to find a register for $b$.  Once a
+register has been found, an instruction is inserted that loads $b$
+into that register.
+
+\begin{legal}
+\item $b$ is either dead after $I$ or the next use of $b$ is far in
+  the future.  Then allocate a new register, say $s$ and assign it to
+  $b$.
+\item The next use of $b$ is soon after $I$.
+  \begin{legal}
+  \item $b$ can be in any register when it is next needed.  Allocate a
+    new register, say $s$ and assign it to $b$.
+  \item $b$ is needed in a specific register, say $s$.
+    \begin{legal}
+    \item $s$ is not assigned to any variable.  Then assign $s$ to
+      $b$.
+    \item $s$ is already assigned to some variable $v$.
+      \begin{legal}
+      \item The next use of $v$ is needed in $s$.
+        \begin{legal}
+        \item $b$ is needed before $v$.
+          \begin{legal}
+          \item $v$ is needed relatively soon after $I$.  Then
+            allocate a new register, say $t$.  Insert an instruction
+            that copies $s$ to $t$.  Assign $t$ to $v$.  Assign $s$ to
+            $b$.
+          \item $v$ is needed far in the future.
+            \begin{legal}
+            \item $v$ is also present in a stack location.  Reassign
+              $s$ to $b$.
+            \item $v$ is not present in any stack location.  Insert
+              and instruction to spill $s$ to a stack location and
+              assign that stack location to $v$.  Assign $s$ to $b$.
+            \end{legal}
+          \end{legal}
+        \item $v$ is needed before $b$.  Allocate a new register, say
+          $t$.  Assign $t$ to $b$.
+        \end{legal}
+      \item The next use of $v$ can be in any register.
+        \begin{legal}
+        \item $v$ is needed relatively soon after $I$.  Then allocate
+          a new register, say $t$.  Insert an instruction that copies
+          $s$ to $t$.  Assign $t$ to $v$.  Reassign $s$ to $b$.
+        \item The next use of $v$ is far in the future.
+          \begin{legal}
+          \item $v$ is also present in a stack location.  Reassign
+            $s$ to $b$.
+          \item $v$ is not present in any stack location.  Insert
+            and instruction to spill $s$ to a stack location and
+            assign that stack location to $v$.  Assign $s$ to $b$.
+          \end{legal}
+        \end{legal}
+      \end{legal}
+    \end{legal}
+  \end{legal}
 \end{legal}
 
 \begin{legal}
