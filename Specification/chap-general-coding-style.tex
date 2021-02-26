@@ -68,6 +68,50 @@ be used for displaying documentation or something else.
 \section{Documentation strings}
 \label{sec-general-coding-style-documentation-strings}
 
+Documentation strings are meant for the people who write \emph{client
+  code}, i.e., code that makes use of the feature (function, class,
+etc.) being documented by a documentation string.  Do not confuse the
+target audience for documentation strings with that for
+\emph{comments} \seesec{sec-general-coding-style-commenting}
+
+This intended purpose of documentation strings has a few consequences
+for the coding style.  First, documentation strings are largely
+\emph{noise} to a person reading the code being documented.  The
+reason is simple; presumably the person reading the code already knows
+how it is intended to be used, so the documentation string contains
+information already known to that person.  An extensive documentation
+string for some code may very well contain much more text than the
+code itself, thereby making the code harder to read if the two are
+physically close.  Furthermore, a multi-line documentation string can
+often look unappealing and distracting if most lines start in the
+first text column.  An unfortunate and frequent consequence of these
+disadvantages is that programmers have a tendency to write skimpy
+documentation strings.
+
+One possible remedy for the noise problem is to separate the
+documentation strings from the code, by taking advantage of the
+function \texttt{(setf documentation)}.  The documentation string can
+then be placed in a separate file from the one containing the code.
+One possible problem with this separation is that it is then riskier
+that the documentation becomes incorrect as the code evolves.
+However, this risk is not as great as the analogous one for comments,
+since it is (or should be) much less common that client-visible code
+has its interface altered.
+
+A remedy for the problem of unappealing documentation strings, whether
+together with the code or in a separate file, is to use
+\texttt{format} at read time, and to use the tilde-newline reader
+macro with the \texttt{@} modifier, so that lines starting with the
+second one can be indented so that they align with the first one.
+
+Another important consequence of the purpose of documentation strings
+is that there is absolutely no reason to provide documentation strings
+for features that are not part of the protocol used by client code.
+It is fairly common to see documentation strings provided for features
+that are used only internally in a module.  This practice should be
+avoided, especially since the documentation string is largely noise to
+the code maintainer, as described above.
+
 \section{Commenting}
 \label{sec-general-coding-style-commenting}
 
