@@ -392,6 +392,7 @@ though it is more specific than \texttt{fdefinition}, in that it
 requires its argument to be a symbol.
 
 \section{Using packages}
+\label{sec-coding-style-using-packages}
 
 It is good practice to divide a code base into several different
 \emph{modules}.  \commonlisp{} does not have a module concept, but
@@ -444,4 +445,33 @@ exclusively in a particular implementation.
 
 \section{Names of slot accessors}
 
-%%  LocalWords:  accessors
+There is an older convention that dictates that the name of a slot
+accessor for some class should be prefixed by the name of the class.
+We see this convention in the \commonlisp{} standard itself, as in
+\texttt{symbol-name}, \texttt{package-use-list}, and
+\texttt{array-total-size}.  We also see it in the CLIM
+specification as in \texttt{port-name}, \texttt{sheet-parent}, etc.
+It is even recommended in the literature, for example in Sonja Keene's
+book on object-oriented programming in \commonlisp{}
+\cite{sonya-keene}.
+
+We do not know the origins of this convention, but all three examples
+cited above seem to suggest underuse of the package system for reasons
+that are unknown to us.  While the older convention is acceptable for
+shallow class hierarchies, it is more dubious for deeper ones.  For
+instance, since there is no subclass of \texttt{package} in
+\commonlisp{}, then it follows that \texttt{package-use-list} must be
+given a package as an argument.  However, in CLIM, the class
+\texttt{sheet} is the base class of a fairly deep hierarchy, and
+a call such as \texttt{(sheet-parent stream)} looks very confusing
+indeed.
+
+Thus, instead of this older convention, we suggest a more extensive
+use of the package system, as suggested in
+\refSec{sec-coding-style-using-packages}, and to omit the prefix of
+the symbol itself.  Using the package system instead, has the
+additional advantage that package-local nicknames can be used to
+customize the prefix, again as suggested in
+\refSec{sec-coding-style-using-packages}.
+
+%%  LocalWords:  accessors accessor underuse
