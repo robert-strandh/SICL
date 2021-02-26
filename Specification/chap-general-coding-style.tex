@@ -474,4 +474,49 @@ additional advantage that package-local nicknames can be used to
 customize the prefix, again as suggested in
 \refSec{sec-coding-style-using-packages}.
 
+\section{Use of \texttt{defgeneric}}
+
+The \commonlisp{} standard requires the occurrence of a
+\texttt{defmethod} form without any corresponding preceding
+\texttt{defgeneric} form to result in the creation of a generic
+function, using some information derived from the \texttt{defmethod}
+form.  Even early literature about the \commonlisp{} object system
+\cite{Paeke:1993:OOP} suggests that \texttt{defmethod} was meant to be
+the main operator for creating generic functions, and that
+\texttt{defgeneric} should be used only when the default parameters
+would not be adequate, such as when a different method combination was
+desired.  The idea here is, of course, to make it more
+\emph{convenient} for the programmer to create a generic function.
+
+This idea of convenience has a long history in computing.  Already,
+the Fortran programming language did not require explicit definition
+of variables.  The first letter of the name of the variable would
+determine the type, and the variable was implicitly created the first
+time it was seen by the compiler.  And early Lisp variants would
+silently create a special variable when \texttt{setq} was used with a
+name not previously seen.
+
+But this ``convenience'' has a high price.  A typo in a Fortran
+variable name will silently create a different variable.  The same is
+true for a typo used in \texttt{setq} in early Lisp.  For this reason,
+over time, we tend to move away from such ``convenience'' and towards
+more feedback to the programmer when it can be suspected that the
+programmer made a mistake, thereby often saving many hours of
+debugging time due to a silly mistake.  Hence, \commonlisp{} now
+recognizes that a top-level \texttt{setq} using a name that was not
+previously defined using some defining form such as \texttt{defvar} or
+\texttt{defparameter} is undefined behavior.  And most modern
+\commonlisp{} implementations will signal a warning for such a
+top-level \texttt{setq}.
+
+Similarly, a typo in the name given to \texttt{defmethod} will
+(silently in many \commonlisp{} implementations) create a new generic
+function.  More likely than a typo is the omission of a package
+prefix.  For this reason, we strongly encourage maintainers of
+\commonlisp{} implementations to signal a style warning for this
+situations.  And we strongly encourage the systematic use of
+\texttt{defgeneric}, even for slot accessors.  Using an explicit
+\texttt{defgeneric} form has the additional advantage that appropriate
+names can be given for lambda-list parameters.
+
 %%  LocalWords:  accessors accessor underuse
