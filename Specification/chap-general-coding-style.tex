@@ -277,3 +277,29 @@ reserved for other uses of \texttt{cons} cells such as for
 
 It follows that the two families of functions should never be mixed
 for the same argument.
+
+\section{Use the most specific construct}
+
+There is a very general rule in programming that says that, when there
+is a choice between two constructs that will accomplish some task,
+then the most specific of those constructs should be used.
+
+For example, the two forms \texttt{(+} \textit{expression} \texttt{1)}
+and \texttt{(1+} \textit{expression}\texttt{)} both accomplish the
+same task, but the second one is more specific, so it is preferred over
+the first one.
+
+There is a good reason for this rule.  It helps the person reading the
+code determine the meaning of it faster.  In the particular case of
+the previous example, there is an additional advantage, namely that
+the meaning is determined \emph{before} the appearance of
+\textit{expression}, making the meaning clear even sooner.
+
+In \commonlisp{} there are a few exceptions to this rule. In
+particular, even though \texttt{setq} is more specific than
+\texttt{setf}, the trend is to use \texttt{setf} exclusively.  One
+possible explanation for this exception is that \texttt{setq} is
+considered obsolete for the purpose of application programming.
+Similarly, one may consider \texttt{symbol-function} as obsolete, even
+though it is more specific than \texttt{fdefinition}, in that it
+requires its argument to be a symbol.
