@@ -65,7 +65,50 @@ between the source code and the interaction loop.  When two monitors
 are used, the effect is to waste half a monitor that could otherwise
 be used for displaying documentation or something else.
 
+\section{Documentation strings}
+\label{sec-general-coding-style-documentation-strings}
+
 \section{Commenting}
+\label{sec-general-coding-style-commenting}
+
+Comments are meant for people who are also reading the code, typically
+maintainers of the software.  Do not confuse the target audience for
+comments with that for \emph{documentation strings}
+\seesec{sec-general-coding-style-documentation-strings}
+
+Comments have the annoying disadvantage that they can not be verified
+by the compiler.  There is therefore a significant risk that a comment
+will become inaccurate as the code that is commented evolves.  It
+takes great discipline on the part of the maintainer to make sure that
+comments are updated to match the updated code.
+
+Because of this disadvantage, comments should be used sparingly.  In
+particular, comments should not be used as a substitute for clear
+code, and comments should not paraphrase code when the meaning of that
+code is clear without the comment.
+
+It is common to see a style where each top-level function is preceded
+by a comment containing information about the purpose, the arguments,
+the return values, and perhaps even the author and the creation date
+of the function.  This style should always be avoided.  It duplicates
+information that is otherwise readily available from the code of the
+function itself, or from the versioning system being used.  And such
+comments are highly likely to become obsolete when the signature of
+the function evolves.
+
+To avoid some comments in favor of clear code, a good technique is
+often to split up the code into smaller functions.  Then, rather than
+having a commented block of code inside a big function, each such
+block would be extracted into a separate function, with a name that
+suggests its purpose, thereby often making the comment superfluous.
+
+The main remaining reason for comments is then to explain some
+general technique being used by the code, but that can not easily be
+derived from the code itself.  If the code implements some known
+algorithm, the comment may give a name and a reference to that
+algorithm.  If the technique is specific to the particular code base
+in question, a more elaborate description of the technique being used
+may be required.
 
 Use a single semicolon to introduce a comment that follows the code on
 a line.  Use two semicolons for comments that are not at the top level
