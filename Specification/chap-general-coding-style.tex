@@ -390,3 +390,58 @@ considered obsolete for the purpose of application programming.
 Similarly, one may consider \texttt{symbol-function} as obsolete, even
 though it is more specific than \texttt{fdefinition}, in that it
 requires its argument to be a symbol.
+
+\section{Using packages}
+
+It is good practice to divide a code base into several different
+\emph{modules}.  \commonlisp{} does not have a module concept, but
+most of the advantages of a module can be obtained by the use of a
+combination of an \texttt{asdf} system definition combined with a
+\commonlisp{} \emph{package}.  Names representing the protocol
+implemented by the module would then be exported by the package so
+that these names can be used by client code without resorting to
+breaking abstraction barriers.
+
+We recommend that the \texttt{:use} option of the \texttt{defpackage}
+form should contain only the \texttt{common-lisp} package, or
+occasionally no package at all.  We recommend that, when code in some
+package refers to a name in a different package (other than the
+\texttt{common-lisp} package), an \emph{explicit package prefix} is
+provided, as alternative to importing symbols.  There are several
+reasons for this recommendation:
+
+\begin{itemize}
+\item The person reading the client code can then immediately see to
+  which package a name belongs.
+\item The author of packages then have greater freedom to choose names
+  of exported symbols.  Some names are so common that there is a great
+  risk that they will collide with names from other package, even the
+  \commonlisp{} package.  Trying to avoid collisions by choosing
+  different names often results in artificial-looking names.
+\item When client code employs the \texttt{:use} option for an
+  external package, client code assumes that no external symbols of
+  the external package collide with those of other external packages.
+  While that may be true when the client code is first written,
+  updates to some external package may then break the client code by
+  introducing more exported symbols that then collide.  By avoiding
+  the \texttt{:use} option in favor of explicit package prefixes, this
+  problem is avoided entirely.
+\end{itemize}
+
+While  it may seem that the use of explicit package prefixes might be
+undesirable when the name of the package contains many characters,
+this problem can now be entirely avoided by the use of
+\emph{package-local nicknames}, or PLNs.  While package-local
+nicknames are not part of the \commonlisp{} standard, they are now
+supported by all major \commonlisp{} implementations, including the
+two main commercial ones.
+
+Package-local nicknames also give the author of a module greater
+freedom to name the package so that it is more likely to be globally
+unique.  There is no longer a reason to name a package something
+common like \texttt{core}, even though it is meant to be used
+exclusively in a particular implementation.
+
+\section{Names of slot accessors}
+
+%%  LocalWords:  accessors
