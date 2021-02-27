@@ -12,6 +12,10 @@
 ;;; the generic function to which the method is associated.
 (defgeneric (setf method-generic-function) (generic-function method))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-lambda-list.html
+(defgeneric method-lambda-list (method))
+
 (defclass method (metaobject)
   ((%function 
     :initarg :function 
