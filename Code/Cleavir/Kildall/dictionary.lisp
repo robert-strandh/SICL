@@ -1,7 +1,7 @@
 (in-package #:cleavir-kildall)
 
 ;;;; Dictionaries are the ultimate result of the algorithm and form
-;;;; maps from instructions to pools. They're hash tables. The end
+;;;; maps from instructions to pools. They're hash tables.
 
 (declaim (inline make-dictionary
 		 instruction-pool (setf instruction-pool)))
@@ -26,8 +26,8 @@
   `(setf (gethash ,instruction *dictionary*) ,pool))
 
 ;;; A default method, since all will have dictionaries.
-(defmethod kildall :around (s instruction &key)
-  (declare (ignore s instruction))
+(defmethod kildall :around (specialization instruction &key)
+  (declare (ignore specialization instruction))
   (let ((*dictionary* (make-hash-table :test #'eq)))
     (call-next-method)
     *dictionary*))
