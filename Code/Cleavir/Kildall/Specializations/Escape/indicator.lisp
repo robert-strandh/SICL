@@ -64,14 +64,3 @@
   (declare (type indicator indicator))
   ;; This is used for dynamic-extent assertion.
   (logand indicator (lognot +unknown+)))
-
-(defmethod cleavir-kildall-graphviz:draw-object ((s escape) o)
-  (with-output-to-string (s)
-    (when (logbitp 3 o) ; store
-      (write-char #\S s))
-    (when (logbitp 2 o) ; return
-      (write-char #\R s))
-    (when (logbitp 1 o) ; call
-      (write-char #\C s))
-    (when (logbitp 0 o) ; unknown
-      (write-char #\? s))))

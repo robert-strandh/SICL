@@ -1,8 +1,5 @@
 (in-package #:cleavir-value-numbering)
 
-(defmethod cleavir-kildall-graphviz:draw-object ((s value-numbering) object)
-  (princ-to-string object))
-
 (defclass numbering ()
   ;; Both hash tables instruction->alist, where alist is datum->number.
   ((input :initarg :input :accessor input)
@@ -56,10 +53,7 @@
                dict))
     (make-instance 'numbering :input inputs :output outputs)))
 
-(defun number-values (initial-instruction &key draw liveness)
+(defun number-values (initial-instruction &key liveness)
   (let* ((traverse (make-instance 'value-numbering))
          (dict (cleavir-kildall:kildall traverse initial-instruction :liveness liveness)))
-    (when draw
-      (cleavir-kildall-graphviz:draw-flowchart-with-inputs
-       initial-instruction draw traverse dict))
     (dict-to-numbering dict)))

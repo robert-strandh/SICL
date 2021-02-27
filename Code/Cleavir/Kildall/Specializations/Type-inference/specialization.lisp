@@ -81,9 +81,3 @@
   ;; similarly backwards.
   (cleavir-type-descriptors:sub-descriptor-p
    t2 t1 (environment s) (typecache s)))
-
-(defmethod cleavir-kildall-graphviz:draw-object
-    ((s type-inference) object)
-  (let ((spec (cleavir-type-descriptors:descriptor->specifier
-               object (environment s))))
-    (format nil "~a" spec)))

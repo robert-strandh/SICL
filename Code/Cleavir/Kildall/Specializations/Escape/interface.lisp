@@ -1,6 +1,6 @@
 (in-package #:cleavir-escape)
 
-(defun mark-dynamic-extent (initial-instruction &key draw liveness)
+(defun mark-dynamic-extent (initial-instruction &key liveness)
   (check-type initial-instruction cleavir-ir:enter-instruction)
   (let* ((s (make-instance 'escape))
          (dict (kildall s initial-instruction :liveness liveness)))
@@ -12,7 +12,4 @@
                               (instruction-pool inst dict))))
          (setf (cleavir-ir:dynamic-extent-p inst) t)))
      initial-instruction)
-    (when draw
-      (cleavir-kildall-graphviz:draw-flowchart-with-outputs
-       initial-instruction draw s dict))
     dict))
