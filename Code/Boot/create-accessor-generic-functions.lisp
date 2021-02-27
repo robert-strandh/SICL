@@ -51,7 +51,6 @@
     (ld "CLOS/setf-call-history-defgeneric.lisp")
     (ld "CLOS/specializer-profile-defgeneric.lisp")
     (ld "CLOS/setf-specializer-profile-defgeneric.lisp")
-    (ld "CLOS/method-lambda-list-defgeneric.lisp")
     (ld "CLOS/method-specializers-defgeneric.lisp")
     (ld "CLOS/method-qualifiers-defgeneric.lisp")
     (ld "CLOS/accessor-method-slot-definition-defgeneric.lisp")
