@@ -22,9 +22,3 @@
   (:export #:bitset-pool-mixin)
   (:export #:interfunction-mixin
            #:enter-enclose #:return-enclose #:enclose-info))
-
-(defpackage #:cleavir-kildall-graphviz
-  (:use #:cl #:cleavir-kildall)
-  (:export #:draw-object)
-  (:export #:draw-flowchart-with-outputs
-           #:draw-flowchart-with-inputs))

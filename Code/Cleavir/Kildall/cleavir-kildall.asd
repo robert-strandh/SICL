@@ -16,6 +16,4 @@
    (:file "alist-pool" :depends-on ("map-pool" "packages"))
    (:file "bitset" :depends-on ("kildall" "map-pool" "packages"))
    (:file "interfunction"
-    :depends-on ("kildall" "packages"))
-   (:file "graphviz-drawing"
-    :depends-on ("map-pool" "packages"))))
+    :depends-on ("kildall" "packages"))))
