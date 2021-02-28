@@ -52,7 +52,7 @@
                       return list))))
 
 (defmethod cleavir-kildall:kildall :around
-    ((s liveness-traverse) initial &key)
+    ((specialization liveness-traverse) initial &key)
   (let ((*input-sets* (make-hash-table :test #'eq))
         (*output-sets* (make-hash-table :test #'eq))
         (ids (make-hash-table :test #'eq)))
@@ -90,7 +90,7 @@
       results)))
 
 (defmethod cleavir-kildall:transfer
-    ((s liveness-traverse) instruction)
+    ((specialization liveness-traverse) instruction)
   (let* ((pool (cleavir-kildall:maybe-instruction-pool s instruction))
          (inputs (gethash instruction *input-sets*))
          (outputs (gethash instruction *output-sets*))
