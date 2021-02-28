@@ -37,14 +37,14 @@
 (declaim (inline maybe-instruction-pool))
 (defun maybe-instruction-pool (specialization instruction)
   (multiple-value-bind (pool present-p)
-      (gethash instruction *dictionary*)
+      (dictionary-pool instruction)
     (if present-p
         pool
-        (setf (gethash instruction *dictionary*)
+        (setf (dictionary-pool instruction)
               (make-pool specialization instruction)))))
 
 ;;; We also sometimes need to know whether an instruction has a
-;;; pool, because not having a pool is Kildall's distinguished _1_
+;;; pool, because not having a pool is Kildall's distinguished _1_.
 (declaim (inline pool-present-p))
 (defun pool-present-p (specialization instruction)
   (declare (ignore specialization))
