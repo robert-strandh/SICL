@@ -16,6 +16,10 @@
 ;;; http://metamodular.com/CLOS-MOP/method-lambda-list.html
 (defgeneric method-lambda-list (method))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-qualifiers.html
+(defgeneric method-qualifiers (method))
+
 (defclass method (metaobject)
   ((%function 
     :initarg :function 
