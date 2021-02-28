@@ -4,6 +4,6 @@
 
 (defclass iterate-mixin () ())
 
-(defmethod kildall ((s iterate-mixin) initial-instruction &key)
+(defmethod kildall ((specialization iterate-mixin) initial-instruction &key)
   (loop while *work-list*
-        do (transfer s (pop-work))))
+        do (transfer specialization (pop-work))))
