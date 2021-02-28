@@ -97,7 +97,7 @@
    #:update-instance-for-different-class
    #:update-instance-for-redefined-class
    #:make-method #:add-method #:call-method #:find-method
-   #:method-qualifiers #:compute-applicable-methods #:next-method-p
+   #:compute-applicable-methods #:next-method-p
    #:compute-applicable-methods-using-classes
    #:compute-discriminating-function
    #:invalid-method-error
