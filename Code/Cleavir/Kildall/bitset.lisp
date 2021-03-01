@@ -39,15 +39,17 @@
         do (setf (sbit pool index)
                  (funcall function var (sbit pool index)))))
 
-(defmethod pool-meet ((specialization bitset-pool-mixin) o1 o2)
-  (declare (bit o1 o2))
-  (logior o1 o2))
+(defmethod pool-meet
+    ((specialization bitset-pool-mixin) pool1 pool2)
+  (declare (bit pool1 pool2))
+  (logior pool1 pool2))
 
-(defmethod pool<= ((specialization bitset-pool-mixin) o1 o2)
-  (declare (bit o1 o2))
+(defmethod pool<=
+    ((specialization bitset-pool-mixin) pool1 pool2)
+  (declare (bit pool1 pool2))
   ;; 1 < 0
-  (if (zerop o1)
-      (zerop o2)
+  (if (zerop pool1)
+      (zerop pool2)
       t))
 
 ;;; unused

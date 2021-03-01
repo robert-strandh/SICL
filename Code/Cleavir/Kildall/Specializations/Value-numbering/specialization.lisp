@@ -20,11 +20,11 @@
   (declare (ignore pool))
   (list location))
 
-(defmethod cleavir-kildall:pool<= ((s value-numbering) o1 o2)
-  (subsetp o2 o1 :test #'equal))
+(defmethod cleavir-kildall:pool<= ((s value-numbering) pool1 pool2)
+  (subsetp pool2 pool1 :test #'equal))
 
-(defmethod cleavir-kildall:pool-meet ((s value-numbering) o1 o2)
-  (union o1 o2 :test #'equal))
+(defmethod cleavir-kildall:pool-meet ((s value-numbering) pool1 pool2)
+  (union pool1 pool2 :test #'equal))
 
 (defmethod cleavir-kildall:object1 ((s value-numbering) variable)
   (declare (ignore variable))
