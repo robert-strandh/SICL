@@ -43,7 +43,7 @@
   (declare (bit o1 o2))
   (logior o1 o2))
 
-(defmethod object<= ((specialization bitset-pool-mixin) o1 o2)
+(defmethod pool<= ((specialization bitset-pool-mixin) o1 o2)
   (declare (bit o1 o2))
   ;; 1 < 0
   (if (zerop o1)

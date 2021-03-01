@@ -6,7 +6,7 @@
   (:export #:instruction-pool #:dictionary-pool
            #:maybe-instruction-pool #:pool-present-p)
   (:export #:kildall #:transfer)
-  (:export #:pool-meet #:object<= #:object1
+  (:export #:pool-meet #:pool<= #:object1
            #:find-in-pool #:map-into-pool #:do-into-pool
            #:with-pool-reader #:copy)
   (:export #:add-work)
