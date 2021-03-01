@@ -39,7 +39,7 @@
         do (setf (sbit pool index)
                  (funcall function var (sbit pool index)))))
 
-(defmethod object-meet ((specialization bitset-pool-mixin) o1 o2)
+(defmethod pool-meet ((specialization bitset-pool-mixin) o1 o2)
   (declare (bit o1 o2))
   (logior o1 o2))
 

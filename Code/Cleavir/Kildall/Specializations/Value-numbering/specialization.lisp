@@ -23,7 +23,7 @@
 (defmethod cleavir-kildall:object<= ((s value-numbering) o1 o2)
   (subsetp o2 o1 :test #'equal))
 
-(defmethod cleavir-kildall:object-meet ((s value-numbering) o1 o2)
+(defmethod cleavir-kildall:pool-meet ((s value-numbering) o1 o2)
   (union o1 o2 :test #'equal))
 
 (defmethod cleavir-kildall:object1 ((s value-numbering) variable)

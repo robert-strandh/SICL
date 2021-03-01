@@ -1,6 +1,6 @@
 (in-package #:cleavir-kildall)
 
-(defgeneric object-meet (specialization object1 object2))
+(defgeneric pool-meet (specialization pool1 pool2))
 (defgeneric object<= (specialization object1 object2))
 (defgeneric object1 (specialization key))
 
@@ -47,7 +47,7 @@
                        (t (,from-reader ,var)))))
            (cond ((object<= ,ss ,dest-val new-val) ,dest-val)
                  (t
-                  (setf ,dest-val (object-meet ,ss ,dest-val new-val)
+                  (setf ,dest-val (pool-meet ,ss ,dest-val new-val)
                         ,update t)
                   new-val))))
        (when ,update (add-work ,sinstruction)))))
