@@ -1,0 +1,21 @@
+(cl:in-package #:sicl-mir-to-lir)
+
+(defun find-back-arcs (initial-instruction)
+  (let ((result (make-hash-table :test #'eq))
+        (visited-p (make-hash-table :test #'eq))
+        (on-stack-p (make-hash-table :test #'eq)) )
+    (labels ((traverse (predecessor instruction)
+               (if (gethash instruction visited-p)
+                   (when (gethash instruction on-stack-p)
+                     (push instruction (gethash predecessor result)))
+                   (progn (setf (gethash instruction visited-p) t)
+                          (setf (gethash instruction on-stack-p) t)
+                          (when (typep instruction 'cleavir-ir:enclose-instruction)
+                            (traverse nil (cleavir-ir:code instruction)))
+                          (loop for successor in (cleavir-ir:successors instruction)
+                                do (traverse instruction successor))
+                          (setf (gethash instruction on-stack-p) nil)))))
+      (traverse nil initial-instruction)
+      result)))
+
+
