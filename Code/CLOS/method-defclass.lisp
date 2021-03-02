@@ -17,6 +17,10 @@
 (defgeneric method-lambda-list (method))
 
 ;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-specializers.html
+(defgeneric method-specializers (method))
+
+;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/method-qualifiers.html
 (defgeneric method-qualifiers (method))
 
