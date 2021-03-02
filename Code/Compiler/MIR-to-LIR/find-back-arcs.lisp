@@ -17,5 +17,3 @@
                           (setf (gethash instruction on-stack-p) nil)))))
       (traverse nil initial-instruction)
       result)))
-
-
