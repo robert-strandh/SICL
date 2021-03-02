@@ -9,7 +9,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "find-back-arcs")
    (:file "registers")
    (:file "move-return-address")
    (:file "save-arguments")
