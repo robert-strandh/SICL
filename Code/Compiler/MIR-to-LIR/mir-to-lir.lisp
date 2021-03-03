@@ -20,9 +20,6 @@
        enter-instruction))
     result))
 
-(defun entry-point-input-p (input)
-  (typep input 'sicl-hir-to-mir:entry-point-input))
-
 (defmethod mir-to-lir (client mir)
   (loop for enter-instruction in (sicl-hir-to-mir:gather-enter-instructions mir)
         for lexical-locations = (find-lexical-locations enter-instruction)
