@@ -24,18 +24,11 @@
   (typep input 'sicl-hir-to-mir:entry-point-input))
 
 (defmethod mir-to-lir (client mir)
-  (loop with worklist = (list mir)
-        until (null worklist)
-        do (let* ((enter-instruction (pop worklist))
-                  (lexical-locations (find-lexical-locations enter-instruction)))
-             (cleavir-ir:map-instructions-arbitrary-order
-              (lambda (instruction)
-                (let ((entry (find-if #'entry-point-input-p
-                                      (cleavir-ir:inputs instruction))))
-                  (unless (null entry)
-                    (push (sicl-hir-to-mir:enter-instruction entry)
-                          worklist)))
-                (process-instruction instruction lexical-locations))
-              enter-instruction)
-             (save-arguments enter-instruction)
-             (move-return-address enter-instruction))))
+  (loop for enter-instruction in (sicl-hir-to-mir:gather-enter-instructions mir)
+        for lexical-locations = (find-lexical-locations enter-instruction)
+        do (cleavir-ir:map-local-instructions
+            (lambda (instruction)
+              (process-instruction instruction lexical-locations))
+            enter-instruction)
+           (save-arguments enter-instruction)
+           (move-return-address enter-instruction)))
