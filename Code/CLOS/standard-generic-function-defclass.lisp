@@ -4,6 +4,10 @@
 ;;; http://metamodular.com/CLOS-MOP/generic-function-argument-precedence-order.html
 (defgeneric generic-function-argument-precedence-order (generic-function))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-declarations.html
+(defgeneric generic-function-declarations (generic-function))
+
 (defclass standard-generic-function (generic-function)
   ((%argument-precedence-order
     :initarg :argument-precedence-order
