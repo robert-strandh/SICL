@@ -1,6 +1,8 @@
 (cl:in-package #:sicl-mir-to-lir)
 
-(defun find-back-arcs (initial-instruction)
+;;; Find back arcs in a single function, defined by the
+;;; ENTER-INSTRUCTION given as an argument.
+(defun find-back-arcs (enter-instruction)
   (let ((result (make-hash-table :test #'eq))
         (visited-p (make-hash-table :test #'eq))
         (on-stack-p (make-hash-table :test #'eq)) )
@@ -10,10 +12,8 @@
                      (push instruction (gethash predecessor result)))
                    (progn (setf (gethash instruction visited-p) t)
                           (setf (gethash instruction on-stack-p) t)
-                          (when (typep instruction 'cleavir-ir:enclose-instruction)
-                            (traverse nil (cleavir-ir:code instruction)))
                           (loop for successor in (cleavir-ir:successors instruction)
                                 do (traverse instruction successor))
                           (setf (gethash instruction on-stack-p) nil)))))
-      (traverse nil initial-instruction)
+      (traverse nil enter-instruction)
       result)))
