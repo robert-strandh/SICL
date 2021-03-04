@@ -8,6 +8,10 @@
 ;;; http://metamodular.com/CLOS-MOP/generic-function-name.html
 (defgeneric generic-function-name (generic-function))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-lambda-list.html
+(defgeneric generic-function-lambda-list (generic-function))
+
 (defclass generic-function (metaobject funcallable-standard-object)
   (;; While there is a function named (SETF GENERIC-FUNCTION-NAME), it
    ;; is not a writer function in that it works by calling
