@@ -44,10 +44,11 @@ to be the code that accomplishes the following tasks:
 \end{enumerate}
 
 In a typical implementation, a function call is generated when the
-code of the caller is compiled, and it then never changes.  For this
-permanent code to work, a particular \emph{call protocol} must be
-observed, and that protocol must be independent of the callee, as the
-callee may change after the caller has been compiled.
+code of the caller is compiled, and it then never changes.  As
+mentioned above, for this permanent code to work, a particular
+\emph{function-call protocol} must be observed, and that protocol must
+be independent of the callee, as the callee may change after the
+caller has been compiled.
 
 Our technique optimizes function calls to functions in the
 \emph{global environment} such that the \emph{name} of the callee is
