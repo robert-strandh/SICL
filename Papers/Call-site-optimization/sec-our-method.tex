@@ -8,11 +8,11 @@ the call site.  The most common such case is when the name of the
 function appears in the operator position of a compound form.  Less
 common cases include arguments of the form \texttt{(function}
 \textit{name}\texttt{)} to some standard functions such as
-\texttt{funcall}, \texttt{apply}, and \texttt{multiple-value-call}.
-In particular, expansions of the \texttt{setf} macro are often of the
-form \texttt{(funcall (function (setf} \textit{symbol}\texttt{)) ...)}
-because function names like \texttt{(setf }\textit{symbol}\texttt{)}
-are not allowed in an operator position.
+\texttt{funcall} and \texttt{apply}.  In particular, expansions of the
+\texttt{setf} macro are often of the form \texttt{(funcall (function
+  (setf} \textit{symbol}\texttt{)) ...)}  because function names like
+\texttt{(setf }\textit{symbol}\texttt{)} are not allowed in an
+operator position.
 
 In general, with such named function calls, the function associated
 with the name can be altered at run time, or it can be made undefined
@@ -53,7 +53,8 @@ caller has been compiled.
 Our technique optimizes function calls to functions in the
 \emph{global environment} such that the \emph{name} of the callee is
 known statically, i.e. at compile time.  There are three different
-types of forms that correspond to this description:
+types of forms that correspond to this description and that are
+considered in this work:
 
 \begin{enumerate}
 \item A function form where the operator is a symbol naming a function
@@ -67,6 +68,10 @@ types of forms that correspond to this description:
   \texttt{apply} and the first argument is either a literal symbol
   or a \texttt{function} special form.
 \end{enumerate}
+
+There are some other cases that we do not intend to cover, in
+particular a call to \texttt{multiple-value-call} with a named
+function argument.
 
 With our suggested technique, for these three different form types,
 the function call is created by the callee.  We discuss each form type
