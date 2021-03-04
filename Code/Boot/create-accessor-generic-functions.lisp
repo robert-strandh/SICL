@@ -37,7 +37,6 @@
     (ld "CLOS/setf-class-prototype-defgeneric.lisp")
     (ld "CLOS/dependents-defgeneric.lisp")
     (ld "CLOS/setf-dependents-defgeneric.lisp")
-    (ld "CLOS/generic-function-argument-precedence-order-defgeneric.lisp")
     (ld "CLOS/generic-function-declarations-defgeneric.lisp")
     (ld "CLOS/generic-function-method-class-defgeneric.lisp")
     (ld "CLOS/generic-function-method-combination-defgeneric.lisp")
