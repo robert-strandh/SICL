@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "location-information")
-   (:file "find-back-arcs")))
+   (:file "find-back-arcs")
+   (:file "estimated-distance-to-use")))
