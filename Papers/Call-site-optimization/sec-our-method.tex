@@ -3,8 +3,26 @@
 
 \subsection{Function call}
 
-For the purpose of this work, we define a \emph{function call} to be
-the code that accomplishes the following tasks:
+This work covers function calls to functions that are \emph{named} at
+the call site.  The most common such case is when the name of the
+function appears in the operator position of a compound form.  Less
+common cases include arguments of the form \texttt{(function}
+\textit{name}\texttt{)} to some standard functions such as
+\texttt{funcall}, \texttt{apply}, and \texttt{multiple-value-call}.
+In particular, expansions of the \texttt{setf} macro are often of the
+form \texttt{(funcall (function (setf} \textit{symbol}\texttt{)) ...)}
+because function names like \texttt{(setf }\textit{symbol}\texttt{)}
+are not allowed in an operator position.
+
+In general, with such named function calls, the function associated
+with the name can be altered at run time, or it can be made undefined
+by the use of \texttt{fmakunbound}.  For that reason, the caller can
+make no assumptions about the signature of the callee.  This issue is
+solved by a standardized \emph{function-call protocol} that dictates
+where the caller places the arguments it passes to the callee.
+
+Thus, for the purpose of this work, we define a \emph{function call}
+to be the code that accomplishes the following tasks:
 
 \begin{enumerate}
 \item It accesses the arguments to be passed to the callee from the
