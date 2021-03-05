@@ -7,4 +7,5 @@
    (:file "location-information")
    (:file "find-back-arcs")
    (:file "pool")
+   (:file "work-list")
    (:file "estimated-distance-to-use")))
