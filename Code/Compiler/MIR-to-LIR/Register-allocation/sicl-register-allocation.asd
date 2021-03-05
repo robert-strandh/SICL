@@ -6,4 +6,5 @@
   ((:file "packages")
    (:file "location-information")
    (:file "find-back-arcs")
+   (:file "pool")
    (:file "estimated-distance-to-use")))
