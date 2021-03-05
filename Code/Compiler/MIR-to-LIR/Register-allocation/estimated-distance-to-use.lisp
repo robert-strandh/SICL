@@ -1,13 +1,13 @@
-(cl:in-package #:sicl-mir-to-lir)
+(cl:in-package #:sicl-register-allocation)
 
 (defun initialize (work-list input-info)
   (loop for instruction in work-list
-        do (loop for input in (cleavir-ir:inputs instruction)
-                 when (and (typep input 'cleavir-ir:lexical-location)
-                           (null (assoc input (gethash instruction input-info)
-                                        :test #'eq)))
-                   do (push (cons input 0)
-                            (gethash instruction input-info)))))
+        do (setf (gethash instruction input-info) (make-pool))
+           (loop for input in (cleavir-ir:inputs instruction)
+                 when (typep input 'cleavir-ir:lexical-location)
+                   do (let ((pool (make-pool (cons input 0))))
+                        (setf (gethash instruction input-info)
+                              (pool-meet 1 pool (gethash instruction input-info)))))))
 
 ;;; Compute the input estimated distance to use as a function of 
 (defgeneric handle-instruction (instruction input-info output-info back-arcs))
