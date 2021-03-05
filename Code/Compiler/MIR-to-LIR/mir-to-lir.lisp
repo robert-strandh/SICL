@@ -22,10 +22,5 @@
 
 (defmethod mir-to-lir (client mir)
   (loop for enter-instruction in (sicl-hir-to-mir:gather-enter-instructions mir)
-        for lexical-locations = (find-lexical-locations enter-instruction)
-        do (cleavir-ir:map-local-instructions
-            (lambda (instruction)
-              (process-instruction instruction lexical-locations))
-            enter-instruction)
-           (save-arguments enter-instruction)
-           (move-return-address enter-instruction)))
+        for back-arcs = (find-back-arcs enter-instruction)
+        do (sicl-register-allocation:compute-estimated-distance-to-use enter-instruction back-arcs)))
