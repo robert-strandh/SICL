@@ -7,6 +7,14 @@
 (defun make-pool (&rest pairs)
   pairs)
 
+;;; Remove a variable from a pool
+(defun remove-variable (pool variable)
+  (remove variable pool :key #'car :test #'eq))
+
+;;; Add a variable associated with an estimated distance of use of 0.
+(defun add-variable (pool variable)
+  (acons variable 0 (remove-variable variable pool)))
+
 ;;; This is the <= operation from Kildall's paper.
 (defun pool<= (pool1 pool2)
   (loop for (variable . estimated-distance-to-use) in pool1
