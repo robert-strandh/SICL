@@ -21,22 +21,22 @@
                       (gethash first input-pool)
                       (gethash second input-pool)))))))
 
-(defgeneric handle-instruction
-    (instruction input-pool output-pool back-arcs))
-
 (defmethod compute-new-output-pool
     ((instruction cleavir-ir:unwind-instruction) input-pool back-arcs)
   (gethash (first (cleavir-ir:successors instruction)) input-pool))
+
+(defgeneric handle-instruction
+    (instruction input-pool output-pool back-arcs))
 
 ;;; Compute estimated distance to use for a single function, defined
 ;;; by an ENTER-INSTRUCTION.
 (defun compute-estimated-distance-to-user
     (enter-instruction back-arcs)
-  (let ((work-list '())
+  (let ((work-list (make-instance 'work-list))
         (input-pool (make-hash-table :test #'eq))
         (output-pool (make-hash-table :test #'eq)))
     (cleavir-ir:map-local-instructions
-     (lambda (instruction) (push instruction work-list))
+     (lambda (instruction) (push-item work-list instruction))
      enter-instruction)
     (initialize work-list input-pool)
     (loop until (null work-list)
@@ -47,4 +47,5 @@
                        input-pool
                        output-pool
                        back-arcs)))
-               (setf work-list (append additional-instructions work-list))))))
+               (loop for instruction in additional-instructions
+                     do (push-item work-list instruction))))))
