@@ -39,6 +39,22 @@
 (defgeneric handle-instruction
     (instruction input-pool output-pool back-arcs))
 
+(defmethod handle-instruction
+    (instruction input-pool output-pool back-arcs)
+  (let ((new-output-pool
+          (compute-new-output-pool instruction input-pool back-arcs)))
+    (if (pool<= new-output-pool (gethash instruction output-pool))
+        '()
+        (progn
+          (setf (gethash instruction output-pool) new-output-pool)
+          (let ((new-input-pool
+                  (compute-new-input-pool instruction output-pool)))
+            (if (pool<= new-input-pool (gethash instruction input-pool))
+                '()
+                (progn
+                  (setf (gethash instruction input-pool) new-input-pool)
+                  (cleavir-ir:predecessors instruction))))))))
+
 ;;; Compute estimated distance to use for a single function, defined
 ;;; by an ENTER-INSTRUCTION.
 (defun compute-estimated-distance-to-user
@@ -50,8 +66,8 @@
      (lambda (instruction) (push-item work-list instruction))
      enter-instruction)
     (initialize work-list input-pool)
-    (loop until (null work-list)
-          do (let* ((instruction-to-process (pop work-list))
+    (loop until (emptyp work-list)
+          do (let* ((instruction-to-process (pop-item work-list))
                     (additional-instructions
                       (handle-instruction
                        instruction-to-process
