@@ -25,6 +25,17 @@
     ((instruction cleavir-ir:unwind-instruction) input-pool back-arcs)
   (gethash (first (cleavir-ir:successors instruction)) input-pool))
 
+(defgeneric compute-new-input-pool (instruction output-pool))
+
+(defmethod compute-new-input-pool (instruction output-pool)
+  (let ((result output-pool))
+    (loop for output in (cleavir-ir:outputs instruction)
+          do (setf result (remove-variable result output)))
+    (loop for input in (cleavir-ir:inputs instruction)
+          when (typep input 'cleavir-ir:lexical-location)
+            do (setf result (add-variable result input)))
+    result))
+
 (defgeneric handle-instruction
     (instruction input-pool output-pool back-arcs))
 
