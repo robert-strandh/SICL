@@ -4,8 +4,8 @@
 ;;; and the values are non-negative integers indicating estimated
 ;;; distance to use.
 
-(defun make-pool (&rest pairs)
-  pairs)
+(defun make-pool ()
+  '())
 
 ;;; Remove a variable from a pool
 (defun remove-variable (pool variable)
