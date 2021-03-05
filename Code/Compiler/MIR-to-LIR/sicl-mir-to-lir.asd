@@ -5,7 +5,8 @@
                #:cleavir-mir
                #:cleavir-hir
                #:sicl-ast-to-hir
-               #:sicl-hir-to-mir)
+               #:sicl-hir-to-mir
+               #:sicl-register-allocation)
   :serial t
   :components
   ((:file "packages")
