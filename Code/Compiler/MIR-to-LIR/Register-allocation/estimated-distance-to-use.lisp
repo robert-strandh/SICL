@@ -57,7 +57,7 @@
 
 ;;; Compute estimated distance to use for a single function, defined
 ;;; by an ENTER-INSTRUCTION.
-(defun compute-estimated-distance-to-user
+(defun compute-estimated-distance-to-use
     (enter-instruction back-arcs)
   (let ((work-list (make-instance 'work-list))
         (input-pool (make-hash-table :test #'eq))
@@ -75,4 +75,5 @@
                        output-pool
                        back-arcs)))
                (loop for instruction in additional-instructions
-                     do (push-item work-list instruction))))))
+                     do (push-item work-list instruction))))
+    (values input-pool output-pool)))
