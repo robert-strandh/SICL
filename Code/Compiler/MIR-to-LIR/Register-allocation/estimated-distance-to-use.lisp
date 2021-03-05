@@ -5,9 +5,8 @@
         do (setf (gethash instruction input-info) (make-pool))
            (loop for input in (cleavir-ir:inputs instruction)
                  when (typep input 'cleavir-ir:lexical-location)
-                   do (let ((pool (make-pool (cons input 0))))
-                        (setf (gethash instruction input-info)
-                              (pool-meet 1 pool (gethash instruction input-info)))))))
+                   do (setf (gethash instruction input-info)
+                            (add-variable input (gethash instruction input-info))))))
 
 ;;; Compute the input estimated distance to use as a function of 
 (defgeneric handle-instruction (instruction input-info output-info back-arcs))
