@@ -3,6 +3,24 @@
 
 \subsection{Function call}
 
+A function call involves a first-class object called a \emph{function
+  object} or a \emph{function} for short.  In general, a function may
+refer to variables introduced in some outer scope, so that the
+function is a \emph{closure}.  The (typically native) instructions to
+be executed by the function must be able to refer to such
+\emph{closed-over} variables.  But the values of such variables may
+vary according to the flow of control at run time.  This situation is
+handled by a compile-time procedure called \emph{closure conversion}
+whereby a \emph{static environment} is determined for each function
+object.  A function object thus consists at least of an \emph{entry
+  point}, which is the address of the code to be executed (and which
+is shared between all closures with the same code) and an object
+representing the static environment (which is specific to each
+function object).  A function call must therefore contain instructions
+to access the static environment and put it in an agreed-upon place
+(typically a register), before control is transferred to the entry
+point.
+
 This work covers function calls to functions that are \emph{named} at
 the call site.  The most common such case is when the name of the
 function appears in the operator position of a compound form.  Less
