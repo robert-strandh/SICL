@@ -1,12 +1,14 @@
 (cl:in-package #:sicl-register-allocation)
 
 (defun initialize (work-list input-pool)
-  (loop for instruction in work-list
-        do (setf (gethash instruction input-pool) (make-pool))
-           (loop for input in (cleavir-ir:inputs instruction)
-                 when (typep input 'cleavir-ir:lexical-location)
-                   do (setf (gethash instruction input-pool)
-                            (add-variable input (gethash instruction input-pool))))))
+  (loop until (emptyp work-list)
+        do (let ((instruction (pop-item work-list)))
+             (setf (gethash instruction input-pool) (make-pool))
+             (loop for input in (cleavir-ir:inputs instruction)
+                   when (typep input 'cleavir-ir:lexical-location)
+                     do (setf (gethash instruction input-pool)
+                              (add-variable
+                               (gethash instruction input-pool) input))))))
 
 (defgeneric compute-new-output-pool (instruction input-pool back-arcs))
 
@@ -22,15 +24,16 @@
                       (gethash second input-pool)))))))
 
 (defmethod compute-new-output-pool
-    ((instruction cleavir-ir:unwind-instruction) input-pool back-arcs)
+    ((instruction cleavir-ir:catch-instruction) input-pool back-arcs)
   (gethash (first (cleavir-ir:successors instruction)) input-pool))
 
 (defgeneric compute-new-input-pool (instruction output-pool))
 
 (defmethod compute-new-input-pool (instruction output-pool)
-  (let ((result output-pool))
+  (let ((result (gethash instruction output-pool)))
     (loop for output in (cleavir-ir:outputs instruction)
           do (setf result (remove-variable result output)))
+    (setf result (increment-all-distances result))
     (loop for input in (cleavir-ir:inputs instruction)
           when (typep input 'cleavir-ir:lexical-location)
             do (setf result (add-variable result input)))
@@ -66,6 +69,11 @@
      (lambda (instruction) (push-item work-list instruction))
      enter-instruction)
     (initialize work-list input-pool)
+    (cleavir-ir:map-local-instructions
+     (lambda (instruction)
+       (unless (null (cleavir-ir:successors instruction))
+         (push-item work-list instruction)))
+     enter-instruction)
     (loop until (emptyp work-list)
           do (let* ((instruction-to-process (pop-item work-list))
                     (additional-instructions
