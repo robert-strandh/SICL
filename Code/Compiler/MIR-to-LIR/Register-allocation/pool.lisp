@@ -13,7 +13,7 @@
 
 ;;; Add a variable associated with an estimated distance of use of 0.
 (defun add-variable (pool variable)
-  (acons variable 0 (remove-variable variable pool)))
+  (acons variable 0 (remove-variable pool variable)))
 
 ;;; This is the <= operation from Kildall's paper.
 (defun pool<= (pool1 pool2)
@@ -21,7 +21,7 @@
         for entry = (assoc variable pool2 :test #'eq)
         always (and (not (null entry))
                     (eq (car entry) variable)
-                    (>= (cdr entry) estimated-distance-to-use))))
+                    (<= (cdr entry) estimated-distance-to-use))))
 
 (defun pool-meet (probability pool1 pool2)
   (let ((result '()))
@@ -52,3 +52,7 @@
           when (null (assoc (car entry) pool1 :test #'eq))
             do (push entry result))
     result))
+
+(defun increment-all-distances (pool)
+  (loop for (variable . distance)  in pool
+        collect (cons variable (1+ distance))))
