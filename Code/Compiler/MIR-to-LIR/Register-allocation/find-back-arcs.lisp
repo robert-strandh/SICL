@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-mir-to-lir)
+(cl:in-package #:sicl-register-allocation)
 
 ;;; Find back arcs in a single function, defined by the
 ;;; ENTER-INSTRUCTION given as an argument.
