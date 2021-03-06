@@ -610,16 +610,9 @@ information:
 \item A bitmap representing occupied stack locations.
 \item An estimated \emph{distance} until it is going to be needed (in
   a register) next.
-\item A \emph{location} where it is needed next.  There are three
+\item A \emph{location} where it is needed next.  There are two
   possible values for this location:
   \begin{itemize}
-  \item A specific register.  This possibility is used when the
-    variable is next needed at a program point for which the register
-    assignment has already been accomplished.  It is also used when a
-    variable is needed as an argument to a
-    \texttt{funcall-instruction} (so that the function is unknown).
-    Then the standard call protocol must be respected, and that
-    protocol requires arguments to be in specific locations.
   \item The symbol \texttt{:callee-saves}.  This possibility is used
     when the variable is next needed past a
     \texttt{funcall-instruction}.
@@ -688,10 +681,8 @@ First, the following steps are executed in order:
     \end{legal}
   \end{legal}
   then no further processing is done for $b$.
-\item Otherwise, a register, say $s$ is allocated for $b$ as a second
-  operand, using the \emph{independent allocation case} described
-  below.  Once a register has been found, an instruction is inserted
-  that loads $b$ into $s$.
+\item Otherwise, a new register, say $s$ is allocated for $b$ as a
+  second operand.  An instruction is inserted that loads $b$ into $s$.
 \item If either:
   \begin{legal}
   \item $a$ is an immediate input,
@@ -699,68 +690,11 @@ First, the following steps are executed in order:
     $a$ is far in the future, or
   \item $a$ is assigned only to a stack location and $a = c$,
   \end{legal}
-  then a register, say $r$, is allocated for $c$ using the
-  \emph{independent allocation case} described below.  Then an
-  instruction is inserted before $I$ that assigns $a$ to $r$.
+  then a new register, say $r$, is allocated for $c$.  An instruction
+  is inserted before $I$ that assigns $a$ to $r$.
 \item Otherwise, $a$ and $b$ are both assigned to some registers say
   $r$ and $s$, respectively.  Then the instructions for that case are
   followed, as described below.
-\end{legal}
-
-What follows are the instructions for the \emph{independent allocation
-  case}, allocating a register for some operand $v$:
-
-\begin{legal}
-\item $v$ is either dead after $I$ or the next use of $v$ is far in
-  the future.  Then allocate a new register, say $r$ and assign it to
-  $v$.
-\item The next use of $v$ is soon after $I$.
-  \begin{legal}
-  \item $v$ can be in any register when it is next needed.  Allocate a
-    new register, say $r$ and assign it to $v$.
-  \item $v$ is needed in a specific register, say $r$.
-    \begin{legal}
-    \item $r$ is not assigned to any variable.  Then assign $r$ to
-      $v$.
-    \item $r$ is already assigned to some variable $w$.
-      \begin{legal}
-      \item The next use of $w$ is needed in $r$.
-        \begin{legal}
-        \item $v$ is needed before $w$.
-          \begin{legal}
-          \item $w$ is needed relatively soon after $I$.  Then
-            allocate a new register, say $s$.  Insert an instruction
-            that copies $r$ to $s$.  Assign $s$ to $w$.  Assign $r$ to
-            $v$.
-          \item $w$ is needed far in the future.
-            \begin{legal}
-            \item $w$ is also present in a stack location.  Reassign
-              $r$ to $v$.
-            \item $w$ is not present in any stack location.  Insert
-              and instruction to spill $r$ to a stack location and
-              assign that stack location to $w$.  Assign $r$ to $v$.
-            \end{legal}
-          \end{legal}
-        \item $w$ is needed before $v$.  Allocate a new register, say
-          $s$.  Assign $s$ to $v$.
-        \end{legal}
-      \item The next use of $w$ can be in any register.
-        \begin{legal}
-        \item $w$ is needed relatively soon after $I$.  Then allocate
-          a new register, say $s$.  Insert an instruction that copies
-          $r$ to $s$.  Assign $s$ to $w$.  Reassign $r$ to $v$.
-        \item The next use of $w$ is far in the future.
-          \begin{legal}
-          \item $w$ is also present in a stack location.  Reassign
-            $r$ to $v$.
-          \item $w$ is not present in any stack location.  Insert
-            and instruction to spill $r$ to a stack location and
-            assign that stack location to $w$.  Assign $r$ to $v$.
-          \end{legal}
-        \end{legal}
-      \end{legal}
-    \end{legal}
-  \end{legal}
 \end{legal}
 
 Following are the instructions used when $a$ and $b$ are both assigned
@@ -776,41 +710,9 @@ to registers, say $r$ and $s$ respectively:
     \begin{legal}
     \item $a$ is needed soon after $I$.
       \begin{legal}
-      \item $c$ is needed soon after $I$.
-        \begin{legal}
-        \item $c$ is needed in a specific register, say $t$.
-          \begin{legal}
-          \item $t$ is not currently assigned.  Assign it to $c$.
-            Insert and instruction before $I$ that copies $r$ into
-            $t$.
-          \item $t$ is currently assigned to some variable $v$.
-            \begin{legal}
-            \item $v$ is needed sooner than $c$.  Allocate a new
-              register, say $u$ and assign it to $c$.  Insert and
-              instruction before $I$ that copies $r$ into $u$.
-            \item $c$ is needed sooner than $v$.
-              \begin{legal}
-              \item $v$ is needed relatively soon.
-                Allocate a new register, say $u$ and assign it to
-                $v$. Insert an instruction that copies $t$ into $u$.
-                Insert an instruction that copies $r$ into $t$.
-              \item $v$ is needed far in the future.
-                \begin{legal}
-                \item $v$ is also allocated to a location on the
-                  stack.  Then reassign $t$ to $c$.  Insert an
-                  instruction that copies $r$ into $t$.
-                \item $v$ does not have a stack location associated
-                  with it.  Then spill $v$ to a stack location.
-                  Reassign $t$ to $c$.  Insert an instruction that
-                  copies $r$ into $t$.
-                \end{legal}
-              \end{legal}
-            \end{legal}
-          \end{legal}
-        \item $c$ is needed but it can be in any register.  Allocate
-          a new register, say $t$, and assign it to $c$.  Insert an
-          instruction before $I$ that copies $r$ to $t$.
-        \end{legal}
+      \item $c$ is needed soon after $I$. Allocate a new register, say
+        $t$, and assign it to $c$.  Insert an instruction before $I$
+        that copies $r$ to $t$.
       \item $c$ is not needed soon after $I$.  Allocate a new
         register, say $t$, and assign it to $c$.  Insert an
         instruction before $I$ that copies $r$ to $t$.
