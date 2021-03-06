@@ -1,3 +1,23 @@
+@article{10.1145/2866573,
+author = {d'Antras, Amanieu and Gorgovan, Cosmin and Garside, Jim and Luj\'{a}n, Mikel},
+title = {Optimizing Indirect Branches in Dynamic Binary Translators},
+year = {2016},
+issue_date = {April 2016},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {13},
+number = {1},
+issn = {1544-3566},
+url = {https://doi.org/10.1145/2866573},
+doi = {10.1145/2866573},
+abstract = {Dynamic binary translation is a technology for transparently translating and modifying a program at the machine code level as it is running. A significant factor in the performance of a dynamic binary translator is its handling of indirect branches. Unlike direct branches, which have a known target at translation time, an indirect branch requires translating a source program counter address to a translated program counter address every time the branch is executed. This translation can impose a serious runtime penalty if it is not handled efficiently.MAMBO-X64, a dynamic binary translator that translates 32-bit ARM (AArch32) code to 64-bit ARM (AArch64) code, uses three novel techniques to improve the performance of indirect branch translation. Together, these techniques allow MAMBO-X64 to achieve a very low performance overhead of only 10% on average compared to native execution of 32-bit programs. Hardware-assisted function returns use a software return address stack to predict the targets of function returns, making use of several novel optimizations while also exploiting hardware return address prediction. This technique has a significant impact on most benchmarks, reducing binary translation overhead compared to native execution by 40% on average and by 90% on some benchmarks. Branch table inference, an algorithm for detecting and translating branch tables, can reduce the overhead of translated code by up to 40% on some SPEC CPU2006 benchmarks. The remaining indirect branches are handled using a fast atomic hash table, which is optimized to work with multiple threads. This last technique translates indirect branches using a single shared hash table while avoiding expensive synchronization in performance-critical lookup code. This allows the performance to be on par with thread-private hash tables while having superior memory scalability.},
+journal = {ACM Trans. Archit. Code Optim.},
+month = apr,
+articleno = {7},
+numpages = {25},
+keywords = {code cache, indirect branch, Dynamic binary translation}
+}
+
 @techreport{Gudeman93representingtype,
     author = {David Gudeman},
     title = {{Representing Type Information in Dynamically Typed Languages}},
