@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-register-allocation
   (:use #:common-lisp)
-  (:export #:compute-estimated-distance-to-use))
+  (:export #:compute-estimated-distance-to-use
+           #:find-back-arcs))
