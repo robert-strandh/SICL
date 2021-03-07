@@ -64,14 +64,16 @@
   (let ((result '()))
     ;; First handle variables that are present in pool1.
     (loop for entry1 in pool1
-          for (variable . edu) = entry1
-          for entry2 = (assoc variable pool2 :test #'eq)
+          for variable = (lexical-location entry1)
+          for edu = (distance entry1)
+          for entry2 = (find variable pool2
+                             :test #'eq :key #'lexical-location)
           do (cond ((null entry2)
                     ;; The variable is present only in pool1 so the
                     ;; meet must contain its entry in pool1.
                     (push entry1 result))
                    ((or (zerop edu)
-                        (zerop (cdr entry2)))
+                        (zerop (distance entry2)))
                     ;; The variable is present in both pools, and one
                     ;; of the estimated distance to use is 0.  Then
                     ;; the resulting entry must also have an estimated
@@ -80,13 +82,15 @@
                    (t
                     (push (cons variable
                                 (floor (/ (+ (/ probability edu)
-                                             (/ (- 1 probability) (cdr entry2))))))
+                                             (/ (- 1 probability)
+                                                (distance entry2))))))
                           result))))
     ;; Now handle the variables that are present in pool2.  Except
     ;; that if a variable is also present in pool1, it has already
     ;; been handled.
     (loop for entry in pool2
-          when (null (assoc (car entry) pool1 :test #'eq))
+          when (null (find (lexical-location entry) pool1
+                           :test #'eq :key #'lexical-location))
             do (push entry result))
     result))
 
