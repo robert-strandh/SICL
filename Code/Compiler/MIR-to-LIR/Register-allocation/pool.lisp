@@ -29,28 +29,19 @@
     (ceiling (+ (* probability (call-probability item1))
                 (* (- 1 probability) (call-probability item2))))))
 
-;;; For now a pool is an alist where the keys are lexical locations
-;;; and the values are non-negative integers indicating estimated
-;;; distance to use.
-
-;;; Remove once we switch to new representation.
-(defmethod lexical-location ((item cons))
-  (car item))
-
-(defmethod distance ((item cons))
-  (cdr item))
-
 (defun make-pool ()
   '())
 
 (defun make-pool-item
     (lexical-location distance &optional (call-probability 0))
-  (declare (ignore call-probability))
-  (cons lexical-location distance))
+  (make-instance 'pool-item
+    :lexical-location lexical-location
+    :distance distance
+    :call-probability call-probability))
 
 ;;; Remove a variable from a pool
 (defun remove-variable (pool variable)
-  (remove variable pool :key #'car :test #'eq))
+  (remove variable pool :key #'lexical-location :test #'eq))
 
 ;;; Add a variable associated with an estimated distance of use of 0.
 (defun add-variable (pool variable)
@@ -103,5 +94,7 @@
     result))
 
 (defun increment-all-distances (pool)
-  (loop for (variable . distance)  in pool
-        collect (make-pool-item variable (1+ distance))))
+  (loop for pool-item in pool
+        collect (make-pool-item
+                 (lexical-location pool-item)
+                 (1+ (distance pool-item)))))
