@@ -43,6 +43,11 @@
 (defun make-pool ()
   '())
 
+(defun make-pool-item
+    (lexical-location distance &optional (call-probability 0))
+  (declare (ignore call-probability))
+  (cons lexical-location distance))
+
 ;;; Remove a variable from a pool
 (defun remove-variable (pool variable)
   (remove variable pool :key #'car :test #'eq))
