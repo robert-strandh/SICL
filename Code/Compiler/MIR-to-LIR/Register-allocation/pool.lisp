@@ -53,13 +53,12 @@
 
 ;;; This is the <= operation from Kildall's paper.
 (defun pool<= (pool1 pool2)
-  (loop for (variable . estimated-distance-to-use) in pool1
-        for entry2 = (find variable pool2 :test #'eq :key #'lexical-location)
+  (loop for entry1 in pool1
+        for entry2 = (find (lexical-location entry1)  pool2
+                           :test #'eq :key #'lexical-location)
         always (and (not (null entry2))
-                    (eq (lexical-location entry2)
-                        variable)
-                    (<= (distance entry2)
-                        estimated-distance-to-use))))
+                    (eq (lexical-location entry2) (lexical-location entry1))
+                    (<= (distance entry2) (distance entry1)))))
 
 (defun pool-meet (probability pool1 pool2)
   (let ((result '()))
