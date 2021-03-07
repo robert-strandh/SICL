@@ -83,12 +83,14 @@
                     ;; of the estimated distance to use is 0.  Then
                     ;; the resulting entry must also have an estimated
                     ;; distance to use of 0.
-                    (push (cons variable 0) result))
+                    (push (make-pool-item variable 0)
+                          result))
                    (t
-                    (push (cons variable
-                                (floor (/ (+ (/ probability edu)
-                                             (/ (- 1 probability)
-                                                (distance entry2))))))
+                    (push (make-pool-item
+                           variable
+                           (floor (/ (+ (/ probability edu)
+                                        (/ (- 1 probability)
+                                           (distance entry2))))))
                           result))))
     ;; Now handle the variables that are present in pool2.  Except
     ;; that if a variable is also present in pool1, it has already
@@ -101,4 +103,4 @@
 
 (defun increment-all-distances (pool)
   (loop for (variable . distance)  in pool
-        collect (cons variable (1+ distance))))
+        collect (make-pool-item variable (1+ distance))))
