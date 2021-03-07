@@ -1,5 +1,34 @@
 (cl:in-package #:sicl-register-allocation)
 
+(defclass pool-item ()
+  ((%lexical-location :initarg :lexical-location :reader lexical-location)
+   (%distance :initarg :distance :reader distance)
+   (%call-probability :initarg :call-probability :reader call-probability)))
+
+(defgeneric item-meet (probability item1 item2))
+
+(defmethod item-meet (probability (item1 null) (item2 pool-item))
+  (make-instance 'pool-item
+    :lexical-location (lexical-location item2)
+    :distance (floor (/ (distance item2) (- 1 probability)))
+    :call-probability (ceiling (* (- 1 probability) (call-probability item2)))))
+
+(defmethod item-meet (probability (item1 pool-item) (item2 null))
+  (make-instance 'pool-item
+    :lexical-location (lexical-location item2)
+    :distance (floor (/ (distance item1) probability))
+    :call-probability (ceiling (* probability (call-probability item1)))))
+
+(defmethod item-meet (probability (item1 pool-item) (item2 pool-item))
+  (make-instance 'pool-item
+    :lexical-location (lexical-location item1)
+    :distance
+    (floor (/ (+ (/ probability (distance item1))
+                 (/ (- 1 probability) (distance item2)))))
+    :call-probability
+    (ceiling (+ (* probability (call-probability item1))
+                (* (- 1 probability) (call-probability item2))))))
+
 ;;; For now a pool is an alist where the keys are lexical locations
 ;;; and the values are non-negative integers indicating estimated
 ;;; distance to use.
