@@ -54,7 +54,8 @@
 
 ;;; Add a variable associated with an estimated distance of use of 0.
 (defun add-variable (pool variable)
-  (acons variable 0 (remove-variable pool variable)))
+  (cons (make-pool-item variable 0)
+        (remove-variable pool variable)))
 
 ;;; This is the <= operation from Kildall's paper.
 (defun pool<= (pool1 pool2)
