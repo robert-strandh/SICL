@@ -33,6 +33,13 @@
 ;;; and the values are non-negative integers indicating estimated
 ;;; distance to use.
 
+;;; Remove once we switch to new representation.
+(defmethod lexical-location ((item cons))
+  (car item))
+
+(defmethod distance ((item cons))
+  (cdr item))
+
 (defun make-pool ()
   '())
 
