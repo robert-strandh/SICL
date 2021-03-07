@@ -56,8 +56,10 @@
   (loop for (variable . estimated-distance-to-use) in pool1
         for entry2 = (find variable pool2 :test #'eq :key #'lexical-location)
         always (and (not (null entry2))
-                    (eq (car entry2) variable)
-                    (<= (cdr entry2) estimated-distance-to-use))))
+                    (eq (lexical-location entry2)
+                        variable)
+                    (<= (distance entry2)
+                        estimated-distance-to-use))))
 
 (defun pool-meet (probability pool1 pool2)
   (let ((result '()))
