@@ -54,7 +54,7 @@
 ;;; This is the <= operation from Kildall's paper.
 (defun pool<= (pool1 pool2)
   (loop for (variable . estimated-distance-to-use) in pool1
-        for entry = (assoc variable pool2 :test #'eq)
+        for entry = (find variable pool2 :test #'eq :key #'lexical-location)
         always (and (not (null entry))
                     (eq (car entry) variable)
                     (<= (cdr entry) estimated-distance-to-use))))
