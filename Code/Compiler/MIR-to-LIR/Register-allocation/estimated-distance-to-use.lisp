@@ -1,5 +1,18 @@
 (cl:in-package #:sicl-register-allocation)
 
+
+;;; During computation of estimated distance to use, these two
+;;; variables will each hold a hash table mapping instructions to
+;;; pools.
+(defvar *input-pools*)
+(defvar *output-pools*)
+
+(defun input-pool (instruction)
+  (gethash instruction *input-pools*))
+
+(defun output-pool (instruction)
+  (gethash instruction *output-pools*))
+
 (defun initialize (work-list input-pool)
   (loop until (emptyp work-list)
         do (let ((instruction (pop-item work-list)))
