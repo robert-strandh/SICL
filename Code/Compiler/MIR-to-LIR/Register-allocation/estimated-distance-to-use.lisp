@@ -29,27 +29,27 @@
                               (add-variable
                                (input-pool instruction) input))))))
 
-(defgeneric compute-new-output-pool (instruction input-pool back-arcs))
+(defgeneric compute-new-output-pool (instruction back-arcs))
 
-(defmethod compute-new-output-pool (instruction input-pool back-arcs)
+(defmethod compute-new-output-pool (instruction back-arcs)
   (let ((successors (cleavir-ir:successors instruction)))
     (ecase (length successors)
-      (1 (gethash (first successors) input-pool))
+      (1 (input-pool (first successors)))
       (2 (destructuring-bind (first second) successors
            (pool-meet (if (gethash first back-arcs)
                           (if (gethash second back-arcs) 1/2 9/10)
                           (if (gethash second back-arcs) 1/10 1/2))
-                      (gethash first input-pool)
-                      (gethash second input-pool)))))))
+                      (input-pool first)
+                      (input-pool second)))))))
 
 (defmethod compute-new-output-pool
-    ((instruction cleavir-ir:catch-instruction) input-pool back-arcs)
-  (gethash (first (cleavir-ir:successors instruction)) input-pool))
+    ((instruction cleavir-ir:catch-instruction) back-arcs)
+  (input-pool (first (cleavir-ir:successors instruction))))
 
-(defgeneric compute-new-input-pool (instruction output-pool))
+(defgeneric compute-new-input-pool (instruction))
 
-(defmethod compute-new-input-pool (instruction output-pool)
-  (let ((result (gethash instruction output-pool)))
+(defmethod compute-new-input-pool (instruction)
+  (let ((result (output-pool instruction)))
     (loop for output in (cleavir-ir:outputs instruction)
           do (setf result (remove-variable result output)))
     (setf result (increment-all-distances result))
@@ -65,19 +65,17 @@
                                  (remove entry result :test #'eq))))))
     result))
 
-(defgeneric handle-instruction
-    (instruction input-pool output-pool back-arcs))
+(defgeneric handle-instruction (instruction back-arcs))
 
-(defmethod handle-instruction
-    (instruction input-pool output-pool back-arcs)
+(defmethod handle-instruction (instruction back-arcs)
   (let ((new-output-pool
-          (compute-new-output-pool instruction input-pool back-arcs)))
+          (compute-new-output-pool instruction back-arcs)))
     (if (pool<= new-output-pool (output-pool instruction))
         '()
         (progn
           (setf (output-pool instruction) new-output-pool)
           (let ((new-input-pool
-                  (compute-new-input-pool instruction output-pool)))
+                  (compute-new-input-pool instruction)))
             (if (pool<= new-input-pool (input-pool instruction))
                 '()
                 (progn
@@ -105,8 +103,6 @@
                     (additional-instructions
                       (handle-instruction
                        instruction-to-process
-                       *input-pools*
-                       *output-pools*
                        back-arcs)))
                (loop for instruction in additional-instructions
                      do (push-item work-list instruction))))
