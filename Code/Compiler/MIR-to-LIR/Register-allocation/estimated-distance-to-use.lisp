@@ -72,16 +72,16 @@
     (instruction input-pool output-pool back-arcs)
   (let ((new-output-pool
           (compute-new-output-pool instruction input-pool back-arcs)))
-    (if (pool<= new-output-pool (gethash instruction output-pool))
+    (if (pool<= new-output-pool (output-pool instruction))
         '()
         (progn
-          (setf (gethash instruction output-pool) new-output-pool)
+          (setf (output-pool instruction) new-output-pool)
           (let ((new-input-pool
                   (compute-new-input-pool instruction output-pool)))
-            (if (pool<= new-input-pool (gethash instruction input-pool))
+            (if (pool<= new-input-pool (input-pool instruction))
                 '()
                 (progn
-                  (setf (gethash instruction input-pool) new-input-pool)
+                  (setf (input-pool instruction) new-input-pool)
                   (cleavir-ir:predecessors instruction))))))))
 
 ;;; Compute estimated distance to use for a single function, defined
