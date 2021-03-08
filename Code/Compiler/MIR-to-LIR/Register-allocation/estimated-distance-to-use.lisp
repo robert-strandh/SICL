@@ -19,15 +19,15 @@
 (defun (setf output-pool) (output-pool instruction)
   (setf (gethash instruction *output-pools*) output-pool))
 
-(defun initialize (work-list input-pool)
+(defun initialize (work-list)
   (loop until (emptyp work-list)
         do (let ((instruction (pop-item work-list)))
-             (setf (gethash instruction input-pool) (make-pool))
+             (setf (input-pool instruction) (make-pool))
              (loop for input in (cleavir-ir:inputs instruction)
                    when (typep input 'cleavir-ir:lexical-location)
-                     do (setf (gethash instruction input-pool)
+                     do (setf (input-pool instruction)
                               (add-variable
-                               (gethash instruction input-pool) input))))))
+                               (input-pool instruction) input))))))
 
 (defgeneric compute-new-output-pool (instruction input-pool back-arcs))
 
@@ -94,7 +94,7 @@
     (cleavir-ir:map-local-instructions
      (lambda (instruction) (push-item work-list instruction))
      enter-instruction)
-    (initialize work-list *input-pools*)
+    (initialize work-list)
     (cleavir-ir:map-local-instructions
      (lambda (instruction)
        (unless (null (cleavir-ir:successors instruction))
