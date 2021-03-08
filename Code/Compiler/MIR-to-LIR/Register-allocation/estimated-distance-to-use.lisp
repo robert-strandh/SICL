@@ -36,7 +36,14 @@
     (setf result (increment-all-distances result))
     (loop for input in (cleavir-ir:inputs instruction)
           when (typep input 'cleavir-ir:lexical-location)
-            do (setf result (add-variable result input)))
+            do (let* ((entry (find input result
+                                   :test #'eq :key #'lexical-location))
+                      (p (if (null entry) 0 (call-probability entry))))
+                 (setf result
+                       (cons (make-pool-item input 0 p)
+                             (if (null entry)
+                                 result
+                                 (remove entry result :test #'eq))))))
     result))
 
 (defgeneric handle-instruction
