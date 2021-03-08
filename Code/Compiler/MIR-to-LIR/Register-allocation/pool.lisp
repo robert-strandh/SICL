@@ -54,7 +54,8 @@
         for entry2 = (find (lexical-location entry1)  pool2
                            :test #'eq :key #'lexical-location)
         always (and (not (null entry2))
-                    (<= (distance entry2) (distance entry1)))))
+                    (<= (distance entry2) (distance entry1))
+                    (<= (call-probability entry1) (call-probability entry2)))))
 
 (defun pool-meet (probability pool1 pool2)
   (let ((result '()))
