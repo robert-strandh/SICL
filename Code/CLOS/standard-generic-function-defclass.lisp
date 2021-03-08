@@ -12,6 +12,10 @@
 ;;; http://metamodular.com/CLOS-MOP/generic-function-method-class.html
 (defgeneric generic-function-method-class (generic-function))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-method-combination.html
+(defgeneric generic-function-method-combination (generic-function))
+
 (defclass standard-generic-function (generic-function)
   ((%argument-precedence-order
     :initarg :argument-precedence-order
