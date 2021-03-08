@@ -10,8 +10,14 @@
 (defun input-pool (instruction)
   (gethash instruction *input-pools*))
 
+(defun (setf input-pool) (input-pool instruction)
+  (setf (gethash instruction *input-pools*) input-pool))
+
 (defun output-pool (instruction)
   (gethash instruction *output-pools*))
+
+(defun (setf output-pool) (output-pool instruction)
+  (setf (gethash instruction *output-pools*) output-pool))
 
 (defun initialize (work-list input-pool)
   (loop until (emptyp work-list)
