@@ -21,9 +21,5 @@
    ;; The expansion of DEFMETHOD refers to MAKE-METHOD-LAMBDA, so we
    ;; include the definition of the generic function here.
    (:file "make-method-lambda-defgenerics")
-   ;; The expansion of DEFMETHOD refers to CLASS-PROTOTYPE to compute
-   ;; the argument to MAKE-METHOD-LAMBDA, so we include the definition
-   ;; of the generic function so as to avoid warnings.
-   (:file "generic-function-method-class-defgeneric")
    (:file "defmethod-support")))
 
