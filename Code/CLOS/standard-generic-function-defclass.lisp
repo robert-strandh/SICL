@@ -27,6 +27,14 @@
 
 (defgeneric (setf initial-methods) (initial-methods generic-function))
 
+;;; This function returns the call history of the generic function.
+;;; FIXME: say more.
+(defgeneric call-history (generic-function))
+
+;;; This function sets the call history of the generic function.
+;;; FIXME: say more.
+(defgeneric (setf call-history) (new-call-history generic-function))
+
 (defclass standard-generic-function (generic-function)
   ((%argument-precedence-order
     :initarg :argument-precedence-order
