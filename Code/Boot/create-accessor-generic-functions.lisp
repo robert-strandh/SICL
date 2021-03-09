@@ -37,8 +37,6 @@
     (ld "CLOS/setf-class-prototype-defgeneric.lisp")
     (ld "CLOS/dependents-defgeneric.lisp")
     (ld "CLOS/setf-dependents-defgeneric.lisp")
-    (ld "CLOS/specializer-profile-defgeneric.lisp")
-    (ld "CLOS/setf-specializer-profile-defgeneric.lisp")
     (ld "CLOS/accessor-method-slot-definition-defgeneric.lisp")
     (ld "CLOS/setf-accessor-method-slot-definition-defgeneric.lisp")
     (ld "CLOS/slot-definition-name-defgeneric.lisp")
