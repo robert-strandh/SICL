@@ -35,6 +35,14 @@
 ;;; FIXME: say more.
 (defgeneric (setf call-history) (new-call-history generic-function))
 
+;;; This function returns the specializer profile of the generic function.
+;;; FIXME: say more.
+(defgeneric specializer-profile (generic-function))
+
+;;; This function sets the specializer profile of the generic function.
+;;; FIXME: say more.
+(defgeneric (setf specializer-profile) (new-specializer-profile generic-function))
+
 (defclass standard-generic-function (generic-function)
   ((%argument-precedence-order
     :initarg :argument-precedence-order
