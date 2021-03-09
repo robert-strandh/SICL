@@ -23,6 +23,10 @@
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf generic-function-methods) (new-methods generic-function))
 
+(defgeneric initial-methods (generic-function))
+
+(defgeneric (setf initial-methods) (initial-methods generic-function))
+
 (defclass standard-generic-function (generic-function)
   ((%argument-precedence-order
     :initarg :argument-precedence-order
