@@ -46,6 +46,18 @@
     ((instruction cleavir-ir:catch-instruction) back-arcs)
   (input-pool (first (cleavir-ir:successors instruction))))
 
+(defun call-instruction-p (instruction)
+  (typep instruction
+         '(or
+           cleavir-ir:funcall-instruction
+           cleavir-ir:named-call-instruction
+           cleavir-ir:catch-instruction
+           cleavir-ir:bind-instruction
+           cleavir-ir:unwind-instruction
+           cleavir-ir:initialize-values-instruction
+           cleavir-ir:enclose-instruction
+           cleavir-ir:multiple-value-call-instruction)))
+
 (defgeneric compute-new-input-pool (instruction))
 
 (defmethod compute-new-input-pool (instruction)
