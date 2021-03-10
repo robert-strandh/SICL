@@ -5,6 +5,14 @@
    (%distance :initarg :distance :reader distance)
    (%call-probability :initarg :call-probability :reader call-probability)))
 
+(defmethod print-object ((object pool-item) stream)
+  (print-unreadable-object (object stream)
+    (format stream
+            "location: ~s distance: ~s probability: ~s"
+            (lexical-location object)
+            (distance object)
+            (call-probability object))))
+
 (defgeneric item-meet (probability item1 item2))
 
 (defmethod item-meet (probability (item1 null) (item2 pool-item))
