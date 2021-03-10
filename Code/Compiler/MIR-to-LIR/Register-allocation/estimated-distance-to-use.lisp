@@ -58,23 +58,57 @@
            cleavir-ir:enclose-instruction
            cleavir-ir:multiple-value-call-instruction)))
 
+;;; The derived input pool is a prototype input pool that is
+;;; determined from the output pool without taking into account
+;;; whether a lexical location exists among the inputs of the
+;;; instruction.  So it is the output pool, minus the entries
+;;; corresponding to lexical locations in the output of the
+;;; instruction, and with each distance incremented.  If the
+;;; instruction is a call instruction, then the call probability of an
+;;; entry in the derived input pool is 10.  Otherwise, it is the
+;;; preserved probability of the entry in the output pool it is
+;;; derived from.
+(defun compute-derived-input-pool (instruction)
+  (let ((call-instruction-p (call-instruction-p instruction))
+        (outputs (cleavir-ir:outputs instruction)))
+    (loop for entry in (output-pool instruction)
+          for lexical-location = (lexical-location entry)
+          for distance = (distance entry)
+          for call-probability = (call-probability entry)
+          unless (member lexical-location outputs :test #'eq)
+            collect (make-instance 'pool-item
+                      :lexical-location lexical-location
+                      :distance (1+ distance)
+                      :call-probability
+                      (if call-instruction-p 10 call-probability)))))
+
+;;; Return a list of the inputs of INSTRUCTION that are
+;;; lexical-locations.
+(defun lexical-location-inputs (instruction)
+  (loop for input in (cleavir-ir:inputs instruction)
+        when (typep input 'cleavir-ir:lexical-location)
+          collect input))
+
 (defgeneric compute-new-input-pool (instruction))
 
+;;; We first compute the derived input pool.  Then, for every lexical
+;;; input, if it appears in the derived input pool, we just set the
+;;; distance of that entry to 0.  Otherwise, we add a new entry with
+;;; distance 0, and probability 0.
 (defmethod compute-new-input-pool (instruction)
-  (let ((result (output-pool instruction)))
-    (loop for output in (cleavir-ir:outputs instruction)
-          do (setf result (remove-variable result output)))
-    (setf result (increment-all-distances result))
-    (loop for input in (cleavir-ir:inputs instruction)
-          when (typep input 'cleavir-ir:lexical-location)
-            do (let* ((entry (find input result
-                                   :test #'eq :key #'lexical-location))
-                      (p (if (null entry) 0 (call-probability entry))))
-                 (setf result
-                       (cons (make-pool-item input 0 p)
-                             (if (null entry)
-                                 result
-                                 (remove entry result :test #'eq))))))
+  (let* ((derived (compute-derived-input-pool instruction))
+         (result derived)
+         (inputs (lexical-location-inputs instruction)))
+    (loop for input in inputs
+          for entry = (find input derived
+                            :test #'eq :key #'lexical-location)
+          do (if (null entry)
+                 (push (make-instance 'pool-item
+                         :lexical-location input
+                         :distance 0
+                         :call-probability 0)
+                       result)
+                 (reinitialize-instance entry :distance 0)))
     result))
 
 (defgeneric handle-instruction (instruction back-arcs))
