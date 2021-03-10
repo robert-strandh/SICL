@@ -8,6 +8,10 @@
 ;;; http://metamodular.com/CLOS-MOP/slot-definition-allocation.html
 (defgeneric slot-definition-allocation (slot-definition))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-type.html
+(defgeneric slot-definition-type (slot-definition))
+
 (defclass slot-definition (metaobject)
   ((%name 
     :initarg :name
