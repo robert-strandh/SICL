@@ -4,6 +4,10 @@
 ;;; http://metamodular.com/CLOS-MOP/slot-definition-name.html
 (defgeneric slot-definition-name (slot-definition))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-allocation.html
+(defgeneric slot-definition-allocation (slot-definition))
+
 (defclass slot-definition (metaobject)
   ((%name 
     :initarg :name
