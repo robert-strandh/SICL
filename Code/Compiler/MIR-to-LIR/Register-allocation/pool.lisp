@@ -23,16 +23,20 @@
 
 (defmethod item-meet (probability (item1 pool-item) (item2 null))
   (make-instance 'pool-item
-    :lexical-location (lexical-location item2)
+    :lexical-location (lexical-location item1)
     :distance (floor (/ (distance item1) probability))
     :call-probability (ceiling (* probability (call-probability item1)))))
+
+(defun combine-distances (probability distance1 distance2)
+  (if (or (zerop distance1) (zerop distance2))
+      0
+      (floor (/ (+ (/ probability distance1)
+                   (/ (- 1 probability) distance2))))))
 
 (defmethod item-meet (probability (item1 pool-item) (item2 pool-item))
   (make-instance 'pool-item
     :lexical-location (lexical-location item1)
-    :distance
-    (floor (/ (+ (/ probability (distance item1))
-                 (/ (- 1 probability) (distance item2)))))
+    :distance (combine-distances probability (distance item1) (distance item1))
     :call-probability
     (ceiling (+ (* probability (call-probability item1))
                 (* (- 1 probability) (call-probability item2))))))
@@ -70,35 +74,16 @@
     ;; First handle variables that are present in pool1.
     (loop for entry1 in pool1
           for variable = (lexical-location entry1)
-          for edu = (distance entry1)
           for entry2 = (find variable pool2
                              :test #'eq :key #'lexical-location)
-          do (cond ((null entry2)
-                    ;; The variable is present only in pool1 so the
-                    ;; meet must contain its entry in pool1.
-                    (push entry1 result))
-                   ((or (zerop edu)
-                        (zerop (distance entry2)))
-                    ;; The variable is present in both pools, and one
-                    ;; of the estimated distance to use is 0.  Then
-                    ;; the resulting entry must also have an estimated
-                    ;; distance to use of 0.
-                    (push (make-pool-item variable 0)
-                          result))
-                   (t
-                    (push (make-pool-item
-                           variable
-                           (floor (/ (+ (/ probability edu)
-                                        (/ (- 1 probability)
-                                           (distance entry2))))))
-                          result))))
+          do (push (item-meet probability entry1 entry2) result))
     ;; Now handle the variables that are present in pool2.  Except
     ;; that if a variable is also present in pool1, it has already
     ;; been handled.
-    (loop for entry in pool2
-          when (null (find (lexical-location entry) pool1
+    (loop for entry2 in pool2
+          when (null (find (lexical-location entry2) pool1
                            :test #'eq :key #'lexical-location))
-            do (push entry result))
+            do (push (item-meet probability nil entry2) result))
     result))
 
 (defun increment-all-distances (pool)
