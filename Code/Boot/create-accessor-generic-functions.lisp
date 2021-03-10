@@ -39,7 +39,6 @@
     (ld "CLOS/setf-dependents-defgeneric.lisp")
     (ld "CLOS/accessor-method-slot-definition-defgeneric.lisp")
     (ld "CLOS/setf-accessor-method-slot-definition-defgeneric.lisp")
-    (ld "CLOS/slot-definition-name-defgeneric.lisp")
     (ld "CLOS/slot-definition-allocation-defgeneric.lisp")
     (ld "CLOS/slot-definition-type-defgeneric.lisp")
     (ld "CLOS/slot-definition-initargs-defgeneric.lisp")
