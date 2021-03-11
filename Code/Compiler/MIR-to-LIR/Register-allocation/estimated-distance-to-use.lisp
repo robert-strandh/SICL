@@ -111,9 +111,11 @@
                  (reinitialize-instance entry :distance 0)))
     result))
 
-(defgeneric handle-instruction (instruction back-arcs))
+(defgeneric compute-estimated-distance-to-use-for-instruction
+    (instruction back-arcs))
 
-(defmethod handle-instruction (instruction back-arcs)
+(defmethod compute-estimated-distance-to-use-for-instruction
+    (instruction back-arcs)
   (let ((new-output-pool
           (compute-new-output-pool instruction back-arcs)))
     (if (pool<= new-output-pool (output-pool instruction))
@@ -147,7 +149,7 @@
     (loop until (emptyp work-list)
           do (let* ((instruction-to-process (pop-item work-list))
                     (additional-instructions
-                      (handle-instruction
+                      (compute-estimated-distance-to-use-for-instruction
                        instruction-to-process
                        back-arcs)))
                (loop for instruction in additional-instructions
