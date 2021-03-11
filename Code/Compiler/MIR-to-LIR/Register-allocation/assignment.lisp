@@ -14,7 +14,8 @@
     :accessor stack-location)))
 
 (defclass assignment ()
-  ((%locations
+  ((%stack-map :initarg :stack-map :reader stack-map)
+   (%locations
     :initform '()
     :initarg :locations
     :accessor locations)))
