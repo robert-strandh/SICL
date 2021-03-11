@@ -8,10 +8,10 @@
     :initform nil
     :initarg :register
     :accessor register)
-   (%stack-location
+   (%stack-slot
     :initform nil
-    :initarg stack-location
-    :accessor stack-location)))
+    :initarg stack-slot
+    :accessor stack-slot)))
 
 (defclass assignment ()
   ((%stack-map :initarg :stack-map :reader stack-map)
