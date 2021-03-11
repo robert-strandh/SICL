@@ -19,3 +19,19 @@
     :initform '()
     :initarg :locations
     :accessor locations)))
+
+(defvar *input-assignments*)
+
+(defun input-assignment (instruction)
+  (gethash instruction *input-assignments*))
+
+(defun (setf input-assignment) (assignment instruction)
+  (setf (gethash instruction *input-assignments*) assignment))
+
+(defvar *output-assignments*)
+
+(defun output-assignment (instruction)
+  (gethash instruction *output-assignments*))
+
+(defun (setf output-assignment) (assignment instruction)
+  (setf (gethash instruction *output-assignments*) assignment))
