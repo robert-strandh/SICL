@@ -8,4 +8,5 @@
    (:file "find-back-arcs")
    (:file "pool")
    (:file "work-list")
-   (:file "estimated-distance-to-use")))
+   (:file "estimated-distance-to-use")
+   (:file "registers")))
