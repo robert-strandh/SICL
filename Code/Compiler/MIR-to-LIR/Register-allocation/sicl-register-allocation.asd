@@ -9,4 +9,5 @@
    (:file "pool")
    (:file "work-list")
    (:file "estimated-distance-to-use")
-   (:file "registers")))
+   (:file "registers")
+   (:file "assignment")))
