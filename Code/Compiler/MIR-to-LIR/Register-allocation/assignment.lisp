@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-register-allocation)
 
-(defclass locations ()
+(defclass location-assignment ()
   ((%lexical-location
     :initarg :lexical-location
     :reader lexical-location)
@@ -13,12 +13,12 @@
     :initarg stack-slot
     :accessor stack-slot)))
 
-(defclass assignment ()
+(defclass instruction-assignment ()
   ((%stack-map :initarg :stack-map :reader stack-map)
-   (%locations
+   (%location-assignments
     :initform '()
-    :initarg :locations
-    :accessor locations)))
+    :initarg :location-assignments
+    :accessor location-assignments)))
 
 (defvar *input-assignments*)
 
