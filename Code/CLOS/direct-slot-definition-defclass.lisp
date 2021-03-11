@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-clos)
 
-;;; The READERS and WRITERS slots only exist in direct slot
+;;; The READERS and WRITERS slots exist only in direct slot
 ;;; definitions, because they are not combined the way other slot
-;;; properties are when an effective slot definition is computer.
+;;; properties are when an effective slot definition is computed.
 (defclass direct-slot-definition (slot-definition)
   ((%readers 
     :initform '()
