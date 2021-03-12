@@ -40,7 +40,6 @@
     (ld "CLOS/accessor-method-slot-definition-defgeneric.lisp")
     (ld "CLOS/setf-accessor-method-slot-definition-defgeneric.lisp")
     (ld "CLOS/slot-definition-storage-defgeneric.lisp")
-    (ld "CLOS/slot-definition-writers-defgeneric.lisp")
     (ld "CLOS/slot-definition-location-defgeneric.lisp")
     (ld "CLOS/setf-slot-definition-location-defgeneric.lisp")
     (ld "CLOS/variant-signature-defgeneric.lisp")
