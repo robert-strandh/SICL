@@ -55,3 +55,34 @@
 ;;; with SPILL, the UNSPILL is made explicit with an
 ;;; ASSIGNMENT-INSTRUCTION with the analogous input and output
 ;;; arrangements.
+
+(defun unspill (predecessor instruction stack-slot register)
+  (let* ((arrangement (output-arrangement predecessor))
+         (attributions (attributions arrangement))
+         (selected-attributions
+           (remove stack-slot attributions :test-not #'eql :key #'stack-slot))
+         (remaining-attributions
+           (set-difference attributions selected-attributions :test #'eq))
+         (lexical-location (lexical-location (first selected-attributions)))
+         (stack-map (stack-map arrangement))
+         (length (length stack-map))
+         (new-stack-map (make-array length :element-type 'bit)))
+    (replace new-stack-map stack-map)
+    (let* ((new-attributions
+             (loop for selected-attribution in selected-attributions
+                   collect (make-instance 'attribution
+                             :lexical-location lexical-location
+                             :register register
+                             :stack-slot stack-slot)))
+           (new-arrangement (make-instance 'arrangement
+                              :stack-map new-stack-map
+                              :attributions
+                              (append new-attributions remaining-attributions)))
+           (new-instruction (make-instance 'cleavir-ir:assignment-instruction
+                              :input lexical-location
+                              :output lexical-location)))
+      (cleavir-ir:insert-instruction-between
+       new-instruction predecessor instruction)
+      (setf (input-arrangement new-instruction) arrangement
+            (output-arrangement new-instruction) new-arrangement)
+      new-instruction)))
