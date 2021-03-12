@@ -13,3 +13,8 @@
 ;;; output arrangement of I is similar to the input arrangement, but
 ;;; with the attributions containing R having a valid stack slot
 ;;; number in them.
+
+;;; By CACHE, we mean to copy a particular stack slot to a register.
+;;; As with the SPILL, several attributions may be involved.  As with
+;;; SPILL, the CACHE is made explicit with an ASSIGNMENT-INSTRUCTION
+;;; with the analogous input and output arrangements.
