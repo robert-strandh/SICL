@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-register-allocation)
 
-(defclass location-assignment ()
+(defclass attribution ()
   ((%lexical-location
     :initarg :lexical-location
     :reader lexical-location)
@@ -13,25 +13,25 @@
     :initarg stack-slot
     :accessor stack-slot)))
 
-(defclass instruction-assignment ()
+(defclass arrangement ()
   ((%stack-map :initarg :stack-map :reader stack-map)
-   (%location-assignments
+   (%attributions
     :initform '()
-    :initarg :location-assignments
-    :accessor location-assignments)))
+    :initarg :attributions
+    :accessor attributions)))
 
-(defvar *input-assignments*)
+(defvar *input-arrangements*)
 
-(defun input-assignment (instruction)
-  (gethash instruction *input-assignments*))
+(defun input-arrangement (instruction)
+  (gethash instruction *input-arrangements*))
 
-(defun (setf input-assignment) (assignment instruction)
-  (setf (gethash instruction *input-assignments*) assignment))
+(defun (setf input-arrangement) (arrangement instruction)
+  (setf (gethash instruction *input-arrangements*) arrangement))
 
-(defvar *output-assignments*)
+(defvar *output-arrangements*)
 
-(defun output-assignment (instruction)
-  (gethash instruction *output-assignments*))
+(defun output-arrangement (instruction)
+  (gethash instruction *output-arrangements*))
 
-(defun (setf output-assignment) (assignment instruction)
-  (setf (gethash instruction *output-assignments*) assignment))
+(defun (setf output-arrangement) (arrangement instruction)
+  (setf (gethash instruction *output-arrangements*) arrangement))
