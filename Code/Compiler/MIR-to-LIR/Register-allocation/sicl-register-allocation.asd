@@ -10,4 +10,5 @@
    (:file "work-list")
    (:file "estimated-distance-to-use")
    (:file "registers")
-   (:file "assignment")))
+   (:file "assignment")
+   (:file "spill-cache")))
