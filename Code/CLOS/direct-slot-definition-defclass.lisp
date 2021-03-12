@@ -8,6 +8,10 @@
 ;;; http://metamodular.com/CLOS-MOP/slot-definition-readers.html
 (defgeneric slot-definition-readers (slot-definition))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-writers.html
+(defgeneric slot-definition-writers (slot-definition))
+
 (defclass direct-slot-definition (slot-definition)
   ((%readers 
     :initform '()
