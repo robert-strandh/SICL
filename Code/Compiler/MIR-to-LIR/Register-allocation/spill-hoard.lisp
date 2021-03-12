@@ -14,8 +14,44 @@
 ;;; with the attributions containing R having a valid stack slot
 ;;; number in them.
 
-;;; By HOARD, we mean to copy a particular stack slot to a register.
+(defun spill (predecessor instruction register)
+  (let* ((arrangement (output-arrangement predecessor))
+         (attributions (attributions arrangement))
+         (selected-attributions
+           (remove register attributions :test-not #'eq :key #'register))
+         (remaining-attributions
+           (set-difference attributions selected-attributions :test #'eq))
+         (lexical-location (lexical-location (first selected-attributions)))
+         (stack-map (stack-map arrangement))
+         (length (length stack-map))
+         (available-stack-slot (position 0 stack-map))
+         (new-length (+ length (if (null available-stack-slot) 1 0)))
+         (new-stack-map (make-array new-length :element-type 'bit)))
+    (replace new-stack-map stack-map)
+    (when (null available-stack-slot)
+      (setf available-stack-slot length))
+    (setf (bit new-stack-map available-stack-slot) 1)
+    (let* ((new-attributions
+             (loop for selected-attribution in selected-attributions
+                   collect (make-instance 'attribution
+                             :lexical-location lexical-location
+                             :register register
+                             :stack-slot available-stack-slot)))
+           (new-arrangement (make-instance 'arrangement
+                              :stack-map new-stack-map
+                              :attributions
+                              (append new-attributions remaining-attributions)))
+           (new-instruction (make-instance 'cleavir-ir:assignment-instruction
+                              :input lexical-location
+                              :output lexical-location)))
+      (cleavir-ir:insert-instruction-between
+       new-instruction predecessor instruction)
+      (setf (input-arrangement new-instruction) arrangement
+            (output-arrangement new-instruction) new-arrangement)
+      new-instruction)))
+
+;;; By UNSPILL, we mean to copy a particular stack slot to a register.
 ;;; As with the SPILL, several attributions may be involved.  And as
-;;; with SPILL, the HOARD is made explicit with an
+;;; with SPILL, the UNSPILL is made explicit with an
 ;;; ASSIGNMENT-INSTRUCTION with the analogous input and output
 ;;; arrangements.
