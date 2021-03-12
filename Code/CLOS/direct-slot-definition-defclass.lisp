@@ -3,6 +3,11 @@
 ;;; The READERS and WRITERS slots exist only in direct slot
 ;;; definitions, because they are not combined the way other slot
 ;;; properties are when an effective slot definition is computed.
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-readers.html
+(defgeneric slot-definition-readers (slot-definition))
+
 (defclass direct-slot-definition (slot-definition)
   ((%readers 
     :initform '()
