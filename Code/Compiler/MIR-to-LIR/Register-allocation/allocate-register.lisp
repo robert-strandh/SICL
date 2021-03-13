@@ -14,3 +14,7 @@
         for attribution = (find candidate (attributions arrangement)
                                 :test #'eq :key #'register)
         collect (lexical-location attribution)))
+
+(defun extract-pool-items (pool locations)
+  (loop for location in locations
+        collect (find location pool :test #'eq :key #'lexical-location)))
