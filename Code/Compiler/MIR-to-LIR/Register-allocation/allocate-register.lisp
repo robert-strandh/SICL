@@ -8,3 +8,9 @@
                        :test #'eq :key #'register)
           return candiate
         finally (return nil)))
+
+(defun extract-locations (arrangement candidates)
+  (loop for candidate in candidates
+        for attribution = (find candidate (attributions arrangement)
+                                :test #'eq :key #'register)
+        collect (lexical-location attribution)))
