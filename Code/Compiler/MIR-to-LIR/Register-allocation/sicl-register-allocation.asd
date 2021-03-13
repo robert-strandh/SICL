@@ -11,4 +11,5 @@
    (:file "estimated-distance-to-use")
    (:file "registers")
    (:file "arrangement")
-   (:file "spill-unspill")))
+   (:file "spill-unspill")
+   (:file "allocate-register")))
