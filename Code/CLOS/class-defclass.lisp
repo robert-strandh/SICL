@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-clos)
 
+;;; This function returns the unique number of the class, assigned
+;;; when the class is initialized or reinitialized.
+(defgeneric unique-number (class))
+
 (defclass class (specializer)
   ((%unique-number 
     ;; FIXME: the unique numbers should be assigned during class
