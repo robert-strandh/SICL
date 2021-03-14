@@ -9,8 +9,6 @@
 (defun create-accessor-defgenerics (ea)
   (flet ((ld (path)
            (load-source-file path ea)))
-    (ld "CLOS/specializer-direct-methods-defgeneric.lisp")
-    (ld "CLOS/setf-specializer-direct-methods-defgeneric.lisp")
     (ld "CLOS/unique-number-defgeneric.lisp")
     (ld "CLOS/class-name-defgeneric.lisp")
     (ld "CLOS/class-direct-subclasses-defgeneric.lisp")
