@@ -10,6 +10,15 @@
 (defgeneric (setf specializer-direct-generic-functions)
     (new-generic-functions specializer))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/specializer-direct-methods.html
+(defgeneric specializer-direct-methods (specializer))
+
+;;; This function is called by ADD-DIRECT-METHOD and
+;;; REMOVE-DIRECT-METHOD so change the list of methods having
+;;; SPECIALIZER as a specializer.
+(defgeneric (setf specializer-direct-methods) (new-methods specializer))
+
 (defclass specializer (metaobject)
   ((%direct-generic-functions
     :initform '()
