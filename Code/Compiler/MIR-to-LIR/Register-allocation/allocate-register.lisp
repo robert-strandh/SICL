@@ -35,3 +35,13 @@
                   (if (null (stack-slot attribution))
                       (spill predecessor instruction register)
                       predecessor))))))
+
+;;; Return the register that is attributed to LEXICAL-LOCATION in
+;;; ARRANGEMENT, or NIL if no register is atributed to
+;;; LEXICAL-LOCATION.  We know that LEXICAL-LOCATION is live, so we
+;;; know that it has an attribution in ASSIGNEMENT.  We just don't
+;;; know whether the REGISTER of that attribution is a register or
+;;; NIL.
+(defun attributed-register (lexical-location arrangement)
+  (register (find lexical-location (attributions arrangement)
+                  :key #'lexical-location :test #'eq)))
