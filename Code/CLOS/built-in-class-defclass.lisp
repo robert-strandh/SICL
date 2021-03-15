@@ -9,10 +9,7 @@
 ;;; return the empty list for a built-in class.
 
 (defclass built-in-class (real-class)
-  ((%direct-superclasses
-    :initarg :direct-superclasses
-    :reader class-direct-superclasses)
-   (%direct-slots
+  ((%direct-slots
     :initform '()
     :reader class-direct-slots)
    (%finalized-p

@@ -15,9 +15,6 @@
   ((%direct-slots
     :initarg :direct-slots
     :reader class-direct-slots)
-   (%direct-superclasses
-    :initarg :direct-superclasses
-    :reader class-direct-superclasses)
    (%finalized-p
     :initform nil
     :accessor class-finalized-p)

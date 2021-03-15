@@ -12,6 +12,9 @@
    (%documentation
     :initform nil
     :accessor documentation)
+   (%direct-superclasses
+    :initarg :direct-superclasses
+    :reader class-direct-superclasses)
    (%precedence-list
     :initform '()
     ;; The AMOP says that CLASS-PRECEDENCE-LIST should signal an error
