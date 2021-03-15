@@ -4,6 +4,10 @@
 ;;; when the class is initialized or reinitialized.
 (defgeneric unique-number (class))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-name.html
+(defgeneric class-name (class))
+
 (defclass class (specializer)
   ((%unique-number 
     ;; FIXME: the unique numbers should be assigned during class
