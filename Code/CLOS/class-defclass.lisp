@@ -17,6 +17,14 @@
 ;;; function.
 (defgeneric (setf class-direct-subclasses) (direct-subclassees class))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-superclasses.html
+;;;
+;;; The slot corresponding to this generic function has different
+;;; slot options in different subclasses of the class CLASS, which
+;;; is why the slot itself is not included here.
+(defgeneric class-direct-superclasses (class))
+
 (defclass class (specializer)
   ((%unique-number 
     ;; FIXME: the unique numbers should be assigned during class
