@@ -8,6 +8,15 @@
 ;;; http://metamodular.com/CLOS-MOP/class-name.html
 (defgeneric class-name (class))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-subclasses.html
+(defgeneric class-direct-subclasses (class))
+
+;;; The functions ADD-DIRECT-SUBCLASS and REMOVE-DIRECT-SUBCLASS are
+;;; used to update the direct subclasses of a class, so they call this
+;;; function.
+(defgeneric (setf class-direct-subclasses) (direct-subclassees class))
+
 (defclass class (specializer)
   ((%unique-number 
     ;; FIXME: the unique numbers should be assigned during class
