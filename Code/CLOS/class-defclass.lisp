@@ -25,6 +25,14 @@
 ;;; is why the slot itself is not included here.
 (defgeneric class-direct-superclasses (class))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-slots.html
+;;;
+;;; The slot corresponding to this generic function has different
+;;; slot options in different subclasses of the class CLASS, which
+;;; is why the slot itself is not included here.
+(defgeneric class-direct-slots (class))
+
 (defclass class (specializer)
   ((%unique-number 
     ;; FIXME: the unique numbers should be assigned during class
