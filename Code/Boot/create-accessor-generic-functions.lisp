@@ -19,7 +19,6 @@
     (ld "CLOS/setf-precedence-list-defgeneric.lisp")
     (ld "CLOS/instance-size-defgeneric.lisp")
     (ld "CLOS/setf-instance-size-defgeneric.lisp")
-    (ld "CLOS/class-direct-slots-defgeneric.lisp")
     (ld "CLOS/class-default-initargs-defgeneric.lisp")
     (ld "CLOS/setf-class-default-initargs-defgeneric.lisp")
     (ld "CLOS/class-slots-defgeneric.lisp")
