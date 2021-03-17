@@ -4,6 +4,10 @@
 ;;;
 ;;; Class REAL-CLASS.
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-precedence-list.html
+(defgeneric class-precedence-list (class))
+
 (defclass real-class (class)
   ((%direct-default-initargs
     :initarg :direct-default-initargs
