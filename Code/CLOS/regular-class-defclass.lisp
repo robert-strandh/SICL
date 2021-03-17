@@ -11,6 +11,10 @@
 ;;; define it.  See:
 ;;; http://metamodular.com/CLOS-MOP/restrictions-on-implementations.html
 
+;;; This function is used by the class finalization protocol to set
+;;; the flag in the class that indicates that it is finalized.
+(defgeneric (setf class-finalized-p) (new-value class))
+
 (defclass regular-class (real-class)
   ((%direct-slots
     :initarg :direct-slots
