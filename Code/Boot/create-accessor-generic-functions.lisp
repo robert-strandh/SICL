@@ -11,8 +11,6 @@
            (load-source-file path ea)))
     (ld "CLOS/documentation-defgeneric.lisp")
     (ld "CLOS/setf-documentation-defgeneric.lisp")
-    (ld "CLOS/precedence-list-defgeneric.lisp")
-    (ld "CLOS/setf-precedence-list-defgeneric.lisp")
     (ld "CLOS/instance-size-defgeneric.lisp")
     (ld "CLOS/setf-instance-size-defgeneric.lisp")
     (ld "CLOS/class-default-initargs-defgeneric.lisp")
