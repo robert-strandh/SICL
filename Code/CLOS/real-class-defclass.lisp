@@ -24,6 +24,16 @@
 ;;; the precedence list of the class.
 (defgeneric (setf precedence-list) (precedence-list class))
 
+;;; This function is used by ALLOCATE-INSTANCE and
+;;; ALLOCATE-BUILT-IN-INSTANCE to determine the size of the instance
+;;; to allocate.
+(defgeneric instance-size (class))
+
+;;; This function is used during class finalization, when the
+;;; effective slots are known, and it is therefore also known what
+;;; size the instances of this class should have.
+(defgeneric (setf instance-size) (new-size class))
+
 (defclass real-class (class)
   ((%direct-default-initargs
     :initarg :direct-default-initargs
