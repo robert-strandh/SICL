@@ -40,3 +40,9 @@
            instruction)
           (reinitialize-instance instruction
             :inputs (list temp input2)))))))
+
+(defun preprocess-instructions (enter-instruction)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (preprocess-instruction instruction))
+   enter-instruction))
