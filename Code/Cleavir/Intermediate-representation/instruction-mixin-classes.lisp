@@ -15,6 +15,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Mixin classes for instructions that implement some operation such
+;;; as z <- x op y.
+
+;;; Mixin class for all such instructions.
+(defclass binary-operation-mixin () ())
+
+;;; Mixin class for commutative such instructions.
+(defclass commutative-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Other mixin classes.
 
 ;;; Mixin class for instructions that have side effects so that they
