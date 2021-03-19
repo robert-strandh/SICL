@@ -23,6 +23,7 @@
 (defmethod mir-to-lir (client mir)
   (loop for enter-instruction in (sicl-hir-to-mir:gather-enter-instructions mir)
         for back-arcs = (sicl-register-allocation:find-back-arcs enter-instruction)
-        do (multiple-value-bind (input-pool output-pool)
+        do (sicl-register-allocation:preprocess-instructions enter-instruction)
+           (multiple-value-bind (input-pool output-pool)
                (sicl-register-allocation:compute-estimated-distance-to-use enter-instruction back-arcs)
              (list input-pool output-pool))))
