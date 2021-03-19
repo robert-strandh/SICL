@@ -4,7 +4,11 @@
 ;;;
 ;;; MIR instruction SIGNED-ADD-INSTRUCTION
 
-(defclass signed-add-instruction (instruction multiple-successors-mixin)
+(defclass signed-add-instruction
+    (instruction
+     multiple-successors-mixin
+     binary-operation-mixin
+     commutative-mixin)
   ())
 
 (normalize-arguments
@@ -17,7 +21,10 @@
 ;;;
 ;;; MIR instruction SIGNED-SUB-INSTRUCTION
 
-(defclass signed-sub-instruction (instruction multiple-successors-mixin)
+(defclass signed-sub-instruction
+    (instruction
+     multiple-successors-mixin
+     binary-operation-mixin)
   ())
 
 (normalize-arguments
@@ -56,7 +63,11 @@
 ;;;
 ;;; MIR instruction UNSIGNED-ADD-INSTRUCTION
 
-(defclass unsigned-add-instruction (instruction multiple-successors-mixin)
+(defclass unsigned-add-instruction
+    (instruction
+     multiple-successors-mixin
+     binary-operation-mixin
+     commutative-mixin)
   ())
 
 (normalize-arguments
@@ -69,7 +80,10 @@
 ;;;
 ;;; MIR instruction UNSIGNED-SUB-INSTRUCTION
 
-(defclass unsigned-sub-instruction (instruction multiple-successors-mixin)
+(defclass unsigned-sub-instruction
+    (instruction
+     multiple-successors-mixin
+     binary-operation-mixin)
   ())
 
 (normalize-arguments
