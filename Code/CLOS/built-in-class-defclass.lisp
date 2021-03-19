@@ -14,10 +14,7 @@
     :reader class-direct-slots)
    (%finalized-p
     :initform t
-    :reader class-finalized-p)
-   (%effective-slots
-    :initform '()
-    :reader class-slots)))
+    :reader class-finalized-p)))
 
 ;;; The AMOP says that CLASS-DIRECT-SLOTS should return the empty list
 ;;; for a built-in class.
