@@ -6,7 +6,8 @@
 (defmethod preprocess-instruction (instruction)
   nil)
 
-(defun handle-commutative-instruction (instruction)
+(defmethod preprocess-instruction :before
+    ((instruction cleavir-ir:commutative-mixin))
   (destructuring-bind (input1 input2)
       (cleavir-ir:inputs instruction)
     (when (typep input1 'cleavir-ir:immediate-input)
@@ -18,21 +19,10 @@
       ;; eliminate the case where both inputs are immediate inputs.
       (assert (not (typep input2 'cleavir-ir:immediate-input)))
       (rotatef input1 input2))
-    (let ((output (first (cleavir-ir:outputs instruction))))
-      (cond ((eq input1 output)
-             ;; Nothing to do.  Just leave things as they are.
-             nil)
-            ((eq input2 output)
-             ;; Swap the inputs.
-             (rotatef input1 input2))
-            (t
-             (let ((temp (cleavir-ir:new-temporary)))
-               (cleavir-ir:insert-instruction-before
-                (make-instance 'cleavir-ir:assignment-instruction
-                  :input input1
-                  :output temp)
-                instruction)
-               (setf input1 temp)))))
+    (when (eq (first (cleavir-ir:outputs instruction)) input2)
+      (rotatef input1 input2))
+    ;; Now, we are sure that, if an of the inputs is the same as the
+    ;; output, then the first input is such an input.
     (reinitialize-instance instruction
       :inputs (list input1 input2))))
 
