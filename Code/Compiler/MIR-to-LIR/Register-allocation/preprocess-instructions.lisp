@@ -49,3 +49,7 @@
            instruction)
           (reinitialize-instance instruction
             :inputs (list temp input2)))))))
+
+(defmethod preprocess-instruction
+    ((instruction cleavir-ir:signed-add-instruction))
+  (handle-commutative-instruction instruction))
