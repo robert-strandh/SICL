@@ -3,4 +3,5 @@
 (defpackage #:sicl-register-allocation
   (:use #:common-lisp)
   (:export #:compute-estimated-distance-to-use
+           #:preprocess-instructions
            #:find-back-arcs))
