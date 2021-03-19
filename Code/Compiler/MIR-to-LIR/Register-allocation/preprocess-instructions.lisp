@@ -35,3 +35,17 @@
                (setf input1 temp)))))
     (reinitialize-instance instruction
       :inputs (list input1 input2))))
+
+(defun handle-non-commutative-instruction (instruction)
+  (destructuring-bind (input1 input2)
+      (cleavir-ir:inputs instruction)
+    (let ((output (first (cleavir-ir:outputs instruction))))
+      (unless (eq input1 output)
+        (let ((temp (cleavir-ir:new-temporary)))
+          (cleavir-ir:insert-instruction-before
+           (make-instance 'cleavir-ir:assignment-instruction
+             :input input1
+             :output temp)
+           instruction)
+          (reinitialize-instance instruction
+            :inputs (list temp input2)))))))
