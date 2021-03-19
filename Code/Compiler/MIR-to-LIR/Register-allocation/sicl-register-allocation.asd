@@ -4,6 +4,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "preprocess-instructions")
    (:file "location-information")
    (:file "find-back-arcs")
    (:file "pool")
