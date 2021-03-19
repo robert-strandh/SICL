@@ -15,9 +15,6 @@
    (%finalized-p
     :initform t
     :reader class-finalized-p)
-   (%default-initargs
-    :initarg :default-initargs
-    :accessor class-default-initargs)
    (%effective-slots
     :initform '()
     :reader class-slots)))
