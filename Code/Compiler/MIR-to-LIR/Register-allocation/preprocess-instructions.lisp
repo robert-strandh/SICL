@@ -26,7 +26,8 @@
     (reinitialize-instance instruction
       :inputs (list input1 input2))))
 
-(defun handle-non-commutative-instruction (instruction)
+(defmethod preprocess-instruction
+    ((instruction cleavir-ir:binary-operation-mixin))
   (destructuring-bind (input1 input2)
       (cleavir-ir:inputs instruction)
     (let ((output (first (cleavir-ir:outputs instruction))))
@@ -39,7 +40,3 @@
            instruction)
           (reinitialize-instance instruction
             :inputs (list temp input2)))))))
-
-(defmethod preprocess-instruction
-    ((instruction cleavir-ir:signed-add-instruction))
-  (handle-commutative-instruction instruction))
