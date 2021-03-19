@@ -28,6 +28,8 @@
    #:no-successors-mixin
    #:one-successor-mixin
    #:multiple-successors-mixin
+   #:binary-operation-mixin
+   #:commutative-mixin
    #:side-effect-mixin #:side-effect-free-p
    #:box-instruction #:unbox-instruction
    #:allocation-mixin #:dynamic-extent-p
