@@ -90,3 +90,20 @@
                 ;; It is on the stack.  Just unattribute the register.
                 (values (unattribute-register predecessor instruction register)
                         register)))))))
+
+(defun ensure-in-register
+    (lexical-location predecessor instruction pool arrangement)
+  (let* ((attributions (attributions arrangement))
+         (attribution (find lexical-location attributions
+                            :key #'lexical-location :test #'eq))
+         (register (register attribution))
+         (pool-item (find lexical-location pool
+                          :key #'lexical-location :test #'eq))
+         (call-probability (call-probability pool-item)))
+    (if (null register)
+        (allocate-register
+         predecessor
+         instruction
+         pool
+         (if (>= call-probability 3) *callee-saves* *caller-saves*))
+        (values predecessor register))))
