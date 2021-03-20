@@ -53,6 +53,7 @@
 ;;; stack slot in it.  The output arrangement is similar to the input
 ;;; arrangement, but with the attribution corresponding to the lexical
 ;;; location, having the register value NIL.
+
 (defun unattribute-register (predecessor instruction register)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
@@ -79,6 +80,12 @@
       (setf (input-arrangement new-instruction) arrangement
             (output-arrangement new-instruction) new-arrangement)
       new-instruction)))
+
+(defun spill-and-unattribute-register (predecessor instruction register)
+  (unattribute-register
+   (spill predecessor instruction register)
+   instruction
+   register))
 
 ;;; By UNSPILL, we mean to copy a particular stack slot to a register.
 ;;; As with SPILL, the UNSPILL is made explicit with an
