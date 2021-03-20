@@ -26,6 +26,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Mixin class for comparison instructions, i.e., instructions that
+;;; take two inputs, has no output, and has two successors.
+(defclass comparison-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Other mixin classes.
 
 ;;; Mixin class for instructions that have side effects so that they
