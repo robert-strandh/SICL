@@ -37,7 +37,10 @@
 ;;;
 ;;; MIR instruction SIGNED-LESS-INSTRUCTION
 
-(defclass signed-less-instruction (instruction multiple-successors-mixin)
+(defclass signed-less-instruction
+    (instruction
+     multiple-successors-mixin
+     comparison-mixin)
   ())
 
 (normalize-arguments
@@ -50,7 +53,10 @@
 ;;;
 ;;; MIR instruction SIGNED-NOT-GREATER-INSTRUCTION
 
-(defclass signed-not-greater-instruction (instruction multiple-successors-mixin)
+(defclass signed-not-greater-instruction
+    (instruction
+     multiple-successors-mixin
+     comparison-mixin)
   ())
 
 (normalize-arguments
@@ -109,7 +115,10 @@
 ;;;
 ;;; MIR instruction UNSIGNED-LESS-INSTRUCTION
 
-(defclass unsigned-less-instruction (instruction multiple-successors-mixin)
+(defclass unsigned-less-instruction
+    (instruction
+     multiple-successors-mixin
+     comparison-mixin)
   ())
 
 (normalize-arguments
@@ -122,7 +131,10 @@
 ;;;
 ;;; MIR instruction UNSIGNED-NOT-GREATER-INSTRUCTION
 
-(defclass unsigned-not-greater-instruction (instruction multiple-successors-mixin)
+(defclass unsigned-not-greater-instruction
+    (instruction
+     multiple-successors-mixin
+     comparison-mixin)
   ())
 
 (normalize-arguments
@@ -135,7 +147,10 @@
 ;;;
 ;;; MIR instruction EQUAL-INSTRUCTION
 
-(defclass equal-instruction (instruction multiple-successors-mixin)
+(defclass equal-instruction
+    (instruction
+     multiple-successors-mixin
+     comparison-mixin)
   ())
 
 (normalize-arguments
