@@ -1,6 +1,10 @@
 (cl:in-package #:cleavir-ir)
 
-(defclass binary-bitwise-instruction (instruction one-successor-mixin)
+(defclass binary-bitwise-instruction
+    (instruction
+     one-successor-mixin
+     binary-operation-mixin
+     commutative-mixin)
   ())
 
 (normalize-arguments
