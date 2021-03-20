@@ -1,14 +1,5 @@
 (cl:in-package #:sicl-register-allocation)
 
-;;; Find the first unassigned register.  If all registers are
-;;; assigned, return NIL.
-(defun find-unassigned-register (arrangement candidates)
-  (loop for candidate in candidates
-        unless (member candidate (attributions arrangement)
-                       :test #'eq :key #'register)
-          return candidate
-        finally (return nil)))
-
 (defun extract-locations (arrangement candidates)
   (loop for candidate in candidates
         for attribution = (find candidate (attributions arrangement)
@@ -18,23 +9,6 @@
 (defun extract-pool-items (pool locations)
   (loop for location in locations
         collect (find location pool :test #'eq :key #'lexical-location)))
-
-(defun allocate-register
-    (predecessor instruction pool arrangement candidates)
-  (let ((unassigned (find-unassigned-register arrangement candidates)))
-    (if (not (null unassigned))
-        unassigned
-        (let* ((locations (extract-locations arrangement candidates))
-               (pool-items (extract-pool-items pool locations))
-               (sorted-pool-items (sort pool-items #'> :key #'distance))
-               (location (lexical-location (first sorted-pool-items)))
-               (attribution (find location (attributions arrangement)
-                                  :test #'eq :key #'lexical-location))
-               (register (register attribution)))
-          (values register
-                  (if (null (stack-slot attribution))
-                      (spill predecessor instruction register)
-                      predecessor))))))
 
 ;;; Return the register that is attributed to LEXICAL-LOCATION in
 ;;; ARRANGEMENT, or NIL if no register is atributed to
@@ -83,3 +57,36 @@
         when (null attribution)
           return register
         finally (return nil)))
+
+(defun allocate-register (predecessor instruction pool candidates)
+  (let* ((arrangement (output-arrangement predecessor))
+         (attributions (attributions arrangement))
+         (register (find-unattributed-register attributions candidates)))
+    (if (null register)
+        ;; There are no unattributed registers of the kind that we are
+        ;; looking for.  We must steal one that is already attributed
+        ;; to some other lexical location.  We find the lexical
+        ;; location with the highest estimated distance to use.
+        (flet ((compare (attribution1 attribution2)
+                 (let ((pool-item-1 (find (lexical-location attribution1) pool
+                                          :key #'lexical-location :test #'eq))
+                       (pool-item-2 (find (lexical-location attribution2) pool
+                                          :key #'lexical-location :test #'eq)))
+                   (> (distance pool-item-1) (distance pool-item-2)))))
+          (let* ((attributions
+                   (extract-attributions attributions candidates))
+                 (sorted (sort attributions #'compare))
+                 (attribution (first sorted))
+                 (register (register attribution))
+                 (stack-slot (stack-slot attribution)))
+            ;; We have the attribution we want to steal from.  Now, we
+            ;; need to know whether the corresponding lexical location
+            ;; is already on the stack as well.
+            (if (null stack-slot)
+                ;; It is not on the stack. We need to spill the register.
+                (values (spill-and-unattribute-register
+                         predecessor instruction register)
+                        register)
+                ;; It is on the stack.  Just unattribute the register.
+                (values (unattribute-register predecessor instruction register)
+                        register)))))))
