@@ -49,6 +49,14 @@
 ;;; is why the slot itself is not included here.
 (defgeneric class-finalized-p (class))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-default-initargs.html
+(defgeneric class-default-initargs (class))
+
+;;; This function is used by the class finalization protocol to set
+;;; the default initargs of the class. 
+(defgeneric (setf class-default-initargs) (default-initargs class))
+
 (defclass class (specializer)
   ((%unique-number 
     ;; FIXME: the unique numbers should be assigned during class
