@@ -91,12 +91,13 @@
                 (values (unattribute-register predecessor instruction register)
                         register)))))))
 
-(defun ensure-in-register
-    (lexical-location predecessor instruction pool arrangement)
-  (let* ((attributions (attributions arrangement))
+(defun ensure-in-register (lexical-location predecessor instruction)
+  (let* ((arrangement (output-arrangement predecessor))
+         (attributions (attributions arrangement))
          (attribution (find lexical-location attributions
                             :key #'lexical-location :test #'eq))
          (register (register attribution))
+         (pool (input-pool instruction))
          (pool-item (find lexical-location pool
                           :key #'lexical-location :test #'eq))
          (call-probability (call-probability pool-item)))
