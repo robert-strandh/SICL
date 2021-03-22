@@ -3,6 +3,11 @@
 (defgeneric allocate-registers-for-instruction (predecessor instruction))
 
 (defgeneric compute-input-arrangement (predecessor instruction))
+
+(defmethod compute-input-arrangement :after (predecessor instruction)
+  (setf (input-arrangement instruction)
+        (output-arrangement predecessor)))
+
 (defgeneric compute-output-arrangement (predecessor instruction))
 
 (defmethod allocate-registers-for-instruction (predecessor instruction)
