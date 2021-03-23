@@ -9,6 +9,11 @@
 ;;;; stack slot, and a 1 represents a stack slot that holds some
 ;;;; lexical location at some program point.
 
+(defun copy-stack-map (stack-map)
+  (let ((result (make-array (length stack-map) :element-type 'bit)))
+    (replace result stack-map)
+    result))
+
 ;;; Finding a stack slot in a stack map is an operation that always
 ;;; succeeds.  If there is an available stack slot, then it is
 ;;; returned.  Otherwise, the length of the stack map is returned,
