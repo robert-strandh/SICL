@@ -16,33 +16,27 @@
          (remaining-attributions
            (remove selected-attribution attributions :test #'eq))
          (lexical-location (lexical-location selected-attribution))
-         (stack-map (stack-map arrangement))
-         (length (length stack-map))
-         (available-stack-slot (position 0 stack-map))
-         (new-length (+ length (if (null available-stack-slot) 1 0)))
-         (new-stack-map (make-array new-length :element-type 'bit)))
+         (stack-map (stack-map arrangement)))
     (assert (null (stack-slot selected-attribution)))
-    (replace new-stack-map stack-map)
-    (when (null available-stack-slot)
-      (setf available-stack-slot length))
-    (setf (bit new-stack-map available-stack-slot) 1)
-    (let* ((new-attribution
-             (make-instance 'attribution
-               :lexical-location lexical-location
-               :register register
-               :stack-slot available-stack-slot))
-           (new-arrangement (make-instance 'arrangement
-                              :stack-map new-stack-map
-                              :attributions
-                              (cons new-attribution remaining-attributions)))
-           (new-instruction (make-instance 'cleavir-ir:assignment-instruction
-                              :input lexical-location
-                              :output lexical-location)))
-      (cleavir-ir:insert-instruction-between
-       new-instruction predecessor instruction)
-      (setf (input-arrangement new-instruction) arrangement
-            (output-arrangement new-instruction) new-arrangement)
-      new-instruction)))
+    (multiple-value-bind (new-stack-map available-stack-slot)
+        (find-and-reserve-stack-slot stack-map)
+      (let* ((new-attribution
+               (make-instance 'attribution
+                 :lexical-location lexical-location
+                 :register register
+                 :stack-slot available-stack-slot))
+             (new-arrangement (make-instance 'arrangement
+                                :stack-map new-stack-map
+                                :attributions
+                                (cons new-attribution remaining-attributions)))
+             (new-instruction (make-instance 'cleavir-ir:assignment-instruction
+                                :input lexical-location
+                                :output lexical-location)))
+        (cleavir-ir:insert-instruction-between
+         new-instruction predecessor instruction)
+        (setf (input-arrangement new-instruction) arrangement
+              (output-arrangement new-instruction) new-arrangement)
+        new-instruction))))
 
 ;;; By UNATTRIBUTE, we mean to remove a particular register R from an
 ;;; attribution that contains both R and a valid stack slot, so that
