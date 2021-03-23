@@ -94,10 +94,7 @@
          (remaining-attributions
            (remove selected-attribution attributions :test #'eq))
          (lexical-location (lexical-location selected-attribution))
-         (stack-map (stack-map arrangement))
-         (length (length stack-map))
-         (new-stack-map (make-array length :element-type 'bit)))
-    (replace new-stack-map stack-map)
+         (new-stack-map (copy-stack-map (stack-map arrangement))))
     (let* ((new-attribution
              (make-instance 'attribution
                :lexical-location lexical-location
