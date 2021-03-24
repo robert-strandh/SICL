@@ -8,11 +8,12 @@
 ;;; arrangement of I is similar to the input arrangement, but with the
 ;;; attribution containing R having a valid stack slot number in it.
 
-(defun spill (predecessor instruction register)
+(defun spill (predecessor instruction register-number)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
          (selected-attribution
-           (find register attributions :test #'eq :key #'register))
+           (find register-number attributions
+                 :test #'eql :key #'register-number))
          (remaining-attributions
            (remove selected-attribution attributions :test #'eq))
          (lexical-location (lexical-location selected-attribution))
@@ -23,7 +24,7 @@
       (let* ((new-attribution
                (make-instance 'attribution
                  :lexical-location lexical-location
-                 :register register
+                 :register-number register-number
                  :stack-slot available-stack-slot))
              (new-arrangement (make-instance 'arrangement
                                 :stack-map new-stack-map
@@ -48,11 +49,12 @@
 ;;; arrangement, but with the attribution corresponding to the lexical
 ;;; location, having the register value NIL.
 
-(defun unattribute-register (predecessor instruction register)
+(defun unattribute-register (predecessor instruction register-number)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
          (selected-attribution
-           (find register attributions :test #'eq :key #'register))
+           (find register-number attributions
+                 :test #'eql :key #'register-number))
          (remaining-attributions
            (remove selected-attribution attributions :test #'eq))
          (lexical-location (lexical-location selected-attribution))
@@ -62,7 +64,7 @@
     (let* ((new-attribution
              (make-instance 'attribution
                :lexical-location lexical-location
-               :register nil
+               :register-number nil
                :stack-slot stack-slot))
            (new-arrangement (make-instance 'arrangement
                               :stack-map stack-map
@@ -75,18 +77,18 @@
             (output-arrangement new-instruction) new-arrangement)
       new-instruction)))
 
-(defun spill-and-unattribute-register (predecessor instruction register)
+(defun spill-and-unattribute-register (predecessor instruction register-number)
   (unattribute-register
-   (spill predecessor instruction register)
+   (spill predecessor instruction register-number)
    instruction
-   register))
+   register-number))
 
 ;;; By UNSPILL, we mean to copy a particular stack slot to a register.
 ;;; As with SPILL, the UNSPILL is made explicit with an
 ;;; ASSIGNMENT-INSTRUCTION with the analogous input and output
 ;;; arrangements.
 
-(defun unspill (predecessor instruction stack-slot register)
+(defun unspill (predecessor instruction stack-slot register-number)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
          (selected-attribution
@@ -98,7 +100,7 @@
     (let* ((new-attribution
              (make-instance 'attribution
                :lexical-location lexical-location
-               :register register
+               :register-number register-number
                :stack-slot stack-slot))
            (new-arrangement (make-instance 'arrangement
                               :stack-map new-stack-map
