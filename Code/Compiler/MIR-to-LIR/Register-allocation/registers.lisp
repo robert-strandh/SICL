@@ -55,3 +55,8 @@
 (defparameter *caller-saves* #*1011001111110000)
 
 (defparameter *callee-saves* #*0100000000001111)
+
+(defun copy-register-map (register-map)
+  (let ((result (make-array (length register-map) :element-type 'bit)))
+    (replace result register-map)
+    result))
