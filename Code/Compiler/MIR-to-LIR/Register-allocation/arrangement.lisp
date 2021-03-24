@@ -4,10 +4,10 @@
   ((%lexical-location
     :initarg :lexical-location
     :reader lexical-location)
-   (%register
+   (%register-number
     :initform nil
-    :initarg :register
-    :accessor register)
+    :initarg :register-number
+    :accessor register-number)
    (%stack-slot
     :initform nil
     :initarg stack-slot
