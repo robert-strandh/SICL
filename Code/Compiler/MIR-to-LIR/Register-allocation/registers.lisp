@@ -52,8 +52,6 @@
   (vector *rax* *rbx* *rcx* *rdx* *rsp* *rbp* *rsi* *rdi*
           *r8* *r9* *r10* *r11* *r12* *r13* *r14* *r15*))
 
-(defparameter *caller-saves*
-  (list *rax* *rcx* *rdx* *rsi* *rdi* *r8* *r9* *r10* *r11*))
+(defparameter *caller-saves* #*1011001111110000)
 
-(defparameter *callee-saves*
-  (list *rbx* *r12* *r13* *r14* *r15*))
+(defparameter *callee-saves* #*0100000000001111)
