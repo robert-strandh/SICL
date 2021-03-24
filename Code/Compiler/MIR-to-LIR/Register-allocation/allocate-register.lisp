@@ -20,26 +20,6 @@
   (register-number (find lexical-location (attributions arrangement)
                          :key #'lexical-location :test #'eq)))
 
-;;; Split the lexical locations in USED into two groups retuned as two
-;;; values.  The first group constists of lexical locations that
-;;; should be allocated in caller-saves registers and the second group
-;;; consists of lexical locations that should be allocated in
-;;; callee-saves registers.
-(defun split-locations (used pool)
-  (loop for location in used
-        for pool-item = (find location pool
-                              :key #'lexical-location :test #'eq)
-        if (or
-            ;; The location is dead.
-            (null pool-item)
-            ;; It has very little chance of being used across
-            ;; a function call.
-            (<= (call-probability pool-item) 2))
-          collect location into caller-saves
-        else
-          collect location into callee-saves
-        finally (return (values caller-saves callee-saves))))
-
 ;;; From ATTRIBUTIONS, extract attributions with a register that is an
 ;;; element of REGISTERS.
 (defun extract-attributions (attributions registers)
