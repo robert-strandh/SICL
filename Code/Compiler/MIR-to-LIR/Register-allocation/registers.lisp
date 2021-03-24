@@ -60,3 +60,15 @@
   (let ((result (make-array (length register-map) :element-type 'bit)))
     (replace result register-map)
     result))
+
+(defun reserve-register (register-map register-number)
+  (let ((result (copy-register-map register-map)))
+    (assert (zerop (bit result register-number)))
+    (setf (bit result register-number) 1)
+    result))
+
+(defun free-register (register-map register-number)
+  (let ((result (copy-register-map register-map)))
+    (assert (= (bit result register-number) 1))
+    (setf (bit result register-number) 0)
+    result))
