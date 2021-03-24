@@ -3,7 +3,7 @@
 (defun extract-locations (arrangement candidates)
   (loop for candidate in candidates
         for attribution = (find candidate (attributions arrangement)
-                                :test #'eq :key #'register)
+                                :test #'eql :key #'register-number)
         collect (lexical-location attribution)))
 
 (defun extract-pool-items (pool locations)
@@ -14,11 +14,11 @@
 ;;; ARRANGEMENT, or NIL if no register is atributed to
 ;;; LEXICAL-LOCATION.  We know that LEXICAL-LOCATION is live, so we
 ;;; know that it has an attribution in ASSIGNEMENT.  We just don't
-;;; know whether the REGISTER of that attribution is a register or
-;;; NIL.
+;;; know whether the REGISTER-NUMBER of that attribution is a register
+;;; or NIL.
 (defun attributed-register (lexical-location arrangement)
-  (register (find lexical-location (attributions arrangement)
-                  :key #'lexical-location :test #'eq)))
+  (register-number (find lexical-location (attributions arrangement)
+                         :key #'lexical-location :test #'eq)))
 
 ;;; Split the lexical locations in USED into two groups retuned as two
 ;;; values.  The first group constists of lexical locations that
