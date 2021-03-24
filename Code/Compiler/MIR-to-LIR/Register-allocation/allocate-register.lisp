@@ -20,11 +20,12 @@
   (register-number (find lexical-location (attributions arrangement)
                          :key #'lexical-location :test #'eq)))
 
-;;; From ATTRIBUTIONS, extract attributions with a register that is an
-;;; element of REGISTERS.
-(defun extract-attributions (attributions registers)
+;;; From ATTRIBUTIONS, extract attributions with a register that is in
+;;; REGISTER-MAP.
+(defun extract-attributions (attributions register-map)
   (loop for attribution in attributions
-        when (member (register attribution) registers)
+        when (register-number-in-map-p
+              (register-number attribution) register-map)
           collect attribution))
 
 ;;; If there is at least one register in CANDIDATE-REGISTER-MAP that is not in
@@ -33,7 +34,7 @@
 (defun find-unattributed-register (attributions candidate-register-map)
   (let ((attributed-registers (make-empty-register-map)))
     (loop for attribution in attributions
-          do (mark-register attributed-registers (register attribution)))
+          do (mark-register attributed-registers (register-number attribution)))
     (let ((unattributed-register-map
             (bit-andc2 candidate-register-map attributed-registers)))
       (position 1 unattributed-register-map))))
