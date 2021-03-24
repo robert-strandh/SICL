@@ -47,16 +47,16 @@
         when (member (register attribution) registers)
           collect attribution))
 
-;;; If there is at least one register in REGISTERS that is not in any
-;;; attribution in ATTRIBUTIONS, then return any such register.
+;;; If there is at least one register in CANDIDATE-REGISTER-MAP that is not in
+;;; any attribution in ATTRIBUTIONS, then return any such register.
 ;;; Otherwise return NIL.
-(defun find-unattributed-register (attributions registers)
-  (loop for register in registers
-        for attribution = (find register attributions
-                                :key #'register :test #'eq)
-        when (null attribution)
-          return register
-        finally (return nil)))
+(defun find-unattributed-register (attributions candidate-register-map)
+  (let ((attributed-registers (make-empty-register-map)))
+    (loop for attribution in attributions
+          do (mark-register attributed-registers (register attribution)))
+    (let ((unattributed-register-map
+            (bit-andc2 candidate-register-map attributed-registers)))
+      (position 1 unattributed-register-map))))
 
 (defun allocate-register (predecessor instruction pool candidates)
   (let* ((arrangement (output-arrangement predecessor))
