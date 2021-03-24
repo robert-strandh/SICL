@@ -48,6 +48,10 @@
 (defparameter *r15*
   (make-instance 'cleavir-ir:register-location :name "R15"))
 
+(defparameter *registers*
+  (vector *rax* *rbx* *rcx* *rdx* *rsp* *rbp* *rsi* *rdi*
+          *r8* *r9* *r10* *r11* *r12* *r13* *r14* *r15*))
+
 (defparameter *caller-saves*
   (list *rax* *rcx* *rdx* *rsi* *rdi* *r8* *r9* *r10* *r11*))
 
