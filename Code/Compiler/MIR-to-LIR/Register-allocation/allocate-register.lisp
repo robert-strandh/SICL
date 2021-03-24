@@ -41,8 +41,8 @@
 (defun allocate-register (predecessor instruction pool candidates)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
-         (register (find-unattributed-register attributions candidates)))
-    (if (null register)
+         (register-number (find-unattributed-register attributions candidates)))
+    (if (null register-number)
         ;; There are no unattributed registers of the kind that we are
         ;; looking for.  We must steal one that is already attributed
         ;; to some other lexical location.  We find the lexical
@@ -57,7 +57,7 @@
                    (extract-attributions attributions candidates))
                  (sorted (sort attributions #'compare))
                  (attribution (first sorted))
-                 (register (register attribution))
+                 (register-number (register-number attribution))
                  (stack-slot (stack-slot attribution)))
             ;; We have the attribution we want to steal from.  Now, we
             ;; need to know whether the corresponding lexical location
@@ -65,26 +65,27 @@
             (if (null stack-slot)
                 ;; It is not on the stack. We need to spill the register.
                 (values (spill-and-unattribute-register
-                         predecessor instruction register)
-                        register)
+                         predecessor instruction register-number)
+                        register-number)
                 ;; It is on the stack.  Just unattribute the register.
-                (values (unattribute-register predecessor instruction register)
-                        register)))))))
+                (values (unattribute-register
+                         predecessor instruction register-number)
+                        register-number)))))))
 
 (defun ensure-in-register (lexical-location predecessor instruction)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
          (attribution (find lexical-location attributions
                             :key #'lexical-location :test #'eq))
-         (register (register attribution))
+         (register-number (register-number attribution))
          (pool (input-pool instruction))
          (pool-item (find lexical-location pool
                           :key #'lexical-location :test #'eq))
          (call-probability (call-probability pool-item)))
-    (if (null register)
+    (if (null register-number)
         (allocate-register
          predecessor
          instruction
          pool
          (if (>= call-probability 3) *callee-saves* *caller-saves*))
-        (values predecessor register))))
+        (values predecessor register-number))))
