@@ -56,6 +56,12 @@
 
 (defparameter *callee-saves* #*0100000000001111)
 
+(defun make-empty-register-map ()
+  (make-array 16 :element-type 'bit :initial-element 0))
+
+(defun mark-register (register-map register-number)
+  (setf (bit register-map register-number) 1))
+
 (defun copy-register-map (register-map)
   (let ((result (make-array (length register-map) :element-type 'bit)))
     (replace result register-map)
