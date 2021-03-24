@@ -56,6 +56,9 @@
 
 (defparameter *callee-saves* #*0100000000001111)
 
+(defun register-number-in-map-p (register-number register-map)
+  (not (zerop (bit register-map register-number))))
+
 (defun make-empty-register-map ()
   (make-array 16 :element-type 'bit :initial-element 0))
 
