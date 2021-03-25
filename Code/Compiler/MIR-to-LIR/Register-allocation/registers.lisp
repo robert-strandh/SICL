@@ -81,3 +81,6 @@
     (assert (= (bit result register-number) 1))
     (setf (bit result register-number) 0)
     result))
+
+(defun register-map-difference (register-map-1 register-map-2)
+  (bit-andc2 register-map-1 register-map-2))
