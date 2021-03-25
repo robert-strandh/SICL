@@ -19,3 +19,28 @@
     (loop for input in (cleavir-ir:inputs instruction)
           when (typep input 'cleavir-ir:lexical-location)
             do (setf result (ensure-in-register input result instruction)))))
+
+;;; Create a new arrangement that is like ARRANGEMENT but keeping only
+;;; attributions of live lexical locations as indicated by the fact
+;;; that they appear in POOL.
+(defun filter-arrangement (arrangement pool)
+  (let* ((stack-map (stack-map arrangement))
+         (new-stack-map (copy-stack-map stack-map))
+         (register-map (register-map arrangement))
+         (new-register-map (copy-register-map register-map))
+         (attributions (attributions arrangement))
+         (new-attributions '()))
+    (loop for attribution in attributions
+          for location = (lexical-location attribution)
+          for stack-slot = (stack-slot attribution)
+          for register-number = (register-number attribution)
+          do (if (member location pool :test #'eq :key #'lexical-location)
+                 (push location new-attributions)
+                 (progn (unless (null stack-slot)
+                          (free-stack-slot new-stack-map stack-slot))
+                        (unless (null register-number)
+                          (free-register new-register-map register-number)))))
+    (make-instance 'arrangement
+      :stack-map new-stack-map
+      :register-map new-register-map
+      :attributions new-attributions)))
