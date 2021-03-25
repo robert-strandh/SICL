@@ -34,7 +34,7 @@
 (defun find-unattributed-register (arrangement candidate-register-map)
   (let ((attributed-registers (register-map arrangement)))
     (let ((unattributed-register-map
-            (bit-andc2 candidate-register-map attributed-registers)))
+            (register-map-difference candidate-register-map attributed-registers)))
       (position 1 unattributed-register-map))))
 
 (defun allocate-register (predecessor instruction pool candidates)
