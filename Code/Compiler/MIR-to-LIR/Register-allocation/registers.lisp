@@ -84,3 +84,6 @@
 
 (defun register-map-difference (register-map-1 register-map-2)
   (bit-andc2 register-map-1 register-map-2))
+
+(defun find-any-register-in-map (register-map)
+  (position 1 register-map))
