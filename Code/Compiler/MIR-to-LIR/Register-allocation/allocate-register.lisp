@@ -29,13 +29,13 @@
           collect attribution))
 
 ;;; If there is at least one register in CANDIDATE-REGISTER-MAP that is not in
-;;; any attribution in ATTRIBUTIONS, then return any such register.
+;;; any attribution in ARRANGEMENT, then return any such register.
 ;;; Otherwise return NIL.
 (defun find-unattributed-register (arrangement candidate-register-map)
   (let ((attributed-registers (register-map arrangement)))
     (let ((unattributed-register-map
             (register-map-difference candidate-register-map attributed-registers)))
-      (position 1 unattributed-register-map))))
+      (find-any-register-in-map unattributed-register-map))))
 
 (defun allocate-register (predecessor instruction pool candidates)
   (let* ((arrangement (output-arrangement predecessor))
