@@ -15,6 +15,7 @@
 
 (defclass arrangement ()
   ((%stack-map :initarg :stack-map :reader stack-map)
+   (%register-map :initarg :register-map :reader register-map)
    (%attributions
     :initform '()
     :initarg :attributions
