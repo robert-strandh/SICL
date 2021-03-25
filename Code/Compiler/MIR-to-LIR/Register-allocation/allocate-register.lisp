@@ -31,10 +31,8 @@
 ;;; If there is at least one register in CANDIDATE-REGISTER-MAP that is not in
 ;;; any attribution in ATTRIBUTIONS, then return any such register.
 ;;; Otherwise return NIL.
-(defun find-unattributed-register (attributions candidate-register-map)
-  (let ((attributed-registers (make-empty-register-map)))
-    (loop for attribution in attributions
-          do (mark-register attributed-registers (register-number attribution)))
+(defun find-unattributed-register (arrangement candidate-register-map)
+  (let ((attributed-registers (register-map arrangement)))
     (let ((unattributed-register-map
             (bit-andc2 candidate-register-map attributed-registers)))
       (position 1 unattributed-register-map))))
@@ -42,7 +40,7 @@
 (defun allocate-register (predecessor instruction pool candidates)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
-         (register-number (find-unattributed-register attributions candidates)))
+         (register-number (find-unattributed-register arrangement candidates)))
     (if (null register-number)
         ;; There are no unattributed registers of the kind that we are
         ;; looking for.  We must steal one that is already attributed
