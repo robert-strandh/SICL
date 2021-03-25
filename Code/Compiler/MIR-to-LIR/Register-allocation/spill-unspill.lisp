@@ -10,6 +10,7 @@
 
 (defun spill (predecessor instruction register-number)
   (let* ((arrangement (output-arrangement predecessor))
+         (register-map (register-map arrangement))
          (attributions (attributions arrangement))
          (selected-attribution
            (find register-number attributions
@@ -28,6 +29,7 @@
                  :stack-slot available-stack-slot))
              (new-arrangement (make-instance 'arrangement
                                 :stack-map new-stack-map
+                                :register-map register-map
                                 :attributions
                                 (cons new-attribution remaining-attributions)))
              (new-instruction (make-instance 'cleavir-ir:assignment-instruction
@@ -51,6 +53,8 @@
 
 (defun unattribute-register (predecessor instruction register-number)
   (let* ((arrangement (output-arrangement predecessor))
+         (register-map (register-map arrangement))
+         (new-register-map (free-register register-map register-number))
          (attributions (attributions arrangement))
          (selected-attribution
            (find register-number attributions
@@ -68,6 +72,7 @@
                :stack-slot stack-slot))
            (new-arrangement (make-instance 'arrangement
                               :stack-map stack-map
+                              :register-map new-register-map
                               :attributions
                               (cons new-attribution remaining-attributions)))
            (new-instruction (make-instance 'cleavir-ir:nop-instruction)))
@@ -90,6 +95,8 @@
 
 (defun unspill (predecessor instruction stack-slot register-number)
   (let* ((arrangement (output-arrangement predecessor))
+         (register-map (register-map arrangement))
+         (new-register-map (reserve-register register-map register-number))
          (attributions (attributions arrangement))
          (selected-attribution
            (find stack-slot attributions :test #'eql :key #'stack-slot))
@@ -104,6 +111,7 @@
                :stack-slot stack-slot))
            (new-arrangement (make-instance 'arrangement
                               :stack-map new-stack-map
+                              :register-map new-register-map
                               :attributions
                               (cons new-attribution remaining-attributions)))
            (new-instruction (make-instance 'cleavir-ir:assignment-instruction
