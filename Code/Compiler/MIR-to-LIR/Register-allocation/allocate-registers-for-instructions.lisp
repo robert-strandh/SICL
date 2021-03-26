@@ -44,3 +44,9 @@
       :stack-map new-stack-map
       :register-map new-register-map
       :attributions new-attributions)))
+
+(defmethod compute-output-arrangement :before
+    (predecessor instruction)
+  (setf (output-arrangement instruction)
+        (filter-arrangement
+         (input-arrangement instruction) (output-pool instruction))))
