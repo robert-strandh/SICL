@@ -44,3 +44,6 @@
   (let ((stack-slot (find-stack-slot stack-map)))
     (values stack-slot
             (reserve-stack-slot stack-map stack-slot))))
+
+(defun free-stack-slot (stack-map stack-slot)
+  (setf (bit stack-map stack-slot) 0))
