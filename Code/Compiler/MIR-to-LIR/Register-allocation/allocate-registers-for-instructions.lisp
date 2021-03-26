@@ -50,3 +50,8 @@
   (setf (output-arrangement instruction)
         (filter-arrangement
          (input-arrangement instruction) (output-pool instruction))))
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:comparison-mixin))
+  (declare (ignore predecessor))
+  nil)
