@@ -21,6 +21,15 @@
     :initarg :attributions
     :accessor attributions)))
 
+(defmacro with-arrangement-parts
+    ((stack-map-var register-map-var attributions-var arrangement-form) &body body)
+  (let ((arrangement-var (gensym)))
+    `(let* ((,arrangement-var ,arrangement-form)
+            (,stack-map-var (stack-map ,arrangement-var))
+            (,register-map-var (register-map ,arrangement-var))
+            (,attributions-var (attributions ,arrangement-var)))
+       ,@body)))
+
 (defvar *input-arrangements*)
 
 (defun input-arrangement (instruction)
