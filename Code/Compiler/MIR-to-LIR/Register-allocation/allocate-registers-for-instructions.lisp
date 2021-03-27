@@ -57,37 +57,32 @@
   nil)
 
 ;;; For a BINARY-OPERATION-MIXIN, we have prepared the instruction so
-;;; that either the first input and the output are the same, or the
-;;; first input is dead after the instruction.  That fact makes it
-;;; possible to use the same register for the output as for the first
-;;; input.
+;;; that the first input is dead after the instruction.  That fact
+;;; makes it possible to use the same register for the output as for
+;;; the first input.
 (defmethod comput-output-arrangement
     (predecessor (instruction cleavir-ir:binary-operation-mixin))
   (let ((first-input (first (cleavir-ir:inputs instruction)))
         (output (first (cleavir-ir:outputs instruction))))
-    (if (eq first-input output)
-        ;; Then there is nothing to do, because the lexical location
-        ;; survived the filtering since it is live after the
-        ;; instruction.
-        nil
-        (let* ((input-arrangement (input-arrangement instruction))
-               (output-arrangement (output-arrangement instruction))
-               (stack-map (stack-map output-arrangement))
-               (register-map (register-map output-arrangement))
-               (new-register-map (copy-register-map register-map))
-               (attributions (attributions output-arrangement))
-               (attribution
-                 (find first-input (attributions input-arrangement)
-                       :test #'eq :key #'lexical-location))
-               (register-number (register-number attribution))
-               (new-attribution
-                 (make-instance 'attribution
-                   :lexical-location output
-                   :stack-slot nil
-                   :register-number register-number)))
-          (reserve-register new-register-map register-number)
-          (setf (output-arrangement instruction)
-                (make-instance 'arrangement
-                  :stack-map stack-map
-                  :register-map new-register-map
-                  :attributions (cons new-attribution attributions)))))))
+    (assert (not (eq first-input output)))
+    (let* ((input-arrangement (input-arrangement instruction))
+           (output-arrangement (output-arrangement instruction))
+           (stack-map (stack-map output-arrangement))
+           (register-map (register-map output-arrangement))
+           (new-register-map (copy-register-map register-map))
+           (attributions (attributions output-arrangement))
+           (attribution
+             (find first-input (attributions input-arrangement)
+                   :test #'eq :key #'lexical-location))
+           (register-number (register-number attribution))
+           (new-attribution
+             (make-instance 'attribution
+               :lexical-location output
+               :stack-slot nil
+               :register-number register-number)))
+      (reserve-register new-register-map register-number)
+      (setf (output-arrangement instruction)
+            (make-instance 'arrangement
+              :stack-map stack-map
+              :register-map new-register-map
+              :attributions (cons new-attribution attributions))))))
