@@ -126,3 +126,14 @@
     (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
   (declare (ignore predecessor))
   nil)
+
+;;; The MEMSET-INSTRUCTION has no outputs, so we are done.
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:memset1-instruction))
+  (declare (ignore predecessor))
+  nil)
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:memset2-instruction))
+  (declare (ignore predecessor))
+  nil)
