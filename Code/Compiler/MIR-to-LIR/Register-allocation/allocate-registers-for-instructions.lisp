@@ -86,3 +86,43 @@
               :stack-map stack-map
               :register-map new-register-map
               :attributions (cons new-attribution attributions))))))
+
+;;; All the following methods are for instructions that will turn into
+;;; named calls, so the call-site manager will access the arguments
+;;; wherever they are.  Therefore, we do not need to allocate registes
+;;; for them.
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:named-call-instruction))
+  (declare (ignore predecessor))
+  nil)
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:catch-instruction))
+  (declare (ignore predecessor))
+  nil)
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:bind-instruction))
+  (declare (ignore predecessor))
+  nil)
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:unwind-instruction))
+  (declare (ignore predecessor))
+  nil)
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:enclose-instruction))
+  (declare (ignore predecessor))
+  nil)
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:initialize-values-instruction))
+  (declare (ignore predecessor))
+  nil)
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
+  (declare (ignore predecessor))
+  nil)
