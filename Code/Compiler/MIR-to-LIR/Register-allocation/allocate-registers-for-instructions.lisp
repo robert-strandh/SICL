@@ -24,26 +24,24 @@
 ;;; attributions of live lexical locations as indicated by the fact
 ;;; that they appear in POOL.
 (defun filter-arrangement (arrangement pool)
-  (let* ((stack-map (stack-map arrangement))
-         (new-stack-map (copy-stack-map stack-map))
-         (register-map (register-map arrangement))
-         (new-register-map (copy-register-map register-map))
-         (attributions (attributions arrangement))
-         (new-attributions '()))
-    (loop for attribution in attributions
-          for location = (lexical-location attribution)
-          for stack-slot = (stack-slot attribution)
-          for register-number = (register-number attribution)
-          do (if (member location pool :test #'eq :key #'lexical-location)
-                 (push location new-attributions)
-                 (progn (unless (null stack-slot)
-                          (free-stack-slot new-stack-map stack-slot))
-                        (unless (null register-number)
-                          (free-register new-register-map register-number)))))
-    (make-instance 'arrangement
-      :stack-map new-stack-map
-      :register-map new-register-map
-      :attributions new-attributions)))
+  (with-arrangement-parts (stack-map register-map attributions arrangement)
+    (let* ((new-stack-map (copy-stack-map stack-map))
+           (new-register-map (copy-register-map register-map))
+           (new-attributions '()))
+      (loop for attribution in attributions
+            for location = (lexical-location attribution)
+            for stack-slot = (stack-slot attribution)
+            for register-number = (register-number attribution)
+            do (if (member location pool :test #'eq :key #'lexical-location)
+                   (push location new-attributions)
+                   (progn (unless (null stack-slot)
+                            (free-stack-slot new-stack-map stack-slot))
+                          (unless (null register-number)
+                            (free-register new-register-map register-number)))))
+      (make-instance 'arrangement
+        :stack-map new-stack-map
+        :register-map new-register-map
+        :attributions new-attributions))))
 
 (defmethod compute-output-arrangement :before
     (predecessor instruction)
@@ -65,27 +63,25 @@
   (let ((first-input (first (cleavir-ir:inputs instruction)))
         (output (first (cleavir-ir:outputs instruction))))
     (assert (not (eq first-input output)))
-    (let* ((input-arrangement (input-arrangement instruction))
-           (output-arrangement (output-arrangement instruction))
-           (stack-map (stack-map output-arrangement))
-           (register-map (register-map output-arrangement))
-           (new-register-map (copy-register-map register-map))
-           (attributions (attributions output-arrangement))
-           (attribution
-             (find first-input (attributions input-arrangement)
-                   :test #'eq :key #'lexical-location))
-           (register-number (register-number attribution))
-           (new-attribution
-             (make-instance 'attribution
-               :lexical-location output
-               :stack-slot nil
-               :register-number register-number)))
-      (reserve-register new-register-map register-number)
-      (setf (output-arrangement instruction)
-            (make-instance 'arrangement
-              :stack-map stack-map
-              :register-map new-register-map
-              :attributions (cons new-attribution attributions))))))
+    (with-arrangement-parts
+        (stack-map register-map attributions (output-arrangement instruction))
+      (let* ((input-arrangement (input-arrangement instruction))
+             (new-register-map (copy-register-map register-map))
+             (attribution
+               (find first-input (attributions input-arrangement)
+                     :test #'eq :key #'lexical-location))
+             (register-number (register-number attribution))
+             (new-attribution
+               (make-instance 'attribution
+                 :lexical-location output
+                 :stack-slot nil
+                 :register-number register-number)))
+        (reserve-register new-register-map register-number)
+        (setf (output-arrangement instruction)
+              (make-instance 'arrangement
+                :stack-map stack-map
+                :register-map new-register-map
+                :attributions (cons new-attribution attributions)))))))
 
 ;;; All the following methods are for instructions that will turn into
 ;;; named calls, so the call-site manager will access the arguments
