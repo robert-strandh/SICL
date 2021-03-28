@@ -82,6 +82,12 @@
         ;; the contract, so we can use it as it is.
         (values predecessor register-number))))
 
+(defun determine-candidates (lexical-location pool)
+  (let* ((pool-item (find lexical-location pool
+                          :key #'lexical-location :test #'eq))
+         (call-probability (call-probability pool-item)))
+    (if (>= call-probability 3) *callee-saves* *caller-saves*)))
+
 (defun ensure-in-register (lexical-location predecessor instruction)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
