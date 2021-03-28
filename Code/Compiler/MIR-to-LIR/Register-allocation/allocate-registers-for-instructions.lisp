@@ -133,3 +133,16 @@
     (predecessor (instruction cleavir-ir:memset2-instruction))
   (declare (ignore predecessor))
   nil)
+
+(defun allocate-and-attribute-new-register
+    (predecessor instruction lexical-location)
+  (let* ((input-pool (input-pool instruction))
+         (output-pool (output-pool instruction))
+         (output-arrangement (output-arrangement instruction))
+         (candidates (determine-candidates lexical-location output-pool)))
+    (multiple-value-bind (new-predecessor register-number)
+        (allocate-register predecessor instruction input-pool candidates)
+      (declare (ignore new-predecessor))
+      (setf (output-arrangement instruction)
+            (update-arrangement-for-new-definition
+             output-arrangement lexical-location register-number)))))
