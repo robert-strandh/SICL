@@ -94,14 +94,11 @@
          (attribution (find lexical-location attributions
                             :key #'lexical-location :test #'eq))
          (register-number (register-number attribution))
-         (pool (input-pool instruction))
-         (pool-item (find lexical-location pool
-                          :key #'lexical-location :test #'eq))
-         (call-probability (call-probability pool-item)))
+         (pool (input-pool instruction)))
     (if (null register-number)
         (allocate-register
          predecessor
          instruction
          pool
-         (if (>= call-probability 3) *callee-saves* *caller-saves*))
+         (determine-candidates lexical-location pool))
         (values predecessor register-number))))
