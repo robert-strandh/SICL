@@ -37,6 +37,13 @@
             (register-map-difference candidate-register-map attributed-registers)))
       (find-any-register-in-map unattributed-register-map))))
 
+;;; By "allocating a register", we mean to make sure that the output
+;;; arrangment of the predecessor of INSTRUCTION does not have the
+;;; register in any of its attributions.  To accomplish this task, we
+;;; may have to add new instructions preceding INSTRUCTION, and it is
+;;; the last one of these added instructions that will correspond to
+;;; the contract.  For that reason, we return two values: A new
+;;; predecessor and the register we allocated.
 (defun allocate-register (predecessor instruction pool candidates)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
@@ -69,7 +76,11 @@
                 ;; It is on the stack.  Just unattribute the register.
                 (values (unattribute-register
                          predecessor instruction register-number)
-                        register-number)))))))
+                        register-number))))
+        ;; There is an unattributed register of the kind that we are
+        ;; looking for.  This means that PREDECESSOR already fulfuls
+        ;; the contract, so we can use it as it is.
+        (values predecessor register-number))))
 
 (defun ensure-in-register (lexical-location predecessor instruction)
   (let* ((arrangement (output-arrangement predecessor))
