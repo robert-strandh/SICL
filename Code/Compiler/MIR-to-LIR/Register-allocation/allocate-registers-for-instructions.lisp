@@ -183,3 +183,7 @@
 (defmethod compute-output-arrangement
     (predecessor (instruction cleavir-ir:memref2-instruction))
   (compute-output-arrangement-default predecessor instruction))
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:assignment-instruction))
+  (compute-output-arrangement-default predecessor instruction))
