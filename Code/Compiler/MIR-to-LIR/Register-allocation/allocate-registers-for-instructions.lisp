@@ -164,3 +164,14 @@
         ;; attribute it to the output location.
         (allocate-and-attribute-new-register
          predecessor instruction output-location))))
+
+(defun compute-output-arrangement-default (predecessor instruction)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (input-arrangement (input-arrangement instruction))
+         (input-attributions (attributions input-arrangement))
+         (input-attribution (find input input-attributions
+                                  :test #'eq :key #'lexical-location))
+         (output (first (cleavir-ir:outputs instruction)))
+         (pool (output-pool instruction)))
+    (allocate-or-reuse
+     predecessor instruction input-attribution output pool)))
