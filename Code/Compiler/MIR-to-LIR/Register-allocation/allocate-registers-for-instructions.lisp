@@ -175,3 +175,7 @@
          (pool (output-pool instruction)))
     (allocate-or-reuse
      predecessor instruction input-attribution output pool)))
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:memref1-instruction))
+  (compute-output-arrangement-default predecessor instruction))
