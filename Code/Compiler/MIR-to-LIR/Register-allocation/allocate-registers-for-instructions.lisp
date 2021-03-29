@@ -146,3 +146,21 @@
       (setf (output-arrangement instruction)
             (update-arrangement-for-new-definition
              output-arrangement lexical-location register-number)))))
+
+;;;
+(defun allocate-or-reuse
+    (predecessor instruction input-attribution output-location pool)
+  (let ((input-location (lexical-location input-attribution)))
+    (if (or (eq input-location output-location)
+            (not (member input-location pool
+                         :test #'eq :key #'lexical-location)))
+        ;; Then we can reuse the same register
+        (setf (output-arrangement instruction)
+              (update-arrangement-for-new-definition
+               (output-arrangement instruction)
+               output-location
+               (register-number input-attribution)))
+        ;; Otherwise, we need to allocate a new register and
+        ;; attribute it to the output location.
+        (allocate-and-attribute-new-register
+         predecessor instruction output-location))))
