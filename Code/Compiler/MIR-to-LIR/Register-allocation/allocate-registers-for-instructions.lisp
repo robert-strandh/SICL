@@ -224,5 +224,21 @@
                  ;; FIXME: adapt the output arrangement of PREDECESSOR
                  ;; to the existing input arrangement of INSTRUCTION.
                  nil)))
-    ;; FIXME: set up the initial output arrangement of MIR.
+    (destructuring-bind
+        (static-environment-location dynamic-environment-location)
+        (cleavir-ir:outputs mir)
+      (setf (output-arrangement mir)
+            (make-instance 'arrangement
+              :register-map *initial*
+              :stack-map #*
+              :attributions
+              (list
+               (make-instance 'attribution
+                 :lexical-location static-environment-location
+                 :stack-slot nil
+                 :register-number 10)
+               (make-instance 'attribution
+                 :lexical-location dynamic-environment-location
+                 :stack-slot nil
+                 :register-number 1)))))
     (process-pair mir (first (cleavir-ir:successors mir)))))
