@@ -201,6 +201,10 @@
     (predecessor (instruction cleavir-ir:initialize-return-values-instruction))
   nil)
 
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:set-return-value-instruction))
+  nil)
+
 (defun allocate-registers-for-instructions (mir)
   (labels ((process-pair (predecessor instruction)
              (if (null (input-arrangement instruction))
