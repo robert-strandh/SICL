@@ -187,3 +187,8 @@
 (defmethod compute-output-arrangement
     (predecessor (instruction cleavir-ir:assignment-instruction))
   (compute-output-arrangement-default predecessor instruction))
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:compute-argument-count-instruction))
+  (allocate-and-attribute-new-register
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
