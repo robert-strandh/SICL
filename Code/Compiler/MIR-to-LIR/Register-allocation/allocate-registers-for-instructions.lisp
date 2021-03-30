@@ -192,3 +192,20 @@
     (predecessor (instruction cleavir-ir:compute-argument-count-instruction))
   (allocate-and-attribute-new-register
    predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    (predecessor (instruction cleavir-ir:argument-instruction))
+  (compute-output-arrangement-default predecessor instruction))
+
+(defun allocate-registers-for-instructions (mir)
+  (labels ((process-pair (predecessor instruction)
+             (if (null (input-arrangement instruction))
+                 (progn (allocate-registers-for-instruction
+                         predecessor instruction)
+                        (loop for successor in (cleavir-ir:successors instruction)
+                              do (process-pair instruction successor)))
+                 ;; FIXME: adapt the output arrangement of PREDECESSOR
+                 ;; to the existing input arrangement of INSTRUCTION.
+                 nil)))
+    ;; FIXME: set up the initial output arrangement of MIR.
+    (process-pair mir (first (cleavir-ir:successors mir)))))
