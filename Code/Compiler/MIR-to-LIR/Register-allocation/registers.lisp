@@ -41,6 +41,8 @@
 
 (defparameter *xmm* #*000000000000000011111111)
 
+(defparameter *initial* #*010000000010000000000000)
+
 (defun register-number-in-map-p (register-number register-map)
   (not (zerop (bit register-map register-number))))
 
