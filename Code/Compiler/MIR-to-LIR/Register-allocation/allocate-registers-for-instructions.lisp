@@ -224,7 +224,9 @@
                  ;; FIXME: adapt the output arrangement of PREDECESSOR
                  ;; to the existing input arrangement of INSTRUCTION.
                  nil)))
-    (let* ((outputs (cleavir-ir:outputs mir))
+    (let* ((*input-arrangements* (make-hash-table :test #'eq))
+           (*output-arrangements* (make-hash-table :test #'eq))
+           (outputs (cleavir-ir:outputs mir))
            (static-environment-location (first outputs))
            (dynamic-environment-location (second outputs)))
       (setf (output-arrangement mir)
@@ -240,5 +242,5 @@
                (make-instance 'attribution
                  :lexical-location dynamic-environment-location
                  :stack-slot nil
-                 :register-number 1)))))
-    (process-pair mir (first (cleavir-ir:successors mir)))))
+                 :register-number 1))))
+      (process-pair mir (first (cleavir-ir:successors mir))))))
