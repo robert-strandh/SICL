@@ -10,7 +10,7 @@
     :accessor register-number)
    (%stack-slot
     :initform nil
-    :initarg stack-slot
+    :initarg :stack-slot
     :accessor stack-slot)))
 
 (defclass arrangement ()
