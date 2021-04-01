@@ -134,9 +134,7 @@
 ;;; by an ENTER-INSTRUCTION.
 (defun compute-estimated-distance-to-use
     (enter-instruction back-arcs)
-  (let ((work-list (make-instance 'work-list))
-        (*input-pools* (make-hash-table :test #'eq))
-        (*output-pools* (make-hash-table :test #'eq)))
+  (let ((work-list (make-instance 'work-list)))
     (cleavir-ir:map-local-instructions
      (lambda (instruction) (push-item work-list instruction))
      enter-instruction)
@@ -153,5 +151,4 @@
                        instruction-to-process
                        back-arcs)))
                (loop for instruction in additional-instructions
-                     do (push-item work-list instruction))))
-    (values *input-pools* *output-pools*)))
+                     do (push-item work-list instruction))))))
