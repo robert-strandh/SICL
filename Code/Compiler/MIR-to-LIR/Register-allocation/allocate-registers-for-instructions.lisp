@@ -17,6 +17,34 @@
             do (setf result (ensure-in-register input result instruction)))
     result))
 
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:named-call-instruction))
+  predecessor)
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:catch-instruction))
+  predecessor)
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:bind-instruction))
+  predecessor)
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:unwind-instruction))
+  predecessor)
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:enclose-instruction))
+  predecessor)
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:initialize-values-instruction))
+  predecessor)
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
+  predecessor)
+
 ;;; Create a new arrangement that is like ARRANGEMENT but keeping only
 ;;; attributions of live lexical locations as indicated by the fact
 ;;; that they appear in POOL.
