@@ -37,14 +37,12 @@
             (register-map-difference candidate-register-map attributed-registers)))
       (find-any-register-in-map unattributed-register-map))))
 
-;;; By "allocating a register", we mean to make sure that the output
-;;; arrangment of the predecessor of INSTRUCTION does not have the
-;;; register in any of its attributions.  To accomplish this task, we
-;;; may have to add new instructions preceding INSTRUCTION, and it is
-;;; the last one of these added instructions that will correspond to
-;;; the contract.  For that reason, we return two values: A new
-;;; predecessor and the register we allocated.
-(defun allocate-register (predecessor instruction pool candidates)
+;;; Make sure that the output arrangement of the predecessor of
+;;; INSTRUCTION is such that there is at least one unattributed
+;;; register among the CANDIDATES.  To accomplish this task, we may
+;;; have to add new instructions preceding INSTRUCTION.  This new
+;;; predecessor is the return value.
+(defun ensure-unattributed-register (predecessor instruction pool candidates)
   (let* ((arrangement (output-arrangement predecessor))
          (attributions (attributions arrangement))
          (register-number (find-unattributed-register arrangement candidates)))
@@ -70,17 +68,15 @@
             ;; is already on the stack as well.
             (if (null stack-slot)
                 ;; It is not on the stack. We need to spill the register.
-                (values (spill-and-unattribute-register
-                         predecessor instruction register-number)
-                        register-number)
+                (spill-and-unattribute-register
+                 predecessor instruction register-number)
                 ;; It is on the stack.  Just unattribute the register.
-                (values (unattribute-register
-                         predecessor instruction register-number)
-                        register-number))))
+                (unattribute-register
+                 predecessor instruction register-number))))
         ;; There is an unattributed register of the kind that we are
         ;; looking for.  This means that PREDECESSOR already fulfuls
         ;; the contract, so we can use it as it is.
-        (values predecessor register-number))))
+        predecessor)))
 
 (defun determine-candidates (lexical-location pool)
   (let* ((pool-item (find lexical-location pool
@@ -96,9 +92,17 @@
          (register-number (register-number attribution))
          (pool (input-pool instruction)))
     (if (null register-number)
-        (allocate-register
-         predecessor
-         instruction
-         pool
-         (determine-candidates lexical-location pool))
-        (values predecessor register-number))))
+        (let* ((candidates (determine-candidates lexical-location pool))
+               (new-predecessor
+                 (ensure-unattributed-register
+                  predecessor instruction pool candidates))
+               (new-output-arrangement (output-arrangement new-predecessor))
+               (unattributed-register-number
+                 (find-unattributed-register
+                  new-output-arrangement candidates))
+               (stack-slot (stack-slot attribution)))
+          (unspill new-predecessor
+                   instruction
+                   stack-slot
+                   unattributed-register-number))
+        predecessor)))
