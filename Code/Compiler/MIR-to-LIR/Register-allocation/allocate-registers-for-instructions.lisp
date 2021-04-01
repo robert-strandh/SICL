@@ -18,7 +18,8 @@
   (let ((result predecessor))
     (loop for input in (cleavir-ir:inputs instruction)
           when (typep input 'cleavir-ir:lexical-location)
-            do (setf result (ensure-in-register input result instruction)))))
+            do (setf result (ensure-in-register input result instruction)))
+    result))
 
 ;;; Create a new arrangement that is like ARRANGEMENT but keeping only
 ;;; attributions of live lexical locations as indicated by the fact
