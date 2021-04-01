@@ -2,7 +2,4 @@
 
 (defpackage #:sicl-register-allocation
   (:use #:common-lisp)
-  (:export #:compute-estimated-distance-to-use
-           #:allocate-registers-for-instructions
-           #:preprocess-instructions
-           #:find-back-arcs))
+  (:export #:do-register-allocation))
