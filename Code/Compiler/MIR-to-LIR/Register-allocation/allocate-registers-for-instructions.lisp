@@ -4,11 +4,11 @@
 
 (defgeneric process-inputs (predecessor instruction))
 
-(defgeneric compute-output-arrangement (predecessor instruction))
+(defgeneric process-outputs (predecessor instruction))
 
 (defmethod allocate-registers-for-instruction (predecessor instruction)
   (let ((new-predecessor (process-inputs predecessor instruction)))
-    (compute-output-arrangement new-predecessor instruction)))
+    (process-outputs new-predecessor instruction)))
 
 (defmethod process-inputs (predecessor instruction)
   (let ((result predecessor))
@@ -68,13 +68,13 @@
         :register-map new-register-map
         :attributions new-attributions))))
 
-(defmethod compute-output-arrangement :before
+(defmethod process-outputs :before
     (predecessor instruction)
   (setf (output-arrangement instruction)
         (filter-arrangement
          (input-arrangement instruction) (output-pool instruction))))
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:comparison-mixin))
   (declare (ignore predecessor))
   nil)
@@ -113,48 +113,48 @@
 ;;; wherever they are.  Therefore, we do not need to allocate registes
 ;;; for them.
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:named-call-instruction))
   (declare (ignore predecessor))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:catch-instruction))
   (declare (ignore predecessor))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:bind-instruction))
   (declare (ignore predecessor))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:unwind-instruction))
   (declare (ignore predecessor))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:enclose-instruction))
   (declare (ignore predecessor))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:initialize-values-instruction))
   (declare (ignore predecessor))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
   (declare (ignore predecessor))
   nil)
 
 ;;; The MEMSET-INSTRUCTION has no outputs, so we are done.
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:memset1-instruction))
   (declare (ignore predecessor))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:memset2-instruction))
   (declare (ignore predecessor))
   nil)
@@ -190,7 +190,7 @@
         (allocate-and-attribute-new-register
          predecessor instruction output-location))))
 
-(defun compute-output-arrangement-default (predecessor instruction)
+(defun process-outputs-default (predecessor instruction)
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (input-arrangement (input-arrangement instruction))
          (input-attributions (attributions input-arrangement))
@@ -201,40 +201,40 @@
     (allocate-or-reuse
      predecessor instruction input-attribution output pool)))
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:memref1-instruction))
-  (compute-output-arrangement-default predecessor instruction))
+  (process-outputs-default predecessor instruction))
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:memref2-instruction))
-  (compute-output-arrangement-default predecessor instruction))
+  (process-outputs-default predecessor instruction))
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:assignment-instruction))
-  (compute-output-arrangement-default predecessor instruction))
+  (process-outputs-default predecessor instruction))
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:compute-argument-count-instruction))
   (allocate-and-attribute-new-register
    predecessor instruction (first (cleavir-ir:outputs instruction))))
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:argument-instruction))
-  (compute-output-arrangement-default predecessor instruction))
+  (process-outputs-default predecessor instruction))
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:initialize-return-values-instruction))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:set-return-value-instruction))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:return-instruction))
   nil)
 
-(defmethod compute-output-arrangement
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:load-constant-instruction))
   (allocate-and-attribute-new-register
    predecessor instruction (first (cleavir-ir:outputs instruction))))
