@@ -68,12 +68,6 @@
         :register-map new-register-map
         :attributions new-attributions))))
 
-(defmethod process-outputs :before
-    (predecessor instruction)
-  (setf (output-arrangement instruction)
-        (filter-arrangement
-         (input-arrangement instruction) (output-pool instruction))))
-
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:comparison-mixin))
   (declare (ignore predecessor))
