@@ -39,6 +39,9 @@
 
 (defparameter *callee-saves* #*010000000000111100000000)
 
+(defun register-number-is-callee-saves-p (register-number)
+  (= (bit *callee-saves* register-number) 1))
+
 (defparameter *xmm* #*000000000000000011111111)
 
 (defparameter *initial* #*010000000010000000000000)
