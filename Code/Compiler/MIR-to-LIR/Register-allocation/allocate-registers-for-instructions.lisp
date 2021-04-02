@@ -70,8 +70,7 @@
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:comparison-mixin))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 ;;; For a BINARY-OPERATION-MIXIN, we have prepared the instruction so
 ;;; that the first input is dead after the instruction.  That fact
@@ -79,8 +78,7 @@
 ;;; the first input.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:binary-operation-mixin))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 ;;; All the following methods are for instructions that will turn into
 ;;; named calls, so the call-site manager will access the arguments
@@ -89,49 +87,40 @@
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:named-call-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:catch-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:bind-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:unwind-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:enclose-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:initialize-values-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 ;;; The MEMSET-INSTRUCTION has no outputs, so we are done.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:memset1-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:memset2-instruction))
-  (declare (ignore predecessor))
-  nil)
+  predecessor)
 
 (defun ensure-unattributed (predecessor instruction lexical-location)
   (let* ((pool (output-pool predecessor))
