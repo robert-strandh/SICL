@@ -6,10 +6,17 @@
 
 (defgeneric process-outputs (predecessor instruction))
 
-(defmethod allocate-registers-for-instruction (predecessor instruction)
-  (let ((new-predecessor (process-inputs predecessor instruction)))
-    (process-outputs new-predecessor instruction)))
+(defgeneric compute-output-arrangement (instruction))
 
+(defmethod allocate-registers-for-instruction (predecessor instruction)
+  (let* ((new-predecessor (process-inputs predecessor instruction))
+         (new-predecessor (process-outputs new-predecessor instruction)))
+    (setf (input-arrangement instruction)
+          (output-arrangement new-predecessor))
+    (compute-output-arrangement instruction)))
+
+;;; By default, we make sure that every input that is a lexical
+;;; location is in a register.
 (defmethod process-inputs (predecessor instruction)
   (let ((result predecessor))
     (loop for input in (cleavir-ir:inputs instruction)
@@ -17,6 +24,10 @@
             do (setf result (ensure-in-register input result instruction)))
     result))
 
+;;; For named-call instructions, we do not do anything particular.
+;;; The call-site manager will generate the code to fetch the
+;;; arguments and put them in the location where the callee needs them
+;;; to be.
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:named-call-instruction))
   predecessor)
@@ -68,6 +79,8 @@
         :register-map new-register-map
         :attributions new-attributions))))
 
+;;; Comparison instructions don't have any outputs, so nothing needs
+;;; to be done.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:comparison-mixin))
   predecessor)
@@ -82,36 +95,56 @@
 
 ;;; All the following methods are for instructions that will turn into
 ;;; named calls, so the call-site manager will access the arguments
-;;; wherever they are.  Therefore, we do not need to allocate registes
-;;; for them.
+;;; wherever they are.
+
+;;; What we need to do here is to make sure that every lexical
+;;; location that
+;;;   1. is live after the call,
+;;;   2. is not present in a stack slot, and
+;;;   3. is not in a callee-saves register,
+;;; is spilled before the call.
+(defun process-outputs-for-named-call (predecessor instruction)
+  (let ((result predecessor))
+    (loop with arrangement = (output-arrangement predecessor)
+          with pool = (output-pool instruction)
+          for attribution in (attributions arrangement)
+          for location = (lexical-location attribution)
+          for register-number = (register-number attribution)
+          when (and (member location pool
+                            :test #'eq :key #'lexical-location)
+                    (null (stack-slot attribution))
+                    (not (register-number-is-callee-saves-p register-number)))
+            do (setf result
+                     (spill result instruction register-number)))
+    result))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:named-call-instruction))
-  predecessor)
+  (process-outputs-for-named-call predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:catch-instruction))
-  predecessor)
+  (process-outputs-for-named-call predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:bind-instruction))
-  predecessor)
+  (process-outputs-for-named-call predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:unwind-instruction))
-  predecessor)
+  (process-outputs-for-named-call predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:enclose-instruction))
-  predecessor)
+  (process-outputs-for-named-call predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:initialize-values-instruction))
-  predecessor)
+  (process-outputs-for-named-call predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
-  predecessor)
+  (process-outputs-for-named-call predecessor instruction))
 
 ;;; The MEMSET-INSTRUCTION has no outputs, so we are done.
 (defmethod process-outputs
@@ -127,6 +160,13 @@
          (candidates (determine-candidates lexical-location pool)))
     (ensure-unattributed-register predecessor instruction pool candidates)))
 
+;;; The default output processing is valid when there is at least one
+;;; input and at least one output.  We check whether either the first
+;;; input and the first output are identical, or whether the first
+;;; input is dead after the instruction.  In that case, we reuse the
+;;; same register for the output.  Otherwise, we make sure there is an
+;;; unattributed register of the right kind that we can later
+;;; attribute to the output.
 (defun process-outputs-default (predecessor instruction)
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (output (first (cleavir-ir:outputs instruction)))
@@ -173,10 +213,156 @@
     (predecessor (instruction cleavir-ir:return-instruction))
   nil)
 
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:load-constant-instruction))
-  (ensure-unattributed
-   predecessor instruction (first (cleavir-ir:outputs instruction))))
+;;; As with PROCESS-OUTPUTS the default action for
+;;; COMPUTE-OUTPUT-ARRANGEMENT is valid when there is at least one
+;;; input and at least one output.
+(defun compute-output-arrangement-default (instruction)
+  (let* ((first-input (first (cleavir-ir:inputs instruction)))
+         (first-output (first (cleavir-ir:outputs instruction)))
+         (pool (output-pool instruction))
+         (input-arrangement (input-arrangement instruction))
+         (new-arrangement (filter-arrangement input-arrangement pool)))
+    (unless (eq first-input first-output)
+      ;; We must include a new register in the new arrangement.  We
+      ;; know there is an unattributed register of the right kind, so
+      ;; we just have to find one such register.
+      (let* ((candidates (determine-candidates first-output pool))
+             (register-number
+               (find-unattributed-register new-arrangement candidates)))
+        (reserve-register (register-map new-arrangement) register-number)
+        (push (make-instance 'attribution
+                :lexical-location first-output
+                :stack-slot nil
+                :register-number register-number)
+              (attributions new-arrangement))))
+    (setf (output-arrangement instruction) new-arrangement)))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:binary-operation-mixin))
+  (compute-output-arrangement-default instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:assignment-instruction))
+  (compute-output-arrangement-default instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:memref1-instruction))
+  (compute-output-arrangement-default instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:memref2-instruction))
+  (compute-output-arrangement-default instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:argument-instruction))
+  (compute-output-arrangement-default instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:comparison-mixin))
+  (setf (output-arrangement instruction)
+        (filter-arrangement
+         (input-arrangement instruction) (output-pool instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:memset1-instruction))
+  (setf (output-arrangement instruction)
+        (filter-arrangement
+         (input-arrangement instruction) (output-pool instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:memset2-instruction))
+  (setf (output-arrangement instruction)
+        (filter-arrangement
+         (input-arrangement instruction) (output-pool instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:compute-argument-count-instruction))
+  (let* ((input-arrangement (input-arrangement instruction))
+         (pool (output-pool instruction))
+         (output (first (cleavir-ir:outputs instruction)))
+         (candidates (determine-candidates output pool))
+         (new-register-map
+           (copy-register-map (register-map input-arrangement)))
+         (register-number
+           (find-unattributed-register input-arrangement candidates))
+         (new-attribution (make-instance 'attribution
+                            :lexical-location output
+                            :stack-slot nil
+                            :register-number register-number)))
+    (reserve-register new-register-map register-number)
+    (setf (output-arrangement instruction)
+          (make-instance 'arrangement
+            :stack-map (stack-map input-arrangement)
+            :register-map new-register-map
+            :attributions
+            (cons new-attribution (attributions input-arrangement))))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:return-instruction))
+  nil)
+
+;;; We need to make sure the output arrangement reflects the fact that
+;;; only callee-saves registers contain valid objects.
+(defun compute-output-arrangement-for-named-call (instruction)
+  (let ((input-arrangement (input-arrangement instruction))
+        (pool (output-pool instruction)))
+    (with-arrangement-parts
+        (stack-map register-map attributions input-arrangement)
+      (let ((new-register-map (copy-register-map register-map))
+            (new-attributions '()))
+        (loop for attribution in attributions
+              for lexical-location = (lexical-location attribution)
+              for stack-slot = (stack-slot attribution)
+              for register-number = (register-number attribution)
+              do (when (member lexical-location pool
+                               :test #'eq :key #'lexical-location)
+                   ;; Then the lexical location is live.
+                   (if (or (null register-number)
+                           (register-number-is-callee-saves-p register-number))
+                       ;; Then we keep the attribution as it is.
+                       (push attribution new-attributions)
+                       ;; Otherwise, we need to make sure the
+                       ;; register is unattributed.
+                       (progn (push (make-instance 'attribution
+                                      :lexical-location lexical-location
+                                      :stack-slot stack-slot
+                                      :register-number nil)
+                                    new-attributions)
+                              (free-register
+                               new-register-map register-number)))))
+        (setf (output-arrangement instruction)
+              (make-instance 'arrangement
+                :stack-map stack-map
+                :register-map new-register-map
+                :attributions new-attributions))))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:named-call-instruction))
+  (compute-output-arrangement-for-named-call instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:catch-instruction))
+  (compute-output-arrangement-for-named-call instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:bind-instruction))
+  (compute-output-arrangement-for-named-call instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:unwind-instruction))
+  (compute-output-arrangement-for-named-call instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:enclose-instruction))
+  (compute-output-arrangement-for-named-call instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:initialize-values-instruction))
+  (compute-output-arrangement-for-named-call instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:multiple-value-call-instruction))
+  (compute-output-arrangement-for-named-call instruction))
 
 (defun allocate-registers-for-instructions (mir)
   (labels ((process-pair (predecessor instruction)
