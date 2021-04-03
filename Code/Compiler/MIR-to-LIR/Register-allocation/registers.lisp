@@ -55,6 +55,9 @@
 (defun mark-register (register-map register-number)
   (setf (bit register-map register-number) 1))
 
+(defun unmark-register (register-map register-number)
+  (setf (bit register-map register-number) 0))
+
 (defun copy-register-map (register-map)
   (let ((result (make-array (length register-map) :element-type 'bit)))
     (replace result register-map)
