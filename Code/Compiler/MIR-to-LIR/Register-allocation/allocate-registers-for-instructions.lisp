@@ -73,7 +73,7 @@
                    (progn (unless (null stack-slot)
                             (free-stack-slot new-stack-map stack-slot))
                           (unless (null register-number)
-                            (free-register new-register-map register-number)))))
+                            (unmark-register new-register-map register-number)))))
       (make-instance 'arrangement
         :stack-map new-stack-map
         :register-map new-register-map
@@ -210,15 +210,15 @@
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:initialize-return-values-instruction))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:set-return-value-instruction))
-  nil)
+  predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:return-instruction))
-  nil)
+  predecessor)
 
 ;;; As with PROCESS-OUTPUTS the default action for
 ;;; COMPUTE-OUTPUT-ARRANGEMENT is valid when there is at least one
@@ -295,7 +295,7 @@
                             :lexical-location output
                             :stack-slot nil
                             :register-number register-number)))
-    (reserve-register new-register-map register-number)
+    (mark-register new-register-map register-number)
     (setf (output-arrangement instruction)
           (make-instance 'arrangement
             :stack-map (stack-map input-arrangement)
