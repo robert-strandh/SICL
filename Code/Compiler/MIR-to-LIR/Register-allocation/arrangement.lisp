@@ -21,6 +21,21 @@
     :initarg :attributions
     :accessor attributions)))
 
+;;; FIXME: remove this method once everything is working.
+(defmethod initialize-instance :after ((object arrangement) &key)
+  (let ((register-count 0)
+        (register-map (register-map object)))
+    ;; Make sure every register in the attributions is accounted for in
+    ;; the register map.  Also count the number of registers.
+    (loop for attribution in (attributions object)
+          for register-number = (register-number attribution)
+          do (unless (null register-number)
+               (incf register-count)
+               (assert (= (bit register-map register-number) 1))))
+    ;; Make sure there are as many 1s in the register map as there are
+    ;; non-NIL registers in the attributions.
+    (assert (= register-count (count 1 register-map)))))
+
 (defmacro with-arrangement-parts
     ((stack-map-var register-map-var attributions-var arrangement-form) &body body)
   (let ((arrangement-var (gensym)))
