@@ -385,7 +385,7 @@
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:enclose-instruction))
-  (compute-output-arrangement-for-named-call instruction))
+  (compute-output-arrangement-no-inputs instruction))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:initialize-values-instruction))
