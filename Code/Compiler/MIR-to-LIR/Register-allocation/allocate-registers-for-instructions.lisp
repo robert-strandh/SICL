@@ -340,22 +340,27 @@
               for lexical-location = (lexical-location attribution)
               for stack-slot = (stack-slot attribution)
               for register-number = (register-number attribution)
-              do (when (member lexical-location pool
-                               :test #'eq :key #'lexical-location)
-                   ;; Then the lexical location is live.
-                   (if (or (null register-number)
-                           (register-number-is-callee-saves-p register-number))
-                       ;; Then we keep the attribution as it is.
-                       (push attribution new-attributions)
-                       ;; Otherwise, we need to make sure the
-                       ;; register is unattributed.
-                       (progn (push (make-instance 'attribution
-                                      :lexical-location lexical-location
-                                      :stack-slot stack-slot
-                                      :register-number nil)
-                                    new-attributions)
-                              (free-register
-                               new-register-map register-number)))))
+              do (if (member lexical-location pool
+                             :test #'eq :key #'lexical-location)
+                     ;; Then the lexical location is live.
+                     (if (or (null register-number)
+                             (register-number-is-callee-saves-p register-number))
+                         ;; Then we keep the attribution as it is.
+                         (push attribution new-attributions)
+                         ;; Otherwise, we need to make sure the
+                         ;; register is unattributed.
+                         (progn (push (make-instance 'attribution
+                                        :lexical-location lexical-location
+                                        :stack-slot stack-slot
+                                        :register-number nil)
+                                      new-attributions)
+                                (unmark-register
+                                 new-register-map register-number)))
+                     ;; The lexical location is not live.  Check
+                     ;; whether it has an attributed register, and if
+                     ;; so, unmark that register.
+                     (unless (null register-number)
+                       (unmark-register new-register-map register-number))))
         (setf (output-arrangement instruction)
               (make-instance 'arrangement
                 :stack-map stack-map
