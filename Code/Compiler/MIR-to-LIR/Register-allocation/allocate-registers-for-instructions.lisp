@@ -236,7 +236,7 @@
       (let* ((candidates (determine-candidates first-output pool))
              (register-number
                (find-unattributed-register new-arrangement candidates)))
-        (reserve-register (register-map new-arrangement) register-number)
+        (mark-register (register-map new-arrangement) register-number)
         (push (make-instance 'attribution
                 :lexical-location first-output
                 :stack-slot nil
