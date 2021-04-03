@@ -69,7 +69,7 @@
             for stack-slot = (stack-slot attribution)
             for register-number = (register-number attribution)
             do (if (member location pool :test #'eq :key #'lexical-location)
-                   (push location new-attributions)
+                   (push attribution new-attributions)
                    (progn (unless (null stack-slot)
                             (free-stack-slot new-stack-map stack-slot))
                           (unless (null register-number)
