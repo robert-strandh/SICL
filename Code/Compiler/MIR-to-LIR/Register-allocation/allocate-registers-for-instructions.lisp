@@ -217,6 +217,10 @@
   predecessor)
 
 (defmethod process-outputs
+    (predecessor (instruction cleavir-ir:return-value-instruction))
+  (process-outputs-default predecessor instruction))
+
+(defmethod process-outputs
     (predecessor (instruction cleavir-ir:return-instruction))
   predecessor)
 
@@ -297,6 +301,10 @@
   (setf (output-arrangement instruction)
         (filter-arrangement
          (input-arrangement instruction) (output-pool instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:return-value-instruction))
+  (compute-output-arrangement-default instruction))
 
 (defun compute-output-arrangement-no-inputs (instruction)
   (let* ((input-arrangement (input-arrangement instruction))
