@@ -156,9 +156,10 @@
   predecessor)
 
 (defun ensure-unattributed (predecessor instruction lexical-location)
-  (let* ((pool (output-pool predecessor))
+  (let* ((pool (output-pool instruction))
          (candidates (determine-candidates lexical-location pool)))
-    (ensure-unattributed-register predecessor instruction pool candidates)))
+    (ensure-unattributed-register
+     predecessor instruction (output-pool predecessor) candidates)))
 
 ;;; The default output processing is valid when there is at least one
 ;;; input and at least one output.  We check whether either the first
@@ -174,11 +175,12 @@
     ;; We do not need to allocate a new register if either the output
     ;; and the input are the same or the input is dead after
     ;; INSTRUCTION.
-    (unless (and (typep input 'cleavir-ir:lexical-location)
-                 (or (eq input output)
-                     (not (member input pool
-                                  :test #'eq :key #'lexical-location))))
-      (ensure-unattributed predecessor instruction output))))
+    (if (and (typep input 'cleavir-ir:lexical-location)
+             (or (eq input output)
+                 (not (member input pool
+                              :test #'eq :key #'lexical-location))))
+        predecessor
+        (ensure-unattributed predecessor instruction output))))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:memref1-instruction))
@@ -194,6 +196,11 @@
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:compute-argument-count-instruction))
+  (ensure-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:load-constant-instruction))
   (ensure-unattributed
    predecessor instruction (first (cleavir-ir:outputs instruction))))
 
@@ -275,8 +282,7 @@
         (filter-arrangement
          (input-arrangement instruction) (output-pool instruction))))
 
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:compute-argument-count-instruction))
+(defun compute-output-arrangement-no-inputs (instruction)
   (let* ((input-arrangement (input-arrangement instruction))
          (pool (output-pool instruction))
          (output (first (cleavir-ir:outputs instruction)))
@@ -296,6 +302,14 @@
             :register-map new-register-map
             :attributions
             (cons new-attribution (attributions input-arrangement))))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:compute-argument-count-instruction))
+  (compute-output-arrangement-no-inputs instruction))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:load-constant-instruction))
+  (compute-output-arrangement-no-inputs instruction))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:return-instruction))
@@ -366,14 +380,14 @@
 
 (defun allocate-registers-for-instructions (mir)
   (labels ((process-pair (predecessor instruction)
-             (if (null (input-arrangement instruction))
+             (if (input-arrangement-p instruction)
+                 ;; FIXME: adapt the output arrangement of PREDECESSOR
+                 ;; to the existing input arrangement of INSTRUCTION.
+                 nil
                  (progn (allocate-registers-for-instruction
                          predecessor instruction)
                         (loop for successor in (cleavir-ir:successors instruction)
-                              do (process-pair instruction successor)))
-                 ;; FIXME: adapt the output arrangement of PREDECESSOR
-                 ;; to the existing input arrangement of INSTRUCTION.
-                 nil)))
+                              do (process-pair instruction successor))))))
     (let* ((outputs (cleavir-ir:outputs mir))
            (static-environment-location (first outputs))
            (dynamic-environment-location (second outputs)))
