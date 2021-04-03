@@ -220,6 +220,10 @@
     (predecessor (instruction cleavir-ir:return-instruction))
   predecessor)
 
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:unreachable-instruction))
+  predecessor)
+
 ;;; As with PROCESS-OUTPUTS the default action for
 ;;; COMPUTE-OUTPUT-ARRANGEMENT is valid when there is at least one
 ;;; input and at least one output.
@@ -325,6 +329,10 @@
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:return-instruction))
+  nil)
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:unreachable-instruction))
   nil)
 
 ;;; We need to make sure the output arrangement reflects the fact that
