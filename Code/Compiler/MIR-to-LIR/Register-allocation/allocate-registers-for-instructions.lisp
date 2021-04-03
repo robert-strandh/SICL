@@ -288,6 +288,12 @@
         (filter-arrangement
          (input-arrangement instruction) (output-pool instruction))))
 
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:set-return-value-instruction))
+  (setf (output-arrangement instruction)
+        (filter-arrangement
+         (input-arrangement instruction) (output-pool instruction))))
+
 (defun compute-output-arrangement-no-inputs (instruction)
   (let* ((input-arrangement (input-arrangement instruction))
          (pool (output-pool instruction))
