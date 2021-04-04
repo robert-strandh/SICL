@@ -14,8 +14,8 @@
     :accessor stack-slot)))
 
 (defclass arrangement ()
-  ((%stack-map :initarg :stack-map :reader stack-map)
-   (%register-map :initarg :register-map :reader register-map)
+  ((%stack-map :initarg :stack-map :accessor stack-map)
+   (%register-map :initarg :register-map :accessor register-map)
    (%attributions
     :initform '()
     :initarg :attributions
