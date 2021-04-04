@@ -157,3 +157,25 @@
           (setf (bit register-map register-number) 0))
         (setf attributions
               (delete attribution attributions :test #'eq))))))
+
+;;; Destructively update ARRANGEMENT so that the ATTRIBUTION
+;;; containing REGISTER-NUMBER also has a stack slot.  If there is no
+;;; attribution that contains REGISTER-NUMBER, then signal an error.
+;;; If the attribution containing REGISTER-NUMBER already has a stack
+;;; slot, then signal an error.
+(defun ensure-stack-slot (arrangement register-number)
+  (with-arrangement arrangement
+    (let ((attribution (find register-number attributions
+                             :test #'eql :key #'register-number)))
+      (assert (not (null attribution)))
+      (with-attribution attribution
+        (assert (null stack-slot))
+        (let ((free-stack-slot (find 0 stack-map :test #'eql)))
+          (when (null free-stack-slot)
+            (setf free-stack-slot (length stack-map))
+            (let* ((length (1+ free-stack-slot))
+                   (new-stack-map (make-array length :element-type 'bit)))
+              (replace new-stack-map stack-map)
+              (setf (bit new-stack-map free-stack-slot) 1)
+              (setf stack-map new-stack-map)))
+          (setf stack-slot free-stack-slot))))))
