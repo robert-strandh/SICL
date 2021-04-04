@@ -53,6 +53,20 @@
             (,attributions-var (attributions ,arrangement-var)))
        ,@body)))
 
+(defmacro with-arrangement (arrangement-form &body body)
+  `(with-accessors ((stack-map stack-map)
+                    (register-map register-map)
+                    (attributions attributions))
+       ,arrangement-form
+     ,@body))
+
+(defmacro with-attribution (attribution-form &body body)
+  `(with-accessors ((lexical-location lexical-location)
+                    (stack-slot stack-slot)
+                    (register-number register-number))
+       ,attribution-form
+     ,@body))
+
 (defun copy-bit-vector (bit-vector)
   (let ((result (make-array (length bit-vector) :element-type 'bit)))
     (replace result bit-vector)
