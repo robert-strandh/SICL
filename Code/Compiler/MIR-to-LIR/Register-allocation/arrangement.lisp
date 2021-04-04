@@ -53,6 +53,27 @@
             (,attributions-var (attributions ,arrangement-var)))
        ,@body)))
 
+(defun copy-bit-vector (bit-vector)
+  (let ((result (make-array (length bit-vector) :element-type 'bit)))
+    (replace result bit-vector)
+    result))
+
+(defun copy-attribution (attribution)
+  (make-instance 'attribution
+    :lexical-location (lexical-location attribution)
+    :register-number (register-number attribution)
+    :stack-slot (stack-slot attribution)))
+
+(defun copy-attributions (attributions)
+  (mapcar #'copy-attribution attributions))
+
+(defun copy-arrangement (arrangement)
+  (with-arrangement-parts (stack-map register-map attributions arrangement)
+    (make-instance 'arrangement
+      :stack-map (copy-bit-vector stack-map)
+      :register-map (copy-bit-vector register-map)
+      :attributions (copy-attributions attributions))))
+
 (defvar *input-arrangements*)
 
 (defun input-arrangement-p (instruction)
