@@ -74,6 +74,17 @@
       :register-map (copy-bit-vector register-map)
       :attributions (copy-attributions attributions))))
 
+;;; Return the attribution of LEXICAL-LOCATION in ARRANGEMENT as two
+;;; values, the STACK-SLOT and the REGISTER-NUMBER.  If
+;;; LEXICAL-LOCATION is not attributed in ARRANGEMENT, then return NIL
+;;; and NIL.
+(defun find-attribution (arrangement lexical-location)
+  (let ((attribution (find lexical-location (attributions arrangement)
+                           :test #'eq :key #'lexical-location)))
+    (if (null attribution)
+        (values nil nil)
+        (values (stack-slot attribution) (register-number attribution)))))
+
 (defvar *input-arrangements*)
 
 (defun input-arrangement-p (instruction)
