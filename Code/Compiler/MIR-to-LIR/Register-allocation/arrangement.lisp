@@ -85,6 +85,9 @@
         (values nil nil)
         (values (stack-slot attribution) (register-number attribution)))))
 
+(defun register-attributed-p (arrangement register-number)
+  (not (zerop (bit (register-map arrangement) register-number))))
+
 (defvar *input-arrangements*)
 
 (defun input-arrangement-p (instruction)
@@ -110,42 +113,18 @@
 (defun (setf output-arrangement) (arrangement instruction)
   (setf (gethash instruction *output-arrangements*) arrangement))
 
+;;; Destructively update ARRANGEMENT to reflect a new definition of
+;;; LEXICAL-LOCATION, by adding an attribution of LEXICAL-LOCATION to
+;;; REGISTER-NUMBER.  If LEXICAL-LOCATION has an existing attribution
+;;; in ARRANGEMENT, then signal an error.  If REGISTER-NUMBER is
+;;; already attributed to some lexical location in ARRANGEMENT, then
+;;; signal an error.
 (defun update-arrangement-for-new-definition
     (arrangement lexical-location register-number)
-  (with-arrangement-parts (stack-map register-map attributions arrangement)
-    (let ((attribution (find lexical-location attributions
-                             :test #'eq :key #'lexical-location)))
-      (cond ((null attribution)
-             (let ((new-register-map
-                     (reserve-register register-map register-number))
-                   (new-attribution (make-instance 'attribution
-                                      :lexical-location lexical-location
-                                      :stack-slot nil
-                                      :register-number register-number)))
-               (assert (null (find register-number attributions
-                                   :test #'eql :key #'register-number)))
-               (make-instance 'arrangement
-                 :stack-map stack-map
-                 :register-map new-register-map
-                 :attributions (cons new-attribution attributions))))
-            ((null (stack-slot attribution))
-             (assert (eql register-number (register-number attribution)))
-             ;; The existing arrangement is perfect.  Just return it.
-             arrangement)
-            (t
-             (assert (eql register-number (register-number attribution)))
-             ;; We must create a new arrangement that is similar to
-             ;; the one we got, except that the attribution for
-             ;; LEXICAL-LOCATION must have a stack slot that is NIL.
-             (let ((residual-attributions
-                     (remove attribution attributions :test #'eq))
-                   (new-stack-map (copy-stack-map stack-map))
-                   (new-attribution (make-instance 'attribution
-                                      :lexical-location lexical-location
-                                      :stack-slot nil
-                                      :register-number register-number)))
-               (free-stack-slot new-stack-map (stack-slot attribution))
-               (make-instance 'arrangement
-                 :stack-map new-stack-map
-                 :register-map register-map
-                 :attributions (cons new-attribution residual-attributions))))))))
+  (assert (null (find-attribution arrangement lexical-location)))
+  (assert (not (register-attributed-p arrangement register-number)))
+  (push (make-instance 'attribution
+          :lexical-location lexical-location
+          :stack-slot nil
+          :register-number register-number)
+        (attributions arrangement)))
