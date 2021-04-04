@@ -142,3 +142,18 @@
           :stack-slot nil
           :register-number register-number)
         (attributions arrangement)))
+
+;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION is no
+;;; longer attributed.  If LEXICAL-LOCATION is not attributed in
+;;; ARRANGEMENT, then signal an error.
+(defun delete-attribution (arrangement lexical-location)
+  (with-arrangement arrangement
+    (let ((attribution (find lexical-location attributions
+                             :test #'eq :key #'lexical-location)))
+      (assert (not (null attribution)))
+      (with-attribution attribution
+        (setf (bit stack-map stack-slot) 0)
+        (unless (null register-number)
+          (setf (bit register-map register-number) 0))
+        (setf attributions
+              (delete attribution attributions :test #'eq))))))
