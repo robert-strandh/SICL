@@ -192,3 +192,9 @@
                              :test #'eq :key #'lexical-location)))
       (assert (not (null attribution)))
       (not (null (register-number attribution))))))
+
+;;; Return true if and only if in ARRANGEMENT there is an unattributed
+;;; register among the registers in CANDIDATES.
+(defun unattributed-register-exists-p (arrangement candidates)
+  (with-arrangement arrangement
+    (not (null (find 1 (bit-andc2 candidates register-map))))))
