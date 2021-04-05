@@ -231,3 +231,19 @@
 (defun unattributed-register-exists-p (arrangement candidates)
   (with-arrangement arrangement
     (not (null (find 1 (bit-andc2 candidates register-map))))))
+
+;;; Destructively modify arrangement by keeping only the arrangements
+;;; with a lexical location that is a member of LEXICAL-LOCATIONS.
+(defun trim-arrangement (arrangement lexical-locations)
+  (with-arrangement arrangement
+    (setf attributions
+          (loop for attribution in attributions
+                if (member (lexical-location attribution) lexical-locations
+                           :test #'eq :key #'lexical-location)
+                  collect attribution
+                else
+                  do (with-attribution attribution
+                       (unless (null stack-slot)
+                         (setf (bit stack-map stack-slot) 0))
+                       (unless (null register-number)
+                         (setf (bit register-map register-number) 0)))))))
