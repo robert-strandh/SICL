@@ -91,3 +91,12 @@
         collect (make-pool-item
                  (lexical-location pool-item)
                  (1+ (distance pool-item)))))
+
+;;; Return the estimated distance to use of LEXICAL-LOCATION in POOL.
+;;; If LEXICAL-LOCATION is not present in POOL, then an error is
+;;; signaled.
+(defun distance-of-lexical-location (lexical-location pool)
+  (let ((pool-item (find lexical-location pool
+                         :test #'eq :key #'lexical-location)))
+    (assert (not (null pool-item)))
+    (distance pool-item)))
