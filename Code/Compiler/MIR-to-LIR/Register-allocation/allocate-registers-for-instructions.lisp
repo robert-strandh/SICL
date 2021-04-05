@@ -8,17 +8,20 @@
 
 (defgeneric compute-output-arrangement (instruction))
 
-;;; For each input, if it is a lexical location, make sure that
-;;; location has a register attributed to it.  If necessary, insert
-;;; more instructions between PREDECESSOR and INSTRUCTION to
-;;; accomplish this task.  Return the last such instruction to be
-;;; inserted, i.e., the new predecessor of INSTRUCTION, or, if no new
-;;; instructions were inserted, return PREDECESSOR.
+;;; Make sure INPUT is "available".  An input is available if it is
+;;; either an immediate input, or it is a lexical location, and that
+;;; lexical location has a register attributed to it.
+(defun ensure-input-available (predecessor instruction input)
+  (if (typep input 'cleavir-ir:lexical-location)
+      (ensure-lexical-location-has-attributed-register
+       predecessor instruction input)
+      predecessor))
+
+;;; Make sure that every input of INSTRUCTION is available.
 (defun ensure-inputs-available (predecessor instruction)
   (let ((result predecessor))
     (loop for input in (cleavir-ir:inputs instruction)
-          when (typep input 'cleavir-ir:lexical-location)
-            do (setf result (ensure-in-register input result instruction)))
+          do (setf result (ensure-input-available result instruction input)))
     result))
 
 (defmethod allocate-registers-for-instruction (predecessor instruction)
@@ -37,9 +40,12 @@
 ;;; The call-site manager will generate the code to fetch the
 ;;; arguments and put them in the location where the callee needs them
 ;;; to be.
-(defmethod process-inputs
+(defmethod allocate-registers-for-instruction
     (predecessor (instruction cleavir-ir:named-call-instruction))
-  predecessor)
+  (setf (input-arrangement instruction)
+        (output-arrangement predecessor))
+  (setf (output-arrangement instruction)
+        (copy-arrangement (input-arrangement instruction))))
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:catch-instruction))
