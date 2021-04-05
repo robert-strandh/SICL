@@ -193,3 +193,15 @@
       (with-attribution attribution
         (assert (not (null stack-slot)))
         (setf register-number nil)))))
+
+;;; Return a list of lexical locations such that every lexical
+;;; location in the list has some register in CANDIDATES attributed to
+;;; it in ARRANGEMENT.
+(defun lexical-locations-in-register (arrangement candidates)
+  (with-arrangement arrangement
+    (loop for attribution in attributions
+          nconc (with-attribution attribution
+                  (if (or (null register-number)
+                          (zerop (bit candidates register-number)))
+                      '()
+                      (list lexical-location))))))
