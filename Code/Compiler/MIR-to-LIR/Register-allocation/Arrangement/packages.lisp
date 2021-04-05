@@ -8,4 +8,6 @@
            #:lexical-location-has-attributed-stack-slot-p
            #:unattributed-register-exists-p
            #:attribute-stack-slot
+           #:attribute-register
+           #:unattribute-register
            #:delete-attribution))

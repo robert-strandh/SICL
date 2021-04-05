@@ -155,18 +155,40 @@
               (setf stack-map new-stack-map)))
           (setf stack-slot free-stack-slot))))))
 
-;;; Destructively update ARRANGEMENT so that REGISTER-NUMBER is no
-;;; longer present in any attribution.  If there is no attribution
-;;; that contains REGISTER-NUMBER, then signal an error.  If the
-;;; attribution containing REGISTER-NUMBER does not have a stack slot,
-;;; then signal an error.
-(defun delete-register (arrangement register-number-to-delete)
+;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION has a
+;;; register attrbuted to it, selected from CANDIDATES.  If there is
+;;; no attribution for LEXICAL-LOCATION, then signal an error.  If the
+;;; attribution for LEXICAL-LOCATION already has a register, then
+;;; signal an error.  If the attribution for LEXICAL-LOCATION does not
+;;; have a stack slot, then signal an error.  If none of the registers
+;;; in CANDIDATES is unattributed, then signal an error.
+(defun attribute-register (arrangement lexical-location candidates)
   (with-arrangement arrangement
-    (let ((attribution (find register-number-to-delete attributions
-                             :test #'eql :key #'register-number)))
+    (let ((free-register (find 1 (bit-andc2 candidates register-map)))
+          (attribution (find lexical-location attributions
+                             :test #'eql :key #'lexical-location)))
+      (assert (not (null free-register)))
       (assert (not (null attribution)))
       (with-attribution attribution
         (assert (not (null stack-slot)))
+        (assert (null register-number))
+        (setf register-number free-register)
+        (setf (bit register-map free-register) 1)))))
+
+;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION does not
+;;; have a register attributed to it.  If there is no attribution for
+;;; LEXICAL-LOCATION, then signal an error.  If the attribution for
+;;; LEXICAL-LOCATION does not have a register, then signal an error.
+;;; If the attribution for LEXICAL-LOCATION does not have a stack
+;;; slot, then signal an error.
+(defun unattribute-register (arrangement lexical-location)
+  (with-arrangement arrangement
+    (let ((attribution (find lexical-location attributions
+                             :test #'eql :key #'lexical-location)))
+      (assert (not (null attribution)))
+      (with-attribution attribution
+        (assert (not (null stack-slot)))
+        (assert (not (null register-number)))
         (setf register-number nil)
         (setf (bit register-map register-number) 0)))))
 
