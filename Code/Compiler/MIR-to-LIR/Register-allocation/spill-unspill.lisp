@@ -10,36 +10,16 @@
 
 (defun spill (predecessor instruction register-number)
   (let* ((arrangement (output-arrangement predecessor))
-         (register-map (register-map arrangement))
-         (attributions (attributions arrangement))
-         (selected-attribution
-           (find register-number attributions
-                 :test #'eql :key #'register-number))
-         (remaining-attributions
-           (remove selected-attribution attributions :test #'eq))
-         (lexical-location (lexical-location selected-attribution))
-         (stack-map (stack-map arrangement)))
-    (assert (null (stack-slot selected-attribution)))
-    (multiple-value-bind (new-stack-map available-stack-slot)
-        (find-and-reserve-stack-slot stack-map)
-      (let* ((new-attribution
-               (make-instance 'attribution
-                 :lexical-location lexical-location
-                 :register-number register-number
-                 :stack-slot available-stack-slot))
-             (new-arrangement (make-instance 'arrangement
-                                :stack-map new-stack-map
-                                :register-map register-map
-                                :attributions
-                                (cons new-attribution remaining-attributions)))
-             (new-instruction (make-instance 'cleavir-ir:assignment-instruction
-                                :input lexical-location
-                                :output lexical-location)))
-        (cleavir-ir:insert-instruction-between
-         new-instruction predecessor instruction)
-        (setf (input-arrangement new-instruction) arrangement
-              (output-arrangement new-instruction) new-arrangement)
-        new-instruction))))
+         (new-arrangement (copy-arrangement arrangement))
+         (new-instruction (make-instance 'cleavir-ir:assignment-instruction
+                            :input lexical-location
+                            :output lexical-location)))
+    (ensure-stack-slot new-arrangement register-number)
+    (setf (input-arrangement new-instruction) arrangement
+          (output-arrangement new-instruction) new-arrangement)
+    (cleavir-ir:insert-instruction-between
+     new-instruction predecessor instruction)
+    new-instruction))
 
 ;;; By UNATTRIBUTE, we mean to remove a particular register R from an
 ;;; attribution that contains both R and a valid stack slot, so that
