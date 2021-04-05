@@ -181,3 +181,14 @@
                           (zerop (bit candidates register-number)))
                       '()
                       (list lexical-location))))))
+
+;;; Return true if and only if LEXICAL-LOCATION has a register
+;;; attributed to it in ARRANGEMENT.  If LEXICAL-LOCATION does not
+;;; have an attribution in ARRANGEMENT, then an error is signaled.
+(defun lexical-location-has-attributed-register-p
+    (arrangement lexical-location)
+  (with-arrangement arrangement
+    (let ((attribution (find lexical-location attributions
+                             :test #'eq :key #'lexical-location)))
+      (assert (not (null attribution)))
+      (not (null (register-number attribution))))))
