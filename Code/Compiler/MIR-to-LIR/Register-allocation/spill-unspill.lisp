@@ -1,66 +1,46 @@
 (cl:in-package #:sicl-register-allocation)
 
-;;; By SPILL, we mean to copy a particular register R to any free
-;;; stack slot.  The spill is made explicit in the MIR code as an
-;;; ASSIGNMENT-INSTRUCTION I with the same lexical location in the
-;;; input and the output.  The input arrangement of I contains an
-;;; attribution with R in it and with a NIL stack slot.  The output
-;;; arrangement of I is similar to the input arrangement, but with the
-;;; attribution containing R having a valid stack slot number in it.
-
-(defun spill (predecessor instruction register-number)
+;;; In the output arrangement of PREDECESSOR, LEXICAL-LOCATION has a
+;;; register attributed to it, but no stack slot attributed to it.  We
+;;; insert an ASSIGNMENT-INSTRUCTION A between PREDECESSOR and
+;;; INSTRUCTION that has LEXICAL-LOCATION both as its input and its
+;;; output.  The input arrangement of A is the same as the output
+;;; arrangement of PREDECESSOR.  The output arrangement of A is
+;;; similar to the input arrangement, except that it has a stack slot
+;;; attributed to LEXICAL-LOCATION, in addition to the register that
+;;; is attributed to it in the input arrangement of A.
+(defun spill (predecessor instruction lexical-location)
   (let* ((arrangement (output-arrangement predecessor))
-         (new-arrangement (copy-arrangement arrangement))
+         (new-arrangement (arr:copy-arrangement arrangement))
          (new-instruction (make-instance 'cleavir-ir:assignment-instruction
                             :input lexical-location
                             :output lexical-location)))
-    (ensure-stack-slot new-arrangement register-number)
+    (arr:attribute-stack-slot new-arrangement lexical-location)
     (setf (input-arrangement new-instruction) arrangement
           (output-arrangement new-instruction) new-arrangement)
     (cleavir-ir:insert-instruction-between
      new-instruction predecessor instruction)
     new-instruction))
 
-;;; By UNATTRIBUTE, we mean to remove a particular register R from an
-;;; attribution that contains both R and a valid stack slot, so that
-;;; after the operation, the lexical location of the attribution is
-;;; present only on the stack.  We make this change in attribution
-;;; explicit in the MIR code as a NOP instruction I.  The input
-;;; arrangement if I contains an attribution with both R and a valid
-;;; stack slot in it.  The output arrangement is similar to the input
-;;; arrangement, but with the attribution corresponding to the lexical
-;;; location, having the register value NIL.
-
-(defun unattribute-register (predecessor instruction register-number)
+;;; In the output arrangement of PREDECESSOR, LEXICAL-LOCATION has
+;;; both a register and a stack slot attributed to it.  We insert a
+;;; NOP-INSTRUCTION N between PREDECESSOR and INSTRUCTION.  The input
+;;; arrangement of N is the same as the output arrangement of
+;;; PREDECESSOR.  The output arrangement of N is similar to the input
+;;; arrangement, except that it has no register attributed to
+;;; LEXICAL-LOCATION.
+(defun unattribute-register (predecessor instruction lexical-location)
   (let* ((arrangement (output-arrangement predecessor))
-         (register-map (register-map arrangement))
-         (new-register-map (free-register register-map register-number))
-         (attributions (attributions arrangement))
-         (selected-attribution
-           (find register-number attributions
-                 :test #'eql :key #'register-number))
-         (remaining-attributions
-           (remove selected-attribution attributions :test #'eq))
-         (lexical-location (lexical-location selected-attribution))
-         (stack-slot (stack-slot selected-attribution))
-         (stack-map (stack-map arrangement)))
-    (assert (not (null stack-slot)))
-    (let* ((new-attribution
-             (make-instance 'attribution
-               :lexical-location lexical-location
-               :register-number nil
-               :stack-slot stack-slot))
-           (new-arrangement (make-instance 'arrangement
-                              :stack-map stack-map
-                              :register-map new-register-map
-                              :attributions
-                              (cons new-attribution remaining-attributions)))
-           (new-instruction (make-instance 'cleavir-ir:nop-instruction)))
-      (cleavir-ir:insert-instruction-between
-       new-instruction predecessor instruction)
-      (setf (input-arrangement new-instruction) arrangement
-            (output-arrangement new-instruction) new-arrangement)
-      new-instruction)))
+         (new-arrangement (arr:copy-arrangement arrangement))
+         (new-instruction (make-instance 'cleavir-ir:nop-instruction
+                            :input lexical-location
+                            :output lexical-location)))
+    (arr:unattribute-register new-arrangement lexical-location)
+    (setf (input-arrangement new-instruction) arrangement
+          (output-arrangement new-instruction) new-arrangement)
+    (cleavir-ir:insert-instruction-between
+     new-instruction predecessor instruction)
+    new-instruction))
 
 (defun spill-and-unattribute-register (predecessor instruction register-number)
   (unattribute-register
@@ -68,37 +48,24 @@
    instruction
    register-number))
 
-;;; By UNSPILL, we mean to copy a particular stack slot to a register.
-;;; As with SPILL, the UNSPILL is made explicit with an
-;;; ASSIGNMENT-INSTRUCTION with the analogous input and output
-;;; arrangements.
-
-(defun unspill (predecessor instruction stack-slot register-number)
+;;; In the output arrangement of PREDECESSOR, LEXICAL-LOCATION has a
+;;; stack slot attributed to it, but no register attributed to it.  We
+;;; insert an ASSIGNMENT-INSTRUCTION A between PREDECESSOR and
+;;; INSTRUCTION that has LEXICAL-LOCATION both as its input and its
+;;; output.  The input arrangement of A is the same as the output
+;;; arrangement of PREDECESSOR.  The output arrangement of A is
+;;; similar to the input arrangement, except that it has a register
+;;; attributed to LEXICAL-LOCATION, in addition to the stack that
+;;; is attributed to it in the input arrangement of A.
+(defun unspill (predecessor instruction lexical-location candidates)
   (let* ((arrangement (output-arrangement predecessor))
-         (register-map (register-map arrangement))
-         (new-register-map (reserve-register register-map register-number))
-         (attributions (attributions arrangement))
-         (selected-attribution
-           (find stack-slot attributions :test #'eql :key #'stack-slot))
-         (remaining-attributions
-           (remove selected-attribution attributions :test #'eq))
-         (lexical-location (lexical-location selected-attribution))
-         (new-stack-map (copy-stack-map (stack-map arrangement))))
-    (let* ((new-attribution
-             (make-instance 'attribution
-               :lexical-location lexical-location
-               :register-number register-number
-               :stack-slot stack-slot))
-           (new-arrangement (make-instance 'arrangement
-                              :stack-map new-stack-map
-                              :register-map new-register-map
-                              :attributions
-                              (cons new-attribution remaining-attributions)))
-           (new-instruction (make-instance 'cleavir-ir:assignment-instruction
-                              :input lexical-location
-                              :output lexical-location)))
-      (cleavir-ir:insert-instruction-between
-       new-instruction predecessor instruction)
-      (setf (input-arrangement new-instruction) arrangement
-            (output-arrangement new-instruction) new-arrangement)
-      new-instruction)))
+         (new-arrangement (arr:copy-arrangement arrangement))
+         (new-instruction (make-instance 'cleavir-ir:assignment-instruction
+                            :input lexical-location
+                            :output lexical-location)))
+    (arr:attribute-register new-arrangement lexical-location candidates)
+    (setf (input-arrangement new-instruction) arrangement
+          (output-arrangement new-instruction) new-arrangement)
+    (cleavir-ir:insert-instruction-between
+     new-instruction predecessor instruction)
+    new-instruction))
