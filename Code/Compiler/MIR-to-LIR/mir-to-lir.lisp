@@ -21,5 +21,4 @@
     result))
 
 (defmethod mir-to-lir (client mir)
-  (loop for enter-instruction in (sicl-hir-to-mir:gather-enter-instructions mir)
-        do (sicl-register-allocation:do-register-allocation enter-instruction)))
+  nil)
