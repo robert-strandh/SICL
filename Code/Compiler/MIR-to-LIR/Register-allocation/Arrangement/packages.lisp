@@ -10,4 +10,5 @@
            #:attribute-stack-slot
            #:attribute-register
            #:unattribute-register
+           #:trim-arrangement
            #:delete-attribution))
