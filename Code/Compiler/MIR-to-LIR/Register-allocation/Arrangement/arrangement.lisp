@@ -133,15 +133,15 @@
         (setf attributions
               (delete attribution attributions :test #'eq))))))
 
-;;; Destructively update ARRANGEMENT so that the ATTRIBUTION
-;;; containing REGISTER-NUMBER also has a stack slot.  If there is no
-;;; attribution that contains REGISTER-NUMBER, then signal an error.
-;;; If the attribution containing REGISTER-NUMBER already has a stack
-;;; slot, then signal an error.
-(defun ensure-stack-slot (arrangement register-number)
+;;; Destructively update ARRANGEMENT so that the attribution for
+;;; LEXICAL-LOCATION has a stack slot.  If there is no attribution for
+;;; LEXICAL-LOCATION in ARRANGEMENT, then signal an error.  If the
+;;; attribution for LEXICAL-LOCATION already has a stack slot, then
+;;; signal an error.
+(defun attribute-stack-slot (arrangement lexical-location)
   (with-arrangement arrangement
-    (let ((attribution (find register-number attributions
-                             :test #'eql :key #'register-number)))
+    (let ((attribution (find lexical-location attributions
+                             :test #'eql :key #'lexical-location)))
       (assert (not (null attribution)))
       (with-attribution attribution
         (assert (null stack-slot))
@@ -192,6 +192,17 @@
                              :test #'eq :key #'lexical-location)))
       (assert (not (null attribution)))
       (not (null (register-number attribution))))))
+
+;;; Return true if and only if LEXICAL-LOCATION has a stack slot
+;;; attributed to it in ARRANGEMENT.  If LEXICAL-LOCATION does not
+;;; have an attribution in ARRANGEMENT, then an error is signaled.
+(defun lexical-location-has-attributed-stack-slot-p
+    (arrangement lexical-location)
+  (with-arrangement arrangement
+    (let ((attribution (find lexical-location attributions
+                             :test #'eq :key #'lexical-location)))
+      (assert (not (null attribution)))
+      (not (null (stack-slot attribution))))))
 
 ;;; Return true if and only if in ARRANGEMENT there is an unattributed
 ;;; register among the registers in CANDIDATES.
