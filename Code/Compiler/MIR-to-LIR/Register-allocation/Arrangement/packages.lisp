@@ -5,8 +5,7 @@
   (:export #:copy-arrangement
            #:lexical-locations-in-register
            #:lexical-location-has-attributed-register-p
+           #:lexical-location-has-attributed-stack-slot-p
            #:unattributed-register-exists-p
-           #:ensure-stack-slot
+           #:attribute-stack-slot
            #:delete-attribution))
-
-           
