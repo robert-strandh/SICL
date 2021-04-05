@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-register-allocation)
+(cl:in-package #:sicl-register-arrangement)
 
 (defclass attribution ()
   ((%lexical-location
@@ -101,31 +101,6 @@
 
 (defun register-attributed-p (arrangement register-number)
   (not (zerop (bit (register-map arrangement) register-number))))
-
-(defvar *input-arrangements*)
-
-(defun input-arrangement-p (instruction)
-  (nth-value 1 (gethash instruction *input-arrangements*)))
-
-(defun input-arrangement (instruction)
-  (multiple-value-bind (value value-p)
-      (gethash instruction *input-arrangements*)
-    (assert value-p)
-    value))
-
-(defun (setf input-arrangement) (arrangement instruction)
-  (setf (gethash instruction *input-arrangements*) arrangement))
-
-(defvar *output-arrangements*)
-
-(defun output-arrangement (instruction)
-  (multiple-value-bind (value value-p)
-      (gethash instruction *output-arrangements*)
-    (assert value-p)
-    value))
-
-(defun (setf output-arrangement) (arrangement instruction)
-  (setf (gethash instruction *output-arrangements*) arrangement))
 
 ;;; Destructively update ARRANGEMENT to reflect a new definition of
 ;;; LEXICAL-LOCATION, by adding an attribution of LEXICAL-LOCATION to
