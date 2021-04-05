@@ -192,7 +192,8 @@
       (assert (not (null attribution)))
       (with-attribution attribution
         (assert (not (null stack-slot)))
-        (setf register-number nil)))))
+        (setf register-number nil)
+        (setf (bit register-map register-number) 0)))))
 
 ;;; Return a list of lexical locations such that every lexical
 ;;; location in the list has some register in CANDIDATES attributed to
