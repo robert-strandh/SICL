@@ -179,3 +179,17 @@
               (setf (bit new-stack-map free-stack-slot) 1)
               (setf stack-map new-stack-map)))
           (setf stack-slot free-stack-slot))))))
+
+;;; Destructively update ARRANGEMENT so that REGISTER-NUMBER is no
+;;; longer present in any attribution.  If there is no attribution
+;;; that contains REGISTER-NUMBER, then signal an error.  If the
+;;; attribution containing REGISTER-NUMBER does not have a stack slot,
+;;; then signal an error.
+(defun delete-register (arrangement register-number-to-delete)
+  (with-arrangement arrangement
+    (let ((attribution (find register-number-to-delete attributions
+                             :test #'eql :key #'register-number)))
+      (assert (not (null attribution)))
+      (with-attribution attribution
+        (assert (not (null stack-slot)))
+        (setf register-number nil)))))
