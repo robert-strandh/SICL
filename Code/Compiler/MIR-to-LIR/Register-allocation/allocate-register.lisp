@@ -80,3 +80,15 @@
                    instruction
                    lexical-location
                    candidates)))))
+
+;;; Ensure that LEXICAL-LOCATION has an attributed stack slot.  We
+;;; account for two possibilities.  If LEXICAL-LOCATION already has an
+;;; attributed stack slot, then we return PREDECESSOR.  If not, we
+;;; call SPILL to accomplish the task.
+(defun ensure-lexical-location-has-attributed-stack-slot
+    (predecessor instruction lexical-location)
+  (let ((arrangement (output-arrangement predecessor)))
+    (if (arr:lexical-location-has-attributed-stack-slot-p
+         arrangement lexical-location)
+        predecessor
+        (spill predecessor instruction lexical-location))))
