@@ -5,7 +5,7 @@
     (cleavir-ast:map-ast-depth-first-preorder
      (lambda (node)
        (when (typep node 'cleavir-ast:fdefinition-ast)
-	 (push node result)))
+         (push node result)))
      ast)
     result))
 
