@@ -247,3 +247,27 @@
                          (setf (bit stack-map stack-slot) 0))
                        (unless (null register-number)
                          (setf (bit register-map register-number) 0)))))))
+
+;;; Let R be the register attributed to FROM-LEXICAL-LOCATION in
+;;; FROM-ARRANGEMENT.  Create an an attribution in TO-ARRANGEMENT that
+;;; attributes R to TO-LEXICAL-LOCATION.  No stack slot is attributed
+;;; to TO-LEXICAL-LOCATION. in TO-ARRANGEMENT.  If there is no
+;;; attribution for FROM-LEXICAL-LOCATION in FROM-ARRANGEMENT, then an
+;;; error is signaled.  If no register is attributed to
+;;; FROM-LEXICAL-LOCATION in FROM-ARRANGEMENT, then an error is
+;;; signaled.  If TO-LEXICAL-LOCATION already has an attribution in
+;;; TO-ARRANGEMENT, then an error is signaled.
+(defun copy-register-attribution
+    (from-arrangement from-lexical-location to-arrangement to-lexical-location)
+  (let ((from-attribution (find from-lexical-location
+                                (attributions from-arrangement)
+                                :test #'eq :key #'lexical-location)))
+    (assert (not (null from-attribution)))
+    (assert (not (null (register-number from-attribution))))
+    (assert (null (find to-lexical-location (attributions to-arrangement)
+                        :test #'eq :key #'lexical-location)))
+    (push (make-instance 'attribution
+            :lexical-location to-lexical-location
+            :stack-slot nil
+            :register-number (register-number from-attribution))
+          (attributions to-arrangement))))
