@@ -11,4 +11,5 @@
            #:attribute-register
            #:unattribute-register
            #:trim-arrangement
+           #:copy-register-attribution
            #:delete-attribution))
