@@ -2,7 +2,9 @@
 
 (defpackage #:sicl-register-arrangement
   (:use #:common-lisp)
-  (:export #:copy-arrangement
+  (:export #:arrangement
+           #:attribution
+           #:copy-arrangement
            #:lexical-locations-in-register
            #:lexical-location-has-attributed-register-p
            #:lexical-location-has-attributed-stack-slot-p
