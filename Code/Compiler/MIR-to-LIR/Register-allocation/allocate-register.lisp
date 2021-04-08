@@ -44,11 +44,15 @@
 ;;; Make sure that the output arrangement of the predecessor of
 ;;; INSTRUCTION is such that there is at least one unattributed
 ;;; register among the CANDIDATES.
-(defun ensure-unattributed-register (predecessor instruction pool candidates)
-  (let ((arrangement (output-arrangement predecessor)))
-    (if (plusp (arr:unattributed-register-count arrangement candidates))
-        predecessor
-        (unattribute-any-register predecessor instruction pool candidates))))
+(defun ensure-unattributed-registers
+    (predecessor instruction pool candidates desired-count)
+  (let* ((arrangement (output-arrangement predecessor))
+         (free-count (arr:unattributed-register-count arrangement candidates))
+         (result predecessor))
+    (loop repeat (- desired-count free-count)
+          do (setf result
+                   (unattribute-any-register result instruction pool candidates)))
+    result))
 
 (defun determine-candidates (lexical-location pool)
   (let* ((pool-item (find lexical-location pool
@@ -74,8 +78,8 @@
         (let* ((pool (input-pool instruction))
                (candidates (determine-candidates lexical-location pool))
                (new-predecessor
-                 (ensure-unattributed-register
-                  predecessor instruction pool candidates)))
+                 (ensure-unattributed-registers
+                  predecessor instruction pool candidates 1)))
           (unspill new-predecessor
                    instruction
                    lexical-location
