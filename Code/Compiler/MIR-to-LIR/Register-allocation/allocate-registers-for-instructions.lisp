@@ -1,12 +1,14 @@
 (cl:in-package #:sicl-register-allocation)
 
-(defgeneric allocate-registers-for-instruction (predecessor instruction))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; PROCESS-INPUTS.  This function may add new instructions between
+;;; PREDECESSOR and INSTRUCTION in order to create a register
+;;; arrangement suitable for the inputs INSTRUCTION.  It returns the
+;;; last such new instruction that was added, or PREDECESSOR if no new
+;;; instructions were added.
 
 (defgeneric process-inputs (predecessor instruction))
-
-(defgeneric process-outputs (predecessor instruction))
-
-(defgeneric compute-output-arrangement (instruction))
 
 ;;; Make sure INPUT is "available".  An input is available if it is
 ;;; either an immediate input, or it is a lexical location, and that
@@ -24,407 +26,500 @@
           do (setf result (ensure-input-available result instruction input)))
     result))
 
-(defmethod allocate-registers-for-instruction (predecessor instruction)
-  (let* ((new-predecessor (process-inputs predecessor instruction))
-         (new-predecessor (process-outputs new-predecessor instruction)))
-    (setf (input-arrangement instruction)
-          (output-arrangement new-predecessor))
-    (compute-output-arrangement instruction)))
-
 ;;; By default, we make sure that every input that is a lexical
 ;;; location is in a register.
 (defmethod process-inputs (predecessor instruction)
   (ensure-inputs-available predecessor instruction))
 
-;;; For named-call instructions, we do not do anything particular.
-;;; The call-site manager will generate the code to fetch the
-;;; arguments and put them in the location where the callee needs them
-;;; to be.
-(defmethod allocate-registers-for-instruction
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; PROCESS-OUTPUTS.  This function may add new instructions between
+;;; PREDECESSOR and INSTRUCTION in order to create an input register
+;;; arrangement suitable for the outputs of INSTRUCTION.  Typically
+;;; such an arrangement would have unattributed registers that can
+;;; then be attributed to the outputs of INSTRUCTION in its output
+;;; register arrangement.
+
+(defgeneric process-outputs (predecessor instruction))
+
+;;; A method on PROCESS-OUTPUTS specialized to an instruction class
+;;; that has a single output that can be in any suitable register can
+;;; call this function in order to implement its contract.  This
+;;; function may insert new instructions between PREDECESSOR and
+;;; INSTRUCTIONS in order to free up a register in CANDIDATES, so that
+;;; it can then be attributed to the instruction output in the output
+;;; arrangement.
+(defun ensure-one-unattributed (predecessor instruction lexical-location)
+  (let* ((pool (output-pool instruction))
+         (candidates (determine-candidates lexical-location pool)))
+    (ensure-unattributed-registers
+     predecessor instruction (output-pool predecessor) candidates 1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; COMPUTE-OUTPUT-ARRANGEMENT.
+
+(defgeneric compute-output-arrangement (instruction arrangement))
+
+;;; The default way of computing an output arrangement is valid when
+;;; there is exactly one output, and the register attributed to it can
+;;; be chosen arbitrarily.
+(defun compute-output-arrangement-default (instruction arrangement)
+  (let* ((output (first (cleavir-ir:outputs instruction)))
+         (pool (output-pool instruction)))
+    ;; We must include a new register in the arrangement.  We know
+    ;; there is an unattributed register of the right kind.
+    (let ((candidates (determine-candidates output pool)))
+      (arr:attribute-register arrangement output candidates))
+    arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SURVIVORS.  The survivors of an instruction are all those lexical
+;;; locations that are live after the instruction, minus the ones that
+;;; are defined by the instruction.
+
+(defgeneric survivors (instruction))
+
+(defmethod survivors (instruction)
+  (set-difference (mapcar #'lexical-location (output-pool instruction))
+                  (cleavir-ir:outputs instruction)
+                  :test #'eq))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; ALLOCATE-REGISTERS-FOR-INSTRUCTION.  This function is called for
+;;; each instruction in order to compute register arrangements for
+;;; that instruction.
+
+(defgeneric allocate-registers-for-instruction (predecessor instruction))
+
+;;; The default method starts by calling PROCESS-INPUTS to insert new
+;;; predecessors according to the instruction inputs.  It then calls
+;;; PROCESS-OUTPUTS with the resulting predecessors to insert more
+;;; predecessors according to the instruction outputs.  Following
+;;; that, it creates a skeleton arrangement from the input arrangement
+;;; that has been trimmed so that only surviving lexical locations are
+;;; present.  Finally, it calls COMPUTE-OUTPUT-ARRANGEMENT to finalize
+;;; the output arrangement and it assigns the result as the output
+;;; arrangement of the instruction.
+(defmethod allocate-registers-for-instruction (predecessor instruction)
+  (let* ((new-predecessor
+           (process-outputs
+            (process-inputs predecessor instruction)
+            instruction))
+         (arrangement (output-arrangement new-predecessor))
+         (new-arrangement (arr:copy-arrangement arrangement)))
+    (setf (input-arrangement instruction) arrangement)
+    (arr:trim-arrangement new-arrangement (survivors instruction))
+    (setf (output-arrangement instruction)
+          (compute-output-arrangement instruction new-arrangement))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Named call instructions.
+;;;
+;;; For call instructions, processing the inputs means making sure
+;;; that every lexical location that survives the call and that has a
+;;; caller-saves register attributed to it, also has a stack slot
+;;; attributed to it.
+
+(defun process-inputs-for-call-instruction (predecessor instruction)
+  (let* ((survivors (survivors instruction))
+         (in-caller-saves
+           (arr:lexical-locations-in-register
+            (output-arrangement predecessor) *caller-saves*))
+         (both (intersection survivors in-caller-saves :test #'eq))
+         (result predecessor))
+    (loop for lexical-location in both
+          do (setf result
+                   (ensure-lexical-location-has-attributed-stack-slot
+                    result instruction lexical-location)))))
+
+;;; For named-call instructions, there are three ways of processing
+;;; outputs, depending on the exact instruction class.  If the
+;;; instruction has no outputs, then nothing needs to be done.  If the
+;;; instruction has one output, then we call ENSURE-ONE-UNATTRIBUTED.
+;;; If the instruction has two outputs, we handle it specially.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; NAMED-CALL-INSTRUCTION
+;;;
+;;; At the moment, the NAMED-CALL-INSTRUCTION has no outputs, but that
+;;; may change in the future.
+
+(defmethod process-inputs
     (predecessor (instruction cleavir-ir:named-call-instruction))
-  (setf (input-arrangement instruction)
-        (output-arrangement predecessor))
-  (setf (output-arrangement instruction)
-        (copy-arrangement (input-arrangement instruction))))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:named-call-instruction))
+  predecessor)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; CATCH-INSTRUCTION
+;;;
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:catch-instruction))
-  predecessor)
+  (process-inputs-for-call-instruction predecessor instruction))
+
+;;; The CATCH-INSTRUCTION has two outputs, a dynamic environment and a
+;;; "continuation".
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:catch-instruction))
+  (destructuring-bind (dynamic-environment continuation)
+      (cleavir-ir:outputs instruction)
+    (let* ((pool (output-pool instruction))
+           (dynamic-environment-candidates
+             (determine-candidates dynamic-environment pool))
+           (continuation-candidates
+             (determine-candidates continuation pool)))
+      (if (equal dynamic-environment-candidates continuation-candidates)
+          (ensure-unattributed-registers
+           predecessor
+           instruction
+           (output-pool predecessor)
+           dynamic-environment-candidates
+           2)
+          (ensure-unattributed-registers
+           (ensure-unattributed-registers
+            predecessor
+            instruction
+            (output-pool predecessor)
+            continuation
+            1)
+           instruction
+           (output-pool predecessor)
+           dynamic-environment-candidates
+           1)))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:catch-instruction) arrangement)
+  (destructuring-bind (dynamic-environment continuation)
+      (cleavir-ir:outputs instruction)
+    (let* ((pool (output-pool instruction))
+           (dynamic-environment-candidates
+             (determine-candidates dynamic-environment pool))
+           (continuation-candidates
+             (determine-candidates continuation pool)))
+      (arr:attribute-register
+       arrangement
+       dynamic-environment
+       dynamic-environment-candidates)
+      (arr:attribute-register
+       arrangement
+       continuation
+       continuation-candidates)
+      arrangement)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; BIND-INSTRUCTION
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:bind-instruction))
-  predecessor)
+  (process-inputs-for-call-instruction predecessor instruction))
+
+;;; The BIND-INSTRUCTION has a single output for the new dynamic
+;;; environment.
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:bind-instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:bind-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; UNWIND-INSTRUCTION
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:unwind-instruction))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+;;; The UNWIND-INSTRUCTION has no outputs.
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:unwind-instruction))
   predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:unwind-instruction) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; ENCLOSE-INSTRUCTION
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:enclose-instruction))
-  predecessor)
+  (process-inputs-for-call-instruction predecessor instruction))
+
+;;; The ENCLOSE-INSTRUCTION. has a single output, the resulting
+;;; function object.
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:enclose-instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:enclose-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INITIALIZE-VALUES-INSTRUCTION
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:initialize-values-instruction))
-  predecessor)
+  (process-inputs-for-call-instruction predecessor instruction))
+
+;;; The INITIALIZE-VALUES-INSTRUCTION has a single output.
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:initialize-values-instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:initialize-values-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MULTIPLE-VALUE-CALL-INSTRUCTION
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+;;; At the moment, the MULTIPLE-VALUE-CALL-INSTRUCTION has no outputs.
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
   predecessor)
 
-;;; Create a new arrangement that is like ARRANGEMENT but keeping only
-;;; attributions of live lexical locations as indicated by the fact
-;;; that they appear in POOL.
-(defun filter-arrangement (arrangement pool)
-  (with-arrangement-parts (stack-map register-map attributions arrangement)
-    (let* ((new-stack-map (copy-stack-map stack-map))
-           (new-register-map (copy-register-map register-map))
-           (new-attributions '()))
-      (loop for attribution in attributions
-            for location = (lexical-location attribution)
-            for stack-slot = (stack-slot attribution)
-            for register-number = (register-number attribution)
-            do (if (member location pool :test #'eq :key #'lexical-location)
-                   (push attribution new-attributions)
-                   (progn (unless (null stack-slot)
-                            (free-stack-slot new-stack-map stack-slot))
-                          (unless (null register-number)
-                            (unmark-register new-register-map register-number)))))
-      (make-instance 'arrangement
-        :stack-map new-stack-map
-        :register-map new-register-map
-        :attributions new-attributions))))
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:multiple-value-call-instruction) arrangement)
+  arrangement)
 
-;;; Comparison instructions don't have any outputs, so nothing needs
-;;; to be done.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Comparison instructions.
+;;;
+;;; These instructions use the default method in PROCESS-INPUTS.
+
+;;; These instructions do not have any outputs, so nothing needs to be
+;;; done in PROCESS-OUTPUTS.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:comparison-mixin))
   predecessor)
 
+;;; The arrangement we are given does not need to be modified in any
+;;; way.
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:comparison-mixin) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Binary operation instructions.
+;;;
+;;; These instructions use the default method in PROCESS-INPUTS.
+
 ;;; For a BINARY-OPERATION-MIXIN, we have prepared the instruction so
 ;;; that the first input is dead after the instruction.  That fact
 ;;; makes it possible to use the same register for the output as for
-;;; the first input.
+;;; the first input.  As a result, we know that no new register needs
+;;; to be allocated to hold the output.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:binary-operation-mixin))
   predecessor)
 
-;;; All the following methods are for instructions that will turn into
-;;; named calls, so the call-site manager will access the arguments
-;;; wherever they are.
+;;; The x86 requires the register of the destination to be the same as
+;;; the register of the first source operand.  But because of the
+;;; preparation made, the first input is no longer present in
+;;; ARRANGEMENT, and its register is available to attribute to the
+;;; output.
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:binary-operation-mixin) arrangement)
+  (arr:copy-register-attribution
+   (input-arrangement instruction) (first (cleavir-ir:inputs instruction))
+   arrangement (first (cleavir-ir:outputs instruction)))
+  arrangement)
 
-;;; What we need to do here is to make sure that every lexical
-;;; location that
-;;;   1. is live after the call,
-;;;   2. is not present in a stack slot, and
-;;;   3. is not in a callee-saves register,
-;;; is spilled before the call.
-(defun process-outputs-for-named-call (predecessor instruction)
-  (let ((result predecessor))
-    (loop with arrangement = (output-arrangement predecessor)
-          with pool = (output-pool instruction)
-          for attribution in (attributions arrangement)
-          for location = (lexical-location attribution)
-          for register-number = (register-number attribution)
-          when (and (member location pool
-                            :test #'eq :key #'lexical-location)
-                    (null (stack-slot attribution))
-                    (not (register-number-is-callee-saves-p register-number)))
-            do (setf result
-                     (spill result instruction register-number)))
-    result))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MEMSET1-INSTRUCTION
 
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:named-call-instruction))
-  (process-outputs-for-named-call predecessor instruction))
-
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:catch-instruction))
-  (process-outputs-for-named-call predecessor instruction))
-
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:bind-instruction))
-  (process-outputs-for-named-call predecessor instruction))
-
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:unwind-instruction))
-  (process-outputs-for-named-call predecessor instruction))
-
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:enclose-instruction))
-  (process-outputs-for-named-call predecessor instruction))
-
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:initialize-values-instruction))
-  (process-outputs-for-named-call predecessor instruction))
-
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:multiple-value-call-instruction))
-  (process-outputs-for-named-call predecessor instruction))
-
-;;; The MEMSET-INSTRUCTION has no outputs, so we are done.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:memset1-instruction))
   predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:memset1-instruction) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MEMSET2-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:memset2-instruction))
   predecessor)
 
-(defun ensure-unattributed (predecessor instruction lexical-location)
-  (let* ((pool (output-pool instruction))
-         (candidates (determine-candidates lexical-location pool)))
-    (ensure-unattributed-register
-     predecessor instruction (output-pool predecessor) candidates)))
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:memset2-instruction) arrangement)
+  arrangement)
 
-;;; The default output processing is valid when there is at least one
-;;; input and at least one output.  We check whether either the first
-;;; input and the first output are identical, or whether the first
-;;; input is dead after the instruction.  In that case, we reuse the
-;;; same register for the output.  Otherwise, we make sure there is an
-;;; unattributed register of the right kind that we can later
-;;; attribute to the output.
-(defun process-outputs-default (predecessor instruction)
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-         (output (first (cleavir-ir:outputs instruction)))
-         (pool (output-pool instruction)))
-    ;; We do not need to allocate a new register if either the output
-    ;; and the input are the same or the input is dead after
-    ;; INSTRUCTION.
-    (if (and (typep input 'cleavir-ir:lexical-location)
-             (or (eq input output)
-                 (not (member input pool
-                              :test #'eq :key #'lexical-location))))
-        predecessor
-        (ensure-unattributed predecessor instruction output))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MEMREF1-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:memref1-instruction))
-  (process-outputs-default predecessor instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:memref1-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MEMREF2-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:memref2-instruction))
-  (process-outputs-default predecessor instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:memref2-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; ASSIGNMENT-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:assignment-instruction))
-  (process-outputs-default predecessor instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:assignment-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; COMPUTE-ARGUMENT-COUNT-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:compute-argument-count-instruction))
-  (ensure-unattributed
+  (ensure-one-unattributed
    predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:compute-argument-count-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; LOAD-CONSTANT-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:load-constant-instruction))
-  (ensure-unattributed
+  (ensure-one-unattributed
    predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:load-constant-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; ARGUMENT-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:argument-instruction))
-  (process-outputs-default predecessor instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:argument-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INITIALIZE-RETURN-VALUES-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:initialize-return-values-instruction))
   predecessor)
 
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:initialize-return-values-instruction) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SET-RETURN-VALUE-INSTRUCTION
+
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:set-return-value-instruction))
   predecessor)
 
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:set-return-value-instruction) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; RETURN-VALUE-INSTRUCTION
+
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:return-value-instruction))
-  (process-outputs-default predecessor instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
 
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:return-value-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; RETURN-INSTRUCTION.
+
+;;; This instruction has no outputs, so nothing needs to be done in
+;;; PROCESS-OUTPUTS.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:return-instruction))
   predecessor)
 
+;;; There are no successors to this instruction, so there needs to be
+;;; no output arrangement.
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:return-instruction) arrangement)
+  nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; UNREACHABLE-INSTRUCTION.
+
+;;; This instruction has no outputs, so nothing needs to be done in
+;;; PROCESS-OUTPUTS.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:unreachable-instruction))
   predecessor)
 
-;;; As with PROCESS-OUTPUTS the default action for
-;;; COMPUTE-OUTPUT-ARRANGEMENT is valid when there is at least one
-;;; input and at least one output.
-(defun compute-output-arrangement-default (instruction)
-  (let* ((first-input (first (cleavir-ir:inputs instruction)))
-         (first-output (first (cleavir-ir:outputs instruction)))
-         (pool (output-pool instruction))
-         (input-arrangement (input-arrangement instruction))
-         (new-arrangement (filter-arrangement input-arrangement pool)))
-    (unless (eq first-input first-output)
-      ;; We must include a new register in the new arrangement.  We
-      ;; know there is an unattributed register of the right kind, so
-      ;; we just have to find one such register.
-      (let* ((candidates (determine-candidates first-output pool))
-             (register-number
-               (find-unattributed-register new-arrangement candidates)))
-        (mark-register (register-map new-arrangement) register-number)
-        (push (make-instance 'attribution
-                :lexical-location first-output
-                :stack-slot nil
-                :register-number register-number)
-              (attributions new-arrangement))))
-    (setf (output-arrangement instruction) new-arrangement)))
-
+;;; There are no successors to this instruction, so there needs to be
+;;; no output arrangement.
 (defmethod compute-output-arrangement
-    ((instruction cleavir-ir:binary-operation-mixin))
-  (compute-output-arrangement-default instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:assignment-instruction))
-  (compute-output-arrangement-default instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:memref1-instruction))
-  (compute-output-arrangement-default instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:memref2-instruction))
-  (compute-output-arrangement-default instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:argument-instruction))
-  (compute-output-arrangement-default instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:comparison-mixin))
-  (setf (output-arrangement instruction)
-        (filter-arrangement
-         (input-arrangement instruction) (output-pool instruction))))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:memset1-instruction))
-  (setf (output-arrangement instruction)
-        (filter-arrangement
-         (input-arrangement instruction) (output-pool instruction))))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:memset2-instruction))
-  (setf (output-arrangement instruction)
-        (filter-arrangement
-         (input-arrangement instruction) (output-pool instruction))))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:initialize-return-values-instruction))
-  (setf (output-arrangement instruction)
-        (filter-arrangement
-         (input-arrangement instruction) (output-pool instruction))))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:set-return-value-instruction))
-  (setf (output-arrangement instruction)
-        (filter-arrangement
-         (input-arrangement instruction) (output-pool instruction))))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:return-value-instruction))
-  (compute-output-arrangement-default instruction))
-
-(defun compute-output-arrangement-no-inputs (instruction)
-  (let* ((input-arrangement (input-arrangement instruction))
-         (pool (output-pool instruction))
-         (output (first (cleavir-ir:outputs instruction)))
-         (candidates (determine-candidates output pool))
-         (new-register-map
-           (copy-register-map (register-map input-arrangement)))
-         (register-number
-           (find-unattributed-register input-arrangement candidates))
-         (new-attribution (make-instance 'attribution
-                            :lexical-location output
-                            :stack-slot nil
-                            :register-number register-number)))
-    (mark-register new-register-map register-number)
-    (setf (output-arrangement instruction)
-          (make-instance 'arrangement
-            :stack-map (stack-map input-arrangement)
-            :register-map new-register-map
-            :attributions
-            (cons new-attribution (attributions input-arrangement))))))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:compute-argument-count-instruction))
-  (compute-output-arrangement-no-inputs instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:load-constant-instruction))
-  (compute-output-arrangement-no-inputs instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:return-instruction))
+    ((instruction cleavir-ir:unreachable-instruction) arrangement)
   nil)
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:unreachable-instruction))
-  nil)
-
-;;; We need to make sure the output arrangement reflects the fact that
-;;; only callee-saves registers contain valid objects.
-(defun compute-output-arrangement-for-named-call (instruction)
-  (let ((input-arrangement (input-arrangement instruction))
-        (pool (output-pool instruction)))
-    (with-arrangement-parts
-        (stack-map register-map attributions input-arrangement)
-      (let ((new-register-map (copy-register-map register-map))
-            (new-attributions '()))
-        (loop for attribution in attributions
-              for lexical-location = (lexical-location attribution)
-              for stack-slot = (stack-slot attribution)
-              for register-number = (register-number attribution)
-              do (if (member lexical-location pool
-                             :test #'eq :key #'lexical-location)
-                     ;; Then the lexical location is live.
-                     (if (or (null register-number)
-                             (register-number-is-callee-saves-p register-number))
-                         ;; Then we keep the attribution as it is.
-                         (push attribution new-attributions)
-                         ;; Otherwise, we need to make sure the
-                         ;; register is unattributed.
-                         (progn (push (make-instance 'attribution
-                                        :lexical-location lexical-location
-                                        :stack-slot stack-slot
-                                        :register-number nil)
-                                      new-attributions)
-                                (unmark-register
-                                 new-register-map register-number)))
-                     ;; The lexical location is not live.  Check
-                     ;; whether it has an attributed register, and if
-                     ;; so, unmark that register.
-                     (unless (null register-number)
-                       (unmark-register new-register-map register-number))))
-        (setf (output-arrangement instruction)
-              (make-instance 'arrangement
-                :stack-map stack-map
-                :register-map new-register-map
-                :attributions new-attributions))))))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:named-call-instruction))
-  (compute-output-arrangement-for-named-call instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:catch-instruction))
-  (compute-output-arrangement-for-named-call instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:bind-instruction))
-  (compute-output-arrangement-for-named-call instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:unwind-instruction))
-  (compute-output-arrangement-for-named-call instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:enclose-instruction))
-  (compute-output-arrangement-no-inputs instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:initialize-values-instruction))
-  (compute-output-arrangement-for-named-call instruction))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:multiple-value-call-instruction))
-  (compute-output-arrangement-for-named-call instruction))
 
 (defun allocate-registers-for-instructions (mir)
   (labels ((process-pair (predecessor instruction)
