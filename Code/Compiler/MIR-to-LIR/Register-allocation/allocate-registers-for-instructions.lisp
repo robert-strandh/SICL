@@ -535,16 +535,16 @@
            (static-environment-location (first outputs))
            (dynamic-environment-location (second outputs)))
       (setf (output-arrangement mir)
-            (make-instance 'arrangement
+            (make-instance 'arr:arrangement
               :register-map *initial*
               :stack-map #*
               :attributions
               (list
-               (make-instance 'attribution
+               (make-instance 'arr:attribution
                  :lexical-location static-environment-location
                  :stack-slot nil
                  :register-number 10)
-               (make-instance 'attribution
+               (make-instance 'arr:attribution
                  :lexical-location dynamic-environment-location
                  :stack-slot nil
                  :register-number 1))))
