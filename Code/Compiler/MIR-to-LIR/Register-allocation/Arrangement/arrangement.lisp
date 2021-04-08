@@ -226,11 +226,11 @@
       (assert (not (null attribution)))
       (not (null (stack-slot attribution))))))
 
-;;; Return true if and only if in ARRANGEMENT there is an unattributed
-;;; register among the registers in CANDIDATES.
-(defun unattributed-register-exists-p (arrangement candidates)
+;;; Return the number of unattributed registers in ARRANGEMENT, among
+;;; the registers in CANDIDATES.
+(defun unattributed-register-count (arrangement candidates)
   (with-arrangement arrangement
-    (not (null (find 1 (bit-andc2 candidates register-map))))))
+    (count 1 (bit-andc2 candidates register-map))))
 
 ;;; Destructively modify arrangement by keeping only the arrangements
 ;;; with a lexical location that is a member of LEXICAL-LOCATIONS.

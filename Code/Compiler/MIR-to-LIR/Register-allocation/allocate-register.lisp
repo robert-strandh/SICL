@@ -46,7 +46,7 @@
 ;;; register among the CANDIDATES.
 (defun ensure-unattributed-register (predecessor instruction pool candidates)
   (let ((arrangement (output-arrangement predecessor)))
-    (if (arr:unattributed-register-exists-p arrangement candidates)
+    (if (plusp (arr:unattributed-register-count arrangement candidates))
         predecessor
         (unattribute-any-register predecessor instruction pool candidates))))
 

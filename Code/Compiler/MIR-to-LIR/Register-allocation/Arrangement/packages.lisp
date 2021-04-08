@@ -6,7 +6,7 @@
            #:lexical-locations-in-register
            #:lexical-location-has-attributed-register-p
            #:lexical-location-has-attributed-stack-slot-p
-           #:unattributed-register-exists-p
+           #:unattributed-register-count
            #:attribute-stack-slot
            #:attribute-register
            #:unattribute-register
