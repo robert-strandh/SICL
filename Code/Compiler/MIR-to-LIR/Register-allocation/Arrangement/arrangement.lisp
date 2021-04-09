@@ -99,40 +99,6 @@
         (values nil nil)
         (values (stack-slot attribution) (register-number attribution)))))
 
-(defun register-attributed-p (arrangement register-number)
-  (not (zerop (bit (register-map arrangement) register-number))))
-
-;;; Destructively update ARRANGEMENT to reflect a new definition of
-;;; LEXICAL-LOCATION, by adding an attribution of LEXICAL-LOCATION to
-;;; REGISTER-NUMBER.  If LEXICAL-LOCATION has an existing attribution
-;;; in ARRANGEMENT, then signal an error.  If REGISTER-NUMBER is
-;;; already attributed to some lexical location in ARRANGEMENT, then
-;;; signal an error.
-(defun update-arrangement-for-new-definition
-    (arrangement lexical-location register-number)
-  (assert (null (find-attribution arrangement lexical-location)))
-  (assert (not (register-attributed-p arrangement register-number)))
-  (push (make-instance 'attribution
-          :lexical-location lexical-location
-          :stack-slot nil
-          :register-number register-number)
-        (attributions arrangement)))
-
-;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION is no
-;;; longer attributed.  If LEXICAL-LOCATION is not attributed in
-;;; ARRANGEMENT, then signal an error.
-(defun delete-attribution (arrangement lexical-location)
-  (with-arrangement arrangement
-    (let ((attribution (find lexical-location attributions
-                             :test #'eq :key #'lexical-location)))
-      (assert (not (null attribution)))
-      (with-attribution attribution
-        (setf (bit stack-map stack-slot) 0)
-        (unless (null register-number)
-          (setf (bit register-map register-number) 0))
-        (setf attributions
-              (delete attribution attributions :test #'eq))))))
-
 ;;; Destructively update ARRANGEMENT so that the attribution for
 ;;; LEXICAL-LOCATION has a stack slot.  If there is no attribution for
 ;;; LEXICAL-LOCATION in ARRANGEMENT, then signal an error.  If the
@@ -162,7 +128,8 @@
 ;;; signal an error.  If the attribution for LEXICAL-LOCATION does not
 ;;; have a stack slot, then signal an error.  If none of the registers
 ;;; in CANDIDATES is unattributed, then signal an error.
-(defun attribute-register (arrangement lexical-location candidates)
+(defun attribute-register-for-existing-lexical-location
+    (arrangement lexical-location candidates)
   (with-arrangement arrangement
     (let ((free-register (find 1 (bit-andc2 candidates register-map)))
           (attribution (find lexical-location attributions
