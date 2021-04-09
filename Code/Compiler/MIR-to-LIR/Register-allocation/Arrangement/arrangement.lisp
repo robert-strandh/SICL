@@ -39,11 +39,6 @@
 (defmethod initialize-instance :after ((object arrangement) &key)
   (check-arrangement-integrity object))
 
-(defmethod (setf attributions) :after
-    (new-attributions (arrangement arrangement))
-  (declare (ignore new-attributions))
-  (check-arrangement-integrity arrangement))
-
 (defmacro with-arrangement-parts
     ((stack-map-var register-map-var attributions-var arrangement-form) &body body)
   (let ((arrangement-var (gensym)))
@@ -119,7 +114,8 @@
               (replace new-stack-map stack-map)
               (setf (bit new-stack-map free-stack-slot) 1)
               (setf stack-map new-stack-map)))
-          (setf stack-slot free-stack-slot))))))
+          (setf stack-slot free-stack-slot)))))
+  (check-arrangement-integrity arrangement))
 
 ;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION has a
 ;;; register attrbuted to it, selected from CANDIDATES.  If there is
@@ -160,7 +156,8 @@
               :stack-slot nil
               :register-number free-register)
             attributions)
-      (setf (bit register-map free-register) 1))))
+      (setf (bit register-map free-register) 1)))
+  (check-arrangement-integrity arrangement))
 
 ;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION does not
 ;;; have a register attributed to it.  If there is no attribution for
@@ -177,7 +174,8 @@
         (assert (not (null stack-slot)))
         (assert (not (null register-number)))
         (setf register-number nil)
-        (setf (bit register-map register-number) 0)))))
+        (setf (bit register-map register-number) 0))))
+  (check-arrangement-integrity arrangement))
 
 ;;; Return a list of lexical locations such that every lexical
 ;;; location in the list has some register in CANDIDATES attributed to
@@ -226,14 +224,15 @@
     (setf attributions
           (loop for attribution in attributions
                 if (member (lexical-location attribution) lexical-locations
-                           :test #'eq :key #'lexical-location)
+                           :test #'eq)
                   collect attribution
                 else
                   do (with-attribution attribution
                        (unless (null stack-slot)
                          (setf (bit stack-map stack-slot) 0))
                        (unless (null register-number)
-                         (setf (bit register-map register-number) 0)))))))
+                         (setf (bit register-map register-number) 0))))))
+  (check-arrangement-integrity arrangement))
 
 ;;; Let R be the register attributed to FROM-LEXICAL-LOCATION in
 ;;; FROM-ARRANGEMENT.  Create an an attribution in TO-ARRANGEMENT that
@@ -257,4 +256,6 @@
             :lexical-location to-lexical-location
             :stack-slot nil
             :register-number (register-number from-attribution))
-          (attributions to-arrangement))))
+          (attributions to-arrangement)))
+  (check-arrangement-integrity from-arrangement)
+  (check-arrangement-integrity to-arrangement))
