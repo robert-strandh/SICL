@@ -21,7 +21,9 @@
 
 ;;; Return a list of the inputs of INSTRUCTION that are
 ;;; lexical-locations.
-(defun lexical-location-inputs (instruction)
+(defgeneric lexical-location-inputs (instruction))
+
+(defmethod lexical-location-inputs (instruction)
   (loop for input in (cleavir-ir:inputs instruction)
         when (typep input 'cleavir-ir:lexical-location)
           collect input))
