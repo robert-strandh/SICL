@@ -175,6 +175,26 @@
         (setf register-number free-register)
         (setf (bit register-map free-register) 1)))))
 
+;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION has a
+;;; register attrbuted to it, selected from CANDIDATES.  If there
+;;; already an attribution for LEXICAL-LOCATION, then signal an error.
+;;; If none of the registers in CANDIDATES is unattributed, then
+;;; signal an error.
+(defun attribute-register-for-new-lexical-location
+    (arrangement lexical-location candidates)
+  (with-arrangement arrangement
+    (let ((free-register (find 1 (bit-andc2 candidates register-map)))
+          (attribution (find lexical-location attributions
+                             :test #'eql :key #'lexical-location)))
+      (assert (not (null free-register)))
+      (assert (null attribution))
+      (push (make-instance 'attribution
+              :lexical-location lexical-location
+              :stack-slot nil
+              :register-number free-register)
+            attributions)
+      (setf (bit register-map free-register) 1))))
+
 ;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION does not
 ;;; have a register attributed to it.  If there is no attribution for
 ;;; LEXICAL-LOCATION, then signal an error.  If the attribution for
