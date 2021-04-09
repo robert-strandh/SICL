@@ -159,6 +159,10 @@
     (predecessor (instruction cleavir-ir:named-call-instruction))
   predecessor)
 
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:named-call-instruction) arrangement)
+  arrangement)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CATCH-INSTRUCTION
@@ -172,7 +176,7 @@
 ;;; "continuation".
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:catch-instruction))
-  (destructuring-bind (dynamic-environment continuation)
+  (destructuring-bind (continuation dynamic-environment)
       (cleavir-ir:outputs instruction)
     (let* ((pool (output-pool instruction))
            (dynamic-environment-candidates
