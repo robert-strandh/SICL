@@ -13,6 +13,7 @@
     cleavir-ir:argument-instruction
     cleavir-ir:compute-argument-count-instruction
     cleavir-ir:unreachable-instruction
+    cleavir-ir:catch-instruction
     cleavir-ir:unwind-instruction
     cleavir-ir:eq-instruction
     cleavir-ir:multiple-value-call-instruction
