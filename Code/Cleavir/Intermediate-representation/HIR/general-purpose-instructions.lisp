@@ -272,7 +272,8 @@
 ;;;
 ;;; Instruction EQ-INSTRUCTION.
 
-(defclass eq-instruction (instruction multiple-successors-mixin)
+(defclass eq-instruction
+    (instruction multiple-successors-mixin comparison-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
