@@ -63,7 +63,8 @@
          (new-instruction (make-instance 'cleavir-ir:assignment-instruction
                             :input lexical-location
                             :output lexical-location)))
-    (arr:attribute-register new-arrangement lexical-location candidates)
+    (arr:attribute-register-for-existing-lexical-location
+     new-arrangement lexical-location candidates)
     (setf (input-arrangement new-instruction) arrangement
           (output-arrangement new-instruction) new-arrangement)
     (cleavir-ir:insert-instruction-between
