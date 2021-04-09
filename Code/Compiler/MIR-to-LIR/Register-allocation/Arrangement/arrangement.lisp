@@ -100,6 +100,7 @@
 ;;; attribution for LEXICAL-LOCATION already has a stack slot, then
 ;;; signal an error.
 (defun attribute-stack-slot (arrangement lexical-location)
+  (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((attribution (find lexical-location attributions
                              :test #'eql :key #'lexical-location)))
@@ -126,6 +127,7 @@
 ;;; in CANDIDATES is unattributed, then signal an error.
 (defun attribute-register-for-existing-lexical-location
     (arrangement lexical-location candidates)
+  (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((free-register (find 1 (bit-andc2 candidates register-map)))
           (attribution (find lexical-location attributions
@@ -145,8 +147,9 @@
 ;;; signal an error.
 (defun attribute-register-for-new-lexical-location
     (arrangement lexical-location candidates)
+  (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
-    (let ((free-register (find 1 (bit-andc2 candidates register-map)))
+    (let ((free-register (position 1 (bit-andc2 candidates register-map)))
           (attribution (find lexical-location attributions
                              :test #'eql :key #'lexical-location)))
       (assert (not (null free-register)))
@@ -166,6 +169,7 @@
 ;;; If the attribution for LEXICAL-LOCATION does not have a stack
 ;;; slot, then signal an error.
 (defun unattribute-register (arrangement lexical-location)
+  (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((attribution (find lexical-location attributions
                              :test #'eql :key #'lexical-location)))
@@ -220,6 +224,7 @@
 ;;; Destructively modify arrangement by keeping only the arrangements
 ;;; with a lexical location that is a member of LEXICAL-LOCATIONS.
 (defun trim-arrangement (arrangement lexical-locations)
+  (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (setf attributions
           (loop for attribution in attributions
@@ -245,6 +250,8 @@
 ;;; TO-ARRANGEMENT, then an error is signaled.
 (defun copy-register-attribution
     (from-arrangement from-lexical-location to-arrangement to-lexical-location)
+  (check-arrangement-integrity from-arrangement)
+  (check-arrangement-integrity to-arrangement)
   (let ((from-attribution (find from-lexical-location
                                 (attributions from-arrangement)
                                 :test #'eq :key #'lexical-location)))
