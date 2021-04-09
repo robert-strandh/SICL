@@ -135,7 +135,8 @@
     (loop for lexical-location in both
           do (setf result
                    (ensure-lexical-location-has-attributed-stack-slot
-                    result instruction lexical-location)))))
+                    result instruction lexical-location)))
+    result))
 
 ;;; For named-call instructions, there are three ways of processing
 ;;; outputs, depending on the exact instruction class.  If the
