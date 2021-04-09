@@ -28,22 +28,22 @@
 ;;; a FUNCALL-INSTRUCTION, because we still want to keep the
 ;;; additional successors of the CATCH-INSTRUCTION.
 
-(defmethod process-instruction
-    (client (instruction cleavir-ir:catch-instruction) code-object)
-  (destructuring-bind (continuation-output dynamic-environment-output)
-      (cleavir-ir:outputs instruction)
-    (setf (cleavir-ir:outputs instruction) '())
-    (cleavir-ir:insert-instruction-between
-     (make-instance 'cleavir-ir:return-value-instruction
-       :input (make-instance 'cleavir-ir:immediate-input
-                :value 2)
-       :output dynamic-environment-output)
-     instruction
-     (first (cleavir-ir:successors instruction)))
-    (cleavir-ir:insert-instruction-between
-     (make-instance 'cleavir-ir:return-value-instruction
-       :input (make-instance 'cleavir-ir:immediate-input
-                :value 0)
-       :output continuation-output)
-     instruction
-     (first (cleavir-ir:successors instruction)))))
+;; (defmethod process-instruction
+;;     (client (instruction cleavir-ir:catch-instruction) code-object)
+;;   (destructuring-bind (continuation-output dynamic-environment-output)
+;;       (cleavir-ir:outputs instruction)
+;;     (setf (cleavir-ir:outputs instruction) '())
+;;     (cleavir-ir:insert-instruction-between
+;;      (make-instance 'cleavir-ir:return-value-instruction
+;;        :input (make-instance 'cleavir-ir:immediate-input
+;;                 :value 2)
+;;        :output dynamic-environment-output)
+;;      instruction
+;;      (first (cleavir-ir:successors instruction)))
+;;     (cleavir-ir:insert-instruction-between
+;;      (make-instance 'cleavir-ir:return-value-instruction
+;;        :input (make-instance 'cleavir-ir:immediate-input
+;;                 :value 0)
+;;        :output continuation-output)
+;;      instruction
+;;      (first (cleavir-ir:successors instruction)))))
