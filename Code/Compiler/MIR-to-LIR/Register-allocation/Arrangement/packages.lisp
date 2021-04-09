@@ -10,9 +10,8 @@
            #:lexical-location-has-attributed-stack-slot-p
            #:unattributed-register-count
            #:attribute-stack-slot
-           #:attribute-register
+           #:attribute-register-for-existing-lexical-location
            #:attribute-register-for-new-lexical-location
            #:unattribute-register
            #:trim-arrangement
-           #:copy-register-attribution
-           #:delete-attribution))
+           #:copy-register-attribution))
