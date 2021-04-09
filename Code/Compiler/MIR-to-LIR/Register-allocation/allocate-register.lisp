@@ -16,6 +16,13 @@
          (spill predecessor instruction lexical-location))
      instruction lexical-location)))
 
+(defun augmented-distance (lexical-location pool)
+  (let ((pool-item (find lexical-location pool
+                         :test #'eq :key #'lexical-location)))
+    (if (null pool-item)
+        1000000
+        (distance pool-item))))
+
 ;;; Unattribute any register among the ones in CANDIATES.  We know
 ;;; that every register in CANDIDATES is attributed to some lexical
 ;;; location.  So we must choose a "victim" lexical location and
@@ -32,9 +39,9 @@
     ;; attributed register.  We pick the lexical location with the
     ;; greatest estimated distance to use.
     (let* ((victim (first potential-victims))
-           (max-distance (distance-of-lexical-location victim pool)))
+           (max-distance (augmented-distance victim pool)))
       (loop for potential-victim in (rest potential-victims)
-            for distance = (distance-of-lexical-location potential-victim pool)
+            for distance = (augmented-distance potential-victim pool)
             do (when (> distance max-distance)
                  (setf victim potential-victim)
                  (setf max-distance distance)))
@@ -56,9 +63,10 @@
 
 (defun determine-candidates (lexical-location pool)
   (let* ((pool-item (find lexical-location pool
-                          :key #'lexical-location :test #'eq))
-         (call-probability (call-probability pool-item)))
-    (if (>= call-probability 3) *callee-saves* *caller-saves*)))
+                          :key #'lexical-location :test #'eq)))
+    (if (or (null pool-item) (< (call-probability pool-item) 3))
+        *caller-saves*
+        *callee-saves*)))
 
 ;;; Ensure that LEXICAL-LOCATION has an attributed register.  We
 ;;; account for two possibilities.  If LEXICAL-LOCATION already has an
