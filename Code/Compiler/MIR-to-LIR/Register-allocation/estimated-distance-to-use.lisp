@@ -28,6 +28,29 @@
         when (typep input 'cleavir-ir:lexical-location)
           collect input))
 
+(defun call-instruction-p (instruction)
+  (typep instruction
+         '(or
+           cleavir-ir:funcall-instruction
+           cleavir-ir:named-call-instruction
+           cleavir-ir:catch-instruction
+           cleavir-ir:bind-instruction
+           cleavir-ir:unwind-instruction
+           cleavir-ir:initialize-values-instruction
+           cleavir-ir:enclose-instruction
+           cleavir-ir:multiple-value-call-instruction)))
+
+;;; I suspect there might be call instructions that don't actually use
+;;; the dynamic environment, for example ENCLOSE-INSTRUCTION, but this
+;;; is a good approximation for now, and the only result of
+;;; over-estimating such use is that it might be kept in a register
+;;; even though it is not needed for some time.
+(defmethod lexical-location-inputs :around (instruction)
+  (if (call-instruction-p instruction)
+      (cons (cleavir-ir:dynamic-environment-location instruction)
+            (call-next-method))
+      (call-next-method)))
+
 (defun initialize (work-list)
   (loop until (emptyp work-list)
         do (let ((instruction (pop-item work-list)))
@@ -53,18 +76,6 @@
 (defmethod compute-new-output-pool
     ((instruction cleavir-ir:catch-instruction) back-arcs)
   (input-pool (first (cleavir-ir:successors instruction))))
-
-(defun call-instruction-p (instruction)
-  (typep instruction
-         '(or
-           cleavir-ir:funcall-instruction
-           cleavir-ir:named-call-instruction
-           cleavir-ir:catch-instruction
-           cleavir-ir:bind-instruction
-           cleavir-ir:unwind-instruction
-           cleavir-ir:initialize-values-instruction
-           cleavir-ir:enclose-instruction
-           cleavir-ir:multiple-value-call-instruction)))
 
 ;;; The derived input pool is a prototype input pool that is
 ;;; determined from the output pool without taking into account
