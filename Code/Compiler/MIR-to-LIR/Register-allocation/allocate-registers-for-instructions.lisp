@@ -195,7 +195,7 @@
             predecessor
             instruction
             (output-pool predecessor)
-            continuation
+            continuation-candidates
             1)
            instruction
            (output-pool predecessor)
