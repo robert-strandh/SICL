@@ -70,7 +70,8 @@
     ;; We must include a new register in the arrangement.  We know
     ;; there is an unattributed register of the right kind.
     (let ((candidates (determine-candidates output pool)))
-      (arr:attribute-register arrangement output candidates))
+      (arr:attribute-register-for-new-lexical-location
+       arrangement output candidates))
     arrangement))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -205,11 +206,11 @@
              (determine-candidates dynamic-environment pool))
            (continuation-candidates
              (determine-candidates continuation pool)))
-      (arr:attribute-register
+      (arr:attribute-register-for-new-lexical-location
        arrangement
        dynamic-environment
        dynamic-environment-candidates)
-      (arr:attribute-register
+      (arr:attribute-register-for-new-lexical-location
        arrangement
        continuation
        continuation-candidates)
