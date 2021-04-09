@@ -19,15 +19,21 @@
 (defun (setf output-pool) (output-pool instruction)
   (setf (gethash instruction *output-pools*) output-pool))
 
+;;; Return a list of the inputs of INSTRUCTION that are
+;;; lexical-locations.
+(defun lexical-location-inputs (instruction)
+  (loop for input in (cleavir-ir:inputs instruction)
+        when (typep input 'cleavir-ir:lexical-location)
+          collect input))
+
 (defun initialize (work-list)
   (loop until (emptyp work-list)
         do (let ((instruction (pop-item work-list)))
              (setf (input-pool instruction) (make-pool))
-             (loop for input in (cleavir-ir:inputs instruction)
-                   when (typep input 'cleavir-ir:lexical-location)
-                     do (setf (input-pool instruction)
-                              (add-variable
-                               (input-pool instruction) input))))))
+             (loop for input in (lexical-location-inputs instruction)
+                   do (setf (input-pool instruction)
+                            (add-variable
+                             (input-pool instruction) input))))))
 
 (defgeneric compute-new-output-pool (instruction back-arcs))
 
@@ -81,13 +87,6 @@
                       :distance (1+ distance)
                       :call-probability
                       (if call-instruction-p 10 call-probability)))))
-
-;;; Return a list of the inputs of INSTRUCTION that are
-;;; lexical-locations.
-(defun lexical-location-inputs (instruction)
-  (loop for input in (cleavir-ir:inputs instruction)
-        when (typep input 'cleavir-ir:lexical-location)
-          collect input))
 
 (defgeneric compute-new-input-pool (instruction))
 
