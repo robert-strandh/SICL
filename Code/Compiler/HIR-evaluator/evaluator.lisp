@@ -76,6 +76,8 @@
            (ensure-lref 'dynamic-environment lexical-environment))
          (dynamic-environment-lref-2
            (ensure-lref (cleavir-ir:dynamic-environment-output enter-instruction) lexical-environment))
+         (arguments-lref
+           (ensure-lref 'arguments lexical-environment))
          (argument-lref
            (ensure-lref (third (cleavir-ir:outputs enter-instruction)) lexical-environment))
          (successor
@@ -91,6 +93,7 @@
           (setf (lref static-environment-lref-2) static-environment)
           (setf (lref dynamic-environment-lref-1) '())
           (setf (lref dynamic-environment-lref-2) '())
+          (setf (lref arguments-lref) (vector constants-vector))
           (setf (lref argument-lref) constants-vector))
         (catch 'return
           (loop (setf thunk (funcall thunk lexical-locations))))))))
