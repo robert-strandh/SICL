@@ -502,6 +502,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; COMPUTE-RETURN-VALUE-COUNT-INSTRUCTION
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:compute-return-value-count-instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:compute-return-value-count-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; RETURN-VALUE-INSTRUCTION
 
 (defmethod process-outputs
