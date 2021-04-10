@@ -165,6 +165,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INITIALIZE-CLOSURE-INSTRUCTION
+;;;
+;;; The INITIALIZE-CLOSURE-INSTRUCTION has no outputs.
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:initialize-closure-instruction))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:initialize-closure-instruction))
+  predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:initialize-closure-instruction) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; CATCH-INSTRUCTION
 ;;;
 
