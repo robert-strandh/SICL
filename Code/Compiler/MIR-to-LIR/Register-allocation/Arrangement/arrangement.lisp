@@ -177,8 +177,8 @@
       (with-attribution attribution
         (assert (not (null stack-slot)))
         (assert (not (null register-number)))
-        (setf register-number nil)
-        (setf (bit register-map register-number) 0))))
+        (setf (bit register-map register-number) 0)
+        (setf register-number nil))))
   (check-arrangement-integrity arrangement))
 
 ;;; Return a list of lexical locations such that every lexical
@@ -263,6 +263,8 @@
             :lexical-location to-lexical-location
             :stack-slot nil
             :register-number (register-number from-attribution))
-          (attributions to-arrangement)))
+          (attributions to-arrangement))
+    (setf (bit (register-map to-arrangement) (register-number from-attribution))
+          1))
   (check-arrangement-integrity from-arrangement)
   (check-arrangement-integrity to-arrangement))
