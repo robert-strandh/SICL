@@ -129,7 +129,7 @@
     (arrangement lexical-location candidates)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
-    (let ((free-register (find 1 (bit-andc2 candidates register-map)))
+    (let ((free-register (position 1 (bit-andc2 candidates register-map)))
           (attribution (find lexical-location attributions
                              :test #'eql :key #'lexical-location)))
       (assert (not (null free-register)))
@@ -138,7 +138,8 @@
         (assert (not (null stack-slot)))
         (assert (null register-number))
         (setf register-number free-register)
-        (setf (bit register-map free-register) 1)))))
+        (setf (bit register-map free-register) 1))))
+    (check-arrangement-integrity arrangement))
 
 ;;; Destructively update ARRANGEMENT so that LEXICAL-LOCATION has a
 ;;; register attrbuted to it, selected from CANDIDATES.  If there
