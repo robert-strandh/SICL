@@ -12,6 +12,8 @@
     value))
 
 (defun (setf input-arrangement) (arrangement instruction)
+  (unless (null arrangement)
+    (arr::check-arrangement-integrity arrangement))
   (setf (gethash instruction *input-arrangements*) arrangement))
 
 (defvar *output-arrangements*)
@@ -23,4 +25,6 @@
     value))
 
 (defun (setf output-arrangement) (arrangement instruction)
+  (unless (null arrangement)
+    (arr::check-arrangement-integrity arrangement))
   (setf (gethash instruction *output-arrangements*) arrangement))
