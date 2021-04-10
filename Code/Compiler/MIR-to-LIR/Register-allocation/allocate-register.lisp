@@ -49,8 +49,8 @@
        predecessor instruction victim))))
 
 ;;; Make sure that the output arrangement of the predecessor of
-;;; INSTRUCTION is such that there is at least one unattributed
-;;; register among the CANDIDATES.
+;;; INSTRUCTION is such that there is at least DESIRED-COUNT
+;;; unattributed registers among the CANDIDATES.
 (defun ensure-unattributed-registers
     (predecessor instruction pool candidates desired-count)
   (let* ((arrangement (output-arrangement predecessor))
