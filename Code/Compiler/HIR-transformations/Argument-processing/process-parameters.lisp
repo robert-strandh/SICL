@@ -142,8 +142,7 @@
 (defun process-parameters (top-level-enter-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
-     (when (and (typep instruction 'cleavir-ir:enter-instruction)
-                (not (eq instruction top-level-enter-instruction)))
+     (when (typep instruction 'cleavir-ir:enter-instruction)
        (process-enter-instruction instruction)))
    top-level-enter-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
