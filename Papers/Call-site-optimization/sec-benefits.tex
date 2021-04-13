@@ -14,7 +14,9 @@ by the next call.  A typical \commonlisp{} implementation uses a
 symbol (the name of the function) for this indirection, whereas
 \sicl{} uses a separate \texttt{cons} cell, but the cost is the same.
 With our technique, when a callee is altered, the snippet is
-modified.  As a result, no indirection is required.  Furthermore, in
+modified.  As a result, no indirection%
+\footnote{Though, the snippet is itself a kind of indirection, of course.}
+is required.  Furthermore, in
 \sicl{} all functions are standard objects which requires another
 indirection from the \emph{header object} to the so-called \emph{rack}
 where the entry point is stored.
@@ -57,7 +59,7 @@ function can often be created, provided that enough type information
 is made available by the caller for the arguments that correspond to
 specializers of some methods of the generic function.  In the extreme
 (but common) case where the callee is a slot accessor and the class of
-the specialized argument is know, the snippet can contain the full
+the specialized argument is known, the snippet can contain the full
 code to access the slot, without any need to call a particular method
 function.
 
