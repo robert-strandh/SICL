@@ -45,8 +45,23 @@ macro) the original call to \texttt{make-instance} by a call to a
 and the literal keyword arguments given.  The \emph{funcallable
   instance function} of the funcallable object is updated as a result
 of added or removed methods and modified classes as mentioned.
+This technique can be used on other, similar functions.  For example,
+\texttt{slot-value} is often called with a constant slot name, and
+this fact has been explored by \sbcl{}.
 
 Since the optimization is done as a source-code transformation, it is
 applicable only to standard functions that can not change later on.
+
+A similar mechanism (called ``constructor functions'' exists in
+Allegro Common Lisp.
+
+\subsection{Sealing}
+
+Sealing is a mechanism that allows the programmer to freeze the
+definitions of various program elements such as classes and generic
+functions.  The work by Heisig \cite{Heisig:2020:ELS:Sealable} applies
+to \commonlisp{} and can allow for certain call sites to be
+optimized to different degrees, from bypassing generic dispatch to
+fully inlining entire effective methods.
 
 %%  LocalWords:  funcallable ctors Smalltalk SBCL CMUCL
