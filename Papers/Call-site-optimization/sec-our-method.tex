@@ -203,7 +203,7 @@ Thus, if the caller indicates a type other than \texttt{t} for some
 return value, it has to be one of a small number of fixed types, for
 example \texttt{double-float}, \texttt{character},
 \texttt{(signed-byte 64)} and \texttt{(unsigned-byte 64)} (assuming a
-64-bit architecture.  When one of these types is indicated by the
+64-bit architecture).  When one of these types is indicated by the
 caller, the meaning is that the caller requires an unboxed value of
 this type.  Then, if the callee cannot supply such a value, code is
 generated in the snippet to signal an error.
@@ -231,10 +231,16 @@ order:
   function.
 \end{enumerate}
 
+\noindent
 The thread responsible for redefining the callee blocks until step 1
 is accomplished.  Without this blocking, some callers may get the old
 version of the callee and some others the new version, thereby
-violating the overall semantics of a function redefinition.
+violating the overall semantics of a function redefinition.  In some
+cases, it may be acceptable for different callers to get different
+versions, but in the general case, i.e., when it is observable which
+versions are used, it is not acceptable.  Because of this requirement,
+redefining a function can be an expensive operation, but redefining a
+function is expected to be infrequent compared to calling it.
 
 Step 3, on the other hand can be accomplished asynchronously, and even
 in parallel with caller threads, provided that appropriate
