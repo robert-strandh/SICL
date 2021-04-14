@@ -10,7 +10,9 @@ reasons for this additional cost:
 \item With \emph{late binding} being a requirement, i.e. the fact that
   functions can be removed or redefined at run-time, and that callers
   must take such updates into account, it is necessary to have some
-  indirection that can be modified at run-time.
+  indirection that can be modified at run-time.  Mechanisms such as
+  compiler macros and inlining break this requirement, which is often
+  a serious drawback to their use.
 \item \commonlisp{} has a rich function-call protocol with optional
   parameters and keyword parameters.  Keyword parameters, in
   particular, require some considerable run-time parsing for every
