@@ -1,0 +1,253 @@
+
+----------------------- REVIEW 1 ---------------------
+SUBMISSION: 5
+TITLE: Call-site optimization for Common Lisp
+AUTHORS: Robert Strandh
+
+----------- Overall evaluation -----------
+SCORE: 3 (strong accept)
+----- TEXT:
+This paper describes an approach to compiling function calls in Common
+Lisp that supports a JIT-like adaptation to function redefinition
+within an otherwise ahead-of-time strategy. The approach has not yet
+been implemented, so the costs and benefits are not entirely clear,
+but the strategy appears promising and novel.
+
+The JIT-like aspect of the approach is that function-call sites are
+isolated to "snippets" that can be replaced with specialized
+implementations when a function is (re)defined, thus bridging the
+expectations of the caller and callee. When those expectations align,
+a snippet can implement a fast path that avoids argument checking and
+boxing conversions in a way that is more general than specialization
+via macros, which generally requires knowing the callee at expansion
+time. I'm not sure how this relates to the ways that JIT-oriented
+systems manage specializations and swap them out when assumptions
+change, but relinking direct jumps to replace call sites is an
+appealingly simple idea to handle function redefined, and I think ELS
+attendees would be interested to hear about it.
+
+The paper doesn't go into detail about how the mapping from function
+names to snippets should be managed, but it's not difficult to imagine
+that a symbol has a list of snippets attached to it. Then again, it's
+not clear how much space will be needed to keep that mapping, or how
+much extra code must be generated (relative to other strategies) to
+accommodate the function-call indirection through a snippet. In
+particular, since the jump to and return form a snippet uses
+unconditional direct jumps, every call site needs its own snippet;
+that is, call sites using the same kinds of arguments and expecting
+the same kinds of results still would not use the same snippet. The
+sharing-versus-direct-jump choice seems like one that might be refined
+in an actual implementation to trade off space and time.
+
+The paper mentions inline caches (a la Smalltalk) as related work, but
+perhaps even more closely related work is "basic block versioning"
+[Chevalier-Boisvert and Feeley], and the paper should offer a brief
+comparison. The possibility of snippet sharing would probably make
+that work even more related.
+
+Small editing notes:
+
+Line 545: Although there's no indirect jump, the snippet is itself a
+kind of indirection --- but one that is likely friendly to the CPU's
+pipeline, as the paper notes later.
+
+Line 589: "is know" => "is known"
+
+
+
+----------------------- REVIEW 2 ---------------------
+SUBMISSION: 5
+TITLE: Call-site optimization for Common Lisp
+AUTHORS: Robert Strandh
+
+----------- Overall evaluation -----------
+SCORE: 2 (accept)
+----- TEXT:
+This paper describes a proposed implementation strategy for function
+call in a Common Lisp system, which (given some constraints on the
+operation of the garbage collector and some other subsystems) allows
+the implementation to provide effectively distinct, specialized entry
+points to functions given information at each call site (e.g. active
+type declarations or inference, constant arguments in keyword
+position, ...).  I found the paper generally well-written and clear;
+it captures the design at a particular point in time, though that
+design has not been tested by the author as it has not yet been
+implemented in their system. 
+
+Given that this is a presentation of an as-yet unimplemented design,
+we cannot expect quantitative results (e.g. measured speedup of
+specialized call sites, or impact on the garbage collector).  It's
+perhaps a bit of a shame that the author has chosen to restrict the
+scope of their discussion so narrowly, to function calls in Common
+Lisp only; I suspect, though I don't know for certain, that there
+might be useful parallels to be drawn in CL-adjacent bodies of work,
+which might help the reader get a better sense of the scope and effect
+of possible optimizations. 
+
+In CL itself, I think that there is work on a similar implementation
+technique in at least Allegro Common Lisp.  As it is a proprietary
+implementation, and to my knowledge the implementors have not
+published in the academic literature about their techniques, it's
+perhaps unsurprising not to have a detailed discussion here, but one
+can find some circumstantial evidence that theirs is not an unrelated
+technique in comp.lang.lisp archives, for example 
+<https://groups.google.com/g/comp.lang.lisp/c/ZmUW8y4Jh4k/m/bMlsE7q3FPMJ>.
+(I am almost certain that Duane Rettig posted at some point about an
+undocumented way in Allegro Common Lisp to generate calls to functions
+with unboxed arguments -- effectively a specialized entry point of the
+kind discussed here -- but I cannot find that message.  A personal
+communication to Duane might be fruitful.)  Likewise, the section 2.2
+on Ctors should probably mention that a similar optimization, named
+"constructor functions", has been in Allegro Common Lisp since at
+least 1996 (I found a reference to it in the User Manual of version
+4.3). 
+
+Again in the realm of CL, the `fast-generic-functions` repository
+allows for call-site optimization through (limited) sealing of generic
+functions, allowing for the elision of dispatch or even the inlining
+(and possible re-optimization) of the full effective method.  There
+have also been various uses of inline caches in CL, such as a sketch
+of an inline cache for slot-value calls with a variable slot-name
+argument, as in
+<https://sourceforge.net/p/sbcl/mailman/message/20981660/>. 
+
+Outside CL, I'm sure there has been more work on this area, and I'd
+encourage the authors to look for references in Lisp-ish systems.
+Burger & Dybvig's "An Infrastructure for Profile-Driven Dynamic
+Recompilation" (or Burger's dissertation) might be of interest to
+readers, as might Andy Wingo's design notes on inline caches in Guile
+<https://wingolog.org/archives/2018/02/07/design-notes-on-inline-caches-in-guile>.
+(Further away from Lisp-ish systems, to consideration of
+Python/Ruby/Factor runtimes and Java Virtual Machines, there are more
+discussions of function call and implementation strategies; I don't
+know if there is a review article out there to point readers to?) 
+
+Some minor notes:
+
+- (Section 2): it's possible that the absence of published work is
+  that innovation in this area might have happened in the context of
+  proprietary implementations, or implementations without a strong
+  incentive to publish technical papers in the academic literature. 
+
+- (Page 4, line 434): a missing close-paren after "64-bit architecture"
+
+- (Page 4, line 460): I'm not sure about this paragraph (about the
+  thread blocking until redefinition is complete).  I don't think it's
+  necessarily wrong for some threads to see the old definition and
+  some the new, at least depending on the memory model guarantees
+  offered by the system.  On the other hand, it's not clear to me that
+  the redefinition thread blocking achieves the consistency implied,
+  unless by "block" is meant "stop the world" -- in which case that is
+  a very expensive operation! 
+
+- (Page 5, line 523): In the Allegro Common Lisp documentation, there
+  is a discussion about apply and &rest arguments, and in particular
+  about code that augments the apply arguments using the spread
+  argument list technique.  A specific case discussed is where the
+  augmentation is conditional, e.g. 
+
+     (defun foo (f &rest y)
+       (let ((z (if *cond* (list* :extra t y) y)))
+         (apply f z)))
+
+and the point in the documentation is that this is harder to optimize
+for the system than the equivalent 
+
+     (defun foo (f &rest y)
+       (if *cond*
+           (apply f :extra t y)
+           (apply f y)))
+
+I would guess that there is a similar form of call-site optimization
+there that is under discussion in this paper. 
+
+- (Page 6, line 621): "provided by each callee" should read "provided by each caller"
+
+
+
+----------------------- REVIEW 3 ---------------------
+SUBMISSION: 5
+TITLE: Call-site optimization for Common Lisp
+AUTHORS: Robert Strandh
+
+----------- Overall evaluation -----------
+SCORE: -2 (reject)
+----- TEXT:
+The paper presents a compilation technique which tries to reduce the
+overhead of function calls in a way that is compatible with
+function redefinitions by adding many different entry points (potentially
+one for each call) to every function, dynamically generated when the
+function is (re)defined/compiled.
+
+The compilation technique sounds promising, but in the absence of an actual
+implementation it's hard to tell.  That also makes the article fairly weak
+because obviously, there will be tradeoffs between the added administrative
+cost of keeping track of all those snippets, the corresponding code size
+increase and hence cache impact, potentially a slow down by having to first
+jump to the trampoline and only from there jump to the actual callee, plus
+the cost of (re)computing those trampolines every time a function definition
+is updated (this is typically rare, but there might be important
+exceptions), ...
+
+For this reason, I think this article is not ready to be published.
+
+- sec 1, line 102: Of course, compiler macros tend to break item number
+  1 anyway (and if we get rid of item 1, many optimizations can be performed
+  by the compiler without any need to resort to special tricks).
+  I think you should insist on item 1 (and maybe 5) since everything else
+  mostly disappears if this one disappears.
+- sec 1, line 109: same thing.
+- sec 1, line 102: the paper you cite is not comparing an indirect branch to
+  a direct branch, but a dynamically translated indirect branch to
+  a dynamically translated direct branch.  That's a very different problem
+  (the main cost is not in the branch itself but in the need to dynamically
+  compute the translated destination based on the untranslated destination).
+  Normal indirect branches that always jump to the same destination should
+  be just about as efficient as a normal direct jump (i.e. "always"
+  correctly predicted by the BTB), so the extra cost comes mainly from the
+  memory  reference.  Probably not negligible, indeed, but could be much
+  less than "significantly more costly".
+  In any case, the technique you propose can also be used with an indirect
+  jump with almost the same benefits.
+- sec 2.1: you should clarify that this is specifically used to reduce the
+  cost of finding the effective method, and not to speed up a particular
+  function call.  IOW, it's largely orthogonal to what you're proposing.
+- sec 2.2: This seems fairly closely related to your technique (tho it
+  focuses on handling addition/removal of methods rather than redefinition
+  of an actual function, so it applies "at another layer"), so you might
+  want to go into a bit more details of how it works.
+- sec 3: I think this section is concerned about the use of references
+  between code chunks via direct branches, but you should clarify it.
+  Or maybe move it later in the paper after you've explained of how things
+  work and you can clarify what is the problem and why SICL isn't impacted.
+- sec 4.1, lines 276-282: I think the distinction between case 1 and 2 is
+  largely cosmetic, due to details of the Lisp syntax.  E.g. you could start
+  by rewriting all calls of the form (f <foo>) to (funcall #'f <foo>) and
+  then you'd only have case 2 to attend to.
+- sec 4.1, lines 283-285: you could consider this as just one among many
+  other cases of higher-order functions, and similarly specialize calls to
+  things like `mapcar` (so you'd jump to a specialized version of `mapcar`
+  optimized for this specific function argument).
+- sec 4.2: you also need to keep track of all the callers for a given
+  callee, so as to be able to update them later on.  It would be worth
+  mentioning it and describing how/where you keep this info (symbol
+  property?).
+- sec 4.2, line 415: I disagree: the "trampoline snippets" are compiled with
+  knowledge of both the caller and callee and can be optimized based on this
+  knowledge: they belong as much to the caller as to the callee.  They may
+  end up calling the callee, maybe even using the "full function-call
+  protocol", but they can make use of callee-provided info.
+- sec 4.2, line 445: I think you can call this step 1 as "deoptimizing"
+  the call-sites.  Also at the end of this step you need to ensure that all
+  the CPUs involved have had their I-cache and prefetch pipeline
+  flushed/updated so they won't use the old/stale optimized code.
+  This is quite architecture-specific, IIUC.
+- The bibliography is a bit short.  I think the paper would be significantly
+  improved if it came with a more extensive comparison with other systems
+  (some of which might be largely orthogonal but could maybe be combined),
+  such as the eager BBV, or the optimizations in Gambit that compiles calls
+  to functions into a branch that first tests if the definition was changed
+  and if not uses a specialized inline version of the code.  Also the
+  management of the list of call-sites to keep track of the need for updates
+  should be compared to what is done in jit compilers.
+
