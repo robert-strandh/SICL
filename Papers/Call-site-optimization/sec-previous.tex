@@ -20,6 +20,11 @@ is concerned each time the call is made.  By caching the latest
 method, keyed by the distinguished class argument, the system can
 often avoid a costlier computation.
 
+The purpose of inline caching being to reduce the cost of finding the
+applicable effective method, it is not directly related to speeding up
+function calls, but it has the effect of making calls to generic
+functions faster.
+
 \subsection{Ctors}
 \label{sec-previous-ctors}
 
@@ -49,8 +54,14 @@ This technique can be used on other, similar functions.  For example,
 \texttt{slot-value} is often called with a constant slot name, and
 this fact has been explored by \sbcl{}.
 
-Since the optimization is done as a source-code transformation, it is
-applicable only to standard functions that can not change later on.
+This mechanism is not restricted to generic functions, and could very
+well be used for some of the situations handled by the mechanism
+described in this paper.  The funcallable object plays the same role
+as that mechanism, but is less flexible, and requires significantly
+more overhead.  In particular, this overhead would make a simple
+function call \emph{more costly} than the usual mechanism, because of
+the additional call to the funcallable object.  But calls with keyword
+arguments may still benefit.
 
 A similar mechanism (called ``constructor functions'' exists in
 Allegro Common Lisp.
