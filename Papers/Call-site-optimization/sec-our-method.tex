@@ -93,7 +93,10 @@ The first type of form can be considered as special syntax for a
 
 There are some other cases that we do not intend to cover, in
 particular a call to \texttt{multiple-value-call} with a named
-function argument.
+function argument.  In fact, the third type of form could be
+generalized to cover other functions that are commonly used with
+a constant function argument, such as \texttt{mapcar}.  At the moment,
+we are not considering such additional cases.
 
 With our suggested technique, for these three different form types,
 the function call is created by the callee.  We discuss each form type
