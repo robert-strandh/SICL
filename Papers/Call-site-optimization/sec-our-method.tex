@@ -109,10 +109,10 @@ single unconditional \emph{jump} instruction.  The target address in
 that instruction is altered by the callee according to its structure.
 The code for the function call is contained in an object that we call
 a \emph{trampoline snippet}, or just \emph{snippet} for short.  The
-callee allocates an appropriate snippet in the global heap as describe
-in \refSec{sec-sicl-features}, at some available location, and the
-unconditional jump instruction of the caller is modified so that it
-performs a jump to the first instruction of the snippet.  The
+callee allocates an appropriate snippet in the global heap as
+described in \refSec{sec-sicl-features}, at some available location,
+and the unconditional jump instruction of the caller is modified so
+that it performs a jump to the first instruction of the snippet.  The
 constellation of caller, callee, and snippet is illustrated in
 \refFig{fig-snippet}.  We omitted an explicit indication of a control
 transfer from the snippet to the callee code, because such a control
@@ -126,10 +126,17 @@ transfer is not always required.
 Caller, callee, and snippet in the global heap.}
 \end{figure}
 
-When the callee changes in some way, a
-new snippet is allocated and the jump instruction is altered to refer
-to the position of the new snippet.  The old snippet is then subject
-to garbage collection like any other object.
+When the callee changes in some way, a new snippet is allocated and
+the jump instruction is altered to refer to the position of the new
+snippet.  The old snippet is then subject to garbage collection like
+any other object.  For the callee to be able to alter the caller this
+way, a list of all call sites must be accessible from the name of the
+callee.  For an ordinary \commonlisp{} implementation, the symbol used
+to name the callee can store such a list.  In \sicl{}, this
+information would be kept in the data structure describing the callee
+in the first-class global environment
+\cite{Strandh:2015:ELS:Environments}.  Either way, to avoid memory
+leaks, the call site should be referred to through a weak reference.
 
 When code containing a caller is loaded into the global environment,
 and that caller contains a call site that refers to a function that is
