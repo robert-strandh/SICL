@@ -376,6 +376,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; FIXNUM-DIVIDE-INSTRUCTION
+;;;
+;;; The x86 DIV instruction requires a peculiar arrangement of inputs
+;;; and outputs. The first input must be in RAX, the second input can
+;;; be in any register or in memory, and RDX (the high 64 bits of the
+;;; integer to divide) must be zero. The first output will then be in
+;;; RAX, and the second output will be in RDX.
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
+  predecessor)
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
+  (setf predecessor
+        (ensure-unattributed-registers predecessor instruction
+                                       (output-pool instruction)
+                                       (make-register-map *rax* *rdx*)
+                                       2))
+  predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:fixnum-divide-instruction) arrangement)
+  (arr:attribute-register-for-new-lexical-location
+   arrangement
+   (first (cleavir-ir:outputs instruction))
+   (make-register-map *rax*))
+  (arr:attribute-register-for-new-lexical-location
+   arrangement
+   (second (cleavir-ir:outputs instruction))
+   (make-register-map *rdx*))
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; MEMSET1-INSTRUCTION
 
 (defmethod process-outputs

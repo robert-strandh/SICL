@@ -43,6 +43,7 @@
   (= (bit *callee-saves* register-number) 1))
 
 (defparameter *xmm* #*000000000000000011111111)
+(defparameter *gpr* #*111111111111111100000000)
 
 (defparameter *initial* #*010000000010000000000000)
 
@@ -80,3 +81,12 @@
 
 (defun find-any-register-in-map (register-map)
   (position 1 register-map))
+
+(defun register-number (register)
+  (position register *registers*))
+
+(defun make-register-map (&rest registers)
+  (let ((map (make-empty-register-map)))
+    (dolist (register registers)
+      (mark-register map (register-number register)))
+    map))
