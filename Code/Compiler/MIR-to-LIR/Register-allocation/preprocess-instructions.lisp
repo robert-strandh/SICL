@@ -41,6 +41,23 @@
           (reinitialize-instance instruction
             :inputs (list temp input2)))))))
 
+(defmethod preprocess-instruction
+    ((instruction cleavir-ir:fixnum-divide-instruction))
+  ;; If the divisor is a constant, introduce a lexical variable to
+  ;; store it.  x86 (still) only provides encodings for dividing by a
+  ;; register value or by a memory value, but not a constant.
+  (destructuring-bind (divident divisor)
+      (cleavir-ir:inputs instruction)
+    (when (typep divisor 'cleavir-ir:constant-input)
+      (let ((lexical (cleavir-ir:make-lexical-location (gensym "DIVISOR"))))
+        (cleavir-ir:insert-instruction-before
+           (make-instance 'cleavir-ir:assignment-instruction
+             :input divisor
+             :output lexical)
+           instruction)
+        (setf (cleavir-ir:inputs instruction)
+              (list divident lexical))))))
+
 (defun preprocess-instructions (enter-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
