@@ -52,19 +52,21 @@ and the literal keyword arguments given.  The \emph{funcallable
 of added or removed methods and modified classes as mentioned.
 This technique can be used on other, similar functions.  For example,
 \texttt{slot-value} is often called with a constant slot name, and
-this fact has been explored by \sbcl{}.
+this fact has been explored by \sbcl{}.%
+\footnote{http://www.sbcl.org/}
 
-This mechanism is not restricted to generic functions, and could very
-well be used for some of the situations handled by the mechanism
-described in this paper.  The funcallable object plays the same role
-as that mechanism, but is less flexible, and requires significantly
-more overhead.  In particular, this overhead would make a simple
-function call \emph{more costly} than the usual mechanism, because of
-the additional call to the funcallable object.  But calls with keyword
-arguments may still benefit.
+Since the optimization is done as a manual source-code transformation,
+it is applicable mainly to standard functions that can not change later
+on.  The mechanism presented in this paper can be seen as an automatic
+low-overhead version of ctors.
 
 A similar mechanism (called ``constructor functions'' exists in
-Allegro Common Lisp.
+Allegro Common Lisp.%
+\footnote{https://franz.com/products/allegro-common-lisp/}.  And the
+\clasp{} \commonlisp{} implementation%
+\footnote{https://github.com/clasp-developers/clasp}
+uses a similar mechanism for \texttt{make-instance},
+\texttt{change-class}, and \texttt{reinitialize-instance}.
 
 \subsection{Sealing}
 
