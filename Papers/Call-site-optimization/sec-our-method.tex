@@ -230,12 +230,13 @@ callers.  In particular, a callee can be removed using
 order:
 
 \begin{enumerate}
-\item First, a default snippet is allocated for each caller, or the
-  kept default snippet is reused.  The unconditional jump instruction
-  is modified to refer to the default snippet.  As previously
-  explained, this snippet contains code for the full function-call
-  protocol, and in particular, it accesses the callee using an
-  indirection through the function cell.
+\item First, the every call site is de-optimized, which means that a
+  default snippet is allocated for each caller, or the kept default
+  snippet is reused.  The unconditional jump instruction is modified
+  to refer to the default snippet.  As previously explained, this
+  snippet contains code for the full function-call protocol, and in
+  particular, it accesses the callee using an indirection through the
+  function cell.
 \item Next, the callee is atomically replaced by a new function, or
   entirely removed by a single modification to the contents of the
   function cell.
@@ -246,6 +247,11 @@ order:
 \end{enumerate}
 
 \noindent
+When new snippets are substituted, actions may be needed to ensure
+that that processors do not use stale code.  Depending on the types of
+processors involved, such actions include flushing instruction caches
+and prefetch pipelines.
+
 The thread responsible for redefining the callee blocks until step 1
 is accomplished.  Without this blocking, some callers may get the old
 version of the callee and some others the new version, thereby
