@@ -17,7 +17,7 @@
     (cleavir-ast:map-ast-depth-first-preorder
      (lambda (node)
        (when (typep node 'cleavir-ast:load-time-value-ast)
-	 (push node result)))
+         (push node result)))
      ast)
     result))
 
@@ -29,7 +29,7 @@
           for setq-ast = (make-instance 'cleavir-ast:setq-ast
                            :lhs-ast load-time-value-ast
                            :value-ast form-ast)
-	  do (change-class load-time-value-ast 'cleavir-ast:lexical-ast
+          do (change-class load-time-value-ast 'cleavir-ast:lexical-ast
                            :name (gensym))
              (push setq-ast form-asts))
     (make-instance 'cleavir-ast:progn-ast :form-asts form-asts)))

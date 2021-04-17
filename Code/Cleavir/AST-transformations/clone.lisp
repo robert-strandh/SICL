@@ -15,7 +15,7 @@
     (cleavir-ast:map-ast-depth-first-preorder
      (lambda (node)
        (setf (gethash node dictionary)
-	     (make-instance (class-of node))))
+             (make-instance (class-of node))))
      ast)
     dictionary))
 
@@ -37,7 +37,7 @@
 ;;; the CDR.
 (defmethod finalize-substructure ((object cons) dictionary)
   (cons (finalize-substructure (car object) dictionary)
-	(finalize-substructure (cdr object) dictionary)))
+        (finalize-substructure (cdr object) dictionary)))
 
 ;;; If the substructure of an AST is another AST, then the
 ;;; corresponding substructure of the new AST is obtained from the
@@ -48,24 +48,24 @@
   (multiple-value-bind (ast present-p)
       (gethash object dictionary)
     (if present-p
-	ast
-	object)))
+        ast
+        object)))
 
 ;;; Given an AST to finalize and the MODEL AST of which the AST is a
 ;;; clone,  reinitialize the AST with new substructure.
 (defun finalize (ast model dictionary)
   (apply #'reinitialize-instance
-	 ast
-	 (loop for (keyword reader) in (cleavir-io:save-info model)
-	       for value = (funcall reader model)
-	       collect keyword
-	       collect (finalize-substructure value dictionary))))
+         ast
+         (loop for (keyword reader) in (cleavir-io:save-info model)
+               for value = (funcall reader model)
+               collect keyword
+               collect (finalize-substructure value dictionary))))
 
 (defun clone-ast (ast)
   (let ((dictionary (clone-create-dictionary ast)))
     (maphash (lambda (key value)
-	       (finalize value key dictionary))
-	     dictionary)
+               (finalize value key dictionary))
+             dictionary)
     (gethash ast dictionary)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -91,31 +91,31 @@
 
 (defmethod codegen-finalize-substructure ((object cons) dictionary)
   `(cons ,(codegen-finalize-substructure (car object) dictionary)
-	 ,(codegen-finalize-substructure (cdr object) dictionary)))
+         ,(codegen-finalize-substructure (cdr object) dictionary)))
 
 (defmethod codegen-finalize-substructure ((object cleavir-ast:ast) dictionary)
   (multiple-value-bind (ast present-p)
       (gethash object dictionary)
     (if present-p
-	ast
-	object)))
+        ast
+        object)))
 
 (defun codegen-finalize (model dictionary)
   `(reinitialize-instance
     ,(gethash  model dictionary)
     ,@(loop for (keyword reader) in (cleavir-io:save-info model)
-	    for value = (funcall reader model)
-	    collect keyword
-	    collect (codegen-finalize-substructure value dictionary))))
+            for value = (funcall reader model)
+            collect keyword
+            collect (codegen-finalize-substructure value dictionary))))
 
 (defun codegen-clone-ast (ast)
   (let ((dictionary (codegen-clone-create-dictionary ast)))
     `(let ,(loop for key being each hash-key of dictionary
-		   using (hash-value variable)
-		 for class = (class-of key)
-		 for class-name = (class-name class)
-		 collect `(,variable (make-instance ',class-name)))
+                   using (hash-value variable)
+                 for class = (class-of key)
+                 for class-name = (class-name class)
+                 collect `(,variable (make-instance ',class-name)))
        ,@(loop for key being each hash-key of dictionary
-		 using (hash-value variable)
-	       collect (codegen-finalize key dictionary))
+                 using (hash-value variable)
+               collect (codegen-finalize key dictionary))
        ,(gethash ast dictionary))))
