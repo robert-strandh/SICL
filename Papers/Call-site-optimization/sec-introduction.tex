@@ -26,7 +26,9 @@ reasons for this additional cost:
   Full-word integers still require boxing, however.  Similarly, boxing
   is required for values returned by a function.
 \item Generic functions can be dynamically updated by the addition or
-  removal of methods.
+  removal of methods.  Thus, even when the callee is a known generic
+  function, callers can make no assumptions about which methods might
+  be applicable.
 \item The fact that a function can return multiple values requires the
   callee to return additional information about the number of
   return values, and callers that accept multiple values must retrieve
@@ -64,12 +66,20 @@ Lisp%
 \footnote{https://franz.com/products/allegro-common-lisp/} which also
 allows for functions to return a single unboxed value.
 
-The main difference between function redefinition and generic-function
-updates is that a generic function consists of independent
-\emph{effective methods}, only one of which is applicable for a
-particular call.  To determine which effective method is applicable,
-in the general case some significant \emph{generic dispatch}, based on
-the class or the identity of arguments, may be required.
+Concerning item number 5, the main difference between function
+redefinition and generic-function updates is that a generic function
+consists of independent \emph{effective methods}, only one of which is
+applicable for a particular call.  To determine which effective method
+is applicable, in the general case some significant \emph{generic
+  dispatch}, based on the class or the identity of arguments, may be
+required.
+
+A common technique for handling item number 6 is to recognize that
+most callers will use only a single return value.  Then, if the callee
+returns no values, the register holding the first return value will
+nevertheless be initialized to \texttt{nil}.  As a result, callers
+that use a single return value never have to test the number of
+values actually returned.
 
 In this paper, we propose a very general technique for call-site
 optimization that can handle many of the issues listed at the
