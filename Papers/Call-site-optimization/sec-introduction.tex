@@ -57,6 +57,12 @@ disadvantage that a redefinition of the callee will not automatically
 be taken into account, thereby requiring the caller to be recompiled for
 the redefinition to be effective.
 
+Item number 4 can be mitigated by the use of more than one entry point
+for functions, one of which would accept unboxed arguments.  This
+technique is used by Allegro Common Lisp%
+\footnote{https://franz.com/products/allegro-common-lisp/} which also
+allows for functions to return a single unboxed value.
+
 The main difference between function redefinition and generic-function
 updates is that a generic function consists of independent
 \emph{effective methods}, only one of which is applicable for a
