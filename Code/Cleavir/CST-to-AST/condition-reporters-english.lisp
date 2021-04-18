@@ -400,7 +400,7 @@
    stream
    (language acclimation:english))
   (format stream
-          "ERROR while evaluating compiler-time side effect:~%~@<  ~@;~a~:>"
+          "ERROR while evaluating compile-time side effect:~%~@<  ~@;~a~:>"
           (original-condition condition)))
 
 (defmethod acclimation:report-condition
