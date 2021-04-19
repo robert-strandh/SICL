@@ -252,7 +252,7 @@ that that processors do not use stale code.  Depending on the types of
 processors involved, such actions include flushing instruction caches
 and prefetch pipelines.
 
-The thread responsible for redefining the callee blocks until step 1
+The thread responsible for redefining the callee, blocks until step 1
 is accomplished.  Without this blocking, some callers may get the old
 version of the callee and some others the new version, thereby
 violating the overall semantics of a function redefinition.  In some
