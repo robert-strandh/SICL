@@ -39,11 +39,11 @@ to a specialized version of the callee.
 The specialized function call can admit unboxed arguments.  Avoiding
 boxing is particularly useful for applications that manipulate
 floating-point values that are at least the size of the machine word,
-say IEEE double or quadruple floats in a 64-bit system.  Using a
-general-purpose function-call protocol, each such argument must be
-encapsulated in a memory-allocated object before the call, and often,
-the argument will immediately be unboxed by the callee for further
-processing.
+say IEEE double or quadruple floats in a 64-bit system.  When a
+general-purpose function-call protocol is used, each such argument
+must be encapsulated in a memory-allocated object before the call, and
+often, the argument will immediately be unboxed by the callee for
+further processing.
 
 Return values benefit from the same advantages as arguments.  Often,
 the number of values required by the caller is known statically.  The
