@@ -28,10 +28,13 @@ functions faster.
 \subsection{Ctors}
 \label{sec-previous-ctors}
 
-The CMUCL implementation of the \commonlisp{} language uses a
+The CMUCL%
+\footnote{https://www.cons.org/cmucl/}
+implementation of the \commonlisp{} language uses a
 technique that they call \emph{ctors} that can be used for call-site
 optimization of certain functions.  This optimization was introduced
-by Gerd Moellmann in 2002, and has since been included also in SBCL,
+by Gerd Moellmann in 2002, and has since been included also in SBCL%
+\footnote{http://www.sbcl.org/},
 which is a derivative of CMUCL.  In particular, in CMUCL the technique
 is used for the function \texttt{make-instance} which is often called
 with a literal class name and literal keywords for the initialization
@@ -52,15 +55,14 @@ and the literal keyword arguments given.  The \emph{funcallable
 of added or removed methods and modified classes as mentioned.
 This technique can be used on other, similar functions.  For example,
 \texttt{slot-value} is often called with a constant slot name, and
-this fact has been explored by \sbcl{}.%
-\footnote{http://www.sbcl.org/}
+this fact has been explored by \sbcl{}.
 
 Since the optimization is done as a manual source-code transformation,
 it is applicable mainly to standard functions that can not change later
 on.  The mechanism presented in this paper can be seen as an automatic
 low-overhead version of ctors.
 
-A similar mechanism (called ``constructor functions'' exists in
+A similar mechanism (called ``constructor functions'') exists in
 Allegro Common Lisp.  And the \clasp{} \commonlisp{} implementation%
 \footnote{https://github.com/clasp-developers/clasp}
 uses a similar mechanism for \texttt{make-instance},
