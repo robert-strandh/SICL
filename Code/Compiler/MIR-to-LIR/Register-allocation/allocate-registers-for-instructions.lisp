@@ -394,8 +394,12 @@
         (ensure-register-attributions-transferred
          predecessor instruction
          (output-pool instruction)
-         (make-register-map *rax* *rdx*)
-         2))
+         *rax*))
+  (setf predecessor
+        (ensure-register-attributions-transferred
+         predecessor instruction
+         (output-pool instruction)
+         *rdx*))
   predecessor)
 
 (defmethod compute-output-arrangement

@@ -75,30 +75,37 @@
       (assert (not (null lexical-locations)) ()
               "~S is attributed, but there are no lexical locations attributed to it."
               register)
-      (let ((candidates
-              (register-map-difference
-               (determine-candidates (first lexical-locations) pool)
-               map)))
-        (cond
-          ((plusp
-            (arr:unattributed-register-count arrangement candidates))
-           ;; There is an unattributed register, so use that register.
-           )
-          (t
-           ;; There are no unattributed registers, so spill a register.
-           (let ((result
-                   (unattribute-any-register predecessor instruction pool
-                                             candidates)))
-             (dolist (location lexical-locations)
-               (let ((assignment
-                       (make-instance 'cleavir-ir:assignment-instruction
-                                      :input location
-                                      :output location)))
-                 (cleavir-ir:insert-instruction-between assignment
-                                                        result
-                                                        instruction)
-                 (setf result assignment)))
-             result)))))))
+      (let* ((location (first lexical-locations))
+             (candidates
+               (register-map-difference (determine-candidates location pool) map)))
+        (when (zerop (arr:unattributed-register-count arrangement candidates))
+          ;; There are no unattributed registers, so spill one.
+          (setf predecessor
+                (ensure-unattributed-registers predecessor
+                                               instruction
+                                               pool
+                                               candidates
+                                               1)
+                arrangement (output-arrangement predecessor)))
+        ;; There is now an unattributed register, so use that register.
+        (let ((new-arrangement (arr:copy-arrangement arrangement))
+              (assignment
+                (make-instance 'cleavir-ir:assignment-instruction
+                               :input location
+                               :output location)))
+          (arr:unattribute-register new-arrangement location)
+          (arr:attribute-register-for-new-lexical-location
+           new-arrangement
+           location
+           candidates)
+          (setf (output-arrangement assignment)  new-arrangement
+                (input-arrangement  assignment)  arrangement
+                (input-arrangement  instruction) arrangement)
+          (cleavir-ir:insert-instruction-between
+           assignment
+           predecessor
+           instruction)
+          assignment)))))
 
 (defun determine-candidates (lexical-location pool)
   (let* ((pool-item (find lexical-location pool
