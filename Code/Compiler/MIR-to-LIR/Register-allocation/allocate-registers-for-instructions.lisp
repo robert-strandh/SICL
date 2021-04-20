@@ -391,10 +391,11 @@
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
   (setf predecessor
-        (ensure-unattributed-registers predecessor instruction
-                                       (output-pool instruction)
-                                       (make-register-map *rax* *rdx*)
-                                       2))
+        (ensure-register-attributions-transferred
+         predecessor instruction
+         (output-pool instruction)
+         (make-register-map *rax* *rdx*)
+         2))
   predecessor)
 
 (defmethod compute-output-arrangement

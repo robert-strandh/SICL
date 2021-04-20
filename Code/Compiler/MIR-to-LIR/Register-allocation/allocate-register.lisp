@@ -61,6 +61,45 @@
                    (unattribute-any-register result instruction pool candidates)))
     result))
 
+;;; Make sure that REGISTER is not attributed to any lexical variable
+;;; in the predecessor of INSTRUCTION.
+(defun ensure-register-attributions-transferred
+    (predecessor instruction pool register)
+  (let ((map (make-register-map register))
+        (arrangement (output-arrangement predecessor)))
+    ;; We do nothing if the register is already unattributed.
+    (when (= 1 (arr:unattributed-register-count arrangement map))
+      (return-from ensure-register-attributions-transferred predecessor))
+    (let ((lexical-locations
+            (arr:lexical-locations-in-register arrangement map)))
+      (assert (not (null lexical-locations)) ()
+              "~S is attributed, but there are no lexical locations attributed to it."
+              register)
+      (let ((candidates
+              (register-map-difference
+               (determine-candidates (first lexical-locations) pool)
+               map)))
+        (cond
+          ((plusp
+            (arr:unattributed-register-count arrangement candidates))
+           ;; There is an unattributed register, so use that register.
+           )
+          (t
+           ;; There are no unattributed registers, so spill a register.
+           (let ((result
+                   (unattribute-any-register predecessor instruction pool
+                                             candidates)))
+             (dolist (location lexical-locations)
+               (let ((assignment
+                       (make-instance 'cleavir-ir:assignment-instruction
+                                      :input location
+                                      :output location)))
+                 (cleavir-ir:insert-instruction-between assignment
+                                                        result
+                                                        instruction)
+                 (setf result assignment)))
+             result)))))))
+
 (defun determine-candidates (lexical-location pool)
   (let* ((pool-item (find lexical-location pool
                           :key #'lexical-location :test #'eq)))
