@@ -37,17 +37,17 @@
 
 (deftest format.{.8
   (loop for i from 0 to 10
-	for s = (format nil "~v{~A~}" i '(1 2 3 4 5 6 7 8 9 0))
-	unless (string= s (subseq "1234567890" 0 i))
-	collect (list i s))
+        for s = (format nil "~v{~A~}" i '(1 2 3 4 5 6 7 8 9 0))
+        unless (string= s (subseq "1234567890" 0 i))
+        collect (list i s))
   nil)
 
 (deftest formatter.{.8
   (let ((fn (formatter "~V{~A~}")))
     (loop for i from 0 to 10
-	  for s = (formatter-call-to-string fn i '(1 2 3 4 5 6 7 8 9 0))
-	  unless (string= s (subseq "1234567890" 0 i))
-	  collect (list i s)))
+          for s = (formatter-call-to-string fn i '(1 2 3 4 5 6 7 8 9 0))
+          unless (string= s (subseq "1234567890" 0 i))
+          collect (list i s)))
   nil)
 
 (def-format-test format.{.9
@@ -142,26 +142,26 @@
 
 (def-format-test format.\:{.7
   "~0:{XYZ~}" ('((1))) "")
-	  
+          
 (def-format-test format.\:{.8
   "~2:{XYZ~}" ('((1))) "XYZ")
-	  
+          
 (def-format-test format.\:{.9
   "~2:{~A~}" ('((1) (2))) "12")
-	  
+          
 (def-format-test format.\:{.10
   "~2:{~A~}" ('((1 X) (2 Y) (3 Z))) "12")
 
 (deftest format.\:{.11
   (loop for i from 0 to 10 collect
-	(format nil "~v:{~A~}" i '((1) (2) (3 X) (4 Y Z) (5) (6))))
+        (format nil "~v:{~A~}" i '((1) (2) (3 X) (4 Y Z) (5) (6))))
   ("" "1" "12" "123" "1234" "12345"
    "123456" "123456" "123456" "123456" "123456"))
 
 (deftest formatter.\:{.11
   (let ((fn (formatter "~v:{~A~}")))
     (loop for i from 0 to 10 collect
-	  (formatter-call-to-string fn i '((1) (2) (3 X) (4 Y Z) (5) (6)))))
+          (formatter-call-to-string fn i '((1) (2) (3 X) (4 Y Z) (5) (6)))))
   ("" "1" "12" "123" "1234" "12345"
    "123456" "123456" "123456" "123456" "123456"))
 
@@ -176,14 +176,14 @@
 
 (deftest format.\:{.15
   (loop for i from 0 to 10 collect
-	(format nil "~v:{~A~:}" i '((1 X) (2 Y) (3) (4 A B))))
+        (format nil "~v:{~A~:}" i '((1 X) (2 Y) (3) (4 A B))))
   ("" "1" "12" "123" "1234" "1234"
    "1234" "1234" "1234" "1234" "1234"))
 
 (deftest formatter.\:{.15
   (let ((fn (formatter "~v:{~A~:}")))
     (loop for i from 0 to 10 collect
-	  (formatter-call-to-string fn i '((1 X) (2 Y) (3) (4 A B)))))
+          (formatter-call-to-string fn i '((1 X) (2 Y) (3) (4 A B)))))
   ("" "1" "12" "123" "1234" "1234"
    "1234" "1234" "1234" "1234" "1234"))
 
@@ -229,20 +229,20 @@
 
 (deftest format.@{.10
   (loop for i from 0 to 10
-	for x = nil then (cons i x)
-	collect (apply #'format nil "~v@{~A~}" i (reverse x)))
+        for x = nil then (cons i x)
+        collect (apply #'format nil "~v@{~A~}" i (reverse x)))
   ("" "1" "12" "123" "1234" "12345"
    "123456" "1234567" "12345678" "123456789" "12345678910"))
 
 (deftest formatter.@{.10
   (let ((fn (formatter "~v@{~A~}")))
     (loop for i from 0 to 10
-	  for x = nil then (cons i x)
-	  for rest = (list 'a 'b 'c)
-	  collect
-	  (with-output-to-string
-	    (s)
-	    (assert (equal (apply fn s i (append (reverse x) rest)) rest)))))
+          for x = nil then (cons i x)
+          for rest = (list 'a 'b 'c)
+          collect
+          (with-output-to-string
+            (s)
+            (assert (equal (apply fn s i (append (reverse x) rest)) rest)))))
   ("" "1" "12" "123" "1234" "12345"
    "123456" "1234567" "12345678" "123456789" "12345678910"))
 
@@ -287,21 +287,21 @@
 
 (deftest format.\:@.10
   (loop for i from 0 to 10
-	for x = nil then (cons (list i) x)
-	collect
-	(apply #'format nil "~V:@{~A~}" i (reverse x)))
+        for x = nil then (cons (list i) x)
+        collect
+        (apply #'format nil "~V:@{~A~}" i (reverse x)))
   ("" "1" "12" "123" "1234" "12345" "123456" "1234567" "12345678"
    "123456789" "12345678910"))
 
 (deftest formatter.\:@.10
   (let ((fn (formatter "~V@:{~A~}")))
     (loop for i from 0 to 10
-	  for x = nil then (cons (list i) x)
-	  for rest = (list 'a 'b)
-	  collect
-	  (with-output-to-string
-	    (s)
-	    (assert (equal (apply fn s i (append (reverse x) rest)) rest)))))
+          for x = nil then (cons (list i) x)
+          for rest = (list 'a 'b)
+          collect
+          (with-output-to-string
+            (s)
+            (assert (equal (apply fn s i (append (reverse x) rest)) rest)))))
   ("" "1" "12" "123" "1234" "12345" "123456" "1234567" "12345678"
    "123456789" "12345678910"))
 
