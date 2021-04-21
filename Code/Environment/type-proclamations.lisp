@@ -7,78 +7,77 @@
   `(or string character symbol))
 
 (declaim (ftype (function (symbol) t)
-		symbol-value))
+                symbol-value))
 
 (declaim (ftype (function (t symbol) t)
-		(setf symbol-value)))
+                (setf symbol-value)))
 
 (declaim (ftype (function (symbol) function)
-		symbol-function))
+                symbol-function))
 
 (declaim (ftype (function (function symbol) function)
-		(setf symbol-function)))
+                (setf symbol-function)))
 
 (declaim (ftype (function (function-name) t)
-		fdefinition))
+                fdefinition))
 
 (declaim (ftype (function (function function-name) function)
-		(setf fdefinition)))
+                (setf fdefinition)))
 
 (declaim (ftype (function (t) t)
-		proclaim))
+                proclaim))
 
 ;;; FIXME: do something better for the generalized boolean value.
 (declaim (ftype (function (symbol) t)
-		boundp))
+                boundp))
 
 (declaim (ftype (function (symbol) symbol)
-		makunbound))
+                makunbound))
 
 ;;; FIXME: do something better for the generalized boolean value.
 (declaim (ftype (function (function-name) t)
-		fboundp))
+                fboundp))
 
 (declaim (ftype (function (function-name) function-name)
-		fmakunbound))
+                fmakunbound))
 
 ;;; FIXME: do something better for the optional environment. 
 (declaim (ftype (function (symbol &optional t) (or function null))
-		macro-function))
+                macro-function))
 
 (declaim (ftype (function (function symbol &optional null) function)
-		(setf macro-function)))
+                (setf macro-function)))
 
 ;;; FIXME: do something better for the optional environment. 
 (declaim (ftype (function (symbol &optional t) (or function null))
-		compiler-macro-function))
+                compiler-macro-function))
 
 (declaim (ftype (function ((or function null) symbol &optional null)
-			  (or function null))
-		(setf compiler-macro-function)))
+                          (or function null))
+                (setf compiler-macro-function)))
 
 ;;; The function IN-PACKAGE-FUNCTION is used in the expansion of
 ;;; IN-PACKAGE.
 (declaim (ftype (function (string-designator) package)
-		in-package-function))
+                in-package-function))
 
 ;;; FIXME: do something better for the optional environment. 
 ;;; FIXME: do something better for the generalized boolean value.
 (declaim (ftype (function (t &optional t) t)
-		constantp))
+                constantp))
 
 (declaim (ftype (function (symbol) (cons t null))
-		find-value-cell))
+                find-value-cell))
 
 (declaim (ftype (function (function-name) (cons t null))
-		find-function-cell))
+                find-function-cell))
 
 ;;; FIXME: do something better for the generalized boolean value.
 (declaim (ftype (function (symbol) t)
-		special-operator-p))
+                special-operator-p))
 
 (declaim (ftype (function (symbol) (or function null))
-		type-function))
+                type-function))
 
 (declaim (ftype (function (function symbol) function)
-		(setf type-function)))
-
+                (setf type-function)))
