@@ -61,6 +61,17 @@
                    (unattribute-any-register result instruction pool candidates)))
     result))
 
+;;; Return T when the estimated distance to use of LEXICAL-LOCATION is
+;;; higher than that of any location in the list POTENTIAL-VICTIMS.
+(defun should-not-transfer-p (lexical-location pool arrangement candidates)
+  (loop with location-distance = (augmented-distance lexical-location pool)
+        for potential-victim
+          in (arr:lexical-locations-in-register arrangement candidates)
+        for distance = (augmented-distance potential-victim pool)
+        when (> distance location-distance)
+          return t)
+  nil)
+
 ;;; Make sure that REGISTER is not attributed to any lexical variable
 ;;; in the predecessor of INSTRUCTION.
 (defun ensure-register-attributions-transferred
@@ -75,6 +86,13 @@
     (let* ((location (first lexical-locations))
            (candidates
              (register-map-difference (determine-candidates location pool) map)))
+      ;; If this location has a higher EDU than any other which is
+      ;; attributed, spill this location.
+      (when (should-not-transfer-p location pool arrangement candidates)
+        (return-from ensure-register-attributions-transferred
+          (spill predecessor instruction location)))
+      ;; Else, spill some other register and transfer the location to
+      ;; that register.
       (when (zerop (arr:unattributed-register-count arrangement candidates))
         ;; There are no unattributed registers, so spill one.
         (setf predecessor
