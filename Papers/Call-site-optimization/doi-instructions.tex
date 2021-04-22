@@ -1,0 +1,71 @@
+
+as promised, here are the instructions on how you can format your
+paper correctly for the proceedings.  The following code should be in
+the preamble of your TeX-file: 
+
+-----------
+\documentclass[format=sigconf]{acmart}
+\bibliographystyle{plainnat}
+\acmConference[ELS’21]{the 14th European Lisp Symposium}{May 03--04 2021}{Online, Everywhere}
+\acmDOI{10.5281/zenodo.XXXXXXX}
+\setcopyright{rightsretained}
+\copyrightyear{2021}
+-----------
+
+You can obtain your DOI (the missing XXXXXXX in the above TeX-sippet)
+via Zenodo.  The process is a bit involved, but has the wonderful
+benefit that your paper is archived for all time and can be found
+easily. I cannot do this process for you, but at least I can provide
+detailed instructions: 
+
+1. Go to https://zenodo.org/communities/els
+
+2. Click on "New Upload" (should be a big, green button)
+
+3. You should see a form for uploading a new document.  Skip the first
+tab for uploading files, and fill in all the metadata.
+
+4. In the 'Communities' tab, pick 'European Lisp Symposium'
+
+5. In the 'Upload type' tab, pick 'Publication', and select the
+'Conference paper' publication type.
+
+6. The 'Basic information' tab will get you your DOI.  Do not fill in
+the 'Digital Object Identifier' field, but click the 'Reserve DOI'
+button below it.  Zenodo will then assign you a DOI.  Include this DOI
+in your paper and recompile it.  Then upload your finished paper in
+the 'Files' tab.  (This process resolves the circular dependency of
+the DOI being included in the file it points to.).
+
+7. Fill out the remaining items in the 'Basic information' tab.  The
+'Publication date' is 2021-05-03, the 'Title' should be the title of
+your paper, the 'Authors' tab should include each author and
+affiliation (if you plan to publish more papers in the future, I also
+recommend you register an ORCID for yourself and put it there), and
+the 'Description' should be the abstract of your paper.  The other
+fields are not so important - if you want you can declare your paper's
+language as 'eng', and add your paper's keywords to the 'Keywords'.
+
+8. In the 'License' tab, select 'Open Access', and pick a license.  If
+you are not sure about which license to pick, select 'Creative Commons
+Attribution No Derivatives 4.0 International'.
+
+9. In the 'Related/alternative identifiers' tab, you should specify
+that the paper is part of the ELS proceedings by adding an entry with
+value '2677-3465' with the property 'is compiled/created by this
+upload'. Leave the resource type as 'N/A'.
+
+10. In the 'Conference' tab, set the 'Conference title' to 'The 14th
+European Lisp Symposium', the 'Acronym' to 'ELS'21', the 'Dates' to
+3-4 May 2021, the 'Place' to 'Online', and the website to
+'https://european-lisp-symposium.org/2021'.
+
+11. Double-check that all fields have been filled out correctly and
+that you attached the correct file.  Then click 'Publish'.
+
+Once this is done, upload the final version of that paper on Easychair
+and your work as authors is complete.  Which means you should start
+thinking about your ELS talk (if you haven't done so already).  I also
+recommend you start experimenting with your recording setup right
+away.  It would be a shame if your talk would be hampered by something
+like bad audio quality.
