@@ -19,7 +19,7 @@
 
 (defclass dataflow ()
   (;; This hash table maps each instruction to its corresponding
-   ;; operation
+   ;; operation.
    (%operations :initform (make-hash-table :test #'eq)
                 :initarg :operations
                 :accessor operations)))

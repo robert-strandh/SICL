@@ -4,7 +4,7 @@
   `(loop for ,predname in (cleavir-ir:predecessors ,instruction)
          do (tagbody ,@body)))
 
-;;; specific to escape
+;;; Specific to escape.
 (defmacro update (s instruction (&body lists) (&body singles))
   (let ((sinstruction (gensym "INSTRUCTION"))
         (ss (gensym "SPECIALIZATION"))
@@ -14,7 +14,7 @@
          (do-all-predecessors (,pred ,sinstruction)
            (copy ,ss ,pred variable from ,lists ,singles))))))
 
-;;; default method: mark inputs as unknown.
+;;; Default method: mark inputs as unknown.
 (defmethod transfer ((s escape) instruction)
   (update s instruction
           (((cleavir-ir:inputs instruction)
@@ -111,17 +111,16 @@
             ((input
               (let ((from-val (from variable)))
                 (cond ((escapes-p from-val)
-                       ;; The dynamic-extent declaration was
-                       ;; wrong, so the code is nonconforming.
-                       ;; Full warning.
+                       ;; The dynamic-extent declaration was wrong, so
+                       ;; the code is nonconforming.  Full warning.
                        ;; FIXME: Unhelpful without source info.
                        (warn 'incorrect-dynamic-extent
                              :instruction instruction)
                        ;; Ignore the incorrect declaration.
                        from-val)
                       (trust-dynamic-extent
-                       ;; We trust DX declarations we can't
-                       ;; verify, so remove "unknown" bit.
+                       ;; We trust DX declarations we can't verify, so
+                       ;; remove "unknown" bit.
                        (without-unknown from-val))
                       (t #|no-op|# from-val))))))))
 
@@ -161,11 +160,10 @@
   (let ((enclose (enter-enclose instruction))
         (pool (maybe-instruction-pool s instruction)))
     (when enclose
-      ;; for the closed over cells, we rely on the
-      ;; segregate-lexicals generated code, i.e.: there is exactly
-      ;; one variable for each cell, one FETCH for each variable,
-      ;; and each has an immediate-input with the position of that
-      ;; cell in the inputs.
+      ;; For the closed over cells, we rely on the SEGREGATE-LEXICALS
+      ;; generated code, i.e.: there is exactly one variable for each
+      ;; cell, one FETCH for each variable, and each has an
+      ;; immediate-input with the position of that cell in the inputs.
       (let* (fetches info)
         ;; THIS bizarre loop, added after the subsequent one,
         ;; is another kludge on top of that.
@@ -177,11 +175,10 @@
                 do (setf instruction inst)
               else do (loop-finish))
         ;; This bizarre loop is required by the fact that
-        ;; segregate-lexicals will for reasons unknown to me
-        ;; sometimes generate ENCLOSE instructions that take N
-        ;; inputs with an ENTER that only fetches N-1 cells, which
-        ;; will result in their being two fetches but a fetch
-        ;; having an ID of 2.
+        ;; SEGREGATE-LEXICALS will for reasons unknown to me sometimes
+        ;; generate ENCLOSE instructions that take N inputs with an
+        ;; ENTER that only fetches N-1 cells, which will result in
+        ;; their being two fetches but a fetch having an ID of 2.
         ;; Originally we just used the number of fetches for the
         ;; length of the array.
         (loop for inst
@@ -198,14 +195,14 @@
                                         :element-type 'indicator)))
         (dolist (fetch fetches)
           (destructuring-bind (id . out) fetch
-            ;; note that the cell outputs are not live at the
-            ;; ENTER, so if dead variables are excluded this will
-            ;; need rewriting.
+            ;; Note that the cell outputs are not live at the ENTER,
+            ;; so if dead variables are excluded this will need
+            ;; rewriting.
             (setf (aref info id) (find-in-pool s out pool))))
-        ;; strictly speaking we "should" check that the info is
-        ;; <=, but the enclose can do that with its predecessors,
-        ;; and we don't need to worry about meets since there's
-        ;; only one ENTER for any ENCLOSE.
+        ;; Strictly speaking we "should" check that the info is <=,
+        ;; but the enclose can do that with its predecessors, and we
+        ;; don't need to worry about meets since there's only one
+        ;; ENTER for any ENCLOSE.
         (setf (enclose-info enclose) info)))))
 
 (defmethod transfer
@@ -224,7 +221,7 @@
                     s closure-dx
                     (aref info (position variable cells))))))
                 ())
-        ;; no info, so just use the closure's
+        ;; No info, so just use that of the closure.
         (update s instruction
                 ((cells
                   (object-meet s (from variable) closure-dx)))

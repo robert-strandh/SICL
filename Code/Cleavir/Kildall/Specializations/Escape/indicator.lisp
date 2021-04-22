@@ -49,7 +49,7 @@
 
 (defun dxable-p (indicator)
   (declare (type indicator indicator))
-  ;; only being called is allowed.
+  ;; Only being called is allowed.
   (zerop (logand indicator
                  (indicator-union +unknown+ +returned+ +stored+))))
 
