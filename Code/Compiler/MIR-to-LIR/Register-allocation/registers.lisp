@@ -29,29 +29,42 @@
 (make-register *xmm5* "XMM5")
 (make-register *xmm6* "XMM6")
 (make-register *xmm7* "XMM7")
+(make-register *xmm8* "XMM8")
+(make-register *xmm9* "XMM9")
+(make-register *xmm10* "XMM10")
+(make-register *xmm11* "XMM11")
+(make-register *xmm12* "XMM12")
+(make-register *xmm13* "XMM13")
+(make-register *xmm14* "XMM14")
+(make-register *xmm15* "XMM15")
 
 (defparameter *registers*
   (vector *rax* *rbx* *rcx* *rdx* *rsp* *rbp* *rsi* *rdi*
           *r8* *r9* *r10* *r11* *r12* *r13* *r14* *r15*
-          *xmm0* *xmm1* *xmm2* *xmm3* *xmm4* *xmm5* *xmm6* *xmm7* ))
+          *xmm0* *xmm1* *xmm2* *xmm3* *xmm4* *xmm5* *xmm6* *xmm7*
+          *xmm8* *xmm9* *xmm10* *xmm11* *xmm12* *xmm13* *xmm14* *xmm15*))
+(defconstant +register-count+ 32)
+(deftype register-map ()
+  `(array bit (,+register-count+)))
 
-(defparameter *caller-saves* #*101100111111000000000000)
-
-(defparameter *callee-saves* #*010000000000111100000000)
+(defparameter *caller-saves* #*10110011111100000000000000000000)
+(defparameter *callee-saves* #*01000000000011110000000000000000)
 
 (defun register-number-is-callee-saves-p (register-number)
   (= (bit *callee-saves* register-number) 1))
 
-(defparameter *xmm* #*000000000000000011111111)
-(defparameter *gpr* #*111111111111111100000000)
+(defparameter *xmm* #*00000000000000001111111111111111)
+(defparameter *gpr* #*11111111111111110000000000000000)
 
-(defparameter *initial* #*010000000010000000000000)
+(defparameter *initial* #*01000000001000000000000000000000)
 
 (defun register-number-in-map-p (register-number register-map)
   (not (zerop (bit register-map register-number))))
 
 (defun make-empty-register-map ()
-  (make-array 24 :element-type 'bit :initial-element 0))
+  (make-array +register-count+
+              :element-type 'bit
+              :initial-element 0))
 
 (defun mark-register (register-map register-number)
   (setf (bit register-map register-number) 1))
@@ -60,7 +73,7 @@
   (setf (bit register-map register-number) 0))
 
 (defun copy-register-map (register-map)
-  (let ((result (make-array (length register-map) :element-type 'bit)))
+  (let ((result (make-array +register-count+ :element-type 'bit)))
     (replace result register-map)
     result))
 
