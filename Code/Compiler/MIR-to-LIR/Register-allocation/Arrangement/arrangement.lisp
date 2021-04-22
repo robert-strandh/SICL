@@ -216,6 +216,16 @@
       (assert (not (null attribution)))
       (not (null (stack-slot attribution))))))
 
+;;; Return true if and only if LEXICAL-LOCATION has REGISTER-NUMBER
+;;; attributed to it in ARRANGEMENT.
+(defun lexical-location-in-register-p
+    (arrangement lexical-location register-number)
+  (with-arrangement arrangement
+    (loop for attribution in attributions
+          when (eq (lexical-location attribution) lexical-location)
+            return (= (register-number attribution)
+                      register-number))))
+
 ;;; Return the number of unattributed registers in ARRANGEMENT, among
 ;;; the registers in CANDIDATES.
 (defun unattributed-register-count (arrangement candidates)

@@ -60,6 +60,10 @@
   (cons (make-pool-item variable 0)
         (remove-variable pool variable)))
 
+(defun variable-live-p (pool variable)
+  (and (member variable pool :key #'lexical-location :test #'eq)
+       t))
+
 ;;; This is the <= operation from Kildall's paper.
 (defun pool<= (pool1 pool2)
   (loop for entry1 in pool1

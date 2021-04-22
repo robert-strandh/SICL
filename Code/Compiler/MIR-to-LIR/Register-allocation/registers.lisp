@@ -96,7 +96,9 @@
   (position 1 register-map))
 
 (defun register-number (register)
-  (position register *registers*))
+  (let ((position (position register *registers*)))
+    (assert (not (null position)))
+    position))
 
 (defun make-register-map (&rest registers)
   (let ((map (make-empty-register-map)))

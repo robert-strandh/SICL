@@ -72,6 +72,20 @@
           return t)
   nil)
 
+
+(defun determine-candidates (lexical-location pool)
+  (let* ((pool-item (find lexical-location pool
+                          :key #'lexical-location :test #'eq)))
+    (if (or (null pool-item) (< (call-probability pool-item) 3))
+        *caller-saves*
+        *callee-saves*)))
+
+(defun lexical-location-in-register-p (arrangement lexical-location register)
+  (arr:lexical-location-in-register-p
+   arrangement
+   lexical-location
+   (register-number register)))
+
 ;;; Make sure that REGISTER is not attributed to any lexical variable
 ;;; in the predecessor of INSTRUCTION.
 (defun ensure-register-attributions-transferred
@@ -86,6 +100,9 @@
     (let* ((location (first lexical-locations))
            (candidates
              (register-map-difference (determine-candidates location pool) map)))
+      ;; We do nothing if the location will not live past this instruction.
+      (unless (variable-live-p location (output-pool instruction))
+        (return-from ensure-register-attributions-transferred predecessor))
       ;; If this location has a higher EDU than any other which is
       ;; attributed, spill this location.
       (when (should-not-transfer-p location pool arrangement candidates)
@@ -120,13 +137,6 @@
          predecessor
          instruction)
         assignment))))
-
-(defun determine-candidates (lexical-location pool)
-  (let* ((pool-item (find lexical-location pool
-                          :key #'lexical-location :test #'eq)))
-    (if (or (null pool-item) (< (call-probability pool-item) 3))
-        *caller-saves*
-        *callee-saves*)))
 
 ;;; Ensure that LEXICAL-LOCATION has an attributed register.  We
 ;;; account for two possibilities.  If LEXICAL-LOCATION already has an

@@ -386,21 +386,33 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
+  ;; We will load the inputs into RAX and RDX as part of code
+  ;; generation.  It is only necessary to ensure RAX and RDX are
+  ;; free as part of register allocation.
   predecessor)
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
-  (setf predecessor
-        (ensure-register-attributions-transferred
-         predecessor instruction
-         (output-pool instruction)
-         *rax*))
-  (setf predecessor
-        (ensure-register-attributions-transferred
-         predecessor instruction
-         (output-pool instruction)
-         *rdx*))
-  predecessor)
+  (let ((output-pool (output-pool instruction))
+        (dividend (first (cleavir-ir:inputs instruction))))
+    ;; If the dividend input does not outlive this instruction, and it
+    ;; is already in RAX, then we can avoid transferring it to another
+    ;; register.
+    (unless (and (lexical-location-in-register-p
+                  (output-arrangement predecessor)
+                  dividend *rax*)
+                 (variable-live-p dividend output-pool))
+      (setf predecessor
+            (ensure-register-attributions-transferred
+             predecessor instruction
+             (output-pool instruction)
+             *rax*)))
+    (setf predecessor
+          (ensure-register-attributions-transferred
+           predecessor instruction
+           (output-pool instruction)
+           *rdx*))
+    predecessor))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:fixnum-divide-instruction) arrangement)
