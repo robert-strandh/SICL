@@ -40,22 +40,9 @@
 ;;;
 ;;; Utilities.
 
-;;; This function is not actually used in the function for computing
-;;; dominators.
-(defun depth-first-search-preorder (start-node successor-fun)
-  (let ((table (make-hash-table :test #'eq))
-        (result '()))
-    (labels ((traverse (node)
-               (unless (gethash node table)
-                 (setf (gethash node table) t)
-                 (loop for succ in (funcall successor-fun node)
-                       do (traverse succ))
-                 (push node result))))
-      (traverse start-node))
-    result))
-
 (defun count-nodes (start-node successor-fun)
-  (length (depth-first-search-preorder start-node successor-fun)))
+  (length (cleavir-utilities:depth-first-search-preorder
+           start-node successor-fun)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
