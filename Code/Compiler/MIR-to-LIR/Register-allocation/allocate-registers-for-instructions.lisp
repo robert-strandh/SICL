@@ -386,10 +386,10 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
-  ;; We will load the inputs into RAX and RDX in whatever manner they
-  ;; need to be loaded, as part of code generation.  It is only
-  ;; necessary to ensure RAX and RDX can be overwritten as part of
-  ;; register allocation.
+  ;; We will load the inputs in whatever manner they need to be loaded
+  ;; as part of code generation, as DIV accepts a quotient in either a
+  ;; register or in memory.  It is only necessary to ensure RAX and
+  ;; RDX can be overwritten as part of register allocation.
   predecessor)
 
 (defmethod process-outputs
@@ -408,12 +408,10 @@
              predecessor instruction
              (output-pool instruction)
              *rax*)))
-    (setf predecessor
-          (ensure-register-attributions-transferred
-           predecessor instruction
-           (output-pool instruction)
-           *rdx*))
-    predecessor))
+    (ensure-register-attributions-transferred
+     predecessor instruction
+     (output-pool instruction)
+     *rdx*)))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:fixnum-divide-instruction) arrangement)
@@ -425,6 +423,57 @@
    arrangement
    (second (cleavir-ir:outputs instruction))
    (make-register-map *rdx*))
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; FIXNUM-MULTIPLY-INSTRUCTION
+;;;
+;;; x86-64 provides one-address, two-address and three-address (where
+;;; one is immediate) encodings of multiplication.  However, we need
+;;; to provide all 128 bits of a 64-by-64-bit multiplication, so we
+;;; must use the one-address encoding.  Similar to
+;;; FIXNUM-DIVIDE-INSTRUCTION, we must clear out RAX and RDX before
+;;; performing a multiplication.  Unlike division, the first output
+;;; (high 64 bits) will be placed in RDX, and the second (low 64 bits)
+;;; will be placed in RAX.
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
+  ;; Again, we can load the inputs however we want.
+  predecessor)
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
+  (let ((output-pool (output-pool instruction))
+        (dividend (first (cleavir-ir:inputs instruction))))
+    ;; If the dividend input does not outlive this instruction, and it
+    ;; is already in RAX, then we can avoid transferring it to another
+    ;; register.
+    (unless (and (lexical-location-in-register-p
+                  (output-arrangement predecessor)
+                  dividend *rax*)
+                 (variable-live-p dividend output-pool))
+      (setf predecessor
+            (ensure-register-attributions-transferred
+             predecessor instruction
+             (output-pool instruction)
+             *rax*)))
+    (ensure-register-attributions-transferred
+     predecessor instruction
+     (output-pool instruction)
+     *rdx*)))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:fixnum-multiply-instruction) arrangement)
+  (arr:attribute-register-for-new-lexical-location
+   arrangement
+   (first (cleavir-ir:outputs instruction))
+   (make-register-map *rdx*))
+  (arr:attribute-register-for-new-lexical-location
+   arrangement
+   (second (cleavir-ir:outputs instruction))
+   (make-register-map *rax*))
   arrangement)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
