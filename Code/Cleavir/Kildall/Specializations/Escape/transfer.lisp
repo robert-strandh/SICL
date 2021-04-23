@@ -187,7 +187,7 @@
               for id-in = (second (cleavir-ir:inputs inst))
               for out = (first (cleavir-ir:outputs inst))
               while (typep inst 'cleavir-ir:fetch-instruction)
-              ;; the cell #, and the variable with the cell.
+              ;; The cell #, and the variable with the cell.
               do (push (cons (cleavir-ir:value id-in) out) fetches)
               maximizing (cleavir-ir:value id-in) into max-id
               finally (setf info

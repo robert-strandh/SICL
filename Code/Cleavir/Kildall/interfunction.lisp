@@ -24,7 +24,8 @@
   `(setf (gethash ,enclose *enclose-info*) ,new-value))
 
 (defun initialize-interfunction (initial-instruction)
-  ;; we rely on the fact that returns are only hit after their enclose.
+  ;; We rely on the fact that returns are only hit after their
+  ;; enclose.
   (cleavir-ir:map-instructions-with-owner
    (lambda (instruction owner)
      (typecase instruction
