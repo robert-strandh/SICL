@@ -324,7 +324,7 @@
 ;;; Class BLOCK-AST.
 
 (defclass block-ast (ast)
-  ;; FIXME: make this read-only and use REINITIALIZE-INSTANCE insteac.
+  ;; FIXME: make this read-only and use REINITIALIZE-INSTANCE instead.
   ((%body-ast :initarg :body-ast :accessor body-ast)))
 
 (cleavir-io:define-save-info block-ast
