@@ -207,10 +207,10 @@
                 (typep existing-var-description
                        'trucler:global-special-variable-description))
            ;; It is mentioned in the environment as globally special.
-           ;; if it's only special because of a local declaration,
-           ;; this binding is not special.
            (values t t))
           (t
+           ;; If it is special only because of a local declaration,
+           ;; this binding is not special.
            (values nil nil)))))
 
 ;;; Given a list of canonicalized declaration specifiers for a single
