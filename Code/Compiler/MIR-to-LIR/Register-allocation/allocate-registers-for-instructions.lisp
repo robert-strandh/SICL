@@ -386,9 +386,10 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
-  ;; We will load the inputs into RAX and RDX as part of code
-  ;; generation.  It is only necessary to ensure RAX and RDX are
-  ;; free as part of register allocation.
+  ;; We will load the inputs into RAX and RDX in whatever manner they
+  ;; need to be loaded, as part of code generation.  It is only
+  ;; necessary to ensure RAX and RDX can be overwritten as part of
+  ;; register allocation.
   predecessor)
 
 (defmethod process-outputs
