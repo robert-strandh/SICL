@@ -1,4 +1,4 @@
-(in-package #:sicl-conditions)
+(cl:in-package #:sicl-conditions)
 
 (defmethod print-object :around ((restart restart) stream)
   (if *print-escape*

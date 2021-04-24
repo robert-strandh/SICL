@@ -1,4 +1,4 @@
-(in-package #:sicl-conditions)
+(cl:in-package #:sicl-conditions)
 
 ;;; Condition signaling
 
