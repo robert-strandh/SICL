@@ -14,7 +14,7 @@
 (defmacro multiple-value-bind (variables values-form &body body)
   (let ((rest-variable (gensym)))
     `(multiple-value-call
-	 (lambda (&optional ,@variables &rest ,rest-variable)
-	   (declare (ignore ,rest-variable))
-	   ,@body)
+         (lambda (&optional ,@variables &rest ,rest-variable)
+           (declare (ignore ,rest-variable))
+           ,@body)
        ,values-form)))

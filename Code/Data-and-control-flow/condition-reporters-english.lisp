@@ -5,7 +5,7 @@
      stream
      (language acclimation:english))
   (format stream
-	  "An odd number of arguments was given to SETF~@
+          "An odd number of arguments was given to SETF~@
            in the following form:~@
            ~s"
           (form condition)))
@@ -15,7 +15,7 @@
      stream
      (language acclimation:english))
   (format stream
-	  "An odd number of arguments was given to PSETF~@
+          "An odd number of arguments was given to PSETF~@
            in the following form:~@
            ~s"
           (form condition)))
@@ -25,7 +25,7 @@
      stream
      (language acclimation:english))
   (format stream
-	  "An odd number of arguments was given to PSETQ~@
+          "An odd number of arguments was given to PSETQ~@
            in the following form:~@
            ~s"
           (form condition)))
@@ -35,7 +35,7 @@
      stream
      (language acclimation:english))
   (format stream
-	  "Too few arguments were given to SHIFTF~@
+          "Too few arguments were given to SHIFTF~@
            in the following form:~@
            ~s"
           (form condition)))
