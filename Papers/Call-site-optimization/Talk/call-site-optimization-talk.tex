@@ -139,15 +139,17 @@ Several objectives:
   \item With optional parameters, a conditional branch is required.
   \item Keyword parameters require iterating over remaining arguments.
   \end{itemize}
+  \vskip 0.25cm
+  Mitigated by the use of compiler macros.  But then late binding is
+  no longer respected.
 }
 
 \frame{
-  \frametitle{Optional parameters and keyword parameters}
-  \begin{itemize}
-  \item Callee must at least check the argument count.
-  \item With optional parameters, a conditional branch is required.
-  \item Keyword parameters require iterating over remaining arguments.
-  \end{itemize}
+  \frametitle{Callee must check types of arguments}
+  Necessary if specific types are required to fulfill contract.
+  \vskip 0.25cm
+  Mitigated by inlining.  But then late binding is no longer
+  respected.
 }
 
 \frame[containsverbatim]{
