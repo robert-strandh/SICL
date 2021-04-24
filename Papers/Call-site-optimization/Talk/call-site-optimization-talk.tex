@@ -109,7 +109,16 @@ Several objectives:
 }
 
 \frame{
-\frametitle{blabla}
+\frametitle{Context for this work}
+Cost of function calls in \commonlisp{}:
+\begin{itemize}
+\item Late binding (broken by inlining and compiler macros).
+\item Optional parameters and keyword parameters.
+\item Callee must often check types of arguments.
+\item Arguments must be boxed.
+\item Generic functions can be dynamically updated.
+\item Multiple return values complicate caller.
+\end{itemize}
 }
 
 \frame[containsverbatim]{
