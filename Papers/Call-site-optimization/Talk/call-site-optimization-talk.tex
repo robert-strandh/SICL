@@ -162,6 +162,21 @@ Several objectives:
   A similar technique is used for (a single) unbox return value.
 }
 
+\frame{
+  \frametitle{Generic functions can be dynamically updated}
+  \vskip 0.25cm
+  Callers can make no assumption about applicable methods.
+}
+
+\frame{
+  \frametitle{Multiple return values complicate caller}
+  \vskip 0.25cm
+  Mitigated by recognizing that most callers require at most a single
+  return value.
+  \vskip 0.25cm
+  Callee can then always set value in one register.
+}
+
 \frame[containsverbatim]{
 \frametitle{blabla}
 \begin{verbatim}
