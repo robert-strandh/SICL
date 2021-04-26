@@ -512,8 +512,8 @@
    ;; constant to be used with TYPEP, should it turn out to be
    ;; necessary to use TYPEP at runtime to determine the type.
    (%type-specifier-ast :initform nil
-			:initarg :type-specifier-ast
-			:reader type-specifier-ast)
+                        :initarg :type-specifier-ast
+                        :reader type-specifier-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
 ;; (defmethod type-specifier-ast :around ((ast typeq-ast))
@@ -626,7 +626,7 @@
 
 (defmethod children ((ast multiple-value-prog1-ast))
   (cons (first-form-ast ast)
-	(form-asts ast)))
+        (form-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
