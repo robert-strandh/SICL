@@ -246,8 +246,8 @@
                              def-cst
                              environment))
                        ;; Compute these after calling
-                       ;; CONVERT-LOCAL-FUNCTION so that we know
-                       ;; def-cst is actually a list.
+                       ;; CONVERT-LOCAL-FUNCTION so that we know that
+                       ;; DEF-CST is actually a list.
                        (name-cst (cst:first def-cst))
                        (name (cst:raw name-cst)))
                   (cons name fun))))
