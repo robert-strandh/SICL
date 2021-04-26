@@ -1,4 +1,4 @@
-(in-package #:cleavir-ast-to-hir)
+(cl:in-package #:cleavir-ast-to-hir)
 
 ;;; An AST appears in a context inappropriate for it.
 ;;; This is a fatal compiler error.
