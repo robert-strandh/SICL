@@ -212,6 +212,23 @@ in the context of \commonlisp{}.
 }
 
 \frame{
+\frametitle{Definition: function call}
+Code that accomplishes the following tasks:
+\begin{itemize}
+\item Access the arguments and put them in the place where the call
+  protocol expects them.
+\item Access the function object associated with the name.
+\item From the function object, access its static environment.
+\item From the function object, access the entry point.
+\item Transfer control to the entry point (saving the return
+  address).
+\item Upon callee return, access the return values in the place where
+  the callee put them, and store them in the place where they are
+  needed for further computation.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Our technique}
 \vskip 0.25cm
 %% \begin{figure}
