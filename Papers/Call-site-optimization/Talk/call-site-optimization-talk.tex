@@ -229,6 +229,16 @@ Code that accomplishes the following tasks:
 }
 
 \frame{
+\frametitle{Function call, typical implementation}
+\begin{itemize}
+\item The compiler generates the code once, when the caller is
+  compiled.
+\item Since the callee can change, a \emph{function-call protocol} is
+  used by all callers and callees.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Our technique}
 \vskip 0.25cm
 %% \begin{figure}
