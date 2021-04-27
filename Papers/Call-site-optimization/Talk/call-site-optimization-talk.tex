@@ -328,6 +328,19 @@ For each call site in the caller:
 }
 
 \frame{
+\frametitle{Benefits}
+\vskip 0.25cm
+\begin{itemize}
+\item Fewer indirections.
+\item Static environment does not need to be loaded when it is empty.
+\item Argument parsing is greatly simplified, especially for keyword
+  parameters.
+\item Unboxed arguments can be handled.
+\item Sometimes, the entire callee can ``inlined'' into the snippet.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Future work}
 blabla
 \vskip 0.25cm
