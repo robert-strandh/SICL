@@ -92,11 +92,10 @@ LaBRI, University of Bordeaux
 
 \frame{
 \frametitle{Context: The \sicl{} project}
-
 https://github.com/robert-strandh/SICL
-
+\vskip 0.25cm
 Several objectives:
-
+\vskip 0.25cm
 \begin{itemize}
 \item Create high-quality \emph{modules} for implementors of
   \commonlisp{} systems.
@@ -111,6 +110,7 @@ Several objectives:
 \frame{
   \frametitle{Context for this work}
   Cost of function calls in \commonlisp{}:
+  \vskip 0.25cm
   \begin{itemize}
   \item Late binding.
   \item Optional parameters and keyword parameters.
@@ -196,7 +196,7 @@ Several objectives:
 \frametitle{Previous work}
 To our knowledge, no work on call-site optimization has been published
 in the context of \commonlisp{}.
-
+\vskip 0.25cm
 \begin{itemize}
 \item Inline caching.
 \item Ctors.
@@ -214,6 +214,7 @@ in the context of \commonlisp{}.
 \frame{
 \frametitle{Definition: function call}
 Code that accomplishes the following tasks:
+\vskip 0.25cm
 \begin{itemize}
 \item Access the arguments and put them in the place where the call
   protocol expects them.
@@ -241,6 +242,7 @@ Code that accomplishes the following tasks:
 \frame{
 \frametitle{Our technique}
 Optimize calls where the name of the callee is known statically:
+\vskip 0.25cm
 \begin{itemize}
 \item A function form where the operator is a symbol naming a function
   in the global environment.
@@ -253,6 +255,8 @@ Optimize calls where the name of the callee is known statically:
 \end{itemize}
 \vskip 0.25cm
 Others are possible, and we might consider others in the future.
+\vskip 0.25cm
+In this talk, only the first case is considered.  Others are similar.
 %% \begin{figure}
 %% \begin{center}
 %% \inputfig{fig-method-combinations.pdf_t}
@@ -284,6 +288,20 @@ Others are possible, and we might consider others in the future.
 \inputfig{fig-snippet.pdf_t}
 \end{center}
 \end{figure}
+}
+
+\frame{
+  \frametitle{Default snippet}
+  Created in some situations:
+  \vskip 0.25cm
+  \begin{itemize}
+  \item When a new caller refers to an undefined callee.
+  \item When a callee is redefined or made to be undefined (more
+    later).
+  \end{itemize}
+  \vskip 0.25cm
+  The default snippet contains the instructions for the function-call
+  protocol.
 }
 
 \frame{
