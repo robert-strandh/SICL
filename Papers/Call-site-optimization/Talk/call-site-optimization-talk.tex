@@ -314,6 +314,20 @@ In this talk, only the first case is considered.  Others are similar.
 }
 
 \frame{
+\frametitle{Information provided when caller is defined}
+For each call site in the caller:
+\vskip 0.25cm
+\begin{itemize}
+\item Name of callee.
+\item Number of arguments.
+\item Type of each argument.
+\item For each argument, whether it is boxed or unboxed.
+\item For each argument, its location (register or stack position).
+\item Information about return values (more in the paper).
+\end{itemize}
+}
+
+\frame{
 \frametitle{Future work}
 blabla
 \vskip 0.25cm
