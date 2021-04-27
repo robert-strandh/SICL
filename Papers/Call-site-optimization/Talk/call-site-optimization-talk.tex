@@ -240,7 +240,19 @@ Code that accomplishes the following tasks:
 
 \frame{
 \frametitle{Our technique}
+Optimize calls where the name of the callee is known statically:
+\begin{itemize}
+\item A function form where the operator is a symbol naming a function
+  in the global environment.
+\item A function form where the operator is the symbol
+  \texttt{funcall} and the first argument is either a literal symbol
+  or a \texttt{function} special form with a function name.
+\item A function form where the operator is the symbol
+  \texttt{apply} and the first argument is either a literal symbol
+  or a \texttt{function} special form with a function name.
+\end{itemize}
 \vskip 0.25cm
+Others are possible, and we might consider others in the future.
 %% \begin{figure}
 %% \begin{center}
 %% \inputfig{fig-method-combinations.pdf_t}
