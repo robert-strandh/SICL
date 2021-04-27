@@ -260,6 +260,23 @@ Others are possible, and we might consider others in the future.
 %% \end{figure}
 }
 
+
+\frame{
+\frametitle{Our technique, ordinary function form}
+\begin{itemize}
+\item Code emitted by a caller consists of an unconditional
+  \emph{jump} instruction.
+\item The address field of the jump instruction is filled in by the
+  callee.
+\item The code for the function call (according to our definition) is
+  contained in an object called a \emph{trampoline snippet} (or
+  \emph{snippet} for short).
+\item The snippet ends with a second unconditional \emph{jump}
+  instruction back to the instruction following the first such
+  instruction.
+\end{itemize}
+}
+
 \frame{
 \frametitle{Future work}
 blabla
