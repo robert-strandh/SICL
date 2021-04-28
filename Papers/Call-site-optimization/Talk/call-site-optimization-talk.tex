@@ -208,6 +208,17 @@ See paper for inline caching and sealing.  We will discuss only Ctors.
 }
 
 \frame{
+\frametitle{Previous work (ctors)}
+\begin{itemize}
+\item Can be used for certain functions that are often called with
+  some arguments being literals.
+\item In particular, it is used for \texttt{make-instance}.
+\item In Clasp, also used for \texttt{change-class} and
+  \texttt{reinitialize-instance}.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Definition: function call}
 Code that accomplishes the following tasks:
 \vskip 0.25cm
