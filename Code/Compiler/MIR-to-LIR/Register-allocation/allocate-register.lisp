@@ -72,13 +72,21 @@
           return t)
   nil)
 
+(defun filter-for-lexical-location (lexical-location)
+  *gpr*)
 
-(defun determine-candidates (lexical-location pool)
+(defun determine-candidates (lexical-location pool
+                             &key (filter
+                                   (filter-for-lexical-location lexical-location)))
   (let* ((pool-item (find lexical-location pool
                           :key #'lexical-location :test #'eq)))
     (if (or (null pool-item) (< (call-probability pool-item) 3))
-        *caller-saves*
-        *callee-saves*)))
+        (register-map-intersection *caller-saves* filter)
+        (let ((register-map
+                (register-map-intersection *callee-saves* filter)))
+          (if (register-map-empty-p register-map)
+              (register-map-intersection *caller-saves* filter)
+              register-map)))))
 
 (defun lexical-location-in-register-p (arrangement lexical-location register)
   (arr:lexical-location-in-register-p

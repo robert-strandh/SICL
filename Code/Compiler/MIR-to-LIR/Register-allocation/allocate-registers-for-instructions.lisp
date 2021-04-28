@@ -446,14 +446,14 @@
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
   (let ((output-pool (output-pool instruction))
-        (dividend (first (cleavir-ir:inputs instruction))))
-    ;; If the dividend input does not outlive this instruction, and it
-    ;; is already in RAX, then we can avoid transferring it to another
+        (input1 (first (cleavir-ir:inputs instruction))))
+    ;; If the first input does not outlive this instruction, and it is
+    ;; already in RAX, then we can avoid transferring it to another
     ;; register.
     (unless (and (lexical-location-in-register-p
                   (output-arrangement predecessor)
-                  dividend *rax*)
-                 (variable-live-p dividend output-pool))
+                  input1 *rax*)
+                 (variable-live-p input1 output-pool))
       (setf predecessor
             (ensure-register-attributions-transferred
              predecessor instruction

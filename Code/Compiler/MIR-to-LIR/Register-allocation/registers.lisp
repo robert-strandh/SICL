@@ -47,7 +47,7 @@
 (deftype register-map ()
   `(array bit (,+register-count+)))
 
-(defparameter *caller-saves* #*10110011111100000000000000000000)
+(defparameter *caller-saves* #*10110011111100001111111111111111)
 (defparameter *callee-saves* #*01000000000011110000000000000000)
 
 (defun register-number-is-callee-saves-p (register-number)
@@ -92,8 +92,14 @@
 (defun register-map-difference (register-map-1 register-map-2)
   (bit-andc2 register-map-1 register-map-2))
 
+(defun register-map-intersection (register-map-1 register-map-2)
+  (bit-and register-map-1 register-map-2))
+
 (defun find-any-register-in-map (register-map)
   (position 1 register-map))
+
+(defun register-map-empty-p (register-map)
+  (null (find-any-register-in-map register-map)))
 
 (defun register-number (register)
   (let ((position (position register *registers*)))
