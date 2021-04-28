@@ -219,6 +219,20 @@ See paper for inline caching and sealing.  We will discuss only Ctors.
 }
 
 \frame{
+\frametitle{Previous work (ctors)}
+How it works:
+\begin{itemize}
+\item A compiler macro is used to replace the original call by a call
+  to a \emph{funcallable object} that is specific to the literal
+  arguments given.
+\item The \emph{funcallable instance function} of the funcallable
+  object is altered when the callee is altered.
+\item For \texttt{make-instance}, alterations can consist of changes
+  to class definitions.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Definition: function call}
 Code that accomplishes the following tasks:
 \vskip 0.25cm
