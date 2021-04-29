@@ -13,7 +13,7 @@
    #:value
    #:lexical-location #:make-lexical-location
    #:new-temporary
-   #:name
+   #:name #:encoding
    #:external-input #:make-external-input
    #:register-location
    #:layer #:index
