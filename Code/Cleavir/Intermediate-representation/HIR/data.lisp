@@ -66,7 +66,7 @@
 (defun make-lexical-location (name &optional (element-type 't))
   (make-instance 'lexical-location
                  :name name
-                 :encoding element-type))
+                 :element-type element-type))
 
 (defmethod print-object ((object lexical-location) stream)
   (print-unreadable-object (object stream :type t)

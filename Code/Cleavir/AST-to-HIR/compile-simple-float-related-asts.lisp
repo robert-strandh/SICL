@@ -53,8 +53,9 @@
     (ast-class instruction-class)
   `(defmethod compile-ast (client (ast ,ast-class) context)
      (let* ((arguments (cleavir-ast:children ast))
-            (temps (make-temps arguments))
-            (temp (cleavir-ir:new-temporary))
+            (subtype (cleavir-ast:subtype ast))
+            (temps (make-temps arguments subtype))
+            (temp (make-temp subtype))
             (successor (make-instance 'cleavir-ir:box-instruction
                          :element-type (cleavir-ast:subtype ast)
                          :inputs (list temp)

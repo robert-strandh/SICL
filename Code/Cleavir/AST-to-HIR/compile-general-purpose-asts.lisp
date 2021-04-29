@@ -778,9 +778,9 @@
 ;;;
 ;;; Compile ASTs that represent low-level operations.
 
-(defun make-temps (arguments)
+(defun make-temps (arguments &optional (element-type 't))
   (loop for argument in arguments
-        collect (make-temp)))
+        collect (make-temp element-type)))
 
 (defun compile-arguments (client arguments temps successor context)
   (loop with succ = successor

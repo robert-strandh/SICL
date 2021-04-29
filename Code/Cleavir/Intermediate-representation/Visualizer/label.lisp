@@ -50,6 +50,9 @@
 
 (defmethod label ((instruction cleavir-ir:funcall-instruction)) "funcall")
 
+(defmethod label ((instruction cleavir-ir:named-call-instruction))
+  (format nil "funcall ~a" (cleavir-ir:callee-name instruction)))
+
 (defmethod label ((instruction cleavir-ir:funcall-no-return-instruction))
   "funcall-no-return")
 
@@ -182,3 +185,8 @@
 
 (defmethod label ((instruction cleavir-ir:store-to-static-environment-instruction))
   "Store")
+
+(defmethod label ((instruction sicl-ir:load-constant-instruction))
+  (format nil "Load constant ~a"
+          (aref (sicl-ir:constants instruction)
+                (cleavir-ir:location-info instruction))))
