@@ -204,18 +204,13 @@ We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, $E_4$, and $E_5$.
 \subsection{Phase 0}
 
 In phase $0$, we load enough functionality into environment $E0$ to be
-able to compile source files into \emph{fasl} files.  This
+able to produce abstract syntax trees (ASTs) from source files.  This
 functionality involves mainly standard macros that are required during
 compilation.
 
-We then compile all the files that are ultimately used in the final
-system.  Since \emph{fasl} files are independent of any particular
-environment, the same \emph{fasl} file can be loaded into different
-environments during the following phases of stage 1.
-
 Any code can be compiled, provided that the macros that are called by
 the code are defined in environment $E_0$.  In particular, code that
-defines macros can be compiled into \texttt{fasl}s.
+defines macros can be compiled into abstract syntax trees.
 
 \subsection{Phase 1}
 
