@@ -8,9 +8,9 @@ standard, also contains the library \texttt{closer-mop}.  This
 \commonlisp{} system is called the \emph{host}.  The result of the
 bootstrapping process is an \emph{image} in the form of an executable
 file containing a \sysname{} system.  This system is called the
-\emph{target}.  The target image does not contain a complete
-\commonlisp{} system.  It only contains enough functionality to load
-the remaining system from compiled files.
+\emph{target}.  We have not yet decided whether to generate a complete
+target system using the host, or whether to generate a partial system
+that would then load additional functionality from compiled files
 \seesec{sec-bootstrapping-viable-image}.
 
 In general, the target image can be thought of as containing
