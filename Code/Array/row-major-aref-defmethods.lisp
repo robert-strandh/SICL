@@ -9,8 +9,8 @@
   (unless (and (numberp index)
                (>= index 0)
                (< index (array-total-size array)))
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'row-major-index-must-be-non-negative-and-less-than-total-size
+           :array array
            :datum index
            :expected-type `(integer 0 (,(array-total-size array))))))
 
@@ -19,8 +19,8 @@
   (unless (and (numberp index)
                (>= index 0)
                (< index (array-total-size array)))
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'row-major-index-must-be-non-negative-and-less-than-total-size
+           :array array
            :datum index
            :expected-type `(integer 0 (,(array-total-size array))))))
 
