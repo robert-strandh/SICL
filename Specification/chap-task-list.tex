@@ -12,33 +12,6 @@ untabifying source code, fixing grammar in comments, and generally
 altering code to conform to the guidelines in the previous two
 chapters.
 
-\section{Implement hash tables}
-
-Hash tables have not yet been implemented in \sysname{}.  We would
-like to investigate several possible implementations, and perhaps
-propose several such implementations, with different characteristics,
-in the code base of \sysname{}.
-
-Since \sysname{} has a very efficient technique for generic dispatch,
-we think that there could be a hierarchy of classes with different
-characteristics, all implementing the standard protocol for hash
-tables specified by the \commonlisp{} standard.
-
-In general, we want hash tables to be thread safe.  If it is possible
-to make them lock free, that is even better.
-
-The code should be structured so that it looks ``natural'' in
-intrinsic setting, i.e. when the code is loaded into \sysname{}.
-However, we would like for the code to be structured such that it can
-be tested in an extrinsic setting as well.
-
-The code should contain a separate \texttt{test} system, probably using
-extensive testing through the use of randomly generated operations.
-
-\subsection{Implementation using open hashing}
-
-\subsection{Implementation using vector buckets}
-
 \section{Implement streams}
 
 Streams have non yet been implemented in \sysname{}.  The full set of
