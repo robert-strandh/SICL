@@ -40,6 +40,7 @@
            that is strictly less than that dimension."
           (1+ (index-number condition))
           (given-array condition)
+          (type-error-datum condition)
           (1+ (index-number condition))
           (array-dimension (given-array condition) (index-number condition))))
 
