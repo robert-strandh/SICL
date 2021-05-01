@@ -13,3 +13,7 @@
     (type-error acclimation:condition)
   ((%array :initarg :array :reader given-array)
    (%index-number :initarg :index-number :reader index-number)))
+
+(define-condition row-major-index-must-be-non-negative-and-less-than-total-size
+    (type-error acclimation:condition)
+  ((%array :initarg :array :reader given-array)))
