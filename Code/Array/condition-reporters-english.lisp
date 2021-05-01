@@ -42,3 +42,18 @@
           (given-array condition)
           (1+ (index-number condition))
           (array-dimension (given-array condition) (index-number condition))))
+
+(defmethod acclimation:report-condition
+    ((condition row-major-index-must-be-non-negative-and-less-than-total-size)
+     stream
+     (language acclimation:english))
+  (format stream
+          "The row-major index given in order to access the array:~@
+           ~s~@
+           has a value of ~s~@
+           but the total size of the array is ~d,~@
+           so the index must be a non-negative integer~@
+           that is strictly less than that size."
+          (given-array condition)
+          (type-error-datum condition)
+          (array-total-size (given-array condition))))
