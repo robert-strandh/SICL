@@ -53,11 +53,11 @@
   (incf (sum-squared-cpu-time basic-meter) (* cpu-time cpu-time))
   (if (= (invocation-count basic-meter) 1)
       (progn (setf (min-cpu-time basic-meter) cpu-time)
-	     (setf (max-cpu-time basic-meter) cpu-time))
+             (setf (max-cpu-time basic-meter) cpu-time))
       (progn (setf (min-cpu-time basic-meter)
-		   (min (min-cpu-time basic-meter) cpu-time))
-	     (setf (max-cpu-time basic-meter)
-		   (max (max-cpu-time basic-meter) cpu-time)))))
+                   (min (min-cpu-time basic-meter) cpu-time))
+             (setf (max-cpu-time basic-meter)
+                   (max (max-cpu-time basic-meter) cpu-time)))))
 
 (defmethod reset progn ((meter basic-meter))
   (setf (sum-cpu-time meter) 0)
@@ -66,43 +66,43 @@
 
 (defmethod stream-report progn ((meter basic-meter) stream)
   (with-accessors ((invocation-count invocation-count)
-		   (sum-cpu-time sum-cpu-time)
-		   (sum-squared-cpu-time sum-squared-cpu-time)
-		   (min-cpu-time min-cpu-time)
-		   (max-cpu-time max-cpu-time))
+                   (sum-cpu-time sum-cpu-time)
+                   (sum-squared-cpu-time sum-squared-cpu-time)
+                   (min-cpu-time min-cpu-time)
+                   (max-cpu-time max-cpu-time))
       meter
     (format stream "Invocation count: ~a~%" invocation-count)
     (unless (zerop invocation-count)
       (format stream
-	      "Total CPU time: ~a seconds~%"
-	      (float (/ sum-cpu-time
-			internal-time-units-per-second)))
+              "Total CPU time: ~a seconds~%"
+              (float (/ sum-cpu-time
+                        internal-time-units-per-second)))
       (format stream
-	      "Minimum CPU time for an invocation: ~a seconds~%"
-	      (float (/ min-cpu-time
-			internal-time-units-per-second)))
+              "Minimum CPU time for an invocation: ~a seconds~%"
+              (float (/ min-cpu-time
+                        internal-time-units-per-second)))
       (format stream
-	      "Maximum CPU time for an invocation: ~a seconds~%"
-	      (float (/ max-cpu-time
-			internal-time-units-per-second)))
+              "Maximum CPU time for an invocation: ~a seconds~%"
+              (float (/ max-cpu-time
+                        internal-time-units-per-second)))
       (format stream
-	      "Average CPU time per invocation: ~a seconds~%"
-	      (float (/ sum-cpu-time
-			invocation-count
-			internal-time-units-per-second)))
+              "Average CPU time per invocation: ~a seconds~%"
+              (float (/ sum-cpu-time
+                        invocation-count
+                        internal-time-units-per-second)))
       (format stream
-	      "Standard deviation of CPU time per invocation: ~a seconds~%"
-	      (/ (sqrt (/ (- sum-squared-cpu-time
-			     (/ (* sum-cpu-time sum-cpu-time)
-				invocation-count))
-			  invocation-count))
-		 internal-time-units-per-second)))))
+              "Standard deviation of CPU time per invocation: ~a seconds~%"
+              (/ (sqrt (/ (- sum-squared-cpu-time
+                             (/ (* sum-cpu-time sum-cpu-time)
+                                invocation-count))
+                          invocation-count))
+                 internal-time-units-per-second)))))
 
 (defmethod invoke-with-meter :around ((meter basic-meter) function)
   (declare (ignorable function))
   (let ((time (get-internal-run-time)))
     (multiple-value-prog1
-	(call-next-method)
+        (call-next-method)
       (register-one-invocation meter (- (get-internal-run-time) time)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -132,31 +132,31 @@
 
 (defmethod stream-report progn ((meter size-meter) stream)
   (with-accessors ((invocation-count invocation-count)
-		   (sum-size sum-size)
-		   (sum-squared-size sum-squared-size)
-		   (min-size min-size)
-		   (max-size max-size))
+                   (sum-size sum-size)
+                   (sum-squared-size sum-squared-size)
+                   (min-size min-size)
+                   (max-size max-size))
       meter
     (unless (zerop invocation-count)
       (format stream
-	      "Total size: ~a~%"
-	      (float sum-size))
+              "Total size: ~a~%"
+              (float sum-size))
       (format stream
-	      "Minimum size for an invocation: ~a~%"
-	      (float min-size))
+              "Minimum size for an invocation: ~a~%"
+              (float min-size))
       (format stream
-	      "Maximum size for an invocation: ~a~%"
-	      (float max-size))
+              "Maximum size for an invocation: ~a~%"
+              (float max-size))
       (format stream
-	      "Average size per invocation: ~a~%"
-	      (float (/ sum-size
-			invocation-count)))
+              "Average size per invocation: ~a~%"
+              (float (/ sum-size
+                        invocation-count)))
       (format stream
-	      "Standard deviation of size per invocation: ~a~%"
-	      (sqrt (/ (- sum-squared-size
-			  (/ (* sum-size sum-size)
-			     invocation-count))
-		       invocation-count))))))
+              "Standard deviation of size per invocation: ~a~%"
+              (sqrt (/ (- sum-squared-size
+                          (/ (* sum-size sum-size)
+                             invocation-count))
+                       invocation-count))))))
 
 (defmethod invoke-with-meter :around ((meter size-meter) function)
   (declare (ignorable function))
@@ -166,10 +166,10 @@
     (incf (sum-size meter) (temp-size meter))
     (incf (sum-squared-size meter) (* (temp-size meter) (temp-size meter)))
     (if (= (invocation-count meter) 1)
-	(progn (setf (min-size meter) (temp-size meter))
-	       (setf (max-size meter) (temp-size meter)))
-	(progn (setf (min-size meter)
-		     (min (min-size meter) (temp-size meter)))
-	       (setf (max-size meter)
-		     (max (max-size meter) (temp-size meter)))))
+        (progn (setf (min-size meter) (temp-size meter))
+               (setf (max-size meter) (temp-size meter)))
+        (progn (setf (min-size meter)
+                     (min (min-size meter) (temp-size meter)))
+               (setf (max-size meter)
+                     (max (max-size meter) (temp-size meter)))))
     (setf (temp-size meter) 0)))
