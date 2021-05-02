@@ -17,3 +17,7 @@
 (define-condition row-major-index-must-be-non-negative-and-less-than-total-size
     (type-error acclimation:condition)
   ((%array :initarg :array :reader given-array)))
+
+(define-condition incompatible-type-for-new-element
+    (type-error acclimation:condition)
+  ((%array :initarg :array :reader given-array)))
