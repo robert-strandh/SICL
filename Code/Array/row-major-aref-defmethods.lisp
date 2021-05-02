@@ -49,8 +49,8 @@
 
 (defmethod (setf row-major-aref) (new-element (array array-double-float) index)
   (unless (typep new-element 'double-float)
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'incompatible-type-for-new-element
+           :array array
            :datum new-element
            :expected-type 'double-float))
   (progn (cleavir-primop:aset array
@@ -70,8 +70,8 @@
 
 (defmethod (setf row-major-aref) (new-element (array array-single-float) index)
   (unless (typep new-element 'single-float)
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'incompatible-type-for-new-element
+           :array array
            :datum new-element
            :expected-type 'single-float))
   (progn (cleavir-primop:aset array
@@ -91,8 +91,8 @@
 
 (defmethod (setf row-major-aref) (new-element (array array-signed-byte-64) index)
   (unless (typep new-element '(signed-byte 64))
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'incompatible-type-for-new-element
+           :array array
            :datum new-element
            :expected-type '(signed-byte 64)))
   (progn (cleavir-primop:aset array
@@ -112,8 +112,8 @@
 
 (defmethod (setf row-major-aref) (new-element (array array-unsigned-byte-64) index)
   (unless (typep new-element '(unsigned-byte 64))
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'incompatible-type-for-new-element
+           :array array
            :datum new-element
            :expected-type '(unsigned-byte 64)))
   (progn (cleavir-primop:aset array
@@ -133,8 +133,8 @@
 
 (defmethod (setf row-major-aref) (new-element (array array-signed-byte-32) index)
   (unless (typep new-element '(signed-byte 32))
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'incompatible-type-for-new-element
+           :array array
            :datum new-element
            :expected-type '(signed-byte 32)))
   (progn (cleavir-primop:aset array
@@ -154,8 +154,8 @@
 
 (defmethod (setf row-major-aref) (new-element (array array-unsigned-byte-32) index)
   (unless (typep new-element '(unsigned-byte 32))
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'incompatible-type-for-new-element
+           :array array
            :datum new-element
            :expected-type '(unsigned-byte 32)))
   (progn (cleavir-primop:aset array
@@ -197,8 +197,8 @@
 
 (defmethod (setf row-major-aref) (new-element (array array-bit) index)
   (unless (typep new-element 'bit)
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'incompatible-type-for-new-element
+           :array array
            :datum new-element
            :expected-type 'bit))
   (progn (cleavir-primop:aset array
@@ -218,8 +218,8 @@
 
 (defmethod (setf row-major-aref) (new-element (array array-character) index)
   (unless (typep new-element 'character)
-    ;; FIXME: signal a more specific condition.
-    (error 'type-error
+    (error 'incompatible-type-for-new-element
+           :array array
            :datum new-element
            :expected-type 'character))
   (progn (cleavir-primop:aset array
