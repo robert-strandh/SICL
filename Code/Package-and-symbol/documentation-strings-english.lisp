@@ -18,4 +18,8 @@
               The default value for PACKAGE is the current package.~@
               This function makes the designated symbols external~@
               in PACKAGE.~@
+              If any symbol is already external in PACKAGE, this~@
+              function has no effect on that symbol.@
+              If any symbol is present in PACKAGE as an internal~@
+              symbol, its status is changed to be external.~@
               "))
