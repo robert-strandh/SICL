@@ -140,3 +140,7 @@
 (define-condition name-refers-to-a-special-operator
     (error)
   ((%name :initarg :name :reader name)))
+
+(define-condition name-refers-to-a-macro
+    (error)
+  ((%name :initarg :name :reader name)))
