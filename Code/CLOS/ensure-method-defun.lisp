@@ -73,7 +73,6 @@
        (documentation nil)
        (function nil function-p)
        (slot-definition nil slot-definition-p))
-  ;;; FIXME: signal errors as indicated in the comment above.
   (let ((generic-function
           (cond ((typep generic-function-or-name 'generic-function)
                  generic-function-or-name)
