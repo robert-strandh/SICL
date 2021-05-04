@@ -144,3 +144,7 @@
 (define-condition name-refers-to-a-macro
     (error)
   ((%name :initarg :name :reader name)))
+
+(define-condition invalid-function-name
+    (error)
+  ((%name :initarg :name :reader name)))
