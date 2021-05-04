@@ -136,3 +136,7 @@
 (define-condition generic-function-class-must-be-class-or-name
     (error)
   ((%object :initarg :object :reader object)))
+
+(define-condition name-refers-to-a-special-operator
+    (error)
+  ((%name :initarg :name :reader name)))
