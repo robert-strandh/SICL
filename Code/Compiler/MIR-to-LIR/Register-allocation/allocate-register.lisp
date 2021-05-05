@@ -73,7 +73,10 @@
   nil)
 
 (defun filter-for-lexical-location (lexical-location)
-  *gpr*)
+  (let ((type (cleavir-ir:element-type lexical-location)))
+    (if (member type '(single-float double-float))
+        *xmm*
+        *gpr*)))
 
 (defun determine-candidates (lexical-location pool
                              &key (filter
