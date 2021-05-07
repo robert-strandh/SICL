@@ -23,7 +23,7 @@ this is useful in \texttt{defpackage} and \texttt{in-package} forms.
 Using the upper-case equivalent string makes the code break whenever
 the reader is case-sensitive (and it looks strange that the designator
 has a different case from the way symbol that it designates is then
-used), and using keywords unnecessarily clutters the keyword package.
+used).
 
 \section{Docstrings}
 
@@ -118,45 +118,29 @@ in terms of the name and the arguments of the macro.
 
 \section{Compiler macros}
 
-{\sysname} will make extensive use of compiler macros.  Compiler
-macros are part of the standard, so this mechanism must be part of a
-conforming compiler anyway.  In many cases, instead of encoding
-special knowledge in the compiler itself, we can use compiler macros.
-By doing it this way, we simplify the compiler, and we provide a set
-of completely portable macros that any implementation can use. 
+{\sysname} will make use of compiler macros for standard functions
+when doing so seems reasonable, and when some performance improvement
+is likely.  Compiler macros are part of the standard, so this
+mechanism must be part of a conforming compiler anyway.  In some
+cases, instead of encoding special knowledge in the compiler itself,
+we can use compiler macros.  By doing it this way, we simplify the
+compiler, and we provide a set of completely portable macros that any
+implementation can use.
 
-Compiler macros should be used whenever the exact shape of the call
-site might be used to improve performance of the callee.  For
-instance, when the callee uses keyword arguments, we can eliminate the
-overhead of keyword-value parsing at runtime and instead call a
-special version of the callee that does not have to do any such
-parsing.%
-\fixme{There is a suggestion that this creation could be automated by
-  the compiler.  I don't know how doable that would be.}
+However, in \sysname{} we can use \emph{call-site optimization} to
+optimize function calls in many situations where a typical
+\commonlisp{} implementation would have to resort to compiler macros.
+In particular, call-site optimization can usually optimize calls to
+functions with optional and/or keyword parameters.
 
-Similarly, functions that take a \texttt{\&rest} argument can provide
-special cases for different common sizes of the \texttt{\&rest}
-argument.
-
-We propose using compiler macros at least for the following
-situations: 
-
-\begin{itemize}
-\item to convert calls to \texttt{list} and \texttt{list*} into nested
-  calls to \texttt{cons};
-\item to convert simple calls to some built-in functions that accept
-  \texttt{:test} and \texttt{:key} keyword arguments (such as
-  \texttt{find}, \texttt{member}, etc) into calls to
-  special versions of these procedures with particularly simple
-  functions for these keyword arguments (\texttt{identity},
-  \texttt{car}, \texttt{eq}, etc);
-\item to convert calls to some functions that accept optional
-  arguments such as \texttt{last} and \texttt{butlast} into calls to
-  special versions when the optional argument is not given.
-\end{itemize}
-
-Compiler macros should not be used in the place of inlining.
-% (see section \ref{section-inlining}) this section does not exist.
+For cases where call-site optimization is not likely to be able to
+handle the situation, compiler macros should be used whenever the
+exact shape of the call site might be used to improve performance of
+the callee. In particular, for functions that take a \texttt{\&rest}
+argument, we can provide special cases for different common sizes of
+the \texttt{\&rest} argument.  For example, it seems reasonable to
+define a compiler macro for \texttt{list*} that converts the call to
+nested calls to \texttt{cons}.
 
 \section{Conditions and restarts}
 
