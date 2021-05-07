@@ -18,6 +18,5 @@
    (:file "character")
    (:file "augment-catch-instruction")
    (:file "augment-bind-instruction")
-   (:file "augment-initialize-values-instruction")
    (:file "gather-enter-instructions")
    (:file "hir-to-mir")))
