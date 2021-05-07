@@ -25,6 +25,11 @@ the reader is case-sensitive (and it looks strange that the designator
 has a different case from the way symbol that it designates is then
 used).
 
+Using interned symbols sends the wrong message to the person reading
+the code, namely that the package of the symbol has some
+significance.  Using an uninterned symbol immediately tells the
+person reading the code that the package is not being used.
+
 \section{Docstrings}
 
 We believe that it is a bad idea for an implementation of a Lisp
