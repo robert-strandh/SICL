@@ -395,26 +395,26 @@
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
   (let ((output-pool (output-pool instruction))
-        (dividend (first (cleavir-ir:inputs instruction))))
+        (dividend (first (cleavir-ir:inputs instruction)))
+        (used-registers (make-register-map *rax* *rdx*)))
     ;; If the dividend input does not outlive this instruction, and it
     ;; is already in RAX, then we can avoid transferring it to another
     ;; register.
     (unless (and (lexical-location-in-register-p
                   (output-arrangement predecessor)
                   dividend *rax*)
-                 (variable-live-p dividend output-pool))
+                 (not (variable-live-p output-pool dividend)))
       (setf predecessor
             (ensure-register-attributions-transferred
              predecessor instruction
-             (output-pool instruction)
-             *rax*)))
+             output-pool
+             *rax* used-registers)))
     (ensure-register-attributions-transferred
-     predecessor instruction
-     (output-pool instruction)
-     *rdx*)))
+     predecessor instruction output-pool *rdx* used-registers)))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:fixnum-divide-instruction) arrangement)
+  (arr:trim-arrangement arrangement (survivors instruction))
   (arr:attribute-register-for-new-lexical-location
    arrangement
    (first (cleavir-ir:outputs instruction))
@@ -446,23 +446,24 @@
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
   (let ((output-pool (output-pool instruction))
-        (input1 (first (cleavir-ir:inputs instruction))))
+        (input1 (first (cleavir-ir:inputs instruction)))
+        (used-registers (make-register-map *rax* *rdx*)))
     ;; If the first input does not outlive this instruction, and it is
     ;; already in RAX, then we can avoid transferring it to another
     ;; register.
     (unless (and (lexical-location-in-register-p
                   (output-arrangement predecessor)
                   input1 *rax*)
-                 (variable-live-p input1 output-pool))
+                 (not (variable-live-p output-pool input1)))
       (setf predecessor
             (ensure-register-attributions-transferred
              predecessor instruction
              (output-pool instruction)
-             *rax*)))
+             *rax* used-registers)))
     (ensure-register-attributions-transferred
      predecessor instruction
      (output-pool instruction)
-     *rdx*)))
+     *rdx* used-registers)))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:fixnum-multiply-instruction) arrangement)

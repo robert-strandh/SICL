@@ -62,15 +62,17 @@
     result))
 
 ;;; Return T when the estimated distance to use of LEXICAL-LOCATION is
-;;; higher than that of any location in the list POTENTIAL-VICTIMS.
-(defun should-not-transfer-p (lexical-location pool arrangement candidates)
-  (loop with location-distance = (augmented-distance lexical-location pool)
-        for potential-victim
-          in (arr:lexical-locations-in-register arrangement candidates)
-        for distance = (augmented-distance potential-victim pool)
-        when (> distance location-distance)
-          return t)
-  nil)
+;;; lower than that of any location attributed to a register among the CANDIDATES.
+(defun should-transfer-p (lexical-location pool arrangement candidates)
+  (when (plusp (arr:unattributed-register-count arrangement candidates))
+    (return-from should-transfer-p t))
+  (let ((potential-victims
+          (arr:lexical-locations-in-register arrangement candidates)))
+    (loop with location-distance = (augmented-distance lexical-location pool)
+          for potential-victim
+            in potential-victims
+          for victim-distance = (augmented-distance potential-victim pool)
+            thereis (> victim-distance location-distance))))
 
 (defun filter-for-lexical-location (lexical-location)
   (let ((type (cleavir-ir:element-type lexical-location)))
@@ -100,7 +102,7 @@
 ;;; Make sure that REGISTER is not attributed to any lexical variable
 ;;; in the predecessor of INSTRUCTION.
 (defun ensure-register-attributions-transferred
-    (predecessor instruction pool register)
+    (predecessor instruction pool register registers-to-avoid)
   (let* ((map (make-register-map register))
          (arrangement (output-arrangement predecessor))
          (lexical-locations
@@ -110,13 +112,11 @@
       (return-from ensure-register-attributions-transferred predecessor))
     (let* ((location (first lexical-locations))
            (candidates
-             (register-map-difference (determine-candidates location pool) map)))
-      ;; We do nothing if the location will not live past this instruction.
-      (unless (variable-live-p location (output-pool instruction))
-        (return-from ensure-register-attributions-transferred predecessor))
+             (register-map-difference (determine-candidates location pool)
+                                      registers-to-avoid)))
       ;; If this location has a higher EDU than any other which is
       ;; attributed, spill this location.
-      (when (should-not-transfer-p location pool arrangement candidates)
+      (unless (should-transfer-p location pool arrangement candidates)
         (return-from ensure-register-attributions-transferred
           (spill predecessor instruction location)))
       ;; Else, spill some other register and transfer the location to
@@ -136,8 +136,7 @@
               (make-instance 'cleavir-ir:assignment-instruction
                              :input location
                              :output location)))
-        (arr:unattribute-register new-arrangement location)
-        (arr:attribute-register-for-new-lexical-location
+        (arr:reattribute-register
          new-arrangement
          location
          candidates)

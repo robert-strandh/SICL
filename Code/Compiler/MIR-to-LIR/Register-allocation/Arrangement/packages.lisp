@@ -13,6 +13,7 @@
            #:attribute-stack-slot
            #:attribute-register-for-existing-lexical-location
            #:attribute-register-for-new-lexical-location
+           #:reattribute-register
            #:unattribute-register
            #:trim-arrangement
            #:copy-register-attribution))

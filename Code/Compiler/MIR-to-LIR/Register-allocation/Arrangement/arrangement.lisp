@@ -182,6 +182,21 @@
         (setf register-number nil))))
   (check-arrangement-integrity arrangement))
 
+(defun reattribute-register
+    (arrangement lexical-location candidates)
+  (check-arrangement-integrity arrangement)
+  (with-arrangement arrangement
+    (let ((free-register (position 1 (bit-andc2 candidates register-map)))
+          (attribution (find lexical-location attributions
+                             :test #'eql :key #'lexical-location)))
+      (assert (not (null free-register)))
+      (assert (not (null attribution)))
+      (with-attribution attribution
+        (setf (bit register-map register-number) 0)
+        (setf (bit register-map free-register) 1)
+        (setf register-number free-register))))
+  (check-arrangement-integrity arrangement))
+
 ;;; Return a list of lexical locations such that every lexical
 ;;; location in the list has some register in CANDIDATES attributed to
 ;;; it in ARRANGEMENT.

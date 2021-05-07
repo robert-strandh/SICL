@@ -18,9 +18,15 @@
 (defclass raw-integer (raw-datum)
   ())
 
+(defmethod element-type ((raw raw-integer))
+  't)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum RAW-FLOAT.
 
 (defclass raw-float (raw-datum)
   ())
+
+(defmethod element-type ((raw raw-float))
+  'double-float)
