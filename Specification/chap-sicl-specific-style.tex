@@ -218,3 +218,58 @@ Consider the use of locks to be free.  We predict that a technique
 call ``speculative lock elision'' will soon be available in all main
 processors.
 
+\section{Extensible Libraries}
+
+During the development on \sysname{}, we have come up with a
+widely-applicable technique for defining extensible libraries.  Such an
+extensible library is defined around a set of generic functions that take a
+client object as their first argument.  This client object is forwarded by
+all internal calls of the library, such that all consecutive calls within
+that library receive the same first argument.  The default behavior of the
+library is defined by methods whose first parameter specializes only on the
+class \texttt{T}.
+
+When a client uses the library, it must supply a client object to these
+generic functions that can be clearly distinguished from client objects of
+any other client.  Ideally, the client object should be an instance of a
+class that is defined by that client, but other variants like using a
+symbol whose name relates to the client are also possible.  The client can
+then extend the behavior of the library by defining additional methods that
+specialize on the client object.
+
+Designing a library in this way has a number of benefits:
+
+\begin{itemize}
+\item Clients can introduce very deep changes to the original behavior of
+  the library, including use of some entirely different data structures, or
+  additional \texttt{:before}, \texttt{:after}, and \texttt{:around}
+  methods.
+\item The library can intentionally leave some parts of its behavior
+  undefined, and rely on clients to fill in this information.
+\item The library can be used by multiple clients simultaneously, even in
+  the case where the types of some of the involved data structures alone
+  are not specific enough for discrimination.  (For example, imagine two
+  clients for a library that operates on multisets.  The first client might
+  represent these sets as a list of objects, and the second library might
+  represent these sets as an alist whose keys are objects and whose values
+  are their count.  Without the client argument, the generic functions for
+  working with such multisets wouldn't be able to detect whether they are
+  used by the first client, or by the second client.)
+\item If a client defines its own class of client objects and supplies an
+  instance of that class as the client argument of an extensible library,
+  it is possible to customize the client behavior further by means of
+  inheritance, e.g., to extract the common behavior of several clients into
+  a base class, to mix the behavior of several clients, or to introduce
+  minor modifications to an existing client.
+\item Clients can add additional information or even mutable state to the
+  client object.  This state is then automatically available to all methods
+  applicable to this client object.  Introducing state this way can avoid
+  what would otherwise have been a global data structure.
+\end{itemize}
+
+We use this technique pervasively in {\sysname}.  The result is that the
+{\sysname} codebase itself contains just a few client classes and methods,
+while the bulk of the functionality is available as independent, extensible
+libraries.  Examples of such libraries are Eclector, the portable Common
+Lisp reader, or Clostrum, an implementation of first-class global
+environments.
