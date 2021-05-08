@@ -9,7 +9,7 @@ Furthermore, we would like \sysname{} to be not only a high-quality
 implementation, but we would like for its code to be very readable.
 For that reason, we think it is preferable to write \sysname{} in a
 ``literate programming'' style, with significant comments explaining
-the code. 
+the code.
 
 Accordingly, we prefer comments to consist of complete sentences,
 starting with a capital letter, and ending with punctuation.
@@ -44,7 +44,7 @@ harder.
 
 For this reason, we will provide language-specific files containing
 all docstrings of Common Lisp in the form of calls to \texttt{(setf
-documentation)}. 
+documentation)}.
 
 We also recommend using \texttt{format} (at read time) so that the
 format directive \texttt{\~{}@} can be used at the end of lines,
@@ -70,13 +70,13 @@ namely the double colon package marker and the percent character.
 Code should refer to slot names directly as little as possible.  Even
 code that is private to a package should use an internal protocol in
 the form of readers and writers, and such protocols should be
-documented and exported whenever reasonable. 
+documented and exported whenever reasonable.
 
 \section{Standard functions}
 
 Standard functions should always check the validity of their arguments
 and of any other aspect of the environment.  If such a function fails
-to accomplish its task, it should signal an appropriate condition.  
+to accomplish its task, it should signal an appropriate condition.
 
 We would like error messages to be phrased in terms of the code that
 was directly invoked by user code, as opposed to in terms of code that
@@ -102,24 +102,24 @@ this problem:
   the Common Lisp \hs{}.
 \item If acceptable in terms of performance, a standard function such
   as $f$ that calls other functions that may signal an error, handles
-  such errors by signaling an error that is directly related to $f$. 
+  such errors by signaling an error that is directly related to $f$.
 \item Error reporting is done in terms of the name and arguments to
-  $f$. 
-  
+  $f$.
+
 \end{itemize}
 
 \section{Standard macros}
 
 Standard macros must do extensive syntax analysis on their input so as
 to avoid compilation errors that are phrased in terms of expanded
-code.  
+code.
 
 As with standard functions, standard macros that expand into other
 system code that may signal an error should not use other standard
 functions or other standard macros directly, but instead special
 versions that signal more specific conditions.  The expanded code
 should then contain a handler for such errors, which signals an error
-in terms of the name and the arguments of the macro. 
+in terms of the name and the arguments of the macro.
 
 \section{Compiler macros}
 
@@ -159,7 +159,7 @@ information as possible in order reduce the required effort to
 find out where the problem is located.
 
 \sysname{} function should also provide restarts whenever this is
-practical. 
+practical.
 
 \section{Condition reporting}
 
@@ -169,11 +169,11 @@ condition reporting for different languages and for different
 systems.  An integrated development environment might provide
 different condition reporters from the normal ones, that in addition
 to reporting a condition, displays the source-code location of the
-problem. 
+problem.
 
 Every \sysname{} module will supply a set of default condition
 reporters for all the specific conditions defined in that module.
-Those condition reporters will use plain English text. 
+Those condition reporters will use plain English text.
 
 \section{Internationalization}
 
@@ -190,14 +190,14 @@ by the condition-reporting function to \texttt{sicl:report-condition}.
 In other words, the default \texttt{:report} function for conditions is:
 
 \begin{verbatim}
-   (lambda (condition stream) 
+   (lambda (condition stream)
      (sicl:report-condition condition stream sicl:*language*))
 \end{verbatim}
 
 Similarly, the Common Lisp function \texttt{documentation} should
 trampoline to a function that uses the value of
 \texttt{sicl:*language*} to determine which language to use to show
-the documentation. 
+the documentation.
 
 \section{Package structure}
 
@@ -208,7 +208,7 @@ internal symbols as well.  Implementation packages may export symbols
 to be used by other implementation packages.
 
 This package structure allows us to isolate implementation-dependent
-symbols in different packages.  
+symbols in different packages.
 
 \section{Assertions}
 
