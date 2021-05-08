@@ -332,8 +332,8 @@ handled first.  The following code violates the expectations:
 (defun map-conses (function tree)
  (unless (atom node)
    (funcall function node)
-   (traverse (car node))
-   (traverse (cdr node))))
+   (map-conses function (car node))
+   (map-conses function (cdr node))))
 \end{verbatim}
 
 and should be written like this instead:
@@ -343,8 +343,8 @@ and should be written like this instead:
   (if (atom node)
       nil ; nothing to do
       (progn (funcall function node)
-             (traverse (car node))
-             (traverse (cdr node)))))
+             (map-conses (car node))
+             (map-conses (cdr node)))))
 \end{verbatim}
 
 though, admittedly, this example is a little too simple to illustrate
