@@ -229,13 +229,13 @@ that library receive the same first argument.  The default behavior of the
 library is defined by methods whose first parameter specializes only on the
 class \texttt{T}.
 
-When a client uses the library, it must supply a client object to these
-generic functions that can be clearly distinguished from client objects of
-any other client.  Ideally, the client object should be an instance of a
-class that is defined by that client, but other variants like using a
-symbol whose name relates to the client are also possible.  The client can
-then extend the behavior of the library by defining additional methods that
-specialize on the client object.
+Whenever a client calls a generic function of the library, it must supply a
+client object that can be clearly distinguished from client objects of any
+other client.  Ideally, the client object should be an instance of a class
+that is defined by that client, but other variants like using a symbol
+whose name relates to the client are also possible.  The client can then
+extend the behavior of the library by defining additional methods
+specialized to the client object or its class.
 
 Designing a library in this way has a number of benefits:
 
