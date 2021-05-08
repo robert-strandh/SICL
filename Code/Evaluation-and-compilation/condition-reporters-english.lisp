@@ -5,6 +5,6 @@
      stream
      (language acclimation:english))
   (format stream
-	  "The optional environment argument must either be~@
+          "The optional environment argument must either be~@
            omitted or NIL, but the following was found instead:~%~s"
-	  (environment condition)))
+          (environment condition)))
