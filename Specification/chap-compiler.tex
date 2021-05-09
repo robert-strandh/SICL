@@ -303,38 +303,14 @@ original instruction, we do not emit any
 We are allowed to do that because even when no values are returned
 from a function, the first location must contain \texttt{nil}.
 
-\subsubsection{Hoisting non-trivial constants}
+\subsubsection{Handling non-trivial constants}
 
-Non-trivial constants must be hoisted to the top-level function.
-Whether a costant is trivial or not is determined by a call to the
-generic function \texttt{trivial-constant-p}.
-
-The class \texttt{top-level-enter-instruction} is a subclass of the
-class \texttt{enter-instruction} and it adds a slot holding a list of
-all non-trivial constants in the entire code graph.  When the
-top-level enter instruction is turned into a closure, these constants
-become part of the static environment of the top-level function.
-Initially, the list of constants is empty.  During hosting, we keep a
-parallel list of lexical locations corresponding to each constant.
-
-For each non-trivial constant, a check is first made to see whether it
-is already in the list of constants in the top-level enter
-instruction.  If not, it is added to the end of the list, and a new
-lexical location is added to the end of the parallel list.  Either
-way, we determine the position of the constant in the list of
-constants.  The corresponding lexical location has the same position
-in the parallel list.  When a new constant and a new lexical location
-must be added, a \texttt{fetch-instruction} is added at the top level.
-The inputs of the \texttt{fetch-instruction} are the
-static-environment location of the top-level enter instruction, and a
-constant input corresponding to the position of the constant in the
-list.  The output of the \texttt{fetch-instruction} is the
-corresponding lexical location.
-
-The constant input is replaced by the corresponding lexical location.
-
-Notice that this transformation will create shared variables, so it is
-important that it is performed before closure conversion.
+Non-trivial constant inputs are handled by the introduction of a
+\texttt{load-constant-instruction}.  This instruction has no inputs
+and a single lexical output.  The instruction itself contains the
+constant.  During later phases, this instruction is replaced by a
+PC-relative load instruction that fetches the constant from a vector
+of constants allocated separately.
 
 \subsubsection{Eliminating \texttt{create-cell-instruction}s}
 
