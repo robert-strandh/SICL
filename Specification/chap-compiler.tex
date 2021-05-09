@@ -165,39 +165,6 @@ instructions, namely: \texttt{compute-argument-count-instruction} and
 according to the lambda list is sufficiently complex that we
 documented it separately, in \refChap{chap-processing-arguments}.
 
-\subsubsection{Converting \texttt{symbol-value-instruction}s}
-
-A \texttt{symbol-value-instruction} is converted to an
-\texttt{fdefinition-instruction} followed by a
-\texttt{funcall-instruction}.  The input to the
-\texttt{fdefinition-instruction} is the constant input with a value of
-\texttt{symbol-value}.  The output of the
-\texttt{fdefinition\-instruction} becomes the first input to the
-\texttt{funcall-instruction}.  The second input to the
-\texttt{funcall-instruction} is the constant input (i.e. the symbol
-of which the value is wanted) of the original instruction.
-
-Since the output of the \texttt{funcall-instruction} is the
-distinguished multiple-value location, the original instruction is
-converted to a \texttt{multiple-to-fixed\-instruction} with its
-original output.
-
-\subsubsection{Converting \texttt{set-symbol-value-instruction}s}
-
-A \texttt{set-symbol-value-instruction} is converted to an
-\texttt{fdefinition-instruction} followed by a
-\texttt{funcall-instruction}.  The input to the
-\texttt{fdefinition-instruction} is the constant input with a value of
-\texttt{(setf symbol-value)}.  The output of the
-\texttt{fdefinition-instruction} becomes the first input to the
-\texttt{funcall-instruction}.  The second input to the
-\texttt{funcall-instruction} is the constant input (i.e. the symbol
-of which the value is wanted) of the original instruction.  The third
-input to the is the value to assign to the variable.
-
-Since no outputs are involved, the original instruction is converted
-directly to the \texttt{funcall-instruction}.
-
 \subsubsection{Handling \texttt{named-call-instruction}s and similar}
 
 It used to be the case that the AST-to-HIR phase generated
