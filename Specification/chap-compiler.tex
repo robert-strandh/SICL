@@ -198,37 +198,26 @@ input to the is the value to assign to the variable.
 Since no outputs are involved, the original instruction is converted
 directly to the \texttt{funcall-instruction}.
 
-\subsubsection{Hoisting \texttt{fdefinition-instruction}s}
+\subsubsection{Handling \texttt{named-call-instruction}s and similar}
 
-All \texttt{fdefinition-instruction}s are \emph{hoisted}, meaning that
-they are transformed and executed at the top level.  The lexical
-location that holds the function in question then becomes a shared
-variable that must later be processed during closure conversion.
+It used to be the case that the AST-to-HIR phase generated
+\texttt{fdefinition-instruction}s, but it no longer does.  Instead,
+for function calls with a name in the operator position, it now
+generates \texttt{named-call-instruction}s.  These instructions
+(together with other instructions that will ultimately turn into calls
+to known functions; see below) are scanned for in the HIR code, and a
+list of \emph{call-sites} is established.  Otherwise, these
+instructions are not processed at all.  In the final native code, they
+will turn into unconditional jumps, and the target address will be
+filled in by the call-site manager when the code is tied to an
+environment.
 
-We assume that the input of the \texttt{fdefinition-instruction} is a
-constant representing the name of the desired function.  For that
-reason, this transformation must be accomplished before constants are
-hoisted.
-
-We keep an \texttt{equal} hash table of functions that have already
-been hoisted.  The key of the hash table is the name of the function,
-and the value is the lexical location that holds the \emph{function
-  cell} of the function in the global environment.
-
-The \texttt{fdefinition-instruction} is turned into a
-\texttt{car-instruction} with the input being the lexical location
-holding the function cell.  At the top level, we insert a
-\texttt{funcall-instruction} that calls the function that, given a
-function name, returns a function cell.  This function is the
-first-and only argument to the top-level function, so we find it by
-inserting an \texttt{argument-instruction} with a constant input with
-a value of $0$.  The return value of the call is obtained by a
-\texttt{multiple-to-fixed-instruction} immediately following the
-inserted \texttt{funcall-instruction}.%
-\fixme{Check whether we really need to insert a
-  \texttt{multiple-to-fixed} instruction.  It might be possible to
-  insert a \texttt{return-value-instruction} since we know that there
-  is a single return value.}
+Other instructions are treated the same way.  In particular
+\texttt{catch-instruction}s, \texttt{bind-instruction}s,
+\texttt{unwind-instruction}s, \texttt{symbol-value-instruction}s,
+\texttt{set-symbol-value-instruction}s.  When these instructions are
+scanned for in HIR code, the call sites that are established reflect
+the exact kind of instruction.
 
 \subsubsection{Eliminating \texttt{fixed-to-multiple-instruction}s}
 
