@@ -102,7 +102,8 @@
 ;;; Make sure that REGISTER is not attributed to any lexical variable
 ;;; in the predecessor of INSTRUCTION.
 (defun ensure-register-attributions-transferred
-    (predecessor instruction pool register registers-to-avoid)
+    (predecessor instruction pool register
+     &optional (registers-to-avoid (make-register-map register)))
   (let* ((map (make-register-map register))
          (arrangement (output-arrangement predecessor))
          (lexical-locations

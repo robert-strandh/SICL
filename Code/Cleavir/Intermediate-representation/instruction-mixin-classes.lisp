@@ -32,6 +32,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Mixin class for test instructions, i.e., instructions that
+;;; take one input, has no output, and has two successors.
+(defclass test-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Other mixin classes.
 
 ;;; Mixin class for instructions that have side effects so that they

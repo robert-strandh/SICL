@@ -165,6 +165,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; FUNCALL-INSTRUCTION
+;;;
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:funcall-instruction))
+  (setf predecessor
+        (ensure-register-attributions-transferred
+         predecessor
+         instruction
+         (output-pool instruction)
+         *dynamic-environment*))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:funcall-instruction))
+  predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:funcall-instruction) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; INITIALIZE-CLOSURE-INSTRUCTION
 ;;;
 ;;; The INITIALIZE-CLOSURE-INSTRUCTION has no outputs.
@@ -345,6 +368,24 @@
 ;;; way.
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:comparison-mixin) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test instructions.
+;;;
+;;; These instructions use the default method in PROCESS-INPUTS.
+
+;;; These instructions do not have any outputs, so nothing needs to be
+;;; done in PROCESS-OUTPUTS.
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:test-mixin))
+  predecessor)
+
+;;; The arrangement we are given does not need to be modified in any
+;;; way.
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:test-mixin) arrangement)
   arrangement)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

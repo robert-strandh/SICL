@@ -31,6 +31,7 @@
    #:binary-operation-mixin
    #:commutative-mixin
    #:comparison-mixin
+   #:test-mixin
    #:side-effect-mixin #:side-effect-free-p
    #:box-instruction #:unbox-instruction
    #:allocation-mixin #:dynamic-extent-p
