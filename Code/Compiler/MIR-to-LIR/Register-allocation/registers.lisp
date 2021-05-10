@@ -47,6 +47,10 @@
 (deftype register-map ()
   `(array bit (,+register-count+)))
 
+(defvar *dynamic-environment* *rbx*)
+(defvar *argument-count*      *r9*)
+(defvar *static-environment*  *r10*)
+
 (defparameter *caller-saves* #*10110011111100001111111111111111)
 (defparameter *callee-saves* #*01000000000011110000000000000000)
 
