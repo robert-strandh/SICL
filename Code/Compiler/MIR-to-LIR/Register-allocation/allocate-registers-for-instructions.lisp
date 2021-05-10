@@ -724,9 +724,9 @@
                (make-instance 'arr:attribution
                  :lexical-location static-environment-location
                  :stack-slot nil
-                 :register-number 10)
+                 :register-number (register-number *static-environment*))
                (make-instance 'arr:attribution
                  :lexical-location dynamic-environment-location
                  :stack-slot nil
-                 :register-number 1))))
+                 :register-number (register-number *dynamic-environment*)))))
       (process-pair mir (first (cleavir-ir:successors mir))))))
