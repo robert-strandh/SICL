@@ -83,6 +83,26 @@ The reason we need to separate these two operations is that for
 bootstrapping purposes, the two are going to use distinct global
 environments.
 
+\section{Loading code into an environment}
+
+During each bootstrapping phase, several files containing \sysname{}
+source code are \emph{loaded} into a particular global environment.
+Loading is always accomplished by a call to the function
+\texttt{sicl-boot:load-source-file}.  This function has two
+parameters.  The first parameter is a \emph{relative pathname} which
+is a string that designates a pathname relative to the ASDF system
+definition \texttt{sicl}.  The second parameter is a global
+environment into which the code is to be loaded.  Loading a file means
+evaluating the top-level forms in the file according to the semantics
+of \commonlisp{}.
+
+The function \texttt{sicl-boot:load-source-file} starts by converting
+the relative pathname into an absolute pathname.  Then it loops until
+the end of file of the input file, and for each iteration, it reads a
+top-level form as a \emph{concrete syntax tree} or CST.  Finally, it
+calls \texttt{cleavir-cst-to-ast:cst-eval} to evaluate the resulting
+CST.
+
 \section{Viable image}
 \label{sec-bootstrapping-viable-image}
 
