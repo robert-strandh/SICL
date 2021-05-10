@@ -27,13 +27,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin class for comparison instructions, i.e., instructions that
-;;; take two inputs, has no output, and has two successors.
+;;; take two inputs, have no output, and have two successors.
 (defclass comparison-mixin () ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin class for test instructions, i.e., instructions that
-;;; take one input, has no output, and has two successors.
+;;; take one input, have no output, and have two successors.
 (defclass test-mixin () ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
