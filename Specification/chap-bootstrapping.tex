@@ -103,6 +103,15 @@ top-level form as a \emph{concrete syntax tree} or CST.  Finally, it
 calls \texttt{cleavir-cst-to-ast:cst-eval} to evaluate the resulting
 CST.
 
+A method on \texttt{cleavir-cst-to-ast:cst-eval} specialized to the
+\texttt{sicl-boot:client} class calls
+\texttt{cleavir-cst-to-ast:cst-to-ast} and then it looks up the
+function named \texttt{ast-eval} in the environment passed as an
+argument, in order to evaluate the resulting AST.  In other words,
+the effect of loading a file into an environment depends on the
+definition in that environment of the function
+\texttt{sicl-boot:ast-eval}.
+
 \section{Viable image}
 \label{sec-bootstrapping-viable-image}
 
