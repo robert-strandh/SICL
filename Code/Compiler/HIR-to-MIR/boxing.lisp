@@ -118,7 +118,7 @@
                :callee-name 'error
                :inputs (list message-constant-location)
                :outputs '()
-               :successors (make-instance 'cleavir-ir:unreachable-instruction))))
+               :successors (list (make-instance 'cleavir-ir:unreachable-instruction)))))
           (t
            (error "Don't know how to box ~s" element-type)))))
 

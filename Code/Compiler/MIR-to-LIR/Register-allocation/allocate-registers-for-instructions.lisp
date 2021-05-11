@@ -526,6 +526,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; SIGN-EXTEND-INSTRUCTION
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:sign-extend-instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:sign-extend-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; MEMSET1-INSTRUCTION
 
 (defmethod process-outputs
