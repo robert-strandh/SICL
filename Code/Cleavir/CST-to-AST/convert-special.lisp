@@ -102,7 +102,7 @@
   (let ((situations-cst (cst:second cst)))
     (unless (cst:proper-list-p situations-cst)
       (error 'situations-must-be-proper-list :cst situations-cst))
-    ;; Check each situation
+    ;; Check each situation.
     (loop for remaining = situations-cst then (cst:rest remaining)
           until (cst:null remaining)
           do (let* ((situation-cst (cst:first remaining))
@@ -352,12 +352,12 @@
 ;;;
 ;;; The TAGBODY special form always returns NIL.  We generate a PROGN
 ;;; with the TAGBODY-AST and a CONSTANT-AST in it, because the
-;;; TAGBODY-AST (unlike hte TAGBODY special form) does not generate a
+;;; TAGBODY-AST (unlike the TAGBODY special form) does not generate a
 ;;; value.
 
 (defun tagp (item)
   (let ((raw (cst:raw item)))
-    ;; go tags are symbols or integers, per CLHS glossary.
+    ;; GO tags are symbols or integers, per CLHS glossary.
     (or (symbolp raw)
         (integerp raw))))
 
@@ -453,14 +453,14 @@
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
-    ;; FIXME: We only check whether the read-only-p flag is well formed,
-    ;; but we don't use it for anything.
+    ;; FIXME: We only check whether the READ-ONLY-P flag is well
+    ;; formed, but we don't use it for anything.
     (unless (cst:null remaining-cst)
       (let ((read-only-p (cst:raw (cst:first remaining-cst))))
         (if (member read-only-p '(nil t))
             read-only-p
-            ;; The HyperSpec specifically requires a "boolean"
-            ;; and not a "generalized boolean".
+            ;; The HyperSpec specifically requires a "Boolean"
+            ;; and not a "generalized Boolean".
             (error 'read-only-p-must-be-boolean
                    :cst (cst:first remaining-cst)))))
     ;; LOAD-TIME-VALUE forms are treated differently, depending on whether
@@ -578,7 +578,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FUNCTION.
-;;;
 
 (defun convert-named-function (client name-cst environment)
   (let ((info (describe-function client environment (cst:raw name-cst))))
@@ -624,11 +623,11 @@
 ;;;
 ;;; Converting THE.
 
-;;; Given a type in values position (i.e. argument to THE or return
-;;; value of a function type), return three values: a list of REQUIRED
-;;; types, a list of OPTIONAL types, and a REST type, and whether a
-;;; REST was present.  e.g. (values integer &optional cons &rest
-;;; symbol) => (INTEGER), (CONS), SYMBOL, T
+;;; Given a type in values position (i.e., an argument to THE or
+;;; return value of a function type), return three values: a list of
+;;; REQUIRED types, a list of OPTIONAL types, and a REST type, and
+;;; whether a REST was present.  e.g., (values integer &optional cons
+;;; &rest symbol) => (INTEGER), (CONS), SYMBOL, T.
 
 (defun parse-values-type (values-type)
   (let ((original-values-type values-type))
@@ -658,18 +657,19 @@
 ;;; specified in the type, but we would like to represent types more
 ;;; exactly for analysis.
 (defun fudge-values-type (req opt rest restp)
-  ;; to allow too many values, just force a &rest iff unspecified
+  ;; To allow too many values, just force a &rest if and only of
+  ;; unspecified.
   (unless restp (setf rest 't))
-  ;; too few values is more difficult
-  ;; any values not returned by the THE form are considered NIL,
-  ;; so if a "required" type includes NIL it could also be no-value
-  ;; and on the flipside, if a type does NOT include NIL the form
+  ;; Too few values is more difficult.
+  ;; Any values not returned by the THE form are considered NIL,
+  ;; so if a "required" type includes NIL, it could also be no-value.
+  ;; And on the flipside, if a type does NOT include NIL, the form
   ;; must actually return a value for it.
   ;; Therefore, we can just make all types on the end of REQ that
   ;; do not include NIL optional.
   ;; A further complication is that, since this is compile-time,
   ;; some types may not be defined enough for TYPEP to work
-  ;; (e.g. SATISFIES with an undefined function) as mentioned in
+  ;; (e.g., SATISFIES with an undefined function) as mentioned in
   ;; CLHS deftype. Therefore we use SUBTYPEP instead of TYPEP.
   ;; We have, also according to that page, the opportunity to
   ;; signal a warning and ignore the declaration instead, but
@@ -682,19 +682,19 @@
                        (or subtype-p (not valid-p))))
                    req
                    :from-end t))
-         ;; if we found something, we need the next position
-         ;; for the next bit. if we didn't, zero
-         ;; E.g. (values integer list) => lastpos = 1
+         ;; If we found something, we need the next position
+         ;; for the next bit. If we didn't, zero.
+         ;; E.g., (values integer list) => lastpos = 1
          (lastpos (if lastpos (1+ lastpos) 0))
-         ;; and new-opt = (list)
+         ;; And new-opt = (list).
          (new-opt (nthcdr lastpos req))
-         ;; and new-req = (integer)
+         ;; And new-req = (integer).
          (new-req (ldiff req new-opt)))
     (setf req new-req
           opt (append new-opt opt)))
   (values req opt rest))
 
-;;; the-values-components: compose the above two functions.
+;;; The-values-components: compose the above two functions.
 (defun the-values-components (values-type)
   (multiple-value-call #'fudge-values-type
     (parse-values-type values-type)))
