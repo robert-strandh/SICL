@@ -78,7 +78,6 @@
                       :dynamic-environment-location dynamic-environment
                       :callee-name 'make-instance
                       :input double-float-constant-location)))
-             (sicl-compiler:establish-call-site instruction code-object)
              (cleavir-ir:insert-instruction-before
               (make-instance 'cleavir-ir:load-constant-instruction
                 :dynamic-environment-location dynamic-environment
@@ -93,12 +92,12 @@
                 :input (make-instance 'cleavir-ir:immediate-input :value 0)
                 :output object-location)
               instruction)
-             (change-class instruction 'cleavir-ir:nook-write-instruction
-                           :inputs (list object-location
-                                         (make-instance 'cleavir-ir:immediate-input
-                                           :value 3)
-                                         (first (cleavir-ir:inputs instruction)))
-                           :outputs '())))
+             (process-nook-write-instruction
+              instruction
+              object-location
+              (make-instance 'cleavir-ir:immediate-input
+                             :value 3)
+              (first (cleavir-ir:inputs instruction)))))
           ((or (equal element-type '(signed-byte 64))
                (equal element-type '(unsigned-byte 64)))
            (let ((dynamic-environment
@@ -112,12 +111,14 @@
                 :output message-constant-location
                 :location-info
                 (sicl-compiler:ensure-constant
-                 code-object "Can't box ((un)signed-byte 65) yet"))
+                 code-object "Can't box ((un)signed-byte 64) yet"))
               instruction)
              (change-class instruction 'cleavir-ir:named-call-instruction
-                           :dynamic-environment-location dynamic-environment
-                           :callee-name 'error
-                           :inputs (list message-constant-location))))
+               :dynamic-environment-location dynamic-environment
+               :callee-name 'error
+               :inputs (list message-constant-location)
+               :outputs '()
+               :successors (make-instance 'cleavir-ir:unreachable-instruction))))
           (t
            (error "Don't know how to box ~s" element-type)))))
 
@@ -163,16 +164,18 @@
           ((eq element-type 'single-float)
            (unbox-single-float instruction))
           ((eq element-type 'double-float)
-           (change-class instruction 'cleavir-ir:nook-read-instruction
-                         :inputs (list (first (cleavir-ir:inputs instruction))
-                                       (make-instance 'cleavir-ir:immediate-input
-                                         :value 3))))
+           (process-nook-read-instruction
+            instruction
+            (first (cleavir-ir:inputs instruction))
+            (make-instance 'cleavir-ir:immediate-input
+                           :value 3)))
           ((or (equal element-type '(signed-byte 64))
                (equal element-type '(unsigned-byte 64)))
            ;; FIXME: What does it mean to unbox a (signed-byte 64)?
-           (change-class instruction 'cleavir-ir:nook-read-instruction
-                         :inputs (list (first (cleavir-ir:inputs instruction))
-                                       (make-instance 'cleavir-ir:immediate-input
-                                         :value 3))))
+           (process-nook-read-instruction
+            instruction
+            (first (cleavir-ir:inputs instruction))
+            (make-instance 'cleavir-ir:immediate-input
+                           :value 3)))
           (t
            (error "Don't know how to unbox ~s" element-type)))))
