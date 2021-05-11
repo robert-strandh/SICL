@@ -170,12 +170,19 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:funcall-instruction))
+  ;; We need to save all the caller-saves registers, and registers
+  ;; involved in the calling convention such as the argument count,
+  ;; dynamic environment and static environment.  All but the dynamic
+  ;; environment register are already caller-saves, so we only handle
+  ;; the dynamic environment register specially.
   (setf predecessor
         (ensure-register-attributions-transferred
          predecessor
          instruction
          (output-pool instruction)
-         *dynamic-environment*))
+         *dynamic-environment*
+         (register-map-union (make-register-map *dynamic-environment*)
+                             *caller-saves*)))
   (process-inputs-for-call-instruction predecessor instruction))
 
 (defmethod process-outputs
@@ -455,7 +462,6 @@
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:fixnum-divide-instruction) arrangement)
-  (arr:trim-arrangement arrangement (survivors instruction))
   (arr:attribute-register-for-new-lexical-location
    arrangement
    (first (cleavir-ir:outputs instruction))

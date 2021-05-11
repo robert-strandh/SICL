@@ -72,8 +72,7 @@
                     (make-instance 'cleavir-ir:lexical-location
                       :name (gensym)))
                   (object-location
-                    (make-instance 'cleavir-ir:lexical-location
-                      :name (gensym)))
+                    (first (cleavir-ir:outputs instruction)))
                   (call-instruction
                     (make-instance 'cleavir-ir:named-call-instruction
                       :dynamic-environment-location dynamic-environment
@@ -92,13 +91,14 @@
               (make-instance 'cleavir-ir:return-value-instruction
                 :dynamic-environment-location dynamic-environment
                 :input (make-instance 'cleavir-ir:immediate-input :value 0)
-                :output (first (cleavir-ir:outputs instruction)))
+                :output object-location)
               instruction)
              (change-class instruction 'cleavir-ir:nook-write-instruction
                            :inputs (list object-location
                                          (make-instance 'cleavir-ir:immediate-input
                                            :value 3)
-                                         (first (cleavir-ir:inputs instruction))))))
+                                         (first (cleavir-ir:inputs instruction)))
+                           :outputs '())))
           ((or (equal element-type '(signed-byte 64))
                (equal element-type '(unsigned-byte 64)))
            (let ((dynamic-environment
