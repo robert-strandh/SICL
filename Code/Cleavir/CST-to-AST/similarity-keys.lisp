@@ -13,8 +13,8 @@
     (if present-p
         value
         (if (characterp object)
-            ;; For characters, we have to inhibit the behavior of EQUALP to
-            ;; compare them with CHAR-EQUAL.
+            ;; For characters, we have to inhibit the behavior of
+            ;; EQUALP to compare them with CHAR-EQUAL.
             (cons '.character. (char-int object))
             ;; Otherwise, we just use OBJECT itself as the key.
             object))))
@@ -30,13 +30,13 @@
          (name-representation (equal-representation name))
          (package-representation (equal-representation package))
          (equal-keys '()))
-    ;; Symbols with similar name and similar package are similar. Also,
-    ;; apparently uninterned symbols with the same name are similar.  This
-    ;; first key takes care of both cases.
+    ;; Symbols with similar name and similar package are similar.
+    ;; Also, apparently uninterned symbols with the same name are
+    ;; similar.  This first key takes care of both cases.
     (push (list class name-representation package-representation)
           equal-keys)
-    ;; Two interned symbols can also be similar if they are both accessible
-    ;; in the current package at compile time.
+    ;; Two interned symbols can also be similar if they are both
+    ;; accessible in the current package at compile time.
     (unless (null package)
       (push (list class name-representation (equalp-representation *package*))
             equal-keys))
