@@ -19,11 +19,14 @@
      lexical-environment)
   `(funcall ,(lambda (object)
                (cond ((null object)
-                      (env:find-class client (e3 client) 'null))
+                      (env:find-class client (sicl-boot:environment client)
+                                      'null))
                      ((symbolp object)
-                      (env:find-class client (e3 client) 'symbol))
+                      (env:find-class client (sicl-boot:environment client)
+                                      'symbol))
                      ((stringp object)
-                      (env:find-class client (e3 client) 'string))
+                      (env:find-class client (sicl-boot:environment client)
+                                      'string))
                      (t
                       (class-of object))))
             ,(sicl-ast-evaluator:translate-ast
