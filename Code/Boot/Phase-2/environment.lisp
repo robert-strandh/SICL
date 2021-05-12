@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-boot-phase-2)
 
-;;; Environment E1.
+;;; Environment E2.
 ;;;
 ;;; There are no SICL generic functions in this environment.
 ;;;
@@ -20,4 +20,4 @@
   ())
 
 (defclass client (sicl-boot:client)
-  ())
+  ((%e2 :initarg :e2 :reader e2)))
