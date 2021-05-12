@@ -6,7 +6,7 @@
                    (e1 sicl-boot:e1))
       boot
     (change-class e1 'environment
-                  :client (make-instance 'client))
+                  :client (make-instance 'client :environment e1))
     (let ((client (env:client e0)))
       (setf (env:fdefinition client e0 'sicl-boot:ast-eval)
             (lambda (ast)
