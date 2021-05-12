@@ -19,5 +19,4 @@
 (defclass environment (sicl-boot:environment)
   ())
 
-(defclass client (sicl-boot:client)
-  ((%e2 :initarg :e2 :reader e2)))
+(defclass client (sicl-boot:client) ())
