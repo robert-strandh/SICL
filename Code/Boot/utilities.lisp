@@ -78,6 +78,10 @@
     (funcall (env:fdefinition client environment 'ast-eval) ast)))
 
 (defun load-source-file-common (absolute-pathname environment)
+  (if (member absolute-pathname (loaded-files environment)
+              :test #'equal)
+      (warn "Loading file ~a a second time." absolute-pathname)
+      (push absolute-pathname (loaded-files environment)))
   (let ((*package* *package*))
     (sicl-source-tracking:with-source-tracking-stream-from-file
         (input-stream absolute-pathname)
