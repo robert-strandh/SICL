@@ -1,5 +1,14 @@
 (cl:in-package #:sicl-compiler)
 
+(defun check-every-location-is-defined (mir)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (dolist (input (cleavir-ir:inputs instruction))
+       (when (and (typep input 'cleavir-ir:lexical-location)
+                  (null (cleavir-ir:defining-instructions input)))
+         (error "~s is used but never defined" input))))
+   mir))
+
 (defun compile-ast (client ast)
   (eliminate-fdefinition-asts ast)
   (let* ((cleavir-cst-to-ast::*origin* nil)
@@ -43,8 +52,9 @@
         (setf (hir-thunks code-object)
               (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
         (sicl-hir-transformations:eliminate-append-values-instructions hir)
-        (sicl-hir-to-mir:hir-to-mir client code-object)
-        (sicl-mir-to-lir:mir-to-lir client hir)
+        (check-every-location-is-defined hir)
+        ; (sicl-hir-to-mir:hir-to-mir client code-object)
+        ; (sicl-mir-to-lir:mir-to-lir client hir)
         ;; (multiple-value-bind (instructions label-map)
         ;;   (cluster:assemble (sicl-code-generation:generate-code hir2))
         code-object))))
