@@ -7,7 +7,7 @@
                    (e4 sicl-boot:e4))
       boot
     (change-class e3 'environment
-                  :client (make-instance 'client :e3 e3))
+                  :client (make-instance 'client :environment e3))
     (load-source-file "Structure/packages.lisp" e3)
     (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e3)
     (sicl-boot:create-accessor-defgenerics e3)
