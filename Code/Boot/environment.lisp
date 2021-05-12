@@ -2,6 +2,9 @@
 
 (defclass environment (env:run-time-environment)
   ((%name :initarg :name :reader name)
+   ;; This slot holds a list of pathnames naming files that have been
+   ;; loaded into this environment.
+   (%loaded-files :initform '() :accessor loaded-files)
    ;; This slot holds a list of override entries.  Such an entry is a
    ;; CONS cell, where the CAR of the CONS cell is a function name,
    ;; and the CDR of the CONS cell is a FUNCTION CELL (which is
