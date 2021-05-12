@@ -3,5 +3,4 @@
 (defclass environment (sicl-boot:environment)
   ())
 
-(defclass client (sicl-boot:client)
-  ((%e5 :initarg :e5 :reader e5)))
+(defclass client (sicl-boot:client) ())
