@@ -34,7 +34,7 @@
                    (e3 sicl-boot:e3)) 
       boot
     (change-class e2 'environment
-                  :client (make-instance 'client :environment e2))
+                  :client (make-client 'client :environment e2))
     (import-from-host boot)
     (sicl-boot:copy-macro-functions e0 e2)
     (sicl-boot:copy-macro-functions e0 e3)
