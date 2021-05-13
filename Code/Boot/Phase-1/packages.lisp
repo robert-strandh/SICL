@@ -8,5 +8,6 @@
                 #:compile-source-file
                 #:load-source-file
                 #:load-fasl
-                #:copy-macro-functions)
+                #:copy-macro-functions
+                #:make-client)
   (:export #:boot))
