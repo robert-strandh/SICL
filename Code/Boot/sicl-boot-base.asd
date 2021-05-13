@@ -2,8 +2,8 @@
 
 (defsystem #:sicl-boot-base
   :depends-on (#:cleavir-code-utilities
-               #:sicl-environment
                #:sicl-client
+               #:sicl-environment
                #:sicl-ast-to-hir
                #:sicl-hir-evaluator
                #:sicl-hir-to-mir
