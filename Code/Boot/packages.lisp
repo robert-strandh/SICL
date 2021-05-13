@@ -5,7 +5,7 @@
   (:local-nicknames (#:env #:sicl-environment))
   (:export #:environment
            #:name
-           #:client
+           #:client #:make-client
            #:boot
            #:repl
            #:e0 #:e1 #:e2 #:e3 #:e4 #:e5
