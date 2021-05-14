@@ -2,8 +2,10 @@
 
 (defclass environment (env:run-time-environment)
   ((%name :initarg :name :reader name)
-   ;; This slot holds a list of pathnames naming files that have been
-   ;; loaded into this environment.
+   ;; This slot holds an association list.  The key of an element is
+   ;; the pathname naming a file that has been loaded into this
+   ;; environment.  The value of an element is a universal time when
+   ;; the file was loaded.
    (%loaded-files :initform '() :accessor loaded-files)
    ;; This slot holds a list of override entries.  Such an entry is a
    ;; CONS cell, where the CAR of the CONS cell is a function name,
