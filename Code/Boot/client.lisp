@@ -3,9 +3,13 @@
 ;;; An instance of this class is used both as the CLIENT argument in
 ;;; operations that require such an argument, and as an ASDF operation
 ;;; object to pass to ASDF:OPERATE.
-(defclass client (sicl-client:sicl asdf:operation)
+(defclass client
+    (sicl-client:sicl asdf/action:downward-operation asdf/action:selfward-operation)
   ((%environment :initarg :environment :reader environment)
-   (asdf:sideway-operation :initform 'client :allocation :class)))
+   (asdf:selfward-operation :initform '(prepare-op) :allocation :class)))
+
+(defclass prepare-op (asdf/action:upward-operation asdf/action:sideway-operation)
+  ((asdf:sideway-operation :initform 'client :allocation :class)))
 
 (defun make-client (class &rest initargs)
   (let ((client (asdf:make-operation class)))
@@ -24,4 +28,14 @@
 (defmethod asdf:perform ((operation client) (component asdf/system:system))
   (format *trace-output*
           "Done loading system ~s~%"
+          component))
+
+(defmethod asdf:perform ((operation prepare-op) component)
+  (format *trace-output*
+          "Not preparing component ~s~%"
+          component))
+
+(defmethod asdf:perform ((operation prepare-op) (component asdf/system:system))
+  (format *trace-output*
+          "Loading system ~s~%"
           component))
