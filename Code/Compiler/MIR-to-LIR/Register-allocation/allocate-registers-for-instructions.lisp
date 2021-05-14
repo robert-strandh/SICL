@@ -359,6 +359,41 @@
     ((instruction cleavir-ir:multiple-value-call-instruction) arrangement)
   arrangement)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SAVE-VALUES-INSTRUCTION
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:save-values-instruction))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:save-values-instruction))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:save-values-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; RESTORE-VALUES-INSTRUCTION
+;;;
+;;; This instruction does not have any outputs.
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:restore-values-instruction))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:restore-values-instruction))
+  predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:restore-values-instruction) arrangement)
+  arrangement)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Comparison instructions.
