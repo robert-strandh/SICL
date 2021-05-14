@@ -175,14 +175,14 @@
   ;; dynamic environment and static environment.  All but the dynamic
   ;; environment register are already caller-saves, so we only handle
   ;; the dynamic environment register specially.
-  (setf predecessor
-        (ensure-register-attributions-transferred
-         predecessor
-         instruction
-         (output-pool instruction)
-         *dynamic-environment*
-         (register-map-union (make-register-map *dynamic-environment*)
-                             *caller-saves*)))
+  (let ((in-dynamic-environment
+          (arr:lexical-locations-in-register
+           (output-arrangement predecessor)
+           (make-register-map *dynamic-environment*))))
+    (loop for location in in-dynamic-environment
+          do (setf predecessor
+                   (ensure-lexical-location-has-attributed-stack-slot
+                    predecessor instruction location))))
   (process-inputs-for-call-instruction predecessor instruction))
 
 (defmethod process-outputs
@@ -277,16 +277,16 @@
     (predecessor (instruction cleavir-ir:bind-instruction))
   (process-inputs-for-call-instruction predecessor instruction))
 
-;;; The BIND-INSTRUCTION has a single output for the new dynamic
-;;; environment.
+;;; The BIND-INSTRUCTION is supposed to have a single output, but
+;;; HIR-to-MIR processes it by moving that output to an instruction
+;;; after it. So we do not do any allocation from this instruction.
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:bind-instruction))
-  (ensure-one-unattributed
-   predecessor instruction (first (cleavir-ir:outputs instruction))))
+  predecessor)
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:bind-instruction) arrangement)
-  (compute-output-arrangement-default instruction arrangement))
+  arrangement)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
