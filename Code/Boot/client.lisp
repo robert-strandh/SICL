@@ -46,3 +46,26 @@
   (format *trace-output*
           "Loading system ~s~%"
           component))
+
+(defmethod asdf/action:compute-action-stamp
+    (plan (operation prepare-op) component &key just-done)
+  (if just-done
+      (values (get-universal-time) t)
+      (values nil nil)))
+
+(defmethod asdf/action:compute-action-stamp
+    (plan (operation client) component &key just-done)
+  (if just-done
+      (values (get-universal-time) t)
+      (values nil nil)))
+
+(defmethod asdf/action:compute-action-stamp
+    (plan (operation client) (component asdf/lisp-action:cl-source-file) &key just-done)
+  (if just-done
+      (values (get-universal-time) t)
+      (let* ((files (loaded-files (environment operation)))
+             (path (asdf/component:component-pathname component))
+             (entry (assoc path files :test #'equal)))
+        (if (null entry)
+            (values nil nil)
+            (values (cdr entry) t)))))
