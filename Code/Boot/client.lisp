@@ -25,6 +25,13 @@
           "Not acting upon component ~s~%"
           component))
 
+(defmethod asdf:perform
+    ((operation client) (component asdf/lisp-action:cl-source-file))
+  (format *trace-output* "Loading ~s~%" component)
+  (load-source-file-common
+   (asdf/component:component-pathname component)
+   (environment operation)))
+
 (defmethod asdf:perform ((operation client) (component asdf/system:system))
   (format *trace-output*
           "Done loading system ~s~%"
