@@ -2,7 +2,7 @@
 
 (defun load-alexandria (e5)
   (load-source-file "Data-and-control-flow/psetq-defmacro.lisp" e5)
-  (load-asdf-system '#:alexandria e5))
+  (new-load-asdf-system '#:alexandria e5))
 
 (defun load-clostrum (e5)
   ;; FIXME: undefine all environment functions here.
@@ -60,8 +60,8 @@
     (load-source-file "Data-and-control-flow/values-define-setf-expander.lisp" e5)
     (load-source-file "Evaluation-and-compilation/compiler-macro-function-defun.lisp" e5)
     (load-source-file "Evaluation-and-compilation/setf-compiler-macro-function-defun.lisp" e5)
-    (load-asdf-system '#:sicl-hash-table-base e5)
-    (load-asdf-system '#:sicl-hash-table e5)
+    (load-source-file "CLOS/with-accessors-defmacro.lisp" e5)
+    (new-load-asdf-system '#:sicl-hash-table e5)
     (import-functions-from-host '(intern) e5)
     (load-alexandria e5)
     (load-clostrum e5)
