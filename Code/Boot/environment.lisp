@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-boot)
 
+(defgeneric loaded-files (environment))
+
+(defgeneric (setf loaded-files) (loaded-files environment))
+
 (defclass environment (env:run-time-environment)
   ((%name :initarg :name :reader name)
    ;; This slot holds an association list.  The key of an element is
