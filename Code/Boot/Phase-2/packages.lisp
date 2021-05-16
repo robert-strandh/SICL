@@ -7,6 +7,5 @@
                 #:load-source-file
                 #:import-functions-from-host
                 #:define-error-functions
-                #:with-intercepted-function-cells
-                #:make-client)
+                #:with-intercepted-function-cells)
   (:export #:boot))

@@ -19,7 +19,7 @@
    (%overridden-function-cells
     :initform '()
     :accessor overridden-function-cells))
-  (:default-initargs :client (make-client 'client)))
+  (:default-initargs :client (make-instance 'client)))
 
 (defmethod trucler:restrict-for-macrolet-expander
     (client (environment environment))

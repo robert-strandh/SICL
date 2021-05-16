@@ -9,9 +9,6 @@
 (defclass prepare-op (asdf/action:upward-operation asdf/action:sideway-operation)
   ((asdf:sideway-operation :initform 'load-op :allocation :class)))
 
-(defun make-client (class &rest initargs)
-  (apply #'make-instance class initargs))
-
 (defgeneric loaded-files (environment))
 
 (defgeneric (setf loaded-files) (loaded-files environment))
