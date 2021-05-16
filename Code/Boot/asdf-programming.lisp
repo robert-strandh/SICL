@@ -26,9 +26,8 @@
           component))
 
 (defmethod asdf:perform ((operation prepare-op) component)
-  (format *trace-output*
-          "Not preparing component ~s~%"
-          component))
+  (declare (ignore component))
+  nil)
 
 (defmethod asdf:perform ((operation prepare-op) (component asdf/system:system))
   (format *trace-output*
