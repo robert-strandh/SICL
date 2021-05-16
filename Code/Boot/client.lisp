@@ -25,12 +25,14 @@
           "Not acting upon component ~s~%"
           component))
 
+(defvar *environment*)
+
 (defmethod asdf:perform
     ((operation client) (component asdf/lisp-action:cl-source-file))
   (format *trace-output* "Loading ~s~%" component)
   (load-source-file-common
    (asdf/component:component-pathname component)
-   (environment operation)))
+   *environment*))
 
 (defmethod asdf:perform ((operation client) (component asdf/system:system))
   (format *trace-output*
@@ -63,7 +65,7 @@
     (plan (operation client) (component asdf/lisp-action:cl-source-file) &key just-done)
   (if just-done
       (values (get-universal-time) t)
-      (let* ((files (loaded-files (environment operation)))
+      (let* ((files (loaded-files *environment*))
              (path (asdf/component:component-pathname component))
              (entry (assoc path files :test #'equal)))
         (if (null entry)
