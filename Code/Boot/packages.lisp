@@ -15,6 +15,7 @@
            #:compile-source-file
            #:load-source-file
            #:load-asdf-system
+           #:new-load-asdf-system
            #:ast-eval
            #:load-fasl
            #:copy-macro-functions
