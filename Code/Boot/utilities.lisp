@@ -80,9 +80,13 @@
 (defun load-source-file-common (absolute-pathname environment)
   (if (null (assoc absolute-pathname (loaded-files environment)
                    :test #'equal))
-      (push (cons absolute-pathname (get-universal-time))
-            (loaded-files environment))
-      (warn "Loading file ~a a second time." absolute-pathname))
+      (progn (push (cons absolute-pathname (get-universal-time))
+                   (loaded-files environment))
+             (format *trace-output*
+                     "Loading file ~s into ~a~%"
+                     absolute-pathname
+                     (name environment)))
+      (warn "Loading file ~s a second time." absolute-pathname))
   (let ((*package* *package*))
     (sicl-source-tracking:with-source-tracking-stream-from-file
         (input-stream absolute-pathname)
@@ -93,17 +97,9 @@
             do (cleavir-cst-to-ast:cst-eval client cst environment)))))
 
 (defun load-source-file-absolute (absolute-pathname environment)
-  (format *trace-output*
-          "Loading file ~a into ~a~%"
-          absolute-pathname
-          (name environment))
   (load-source-file-common absolute-pathname environment))
 
 (defun load-source-file (relative-pathname environment)
-  (format *trace-output*
-          "Loading file ~a into ~a~%"
-          relative-pathname
-          (name environment))
   (let ((absolute-pathname
           (source-relative-to-absolute-pathname relative-pathname)))
     (load-source-file-common absolute-pathname environment)))
@@ -116,7 +112,7 @@
 
 (defun asdf-system-absolute-file-names (asdf-system-name)
   (loop for file in (asdf-system-files asdf-system-name)
-        collect (namestring (asdf/component:component-pathname file))))
+        collect (asdf/component:component-pathname file)))
 
 (defun load-asdf-system (asdf-system-name environment)
   (loop for filename in (asdf-system-absolute-file-names asdf-system-name)
