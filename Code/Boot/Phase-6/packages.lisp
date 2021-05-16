@@ -8,5 +8,6 @@
                 #:define-error-functions
                 #:load-source-file
                 #:load-asdf-system
+                #:new-load-asdf-system
                 #:with-intercepted-function-cells)
   (:export #:boot))
