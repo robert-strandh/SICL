@@ -74,4 +74,4 @@
     (load-alexandria e5)
     (load-clostrum e5)
     (load-acclimation e5)
-    (load-trucler e5)))
+    (new-load-asdf-system '#:trucler-reference e5)))
