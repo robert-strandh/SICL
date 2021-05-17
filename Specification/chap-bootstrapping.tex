@@ -123,6 +123,15 @@ fast, but it does not produce intermediate code, so it can not be used
 to create target native instructions.  Instead, it is used in
 environments where we need to only \emph{evaluate} the code.
 
+In environment $e_5$, on the other hand, \texttt{sicl-boot:ast-eval}
+is defined to call the HIR evaluator instead.  The way it does this,
+is that it first translates the AST to a code object containing HIR
+code.  It then calls the function
+\texttt{sicl-compiler:tied-code-object} to tie the code object to the
+environment.  This call results in the HIR code being translated to a
+graph of \emph{thunks}, where each thunk is a host function that, when
+called executes the effect of a single HIR instruction.
+
 \section{Viable image}
 \label{sec-bootstrapping-viable-image}
 
