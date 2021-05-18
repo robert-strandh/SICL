@@ -46,6 +46,7 @@
     (load-source-file "Evaluation-and-compilation/compiler-macro-function-defun.lisp" e5)
     (load-source-file "Evaluation-and-compilation/setf-compiler-macro-function-defun.lisp" e5)
     (load-source-file "CLOS/with-accessors-defmacro.lisp" e5)
+    (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)
     (setf (env:fdefinition (env:client e5) e5 'proclaim)
           (constantly nil))
     (setf (env:fdefinition (env:client e5) e5 'documentation)
@@ -57,7 +58,6 @@
     (enable-deftype e5)
     (enable-printing e5)
     (enable-conditions e5)
-    (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)
     ;; Fake this macro for now
     (setf (env:macro-function (env:client e5) e5 'with-standard-io-syntax)
           (lambda (form environment)
