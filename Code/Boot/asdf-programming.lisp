@@ -57,7 +57,7 @@
             (values nil nil)
             (values (cdr entry) t)))))
 
-(defun new-load-asdf-system (asdf-system-name environment)
+(defun load-asdf-system (asdf-system-name environment)
   (let ((*environment* environment))
     (asdf:operate (asdf:make-operation 'load-op)
                   (asdf:find-system asdf-system-name))))

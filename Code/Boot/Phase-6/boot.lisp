@@ -2,7 +2,7 @@
 
 (defun load-alexandria (e5)
   (load-source-file "Data-and-control-flow/psetq-defmacro.lisp" e5)
-  (new-load-asdf-system '#:alexandria e5))
+  (load-asdf-system '#:alexandria e5))
 
 (defun load-clostrum (e5)
   ;; FIXME: undefine all environment functions here.
@@ -22,7 +22,7 @@
   (setf (env:special-variable
          (env:client e5) e5 'clostrum-implementation::*compilation-operators* t)
         '())
-  (new-load-asdf-system '#:clostrum/virtual e5))
+  (load-asdf-system '#:clostrum/virtual e5))
 
 (defun boot (boot)
   (format *trace-output* "Start phase 6~%")
@@ -64,9 +64,9 @@
     (import-functions-from-host '(intern) e5)
     (enable-deftype e5)
     (enable-conditions e5)
-    (new-load-asdf-system '#:sicl-hash-table e5)
+    (load-asdf-system '#:sicl-hash-table e5)
     (load-alexandria e5)
     (enable-printing e5)
     (load-clostrum e5)
-    (new-load-asdf-system '#:acclimation e5)
-    (new-load-asdf-system '#:trucler-reference e5)))
+    (load-asdf-system '#:acclimation e5)
+    (load-asdf-system '#:trucler-reference e5)))
