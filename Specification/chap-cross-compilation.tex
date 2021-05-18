@@ -4,16 +4,17 @@
 In this chapter, we discuss issues specific to \emph{cross
   compilation}, i.e. when a compiler produces code for a system other
 than the host \commonlisp{} system it runs in.  For general compilation
-topics, see \refChap{chap-compiler}.
+topics, see \refChap{chap-compiler}.  A cross compiler must necessary
+create some external representation, like  a \emph{file}, containing
+the result of the compilation, and that file must be readable on the
+target system.  Most often, it will be the \emph{fasl} format of the
+target.
 
 \section{General issues with cross compilation}
 
 While it may seem obvious and straightforward (though perhaps not
 easy) to write a cross compiler for \commonlisp{}, there are some minor issues
 that have to be considered. 
-
-Perhaps the most important extrinsic compiler is the \emph{extrinsic
-  file compiler}.
 
 We exclude the use of the \texttt{read} function of the host
 environment because it can cause some problem.%
