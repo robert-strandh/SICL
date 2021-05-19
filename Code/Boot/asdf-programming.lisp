@@ -15,7 +15,6 @@
 
 (defmethod asdf:perform
     ((operation load-op) (component asdf/lisp-action:cl-source-file))
-  (format *trace-output* "Loading ~s~%" component)
   (load-source-file-common
    (asdf/component:component-pathname component)
    *environment*))
