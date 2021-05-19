@@ -39,9 +39,6 @@
   (let ((client (env:client environment)))
     (funcall (env:fdefinition client environment 'ast-eval) ast)))
 
-(defun load-fasl (relative-pathname environment)
-  (ast-eval (read-fasl relative-pathname) environment))
-
 (defun cst-to-ast (cst environment file-compilation-semantics-p)
   (let ((cleavir-cst-to-ast::*origin* nil)
         (client (env:client environment)))

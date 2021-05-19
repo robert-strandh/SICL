@@ -15,7 +15,6 @@
            #:load-source-file
            #:load-asdf-system
            #:ast-eval
-           #:load-fasl
            #:copy-macro-functions
            #:define-environment-functions
            #:create-accessor-defgenerics

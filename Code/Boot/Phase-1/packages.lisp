@@ -6,6 +6,5 @@
   (:import-from #:sicl-boot
                 #:host-load
                 #:load-source-file
-                #:load-fasl
                 #:copy-macro-functions)
   (:export #:boot))
