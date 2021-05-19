@@ -19,22 +19,6 @@
 (defun source-relative-to-absolute-pathname (relative-pathname)
   (asdf:system-relative-pathname '#:sicl relative-pathname))
 
-(defun fasl-relative-to-absolute-pathname (relative-pathname)
-  (let ((augmented-relative-pathname
-          (concatenate 'string "ASTs/" relative-pathname)))
-    (asdf:system-relative-pathname
-     '#:sicl-boot augmented-relative-pathname)))
-
-(defun source-to-fasl-pathname (pathname)
-  (let* ((dot-position (position #\. pathname :from-end t))
-         (prefix (subseq pathname 0 dot-position)))
-    (concatenate 'string prefix ".fasl")))
-
-(defun read-fasl (relative-pathname)
-  (let ((absolute-pathname
-          (fasl-relative-to-absolute-pathname relative-pathname)))
-    (cleavir-io:read-model absolute-pathname '(v0))))
-
 (defun ast-eval (ast environment)
   (let ((client (env:client environment)))
     (funcall (env:fdefinition client environment 'ast-eval) ast)))
