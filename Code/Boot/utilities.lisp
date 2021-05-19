@@ -104,30 +104,6 @@
           (source-relative-to-absolute-pathname relative-pathname)))
     (load-source-file-common absolute-pathname environment)))
 
-(defun compile-source-file (relative-pathname environment)
-  (let ((absolute-pathname
-          (source-relative-to-absolute-pathname relative-pathname)))
-    (sicl-source-tracking:with-source-tracking-stream-from-file
-        (input-stream absolute-pathname)
-      (let* ((evaluation-environment
-               (make-instance 'env:evaluation-environment
-                 :parent environment))
-             (compilation-environment
-               (make-instance 'env:compilation-environment
-                 :parent evaluation-environment))
-             (asts (loop with eof-marker = (list nil)
-                         for cst = (eclector.concrete-syntax-tree:read
-                                    input-stream nil eof-marker)
-                         until (eq cst eof-marker)
-                         collect (cst-to-ast cst compilation-environment t)))
-             (ast (make-instance 'cleavir-ast:progn-ast
-                    :form-asts asts))
-             (output-relative-pathname
-               (source-to-fasl-pathname relative-pathname)))
-        (ensure-directories-exist
-         (fasl-relative-to-absolute-pathname output-relative-pathname))
-        (write-fasl output-relative-pathname ast)))))
-
 (defun copy-macro-functions (from-environment to-environment)
   (let ((table (make-hash-table :test #'eq))
         (client (env:client from-environment)))

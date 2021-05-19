@@ -12,7 +12,6 @@
            #:*e0* #:*e1* #:*e2* #:*e3* #:*e4* #:*e5*
            #:import-functions-from-host
            #:define-error-functions
-           #:compile-source-file
            #:load-source-file
            #:load-asdf-system
            #:ast-eval
