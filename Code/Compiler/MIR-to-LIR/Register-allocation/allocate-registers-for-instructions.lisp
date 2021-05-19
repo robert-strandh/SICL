@@ -49,9 +49,12 @@
 ;;; INSTRUCTIONS in order to free up a register in CANDIDATES, so that
 ;;; it can then be attributed to the instruction output in the output
 ;;; arrangement.
-(defun ensure-one-unattributed (predecessor instruction lexical-location)
+(defun ensure-one-unattributed (predecessor instruction lexical-location
+                                &key (disallowed-registers (make-register-map)))
   (let* ((pool (output-pool instruction))
-         (candidates (determine-candidates lexical-location pool)))
+         (candidates (register-map-difference
+                      (determine-candidates lexical-location pool)
+                      disallowed-registers)))
     (ensure-unattributed-registers
      predecessor instruction (output-pool predecessor) candidates 1)))
 
@@ -735,7 +738,8 @@
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:return-value-instruction))
   (ensure-one-unattributed
-   predecessor instruction (first (cleavir-ir:outputs instruction))))
+   predecessor instruction (first (cleavir-ir:outputs instruction))
+   :disallowed-registers *return-values*))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:return-value-instruction) arrangement)

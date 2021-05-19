@@ -4,7 +4,6 @@
   `(defparameter ,variable
      (make-instance 'cleavir-ir:register-location :name ,name)))
 
-(make-register *rax "RAX")
 (make-register *rax* "RAX")
 (make-register *rbx* "RBX")
 (make-register *rcx* "RCX")
@@ -51,8 +50,9 @@
 (defvar *argument-count*      *r9*)
 (defvar *static-environment*  *r10*)
 
-(defparameter *caller-saves* #*10110011111100001111111111111111)
-(defparameter *callee-saves* #*01000000000011110000000000000000)
+(defparameter *caller-saves*  #*10110011111100001111111111111111)
+(defparameter *callee-saves*  #*01000000000011110000000000000000)
+(defparameter *return-values* #*10110011010000000000000000000000)
 
 (defun register-number-is-callee-saves-p (register-number)
   (= (bit *callee-saves* register-number) 1))
