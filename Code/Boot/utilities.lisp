@@ -35,11 +35,6 @@
           (fasl-relative-to-absolute-pathname relative-pathname)))
     (cleavir-io:read-model absolute-pathname '(v0))))
 
-(defun write-fasl (relative-pathname ast)
-  (let ((absolute-pathname
-          (fasl-relative-to-absolute-pathname relative-pathname)))
-    (cleavir-io:write-model absolute-pathname "V0" ast)))
-
 (defun ast-eval (ast environment)
   (let ((client (env:client environment)))
     (funcall (env:fdefinition client environment 'ast-eval) ast)))
