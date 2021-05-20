@@ -30,9 +30,10 @@ reader, which can be customized in many ways.  In particular, it
 allows \emph{source tracking}, i.e. it can associate file position
 with every expression in the file.
 
-Clearly, since we are talking about the \emph{file compiler} we face
-the same restrictions concerning literal objects as a native file
-compiler does.%-----------------------------------------------------
+If the cross compiler generates \emph{fasl} files, then the compiler
+is necessarily a \emph{file compiler}, and we face the same
+restrictions concerning literal objects as a native file compiler
+does.%---------------------------------------------------------
 \footnote{See Section 3.2.4 in the \hs{}.} %--------------------
 In addition, though, there are some restrictions due to differences
 between systems that the \hs{} explicitly allows.  
