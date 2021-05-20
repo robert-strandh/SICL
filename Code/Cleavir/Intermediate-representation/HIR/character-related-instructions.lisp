@@ -8,7 +8,8 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass characterp-instruction (instruction multiple-successors-mixin)
+(defclass characterp-instruction
+    (instruction multiple-successors-mixin test-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

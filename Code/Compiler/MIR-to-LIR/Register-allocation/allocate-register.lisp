@@ -61,12 +61,93 @@
                    (unattribute-any-register result instruction pool candidates)))
     result))
 
-(defun determine-candidates (lexical-location pool)
+;;; Return T when the estimated distance to use of LEXICAL-LOCATION is
+;;; lower than that of any location attributed to a register among the CANDIDATES.
+(defun should-transfer-p (lexical-location pool arrangement candidates)
+  (when (plusp (arr:unattributed-register-count arrangement candidates))
+    (return-from should-transfer-p t))
+  (let ((potential-victims
+          (arr:lexical-locations-in-register arrangement candidates)))
+    (loop with location-distance = (augmented-distance lexical-location pool)
+          for potential-victim
+            in potential-victims
+          for victim-distance = (augmented-distance potential-victim pool)
+            thereis (> victim-distance location-distance))))
+
+(defun filter-for-lexical-location (lexical-location)
+  (let ((type (cleavir-ir:element-type lexical-location)))
+    (if (member type '(single-float double-float))
+        *xmm*
+        *gpr*)))
+
+(defun determine-candidates (lexical-location pool
+                             &key (filter
+                                   (filter-for-lexical-location lexical-location)))
   (let* ((pool-item (find lexical-location pool
                           :key #'lexical-location :test #'eq)))
     (if (or (null pool-item) (< (call-probability pool-item) 3))
-        *caller-saves*
-        *callee-saves*)))
+        (register-map-intersection *caller-saves* filter)
+        (let ((register-map
+                (register-map-intersection *callee-saves* filter)))
+          (if (register-map-empty-p register-map)
+              (register-map-intersection *caller-saves* filter)
+              register-map)))))
+
+(defun lexical-location-in-register-p (arrangement lexical-location register)
+  (arr:lexical-location-in-register-p
+   arrangement
+   lexical-location
+   (register-number register)))
+
+;;; Make sure that REGISTER is not attributed to any lexical variable
+;;; in the predecessor of INSTRUCTION.
+(defun ensure-register-attributions-transferred
+    (predecessor instruction pool register
+     &optional (registers-to-avoid (make-register-map register)))
+  (let* ((map (make-register-map register))
+         (arrangement (output-arrangement predecessor))
+         (lexical-locations
+           (arr:lexical-locations-in-register arrangement map)))
+    ;; We do nothing if the register is already unattributed.
+    (when (null lexical-locations)
+      (return-from ensure-register-attributions-transferred predecessor))
+    (let* ((location (first lexical-locations))
+           (candidates
+             (register-map-difference (determine-candidates location pool)
+                                      registers-to-avoid)))
+      ;; If this location has a higher EDU than any other which is
+      ;; attributed, spill this location.
+      (unless (should-transfer-p location pool arrangement candidates)
+        (return-from ensure-register-attributions-transferred
+          (spill predecessor instruction location)))
+      ;; Else, spill some other register and transfer the location to
+      ;; that register.
+      (when (zerop (arr:unattributed-register-count arrangement candidates))
+        ;; There are no unattributed registers, so spill one.
+        (setf predecessor
+              (ensure-unattributed-registers predecessor
+                                             instruction
+                                             pool
+                                             candidates
+                                             1)
+              arrangement (output-arrangement predecessor)))
+      ;; There is now an unattributed register, so use that register.
+      (let ((new-arrangement (arr:copy-arrangement arrangement))
+            (assignment
+              (make-instance 'cleavir-ir:assignment-instruction
+                             :input location
+                             :output location)))
+        (arr:reattribute-register
+         new-arrangement
+         location
+         candidates)
+        (setf (output-arrangement assignment) new-arrangement
+              (input-arrangement  assignment) arrangement)
+        (cleavir-ir:insert-instruction-between
+         assignment
+         predecessor
+         instruction)
+        assignment))))
 
 ;;; Ensure that LEXICAL-LOCATION has an attributed register.  We
 ;;; account for two possibilities.  If LEXICAL-LOCATION already has an

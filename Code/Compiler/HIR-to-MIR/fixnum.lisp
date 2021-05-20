@@ -43,3 +43,6 @@
      instruction)
     (change-class instruction 'cleavir-ir:unsigned-sub-instruction
                   :inputs (list temp one))))
+
+(defmethod process-instruction
+    (client (instruction cleavir-ir:float-add-instruction) code-object))

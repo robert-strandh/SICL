@@ -7,9 +7,13 @@
      (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
 
-(defmacro define-simple-two-arg-float-instruction (name)
+;;; While x86-64 specifies only two-address binary instructions, we
+;;; intend to make use of three-address binary instructions provided
+;;; by the AVX extension.
+(defmacro define-simple-two-arg-float-instruction
+    (name &key (additional-superclasses '()))
   `(progn
-     (defclass ,name (instruction one-successor-mixin)
+     (defclass ,name (instruction one-successor-mixin ,@additional-superclasses)
        ((%subtype :initarg :subtype :reader subtype)))
      (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
@@ -29,7 +33,8 @@
 ;;; unboxed elements of the given SUBTYPE. Its single
 ;;; unboxed output is of that same type as well.
 
-(define-simple-two-arg-float-instruction float-add-instruction)
+(define-simple-two-arg-float-instruction float-add-instruction
+  :additional-superclasses (commutative-mixin))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -49,7 +54,8 @@
 ;;; unboxed elements of the given SUBTYPE. Its single
 ;;; unboxed output is of that same type as well.
 
-(define-simple-two-arg-float-instruction float-mul-instruction)
+(define-simple-two-arg-float-instruction float-mul-instruction
+  :additional-superclasses (commutative-mixin))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

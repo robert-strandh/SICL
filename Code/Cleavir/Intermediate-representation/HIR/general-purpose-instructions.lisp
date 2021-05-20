@@ -284,7 +284,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass consp-instruction (instruction multiple-successors-mixin)
+(defclass consp-instruction (instruction multiple-successors-mixin test-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -295,7 +295,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass fixnump-instruction (instruction multiple-successors-mixin)
+(defclass fixnump-instruction (instruction multiple-successors-mixin test-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -309,7 +309,8 @@
 ;;; This instruction can be used by clients that represent short
 ;;; floats as immediate objects.
 
-(defclass short-float-p-instruction (instruction multiple-successors-mixin)
+(defclass short-float-p-instruction
+    (instruction multiple-successors-mixin test-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -323,7 +324,8 @@
 ;;; This instruction can be used by clients that represent single
 ;;; floats as immediate objects.
 
-(defclass single-float-p-instruction (instruction multiple-successors-mixin)
+(defclass single-float-p-instruction
+    (instruction multiple-successors-mixin test-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -337,7 +339,8 @@
 ;;; This instruction can be used by clients that have unique tag bits
 ;;; for representing standard objects.
 
-(defclass standard-object-p-instruction (instruction multiple-successors-mixin)
+(defclass standard-object-p-instruction
+    (instruction multiple-successors-mixin test-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

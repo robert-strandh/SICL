@@ -21,4 +21,5 @@
     result))
 
 (defmethod mir-to-lir (client mir)
-  nil)
+  (mapc #'sicl-register-allocation:do-register-allocation
+        (sicl-hir-to-mir:gather-enter-instructions mir)))

@@ -20,7 +20,7 @@
          (unboxed (if (cleavir-ast:boxed-p ast)
                       (results context)
                       ;; need an additional boxing step.
-                      (list (make-temp))))
+                      (list (make-temp type))))
          (succ (if (cleavir-ast:boxed-p ast)
                    (successors context)
                    (list (box-for-type type unboxed context)))))

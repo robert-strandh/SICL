@@ -23,14 +23,14 @@
                  (setf (cleavir-ir:inputs instruction) (list *r11* *r12*)))
           (setf (cleavir-ir:inputs instruction)
                 (cons *r11* (rest (cleavir-ir:inputs instruction))))))
-    (loop for successor in (cleavir-ir:successors instruction)
-          do (insert-memset-between
-              instruction
-              successor
-              *r11*
-              (first (cleavir-ir:outputs instruction))
-              lexical-locations))
-    (setf (cleavir-ir:outputs instruction) (list *r11*)))
+  (loop for successor in (cleavir-ir:successors instruction)
+        do (insert-memset-between
+            instruction
+            successor
+            *r11*
+            (first (cleavir-ir:outputs instruction))
+            lexical-locations))
+  (setf (cleavir-ir:outputs instruction) (list *r11*)))
 
 (defmethod process-instruction
     ((instruction cleavir-ir:unsigned-add-instruction) lexical-locations)

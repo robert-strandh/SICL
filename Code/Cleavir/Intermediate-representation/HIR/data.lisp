@@ -58,18 +58,24 @@
 ;;; for any lexical variable.  
 
 (defclass lexical-location (datum)
-  ((%name :initarg :name :reader name)))
+  ((%name :initarg :name :reader name)
+   (%element-type :initarg :element-type
+                  :initform 't
+                  :reader element-type)))
 
-(defun make-lexical-location (name)
-  (make-instance 'lexical-location :name name))
+(defun make-lexical-location (name &optional (element-type 't))
+  (make-instance 'lexical-location
+                 :name name
+                 :element-type element-type))
 
 (defmethod print-object ((object lexical-location) stream)
   (print-unreadable-object (object stream :type t)
     (format stream "~a" (name object))))
 
 ;;; Generate a new lexical location
-(defun new-temporary (&optional (thing nil thing-p))
-  (make-lexical-location (if thing-p (gensym thing) (gensym))))
+(defun new-temporary (&optional (thing nil thing-p) (element-type 't))
+  (make-lexical-location (if thing-p (gensym thing) (gensym))
+                         element-type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

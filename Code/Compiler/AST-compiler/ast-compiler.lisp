@@ -1,5 +1,14 @@
 (cl:in-package #:sicl-compiler)
 
+(defun check-every-location-is-defined (mir)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (dolist (input (cleavir-ir:inputs instruction))
+       (when (and (typep input 'cleavir-ir:lexical-location)
+                  (null (cleavir-ir:defining-instructions input)))
+         (error "~s is used but never defined" input))))
+   mir))
+
 (defun compile-ast (client ast)
   (eliminate-fdefinition-asts ast)
   (let* ((cleavir-cst-to-ast::*origin* nil)
@@ -18,6 +27,7 @@
                  :ir hir)))
         (adjust-array (constants code-object) load-time-value-count
                       :fill-pointer t)
+        ; (check-every-location-is-defined hir)
         (cleavir-partial-inlining:do-inlining hir)
         (sicl-argument-processing:process-parameters hir)
         (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
