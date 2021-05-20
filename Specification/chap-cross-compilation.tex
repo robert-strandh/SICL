@@ -3,12 +3,13 @@
 
 In this chapter, we discuss issues specific to \emph{cross
   compilation}, i.e. when a compiler produces code for a system other
-than the host \commonlisp{} system it runs in.  For general compilation
-topics, see \refChap{chap-compiler}.  A cross compiler must necessary
-create some external representation, like  a \emph{file}, containing
-the result of the compilation, and that file must be readable on the
-target system.  Most often, it will be the \emph{fasl} format of the
-target.
+than the host \commonlisp{} system it runs in.  For general
+compilation topics, see \refChap{chap-compiler}.  A cross compiler
+must necessarily create some external representation, like a
+\emph{file}, containing the result of the compilation, and that file
+must be readable on the target system.  This file can be in the form
+of a target \emph{fasl} file, or, as is the case with \sysname{}
+bootstrapping, an entire target executable file.
 
 \section{General issues with cross compilation}
 
