@@ -25,7 +25,7 @@
     (cleavir-ast:map-ast-depth-first-preorder
      (lambda (node)
        (when (typep node 'cleavir-ast:load-time-value-ast)
-	 (push node result)))
+         (push node result)))
      ast)
     result))
 
@@ -47,10 +47,9 @@
                            :element-type t
                            :simple-p t
                            :boxed-p t)
-	  do (change-class load-time-value-ast 'cleavir-ast:load-constant-ast
+          do (change-class load-time-value-ast 'cleavir-ast:load-constant-ast
                            :location-info count)
              (push aset-ast form-asts)
           finally (return (values (make-instance 'cleavir-ast:progn-ast
                                     :form-asts form-asts)
                                   count)))))
-                  
