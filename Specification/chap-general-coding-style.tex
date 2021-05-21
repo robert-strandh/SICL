@@ -48,22 +48,46 @@ possible enlightening answer to such a question.
 
 \section{Width of a line of code}
 
-Horizontal space is a precious resource that should not be wasted.
-The width of a line should preferably not exceed 80 characters.  This
-limit used to be hard, because some printers or printer drivers would
-truncate longer lines.  Since it is less common to print code these
-days, the limit is now soft.  The purpose of keeping lines somewhat
-short is so that it is possible on a reasonable monitor to display two
-documents side by side.  One document is typically a \commonlisp{}
-source file, and the other document is typically the buffer containing
-interactions with the \commonlisp{} system.
+The purpose of this section is to determine the preferred maximum
+number of characters in a line of program text in a way that:
+\begin{itemize}
+\item the width of a text window can be chosen so that few or no lines
+  are wrapped, and
+\item as much program text as possible can be presented to the
+  programmer on the kind of screen used for programming.
+\end{itemize}
 
-The systematic use of long lines makes the practice of displaying two
-documents side by side impossible, or at least impractical.  If a
-single monitor is used, the programmer then has to flip back and forth
-between the source code and the interaction loop.  When two monitors
-are used, the effect is to waste half a monitor that could otherwise
-be used for displaying documentation or something else.
+There is no general way of determining an optimal width of a line of
+program text, because the value depends on factors that are individual
+to the programmer as well as to the installation used for programming.
+Some such factors are:
+
+\begin{itemize}
+\item Font size.  Some programmers can comfortably view very small
+  fonts; others require bigger ones.
+\item Size of monitor, both in pixels and in physical dimensions.
+\item Viewing distance.
+\item The condition of the eyes of the programmer.
+\end{itemize}
+
+However, we need to establish some kind of convention without taking
+such factors into account.
+
+Clearly, if we make the maximum width of a line too small, then
+compound forms most more often be folded over several lines, thereby
+increasing the number of lines of code and decreasing the total amount
+of program text that can be viewed with a particular window height.
+
+Conversely, if we make the maximum width too large, and we adapt the
+width of the window accordingly, then most lines that are
+significantly shorter will contain large amounts of white space, and
+the width of the window may make it impossible to have another window
+next to the current one on the same screen.
+
+We think that a good compromise is 80 characters.  This value used to
+be a hard limit, because some printers or printer drivers would
+truncate longer lines.  Since it is less common to print code these
+days, the limit is now soft.
 
 \section{Documentation strings}
 \label{sec-general-coding-style-documentation-strings}
