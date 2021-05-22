@@ -118,7 +118,8 @@
                :callee-name 'error
                :inputs (list message-constant-location)
                :outputs '()
-               :successors (list (make-instance 'cleavir-ir:unreachable-instruction)))))
+               :successors (list (make-instance 'cleavir-ir:unreachable-instruction
+                                   :dynamic-environment-location dynamic-environment)))))
           (t
            (error "Don't know how to box ~s" element-type)))))
 

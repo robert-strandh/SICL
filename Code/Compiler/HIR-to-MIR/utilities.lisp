@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-hir-to-Mir)
+(cl:in-package #:sicl-hir-to-mir)
 
 ;;; Insert either an UNSIGNED-ADD-INSTRUCTION or an
 ;;; UNSIGNED-SUB-INSTRUCTION (depending on the sign of OFFSET) before
@@ -38,6 +38,8 @@
                      (make-instance 'cleavir-ir:immediate-input
                        :value 3))
        :output rack-location
+       :dynamic-environment-location
+       (cleavir-ir:dynamic-environment-location instruction)
        :successor instruction)
      instruction)
     rack-location))

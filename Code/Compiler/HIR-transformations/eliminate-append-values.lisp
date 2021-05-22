@@ -17,6 +17,7 @@
     (make-instance 'cleavir-ir:car-instruction
       :input values-location
       :output cell-location
+      :dynamic-environment-location dynamic-environment-location
       :successor successor)))
 
 (defun make-incrementation-instruction
