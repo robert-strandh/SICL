@@ -106,5 +106,5 @@
       (format t "~&~a:" then)
       (write-instruction-chain (cleavir-ir:first-successor less))
       (format t "~&~a:" else)
-      (write-instruction-chain (second (cleavir-ir:successors less))))
+      (write-instruction-chain (cleavir-ir:second-successor less)))
     t))

@@ -30,7 +30,7 @@
 			       (instruction-input i types))))
 	 (cond ((bottom-p (binary-meet vtype ttype))
 		(cleavir-ir:bypass-instruction
-		 i (second (cleavir-ir:successors i))))
+		 i (cleavir-ir:second-successor i)))
 	       ((bottom-p (difference vtype ttype))
 		(cleavir-ir:bypass-instruction
 		 i (cleavir-ir:first-successor i)))))))
