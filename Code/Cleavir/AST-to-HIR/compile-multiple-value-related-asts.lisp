@@ -11,7 +11,7 @@
         do (setf result-context
                  (clone-context
                   context
-                  :successors (list successor)))
+                  :successor successor))
         finally (return (first (successors result-context)))))
 
 (defmethod compile-ast (client (ast cleavir-ast:multiple-value-prog1-ast) context)
@@ -20,34 +20,34 @@
    (cleavir-ast:first-form-ast ast)
    (clone-context
     context
-    :successors
-    (list (if (eq (results context) :values)
-              (let* ((dynamic-environment-location
-                       (cleavir-ir:make-lexical-location (gensym "values")))
-                     (new-context
-                       (clone-context
-                        context
-                        :results '()
-                        :dynamic-environment-location dynamic-environment-location)))
-                (make-instance 'cleavir-ir:save-values-instruction
-                  :output dynamic-environment-location
-                  :successors
-                  (list (compile-multiple-value-prog1-body
-                         client
-                         (cleavir-ast:form-asts ast)
-                         (clone-context
-                          new-context
-                          :successors
-                          (list (make-instance 'cleavir-ir:restore-values-instruction
-                                  :successors (list (first (successors context)))
-                                  :dynamic-environment-location dynamic-environment-location)))))))
-              (let ((new-context (clone-context context :results '())))
-                (compile-multiple-value-prog1-body
-                 client
-                 (cleavir-ast:form-asts ast)
+    :successor
+    (if (eq (results context) :values)
+        (let* ((dynamic-environment-location
+                 (cleavir-ir:make-lexical-location (gensym "values")))
+               (new-context
                  (clone-context
-                  new-context
-                  :successors (list (first (successors context)))))))))))
+                  context
+                  :results '()
+                  :dynamic-environment-location dynamic-environment-location)))
+          (make-instance 'cleavir-ir:save-values-instruction
+            :output dynamic-environment-location
+            :successor
+            (compile-multiple-value-prog1-body
+             client
+             (cleavir-ast:form-asts ast)
+             (clone-context
+              new-context
+              :successor
+              (make-instance 'cleavir-ir:restore-values-instruction
+                :successor (first (successors context))
+                :dynamic-environment-location dynamic-environment-location)))))
+        (let ((new-context (clone-context context :results '())))
+          (compile-multiple-value-prog1-body
+           client
+           (cleavir-ast:form-asts ast)
+           (clone-context
+            new-context
+            :successor (first (successors context)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -63,7 +63,7 @@
      (clone-context
       context
       :results locations
-      :successors (list (first (successors context)))))))
+      :successor (first (successors context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -93,7 +93,7 @@
                 client
                 arguments temps
                 (make-instance 'cleavir-ir:fixed-to-multiple-instruction
-                  :inputs temps :successors (list (first successors)))
+                 :inputs temps :successor (first successors))
                 context)))
             (t ;lexical locations
              ;; this is a bit tricky because there may be more or less
@@ -117,7 +117,7 @@
                                                         (clone-context
                                                          context
                                                          :results '()
-                                                         :successors (list succ))))
+                                                         :successor succ)))
                              finally (return succ)))
                       (nils (nil-fill nils (first successors)))
                       (t (first successors)))
@@ -140,23 +140,23 @@
        (clone-context
         context
         :result function-temp
-        :successors
-        (list (compile-ast
-               client
-               (first (cleavir-ast:form-asts ast))
-               (clone-context
-                context
-                :results (list quotient-temp remainder-temp)
-                :successors
-                (list (make-instance 'cleavir-ir:funcall-instruction
-                        :inputs (list function-temp quotient-temp remainder-temp)
-                        :outputs '()
-                        :successors
-                        (if (eq results :values)
-                            successors
-                            (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-                                    :outputs results
-                                    :successors (list (first successors)))))))))))))))
+        :successor
+        (compile-ast
+         client
+         (first (cleavir-ast:form-asts ast))
+         (clone-context
+          context
+          :results (list quotient-temp remainder-temp)
+          :successor
+          (make-instance 'cleavir-ir:funcall-instruction
+            :inputs (list function-temp quotient-temp remainder-temp)
+            :outputs '()
+            :successors
+            (if (eq results :values)
+                successors
+                (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                        :outputs results
+                        :successor (first successors))))))))))))
 
 (defun compile-multiple-value-call (client ast context)
   (with-accessors ((results results)
@@ -175,7 +175,7 @@
                    (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
                            :inputs '()
                            :outputs results
-                           :successors (list (first successors))))))))
+                           :successor (first successors)))))))
       (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
             do (setf successor
                      (compile-ast
@@ -184,20 +184,20 @@
                       (clone-context
                        context
                        :results :values
-                       :successors
-                       (list (make-instance 'cleavir-ir:append-values-instruction
-                               :output values-temp
-                               :successors (list successor)))))))
+                       :successor
+                       (make-instance 'cleavir-ir:append-values-instruction
+                         :output values-temp
+                         :successor successor)))))
       (compile-ast
        client
        (cleavir-ast:function-form-ast ast)
        (clone-context
         context
         :result function-temp
-        :successors
-        (list (make-instance 'cleavir-ir:initialize-values-instruction
-                :output values-temp
-                :successors (list successor))))))))
+        :successor
+        (make-instance 'cleavir-ir:initialize-values-instruction
+          :output values-temp
+          :successor successor))))))
 
 (defmethod compile-ast (client (ast cleavir-ast:multiple-value-call-ast) context)
   (if (and (= (length (cleavir-ast:form-asts ast)) 1)

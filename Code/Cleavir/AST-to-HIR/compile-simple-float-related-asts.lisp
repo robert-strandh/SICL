@@ -13,10 +13,10 @@
      (clone-context
       context
       :result temp
-      :successors
-      (list (make-instance 'cleavir-ir:single-float-p-instruction
-              :input temp
-              :successors (successors context)))))))
+      :successor
+      (make-instance 'cleavir-ir:single-float-p-instruction
+        :input temp
+        :successors (successors context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -42,7 +42,7 @@
                               (clone-context
                                    context
                                    :result inter
-                                   :successors (list succ))))
+                                   :successor succ)))
         finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -153,16 +153,16 @@
      (clone-context
       context
       :result input
-      :successors
-      (list (make-instance 'cleavir-ir:unbox-instruction
-              :element-type from
-              :inputs (list input)
-              :outputs (list unboxed-input)
-              :successors (list (make-instance 'cleavir-ir:coerce-instruction
-                                  :from from :to to
-                                  :input unboxed-input :output unboxed-output
-                                  :successors (list (make-instance 'cleavir-ir:box-instruction
-                                                      :element-type to
-                                                      :inputs (list unboxed-output)
-                                                      :outputs (results context)
-                                                      :successors (successors context)))))))))))
+      :successor
+      (make-instance 'cleavir-ir:unbox-instruction
+        :element-type from
+        :inputs (list input)
+        :outputs (list unboxed-input)
+        :successors (list (make-instance 'cleavir-ir:coerce-instruction
+                            :from from :to to
+                            :input unboxed-input :output unboxed-output
+                            :successor (make-instance 'cleavir-ir:box-instruction
+                                         :element-type to
+                                         :inputs (list unboxed-output)
+                                         :outputs (results context)
+                                         :successors (successors context)))))))))

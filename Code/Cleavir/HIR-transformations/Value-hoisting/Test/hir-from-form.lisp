@@ -4,11 +4,11 @@
   (cleavir-ir:make-enter-instruction
    '()
    (cleavir-ir:dynamic-environment-location lexical-location)
-   :successors
-   (list (make-instance 'cleavir-ir:funcall-instruction
-           :inputs (list* lexical-location (mapcar #'cleavir-ir:make-constant-input constants))
-           :successors
-           (list (make-instance 'cleavir-ir:return-instruction))))))
+   :successor
+   (make-instance 'cleavir-ir:funcall-instruction
+     :inputs (list* lexical-location (mapcar #'cleavir-ir:make-constant-input constants))
+     :successor
+     (make-instance 'cleavir-ir:return-instruction))))
 
 ;;; This :AROUND method replaces certain forms with a custom expansion.  In
 ;;; doing so, we avoid circularities such as when the creation form of a
