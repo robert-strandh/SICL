@@ -31,5 +31,5 @@
                    (make-instance 'cleavir-ir:assignment-instruction
                     :input (cleavir-ir:make-constant-input 'nil)
                     :output value
-                    :successor next))
+                    :successors (list next)))
           finally (return next))))

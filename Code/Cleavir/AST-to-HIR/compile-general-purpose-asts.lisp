@@ -30,7 +30,7 @@
                        (clone-context
                         context
                         :result ,temp
-                        :successor ,(recur rest-readers rest-temps)))))))
+                        :successors (list ,(recur rest-readers rest-temps))))))))
       `(defmethod compile-ast (client (ast ,ast) context)
          (let (,@(loop for temp in temps
                        collect `(,temp (make-temp))))

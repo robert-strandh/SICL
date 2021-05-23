@@ -29,12 +29,12 @@
               (clone-context
                context
                :result temp
-               :successor
-               (make-instance 'cleavir-ir:fixed-to-multiple-instruction
-                 :inputs (list temp)
-                 :successor (first successors)
-                 :dynamic-environment-location
-                 (dynamic-environment-location context))))))
+               :successors
+               (list (make-instance 'cleavir-ir:fixed-to-multiple-instruction
+                       :inputs (list temp)
+                       :successors (list (first successors))
+                       :dynamic-environment-location
+                       (dynamic-environment-location context)))))))
           ((null results)
            ;; We don't need the result.  This situation typically
            ;; happens when we compile a form other than the last of a
@@ -64,7 +64,7 @@
                                (clone-context
                                 context
                                 :result (first results)
-                                :successor successor)))))))
+                                :successors (list successor))))))))
 
 ;;; If these checks fail, it's an internal bug, since the
 ;;; :around method should fix the results and successors.

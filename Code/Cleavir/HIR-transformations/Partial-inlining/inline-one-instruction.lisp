@@ -141,7 +141,7 @@
                 (translate-input (cleavir-ir:dynamic-environment-location instruction)
                                  mapping)))
           (make-instance 'cleavir-ir:nop-instruction
-            :successor target
+            :successors (list target)
             :dynamic-environment-location dynamic-environment-location))
         ;; We are still actually unwinding, but need to ensure the
         ;; DESTINATION is hooked up correctly.
@@ -246,7 +246,7 @@
                           (make-instance 'cleavir-ir:funcall-instruction
                             :inputs (cons new-closure (rest (cleavir-ir:inputs call-instruction)))
                             :outputs (cleavir-ir:outputs call-instruction)
-                            :successor (first (cleavir-ir:successors call-instruction))
+                            :successors (list (first (cleavir-ir:successors call-instruction)))
                             :dynamic-environment-location dynamic-environment-location)))
          (new-enters (loop with dynamic-environment-location
                              = (cleavir-ir:dynamic-environment-location enter-instruction)
@@ -255,7 +255,7 @@
                            (make-instance 'cleavir-ir:enter-instruction
                             :lambda-list (cleavir-ir:lambda-list enter-instruction)
                             :dynamic-environment-location dynamic-environment-location
-                            :successor succ)))
+                            :successors (list succ))))
          (new-encloses (loop with dynamic-environment-location
                                = (cleavir-ir:dynamic-environment-location enclose-instruction)
                              for succ in alt-successors
@@ -265,7 +265,7 @@
                              collect
                              (make-instance 'cleavir-ir:enclose-instruction
                                :output closure
-                               :successor call
+                               :successors (list call)
                                :code enter
                                :dynamic-environment-location dynamic-environment-location))))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)

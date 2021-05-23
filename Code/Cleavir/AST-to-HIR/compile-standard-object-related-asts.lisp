@@ -13,10 +13,10 @@
      (clone-context
       context
       :result temp
-      :successor
-      (make-instance 'cleavir-ir:standard-object-p-instruction
-        :input temp
-        :successors (successors context))))))
+      :successors
+      (list (make-instance 'cleavir-ir:standard-object-p-instruction
+              :input temp
+              :successors (successors context)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -41,25 +41,25 @@
      (clone-context
       context
       :result temp1
-      :successor
-      (if (typep nook-number-ast 'cleavir-ast:constant-ast)
-          (let ((nook-number-input
-                  (make-instance 'cleavir-ir:constant-input
-                    :value (cleavir-ast:value nook-number-ast))))
-            (make-instance 'cleavir-ir:nook-read-instruction
-              :inputs (list temp1 nook-number-input)
-              :outputs (results context)
-              :successors (successors context)))
-          (compile-ast
-           client
-           (cleavir-ast:nook-number-ast ast)
-           (clone-context
-            context
-            :result temp2
-            :successor  (make-instance 'cleavir-ir:nook-read-instruction
-                          :inputs (list temp1 temp2)
-                          :outputs (results context)
-                          :successors (successors context)))))))))
+      :successors
+      (list (if (typep nook-number-ast 'cleavir-ast:constant-ast)
+                (let ((nook-number-input
+                        (make-instance 'cleavir-ir:constant-input
+                          :value (cleavir-ast:value nook-number-ast))))
+                  (make-instance 'cleavir-ir:nook-read-instruction
+                    :inputs (list temp1 nook-number-input)
+                    :outputs (results context)
+                    :successors (successors context)))
+                (compile-ast
+                 client
+                 (cleavir-ast:nook-number-ast ast)
+                 (clone-context
+                  context
+                  :result temp2
+                  :successors  (list (make-instance 'cleavir-ir:nook-read-instruction
+                                       :inputs (list temp1 temp2)
+                                       :outputs (results context)
+                                       :successors (successors context)))))))))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -75,22 +75,22 @@
      (clone-context
       context
       :result temp1
-      :successor
-      (compile-ast
-       client
-       (cleavir-ast:nook-number-ast ast)
-       (clone-context
-        context
-        :result temp2
-        :successor
-        (compile-ast
-         client
-         (cleavir-ast:value-ast ast)
-         (clone-context
-          context
-          :result temp3
-          :successor
-          (make-instance 'cleavir-ir:nook-write-instruction
-            :inputs (list temp1 temp2 temp3)
-            :outputs '()
-            :successors (successors context))))))))))
+      :successors
+      (list (compile-ast
+             client
+             (cleavir-ast:nook-number-ast ast)
+             (clone-context
+              context
+              :result temp2
+              :successors
+              (list (compile-ast
+                     client
+                     (cleavir-ast:value-ast ast)
+                     (clone-context
+                      context
+                      :result temp3
+                      :successors
+                      (list (make-instance 'cleavir-ir:nook-write-instruction
+                              :inputs (list temp1 temp2 temp3)
+                              :outputs '()
+                              :successors (successors context)))))))))))))

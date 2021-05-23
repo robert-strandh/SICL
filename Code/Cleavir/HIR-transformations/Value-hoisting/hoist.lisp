@@ -28,13 +28,13 @@
         (enclosed-thunk (cleavir-ir:new-temporary)))
     (emit-instruction (make-instance 'cleavir-ir:enclose-instruction
                         :output enclosed-thunk
-                        :successor nop
+                        :successors (list nop)
                         :code thunk))
     (emit-instruction (make-instance 'cleavir-ir:funcall-instruction
                         :inputs (list enclosed-thunk)))
     (emit-instruction (make-instance 'cleavir-ir:multiple-to-fixed-instruction
                         :outputs outputs
-                        :successor nop))))
+                        :successors (list nop)))))
 
 ;;; Ensure that CONSTRUCTOR is run at load time and that the resulting
 ;;; object is stored in the lexical variable OUTPUT.

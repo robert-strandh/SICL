@@ -13,10 +13,10 @@
      (clone-context
       context
       :result temp
-      :successor
-      (make-instance 'cleavir-ir:consp-instruction
-        :input temp
-        :successors (successors context))))))
+      :successors
+      (list (make-instance 'cleavir-ir:consp-instruction
+              :input temp
+              :successors (successors context)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
