@@ -151,7 +151,7 @@
   (let* ((values-location (first (cleavir-ir:outputs instruction)))
          (dynamic-environment-location
            (cleavir-ir:dynamic-environment-location instruction))
-         (successor (first (cleavir-ir:successors instruction))))
+         (successor (cleavir-ir:first-successor instruction)))
     (multiple-value-bind (first last)
         (make-replacement
          successor

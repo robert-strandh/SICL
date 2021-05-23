@@ -26,6 +26,6 @@
      initial-instruction)
     (dolist (catch death)
       ;; Modify the flow graph.
-      (cleavir-ir:bypass-instruction (first (cleavir-ir:successors catch)) catch))
+      (cleavir-ir:bypass-instruction (cleavir-ir:first-successor catch) catch))
     (cleavir-ir:reinitialize-data initial-instruction)
     death))

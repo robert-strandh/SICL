@@ -33,7 +33,7 @@
 		 i (second (cleavir-ir:successors i))))
 	       ((bottom-p (difference vtype ttype))
 		(cleavir-ir:bypass-instruction
-		 i (first (cleavir-ir:successors i))))))))
+		 i (cleavir-ir:first-successor i)))))))
    initial)
   ;; we've possibly excised huge portions of this function, so do
   ;;  some cleanup

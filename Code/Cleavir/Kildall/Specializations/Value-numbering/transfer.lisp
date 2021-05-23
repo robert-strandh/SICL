@@ -15,7 +15,7 @@
     (let* ((input (first (cleavir-ir:inputs instruction)))
            (input-number (from input))
            (output (first (cleavir-ir:outputs instruction)))
-           (succ (first (cleavir-ir:successors instruction))))
+           (succ (cleavir-ir:first-successor instruction)))
       (cleavir-kildall:copy s succ variable from
                             ()
                             ((output input-number))))))

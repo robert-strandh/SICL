@@ -804,4 +804,4 @@
                  :lexical-location dynamic-environment-location
                  :stack-slot nil
                  :register-number (register-number *dynamic-environment*)))))
-      (process-pair mir (first (cleavir-ir:successors mir))))))
+      (process-pair mir (cleavir-ir:first-successor mir)))))

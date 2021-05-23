@@ -75,7 +75,7 @@
 
 (defmethod compute-new-output-pool
     ((instruction cleavir-ir:catch-instruction) back-arcs)
-  (input-pool (first (cleavir-ir:successors instruction))))
+  (input-pool (cleavir-ir:first-successor instruction)))
 
 ;;; The derived input pool is a prototype input pool that is
 ;;; determined from the output pool without taking into account

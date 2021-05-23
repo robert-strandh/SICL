@@ -169,8 +169,8 @@
         ;; is another kludge on top of that.
         ;; FIXME: Find a good way to determine size of the closure
         ;; from the enter instruction.
-        (loop for inst = (first (cleavir-ir:successors instruction))
-                then (first (cleavir-ir:successors inst))
+        (loop for inst = (cleavir-ir:first-successor instruction)
+                then (cleavir-ir:first-successor inst)
               when (typep inst 'cleavir-ir:create-cell-instruction)
                 do (setf instruction inst)
               else do (loop-finish))
@@ -182,8 +182,8 @@
         ;; Originally we just used the number of fetches for the
         ;; length of the array.
         (loop for inst
-                = (first (cleavir-ir:successors instruction))
-                  then (first (cleavir-ir:successors inst))
+                = (cleavir-ir:first-successor instruction)
+                  then (cleavir-ir:first-successor inst)
               for id-in = (second (cleavir-ir:inputs inst))
               for out = (first (cleavir-ir:outputs inst))
               while (typep inst 'cleavir-ir:fetch-instruction)

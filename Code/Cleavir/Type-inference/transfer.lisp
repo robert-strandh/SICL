@@ -24,7 +24,7 @@
 
 (defmethod one-successor-transfer :around (instruction input-bag)
   (let* ((result (call-next-method))
-	 (successor (first (cleavir-ir:successors instruction)))
+	 (successor (cleavir-ir:first-successor instruction))
 	 (existing (arc-bag instruction successor *dictionary*))
 	 (filtered-result (filter result existing)))
     (unless (bag-equal filtered-result existing)

@@ -59,14 +59,14 @@
                              :dynamic-environment-location (cleavir-ir:dynamic-environment-location unwind))))
                  (cleavir-ir:bypass-instruction new unwind)))
     ;; Replace return instructions with NOPs that go to after the call.
-    (loop with next = (first (cleavir-ir:successors call))
+    (loop with next = (cleavir-ir:first-successor call)
           for return in returns
           do (let ((nop (make-instance 'cleavir-ir:nop-instruction
                           :successor next
                           :dynamic-environment-location (cleavir-ir:dynamic-environment-location return))))
                (cleavir-ir:bypass-instruction nop return))))
   ;; Replace the call with a regular control arc into the function.
-  (cleavir-ir:bypass-instruction (first (cleavir-ir:successors enter)) call)
+  (cleavir-ir:bypass-instruction (cleavir-ir:first-successor enter) call)
   ;; Done!
   (values))
 
@@ -149,7 +149,7 @@
       (loop until (null worklist)
             do (let* ((item (pop worklist))
                       (enter (enter-instruction item))
-                      (successor (first (cleavir-ir:successors enter))))
+                      (successor (cleavir-ir:first-successor enter)))
                  (setf worklist
                        (append (inline-one-instruction
                                 (enclose-instruction item)

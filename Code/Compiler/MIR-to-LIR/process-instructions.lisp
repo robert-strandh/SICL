@@ -84,7 +84,7 @@
   (assert (= (length (cleavir-ir:successors instruction)) 1))
   (insert-memset-between
    instruction
-   (first (cleavir-ir:successors instruction))
+   (cleavir-ir:first-successor instruction)
    from-register
    to-lexical-location
    lexical-locations))

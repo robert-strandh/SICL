@@ -41,7 +41,7 @@
          (arguments-lref
            (ensure-lref 'arguments lexical-environment))
          (successor
-           (first (cleavir-ir:successors enter-instruction)))
+           (cleavir-ir:first-successor enter-instruction))
          (thunk
            (instruction-thunk client successor lexical-environment)))
     (lambda (arguments static-environment dynamic-environment lexical-locations)
@@ -81,7 +81,7 @@
          (argument-lref
            (ensure-lref (third (cleavir-ir:outputs enter-instruction)) lexical-environment))
          (successor
-           (first (cleavir-ir:successors enter-instruction)))
+           (cleavir-ir:first-successor enter-instruction))
          (thunk
            (instruction-thunk client successor lexical-environment)))
     (lambda (constants-vector static-environment)

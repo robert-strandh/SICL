@@ -39,11 +39,11 @@
 ;;                 :value 2)
 ;;        :output dynamic-environment-output)
 ;;      instruction
-;;      (first (cleavir-ir:successors instruction)))
+;;      (cleavir-ir:first-successor instruction))
 ;;     (cleavir-ir:insert-instruction-between
 ;;      (make-instance 'cleavir-ir:return-value-instruction
 ;;        :input (make-instance 'cleavir-ir:immediate-input
 ;;                 :value 0)
 ;;        :output continuation-output)
 ;;      instruction
-;;      (first (cleavir-ir:successors instruction)))))
+;;      (cleavir-ir:first-successor instruction))))

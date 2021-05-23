@@ -18,7 +18,7 @@
                       :input (make-instance 'cleavir-ir:constant-input :value 0)
                       :output (first outputs)
                       :dynamic-environment-location dynamic-environment-location
-                      :successor (first (cleavir-ir:successors instruction))))
+                      :successor (cleavir-ir:first-successor instruction)))
                   (false-branch true-branch)
                   (count-location (make-instance 'cleavir-ir:lexical-location
                                     :name "RVC")))

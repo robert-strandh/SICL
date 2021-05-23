@@ -49,7 +49,7 @@
          (required-parameters (extract-required-parameters lambda-list))
          (optional-parameters (extract-optional-parameters lambda-list))
          (rest-parameter (extract-rest-parameter lambda-list))
-         (successor (first (cleavir-ir:successors enter-instruction)))
+         (successor (cleavir-ir:first-successor enter-instruction))
          (no-more-arguments-branch successor)
          (more-arguments-branch successor)
          (argument-count-location

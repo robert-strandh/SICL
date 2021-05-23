@@ -104,7 +104,7 @@
           (else (gensym "ELSE")))
       (format t "~&jb ~a~&jmp ~a" then else)
       (format t "~&~a:" then)
-      (write-instruction-chain (first (cleavir-ir:successors less)))
+      (write-instruction-chain (cleavir-ir:first-successor less))
       (format t "~&~a:" else)
       (write-instruction-chain (second (cleavir-ir:successors less))))
     t))

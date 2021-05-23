@@ -87,9 +87,9 @@
              :inputs (list *r12* *r13*)
              :outputs '()
              :successors
-             (list load-r14-from-stack (first (cleavir-ir:successors enter-instruction)))
+             (list load-r14-from-stack (cleavir-ir:first-successor enter-instruction))
              :dynamic-environment-location dynamic-environment-location)))
-    (setf (cleavir-ir:predecessors (first (cleavir-ir:successors enter-instruction)))
+    (setf (cleavir-ir:predecessors (cleavir-ir:first-successor enter-instruction))
           (list loop-test))
     (setf (cleavir-ir:successors add-8-to-r12)
           (list loop-test))

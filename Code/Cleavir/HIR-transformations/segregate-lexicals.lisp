@@ -80,8 +80,8 @@
                            :input (first (cleavir-ir:outputs enclose))))
       ;; Defer initialization until all potentially mutually recurisve
       ;; functions are available.
-      (do ((current-enclose enclose (first (cleavir-ir:successors current-enclose))))
-          ((not (typep (first (cleavir-ir:successors current-enclose))
+      (do ((current-enclose enclose (cleavir-ir:first-successor current-enclose)))
+          ((not (typep (cleavir-ir:first-successor current-enclose)
                        'cleavir-ir:enclose-instruction))
            (cleavir-ir:insert-instruction-after initializer current-enclose)))
       (setf (cleavir-ir:initializer enclose) initializer)
@@ -213,7 +213,7 @@
            :inputs (list cloc d)
            :outputs '())
          instruction
-         (first (cleavir-ir:successors instruction)))
+         (cleavir-ir:first-successor instruction))
         (cleavir-ir:insert-instruction-after
          (make-instance 'cleavir-ir:write-cell-instruction
            :inputs (list cloc d)

@@ -230,7 +230,7 @@
      (successor-instruction cleavir-ir:multiple-successors-mixin)
      mapping)
   (let* ((new-instruction (copy-instruction successor-instruction mapping))
-         (prime-successor (first (cleavir-ir:successors successor-instruction)))
+         (prime-successor (cleavir-ir:first-successor successor-instruction))
          ;; For each successor but the first, we need a new enclose/call
          ;; sequence.
          (alt-successors (rest (cleavir-ir:successors successor-instruction)))
@@ -246,7 +246,7 @@
                           (make-instance 'cleavir-ir:funcall-instruction
                             :inputs (cons new-closure (rest (cleavir-ir:inputs call-instruction)))
                             :outputs (cleavir-ir:outputs call-instruction)
-                            :successor (first (cleavir-ir:successors call-instruction))
+                            :successor (cleavir-ir:first-successor call-instruction)
                             :dynamic-environment-location dynamic-environment-location)))
          (new-enters (loop with dynamic-environment-location
                              = (cleavir-ir:dynamic-environment-location enter-instruction)
@@ -322,7 +322,7 @@
      enter-instruction
      (successor-instruction cleavir-ir:return-instruction)
      mapping)
-  (let* ((call-successor (first (cleavir-ir:successors call-instruction)))
+  (let* ((call-successor (cleavir-ir:first-successor call-instruction))
          (new-instruction (copy-instruction successor-instruction mapping)))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:bypass-instruction new-instruction enclose-instruction)

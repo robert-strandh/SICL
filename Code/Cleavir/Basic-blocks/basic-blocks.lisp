@@ -74,7 +74,7 @@
 (defun map-basic-block-instructions (function basic-block)
   (let ((first (first-instruction basic-block))
         (last (last-instruction basic-block)))
-    (do ((instruction first (first (cleavir-ir:successors instruction))))
+    (do ((instruction first (cleavir-ir:first-successor instruction)))
         ((eq instruction last) (funcall function instruction))
       (funcall function instruction))))
 
