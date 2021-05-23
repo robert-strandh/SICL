@@ -38,6 +38,7 @@
    #:inputs #:outputs
    #:substitute-input #:substitute-output
    #:successors #:predecessors
+   #:nth-successor #:first-successor #:second-successor
    ;; FIXME: check that these two are still needed.
    #:dynamic-environment #:*dynamic-environment*
    #:dynamic-environment-location

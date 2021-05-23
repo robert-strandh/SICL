@@ -142,3 +142,28 @@
 
 (defun clone-instruction (instruction &rest initargs &key &allow-other-keys)
   (apply #'make-instance (class-of instruction) (append initargs (clone-initargs instruction))))
+
+(defun nth-successor (n instruction)
+  (let* ((successors (successors instruction))
+         (result (nth n successors)))
+    (assert (> (length successors) n))
+    (check-type result instruction)
+    result))
+
+(defun (setf nth-successor) (successor n instruction)
+  (let ((successors (successors instruction)))
+    (assert (> (length successors) n))
+    (check-type successor instruction)
+    (setf (nth n successors) successor)))
+
+(defun first-successor (instruction)
+  (nth-successor 0 instruction))
+
+(defun (setf first-successor) (successor instruction)
+  (setf (nth-successor 0 instruction) successor))
+
+(defun second-successor (instruction)
+  (nth-successor 1 instruction))
+
+(defun (setf second-successor) (successor instruction)
+  (setf (nth-successor 1 instruction) successor))
