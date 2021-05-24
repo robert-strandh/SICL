@@ -33,7 +33,7 @@
               Otherwise signal an error of type TYPE-ERROR."))
 
 (fundoc '(setf car)
-	(fmt "Lambda list: (NEW-VALUE OBJECT)~@
+        (fmt "Lambda list: (NEW-VALUE OBJECT)~@
               When OBJECT is a CONS cell, replace the CAR of that CONS cell~@
               by NEW-VALUE, and return NEW-VALUE.~@
               Otherwise signal an error of type TYPE-ERROR."))
@@ -51,7 +51,7 @@
               Otherwise signal an error of type TYPE-ERROR."))
 
 (fundoc '(setf cdr)
-	(fmt "Lambda list: (NEW-VALUE OBJECT)~@
+        (fmt "Lambda list: (NEW-VALUE OBJECT)~@
               When OBJECT is a CONS cell, replace the CDR of that CONS cell~@
               by NEW-VALUE, and return NEW-VALUE.~@
               Otherwise signal an error of type TYPE-ERROR."))
@@ -68,33 +68,33 @@
     (flet ((primitive (letter)
              (if (eql letter #\A) 'car 'cdr)))
       `(progn (fundoc ',function-name
-		      ,(fmt "Lambda list: (OBJECT)~@
+                      ,(fmt "Lambda list: (OBJECT)~@
                              Equivalent to ~a"
-			    (loop with form = 'object
-				  for letter in letters
-				  do (setf form
-					   (list (primitive letter) form))
-				  finally (return form))))
-	      (fundoc '(setf ,function-name)
-		      ,(fmt "Lambda list: (NEW-VALUE LIST)~@
+                            (loop with form = 'object
+                                  for letter in letters
+                                  do (setf form
+                                           (list (primitive letter) form))
+                                  finally (return form))))
+              (fundoc '(setf ,function-name)
+                      ,(fmt "Lambda list: (NEW-VALUE LIST)~@
                              Equivalent to (SETF (C~aR ~a) NEW-VALUE)"
-			    (car (last letters))
-			    (loop with form = 'list
-				  for letter in (butlast letters)
-				  do (setf form
-					   (list (primitive letter) form))
-				  finally (return form))))
-	      (setf (documentation ',function-name 'setf)
-		    ,(fmt "Syntax: (SETF (~a OBJECT) NEW-VALUE)~@
+                            (car (last letters))
+                            (loop with form = 'list
+                                  for letter in (butlast letters)
+                                  do (setf form
+                                           (list (primitive letter) form))
+                                  finally (return form))))
+              (setf (documentation ',function-name 'setf)
+                    ,(fmt "Syntax: (SETF (~a OBJECT) NEW-VALUE)~@
                            Equivalent to (SETF (C~aR ~a) NEW-VALUE)"
-			  function-name
-			  (car (last letters))
-			  (loop with form = 'list
-				for letter in (butlast letters)
-				do (setf form
-					 (list (primitive letter) form))
-				finally (return form))))))))
-			  
+                          function-name
+                          (car (last letters))
+                          (loop with form = 'list
+                                for letter in (butlast letters)
+                                do (setf form
+                                         (list (primitive letter) form))
+                                finally (return form))))))))
+                          
 (make-c*r-documentation caar)
 (make-c*r-documentation cadr)
 (make-c*r-documentation cdar)
@@ -144,7 +144,7 @@
 
 (defmacro make-nth-documentation (function-name number)
   `(progn (fundoc ',function-name
-		  ,(fmt "Lambda list: (LIST)~@
+                  ,(fmt "Lambda list: (LIST)~@
                           Return the ~a element of the list LIST.~@
                           When LIST is a proper list with fewer than ~a element,~@
                           NIL is returned.~@
@@ -152,28 +152,28 @@
                           ~a elements, an error of type TYPE-ERROR is signaled.~@
                           In particular, when LIST is neither a list nor NIL,~@
                           an error of type TYPE-ERROR is signaled."
-			(string-downcase (symbol-name function-name))
-			number
-			number))
-	  (fundoc '(setf ,function-name)
-		  ,(fmt "Lambda list: (NEW-VALUE LIST)~@
+                        (string-downcase (symbol-name function-name))
+                        number
+                        number))
+          (fundoc '(setf ,function-name)
+                  ,(fmt "Lambda list: (NEW-VALUE LIST)~@
                          Replace the ~a element of LIST by NEW-VALUE,~@
                          and return NEW-VALUE.~@
                          If list has fewer than ~a top-level CONS cells,~@
                          or if it an atom, then an error of type TYPE-ERROR~@
                          is signaled."
-			(string-downcase (symbol-name function-name))
-			number))
-	  (setf (documentation ',function-name 'setf)
-		    ,(fmt "Syntax: (SETF (~a OBJECT) NEW-VALUE)~@
+                        (string-downcase (symbol-name function-name))
+                        number))
+          (setf (documentation ',function-name 'setf)
+                    ,(fmt "Syntax: (SETF (~a OBJECT) NEW-VALUE)~@
                           Replace the ~a element of LIST by NEW-VALUE,~@
-			  and return NEW-VALUE.~@
-			  If list has fewer than ~a top-level CONS cells,~@
-			  or if it an atom, then an error of type TYPE-ERROR~@
-			  is signaled."
-			  function-name
-			  (string-downcase (symbol-name function-name))
-			  number))))
+                          and return NEW-VALUE.~@
+                          If list has fewer than ~a top-level CONS cells,~@
+                          or if it an atom, then an error of type TYPE-ERROR~@
+                          is signaled."
+                          function-name
+                          (string-downcase (symbol-name function-name))
+                          number))))
 
 (make-nth-documentation second  "two")
 (make-nth-documentation third   "three")
@@ -204,11 +204,11 @@
               of type TYPE-ERROR is signaled."))
 
 (fundoc '(setf nth)
-	(fmt "Lambda list: (NEW-VALUE N LIST)~@
+        (fmt "Lambda list: (NEW-VALUE N LIST)~@
               Replace the Nth element of LIST by NEW-VALUE,~@
               where N=0 indicates the first element of the LIST.~@
-	      The LIST must have more than N top-level CONS cells.~@
-	      If not, an error of type TYPE-ERROR is signaled."))
+              The LIST must have more than N top-level CONS cells.~@
+              If not, an error of type TYPE-ERROR is signaled."))
 
 (setf (documentation 'nth 'setf)
       (fmt "Syntax: (setf (nth N LIST) NEW-VALUE~@
@@ -230,20 +230,20 @@
               of type TYPE-ERROR is signaled."))
               
 (fundoc 'consp
-	(fmt "Lambda list: (OBJECT)~@
+        (fmt "Lambda list: (OBJECT)~@
               where OBJECT is any object.~@
               Return true if OBJECT is a cons cell.~@
               Return false otherwise."))
 
 (fundoc 'atom
-	(fmt "Lambda list: (OBJECT)~@
+        (fmt "Lambda list: (OBJECT)~@
               where OBJECT is any object.~@
               Return true if OBJECT is an atom~@
               (i.e., not a cons cell).~@
               Return false otherwise."))
 
 (fundoc 'rplaca
-	(fmt "Lambda list: (CONS OBJECT)~@
+        (fmt "Lambda list: (CONS OBJECT)~@
               where CONS is a cons cell and OBJECT is any object.~@
               Replace the the CAR of the CONS cell by OBJECT.~@
               Return the modified cons cell.~@
@@ -251,7 +251,7 @@
               (SETF CAR) returns OBJECT instead of the CONS."))
 
 (fundoc 'rplacd
-	(fmt "Lambda list: (CONS OBJECT)~@
+        (fmt "Lambda list: (CONS OBJECT)~@
               where CONS is a cons cell and OBJECT is any object.~@
               Replace the the CDR of the CONS cell by OBJECT.~@
               Return the modified cons cell.~@
@@ -259,14 +259,14 @@
               (SETF CDR) returns OBJECT instead of the CONS."))
 
 (fundoc 'copy-tree
-	(fmt "Lambda list: (TREE)~@
+        (fmt "Lambda list: (TREE)~@
               where TREE is any tree consisting of internal nodes~@
               in the form of CONS cells, and leaves in the form of atoms.~@
               Return a copy of the tree, i.e. a tree which is like TREE,~@
               except that every CONS cell has been copied."))
 
 (fundoc 'sublis
-	(fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT)~@
               where ALIST is an association list, TREE is a tree~@
               consisting of internal nodes in the form of CONS cells,~@
               and leaves in the form of atoms.  KEY is a designator for~@
@@ -290,7 +290,7 @@
               An error is signaled if both TEST and TEST-NOT are given."))
 
 (fundoc 'nsublis
-	(fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT)~@
               where ALIST is an association list, TREE is a tree~@
               consisting of internal nodes in the form of CONS cells,~@
               and leaves in the form of atoms.  KEY is a designator for~@
@@ -314,7 +314,7 @@
               An error is signaled if both TEST and TEST-NOT are given."))
 
 (fundoc 'subst
-	(fmt "Lambda list: (NEW OLD TREE &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (NEW OLD TREE &key KEY TEST TEST-NOT)~@
               where NEW and OLD are any objects, TREE is a tree~@
               consisting of internal nodes in the form of CONS cells,~@
               and leaves in the form of atoms.  KEY is a designator for~@
@@ -336,7 +336,7 @@
               An error is signaled if both TEST and TEST-NOT are given."))
 
 (fundoc 'nsubst
-	(fmt "Lambda list: (NEW OLD TREE &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (NEW OLD TREE &key KEY TEST TEST-NOT)~@
               where NEW and OLD are any objects, TREE is a tree~@
               consisting of internal nodes in the form of CONS cells,~@
               and leaves in the form of atoms.  KEY is a designator for~@
@@ -358,7 +358,7 @@
               An error is signaled if both TEST and TEST-NOT are given."))
 
 (fundoc 'subst-if 
-	(fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
+        (fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
               where NEW is any objects, PREDICATE is a designator for~@
               a function of one argument that returns a generalized boolean,~@
               TREE is a tree consisting of internal nodes in the form of 
@@ -376,7 +376,7 @@
               the original TREE."))
 
 (fundoc 'nsubst-if 
-	(fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
+        (fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
               where NEW is any objects, PREDICATE is a designator for~@
               a function of one argument that returns a generalized boolean,~@
               TREE is a tree consisting of internal nodes in the form of 
@@ -393,7 +393,7 @@
               TREE might be altered to reflect the substitutions."))
 
 (fundoc 'subst-if-not
-	(fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
+        (fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
               where NEW is any objects, PREDICATE is a designator for~@
               a function of one argument that returns a generalized boolean,~@
               TREE is a tree consisting of internal nodes in the form of 
@@ -411,7 +411,7 @@
               the original TREE."))
 
 (fundoc 'nsubst-if-not
-	(fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
+        (fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
               where NEW is any objects, PREDICATE is a designator for~@
               a function of one argument that returns a generalized boolean,~@
               TREE is a tree consisting of internal nodes in the form of 
@@ -428,7 +428,7 @@
               TREE might be altered to reflect the substitutions."))
 
 (fundoc 'tree-equal
-	(fmt "Lambda list: (TREE-1 TREE-2 &key TEST TEST-NOT)~@
+        (fmt "Lambda list: (TREE-1 TREE-2 &key TEST TEST-NOT)~@
               where TREE-1 and TREE-2 are trees consisting of internal nodes~@
               in the form of CONS cells, and leaves in the form of atoms.~@
               TEST and TEST-NOT are designators for functions of two arguments~@
@@ -448,14 +448,14 @@
               An error is signaled if both TEST and TEST-NOT are given."))
 
 (fundoc 'copy-list
-	(fmt "Lambda list: (LIST)~@
+        (fmt "Lambda list: (LIST)~@
               where LIST is a proper list or a dotted list.~@
               The top-level CONS cells of LIST are copied, and the resulting~@
               copy is returned.~@
               The consequences are undefined if LIST is a circular list."))
 
 (fundoc 'list-length
-	(fmt "Lambda list: (LIST)~@
+        (fmt "Lambda list: (LIST)~@
               where LIST is a proper list or a circular list.~@
               If LIST is a proper list, its length is returned, as if computed~@
               with the LENGTH function.  If LIST is a circular list, then NIL~@
@@ -464,13 +464,13 @@
               a proper list or a circular list."))
 
 (fundoc 'listp
-	(fmt "Lambda list: (OBJECT)~@
+        (fmt "Lambda list: (OBJECT)~@
               where OBJECT is any object.~@
               Return true if OBJECT is of type LIST, i.e., either a CONS cell~@
               or NIL.  Return false otherwise."))
 
 (fundoc 'make-list
-	(fmt "Lambda list: (SIZE &key INITIAL-ELEMENT)~@
+        (fmt "Lambda list: (SIZE &key INITIAL-ELEMENT)~@
               where SIZE is a nonnegative integer, and INITIAL-ELEMENT is~@
               any object.  The default for INITIAL-ELEMENT is NIL.~@
               Return a proper list of length SIZE containing INITIAL-ELEMENT~@
@@ -479,19 +479,19 @@
               integer."))
 
 (fundoc 'endp
-	(fmt "Lambda list: (LIST)~@
+        (fmt "Lambda list: (LIST)~@
               where LIST is a list which might be dotted or circular.~@
               Return true if LIST is NIL.  Return false if LIST is a CONS cell.~@
               Signal an error of type TYPE-ERROR if LIST is neither NIL, nor~@
               a CONS cell, (i.e, if LIST is not a list)."))
 
 (fundoc 'null
-	(fmt "Lambda list: (OBJECT)~@
+        (fmt "Lambda list: (OBJECT)~@
               where OBJECT is any object.~@
               Return true if OBJECT is NIL.  Return false otherwise."))
 
 (fundoc 'nconc
-	(fmt "Lambda list: (&rest LISTS)~@
+        (fmt "Lambda list: (&rest LISTS)~@
               where each object in LISTS must be a list, except possibly the last one~@
               which may be any object.  The others may be dotted lists, but may~@
               not be circular lists.~@
@@ -506,7 +506,7 @@
               If no lists are given, NCONC returns NIL."))
 
 (fundoc 'append
-	(fmt "Lambda list: (&rest LISTS)~@
+        (fmt "Lambda list: (&rest LISTS)~@
               where each object in LISTS must be a proper list, except possibly the~@
               last one, which may be any object.~@
               Return a new list which is the concatenation of the lists in LISTS, i.e.,~@
@@ -521,7 +521,7 @@
               If no lists are given, APPEND returns NIL."))
 
 (fundoc 'revappend
-	(fmt "Lambda list: (LIST TAIL)~@
+        (fmt "Lambda list: (LIST TAIL)~@
               where LIST must be a proper list, and TAIL may be any object.~@
               Return a list that starts with the elements of LIST in reverse order,~@
               with the CDR of the last CONS cell containing TAIL.~@
@@ -529,7 +529,7 @@
               The consequences are undefined if LIST is not a proper list."))
 
 (fundoc 'nreconc
-	(fmt "Lambda list: (LIST TAIL)~@
+        (fmt "Lambda list: (LIST TAIL)~@
               where LIST must be a proper list, and TAIL may be any object.~@
               Return a list that starts with the elements of LIST in reverse order,~@
               with the CDR of the last CONS cell containing TAIL.~@
@@ -538,7 +538,7 @@
               The consequences are undefined if LIST is not a proper list."))
 
 (fundoc 'butlast
-	(fmt "Lambda list: (LIST &optional N)~@
+        (fmt "Lambda list: (LIST &optional N)~@
               where LIST is list that may be dotted but not circular, and
               N is a nonnegative integer.~@
               The default value of N is 1.~@
@@ -554,7 +554,7 @@
               integer."))
 
 (fundoc 'nbutlast
-	(fmt "Lambda list: (LIST &optional N)~@
+        (fmt "Lambda list: (LIST &optional N)~@
               where LIST is list that may be dotted but not circular, and
               N is a nonnegative integer.~@
               The default value of N is 1.~@
@@ -571,7 +571,7 @@
               integer."))
 
 (fundoc 'last
-	(fmt "Lambda list: (LIST &optional N)~@
+        (fmt "Lambda list: (LIST &optional N)~@
               where LIST is a proper list or a dotted list, but must not be~@
               a circular list, and N is a nonnegative integer.~@
               The default value of N is 1.~@
@@ -584,7 +584,7 @@
               integer"))
 
 (fundoc 'ldiff
-	(fmt "Lambda list: (LIST OBJECT)~@
+        (fmt "Lambda list: (LIST OBJECT)~@
               where LIST is a proper list, a dotted list, or a circular list,~@
               and OBJECT is any object.~@
               If OBJECT is EQL to the contents of the CDR of any CONS cell of~@
@@ -599,7 +599,7 @@
               proper or a dotted list."))
 
 (fundoc 'tailp
-	(fmt "Lambda list: (LIST OBJECT)~@
+        (fmt "Lambda list: (LIST OBJECT)~@
               where LIST is a proper list, a dotted list, or a circular list,~@
               and OBJECT is any object.~@
               If OBJECT is EQL to the contents of the CDR of any CONS cell of~@
@@ -612,8 +612,8 @@
               proper or a dotted list."))
 
 (fundoc 'nthcdr
-	(fmt "Lambda list: (N LIST)~@
-	      where N is a nonnegative integer and LIST is a list that might~@
+        (fmt "Lambda list: (N LIST)~@
+              where N is a nonnegative integer and LIST is a list that might~@
               be a dotted list or a circular list.~@
               Return the result of applying CDR N times to LIST.~@
               If LIST contains fewer than N CONS cells, then if LIST is a proper~@
@@ -623,7 +623,7 @@
               integer."))
 
 (fundoc 'rest
-	(fmt "Lambda list: (LIST)~@
+        (fmt "Lambda list: (LIST)~@
               where LIST is a CONS cell or NIL.~@
               If LIST is a CONS cell, then the CDR of that cell is returned.~@
               If LIST is NIL, then NIL is returned.~@
@@ -631,7 +631,7 @@
               is signaled."))
 
 (fundoc '(setf rest)
-	(fmt "Lambda list: (NEW-VALUE LIST)~@
+        (fmt "Lambda list: (NEW-VALUE LIST)~@
               When LIST is a CONS cell, replace the CDR of that CONS cell~@
               by NEW-VALUE, and return NEW-VALUE.~@
               Otherwise signal an error of type TYPE-ERROR."))
@@ -643,7 +643,7 @@
             Otherwise signal an error of type TYPE-ERROR."))
 
 (fundoc 'member
-	(fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT)~@
               where ITEM is any object and LIST is a proper list.~@
               KEY is a designator for a function of one argument which is~@
               applied the elements of LIST before the test is applied,~@
@@ -668,7 +668,7 @@
               proper list."))
 
 (fundoc 'member-if
-	(fmt "Lambda list: (PREDICATE LIST &key KEY)~@
+        (fmt "Lambda list: (PREDICATE LIST &key KEY)~@
               where PREDICATE is a designator for a function of one argument~@
               returning a generalized boolean, and LIST is a proper list.~@
               KEY is a designator for a function of one argument which is~@
@@ -685,7 +685,7 @@
               proper list."))
 
 (fundoc 'member-if-not
-	(fmt "Lambda list: (PREDICATE LIST &key KEY)~@
+        (fmt "Lambda list: (PREDICATE LIST &key KEY)~@
               where PREDICATE is a designator for a function of one argument~@
               returning a generalized boolean, and LIST is a proper list.~@
               KEY is a designator for a function of one argument which is~@
@@ -702,7 +702,7 @@
               proper list."))
 
 (fundoc 'mapc
-	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+        (fmt "Lambda list: (FUNCTION &rest LISTS)~@
               were function is a designator for a function that must accept~@
               as many arguments as there are lists in LISTS.~@
               Each list in LISTS must be a proper list, and there must be at~@
@@ -720,7 +720,7 @@
               in LISTS is not a proper list."))
 
 (fundoc 'mapcar
-	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+        (fmt "Lambda list: (FUNCTION &rest LISTS)~@
               were function is a designator for a function that must accept~@
               as many arguments as there are lists in LISTS.~@
               Each list in LISTS must be a proper list, and there must be at~@
@@ -738,7 +738,7 @@
               in LISTS is not a proper list."))
 
 (fundoc 'maplist
-	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+        (fmt "Lambda list: (FUNCTION &rest LISTS)~@
               were function is a designator for a function that must accept~@
               as many arguments as there are lists in LISTS.~@
               Each list in LISTS must be a proper list, and there must be at~@
@@ -756,7 +756,7 @@
               in LISTS is not a proper list."))
 
 (fundoc 'mapl
-	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+        (fmt "Lambda list: (FUNCTION &rest LISTS)~@
               were function is a designator for a function that must accept~@
               as many arguments as there are lists in LISTS.~@
               Each list in LISTS must be a proper list, and there must be at~@
@@ -774,7 +774,7 @@
               in LISTS is not a proper list."))
 
 (fundoc 'mapcan
-	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+        (fmt "Lambda list: (FUNCTION &rest LISTS)~@
               were function is a designator for a function that must accept~@
               as many arguments as there are lists in LISTS.~@
               Each list in LISTS must be a proper list, and there must be at~@
@@ -793,7 +793,7 @@
               in LISTS is not a proper list."))
 
 (fundoc 'mapcon
-	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+        (fmt "Lambda list: (FUNCTION &rest LISTS)~@
               were function is a designator for a function that must accept~@
               as many arguments as there are lists in LISTS.~@
               Each list in LISTS must be a proper list, and there must be at~@
@@ -812,7 +812,7 @@
               in LISTS is not a proper list."))
 
 (fundoc 'acons
-	(fmt "Lambda list: (KEY DATUM ALIST)~@
+        (fmt "Lambda list: (KEY DATUM ALIST)~@
               where KEY and DATUM are any objects, and ALIST is an association list.~@
               ACONS allocates two CONS cells.  One contains KEY in its CAR and~@
               DATUM in its CDR.  The second one contains the first one in its CAR~@
@@ -820,7 +820,7 @@
               (acons key datum alist) is equivalent to (cons (cons key datum) alist)."))
 
 (fundoc 'assoc
-	(fmt "Lambda list: (ITEM ALIST &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (ITEM ALIST &key KEY TEST TEST-NOT)~@
               where ITEM is any object and ALIST is an association list.~@
               KEY is a designator for a function of one argument which is~@
               applied to the CAR of the elements of ALIST before the test is applied,~@
@@ -843,7 +843,7 @@
               an association list."))
 
 (fundoc 'assoc-if
-	(fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
+        (fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
               where PREDICATE is a designator for a function of one argument~@
               returning a generalized boolean, and ALIST is an association list.~@
               KEY is a designator for a function of one argument which is~@
@@ -859,7 +859,7 @@
               an association list."))
 
 (fundoc 'assoc-if-not
-	(fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
+        (fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
               where PREDICATE is a designator for a function of one argument~@
               returning a generalized boolean, and ALIST is an association list.~@
               KEY is a designator for a function of one argument which is~@
@@ -875,7 +875,7 @@
               an association list."))
 
 (fundoc 'copy-alist
-	(fmt "Lambda list: (ALIST)~@
+        (fmt "Lambda list: (ALIST)~@
               where ALIST is an association list.~@
               The top-level CONS cells are copied, as are any elements that~@
               are CONS cells.  Items that are the CAR or CDR of top-level CONS~@
@@ -884,7 +884,7 @@
               not CONS cells are included in the copy as-is."))
 
 (fundoc 'pairlis
-	(fmt "Lambda list: (KEYS DATA &optional ALIST)~@
+        (fmt "Lambda list: (KEYS DATA &optional ALIST)~@
               where KEYS and DATA are proper lists of the same length, and~@
               ALIST is an association list.  The default of ALIST is NIL.~@
               Elements of KEYS and DATA are paired up to form entries of~@
@@ -895,7 +895,7 @@
               The consequences are undefined if KEYS and DATA are not the same length."))
 
 (fundoc 'rassoc
-	(fmt "Lambda list: (ITEM ALIST &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (ITEM ALIST &key KEY TEST TEST-NOT)~@
               where ITEM is any object and ALIST is an association list.~@
               KEY is a designator for a function of one argument which is~@
               applied to the CDR of the elements of ALIST before the test is applied,~@
@@ -918,7 +918,7 @@
               an association list."))
 
 (fundoc 'rassoc-if
-	(fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
+        (fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
               where PREDICATE is a designator for a function of one argument~@
               returning a generalized boolean, and ALIST is an association list.~@
               KEY is a designator for a function of one argument which is~@
@@ -934,7 +934,7 @@
               an association list."))
 
 (fundoc 'rassoc-if-not
-	(fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
+        (fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
               where PREDICATE is a designator for a function of one argument~@
               returning a generalized boolean, and ALIST is an association list.~@
               KEY is a designator for a function of one argument which is~@
@@ -950,7 +950,7 @@
               an association list."))
 
 (fundoc 'get-properties
-	(fmt "Lambda list: (PLIST INDICATORs)~@
+        (fmt "Lambda list: (PLIST INDICATORs)~@
               where PLIST is a property list, and INDICATORS is a proper list.~@
               PLIST is searched for an indicator that matches one of the indicators~@
               in INDICATORS.  The function EQ is used to determin whether the~@
@@ -963,7 +963,7 @@
               The consequences are undefined if INDICATORS is not a proper list."))
 
 (fundoc 'getf
-	(fmt "Lambda list: (PLIST INDICATOR &default DEFAULT)~@
+        (fmt "Lambda list: (PLIST INDICATOR &default DEFAULT)~@
               where PLIST is a property list, and INDICATOR is any object.~@
               PLIST is searched for an indicator that matches INDICATOR.~@
               The function EQ is used to determine whether the indicator matches.~@
@@ -975,7 +975,7 @@
               The consequences are undefined if PLIST is not a property list."))
 
 (fundoc 'intersection
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1008,7 +1008,7 @@
               The result may share structure with LIST-1 and/or LIST-2."))
 
 (fundoc 'nintersection
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1042,7 +1042,7 @@
               The result may share structure with LIST-1 and/or LIST-2."))
 
 (fundoc 'adjoin
-	(fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT)~@
               where ITEM is any object and LIST is a proper list.~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1067,7 +1067,7 @@
               Otherwise the equivalent of (CONS ITEM LIST) is returned."))
 
 (fundoc 'set-difference
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1101,7 +1101,7 @@
               The result may share structure with LIST-1 and/or LIST-2."))
 
 (fundoc 'nset-difference
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1135,7 +1135,7 @@
               The result may share structure with LIST-1 and/or LIST-2."))
 
 (fundoc 'set-exclusive-or
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1169,7 +1169,7 @@
               The result may share structure with LIST-1 and/or LIST-2."))
 
 (fundoc 'nset-exclusive-or
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1203,7 +1203,7 @@
               The result may share structure with LIST-1 and/or LIST-2."))
 
 (fundoc 'union
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1239,7 +1239,7 @@
               The result may share structure with LIST-1 and/or LIST-2."))
 
 (fundoc 'subsetp
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1264,7 +1264,7 @@
               Otherwise, SUBSETP returns true."))
 
 (fundoc 'nunion
-	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
               where LIST-1 and LIST-2 are proper lists,~@
               KEY is is a designator of a function of one argument~@
               or NIL, which means IDENTITY.~@
@@ -1320,7 +1320,7 @@
             property list."))
 
 (fundoc 'push
-	(fmt "Lambda list: (ITEM PLACE)~@
+        (fmt "Lambda list: (ITEM PLACE)~@
               where ITEM is any object, and PLACE is a place whose value~@
               may be any object.  PLACE is not evaluated.~@
               PUSH replaces the value of PLACE by a CONS of the ITEM and the~@
@@ -1329,7 +1329,7 @@
               except that subforms of PLACE are evaluated only once."))
 
 (fundoc 'pop
-	(fmt "Lambda list: (PLACE)~@
+        (fmt "Lambda list: (PLACE)~@
               where PLACE is a place whose value must be a list,~@
               i.e, a CONS cell or NIL.  PLACE is not evaluated.~@
               POP remembers the CAR of the list that is the value of PLACE,~@
@@ -1344,7 +1344,7 @@
               is signaled."))
 
 (fundoc 'remf
-	(fmt "Lambda list: (PLACE INDICATOR)~@
+        (fmt "Lambda list: (PLACE INDICATOR)~@
               where PLACE whose value is a property list,~@
               and INDICATOR is any object.  PLACE is not evaluated.~@
               If the property list that is the value of PLACE contains an~@
@@ -1360,7 +1360,7 @@
               property list."))
 
 (fundoc 'pushnew
-	(fmt "Lambda list: (ITEM PLACE &key KEY TEST TEST-NOT)~@
+        (fmt "Lambda list: (ITEM PLACE &key KEY TEST TEST-NOT)~@
               where ITEM is any object, and PLACE is a PLACE~@
               whose value is a proper list.  PLACE is not evaluated.~@
               KEY is is a designator of a function of one argument~@
