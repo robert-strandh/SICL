@@ -18,13 +18,17 @@
 (defmethod item-meet (probability (item1 null) (item2 pool-item))
   (make-instance 'pool-item
     :lexical-location (lexical-location item2)
-    :distance (floor (/ (distance item2) (- 1 probability)))
+    :distance (if (= 1 probability)
+                  1000000
+                  (floor (/ (distance item2) (- 1 probability))))
     :call-probability (ceiling (* (- 1 probability) (call-probability item2)))))
 
 (defmethod item-meet (probability (item1 pool-item) (item2 null))
   (make-instance 'pool-item
     :lexical-location (lexical-location item1)
-    :distance (floor (/ (distance item1) probability))
+    :distance (if (zerop probability)
+                  1000000
+                  (floor (/ (distance item1) probability)))
     :call-probability (ceiling (* probability (call-probability item1)))))
 
 (defun combine-distances (probability distance1 distance2)
