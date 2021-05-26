@@ -82,15 +82,11 @@ Check the [Documentation] directory for more information.
 ## Getting Help and Contributing
 
 The SICL community members are usually on various IRC channels.  There
-is now a dedicated channel called [#sicl], but discussion can also be
-found on [#lisp], [#clasp], and [#clim].
+is now a dedicated channel called #sicl, but discussion can also be
+found on #commonlisp, and #clasp.  All these channels are on the
+libera.chat network.
 
-[#sicl]: https://webchat.freenode.net/
-[logs]:https://irclog.tymoon.eu/freenode/%23sicl
-[#lisp]: https://webchat.freenode.net/
-[#clasp]: https://webchat.freenode.net/
-[#clim]: https://webchat.freenode.net/
-
+[logs]:https://irclog.tymoon.eu/libera/%23sicl
 
 [LICENSE-BSD]:https://github.com/robert-strandh/SICL/blob/master/LICENSE-BSD
 
