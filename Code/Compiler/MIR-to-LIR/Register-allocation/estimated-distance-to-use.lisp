@@ -73,9 +73,14 @@
                       (input-pool first)
                       (input-pool second)))))))
 
+;;; We conservatively guess that only the first successor will be used.
 (defmethod compute-new-output-pool
     ((instruction cleavir-ir:catch-instruction) back-arcs)
-  (input-pool (cleavir-ir:first-successor instruction)))
+  (let ((pool
+          (input-pool (cleavir-ir:first-successor instruction))))
+    (dolist (successor (rest (cleavir-ir:successors instruction)))
+      (setf pool (pool-meet 0 pool (input-pool successor))))
+    pool))
 
 ;;; The derived input pool is a prototype input pool that is
 ;;; determined from the output pool without taking into account
