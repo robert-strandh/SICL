@@ -3,5 +3,4 @@
 (defpackage #:cleavir-def-use-chains
   (:use #:common-lisp)
   (:export
-   #:def-use-chains
-   ))
+   #:def-use-chains))
