@@ -602,10 +602,11 @@ A flag determines whether a reference to an object allocated in the
 global heap should be marked or not.  This flag is set when the local
 garbage collection was requested by the global garbage collector, and
 cleared when the local garbage collection was performed as a result of
-the local heap being full.  If a traced object is located in the heap
-and the flag is set, then the global collector is informed that it is
-live.  If the object is located in the nursery, the corresponding bits
-in the live bitmap are set.
+the local heap being full.  If a traced object is located in the
+global heap and the flag is set, then the global collector is informed
+that it is live.  If the object is located in the nursery, the
+corresponding bits in the live bitmap are set.  The global collector
+does not need to be informed about internal pointers into racks.
 
 Once the roots are found, the dyads marked as live in the nursery are
 traced according to the class of the object.  If the object is a
