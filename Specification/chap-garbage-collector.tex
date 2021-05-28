@@ -391,7 +391,7 @@ know exactly when a location contains a root and when it does not.
 This precise traversal is complicated by the fact that some registers
 are so called \emph{callee saves} registers, meaning that a particular
 function invocation does not save the register to the stack before
-making a function call, and instead it relies on a the first function
+making a function call, and instead it relies on the first function
 on the call chain that needs to use the register to save it and
 restore it after use.  A direct consequence of this scheme is that a
 register or a stack location close to the top of the stack may contain
@@ -594,10 +594,9 @@ corresponding word is part of a live object.  The live bitmap is
 initialized so that all bits are cleared before the mark phase begins.
 
 The mark phase starts by finding the roots as described in
-\refSec{sec-garbage-collection-finding-roots}.  Only pointers to dyads
-are reported in this phase.  For every dyad found, the two bits in the
-live bitmap corresponding to the two words in the dyad are set to $1$.
-The stack is scanned from top to bottom and then left in that state.
+\refSec{sec-garbage-collection-finding-roots}.  For every pointer into
+the nursery, a $1$ is set in the bitmap, whether the pointer is to a
+dyad or an internal pointer into a rack.
 
 A flag determines whether a reference to an object allocated in the
 global heap should be marked or not.  This flag is set when the local
