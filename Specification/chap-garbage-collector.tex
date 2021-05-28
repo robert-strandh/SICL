@@ -326,13 +326,19 @@ which objects that survive a collection are promoted, we use a
 very precise idea of the age of different objects, so objects would
 always be promoted in the order of oldest to youngest.  This
 technique avoids the problem in traditional copying collectors where
-the allocation of some intermediate objects is immediately followed by
+the allocation of some temporary objects is immediately followed by
 a collection, so these objects are promoted even though they are
 likely to die soon after the collection.  In a sliding collector,
 promotion will happen only when a collection leaves insufficient space
 in the nursery, at which point only the number of objects required to
 free up enough memory would be promoted, and in the strict order of
-oldest to youngest.
+oldest to youngest.%
+\footnote{Though, we have an invariant that stipulates that there are
+  no references from any object in the global heap to any object in a
+  nursery.  For that reason, if (as a result of a side effect) an old
+  object in the nursery refers to a younger object in the nursery, and
+  the older object is promoted, then the younger object must be
+  promoted as well.}
 
 \subsection{Allocation}
 
