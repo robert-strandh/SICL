@@ -609,19 +609,20 @@ corresponding bits in the live bitmap are set.  The global collector
 does not need to be informed about internal pointers into racks.
 
 Once the roots are found, the dyads marked as live in the nursery are
-traced according to the class of the object.  If the object is a
-standard object (as indicated by the fact that the second word
-contains a rack with the tag reserved for racks ($111$), then the
-class is found in the first word of the header.  The class object is
-recursively visited, and also consulted to determine the number of
-words in the rack and what words of the rack may contain pointers to
-heap-allocated objects.  The bits in the live bitmap corresponding to
-the words of the rack are marked, and the words that may contain live
-object of the rack are recursively visited.  If the object is a
-\texttt{cons} cell, the \texttt{car} and the \texttt{cdr} are
-recursively visited.  Tracing stops when an object is reached that has
-already been traced, or when an object is reached that is located in
-the global heap.
+traced according to whether the dyad is a \texttt{cons} cell or a
+standard object.  Standard objects have a rack pointer with a reserved
+tag ($111$) in the second word, whereas \texttt{cons} cells do not.  If
+the object is a standard object, then it is traced according to the
+layout information in the second word of the rack.  We do not use
+information found in the class of the object, because the object may
+be obsolete, and in that case, the rack layout may not correspond to
+the information in the class.  The bits in the live bitmap
+corresponding to the words of the rack are not marked at this time,
+but the words that may contain live object of the rack are recursively
+visited.  If the object is a \texttt{cons} cell, the \texttt{car} and
+the \texttt{cdr} are recursively visited.  Tracing stops when an
+object is reached that has already been traced, or when an object is
+reached that is located in the global heap.
 
 The mark phase maintains an integer variable named \emph{live space}.
 It is initialized to $0$ at the beginning of the mark phase.  For
