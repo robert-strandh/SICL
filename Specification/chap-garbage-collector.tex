@@ -588,15 +588,20 @@ that the object is incorrectly determined to be dead.
 \subsection{Mark phase}
 
 The mark phase uses a separate bitmap called the \emph{live bitmap}.
-It has a bit for every word in the nursery.  After the mark phase has
-finished, if a bit is set in the bitmap, it means that the
-corresponding word is part of a live object.  The live bitmap is
+It has a bit for every word with an even index in the nursery.  We do
+not need a bit for every word, because only headers will be marked.
+After the mark phase has finished, if a bit is set in the bitmap, it
+means that the corresponding object is live.  The live bitmap is
 initialized so that all bits are cleared before the mark phase begins.
 
 The mark phase starts by finding the roots as described in
-\refSec{sec-garbage-collection-finding-roots}.  For every pointer into
-the nursery, a $1$ is set in the bitmap, whether the pointer is to a
-dyad or an internal pointer into a rack.
+\refSec{sec-garbage-collection-finding-roots}.  If the root is a
+pointer to a dyad in the nursery, the corresponding bit in the live
+bitmap is set to $1$.  If the root is a pointer to a rack in the
+nursery, the root is invalidated by storing a $0$ in it.  This
+invalidation has the effect that the test for sameness of rack before
+and after the function call will fail, and the rack will be reloaded
+from the header.
 
 A flag determines whether a reference to an object allocated in the
 global heap should be marked or not.  This flag is set when the local
@@ -605,24 +610,23 @@ cleared when the local garbage collection was performed as a result of
 the local heap being full.  If a traced object is located in the
 global heap and the flag is set, then the global collector is informed
 that it is live.  If the object is located in the nursery, the
-corresponding bits in the live bitmap are set.  The global collector
-does not need to be informed about internal pointers into racks.
+corresponding bits in the live bitmap are set.  If the root contains a
+pointer to a rack in the global heap, and the flag is set, then the
+global collector is informed that this rack is live.
 
 Once the roots are found, the dyads marked as live in the nursery are
 traced according to whether the dyad is a \texttt{cons} cell or a
 standard object.  Standard objects have a rack pointer with a reserved
-tag ($111$) in the second word, whereas \texttt{cons} cells do not.  If
-the object is a standard object, then it is traced according to the
+tag ($111$) in the second word, whereas \texttt{cons} cells do not.
+If the object is a standard object, then it is traced according to the
 layout information in the second word of the rack.  We do not use
 information found in the class of the object, because the object may
 be obsolete, and in that case, the rack layout may not correspond to
-the information in the class.  The bits in the live bitmap
-corresponding to the words of the rack are not marked at this time,
-but the words that may contain live object of the rack are recursively
-visited.  If the object is a \texttt{cons} cell, the \texttt{car} and
-the \texttt{cdr} are recursively visited.  Tracing stops when an
-object is reached that has already been traced, or when an object is
-reached that is located in the global heap.
+the information in the class.  The words that may contain live object
+of the rack are recursively visited.  If the object is a \texttt{cons}
+cell, the \texttt{car} and the \texttt{cdr} are recursively visited.
+Tracing stops when an object is reached that has already been traced,
+or when an object is reached that is located in the global heap.
 
 The mark phase maintains an integer variable named \emph{live space}.
 It is initialized to $0$ at the beginning of the mark phase.  For
