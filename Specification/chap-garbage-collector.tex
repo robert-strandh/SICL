@@ -681,14 +681,12 @@ by the bit in the live bitmap, and an object is skipped if it has
 already been promoted, as indicated by the bit in the promotion
 bitmap.  If the object is not to be skipped, it is promoted.  This
 means that a \emph{copy} of the object is allocated in the global
-heap.  A forward reference is stored in the first word of the dyad
-of the original object, and a bit is set in the promotion bitmap.
-Similarly, the contents of every word of the rack that has a
-corresponding $1$ in the promotion bitmap is replaced by a
-forwarding pointer.  Notice that, during this phase, there will
-be references from the global heap to the nursery, but these
-references will never be followed by the global collector, and they
-will disappear at the end of the promotion phase.
+heap.  A forward reference is stored in the first word of the dyad of
+the original object, and a bit is set in the promotion bitmap.  Notice
+that, during this phase, there will be references from the global heap
+to the nursery, but these references will never be followed by the
+global collector, and they will disappear at the end of the promotion
+phase.
 
 The newly promoted \emph{copy} is then traced in much the same way as
 objects are traced during the mark phase.  An object is traced by
@@ -698,8 +696,8 @@ the corresponding bit being set in the promotion bitmap, the reference
 is replaced by the forward reference stored in the first word of the
 dyad in the nursery, and tracing stops.  If the visited object has
 not yet been promoted, then a copy is allocated in the global heap as
-described above.  The corresponding bits in the promotion bitmap are set
-and forwarding pointers are stored, again as above, and the copy is
+described above.  The corresponding bit in the promotion bitmap is set
+and a forwarding pointer is stored, again as above, and the copy is
 recursively traced.  Notice that if a functional programming style is
 used, all objects referred to by the initial copy will have already
 been promoted.  Only side effects can result in an object containing a
@@ -716,10 +714,10 @@ remaining after this phase.
 When a sufficient number of objects have been promoted, the stack is
 traversed to find roots that need to be modified as a result of object
 having been promoted.  We consult the frame map of each frame to
-determine the roots.  Whether the root contains a pointer to a dyad or
-to some element of a rack, the promotion bitmap for that pointer is
-consulted.  If it is set, then the root is replaced by the forwarding
-pointer stored in the dyad or the rack.
+determine the roots.  When a root contains a pointer to a dyad in the
+nursery, the promotion bitmap for that pointer is consulted.  If it is
+set, then the root is replaced by the forwarding pointer stored in the
+dyad
 
 Finally, every live object in the nursery that has not been promoted
 is scanned to determine any reference to a promoted object.  Such a
