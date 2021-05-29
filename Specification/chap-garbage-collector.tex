@@ -673,6 +673,11 @@ must be updated when the object owning the rack has been promoted.  We
 do this by replacing the contents of the variable with the forwarding
 pointer when the corresponding bit in the promotion bitmap is set.
 
+To preserve the invariant of the garbage collector that there must be
+no references from the global heap to a nursery, whenever an object is
+promoted, other objects referenced from the promoted object, must be
+recursively promoted.
+
 The promotion phase executes a loop over the live objects that have
 not yet been promoted in the nursery, starting from the one with the
 smallest address.  An object is skipped if it not live, as indicated
@@ -682,9 +687,9 @@ bitmap.  If the object is not to be skipped, it is promoted.  This
 means that a \emph{copy} of the object is allocated in the global
 heap.  A forward reference is stored in the first word of the dyad
 of the original object, and a bit is set in the promotion bitmap.
-Similarly, the contents of every word of the rack is replaced by a
-forwarding pointer, and the bit in the promotion bitmap corresponding
-to each such word is set.  Notice that, during this phase, there will
+Similarly, the contents of every word of the rack that has a
+corresponding $1$ in the promotion bitmap is replaced by a
+forwarding pointer.  Notice that, during this phase, there will
 be references from the global heap to the nursery, but these
 references will never be followed by the global collector, and they
 will disappear at the end of the promotion phase.
@@ -714,14 +719,11 @@ remaining after this phase.
 
 When a sufficient number of objects have been promoted, the stack is
 traversed to find roots that need to be modified as a result of object
-having been promoted.  However, since the stack is now in a state
-where every local variable is stored in the stack frame that owns it
-as \refSec{sec-garbage-collection-finding-roots} explains, we only
-need to consult the frame map of each frame to determine the roots.
-Whether the root contains a pointer to a dyad or to some element of
-a rack, the promotion bitmap for that pointer is consulted.  If it
-is set, then the root is replaced by the forwarding pointer stored in
-the dyad or the rack.
+having been promoted.  We consult the frame map of each frame to
+determine the roots.  Whether the root contains a pointer to a dyad or
+to some element of a rack, the promotion bitmap for that pointer is
+consulted.  If it is set, then the root is replaced by the forwarding
+pointer stored in the dyad or the rack.
 
 Finally, every live object in the nursery that has not been promoted
 is scanned to determine any reference to a promoted object.  Such a
