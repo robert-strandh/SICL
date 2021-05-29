@@ -664,14 +664,14 @@ promoted, the first word of the dyad contains a \emph{forwarding
   pointer} pointing to the promoted object in the global heap, and the
 bit in the promotion bitmap corresponding to the first word of the
 dyad is set.  Similarly, when a standard object has been promoted,
-\emph{every word} of the rack contains a forwarding pointer, pointing
-to the new word in the global heap, and the bit in the promotion
-bitmap corresponding to that word is set.  The reason for treating the
-rack this way is that a stack frame may contain local variables that
-are rack pointers, and those variables must be updated when the object
-owning the rack has been promoted.  We do this by replacing the
-contents of the variable with the forwarding pointer when the
-corresponding bit in the promotion bitmap is set.
+every word in the rack that has a $1$ in the live bitmap contains a
+forwarding pointer, pointing to the new word in the global heap, and
+the bit in the promotion bitmap corresponding to that word is set.
+The reason for treating the rack this way is that a stack frame may
+contain local variables that are rack pointers, and those variables
+must be updated when the object owning the rack has been promoted.  We
+do this by replacing the contents of the variable with the forwarding
+pointer when the corresponding bit in the promotion bitmap is set.
 
 The promotion phase executes a loop over the live objects that have
 not yet been promoted in the nursery, starting from the one with the
