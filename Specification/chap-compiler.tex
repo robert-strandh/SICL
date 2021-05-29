@@ -491,46 +491,7 @@ datum.
 
 \subsection{Conversion from MIR to LIR}
 
-\subsubsection{Register allocation using graph coloring}
-
-For register allocation, we use the traditional \emph{graph coloring}
-method.  Since this problem is intractable, we use the method
-described in \cite{Muchnick:1998:ACD:286076}.  This method uses two
-rules:
-
-\begin{enumerate}
-\item The first rule consists of removing a node N in the graph that
-  has a degree that is less than the number of available colors
-  (registers), and solving the reduced problem.  The node color chosen
-  for N is any color not chosen by a node adjacent to N.
-\item The second rule consists of removing a node N in the graph with
-  the smallest degree that is greater than or equal to the number of
-  available colors, and solving the reduced problem.  With some luck,
-  two or more nodes adjacent to N are assigned the same color so that
-  the total number of colors used by the adjacent nodes is less than
-  the number of available colors, leaving at least one color for N.
-\end{enumerate}
-
-We modified the standard algorithm to allow for variables to have a
-\emph{required register}, so that either the required register gets
-assigned to the variable, or the variable is spilled.  This technique
-is used for variables that are used to hold \emph{callee-saved}
-registers to avoid that one such register gets assigned to another.
-We also allow for a variable to have a \emph{preferred register} which
-is chosen by the register allocator if it is available at the time a
-choice has to be made.  We use this technique to try as much as
-possible to compute a value into a register that it is required to end
-up in eventually, such as a register for a particular argument.%
-\fixme{Document how we indicate that an instruction might trash a
-  register.  Also, attempt to use the same method to indicate that a
-  global function or variable value might change across a function
-  call.}
-
-\subsubsection{Alternative strategy for register allocation}
-
-The material is this section is derived from random thoughts on an
-alternative strategy for register allocation.  It may be removed, or
-it may be improved in the future.
+\subsubsection{Register allocation}
 
 Assume that for each program point we maintain a set of
 \emph{entries}.  Each entry corresponds to a lexical variable that is
