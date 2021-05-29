@@ -662,20 +662,12 @@ likely it is for young objects to be promoted even though they are
 likely to die soon.
 
 The promotion phase uses a bitmap called the \emph{promotion bitmap}
-again containing one bit per word in the nursery.  This bitmap is
-initialized so that all its bits are cleared.  When an object has been
-promoted, the first word of the dyad contains a \emph{forwarding
-  pointer} pointing to the promoted object in the global heap, and the
-bit in the promotion bitmap corresponding to the first word of the
-dyad is set.  Similarly, when a standard object has been promoted,
-every word in the rack that has a $1$ in the live bitmap contains a
-forwarding pointer, pointing to the new word in the global heap, and
-the bit in the promotion bitmap corresponding to that word is set.
-The reason for treating the rack this way is that a stack frame may
-contain local variables that are rack pointers, and those variables
-must be updated when the object owning the rack has been promoted.  We
-do this by replacing the contents of the variable with the forwarding
-pointer when the corresponding bit in the promotion bitmap is set.
+again containing one bit for every word with an even index in the
+nursery.  This bitmap is initialized so that all its bits are cleared.
+When an object has been promoted, the first word of the dyad contains
+a \emph{forwarding pointer} pointing to the promoted object in the
+global heap, and the bit in the promotion bitmap corresponding to the
+first word of the dyad is set.
 
 To preserve the invariant of the garbage collector that there must be
 no references from the global heap to a nursery, whenever an object is
