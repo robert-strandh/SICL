@@ -36,27 +36,37 @@ follows:
 
 \begin{tabular}{|l|l|l|}
 \hline
-Name & Used for & Saved by\\
+Name & Used for\\
 \hline
 \hline
-RAX & First return value & Caller\\
-RBX & Dynamic environment & Callee\\
-RCX & Fourth argument, third return value & Caller \\
-RDX & Third argument, second return value & Caller\\
-RSP & Stack pointer &\\
-RBP & Frame pointer & Caller\\
-RSI & Second argument, fourth return value & Caller\\
-RDI & First argument, value count & Caller\\
-R8  & Fifth argument & Caller\\
-R9  &  Argument count, fifth return value& Caller\\
-R10 & Static env. argument & Caller\\
-R11 & Scratch & Caller\\
-R12 & Register variable & Callee\\
-R13 & Register variable & Callee\\
-R14 & Register variable & Callee\\
-R15 & Register variable & Callee\\
+RAX & First return value\\
+RBX & Dynamic environment\\
+RCX & Fourth argument, third return value \\
+RDX & Third argument, second return value\\
+RSP & Stack pointer \\
+RBP & Frame pointer \\
+RSI & Second argument, fourth return value\\
+RDI & First argument, value count\\
+R8  & Fifth argument\\
+R9  &  Argument count, fifth return value\\
+R10 & Static env. argument\\
+R11 & Scratch\\
+R12 & Register variable\\
+R13 & Register variable\\
+R14 & Register variable\\
+R15 & Register variable\\
 \hline
 \end{tabular}
+
+We do not use any callee-saves registers.  The call-site manager is
+able to optimize register use for leaf routines, by essentially
+treating every register as a callee-saves register, except that this
+optimization is more flexible, since the call-site manager has
+knowledge about both the caller and the callee.
+
+By not using callee-saves registers, we are also able to simplify both
+the register allocator, the compiler, and the root-finding phase of
+the garbage collector.
 
 \section{Representation of function objects}
 
