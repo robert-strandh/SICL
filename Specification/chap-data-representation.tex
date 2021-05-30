@@ -243,38 +243,11 @@ A code object contains the following information:
   that is used by the garbage collector to determine which stack
   locations contain \commonlisp{} objects that should be traced.
   Stack locations containing data owned by the current function
-  invocation are present in the table.  A frame map never contains a
-  stack location used to store a callee-saves register, because
-  whether such a location contains a \commonlisp{} object or some
-  other datum is determined by the caller of the current function.
-  The compiler may omit stack locations that are known to contain
-  immediate \commonlisp{} objects that the garbage collector does not
-  have to trace.  For a typical backend, index $i$ of the bitmap
-  represents the stack location at address $b-i$ where $b$ is the
-  value of the base pointer.
-\item A hash table mapping a value of the program counter to a
-  \emph{callee-saves register map}.  This map is a bitmap which has as
-  many elements as there are callee-saves registers.  A bit in the
-  bitmap is set if the corresponding callee-saves register contains a
-  \commonlisp{} object that may need to be traced by the garbage
-  collector.  The compiler may put a cleared bit in the bitmap for a
-  register known to contain an immediate \commonlisp{} object that the
-  garbage collector does not need to trace.
-\item A hash table mapping a value of the program counter to a
-  \emph{callee-saves stack map}.  This map is indexed by a
-  callee-saved register and contains a stack location in which the
-  contents of the saved register was stored before the current
-  function could use the register.  For a typical backend such as
-  x86-64, the entries in the table represent the registers
-  \texttt{RBX} (index 0), \texttt{R12} (index 1), \texttt{R13} (index
-  2), \texttt{R14} (index 3), and \texttt{R15} (index 4) as described
-  in \refSec{sec-backend-x86-84-register-use}.  The value of an entry
-  represents the value to subtract from the value of the base pointer
-  in order to get the stack location of the saved register.  A value
-  of $0$ indicates that the register is not used by this function at
-  this program point, i.e. either current function did not save the
-  register, or it restored the register after having finished using
-  it,
+  invocation are present in the table.  The compiler may omit stack
+  locations that are known to contain immediate \commonlisp{} objects
+  that the garbage collector does not have to trace.  For a typical
+  backend, index $i$ of the bitmap represents the stack location at
+  address $b-i$ where $b$ is the value of the base pointer.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
