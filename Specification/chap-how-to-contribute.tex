@@ -49,3 +49,27 @@ The important objectives of \sysname{} are (in no particular order):
   call-site optimization is more general, and subsumes these other
   techniques, as well as some others.
 \end{itemize}
+
+In the following sections, we elaborate on some ideas for
+contributions in each of the domains mentioned above.
+
+\section{Performance}
+
+Perhaps the most important aspect of performance improvements is to
+make sure they are really making a significant difference to overall
+performance, compared to the increased complexity and maintenance
+burden they might introduce.
+
+The first step in determining whether some code meant to improve
+performance is to devise a way to measure whether the aspect being
+optimized is exercised often enough to justify the optimization.  We
+strongly advise against the technique that consists of acting upon
+some intuition, and using the optimization code to test the
+intuition.  We advise against it, because the code then has a tendency
+to remain in the repository, even if it turns out that the performance
+improvement is marginal, and more code implies a greater maintenance
+burden.  We recommend the article \cite{10.1145/3213770}
+John Ousterhout on performance measure that discusses in great length
+the importance of performance measures, and how they go beyond simple
+profiling.
+
