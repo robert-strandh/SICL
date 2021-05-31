@@ -29,6 +29,14 @@ The important objectives of \sysname{} are (in no particular order):
   should refer to source locations whenever possible.  But it also
   means that we must be able to set breakpoints for the purpose of
   pausing the execution and examining variable values.
+\item Features.  We are obviously interested in \sysname{} having the
+  features that application programmers expect.  However, there are
+  some features that we are not particularly interested in, because we
+  do not intend to use them ourselves, and they would likely increase
+  our own maintenance burden.  Features like that would be better to
+  implement as separate repositories that interested users could add
+  if they like.  In particular, we are not interested in maintaining a
+  foreign-function interface (FFI).
 \item Performance.  Performance is a major objective for \sysname{}.
   However, we do not want maximum performance at all cost.  Other
   objectives must be respected as well.  In particular, we want to try
