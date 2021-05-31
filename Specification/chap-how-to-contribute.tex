@@ -1,0 +1,43 @@
+\chapter{How to contribute}
+
+In this chapter, we give some guidelines to people who think they
+might want to contribute to \sysname{}.  Specifically, we elaborate on
+the main objectives with \sysname{}, which will then dictate what kind
+of contributions we are interested in, and how to determine whether a
+contribution is worthwhile to work on.
+
+The important objectives of \sysname{} are (in no particular order):
+
+\begin{itemize}
+\item Simplicity.  We want the design to be as simple as possible.  We
+  tolerate exceptions to this rule only if there is some major
+  advantage to them, such as performance.  For example objects of
+  type \texttt{cons}, \texttt{fixnum}, \texttt{character}, and
+  \texttt{single-float} are not standard objects, because we are
+  convinced that it would be hard to get good performance if they
+  were.
+\item Maintainability.  We want the code to be readable and
+  understandable.  This objective implies not only that the code
+  should have comments explaining the techniques being used, but also
+  that the code should be idiomatic, divided into reasonable-sized
+  units with appropriate names, and respect the guidelines in
+  \refChap{chap-general-commonlisp-style-guide}, and
+  \refChap{sicl-specific-style-guide}.
+\item Debuggability.  We want \sysname{} to be the preferred
+  \commonlisp{} implementation for debugging application code.  This
+  objective implies that error messages should be excellent, and they
+  should refer to source locations whenever possible.  But it also
+  means that we must be able to set breakpoints for the purpose of
+  pausing the execution and examining variable values.
+\item Performance.  Performance is a major objective for \sysname{}.
+  However, we do not want maximum performance at all cost.  Other
+  objectives must be respected as well.  In particular, we want to try
+  to avoid code for handling specific optimization situations if there
+  is a more general optimization technique that can handle several
+  such situations.  For example, while some \commonlisp{}
+  implementation can avoid checking the argument count by having
+  several special entry points in each function, and avoid keyword
+  arguments by introducing many compiler macros, our technique for
+  call-site optimization is more general, and subsumes these other
+  techniques, as well as some others.
+\end{itemize}
