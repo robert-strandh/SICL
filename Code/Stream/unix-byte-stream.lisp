@@ -14,6 +14,6 @@
 
 (defmethod stream-write-byte ((stream unix-byte-output-stream) integer)
   (when (= (fill-pointer (buffer stream))
-	   (array-total-size (buffer stream)))
+           (array-total-size (buffer stream)))
     (stream-finish-output stream))
   (vector-push integer (buffer stream)))
