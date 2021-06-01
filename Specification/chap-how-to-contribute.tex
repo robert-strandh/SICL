@@ -53,6 +53,37 @@ The important objectives of \sysname{} are (in no particular order):
 In the following sections, we elaborate on some ideas for
 contributions in each of the domains mentioned above.
 
+\section{Features}
+
+\subsection{Fast Fourier Transform (FFT)}
+
+We would like to provide a good FFT library.  The implementation can
+use threads (for large vectors) and/or special SIMD instructions.  The
+best implementation strategy is probably to write a \commonlisp{}
+function that generates machine code.
+
+\subsection{POSIX interface}
+
+\sysname{} (and other \commonlisp{} implementations as well) need to
+communicate with the operating system, and POSIX is a standard
+interface for doing so.  We would like to see a complete POSIX
+interface as described here: http://metamodular.com/POSIX-API/index.html
+
+\subsection{Profiling}
+
+We need code for profiling application programs.  Such code involves
+the profiling interface itself, but also the compiler infrastructure
+that allows code to be profiled.  But an ordinary profiler and a
+statistical profiler are needed.
+
+\subsection{Coverage}
+
+We also need code to create coverage statistics for application
+programs.  As with profiling, such code involves both the interface to
+the facility and compiler infrastructure.
+
+\subsection{General array displacement}
+
 \section{Performance}
 
 Perhaps the most important aspect of performance improvements is to
