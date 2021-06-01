@@ -84,6 +84,16 @@ the facility and compiler infrastructure.
 
 \subsection{General array displacement}
 
+The standard \commonlisp{} feature for array displacement is very
+limited.  Only an interval of the base array can be expressed.  We
+would like an extension of this facility so that the elements of an
+array with some particular dimensions would be determined by some
+arbitrary function being applied to valid indices of the array.
+Ordinary array displacement can then be expressed with this function
+being a closure, closing over the base array.  But there does not have
+to be any base array involved at all.  The function can generate the
+``elements'' in some arbitrary way.
+
 \section{Performance}
 
 Perhaps the most important aspect of performance improvements is to
