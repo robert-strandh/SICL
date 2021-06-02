@@ -725,7 +725,8 @@
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:compute-return-value-count-instruction))
   (ensure-one-unattributed
-   predecessor instruction (first (cleavir-ir:outputs instruction))))
+   predecessor instruction (first (cleavir-ir:outputs instruction))
+   :disallowed-registers *return-values*))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:compute-return-value-count-instruction) arrangement)
