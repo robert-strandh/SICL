@@ -1,26 +1,31 @@
 (cl:in-package #:cleavir-ir)
 
-(defmacro define-simple-one-arg-float-instruction (name)
-  `(progn
-     (defclass ,name (instruction one-successor-mixin)
-       ((%subtype :initarg :subtype :reader subtype)))
-     (defmethod clone-initargs append ((instruction ,name))
-       (list :subtype (subtype instruction)))))
+;;; Mixin for instructions which perform some floating point
+;;; arithmetic, with a single successor and a single output.
+(defclass float-arithmetic-mixin () ())
 
 ;;; While x86-64 specifies only two-address binary instructions, we
 ;;; intend to make use of three-address binary instructions provided
 ;;; by the AVX extension.
+(defmacro define-simple-one-arg-float-instruction (name)
+  `(progn
+     (defclass ,name (instruction one-successor-mixin float-arithmetic-mixin)
+       ((%subtype :initarg :subtype :reader subtype)))
+     (defmethod clone-initargs append ((instruction ,name))
+       (list :subtype (subtype instruction)))))
+
 (defmacro define-simple-two-arg-float-instruction
     (name &key (additional-superclasses '()))
   `(progn
-     (defclass ,name (instruction one-successor-mixin ,@additional-superclasses)
+     (defclass ,name (instruction one-successor-mixin
+                      float-arithmetic-mixin ,@additional-superclasses)
        ((%subtype :initarg :subtype :reader subtype)))
      (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
 
 (defmacro define-simple-float-comparison-instruction (name)
   `(progn
-     (defclass ,name (instruction multiple-successors-mixin)
+     (defclass ,name (instruction multiple-successors-mixin comparison-mixin)
        ((%subtype :initarg :subtype :reader subtype)))
      (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))

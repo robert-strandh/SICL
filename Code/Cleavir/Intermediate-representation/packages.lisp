@@ -96,6 +96,7 @@
    #:fixnum-logior-instruction
    #:fixnum-logxor-instruction
    #:fixnum-lognot-instruction
+   #:float-arithmetic-mixin
    #:float-add-instruction
    #:float-sub-instruction
    #:float-mul-instruction

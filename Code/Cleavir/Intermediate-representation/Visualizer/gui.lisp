@@ -182,6 +182,11 @@
                      (floor datum-width 2) (floor datum-height 2)
                      :filled nil)))
 
+(defun ink-for-element-type (type)
+  (case type
+    ((single-float double-float) clim:+purple+)
+    (t clim:+dark-green+)))
+
 (defmethod draw-datum ((datum cleavir-ir:lexical-location) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos
@@ -191,7 +196,8 @@
       (clim:draw-text* pane (string (cleavir-ir:name datum))
                        hpos vpos
                        :align-x :center :align-y :center
-                       :ink clim:+dark-green+))))
+                       :ink (ink-for-element-type
+                             (cleavir-ir:element-type datum))))))
 
 (defmethod draw-datum ((datum cleavir-ir:constant-input) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
@@ -208,7 +214,7 @@
                          (subseq label 0 (min 15 (length label)))
                          hpos vpos
                          :align-x :center :align-y :center
-                       :ink clim:+dark-blue+)))))
+                         :ink clim:+dark-blue+)))))
 
 (defmethod draw-datum ((datum cleavir-ir:immediate-input) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)

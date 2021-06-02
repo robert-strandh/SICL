@@ -4,7 +4,7 @@
 
 (defun compute-dx (instruction instructions)
   (let ((length (length instructions))
-        (position (position instruction instructions)))
+        (position (or (position instruction instructions) 0)))
     (round (* *base-width*
               0.15
               (let ((middle-position (/ (1- length) 2)))
