@@ -6,4 +6,4 @@
     `(let ((,variable ,stream-form))
        ,@declarations
        (unwind-protect (progn ,@forms)
-	 (close ,variable)))))
+         (close ,variable)))))

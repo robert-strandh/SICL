@@ -122,8 +122,11 @@
    #:update-dependent
    #:find-method-combination
    ;; Other functions
+   #:standard-instance-access
+   #:funcallable-standard-instance-access
    #:set-funcallable-instance-function
    #:shared-initialize-around-real-class-default
+   #:intern-eql-specializer
    ;; SICL-specific classes
    #:real-class #:regular-class
    ;; SICL-specific functions
