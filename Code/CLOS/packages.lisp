@@ -122,6 +122,8 @@
    #:update-dependent
    #:find-method-combination
    ;; Other functions
+   #:standard-instance-access
+   #:funcallable-standard-instance-access
    #:set-funcallable-instance-function
    #:shared-initialize-around-real-class-default
    ;; SICL-specific classes
