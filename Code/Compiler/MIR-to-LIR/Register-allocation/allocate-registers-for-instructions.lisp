@@ -594,6 +594,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Floating-point arithmetic instructions.
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:float-arithmetic-mixin))
+  (ensure-one-unattributed
+   predecessor instruction (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:float-arithmetic-mixin) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; MEMSET1-INSTRUCTION
 
 (defmethod process-outputs
@@ -725,7 +738,8 @@
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:compute-return-value-count-instruction))
   (ensure-one-unattributed
-   predecessor instruction (first (cleavir-ir:outputs instruction))))
+   predecessor instruction (first (cleavir-ir:outputs instruction))
+   :disallowed-registers *return-values*))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:compute-return-value-count-instruction) arrangement)
