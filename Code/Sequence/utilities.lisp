@@ -42,7 +42,7 @@
            (unless (gethash class table)
              (setf (gethash class table) t)
              (push class subclasses)
-             (mapc #'push-subclasses (closer-mop:class-direct-subclasses class)))))
+             (mapc #'push-subclasses (sicl-host-mop:class-direct-subclasses class)))))
       (push-subclasses class)
       subclasses)))
 
@@ -50,7 +50,7 @@
   (let ((prototype (coerce nil sequence-class)))
     (check-type prototype vector)
     (let ((direct-subclasses
-            (closer-mop:class-direct-subclasses (class-of prototype))))
+            (sicl-host-mop:class-direct-subclasses (class-of prototype))))
       (if (null direct-subclasses)
           (array-element-type prototype)
           `(or ,@(mapcar #'vector-class-element-type direct-subclasses))))))

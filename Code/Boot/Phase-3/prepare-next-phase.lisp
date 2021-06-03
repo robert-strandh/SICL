@@ -10,7 +10,7 @@
         (setf (gethash symbol visited) t)
         (let ((class (env:find-class (env:client e3) e3 symbol)))
           (unless (null class)
-            (closer-mop:finalize-inheritance class))))))
+            (sicl-host-mop:finalize-inheritance class))))))
   (format *trace-output* "done!~%"))
 
 (defun prepare-next-phase (e2 e3 e4)

@@ -1,9 +1,9 @@
 (cl:in-package #:sicl-boot)
 
-(defclass header (closer-mop:funcallable-standard-object)
+(defclass header (sicl-host-mop:funcallable-standard-object)
   ((%class :initarg :class)
    (%rack :initarg :rack))
-  (:metaclass closer-mop:funcallable-standard-class))
+  (:metaclass sicl-host-mop:funcallable-standard-class))
 
 (defmethod sicl-ast-evaluator:translate-ast
     (client (ast cleavir-ast:nook-write-ast) lexical-environment)

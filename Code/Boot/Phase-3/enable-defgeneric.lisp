@@ -61,12 +61,12 @@
                        ast)))))
   (setf (env:fdefinition
          (env:client e3) e3 'sicl-clos:set-funcallable-instance-function)
-        #'closer-mop:set-funcallable-instance-function)
+        #'sicl-host-mop:set-funcallable-instance-function)
   (define-compute-discriminating-function e2 e3 e4))
 
 (defun enable-defgeneric (e2 e3 e4)
   (setf (env:fdefinition (env:client e2) e2 'sicl-clos:class-prototype)
-        #'closer-mop:class-prototype)
+        #'sicl-host-mop:class-prototype)
   (with-intercepted-function-cells
       (e3
        (class-of (env:function-cell (env:client e2) e2 'class-of))

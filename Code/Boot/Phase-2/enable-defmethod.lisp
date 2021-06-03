@@ -15,7 +15,7 @@
                       (values
                        (class-name (class-of function))
                        (class-name
-                        (closer-mop:generic-function-method-class function)))
+                        (sicl-host-mop:generic-function-method-class function)))
                       (values 'standard-generic-function 'standard-method)))
                 (values 'standard-generic-function 'standard-method))))))
 
@@ -48,7 +48,7 @@
     (setf (env:find-class client e2 't) (find-class 't))
     (setf (env:find-class client e2 'null) (find-class 'null))
     (setf (env:fdefinition client e2 'sicl-clos:method-function)
-          #'closer-mop:method-function)
+          #'sicl-host-mop:method-function)
     (setf (env:special-operator client e3 'cleavir-primop:multiple-value-call) t))
   (import-functions-from-host
    '(sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers

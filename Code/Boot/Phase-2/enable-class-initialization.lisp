@@ -39,7 +39,7 @@
                arguments)
         (loop for slot-spec in direct-slots
               for slot = (apply #'make-instance
-                                'closer-mop:standard-direct-slot-definition
+                                'sicl-host-mop:standard-direct-slot-definition
                                 slot-spec)
               for slot-name = (getf slot-spec :name)
               for readers = (getf slot-spec :readers)

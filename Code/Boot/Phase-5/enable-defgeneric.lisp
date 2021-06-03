@@ -25,7 +25,7 @@
        ;; FIXME: this one should also assign the slots in the
        ;; function object.
        (sicl-clos:set-funcallable-instance-function
-        (list #'closer-mop:set-funcallable-instance-function))
+        (list #'sicl-host-mop:set-funcallable-instance-function))
        (no-applicable-method (list #'no-applicable-method)))
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e5))
   (load-source-file "CLOS/discriminating-automaton.lisp" e5)

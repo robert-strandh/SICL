@@ -39,13 +39,13 @@
       ;; When we create class metaobjects, we need to instantiate the
       ;; class STANDARD-DIRECT-SLOT-DEFINITION, so we import it here.
       (setf (env:find-class client e2 'sicl-clos:standard-direct-slot-definition)
-            (find-class 'closer-mop:standard-direct-slot-definition))
+            (find-class 'sicl-host-mop:standard-direct-slot-definition))
       (setf (env:find-class client e2 'sicl-clos:specializer)
-            (find-class 'closer-mop:specializer))
+            (find-class 'sicl-host-mop:specializer))
       (setf (env:find-class client e2 'sicl-clos:forward-referenced-class)
-            (find-class 'closer-mop:forward-referenced-class))
+            (find-class 'sicl-host-mop:forward-referenced-class))
       (import-functions-from-host '(class-of add-method) e2)
       (setf (env:fdefinition client e2 'sicl-clos:class-precedence-list)
-            #'closer-mop:class-precedence-list)
+            #'sicl-host-mop:class-precedence-list)
       (setf (env:fdefinition client e2 'sicl-clos:class-direct-superclasses)
-            #'closer-mop:class-direct-superclasses))))
+            #'sicl-host-mop:class-direct-superclasses))))

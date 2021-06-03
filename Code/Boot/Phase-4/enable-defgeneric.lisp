@@ -32,7 +32,7 @@
        ;; FIXME: this one should also assign the slots in the
        ;; function object.
        (sicl-clos:set-funcallable-instance-function
-        (list #'closer-mop:set-funcallable-instance-function))
+        (list #'sicl-host-mop:set-funcallable-instance-function))
        (class-of (env:function-cell (env:client e5) e5 'class-of))
        (no-applicable-method (list #'no-applicable-method)))
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e4))

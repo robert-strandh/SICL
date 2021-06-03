@@ -13,7 +13,7 @@
 ;;; Therefore, that aspect of the host class-initialization protocol
 ;;; will not be invoked.
 (defclass funcallable-standard-class
-    (closer-mop:funcallable-standard-class)
+    (sicl-host-mop:funcallable-standard-class)
   ())
 
 (defmethod print-object ((object funcallable-standard-class) stream)
@@ -21,9 +21,9 @@
 
 ;;; This method is apparently necessary so that we are allowed to
 ;;; make instances of our new class.
-(defmethod closer-mop:validate-superclass
+(defmethod sicl-host-mop:validate-superclass
     ((class funcallable-standard-class)
-     (superclass closer-mop:funcallable-standard-class))
+     (superclass sicl-host-mop:funcallable-standard-class))
   t)
 
 (defun boot (boot)
@@ -38,7 +38,7 @@
     (import-from-host boot)
     (sicl-boot:copy-macro-functions e0 e2)
     (sicl-boot:copy-macro-functions e0 e3)
-    (import-functions-from-host '(closer-mop:method-function) e3)
+    (import-functions-from-host '(sicl-host-mop:method-function) e3)
     (let ((client (env:client e3)))
       (setf (env:fdefinition client e2 'sicl-boot:ast-eval)
             (lambda (ast)

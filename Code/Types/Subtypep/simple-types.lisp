@@ -32,7 +32,7 @@
   (scan-for-simple-types (find-class type-specifier) table))
 
 (defmethod scan-for-simple-types ((type-specifier class) table)
-  (loop for class in (closer-mop:class-precedence-list type-specifier)
+  (loop for class in (sicl-host-mop:class-precedence-list type-specifier)
         unless (nth-value 1 (gethash class (bit-positions table)))
           do (setf (gethash class (bit-positions table))
                    (logior (gethash class (bit-positions table) 0)

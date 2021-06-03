@@ -48,7 +48,7 @@
   (with-intercepted-function-cells
       (e4
        (sicl-clos:set-funcallable-instance-function
-        (list #'closer-mop:set-funcallable-instance-function)))
+        (list #'sicl-host-mop:set-funcallable-instance-function)))
     (load-source-file "CLOS/invalidate-discriminating-function.lisp" e4))
   (import-functions-from-host
    '(cleavir-code-utilities:parse-generic-function-lambda-list

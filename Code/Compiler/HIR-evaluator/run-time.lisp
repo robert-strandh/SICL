@@ -1,15 +1,15 @@
 (cl:in-package #:sicl-hir-evaluator)
 
-(defclass hir-closure (closer-mop:funcallable-standard-object)
+(defclass hir-closure (sicl-host-mop:funcallable-standard-object)
   ((%environment :initarg :environment :reader environment))
-  (:metaclass closer-mop:funcallable-standard-class))
+  (:metaclass sicl-host-mop:funcallable-standard-class))
 
 (defun enclose (entry-point static-environment-length lexical-locations)
   (let* ((static-environment
            (make-array static-environment-length))
          (closure (make-instance 'hir-closure
                     :environment static-environment)))
-    (closer-mop:set-funcallable-instance-function
+    (sicl-host-mop:set-funcallable-instance-function
      closure
      (lambda (&rest args)
        (funcall entry-point

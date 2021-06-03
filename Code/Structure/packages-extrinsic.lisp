@@ -2,7 +2,7 @@
 
 (defpackage #:sicl-structure
   (:use #:common-lisp)
-  (:local-nicknames (#:mop #:closer-mop))
+  (:local-nicknames (#:mop #:sicl-host-mop))
   (:shadow #:defstruct
            #:copy-structure
            #:structure-class

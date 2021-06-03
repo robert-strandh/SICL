@@ -7,7 +7,7 @@
     (loop with client = (env:client environment)
           for function-name in function-names
           for gf = (env:fdefinition client environment function-name)
-          for method = (make-instance 'closer-mop:standard-reader-method
+          for method = (make-instance 'sicl-host-mop:standard-reader-method
                          :lambda-list '(object)
                          :qualifiers '()
                          :specializers (list class)
@@ -23,7 +23,7 @@
     (loop with client = (env:client environment)
           for function-name in function-names
           for gf = (env:fdefinition client environment function-name)
-          for method = (make-instance 'closer-mop:standard-writer-method
+          for method = (make-instance 'sicl-host-mop:standard-writer-method
                          :lambda-list '(value object)
                          :qualifiers '()
                          :specializers (list (find-class t) class)
