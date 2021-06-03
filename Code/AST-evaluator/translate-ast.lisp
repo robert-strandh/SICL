@@ -1,5 +1,11 @@
 (cl:in-package #:sicl-ast-evaluator)
 
+;;; This variable will hold a list of CONS cells, where the CAR of
+;;; each cell is the name of a function, and the CDR is the name of a
+;;; variable that will hold the function cell of the function with
+;;; that name.
+(defvar *function-cells*)
+
 (defvar *run-time-environment-name*)
 
 (defgeneric translate-ast (client ast lexical-environment))

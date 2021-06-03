@@ -17,12 +17,6 @@
      (cleavir-cst-to-ast:cst-to-ast
       client cst environment)))
 
-;;; This variable will hold a list of CONS cells, where the CAR of
-;;; each cell is the name of a function, and the CDR is the name of a
-;;; variable that will hold the function cell of the function with
-;;; that name.
-(defvar *function-cells*)
-
 (defun translate-top-level-ast (client ast)
   (let* ((table (make-hash-table :test #'eq))
          (lexical-environment (list table))
