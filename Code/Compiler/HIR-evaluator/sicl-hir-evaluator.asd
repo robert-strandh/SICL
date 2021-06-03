@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-hir-evaluator
-  :depends-on (#:closer-mop
+  :depends-on (#:sicl-host-mop
                #:cleavir-hir
                #:cleavir-cst-to-ast
                #:sicl-utilities
