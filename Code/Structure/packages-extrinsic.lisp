@@ -11,7 +11,6 @@
            #:copy-structure
            #:structure-class
            #:structure-object
-
            #:structure-slot-definition
            #:structure-slot-definition-read-only
            #:structure-direct-slot-definition
