@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-structure-extrinsic
-  :depends-on (#:closer-mop
+  :depends-on (#:sicl-host-mop
                #:sicl-global-environment)
   :serial t
   :components

@@ -4,7 +4,7 @@
   :depends-on (:cleavir-code-utilities
                :concrete-syntax-tree
                :sicl-simple-readtable
-               :closer-mop)
+               :sicl-host-mop)
   :serial t
   :components
   ((:file "packages")
