@@ -22,8 +22,7 @@
                #:sicl-stream-support
                #:sicl-ast-evaluator
                #:sicl-cst-to-ast
-               #:eclector
-               #:eclector-concrete-syntax-tree
+               #:sicl-reader
                #:cleavir-io
                #:sicl-boot-backtrace-inspector
                #:clouseau)
