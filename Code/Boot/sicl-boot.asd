@@ -13,3 +13,14 @@
   :components
   ((:file "boot")
    (:file "trace")))
+
+(defmethod asdf:operate :after
+    ((operation asdf/lisp-action:load-op)
+     (component (eql (asdf:find-system '#:sicl-boot)))
+     &key)
+  (unless (null (find-package '#:closer-common-lisp-user))
+    (delete-package '#:closer-common-lisp-user))
+  (unless (null (find-package '#:closer-common-lisp))
+    (delete-package '#:closer-common-lisp))
+  (unless (null (find-package '#:closer-mop))
+    (rename-package '#:closer-mop (format nil "~a" (random 100000000)))))
