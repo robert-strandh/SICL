@@ -38,3 +38,17 @@
 (defun clear-output (&optional (output-stream *standard-output*))
   (stream-clear-output output-stream)
   nil)
+
+(defun read-char
+    (&optional
+       (input-stream *standard-input*)
+       (eof-error-p t)
+       (eof-value nil)
+       (recursive-p nil))
+  (let ((result (stream-read-char input-stream)))
+    (declare (ignore recursive-p))
+    (if (eq result :eof)
+        (if eof-error-p
+            (error 'end-of-file :error-stream input-stream)
+            eof-value)
+        result)))
