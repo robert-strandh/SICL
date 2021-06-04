@@ -111,3 +111,6 @@
   (let ((buffer (buffer stream)))
     (when (= (fill-pointer buffer) (array-total-size buffer))
       (stream-finish-output stream))))
+
+(defclass buffered-input-stream-mixin
+    (buffered-stream-mixin) ())
