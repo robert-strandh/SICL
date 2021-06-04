@@ -8,5 +8,6 @@
   ((:file "packages")
    (:file "enable-deftype")
    (:file "enable-printing")
+   (:file "enable-reading")
    (:file "enable-conditions")
    (:file "boot")))
