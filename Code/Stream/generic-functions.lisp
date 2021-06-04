@@ -23,3 +23,7 @@
 (defgeneric stream-write-char (stream character))
 
 (defgeneric stream-write-string (stream string &optional start end))
+
+(defgeneric stream-read-byte (stream))
+
+(defgeneric stream-read-char (stream))
