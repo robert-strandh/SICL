@@ -17,3 +17,6 @@
            (array-total-size (buffer stream)))
     (stream-finish-output stream))
   (vector-push integer (buffer stream)))
+
+(defclass unix-byte-input-stream (stream buffered-input-stream-mixin)
+  ((%file-descriptor :initarg :file-descriptor :reader file-descriptor)))
