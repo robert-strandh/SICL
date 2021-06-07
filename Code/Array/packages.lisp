@@ -19,10 +19,14 @@
    #:array-unsigned-byte-32
    #:array-unsigned-byte-64
    #:array-unsigned-byte-8
+   #:array-complex-single-float
+   #:array-complex-double-float
    #:vector-single-float
    #:vector-double-float
    #:vector-signed-byte-32
    #:vector-signed-byte-64
    #:vector-unsigned-byte-32
    #:vector-unsigned-byte-64
-   #:vector-unsigned-byte-8))
+   #:vector-unsigned-byte-8
+   #:vector-complex-single-float
+   #:vector-complex-double-float))
