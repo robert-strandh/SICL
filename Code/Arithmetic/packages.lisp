@@ -14,4 +14,7 @@
    #:binary-equal
    #:sign-and-limb-count
    #:single-float-p
-   #:double-float-p))
+   #:double-float-p
+   #:complex-rational
+   #:complex-single-float
+   #:complex-double-float))
