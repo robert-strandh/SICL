@@ -12,4 +12,6 @@
    #:binary-greater
    #:binary-not-less
    #:binary-equal
-   #:sign-and-limb-count))
+   #:sign-and-limb-count
+   #:single-float-p
+   #:double-float-p))
