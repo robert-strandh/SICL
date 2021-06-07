@@ -23,8 +23,6 @@
     (ld "CLOS/template-defgeneric.lisp")
     (ld "Arithmetic/numerator-defgeneric.lisp")
     (ld "Arithmetic/denominator-defgeneric.lisp")
-    (ld "Arithmetic/realpart-defgeneric.lisp")
-    (ld "Arithmetic/imagpart-defgeneric.lisp")
     (ld "Array/array-dimensions-defgeneric.lisp")
     (ld "Array/vector-fill-pointer-defgeneric.lisp")
     (ld "Array/setf-vector-fill-pointer-defgeneric.lisp")
