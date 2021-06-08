@@ -6,7 +6,18 @@
          :expected-type 'array))
 
 (defmethod array-element-type ((array array))
+  (error 'argument-to-array-element-type-must-be-a-specialized-array
+         :datum array
+         :expected-type '(array *)))
+
+(defmethod array-element-type ((array array-t))
   't)
+
+(defmethod array-element-type ((array array-complex-double-float))
+  '(complex double-float))
+
+(defmethod array-element-type ((array array-complex-single-float))
+  '(complex single-float))
 
 (defmethod array-element-type ((array array-double-float))
   'double-float)
