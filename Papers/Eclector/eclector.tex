@@ -1,0 +1,138 @@
+\documentclass[format=sigconf]{acmart}
+%\documentclass{sig-alternate-05-2015}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+
+\def\inputfig#1{\input #1}
+\def\inputtex#1{\input #1}
+\def\inputal#1{\input #1}
+\def\inputcode#1{\input #1}
+\newcommand\inputeps[1]{\includegraphics[width=\linewidth]{#1}}
+
+\inputtex{logos.tex}
+\inputtex{refmacros.tex}
+\inputtex{other-macros.tex}
+
+\acmConference[ELS'19]{the 12th European Lisp Symposium}{April 1--2 2019}{%
+  Genoa, Italy}
+\acmISBN{978-2-9557474-2-1}
+\acmDOI{}
+
+\setcopyright{rightsretained}
+
+\begin{document}
+%\conferenceinfo{12th ELS}{April 1--2, 2019, Genoa, Italy}
+
+\title{A Portable, Source-tracking Reader for Common Lisp
+}
+
+\author{Jan Moringen}
+
+\email{jan.moringen@???}
+
+\author{Robert Strandh}
+\email{robert.strandh@u-bordeaux.fr}
+
+%% \affiliation{
+%%   \institution{LaBRI, University of Bordeaux}
+%%   \streetaddress{351 cours de la libération}
+%%   \city{Talence}
+%%   \country{France}}
+
+%\numberofauthors{2}
+%% \author{\alignauthor
+%% Jan Morningen\\
+%% Robert Strandh\\
+%% \affaddr{University of Bordeaux}\\
+%% \affaddr{351, Cours de la Libération}\\
+%% \affaddr{Talence, France}\\
+%% \email{irene.durand@u-bordeaux.fr}
+%% \email{robert.strandh@u-bordeaux.fr}}
+
+%% \toappear{Permission to make digital or hard copies of all or part of
+%%   this work for personal or classroom use is granted without fee
+%%   provided that copies are not made or distributed for profit or
+%%   commercial advantage and that copies bear this notice and the full
+%%   citation on the first page. Copyrights for components of this work
+%%   owned by others than the author(s) must be honored. Abstracting with
+%%   credit is permitted. To copy otherwise, or republish, to post on
+%%   servers or to redistribute to lists, requires prior specific
+%%   permission and/or a fee. Request permissions from
+%%   Permissions@acm.org.
+
+%%   ELS '19, April 1 -- 2 2019, Genoa, Italy
+%%   Copyright is held by the owner/author(s). %Publication rights licensed to ACM.
+%% %  ACM 978-1-4503-2931-6/14/08\$15.00.
+%% %  http://dx.doi.org/10.1145/2635648.2635654
+%% }
+
+
+\begin{abstract}
+The \commonlisp{} \texttt{read} function is the standard parser for
+\commonlisp{} source code.  The \commonlisp{} file compiler invokes
+the reader to turn the program text in the form of a sequence of
+characters into a nested structure consisting of \texttt{cons} cells
+and atoms.  However, in order for the compiler to be able to generate
+good error messages, both for compile time and run time errors, the
+location of source code in the original file must be propagated to all
+compilation phases.
+
+Furthermore, the \commonlisp{} reader is the ideal parser for code in
+an editor buffer.  For such an application, the reader must also be
+able to parse source text that is ignored by a typical reader, such as
+comments.
+
+We present an implementation-independent reader that is able to
+accomplish such source tracking by wrapping the standard nested
+structure elements in standard instances that also contain information
+about source location.  Our reader returns such objects not only for
+expressions, but also for material that is otherwise ignored.
+
+The reader can function with custom reader macros, but we provide
+special versions of the standard reader macros that provide additional
+information about the nature of the code being parsed.
+\end{abstract}
+
+ \begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10010940.10010971.10011682</concept_id>
+<concept_desc>Software and its engineering~Abstraction, modeling and modularity</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10010940.10011003.10011002</concept_id>
+<concept_desc>Software and its engineering~Software performance</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011041</concept_id>
+<concept_desc>Software and its engineering~Compilers</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Abstraction, modeling and modularity}
+\ccsdesc[500]{Software and its engineering~Software performance}
+\ccsdesc[500]{Software and its engineering~Compilers}
+
+%\printccsdesc
+
+\keywords{\commonlisp{}, Portability}
+
+\maketitle
+\inputtex{spec-macros.tex}
+
+\inputtex{sec-introduction.tex}
+\inputtex{sec-previous.tex}
+\inputtex{sec-our-method.tex}
+\inputtex{sec-conclusions.tex}
+\inputtex{sec-acknowledgements.tex}
+
+%\bibliographystyle{abbrv}
+\bibliographystyle{plainnat}
+\bibliography{eclector}
+\end{document}
+
+%%  LocalWords:  Inlining inlining
