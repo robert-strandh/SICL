@@ -68,6 +68,11 @@
   (and (member variable pool :key #'lexical-location :test #'eq)
        t))
 
+(defun check-pool-validity (pool)
+  (assert (equal (remove-duplicates pool :key #'lexical-location)
+                 pool))
+  pool)
+
 ;;; This is the <= operation from Kildall's paper.
 (defun pool<= (pool1 pool2)
   (loop for entry1 in pool1
@@ -92,7 +97,7 @@
           when (null (find (lexical-location entry2) pool1
                            :test #'eq :key #'lexical-location))
             do (push (item-meet probability nil entry2) result))
-    result))
+    (check-pool-validity result)))
 
 (defun increment-all-distances (pool)
   (loop for pool-item in pool

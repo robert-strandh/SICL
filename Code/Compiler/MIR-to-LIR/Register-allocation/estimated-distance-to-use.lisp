@@ -95,16 +95,17 @@
 (defun compute-derived-input-pool (instruction)
   (let ((call-instruction-p (call-instruction-p instruction))
         (outputs (cleavir-ir:outputs instruction)))
-    (loop for entry in (output-pool instruction)
-          for lexical-location = (lexical-location entry)
-          for distance = (distance entry)
-          for call-probability = (call-probability entry)
-          unless (member lexical-location outputs :test #'eq)
-            collect (make-instance 'pool-item
-                      :lexical-location lexical-location
-                      :distance (1+ distance)
-                      :call-probability
-                      (if call-instruction-p 10 call-probability)))))
+    (check-pool-validity
+     (loop for entry in (output-pool instruction)
+           for lexical-location = (lexical-location entry)
+           for distance = (distance entry)
+           for call-probability = (call-probability entry)
+           unless (member lexical-location outputs :test #'eq)
+             collect (make-instance 'pool-item
+                       :lexical-location lexical-location
+                       :distance (1+ distance)
+                       :call-probability
+                      (if call-instruction-p 10 call-probability))))))
 
 (defgeneric compute-new-input-pool (instruction))
 
@@ -117,7 +118,7 @@
          (result derived)
          (inputs (lexical-location-inputs instruction)))
     (loop for input in inputs
-          for entry = (find input derived
+          for entry = (find input result
                             :test #'eq :key #'lexical-location)
           do (if (null entry)
                  (push (make-instance 'pool-item
@@ -126,7 +127,7 @@
                          :call-probability 0)
                        result)
                  (reinitialize-instance entry :distance 0)))
-    result))
+    (check-pool-validity result)))
 
 (defgeneric compute-estimated-distance-to-use-for-instruction
     (instruction back-arcs))
