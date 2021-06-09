@@ -18,7 +18,6 @@
                #:sicl-string-support
                #:sicl-character-support
                #:sicl-type-support
-               #:sicl-printer-support
                #:sicl-stream-support
                #:sicl-ast-evaluator
                #:sicl-cst-to-ast
