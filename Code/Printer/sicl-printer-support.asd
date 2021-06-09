@@ -3,4 +3,5 @@
 (defsystem sicl-printer-support
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "readtable-defclass")))
