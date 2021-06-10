@@ -7,4 +7,5 @@
   (load-source-file "Arithmetic/realp-defgeneric.lisp" e5)
   (load-source-file "Arithmetic/rationalp-defgeneric.lisp" e5)
   (load-source-file "Arithmetic/floatp-defgeneric.lisp" e5)
-  (load-source-file "Character/char-code-limit-defconstant.lisp" e5))
+  (load-source-file "Character/char-code-limit-defconstant.lisp" e5)
+  (load-asdf-system '#:ctype e5))
