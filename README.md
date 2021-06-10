@@ -19,6 +19,7 @@ versions.
 
 [the Cluster repository]:https://github.com/robert-strandh/Cluster
 [the Concrete-Syntax-Tree repository]:https://github.com/s-expressionists/Concrete-Syntax-Tree
+[the ctype repository]:https://github.com/s-expressionists/ctype
 [the Eclector repository]:https://github.com/s-expressionists/Eclector
 [the Trucler repository]:https://github.com/s-expressionists/Trucler
 [the Clostrum repository]:https://github.com/s-expressionists/Clostrum
