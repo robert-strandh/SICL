@@ -79,4 +79,5 @@
     (load-clostrum e5)
     (load-asdf-system '#:acclimation e5)
     (load-asdf-system '#:trucler-reference e5)
-    (load-ctype e5)))
+    (load-ctype e5)
+    (load-source-file "Types/subtypep-defun.lisp" e5)))
