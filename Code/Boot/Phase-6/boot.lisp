@@ -78,4 +78,5 @@
     (enable-printing e5)
     (load-clostrum e5)
     (load-asdf-system '#:acclimation e5)
-    (load-asdf-system '#:trucler-reference e5)))
+    (load-asdf-system '#:trucler-reference e5)
+    (load-ctype e5)))
