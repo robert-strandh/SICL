@@ -26,8 +26,9 @@ versions.
 [the Incless repository]:https://github.com/s-expressionists/incless
 
    * A recent 64-bit version of SBCL
-   * The system "cluster" from [the Cluster repository]
-   * The system "concrete-syntax-tree" from [the Concrete-Syntax-Tree repository]
+   * The system "cluster", from [the Cluster repository]
+   * The system "concrete-syntax-tree", from [the Concrete-Syntax-Tree repository]
+   * The system "ctype", from [the ctype repository]
    * The system "eclector", from [the Eclector repository]
    * The system "trucler-reference", from [the Trucler repository]
    * The system "clostrum", from [the Clostrum repository]
