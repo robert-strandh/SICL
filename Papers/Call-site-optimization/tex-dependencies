@@ -2,9 +2,9 @@
 
 #set -x
 TEXFILES=$(./strip-dependence inputtex $1)
-printf " $TEXFILES "
+printf " %s " "$TEXFILES"
 for i in $TEXFILES
 do
-    printf " $(./tex-dependencies $i) "
+    printf " %s " "$(./tex-dependencies $i)"
 done
 echo
