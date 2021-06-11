@@ -71,7 +71,7 @@
                   (make-instance class-name
                       :dimensions canonicalized-dimensions
                       :additional-space additional-space
-                      :fill-pointer (if (eq fill-pointer t)
+                      :fill-pointer (if (eq fill-pointer 't)
                                         element-count
                                         fill-pointer))
                   (make-instance class-name
