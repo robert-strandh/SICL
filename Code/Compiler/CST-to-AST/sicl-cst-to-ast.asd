@@ -10,4 +10,5 @@
   ((:file "packages")
    (:file "symbol-value")
    (:file "dynamic-environment")
-   (:file "stack")))
+   (:file "stack")
+   (:file "convert-standard-object-primops")))
