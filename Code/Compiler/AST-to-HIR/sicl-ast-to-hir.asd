@@ -14,4 +14,5 @@
    (:file "client")
    (:file "customization")
    (:file "dynamic-environment")
-   (:file "stack")))
+   (:file "stack")
+   (:file "standard-object")))
