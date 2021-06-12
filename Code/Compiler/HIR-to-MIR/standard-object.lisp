@@ -54,3 +54,28 @@
                   :base-address object-location
                   :offset (make-instance 'cleavir-ir:immediate-input
                             :value -5))))
+
+(defmethod process-instruction
+    (client
+     (instruction sicl-ir:rack-instruction)
+     code-object)
+  (destructuring-bind (object-location)
+      (cleavir-ir:inputs instruction)
+    (change-class instruction
+                  'cleavir-ir:memref2-instruction
+                  :base-address object-location
+                  :offset (make-instance 'cleavir-ir:immediate-input
+                            :value 3))))
+
+(defmethod process-instruction
+    (client
+     (instruction sicl-ir:set-rack-instruction)
+     code-object)
+  (destructuring-bind (object-location rack-location)
+      (cleavir-ir:inputs instruction)
+    (change-class instruction
+                  'cleavir-ir:memset2-instruction
+                  :base-address object-location
+                  :offset (make-instance 'cleavir-ir:immediate-input
+                            :value 3)
+                  :value rack-location)))
