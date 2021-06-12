@@ -13,4 +13,6 @@
    #:caller-frame-pointer-instruction
    #:establish-stack-frame-instruction
    #:push-instruction
-   #:pop-instruction))
+   #:pop-instruction
+   #:rack-instruction
+   #:set-rack-instruction))
