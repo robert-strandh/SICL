@@ -53,3 +53,26 @@
                   (sicl-hir-evaluator:input 2))))
         (sicl-hir-evaluator:successor 0))
       (call-next-method)))
+
+(defmethod sicl-hir-evaluator:instruction-thunk
+    ((client client)
+     (instruction sicl-ir:rack-instruction)
+     lexical-environment)
+  (sicl-hir-evaluator:make-thunk
+      (client instruction lexical-environment :inputs 1 :outputs 1)
+    (setf (sicl-hir-evaluator:output 0)
+          (let ((object (sicl-hir-evaluator:input 0)))
+            (slot-value object 'sicl-boot::%rack)))
+    (sicl-hir-evaluator:successor 0)))
+
+(defmethod sicl-hir-evaluator:instruction-thunk
+    ((client client)
+     (instruction sicl-ir:set-rack-instruction)
+     lexical-environment)
+  (sicl-hir-evaluator:make-thunk
+      (client instruction lexical-environment :inputs 2 :outputs 0)
+    (let ((object (sicl-hir-evaluator:input 0))
+          (rack (sicl-hir-evaluator:input 1)))
+      (setf (slot-value object 'sicl-boot::%rack)
+            rack))
+    (sicl-hir-evaluator:successor 0)))
