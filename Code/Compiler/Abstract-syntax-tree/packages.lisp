@@ -19,4 +19,9 @@
    ;; WITH-DYNAMIC-ENVIRONMENT.
    #:with-dynamic-environment-ast
    #:dynamic-environment-ast
-   #:body-ast))
+   #:body-ast
+   ;; This AST class is the result of converting the primop RACK.
+   #:rack-ast
+   #:standard-object-ast
+   ;; This AST class is the result of converting the primop SET-RACK.
+   #:set-rack-ast))
