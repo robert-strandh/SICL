@@ -9,6 +9,5 @@
    (:file "breakpoint-instruction")
    (:file "named-call-instruction")
    (:file "dynamic-environment")
-   (:file "stack")))
-
-   
+   (:file "stack")
+   (:file "standard-object-instructions")))
