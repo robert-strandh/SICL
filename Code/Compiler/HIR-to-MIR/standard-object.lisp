@@ -53,4 +53,4 @@
                   'cleavir-ir:memref2-instruction
                   :base-address object-location
                   :offset (make-instance 'cleavir-ir:immediate-input
-                                         :value -5))))
+                            :value -5))))
