@@ -25,4 +25,18 @@
    ;; parameters are forms that are executed in the dynamic
    ;; environment computed by the first form.  The remaining forms are
    ;; an implicit PROGN.
-   #:with-dynamic-environment))
+   #:with-dynamic-environment
+   ;; This primop has one parameter which must be a standard object.
+   ;; It returns a single value, which is the rack of the standard
+   ;; object of its parameter
+   #:rack
+   ;; This primop has two parameters.  The first parameter must be a
+   ;; standard object.  The second parameter must be a rack.  The
+   ;; effect of this primop is to set the rack of the standard object
+   ;; that is the value of its first parameter to the rack that is the
+   ;; value of the second parameter.
+   ;;
+   ;; FIXME: At some later point, make this primop have two rack
+   ;; parameters, and use CAS to replace the rack.  Then the primop
+   ;; can be a test primop that "returns" true if the CAS succeeds.
+   #:set-rack))
