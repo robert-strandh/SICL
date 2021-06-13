@@ -50,8 +50,3 @@
        array new-array (mapcar #'min old-dimensions new-dimensions)))
     (setf (sicl-primop:rack array) (sicl-primop:rack new-array)))
   array)
-
-    
-
-   
-  
