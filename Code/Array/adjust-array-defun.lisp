@@ -44,6 +44,7 @@
          (new-array
            (apply #'make-array
                   new-dimensions
+                  :element-type element-type
                   :fill-pointer resulting-fill-pointer
                   keyword-arguments)))
     (unless initial-contents-p
