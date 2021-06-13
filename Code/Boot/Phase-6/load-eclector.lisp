@@ -2,6 +2,7 @@
 
 (defun load-eclector (e5)
   (load-source-file "Array/make-array-defun.lisp" e5)
+  (load-source-file "Array/adjust-array-defun.lisp" e5)
   ;; Eclector calls MAKE-ARRAY to create a vector, and then it calls
   ;; LENGTH to determine its length.  But at this point, LENGTH is the
   ;; host function by that name, so it won't work on SICL vectors.
