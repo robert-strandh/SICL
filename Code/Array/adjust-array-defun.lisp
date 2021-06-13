@@ -24,3 +24,34 @@
                             do (aux (cons index indices-so-far)
                                     (rest remaining-dimensions))))))
          (aux '() (reverse dimensions)))))))
+
+(defun adjust-array
+    (array
+     new-dimensions
+     &rest keyword-arguments
+     &key
+       (element-type 't)
+       (initial-element nil initial-element-p)
+       (initial-contents nil initial-contents-p)
+       fill-pointer
+       (displaced-to nil displaced-to-p)
+       (displaced-index-offset nil displaced-index-offset-p))
+  (let* ((old-dimensions (array-dimensions array))
+         (resulting-fill-pointer
+           (if (null fill-pointer)
+               fill-pointer
+               (fill-pointer array)))
+         (new-array
+           (apply #'make-array
+                  :fill-pointer resulting-fill-pointer
+                  keyword-arguments)))
+    (unless initial-contents-p
+      (copy-elements
+       array new-array (mapcar #'min old-dimensions new-dimensions)))
+    (setf (sicl-primop:rack array) (sicl-primop:rack new-array)))
+  array)
+
+    
+
+   
+  
