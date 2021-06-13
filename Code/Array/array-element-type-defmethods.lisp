@@ -43,5 +43,5 @@
 (defmethod array-element-type ((array array-bit))
   'bit)
 
-(defmethod array-element-type ((array character))
+(defmethod array-element-type ((array array-character))
   'character)
