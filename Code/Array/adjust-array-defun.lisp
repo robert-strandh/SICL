@@ -30,7 +30,7 @@
      new-dimensions
      &rest keyword-arguments
      &key
-       (element-type 't)
+       (element-type (array-element-type array))
        (initial-element nil initial-element-p)
        (initial-contents nil initial-contents-p)
        fill-pointer
