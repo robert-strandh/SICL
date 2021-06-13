@@ -43,6 +43,7 @@
                (fill-pointer array)))
          (new-array
            (apply #'make-array
+                  new-dimensions
                   :fill-pointer resulting-fill-pointer
                   keyword-arguments)))
     (unless initial-contents-p
