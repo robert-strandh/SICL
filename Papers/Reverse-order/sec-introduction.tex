@@ -53,7 +53,7 @@ Another simple technique would be to traverse the list
 \emph{recursively} and testing the elements during the
 \emph{backtracking} phase of the recursion.%
 \footnote{Despite considerable research, we have not been able to find
-  any original reference to this technique, and it seems to trivial
+  any original reference to this technique, and it seems too trivial
   for standard text books to even discuss.  We must conclude that this
   technique must be so obvious that it was probably discovered
   independenlty by several people.}
@@ -75,7 +75,7 @@ large number of elements, for several reasons:
 
 \begin{itemize}
 \item We do not want the list to be small enough to fit in the cache,
-  because cache performance depends on other workload as well.
+  because cache performance depends on other workloads as well.
 \item For short lists, performance may be dominated by the overhead of
   calling a few functions, or by loop prologues and epilogues.  By
   using long lists, we make sure that performance is dominated by
@@ -113,6 +113,6 @@ logarithm in base~$2$.  We use $\mathsf{log}$ only when the base is
 unimportant.
 Given a real number $n$, the notation
 $\lfloor n \rfloor$ represents the \emph{floor} of $n$ 
-and $\lceil n \rceil$ \emph{cieling}. For example, $\lfloor 1.5 \rfloor = 1$
+and $\lceil n \rceil$ \emph{ceiling}. For example, $\lfloor 1.5 \rfloor = 1$
 and $\lceil 1.5 \rceil = 2$. 
 %%  LocalWords:  startup runtime allocator
