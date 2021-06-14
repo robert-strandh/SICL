@@ -8,4 +8,4 @@
    ;; TYPEP, except that it does not evaluate its TYPE argument. 
    #:typeq
    #:type-expander
-   ))
+   #:typexpand))
