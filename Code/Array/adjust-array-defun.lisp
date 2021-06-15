@@ -36,7 +36,9 @@
        fill-pointer
        (displaced-to nil displaced-to-p)
        (displaced-index-offset nil displaced-index-offset-p))
-  (let* ((old-dimensions (array-dimensions array))
+  (let* ((canonicalized-dimensions
+           (if (atom new-dimensions) (list new-dimensions) new-dimensions))
+         (old-dimensions (array-dimensions array))
          (resulting-fill-pointer
            (if (null fill-pointer)
                fill-pointer
@@ -49,6 +51,6 @@
                   keyword-arguments)))
     (unless initial-contents-p
       (copy-elements
-       array new-array (mapcar #'min old-dimensions new-dimensions)))
+       array new-array (mapcar #'min old-dimensions canonicalized-dimensions)))
     (setf (sicl-primop:rack array) (sicl-primop:rack new-array)))
   array)
