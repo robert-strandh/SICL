@@ -29,7 +29,7 @@
               (cond ((not (null expander))
                      ;; We found an expander.  Expand TYPE-SPECIFIER and call
                      ;; TYPEP recursively with the expanded type specifier.
-                     (typep object (funcall expander type-specifier)))
+                     (typep object (funcall expander (list type-specifier))))
                     ((not (null type-class))
                      ;; TYPE-SPECIFIER is the name of a class.
                      (let ((object-class (class-of object)))
