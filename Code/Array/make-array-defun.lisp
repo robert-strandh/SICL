@@ -20,7 +20,11 @@
          (rank (length canonicalized-dimensions))
          (element-count (apply #'* canonicalized-dimensions)))
     (multiple-value-bind (class-name additional-space default-element)
-        (cond ((subtypep element-type 'character)
+        (cond ((eq element-type 't)
+               (values (if (= rank 1) 'simple-vector 'array-t)
+                       element-count
+                       nil))
+              ((subtypep element-type 'character)
                (values (if (= rank 1) 'string 'array-character)
                        (ceiling element-count 2)
                        #\Space))
@@ -65,7 +69,9 @@
                        (* element-count 2)
                        #c(0d0 0d0)))
               (t
-               (values 't element-count nil)))
+               (values (if (= rank 1) 'simple-vector 'array-t)
+                       element-count
+                       nil)))
       (let ((result
               (if (= rank 1)
                   (make-instance class-name
