@@ -2,6 +2,10 @@
 
 (defun load-eclector (e5)
   (load-source-file "Array/make-array-defun.lisp" e5)
+  (setf (env:special-operator (env:client e5) e5 'sicl-primop:rack)
+        '(:special-operator t))
+  (setf (env:special-operator (env:client e5) e5 'sicl-primop:set-rack)
+        '(:special-operator t))
   (load-source-file "Array/adjust-array-defun.lisp" e5)
   ;; Eclector calls MAKE-ARRAY to create a vector, and then it calls
   ;; LENGTH to determine its length.  But at this point, LENGTH is the
