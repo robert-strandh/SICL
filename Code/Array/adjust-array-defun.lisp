@@ -52,5 +52,5 @@
     (unless initial-contents-p
       (copy-elements
        array new-array (mapcar #'min old-dimensions canonicalized-dimensions)))
-    (setf (sicl-primop:rack array) (sicl-primop:rack new-array)))
+    (progn (sicl-primop:set-rack array (sicl-primop:rack new-array)) nil))
   array)
