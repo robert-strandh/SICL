@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-cst-to-ast)
 
-(defmethod cleavir-convert-special
+(defmethod cleavir-cst-to-ast:convert-special
     (client (symbol (eql 'sicl-primop:rack)) cst environment)
   (cleavir-cst-to-ast:check-simple-primop-syntax cst 1)
   (cst:db origin (rack-cst standard-object-cst) cst
@@ -9,7 +9,7 @@
       :standard-object-ast
       (cleavir-cst-to-ast:convert client standard-object-cst environment))))
 
-(defmethod cleavir-convert-special
+(defmethod cleavir-cst-to-ast:convert-special
     (client (symbol (eql 'sicl-primop:set-rack)) cst environment)
   (cleavir-cst-to-ast:check-simple-primop-syntax cst 2)
   (cst:db origin (set-rack-cst standard-object-cst rack-cst) cst
