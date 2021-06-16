@@ -6,6 +6,14 @@
         '(:special-operator t))
   (setf (env:special-operator (env:client e5) e5 'sicl-primop:set-rack)
         '(:special-operator t))
+  ;; Eclector calls ALEXANDRIA:SYMBOLICATE, but we can't use that
+  ;; version right now, because it creates a SICL string and then
+  ;; tries to call the host REPLACE with that string as the first
+  ;; argument.  So we define it here, just for Eclector:
+  (setf (env:fdefinition
+         (env:client e5) e5 (intern (symbol-name '#:symbolicate) '#:alexandria))
+        (lambda (s1 s2 s3)
+          (intern (concatenate 'string (string s1) (string s2) (string s3)))))
   (load-source-file "Array/adjust-array-defun.lisp" e5)
   ;; Eclector calls MAKE-ARRAY to create a vector, and then it calls
   ;; LENGTH to determine its length.  But at this point, LENGTH is the
