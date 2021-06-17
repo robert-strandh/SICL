@@ -9,6 +9,10 @@
 ;;; any successors are converted.  This way, even circular instruction
 ;;; graphs can be converted with ease.
 
+;;; I have a feeling that we don't need to call host THROW to
+;;; synchronize the dynamic environments of the host and the target.
+;;; So I have commented out the use of the prologue and the epilogue.
+
 (defmacro make-thunk ((client instruction lexical-environment
                        &key (inputs 0) (outputs 0) (successors 1))
                       &body body)
@@ -84,13 +88,13 @@
                              ((dynamic-environment (lref ,dynamic-environment-gensym-2)))
                            (lambda (,lexical-locations)
                              (declare (simple-vector ,lexical-locations))
-                             (prologue
+                             #+(or)(prologue
                               ,lexical-locations
                               ,dynamic-environment-gensym-1
                               ,dynamic-environment-gensym-2
                               ,self-gensym)
                              (prog1 (progn ,@body)
-                               (epilogue
+                               #+(or)(epilogue
                                 ,lexical-locations
                                 ,dynamic-environment-gensym-1
                                 ,dynamic-environment-gensym-2))))))
