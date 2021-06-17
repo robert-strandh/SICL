@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "generic-functions")
+   (:file "the-instruction")
    (:file "expand-funcall-instructions")
    (:file "cons")
    (:file "utilities")
