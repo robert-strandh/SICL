@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-hash-table)
 
-(defgeneric hash-table-p (object)
-  (:method (object) nil)
-  (:method ((object hash-table)) t))
-
 (defgeneric hash-table-count (hash-table))
 
 (defgeneric hash-table-rehash-size (hash-table))
@@ -43,10 +39,3 @@
 
 ;;; Internal
 (defgeneric make-hash-table-iterator (hash-table))
-
-(defmethod print-object ((table hash-table) stream)
-  (print-unreadable-object (table stream :type t :identity t)
-    (format stream ":test ~s size ~d/~d"
-            (hash-table-test table)
-            (hash-table-count table)
-            (hash-table-size table))))
