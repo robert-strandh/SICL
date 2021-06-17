@@ -761,6 +761,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; NOP-INSTRUCTION
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:nop-instruction))
+  predecessor)
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:nop-instruction))
+  predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:nop-instruction) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; RETURN-INSTRUCTION.
 
 ;;; This instruction has no outputs, so nothing needs to be done in
