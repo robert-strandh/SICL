@@ -2,7 +2,7 @@
 
 (defvar *default-hash-table-class*)
 
-(defmethod initialize-instance :after ((hash-table hash-table) &key test)
+(defmethod initialize-instance :after ((hash-table hash-table) &key test &allow-other-keys)
   (assert (> (hash-table-rehash-size hash-table) 1)
           ()
           "The rehash-size must be greater than 1.")
