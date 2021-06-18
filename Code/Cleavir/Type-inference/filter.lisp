@@ -29,6 +29,6 @@
   (if (= (length bag) (length filter))
       bag
       (loop for restriction in bag
-	    when (member (first restriction) filter
-			 :test #'eq :key #'first)
-	      collect restriction)))
+            when (member (first restriction) filter
+                         :test #'eq :key #'first)
+              collect restriction)))

@@ -8,4 +8,4 @@
 ;;; also present in the other bag.
 (defun bag-equal (bag1 bag2) 
   (loop for restriction in bag1
-	always (member restriction bag2 :test #'equal)))
+        always (member restriction bag2 :test #'equal)))

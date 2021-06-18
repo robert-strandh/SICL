@@ -14,8 +14,8 @@
 
 (defun instruction-input (instruction dictionary)
   (apply #'bag-join
-	 (mapcar (lambda (pred)
-		   (arc-bag pred instruction dictionary))
-		 (cleavir-ir:predecessors instruction))))
+         (mapcar (lambda (pred)
+                   (arc-bag pred instruction dictionary))
+                 (cleavir-ir:predecessors instruction))))
 
 (defvar *work-list*)
