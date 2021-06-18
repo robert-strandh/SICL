@@ -1,0 +1,20 @@
+\chapter{Possible alternative designs}
+
+\section{Representation of standard objects}
+
+Currently, standard objects are represented by a two-word header and a
+rack.  The header contains a pointer to the class object, and a
+pointer to the rack.  The problem with this representation is that a
+two-word CAS (Compare-And-Swap) instruction is required to avoid locks
+and data races when an object is supplied to \texttt{change-class}.
+
+The suggested alternative design is to put the class pointer in the
+rack rather than in the header.  Then, \texttt{change-class} would
+created a complete new rack, including a pointer to the new class, and
+a single-word CAS instruction could be used to update the object.
+
+With this representation, a word is freed up in the header.  The
+garbage collector depends on the header being two words, so it would
+seem that the freed-up word would then be wasted.  We suggest putting
+the hash value for the object in the header, as this value can be
+linked to the identity of the object.
