@@ -11,4 +11,5 @@
   (load-source-file "Arithmetic/floatp-defgeneric.lisp" e5)
   (load-source-file "Arithmetic/upgraded-complex-part-type-defun.lisp" e5)
   (load-source-file "Character/char-code-limit-defconstant.lisp" e5)
+  (load-source-file "Cons/ldiff-defun.lisp" e5)
   (let ((*features* '(:sicl))) (load-asdf-system '#:ctype e5)))
