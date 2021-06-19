@@ -34,6 +34,8 @@
     (load-asdf-system '#:sicl-printer-support e5)
     (load-source-file "Array/array-element-type-defgeneric.lisp" e5)
     (load-source-file "Array/array-element-type-defmethods.lisp" e5)
+    ;; Avoid several warnings by making a temporary definition of SUBTYPEP.
+    (define-error-functions '(subtypep) e5)
     (load-source-file "Array/upgraded-array-element-type-defun.lisp" e5)
     (setf (env:fdefinition (env:client e5) e5 'sicl-clos::update-header)
           (lambda (to from)
