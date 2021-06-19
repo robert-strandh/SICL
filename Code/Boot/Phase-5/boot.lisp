@@ -14,4 +14,5 @@
     (sicl-boot:create-accessor-defgenerics e5)
     (sicl-boot:create-mop-classes e5)
     (create-additional-generic-functions e5)
+    (load-source-file "Arithmetic/ceiling-defun.lisp" e5)
     (prepare-next-phase e3 e4 e5)))
