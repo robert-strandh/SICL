@@ -1,0 +1,4 @@
+This system exists in order to be a prerequisite for the SICL-SEQUENCE
+system, but without the mechanics of the FAST-GENERIC-FUNCTION system,
+so that the resulting generic functions are just ordinary generic
+functions.
