@@ -30,6 +30,8 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
+    (load-source-file "String/make-string-defun.lisp" e5)
+    (setf *symbol-names* (make-hash-table :test #'eq))
     (load-asdf-system '#:sicl-filename e5)
     (load-asdf-system '#:sicl-printer-support e5)
     (load-source-file "Array/array-element-type-defgeneric.lisp" e5)
