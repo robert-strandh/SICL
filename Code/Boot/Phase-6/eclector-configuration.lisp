@@ -2,7 +2,7 @@
 
 (defparameter *symbol-names* nil)
 
-(defmethod eclector.reader:interpret-symbol :around 
+(defmethod eclector.reader:interpret-symbol :around
     ((client sicl-boot-phase-5::client) input-stream package-indicator symbol-name internp)
   (let* ((result (call-next-method)))
     (when (null (gethash result *symbol-names*))
