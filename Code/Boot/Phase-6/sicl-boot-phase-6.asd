@@ -6,6 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "eclector-configuration")
    (:file "enable-deftype")
    (:file "enable-printing")
    (:file "enable-reading")
