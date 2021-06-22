@@ -4,45 +4,25 @@
 ;;;
 ;;; Function PROCLAIM.
 
-(defun proclaim-declaration (name)
-  (setf (sicl-genv:declaration
-         name
-         (load-time-value (sicl-genv:global-environment)))
-        t))
+(let* ((environment (sicl-environment:global-environment))
+       (client (sicl-environment:client environment))
+       (proclamation-function
+         (fdefinition 'sicl-environment:proclamation))
+       (setf-proclamation-function
+         (fdefinition '(setf sicl-environment:proclamation))))
 
-(defun proclaim-ftype (name type)
-  (setf (sicl-genv:function-type name (global-environment))
-        type))
+  (defun declaration-proclamations ()
+    (funcall proclamation-function client environment 'declaration))
 
-(defun proclaim-special (name)
-  (setf (sicl-genv:special-variable
-         name
-         (load-time-value (sicl-genv:global-environment))
-         nil)
-        nil))
+  ;; FIXME: check that NAMES is a proper list.
+  (defun proclaim-declarations (names)
+    (funcall setf-proclamation-function
+             (append names (declaration-proclamations))
+             client environment 'declaration)))
 
-(defun proclaim-inline (name)
-  (setf (sicl-genv:function-inline name) 'inline))
-  
-(defun proclaim-notinline (name)
-  (setf (sicl-genv:function-inline name) 'notinline))
-  
 (defun proclaim (declaration-specifier)
   (case (car declaration-specifier)
     (declaration
-     (mapc #'proclaim-declaration
-           (cdr declaration-specifier)))
-    (ftype
-     (mapc (lambda (name) (proclaim-ftype name (cadr declaration-specifier)))
-           (cddr declaration-specifier)))
-    (special
-     (mapc #'proclaim-special
-           (cdr declaration-specifier)))
-    (inline
-     (mapc #'proclaim-inline
-           (cdr declaration-specifier)))
-    (notinline
-     (mapc #'proclaim-notinline
-           (cdr declaration-specifier)))
+     (proclaim-declarations (cdr declaration-specifier)))
     ;; FIXME: handle more proclamations
     ))
