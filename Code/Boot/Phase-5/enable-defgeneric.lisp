@@ -41,8 +41,3 @@
   (define-compute-applicable-methods e5)
   (define-compute-effective-method e5)
   (define-compute-discriminating-function e5))
-
-(defun enable-defgeneric (e5)
-  (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e5)
-  (load-source-file "CLOS/ensure-generic-function-using-class-defgenerics.lisp" e5)
-  (load-source-file "CLOS/ensure-generic-function-using-class-defmethods.lisp" e5))
