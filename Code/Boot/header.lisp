@@ -2,7 +2,26 @@
 
 (defclass header (sicl-host-mop:funcallable-standard-object)
   ((%class :initarg :class)
-   (%rack :initarg :rack))
+   (%rack :initarg :rack)
+   ;; When a header instance is used to represent a function that is
+   ;; executable as a host function, the following slot contains a
+   ;; function that we might call the ORIGINAL FUNCTION.  The original
+   ;; function is the argument passed to
+   ;; SET-FUNCALLABLE-INSTANCE-FUNCTION to make this header instance
+   ;; executable.  By keeping the original function around, we can
+   ;; re-evaluate the call to SET-FUNCALLABLE-INSTANCE-FUNCTION later.
+   ;; We use this possibility for things like tracing during
+   ;; bootstrapping.  For that, we simply call
+   ;; SET-FUNCALLABLE-INSTANCE-FUNCTION with a wrapper, wrapping the
+   ;; original function in code that will display the trace message,
+   ;; or do whatever we want done on function entry or exit.  Then,
+   ;; undoing this wrapping is a simple matter of calling
+   ;; SET-FUNCALLABLE-INSTANCE-FUNCTION, passing it the original
+   ;; function.
+   (%original-function
+    :initform nil
+    :initarg :original-function
+    :accessor original-function))
   (:metaclass sicl-host-mop:funcallable-standard-class))
 
 (defmethod sicl-ast-evaluator:translate-ast
