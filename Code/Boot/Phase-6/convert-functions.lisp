@@ -6,7 +6,7 @@
     (sicl-host-mop:set-funcallable-instance-function wrapper function)
     wrapper))
 
-;;; FIXME: Figure out a better way to write this function. 
+;;; FIXME: Figure out a better way to write this function.
 (defun host-function-p (name client e5)
   (if (symbolp name)
       (if (and (env:fboundp client e5 name)
