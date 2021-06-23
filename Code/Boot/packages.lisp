@@ -21,4 +21,5 @@
            #:create-mop-classes
            #:with-intercepted-function-cells
            #:overridden-function-cells
-           #:header))
+           #:header
+           #:original-function))
