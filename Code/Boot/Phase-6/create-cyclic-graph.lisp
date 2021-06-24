@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defmacro with-impure-sicl-object (object-var &body body)
   `(when (typep ,object-var 'sicl-boot::header)
