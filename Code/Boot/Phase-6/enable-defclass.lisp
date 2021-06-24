@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun define-add-remove-direct-subclass (e5)
   (load-source-file "CLOS/add-remove-direct-subclass-support.lisp" e5)
