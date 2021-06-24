@@ -17,6 +17,5 @@
    (:file "enable-generic-function-creation")
    (:file "enable-defgeneric")
    (:file "enable-defmethod")
-   (:file "enable-defclass")
    (:file "prepare-next-phase")
    (:file "boot")))
