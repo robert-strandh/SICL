@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun enable-defmethod (e5)
   (load-source-file "CLOS/add-remove-direct-method-defgenerics.lisp" e5)
