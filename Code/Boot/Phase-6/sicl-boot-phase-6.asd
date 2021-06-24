@@ -6,6 +6,8 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "create-cyclic-graph")
+   (:file "prepare-this-phase")
    (:file "convert-functions")
    (:file "eclector-configuration")
    (:file "enable-deftype")
