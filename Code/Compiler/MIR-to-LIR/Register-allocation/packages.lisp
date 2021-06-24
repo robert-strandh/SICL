@@ -3,4 +3,4 @@
 (defpackage #:sicl-register-allocation
   (:use #:common-lisp)
   (:local-nicknames (#:arr #:sicl-register-arrangement))
-  (:export #:do-register-allocation))
+  (:export #:do-register-allocation #:adapt-instruction))

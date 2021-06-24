@@ -94,6 +94,18 @@
         (values nil nil)
         (values (stack-slot attribution) (register-number attribution)))))
 
+;;; Determine if the NEXT arrangement is compatible with the PREVIOUS
+;;; arrangement, i.e. all the attributions in NEXT are present in the
+;;; PREVIOUS arrangement.  Note that compatibility is not symmetric.
+(defun arrangements-compatible-p (previous next)
+  (or (eq previous next)
+      (loop for attribution in (attributions next)
+            always (with-attribution attribution
+                     (multiple-value-bind (other-register-number other-stack-slot)
+                         (find-attribution previous lexical-location)
+                       (and (eql other-register-number register-number)
+                            (eql other-stack-slot stack-slot)))))))
+
 ;;; Destructively update ARRANGEMENT so that the attribution for
 ;;; LEXICAL-LOCATION has a stack slot.  If there is no attribution for
 ;;; LEXICAL-LOCATION in ARRANGEMENT, then signal an error.  If the

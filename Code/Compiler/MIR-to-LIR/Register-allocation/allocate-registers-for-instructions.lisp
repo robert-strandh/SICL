@@ -810,9 +810,7 @@
 (defun allocate-registers-for-instructions (mir)
   (labels ((process-pair (predecessor instruction)
              (if (input-arrangement-p instruction)
-                 ;; FIXME: adapt the output arrangement of PREDECESSOR
-                 ;; to the existing input arrangement of INSTRUCTION.
-                 nil
+                 (adapt-arrangements predecessor instruction)
                  (progn (allocate-registers-for-instruction
                          predecessor instruction)
                         (loop for successor in (cleavir-ir:successors instruction)

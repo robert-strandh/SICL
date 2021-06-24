@@ -16,5 +16,6 @@
    (:file "arrangement")
    (:file "spill-unspill")
    (:file "allocate-register")
+   (:file "adapt-arrangement")
    (:file "allocate-registers-for-instructions")
    (:file "register-allocation")))

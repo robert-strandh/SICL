@@ -135,8 +135,9 @@
       (let ((new-arrangement (arr:copy-arrangement arrangement))
             (assignment
               (make-instance 'cleavir-ir:assignment-instruction
-                             :input location
-                             :output location)))
+                :dynamic-environment-location (cleavir-ir:dynamic-environment-location instruction)
+                :input location
+                :output location)))
         (arr:reattribute-register
          new-arrangement
          location
