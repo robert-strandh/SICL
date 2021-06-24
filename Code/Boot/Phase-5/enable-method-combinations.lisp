@@ -1,11 +1,11 @@
 (cl:in-package #:sicl-boot-phase-5)
 
-(defun enable-method-combinations (e5)
-  (import-functions-from-host
+(defun enable-method-combinations (e3 e5)
+  (import-functions-from-host-into-e5
    '(;; sicl-method-combination:define-method-combination-expander
      sicl-method-combination::lambda-list-variables
      sicl-loop::list-car sicl-loop::list-cdr)
-   e5)
+   e3 e5)
   (load-source-file "Method-combination/method-group-specifier.lisp" e5)
   (load-source-file "Method-combination/method-discriminator.lisp" e5)
   (load-source-file "Method-combination/long-form-expansion.lisp" e5)
