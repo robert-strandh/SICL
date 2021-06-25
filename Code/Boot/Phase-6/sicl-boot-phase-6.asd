@@ -6,6 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "enable-object-creation")
    (:file "enable-array-access")
    (:file "enable-method-combinations")
    (:file "enable-defgeneric")

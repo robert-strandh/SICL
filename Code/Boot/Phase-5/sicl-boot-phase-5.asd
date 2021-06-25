@@ -11,6 +11,5 @@
    (:file "create-additional-classes")
    (:file "hir-evaluator-configuration")
    (:file "enable-typep")
-   (:file "enable-object-creation")
    (:file "prepare-next-phase")
    (:file "boot")))
