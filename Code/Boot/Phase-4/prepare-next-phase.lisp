@@ -11,6 +11,4 @@
   (define-ast-eval e5)
   (sicl-boot:copy-macro-functions e4 e5)
   (load-source-file "CLOS/class-of-defun.lisp" e4)
-  (enable-typep e3 e4)
-  (load-source-file "Types/type-of-defgeneric.lisp" e4)
-  (enable-object-creation e3 e4))
+  (enable-typep e3 e4))
