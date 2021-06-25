@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-4)
+(cl:in-package #:sicl-boot-phase-5)
 
 (defun enable-object-allocation (e4)
   (setf (env:fdefinition (env:client e4) e4 'sicl-clos::allocate-general-instance)
