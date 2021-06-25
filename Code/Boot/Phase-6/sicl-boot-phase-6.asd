@@ -6,6 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "enable-method-combinations")
    (:file "enable-defgeneric")
    (:file "enable-generic-function-creation")
    (:file "enable-defmethod")

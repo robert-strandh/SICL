@@ -13,6 +13,5 @@
    (:file "enable-typep")
    (:file "enable-array-access")
    (:file "enable-object-creation")
-   (:file "enable-method-combinations")
    (:file "prepare-next-phase")
    (:file "boot")))
