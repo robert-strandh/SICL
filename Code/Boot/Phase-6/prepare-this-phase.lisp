@@ -45,6 +45,7 @@
   (finish-output *trace-output*))
 
 (defun prepare-this-phase (e3 e4 e5)
+  (enable-generic-function-creation e3 e5)
   (enable-defmethod e5)
   (enable-defclass e5)
   ;; (enable-printing e5)
