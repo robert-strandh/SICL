@@ -30,5 +30,4 @@
     (load-source-file "Arithmetic/floor-defun.lisp" e5)
     (load-source-file "Arithmetic/ceiling-defun.lisp" e5)
     (load-source-file "Arithmetic/truncate-defun.lisp" e5)
-    (load-source-file "Arithmetic/round-defun.lisp" e5)
-    (prepare-next-phase e3 e4 e5)))
+    (load-source-file "Arithmetic/round-defun.lisp" e5)))
