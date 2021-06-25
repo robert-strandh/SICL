@@ -8,6 +8,5 @@
   :components
   ((:file "packages")
    (:file "environment")
-   (:file "prepare-next-phase")
    (:file "ast-evaluator-configuration")
    (:file "boot")))
