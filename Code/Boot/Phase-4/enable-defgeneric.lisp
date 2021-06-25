@@ -72,10 +72,3 @@
          (env:client e4) e4 'sicl-clos:ensure-generic-function-using-class)))
     (load-source-file "CLOS/ensure-generic-function-defun.lisp" e5))
   (load-source-file "CLOS/defgeneric-defmacro.lisp" e5))
-
-(defun define-generic-function-class-names (e5)
-  (setf (env:fdefinition
-         (env:client e5) e5 'sicl-clos::generic-function-class-names)
-        (lambda (name environment)
-          (declare (ignore name environment))
-          (values 'standard-generic-function 'standard-method))))

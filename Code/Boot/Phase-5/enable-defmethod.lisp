@@ -1,4 +1,11 @@
-(cl:in-package #:sicl-boot-phase-4)
+(cl:in-package #:sicl-boot-phase-5)
+
+(defun define-generic-function-class-names (e5)
+  (setf (env:fdefinition
+         (env:client e5) e5 'sicl-clos::generic-function-class-names)
+        (lambda (name environment)
+          (declare (ignore name environment))
+          (values 'standard-generic-function 'standard-method))))
 
 (defun define-ensure-method (e3 e4 e5)
   (setf (env:special-variable (env:client e5) e5 'lambda-list-keywords t)
@@ -24,11 +31,11 @@
           (declare (ignore environment))
           `(sicl-clos::make-method-lambda-default
             nil nil ,(fourth form) nil)))
-  (import-functions-from-host
+  (import-functions-from-host-into-e5
    '(cleavir-code-utilities:parse-specialized-lambda-list
      cleavir-code-utilities:separate-function-body
      cleavir-code-utilities:required)
-   e5)
+   e3 e5)
   (load-source-file "CLOS/add-remove-direct-method-defgenerics.lisp" e4)
   (load-source-file "CLOS/add-remove-direct-method-support.lisp" e4)
   (load-source-file "CLOS/add-remove-direct-method-defmethods.lisp" e4)
