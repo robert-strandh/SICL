@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun define-classp (e5)
   (load-source-file "CLOS/classp-defgeneric.lisp" e5)
