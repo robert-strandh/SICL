@@ -6,5 +6,6 @@
   (:import-from #:sicl-boot
                 #:define-error-functions
                 #:load-source-file
+                #:import-functions-from-host
                 #:with-intercepted-function-cells)
   (:export #:boot))
