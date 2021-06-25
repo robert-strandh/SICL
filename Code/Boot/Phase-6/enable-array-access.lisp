@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun enable-array-access (e5)
   (load-source-file "Array/array-dimension-defun.lisp" e5)
