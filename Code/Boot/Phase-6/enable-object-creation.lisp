@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun enable-object-initialization (e3 e5)
   (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e5)
