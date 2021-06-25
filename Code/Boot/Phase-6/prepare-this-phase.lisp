@@ -45,6 +45,7 @@
   (finish-output *trace-output*))
 
 (defun prepare-this-phase (e3 e4 e5)
+  (enable-array-access e5)
   (enable-method-combinations e3 e5)
   (enable-compute-discriminating-function e5)
   (enable-generic-function-creation e3 e5)

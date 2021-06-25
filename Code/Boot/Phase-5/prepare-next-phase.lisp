@@ -18,5 +18,4 @@
                  (sicl-clos:method-function
                   (env:function-cell (env:client e4) e4 'sicl-clos:method-function)))
               (funcall (env:fdefinition (env:client e5) e5 'sicl-boot:ast-eval)
-                       ast)))))
-  (enable-array-access e5))
+                       ast))))))
