@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-4)
+(cl:in-package #:sicl-boot-phase-5)
 
 (defun enable-object-initialization (e3 e4)
   (setf (env:constant-variable (env:client e3) e3 'sicl-clos::+unbound-slot-value+)
