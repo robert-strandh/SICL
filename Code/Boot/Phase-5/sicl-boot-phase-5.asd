@@ -14,7 +14,6 @@
    (:file "enable-array-access")
    (:file "enable-object-creation")
    (:file "enable-method-combinations")
-   (:file "enable-generic-function-creation")
    (:file "enable-defgeneric")
    (:file "prepare-next-phase")
    (:file "boot")))
