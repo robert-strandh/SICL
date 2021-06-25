@@ -7,6 +7,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "enable-method-combinations")
    (:file "enable-defgeneric")
    (:file "enable-defmethod")
    (:file "enable-defclass")
