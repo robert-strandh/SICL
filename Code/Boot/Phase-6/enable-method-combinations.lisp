@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun enable-method-combinations (e3 e5)
   (import-functions-from-host-into-e5
