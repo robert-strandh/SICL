@@ -45,5 +45,4 @@
        (sicl-clos:method-function
         (env:function-cell (env:client e3) e3 'sicl-clos:method-function)))
     (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e4))
-  (enable-defgeneric e3 e4 e5)
-  (enable-defmethod e3 e4 e5))
+  (enable-defgeneric e3 e4 e5))

@@ -16,5 +16,6 @@
   (finish-output *trace-output*))
 
 (defun prepare-this-phase (e3 e4 e5)
+  (enable-defmethod e3 e4 e5)
   (enable-defclass e3 e4 e5)
   (finalize-classes e3 e4))
