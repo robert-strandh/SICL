@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-boot-phase-5)
 
+(defun define-ast-eval (e5)
+  (setf (env:fdefinition (env:client e5) e5 'sicl-boot:ast-eval)
+        (lambda (ast)
+          (let* ((client (env:client e5))
+                 (code-object (sicl-compiler:compile-ast client ast)))
+            (sicl-compiler:tie-code-object code-object e5)))))
+
 (defun finalize-classes (e3 e4)
   (format *trace-output* "Finalizing all classes in ~a..." (sicl-boot:name e4))
   (finish-output *trace-output*)
@@ -16,6 +23,7 @@
   (finish-output *trace-output*))
 
 (defun prepare-this-phase (e3 e4 e5)
+  (define-ast-eval e5)
   (sicl-boot:copy-macro-functions e4 e5)
   (load-source-file "CLOS/class-of-defun.lisp" e4)
   (enable-typep e3 e4)
