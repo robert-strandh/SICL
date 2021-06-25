@@ -7,6 +7,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "prepare-this-phase")
    (:file "create-additional-generic-functions")
    (:file "create-additional-classes")
    (:file "hir-evaluator-configuration")
