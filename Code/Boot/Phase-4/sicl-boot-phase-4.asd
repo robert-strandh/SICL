@@ -12,7 +12,6 @@
    (:file "enable-object-creation")
    (:file "enable-method-combinations")
    (:file "enable-defgeneric")
-   (:file "enable-defclass")
    (:file "enable-defmethod")
    (:file "prepare-next-phase")
    (:file "ast-evaluator-configuration")

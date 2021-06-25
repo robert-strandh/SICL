@@ -7,6 +7,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "enable-defclass")
    (:file "prepare-this-phase")
    (:file "create-additional-generic-functions")
    (:file "create-additional-classes")
