@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun define-generic-function-class-names (e3)
   (setf (env:fdefinition
