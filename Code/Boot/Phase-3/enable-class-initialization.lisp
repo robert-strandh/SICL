@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-3)
 
 ;;; The problem we solve with this code is that we create host classes
 ;;; using the host MAKE-INSTANCE function.  Doing so will trigger that
@@ -16,33 +16,32 @@
 ;;; to host generic functions in the host global environment.  Next,
 ;;; it adds those readers and writers explicitly to our generic
 ;;; functions in E3, using special-purpose code.
-(defun enable-class-initialization (boot)
-  (with-accessors ((e3 sicl-boot:e3)) boot
-    (defmethod initialize-instance :around ((class funcallable-standard-class)
-                                            &rest arguments
-                                            &key
-                                              direct-default-initargs
-                                              direct-superclasses
-                                              direct-slots
-                                            &allow-other-keys)
-      (let ((new-direct-slots
-              (loop for slot-spec in direct-slots
-                    for spec = (copy-list slot-spec)
-                    do (remf spec :readers)
-                       (remf spec :writers)
-                    collect spec)))
-        (apply #'call-next-method
-               class
-               :direct-superclasses direct-superclasses
-               :direct-default-initargs direct-default-initargs
-               :direct-slots new-direct-slots
-               arguments)
-        (loop for slot-spec in direct-slots
-              for slot = (apply #'make-instance
-                                'sicl-host-mop:standard-direct-slot-definition
-                                slot-spec)
-              for slot-name = (getf slot-spec :name)
-              for readers = (getf slot-spec :readers)
-              for writers = (getf slot-spec :writers)
-              do (add-readers e3 readers class slot-name slot)
-                 (add-writers e3 writers class slot-name slot))))))
+(defun enable-class-initialization (e3)
+  (defmethod initialize-instance :around ((class funcallable-standard-class)
+                                          &rest arguments
+                                          &key
+                                            direct-default-initargs
+                                            direct-superclasses
+                                            direct-slots
+                                          &allow-other-keys)
+    (let ((new-direct-slots
+            (loop for slot-spec in direct-slots
+                  for spec = (copy-list slot-spec)
+                  do (remf spec :readers)
+                     (remf spec :writers)
+                  collect spec)))
+      (apply #'call-next-method
+             class
+             :direct-superclasses direct-superclasses
+             :direct-default-initargs direct-default-initargs
+             :direct-slots new-direct-slots
+             arguments)
+      (loop for slot-spec in direct-slots
+            for slot = (apply #'make-instance
+                              'sicl-host-mop:standard-direct-slot-definition
+                              slot-spec)
+            for slot-name = (getf slot-spec :name)
+            for readers = (getf slot-spec :readers)
+            for writers = (getf slot-spec :writers)
+            do (add-readers e3 readers class slot-name slot)
+               (add-writers e3 writers class slot-name slot)))))
