@@ -6,7 +6,5 @@
   :components
   ((:file "packages")
    (:file "environment")
-   (:file "enable-typep")
-   (:file "prepare-next-phase")
    (:file "ast-evaluator-configuration")
    (:file "boot")))
