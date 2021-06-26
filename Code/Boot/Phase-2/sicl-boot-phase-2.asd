@@ -7,7 +7,6 @@
   ((:file "packages")
    (:file "environment")
    (:file "import-from-host")
-   (:file "add-readers-and-writers")
    (:file "enable-typep")
    (:file "enable-object-creation")
    (:file "enable-defgeneric")
