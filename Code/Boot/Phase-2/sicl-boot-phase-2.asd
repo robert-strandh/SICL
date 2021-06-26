@@ -9,6 +9,5 @@
    (:file "import-from-host")
    (:file "enable-typep")
    (:file "enable-object-creation")
-   (:file "enable-defgeneric")
    (:file "prepare-next-phase")
    (:file "boot")))

@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "enable-defgeneric")
    (:file "add-readers-and-writers")
    (:file "enable-class-initialization")
    (:file "enable-defclass")
