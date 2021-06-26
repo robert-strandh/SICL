@@ -7,5 +7,4 @@
   (sicl-boot:copy-macro-functions e3 e4)
   (load-source-file "CLOS/class-of-defun.lisp" e3)
   (enable-typep e2 e3)
-  (load-source-file "Types/type-of-defgeneric.lisp" e3)
-  (enable-object-creation e2 e3))
+  (load-source-file "Types/type-of-defgeneric.lisp" e3))
