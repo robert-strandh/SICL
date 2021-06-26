@@ -37,7 +37,16 @@
      intern
      cleavir-code-utilities:parse-deftype
      sicl-method-combination::lambda-list-variables
-     sicl-loop::list-car sicl-loop::list-cdr)
+     sicl-loop::list-car sicl-loop::list-cdr
+     env:type-expander
+     ;; For Ctype.
+     map substitute functionp lognot logcount subsetp member-if intersection
+     ;; For Eclector.
+     digit-char-p char-upcase
+     ;; Eclector uses EVAL in some compiler macros to evaluate some
+     ;; Boolean arguments, but it is applied only to contstants so we
+     ;; can use the host EVAL.
+     eval)
    e3 e5)
   (enable-method-combinations e3 e4 e5)
   (setf (env:special-operator (env:client e5) e5 'cleavir-primop:multiple-value-call) t)

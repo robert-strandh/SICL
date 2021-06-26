@@ -1,10 +1,7 @@
 (cl:in-package #:sicl-boot-phase-6)
 
-(defun enable-object-initialization (e3 e5)
+(defun enable-object-initialization (e5)
   (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e5)
-  (import-functions-from-host-into-e5
-   '(sicl-loop::list-car sicl-loop::list-cdr)
-   e3 e5)
   (load-source-file "CLOS/shared-initialize-support.lisp" e5)
   (load-source-file "CLOS/shared-initialize-defgenerics.lisp" e5)
   (load-source-file "CLOS/shared-initialize-defmethods.lisp" e5)
@@ -47,9 +44,9 @@
   (load-source-file "CLOS/slot-value-etc-defmethods.lisp" e5)
   (load-source-file "CLOS/slot-value-etc-specified-defuns.lisp" e5))
 
-(defun enable-object-creation (e3 e5)
+(defun enable-object-creation (e5)
   (enable-slot-value e5)
-  (enable-object-initialization e3 e5)
+  (enable-object-initialization e5)
   (enable-object-allocation e5)
   (enable-class-finalization e5)
   (enable-make-instance e5))
