@@ -9,7 +9,6 @@
    (:file "enable-typep")
    (:file "enable-object-creation")
    (:file "enable-method-combinations")
-   (:file "enable-defgeneric")
    (:file "prepare-next-phase")
    (:file "ast-evaluator-configuration")
    (:file "boot")))

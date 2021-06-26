@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "enable-defgeneric")
    (:file "enable-defmethod")
    (:file "enable-defclass")
    (:file "prepare-this-phase")
