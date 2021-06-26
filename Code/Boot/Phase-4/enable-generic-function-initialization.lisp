@@ -1,11 +1,6 @@
 (cl:in-package #:sicl-boot-phase-4)
 
 (defun enable-generic-function-initialization (e2 e3)
-  (import-functions-from-host
-   '(cleavir-code-utilities:proper-list-p
-     cleavir-code-utilities:required
-     cleavir-code-utilities:parse-generic-function-lambda-list)
-   e3)
   (load-source-file "CLOS/invalidate-discriminating-function.lisp" e3)
   (with-intercepted-function-cells
       (e3

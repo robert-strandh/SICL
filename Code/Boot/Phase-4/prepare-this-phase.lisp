@@ -35,13 +35,6 @@
   (setf (env:fdefinition (env:client e3) e3 '(setf slot-value))
         (lambda (value object slot-name)
           (error "(SETF SLOT-VALUE) called with ~s, ~s and ~s" value object slot-name)))
-  (import-functions-from-host
-   '(shared-initialize initialize-instance)
-   e3)
-  (import-functions-from-host
-   '(cleavir-code-utilities:parse-generic-function-lambda-list
-     cleavir-code-utilities:required)
-   e3)
   (load-source-file "CLOS/generic-function-initialization-support.lisp" e3)
   (with-intercepted-function-cells
       (e3

@@ -5,12 +5,8 @@
         10000000)
   (load-source-file "CLOS/slot-bound-using-index.lisp" e3)
   (load-source-file "CLOS/standard-instance-access.lisp" e3)
-  (import-functions-from-host '(slot-unbound) e3)
   (load-source-file "CLOS/slot-value-etc-support.lisp" e3)
   (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e4)
-  (import-functions-from-host
-   '(sicl-loop::list-car sicl-loop::list-cdr)
-   e4)
   (with-intercepted-function-cells
       (e4
        (sicl-clos:slot-definition-name

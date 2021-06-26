@@ -1,10 +1,6 @@
 (cl:in-package #:sicl-boot-phase-5)
 
 (defun enable-method-combinations (e3 e4 e5)
-  (import-functions-from-host
-   '(sicl-method-combination:define-method-combination-expander
-     sicl-loop::list-car sicl-loop::list-cdr)
-   e4)
   (load-source-file "Method-combination/accessor-defgenerics.lisp" e4)
   (load-source-file "Method-combination/method-combination-template-defclass.lisp" e4)
   (with-intercepted-function-cells

@@ -44,9 +44,6 @@
   (define-sub-specializer-p e3)
   (define-compute-applicable-methods e3 e4)
   (define-compute-effective-method e3)
-  (import-functions-from-host
-   '(no-applicable-method)
-   e3)
   (setf (env:fdefinition (env:client e3) e3 'compile)
         (lambda (x lambda-expression)
           (assert (null x))

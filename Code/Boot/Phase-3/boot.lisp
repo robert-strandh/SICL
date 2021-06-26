@@ -9,6 +9,16 @@
       boot
     (change-class e3 'environment
                   :client (make-instance 'client :environment e3))
+    (import-functions-from-host '(slot-unbound) e3)
+    (import-functions-from-host
+     '(no-applicable-method
+       cleavir-code-utilities:proper-list-p
+       cleavir-code-utilities:required
+       cleavir-code-utilities:parse-generic-function-lambda-list
+       sicl-method-combination:define-method-combination-expander
+       sicl-loop::list-car sicl-loop::list-cdr
+       shared-initialize initialize-instance)
+     e3)
     (prepare-this-phase e1 e2 e3)
     (load-source-file "Structure/packages.lisp" e3)
     (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e3)

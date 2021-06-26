@@ -8,6 +8,14 @@
       boot
     (change-class e4 'environment
                   :client (make-instance 'client :environment e4))
+    (import-functions-from-host
+     '(cleavir-code-utilities:parse-generic-function-lambda-list
+       cleavir-code-utilities:parse-specialized-lambda-list
+       cleavir-code-utilities:separate-function-body
+       cleavir-code-utilities:required
+       sicl-method-combination:define-method-combination-expander
+       sicl-loop::list-car sicl-loop::list-cdr)
+     e4)
     (prepare-this-phase e2 e3 e4)
     (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e4)
     (sicl-boot:create-accessor-defgenerics e4)

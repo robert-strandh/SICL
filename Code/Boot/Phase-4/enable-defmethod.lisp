@@ -31,11 +31,6 @@
           (declare (ignore environment))
           `(sicl-clos::make-method-lambda-default
             nil nil ,(fourth form) nil)))
-  (import-functions-from-host
-   '(cleavir-code-utilities:parse-specialized-lambda-list
-     cleavir-code-utilities:separate-function-body
-     cleavir-code-utilities:required)
-   e4)
   (load-source-file "CLOS/add-remove-direct-method-defgenerics.lisp" e3)
   (load-source-file "CLOS/add-remove-direct-method-support.lisp" e3)
   (load-source-file "CLOS/add-remove-direct-method-defmethods.lisp" e3)
