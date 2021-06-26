@@ -15,13 +15,9 @@
        cleavir-code-utilities:parse-generic-function-lambda-list
        sicl-method-combination:define-method-combination-expander
        sicl-loop::list-car sicl-loop::list-cdr
-       shared-initialize initialize-instance
+       shared-initialize initialize-instance reinitialize-instance
        sicl-host-mop:method-function)
      e3)
-    (setf (env:fdefinition (env:client e3) e3 'sicl-boot:ast-eval)
-          (lambda (ast)
-            (sicl-ast-evaluator:eval-ast ast e3)))
-    (sicl-boot:copy-macro-functions e2 e3)
     (prepare-this-phase e1 e2 e3)
     (load-source-file "Structure/packages.lisp" e3)
     (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e3)
