@@ -5,7 +5,4 @@
                    (e2 sicl-boot:e2)
                    (e3 sicl-boot:e3))
       boot
-    (import-functions-from-host
-     '(reinitialize-instance)
-     e3)
-    (enable-typep e2)))
+    ))
