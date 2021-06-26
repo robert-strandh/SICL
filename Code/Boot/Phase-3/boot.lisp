@@ -16,7 +16,9 @@
        sicl-method-combination:define-method-combination-expander
        sicl-loop::list-car sicl-loop::list-cdr
        shared-initialize initialize-instance reinitialize-instance
-       sicl-host-mop:method-function)
+       sicl-host-mop:method-function
+       sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
+       (setf env:macro-function))
      e3)
     (prepare-this-phase e1 e2 e3)
     (load-source-file "Structure/packages.lisp" e3)

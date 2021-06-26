@@ -50,10 +50,6 @@
     (setf (env:fdefinition client e2 'sicl-clos:method-function)
           #'sicl-host-mop:method-function)
     (setf (env:special-operator client e3 'cleavir-primop:multiple-value-call) t))
-  (import-functions-from-host
-   '(sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
-     (setf env:macro-function))
-   e3)
   (load-source-file "CLOS/make-method-lambda-support.lisp" e3)
   (setf (env:macro-function (env:client e3) e3 'sicl-clos:make-method-lambda)
         (lambda (form environment)
