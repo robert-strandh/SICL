@@ -11,7 +11,6 @@
    (:file "enable-typep")
    (:file "enable-object-creation")
    (:file "enable-defgeneric")
-   (:file "enable-defmethod")
    (:file "enable-class-initialization")
    (:file "enable-defclass")
    (:file "prepare-next-phase")
