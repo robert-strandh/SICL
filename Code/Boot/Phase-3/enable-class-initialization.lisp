@@ -17,13 +17,14 @@
 ;;; it adds those readers and writers explicitly to our generic
 ;;; functions in E3, using special-purpose code.
 (defun enable-class-initialization (e3)
-  (defmethod initialize-instance :around ((class funcallable-standard-class)
-                                          &rest arguments
-                                          &key
-                                            direct-default-initargs
-                                            direct-superclasses
-                                            direct-slots
-                                          &allow-other-keys)
+  (defmethod initialize-instance :around
+      ((class sicl-boot-phase-2::funcallable-standard-class)
+       &rest arguments
+       &key
+         direct-default-initargs
+         direct-superclasses
+         direct-slots
+       &allow-other-keys)
     (let ((new-direct-slots
             (loop for slot-spec in direct-slots
                   for spec = (copy-list slot-spec)
