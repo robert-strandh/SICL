@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun enable-object-creation (e1 e2)
   (let ((client (env:client e2)))
