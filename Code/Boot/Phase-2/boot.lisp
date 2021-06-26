@@ -45,5 +45,4 @@
               (sicl-ast-evaluator:eval-ast ast e2)))
       (setf (env:fdefinition client e3 'sicl-boot:ast-eval)
             (lambda (ast)
-              (sicl-ast-evaluator:eval-ast ast e3))))
-    (prepare-next-phase boot)))
+              (sicl-ast-evaluator:eval-ast ast e3))))))
