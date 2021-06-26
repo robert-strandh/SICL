@@ -8,6 +8,7 @@
       boot
     (change-class e4 'environment
                   :client (make-instance 'client :environment e4))
+    (prepare-this-phase e2 e3 e4)
     (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e4)
     (sicl-boot:create-accessor-defgenerics e4)
     (sicl-boot:create-mop-classes e4)
