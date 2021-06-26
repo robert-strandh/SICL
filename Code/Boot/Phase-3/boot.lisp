@@ -1,11 +1,9 @@
 (cl:in-package #:sicl-boot-phase-3)
 (defun boot (boot)
   (format *trace-output* "Start phase 3~%")
-  (with-accessors ((e0 sicl-boot:e0)
-                   (e1 sicl-boot:e1)
+  (with-accessors ((e1 sicl-boot:e1)
                    (e2 sicl-boot:e2)
-                   (e3 sicl-boot:e3)
-                   (e4 sicl-boot:e4))
+                   (e3 sicl-boot:e3))
       boot
     (change-class e3 'environment
                   :client (make-instance 'client :environment e3))
@@ -17,8 +15,13 @@
        cleavir-code-utilities:parse-generic-function-lambda-list
        sicl-method-combination:define-method-combination-expander
        sicl-loop::list-car sicl-loop::list-cdr
-       shared-initialize initialize-instance)
+       shared-initialize initialize-instance
+       sicl-host-mop:method-function)
      e3)
+    (setf (env:fdefinition (env:client e3) e3 'sicl-boot:ast-eval)
+          (lambda (ast)
+            (sicl-ast-evaluator:eval-ast ast e3)))
+    (sicl-boot:copy-macro-functions e2 e3)
     (prepare-this-phase e1 e2 e3)
     (load-source-file "Structure/packages.lisp" e3)
     (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e3)
