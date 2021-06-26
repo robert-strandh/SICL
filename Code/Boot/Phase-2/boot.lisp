@@ -29,7 +29,7 @@
 (defun boot (boot)
   (format *trace-output* "Start phase 2~%")
   (with-accessors ((e0 sicl-boot:e0)
-                   (e2 sicl-boot:e2)) 
+                   (e2 sicl-boot:e2))
       boot
     (change-class e2 'environment
                   :client (make-instance 'client :environment e2))
