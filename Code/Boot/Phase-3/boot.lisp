@@ -2,12 +2,14 @@
 (defun boot (boot)
   (format *trace-output* "Start phase 3~%")
   (with-accessors ((e0 sicl-boot:e0)
+                   (e1 sicl-boot:e1)
                    (e2 sicl-boot:e2)
                    (e3 sicl-boot:e3)
                    (e4 sicl-boot:e4))
       boot
     (change-class e3 'environment
                   :client (make-instance 'client :environment e3))
+    (prepare-this-phase e1 e2 e3)
     (load-source-file "Structure/packages.lisp" e3)
     (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e3)
     (sicl-boot:create-accessor-defgenerics e3)
