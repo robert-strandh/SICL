@@ -8,6 +8,4 @@
   (load-source-file "CLOS/class-of-defun.lisp" e3)
   (enable-typep e2 e3)
   (load-source-file "Types/type-of-defgeneric.lisp" e3)
-  (enable-object-creation e2 e3)
-  (enable-method-combinations e2 e3 e4)
-  (setf (env:special-operator (env:client e4) e4 'cleavir-primop:multiple-value-call) t))
+  (enable-object-creation e2 e3))

@@ -14,6 +14,8 @@
   (format *trace-output* "done!~%"))
 
 (defun prepare-this-phase (e2 e3 e4)
+  (enable-method-combinations e2 e3 e4)
+  (setf (env:special-operator (env:client e4) e4 'cleavir-primop:multiple-value-call) t)
   (enable-compute-discriminating-function e2 e3 e4)
   (load-source-file "CLOS/defgeneric-support.lisp" e4)
   (load-source-file "CLOS/invalidate-discriminating-function.lisp" e3)
