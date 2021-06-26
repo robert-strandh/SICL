@@ -1,10 +1,3 @@
 (cl:in-package #:sicl-boot-phase-3)
 
-(defun prepare-next-phase (e2 e3 e4)
-  (setf (env:fdefinition (env:client e4) e4 'sicl-boot:ast-eval)
-        (lambda (ast)
-          (sicl-ast-evaluator:eval-ast ast e4)))
-  (sicl-boot:copy-macro-functions e3 e4)
-  (load-source-file "CLOS/class-of-defun.lisp" e3)
-  (enable-typep e2 e3)
-  (load-source-file "Types/type-of-defgeneric.lisp" e3))
+(defun prepare-next-phase (e2 e3 e4) nil)
