@@ -8,7 +8,6 @@
    (:file "environment")
    (:file "enable-typep")
    (:file "enable-object-creation")
-   (:file "enable-method-combinations")
    (:file "prepare-next-phase")
    (:file "ast-evaluator-configuration")
    (:file "boot")))
