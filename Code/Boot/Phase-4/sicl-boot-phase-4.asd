@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "enable-defclass")
    (:file "prepare-this-phase")
    (:file "ast-evaluator-configuration")
    (:file "boot")))

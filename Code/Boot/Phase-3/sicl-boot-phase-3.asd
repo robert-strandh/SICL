@@ -11,7 +11,6 @@
    (:file "enable-method-combinations")
    (:file "enable-defgeneric")
    (:file "enable-defmethod")
-   (:file "enable-defclass")
    (:file "prepare-next-phase")
    (:file "ast-evaluator-configuration")
    (:file "boot")))
