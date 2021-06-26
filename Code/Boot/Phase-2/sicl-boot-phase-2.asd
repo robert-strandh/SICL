@@ -12,6 +12,5 @@
    (:file "enable-object-creation")
    (:file "enable-defgeneric")
    (:file "enable-class-initialization")
-   (:file "enable-defclass")
    (:file "prepare-next-phase")
    (:file "boot")))
