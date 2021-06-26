@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "enable-class-initialization")
    (:file "enable-defclass")
    (:file "enable-defmethod")
    (:file "prepare-this-phase")
