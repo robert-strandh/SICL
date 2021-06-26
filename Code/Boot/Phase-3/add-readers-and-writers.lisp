@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun add-readers (environment function-names class slot-name slot-definition)
   (let ((function (compile nil `(lambda (args next-methods)
