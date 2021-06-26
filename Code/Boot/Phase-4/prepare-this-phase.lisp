@@ -14,5 +14,5 @@
   (format *trace-output* "done!~%"))
 
 (defun prepare-this-phase (e2 e3 e4)
-  (declare (ignore e2 e4))
+  (enable-defclass e2 e3 e4)
   (finalize-classes e3))
