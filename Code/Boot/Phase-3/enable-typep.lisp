@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun enable-typep (e2)
   (define-error-functions '(typep symbol-package find-package) e2)
