@@ -8,5 +8,4 @@
     (import-functions-from-host
      '(reinitialize-instance)
      e3)
-    (enable-typep e2)
-    (enable-object-creation e1 e2)))
+    (enable-typep e2)))
