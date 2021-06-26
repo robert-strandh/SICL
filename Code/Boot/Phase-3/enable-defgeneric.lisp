@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-3)
 
 ;;; We want to make it possible to load FASL files containing
 ;;; definitions of generic functions in E3 so that the result is the
