@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun define-ensure-class-using-class (e1 e2 e3)
   (let ((client (env:client e3)))
@@ -41,10 +41,6 @@
       (load-source-file "CLOS/ensure-class.lisp" e3))))
 
 
-(defun enable-defclass (boot)
-  (with-accessors ((e1 sicl-boot:e1)
-                   (e2 sicl-boot:e2)
-                   (e3 sicl-boot:e3))
-      boot
-    (define-ensure-class-using-class e1 e2 e3)
-    (define-ensure-class e2 e3)))
+(defun enable-defclass (e1 e2 e3)
+  (define-ensure-class-using-class e1 e2 e3)
+  (define-ensure-class e2 e3))
