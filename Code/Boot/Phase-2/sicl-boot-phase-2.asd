@@ -7,5 +7,4 @@
   ((:file "packages")
    (:file "environment")
    (:file "import-from-host")
-   (:file "prepare-next-phase")
    (:file "boot")))
