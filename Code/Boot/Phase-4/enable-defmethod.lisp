@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-boot-phase-3)
 
+(defun define-generic-function-class-names (e4)
+  (setf (env:fdefinition
+         (env:client e4) e4 'sicl-clos::generic-function-class-names)
+        (lambda (name environment)
+          (declare (ignore name environment))
+          (values 'standard-generic-function 'standard-method))))
+
 (defun define-ensure-method (e2 e3 e4)
   (setf (env:special-variable (env:client e4) e4 'lambda-list-keywords t)
         '(&optional &rest &body &key &allow-other-keys &aux &whole &environment))
