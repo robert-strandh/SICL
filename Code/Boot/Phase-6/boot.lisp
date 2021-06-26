@@ -72,7 +72,6 @@
           (lambda (new-value x doc-type)
             (declare (ignore x doc-type))
             new-value))
-    (import-functions-from-host '(intern) e5)
     (enable-deftype e5)
     (enable-conditions e5)
     (load-asdf-system '#:sicl-hash-table e5)

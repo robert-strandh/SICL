@@ -29,6 +29,16 @@
   (enable-typep e3 e4)
   (load-source-file "Types/type-of-defgeneric.lisp" e4)
   (enable-object-creation e3 e4)
+  (import-functions-from-host-into-e5
+   '(cleavir-code-utilities:parse-generic-function-lambda-list
+     cleavir-code-utilities:parse-specialized-lambda-list
+     cleavir-code-utilities:separate-function-body
+     cleavir-code-utilities:required
+     intern
+     cleavir-code-utilities:parse-deftype
+     sicl-method-combination::lambda-list-variables
+     sicl-loop::list-car sicl-loop::list-cdr)
+   e3 e5)
   (enable-method-combinations e3 e4 e5)
   (setf (env:special-operator (env:client e5) e5 'cleavir-primop:multiple-value-call) t)
   (setf (env:fdefinition (env:client e4) e4 'compile)

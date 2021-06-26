@@ -13,12 +13,7 @@
             sicl-function host-function)
            (setf (env:fdefinition e5-client e5 name) sicl-function)))
 
-(defun enable-method-combinations (e3 e5)
-  (import-functions-from-host-into-e5
-   '(;; sicl-method-combination:define-method-combination-expander
-     sicl-method-combination::lambda-list-variables
-     sicl-loop::list-car sicl-loop::list-cdr)
-   e3 e5)
+(defun enable-method-combinations (e5)
   (load-source-file "Method-combination/method-group-specifier.lisp" e5)
   (load-source-file "Method-combination/method-discriminator.lisp" e5)
   (load-source-file "Method-combination/long-form-expansion.lisp" e5)
