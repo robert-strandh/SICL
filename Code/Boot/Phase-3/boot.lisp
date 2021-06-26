@@ -9,9 +9,9 @@
       boot
     (change-class e3 'environment
                   :client (make-instance 'client :environment e3))
-    (import-functions-from-host '(slot-unbound) e3)
     (import-functions-from-host
-     '(no-applicable-method
+     '(slot-unbound
+       no-applicable-method
        cleavir-code-utilities:proper-list-p
        cleavir-code-utilities:required
        cleavir-code-utilities:parse-generic-function-lambda-list
@@ -26,5 +26,4 @@
     (sicl-boot:create-mop-classes e3)
     (setf (env:find-class (env:client e3) e3 'symbol) (find-class 'symbol))
     (load-source-file "CLOS/class-readers-forward-referenced-class-defmethods.lisp" e3)
-    (load-source-file "CLOS/class-readers-defmethods-before.lisp" e3)
-    (sicl-boot:copy-macro-functions e0 e4)))
+    (load-source-file "CLOS/class-readers-defmethods-before.lisp" e3)))
