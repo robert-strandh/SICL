@@ -31,9 +31,7 @@
           (declare (ignore environment))
           `(sicl-clos::make-method-lambda-default
             nil nil ,(fourth form) nil)))
-  (load-source-file "CLOS/add-remove-direct-method-defgenerics.lisp" e3)
-  (load-source-file "CLOS/add-remove-direct-method-support.lisp" e3)
-  (load-source-file "CLOS/add-remove-direct-method-defmethods.lisp" e3)
+  (load-source-file "CLOS/add-remove-direct-method.lisp" e3)
   (load-source-file "CLOS/dependent-maintenance-defgenerics.lisp" e3)
   (load-source-file "CLOS/dependent-maintenance-support.lisp" e3)
   (load-source-file "CLOS/dependent-maintenance-defmethods.lisp" e3)
