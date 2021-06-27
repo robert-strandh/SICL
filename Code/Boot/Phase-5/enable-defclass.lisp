@@ -29,11 +29,6 @@
         (env:function-cell (env:client e3) e3 'sicl-clos:method-function)))
     (load-source-file "CLOS/class-finalization-defmethods.lisp" e4)))
 
-(defun define-add-remove-direct-subclass (e4)
-  (load-source-file "CLOS/add-remove-direct-subclass-support.lisp" e4)
-  (load-source-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e4)
-  (load-source-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e4))
-
 (defun define-direct-slot-definition-class (e3 e4)
   (with-intercepted-function-cells
       (e3
@@ -55,7 +50,7 @@
     (load-source-file "CLOS/default-superclasses-defmethods.lisp" e4)))
 
 (defun enable-class-initialization (e3 e4 e5)
-  (define-add-remove-direct-subclass e4)
+  (load-source-file "CLOS/add-remove-direct-subclass.lisp" e4)
   (define-direct-slot-definition-class e3 e4)
   (define-default-superclasses e4 e5)
   (define-reader-writer-method-class e4)
