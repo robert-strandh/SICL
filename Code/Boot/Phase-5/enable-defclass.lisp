@@ -33,9 +33,9 @@
   (with-intercepted-function-cells
       (e3
        (find-class (env:function-cell (env:client e4) e4 'find-class)))
-    (load-source-file "CLOS/direct-slot-definition-class-support.lisp" e3))
-  (load-source-file "CLOS/direct-slot-definition-class-defgeneric.lisp" e3)
-  (load-source-file "CLOS/direct-slot-definition-class-defmethods.lisp" e3))
+    (load-source-file "CLOS/direct-slot-definition-class-support.lisp" e3)
+    (load-source-file "CLOS/direct-slot-definition-class-defgeneric.lisp" e3)
+    (load-source-file "CLOS/direct-slot-definition-class-defmethods.lisp" e3)))
 
 (defun define-default-superclasses (e4 e5)
   (load-source-file "CLOS/default-superclasses-defgeneric.lisp" e4)
