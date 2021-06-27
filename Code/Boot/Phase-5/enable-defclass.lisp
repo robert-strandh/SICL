@@ -37,11 +37,6 @@
   (load-source-file "CLOS/direct-slot-definition-class-defgeneric.lisp" e3)
   (load-source-file "CLOS/direct-slot-definition-class-defmethods.lisp" e3))
 
-(defun define-reader-writer-method-class (e4)
-  (load-source-file "CLOS/reader-writer-method-class-support.lisp" e4)
-  (load-source-file "CLOS/reader-writer-method-class-defgenerics.lisp" e4)
-  (load-source-file "CLOS/reader-writer-method-class-defmethods.lisp" e4))
-
 (defun define-default-superclasses (e4 e5)
   (load-source-file "CLOS/default-superclasses-defgeneric.lisp" e4)
   (with-intercepted-function-cells
@@ -53,7 +48,7 @@
   (load-source-file "CLOS/add-remove-direct-subclass.lisp" e4)
   (define-direct-slot-definition-class e3 e4)
   (define-default-superclasses e4 e5)
-  (define-reader-writer-method-class e4)
+  (load-source-file "CLOS/reader-writer-method-class.lisp" e4)
   (with-intercepted-function-cells
       (e4
        (make-instance (env:function-cell (env:client e3) e3 'make-instance))
