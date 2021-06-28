@@ -33,12 +33,10 @@
             nil nil ,(fourth form) nil)))
   (load-source-file "CLOS/add-remove-direct-method.lisp" e4)
   (load-source-file "CLOS/dependent-maintenance.lisp" e4)
-  (load-source-file "CLOS/add-remove-method-defgenerics.lisp" e4)
   (with-intercepted-function-cells
       (e4
        (find-class (env:function-cell (env:client e5) e5 'find-class))
        (env:function-cell (env:client e3) e3 'slot-boundp))
-    (load-source-file "CLOS/add-remove-method-support.lisp" e4))
-  (load-source-file "CLOS/add-remove-method-defmethods.lisp" e4)
+    (load-source-file "CLOS/add-remove-method.lisp" e4))
   (load-source-file "CLOS/defmethod-support.lisp" e5)
   (load-source-file "CLOS/defmethod-defmacro.lisp" e5))
