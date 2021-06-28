@@ -32,9 +32,7 @@
           `(sicl-clos::make-method-lambda-default
             nil nil ,(fourth form) nil)))
   (load-source-file "CLOS/add-remove-direct-method.lisp" e3)
-  (load-source-file "CLOS/dependent-maintenance-defgenerics.lisp" e3)
-  (load-source-file "CLOS/dependent-maintenance-support.lisp" e3)
-  (load-source-file "CLOS/dependent-maintenance-defmethods.lisp" e3)
+  (load-source-file "CLOS/dependent-maintenance.lisp" e3)
   (load-source-file "CLOS/add-remove-method-defgenerics.lisp" e3)
   (with-intercepted-function-cells
       (e3
