@@ -21,4 +21,5 @@
    (:file "allocate-register")
    (:file "adapt-arrangement")
    (:file "allocate-registers-for-instructions")
+   (:file "introduce-registers")
    (:file "register-allocation")))

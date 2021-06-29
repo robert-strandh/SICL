@@ -482,18 +482,24 @@
 ;;; FIXNUM-DIVIDE-INSTRUCTION
 ;;;
 ;;; The x86 DIV instruction requires a peculiar arrangement of inputs
-;;; and outputs. The first input must be in RAX, the second input can
+;;; and outputs.  The first input must be in RAX, the second input can
 ;;; be in any register or in memory, and RDX (the high 64 bits of the
-;;; integer to divide) must be zero. The first output will then be in
+;;; integer to divide) must be zero.  The first output will then be in
 ;;; RAX, and the second output will be in RDX.
+
+;;; In an earlier version of register allocation, we planned to allow
+;;; reading inputs directly from the stack, rather than calling
+;;; ENSURE-INPUTS-AVAILABLE to put them in registers.  But in
+;;; hindsight, I don't have a clue if it is an actually useful
+;;; optimisation; if it was, it would also be applicable to any
+;;; instruction which could also load from memory, but it is a hassle
+;;; to implement, and I _think_ we would also want to track an
+;;; estimated distance between _two_ uses in order to decide if we
+;;; should use a register or not.
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
-  ;; We will load the inputs in whatever manner they need to be loaded
-  ;; as part of code generation, as DIV accepts a quotient in either a
-  ;; register or in memory.  It is only necessary to ensure RAX and
-  ;; RDX can be overwritten as part of register allocation.
-  predecessor)
+  (ensure-inputs-available predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
@@ -542,8 +548,7 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
-  ;; Again, we can load the inputs however we want.
-  predecessor)
+  (ensure-inputs-available predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
