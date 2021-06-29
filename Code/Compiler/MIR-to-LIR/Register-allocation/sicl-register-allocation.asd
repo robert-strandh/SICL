@@ -1,7 +1,10 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-register-allocation
-  :depends-on (#:sicl-register-arrangement)
+  :depends-on (#:cleavir-lir
+               #:cleavir-mir
+               #:cleavir-hir
+               #:sicl-register-arrangement)
   :serial t
   :components
   ((:file "packages")
