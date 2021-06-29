@@ -314,7 +314,9 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:unwind-instruction))
-  (process-inputs-for-call-instruction predecessor instruction))
+  (process-inputs-for-call-instruction
+   (ensure-inputs-available predecessor instruction)
+   instruction))
 
 ;;; The UNWIND-INSTRUCTION has no outputs.
 (defmethod process-outputs

@@ -98,9 +98,9 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
           ((and (not (null in-register)) (not (null in-register)))
            ;; This instruction is a plain register to register assignment.
            (setf (cleavir-ir:inputs instruction)
-                 (aref *registers* in-register)
+                 (list (aref *registers* in-register))
                  (cleavir-ir:outputs instruction)
-                 (aref *registers* out-register)))
+                 (list (aref *registers* out-register))))
           (t
            (error "Not sure what the assignment of (~A, ~A) to (~A, ~A) is meant to be."
                   in-register in-stack out-register out-stack)))))))
@@ -111,6 +111,28 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
 
 (defmethod introduce-registers-for-instruction
     ((instruction cleavir-ir:nop-instruction))
+  nil)
+
+;;; We have to do something for FUNCALL-INSTRUCTION,
+;;; NAMED-CALL-INSTRUCTION and MULTIPLE-VALUE-CALL-INSTRUCTION, but I
+;;; am not sure of what just yet.
+
+(defmethod introduce-registers-for-instruction
+    ((instruction cleavir-ir:named-call-instruction))
+  nil)
+
+(defmethod introduce-registers-for-instruction
+    ((instruction cleavir-ir:funcall-instruction))
+  nil)
+
+(defmethod introduce-registers-for-instruction
+    ((instruction cleavir-ir:multiple-value-call-instruction))
+  nil)
+
+;;; The same goes for INITIALIZE-CLOSURE-INSTRUCTION
+
+(defmethod introduce-registers-for-instruction
+    ((instruction cleavir-ir:initialize-closure-instruction))
   nil)
 
 (defun introduce-registers (mir)
