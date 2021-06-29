@@ -8,4 +8,5 @@
         (*input-arrangements* (make-hash-table :test #'eq))
         (*output-arrangements* (make-hash-table :test #'eq)))
     (compute-estimated-distance-to-use enter-instruction back-arcs)
-    (allocate-registers-for-instructions enter-instruction)))
+    (allocate-registers-for-instructions enter-instruction)
+    (introduce-registers enter-instruction)))
