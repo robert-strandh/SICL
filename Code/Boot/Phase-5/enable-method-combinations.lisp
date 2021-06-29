@@ -25,5 +25,4 @@
          (env:client e5) e5
          '(setf sicl-method-combination:find-method-combination-template))))
     (load-source-file "CLOS/standard-method-combination.lisp" e4))
-  (load-source-file "CLOS/find-method-combination-defgenerics.lisp" e4)
-  (load-source-file "CLOS/find-method-combination-defmethods.lisp" e4))
+  (load-source-file "CLOS/find-method-combination.lisp" e4))

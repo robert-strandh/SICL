@@ -11,5 +11,4 @@
   (load-source-file "Method-combination/find-method-combination.lisp" e5)
   (load-source-file "Method-combination/define-method-combination-defmacro.lisp" e5)
   (load-source-file "CLOS/standard-method-combination.lisp" e5)
-  (load-source-file "CLOS/find-method-combination-defgenerics.lisp" e5)
-  (load-source-file "CLOS/find-method-combination-defmethods.lisp" e5))
+  (load-source-file "CLOS/find-method-combination.lisp" e5))
