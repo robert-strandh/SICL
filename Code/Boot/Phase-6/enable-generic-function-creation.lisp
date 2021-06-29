@@ -1,8 +1,7 @@
 (cl:in-package #:sicl-boot-phase-6)
 
 (defun enable-generic-function-initialization (e5)
-  (load-source-file "CLOS/no-applicable-method-defgenerics.lisp" e5)
-  (load-source-file "CLOS/no-applicable-method-defmethods.lisp" e5)
+  (load-source-file "CLOS/no-applicable-method.lisp" e5)
   (with-intercepted-function-cells
       (e5
        ;; FIXME: this one should also assign the slots in the
