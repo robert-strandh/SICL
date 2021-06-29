@@ -27,7 +27,13 @@
   (let ((cleavir-cst-to-ast::*origin* nil)
         (client (env:client environment)))
     (handler-bind
-        ((trucler:no-function-description
+        ((trucler:undefined-function-referred-to-by-inline-declaration
+           (lambda (condition)
+             (let ((*package* (find-package "KEYWORD")))
+               (warn "Unknown function referred to by INLINE/NOTINLINE declaration ~s"
+                     (trucler:name condition)))
+             (invoke-restart 'trucler:ignore-declaration)))
+         (trucler:no-function-description
            (lambda (condition)
              (unless (member (trucler:name condition)
                              (overridden-function-cells
