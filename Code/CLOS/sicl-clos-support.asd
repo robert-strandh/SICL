@@ -9,6 +9,4 @@
    (:file "make-method-lambda-defgenerics")
    (:file "make-method-lambda-defmethods")
    (:file "defmethod-support")
-   (:file "ensure-class-using-class-support")
-   (:file "reader-writer-method-class-defgenerics")
-   #+(or)(:file "add-accessor-method")))
+   (:file "ensure-class-using-class-support")))
