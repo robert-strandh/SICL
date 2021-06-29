@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-boot-phase-4)
 
-(defun define-classp (e3)
-  (load-source-file "CLOS/classp-defgeneric.lisp" e3)
-  (load-source-file "CLOS/classp-defmethods.lisp" e3))
-
 (defun define-sub-specializer-p (e3)
   (load-source-file "CLOS/sub-specializer-p.lisp" e3))
 
@@ -40,7 +36,7 @@
   (load-source-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))
 
 (defun enable-compute-discriminating-function (e2 e3 e4)
-  (define-classp e3)
+  (load-source-file "CLOS/classp.lisp" e3)
   (define-sub-specializer-p e3)
   (define-compute-applicable-methods e3 e4)
   (define-compute-effective-method e3)
