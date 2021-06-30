@@ -15,11 +15,6 @@
   (load-source-file "CLOS/reinitialize-instance-support.lisp" e5)
   (load-source-file "CLOS/reinitialize-instance-defmethods.lisp" e5))
 
-(defun define-ensure-class-using-class (e5)
-  (load-source-file "CLOS/ensure-class-using-class-support.lisp" e5)
-  (load-source-file "CLOS/ensure-class-using-class-defgenerics.lisp" e5)
-  (load-source-file "CLOS/ensure-class-using-class-defmethods.lisp" e5))
-
 (defun enable-defclass (e5)
   (enable-class-initialization e5)
-  (define-ensure-class-using-class e5))
+  (load-source-file "CLOS/ensure-class-using-class.lisp" e5))

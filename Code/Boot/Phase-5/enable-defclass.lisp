@@ -80,9 +80,7 @@
         (env:function-cell (env:client e5) e5 'find-class))
        ((setf find-class)
         (env:function-cell (env:client e5) e5 '(setf find-class))))
-    (load-source-file "CLOS/ensure-class-using-class-support.lisp" e4))
-  (load-source-file "CLOS/ensure-class-using-class-defgenerics.lisp" e4)
-  (load-source-file "CLOS/ensure-class-using-class-defmethods.lisp" e4))
+    (load-source-file "CLOS/ensure-class-using-class.lisp" e4)))
 
 (defun define-ensure-class (e4 e5)
   (with-intercepted-function-cells
