@@ -7,9 +7,7 @@
             :class class
             :rack (make-array size :initial-element 10000000))))
   (load-source-file "CLOS/stamp-offset-defconstant.lisp" e4)
-  (load-source-file "CLOS/effective-slot-definition-class-support.lisp" e4)
-  (load-source-file "CLOS/effective-slot-definition-class-defgeneric.lisp" e4)
-  (load-source-file "CLOS/effective-slot-definition-class-defmethods.lisp" e4)
+  (load-source-file "CLOS/effective-slot-definition-class.lisp" e4)
   (load-source-file "CLOS/allocate-instance-support.lisp" e4)
   (load-source-file "CLOS/allocate-instance-defgenerics.lisp" e4)
   (load-source-file "CLOS/allocate-instance-defmethods.lisp" e4))
