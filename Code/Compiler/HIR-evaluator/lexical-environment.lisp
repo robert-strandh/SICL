@@ -78,18 +78,11 @@
             contents))))
 
 (defun ensure-lref (entity lexical-environment)
-  (labels
-      ((search-env (env depth)
-         (with-accessors ((parent lexical-environment-parent)
-                          (indices lexical-environment-indices)
-                          (contents lexical-environment-contents))
-             env
-           (multiple-value-bind (index presentp)
-               (gethash entity indices)
-             (if presentp
-                 (make-lref :index index :depth depth)
-                 (if (not parent)
-                     (insert-lref entity lexical-environment)
-                     (search-env parent (1+ depth))))))))
-    (search-env lexical-environment 0)))
-
+  (with-accessors ((parent lexical-environment-parent)
+                   (indices lexical-environment-indices))
+      lexical-environment
+    (multiple-value-bind (index presentp)
+        (gethash entity indices)
+      (if presentp
+          (make-lref :index index :depth 0)
+          (insert-lref entity lexical-environment)))))
