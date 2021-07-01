@@ -43,7 +43,7 @@
            (cleavir-ir:first-successor enter-instruction))
          (thunk
            (instruction-thunk client successor lexical-environment)))
-    (lambda (arguments static-environment dynamic-environment lexical-locations)
+    (lambda (arguments static-environment dynamic-environment)
       (let ((lexical-locations (lexical-environment-vector lexical-environment))
             (thunk thunk))
         (macrolet ((lref (lref)

@@ -4,7 +4,7 @@
   ((%environment :initarg :environment :reader environment))
   (:metaclass sicl-host-mop:funcallable-standard-class))
 
-(defun enclose (entry-point static-environment-length lexical-locations)
+(defun enclose (entry-point static-environment-length)
   (let* ((static-environment
            (if (zerop static-environment-length)
                0
@@ -17,8 +17,7 @@
        (funcall entry-point
                 args
                 static-environment
-                sicl-run-time:*dynamic-environment*
-                lexical-locations)))
+                sicl-run-time:*dynamic-environment*)))
     closure))
 
 (defun initialize-closure (closure &rest static-environment-values)

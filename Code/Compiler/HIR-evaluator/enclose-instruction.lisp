@@ -16,8 +16,7 @@
     (prog1 (make-thunk (client instruction lexical-environment :inputs 0 :outputs 1)
              (setf (output 0)
                    (enclose enter-fn
-                            env-length
-                            (lexical-locations)))
+                            env-length))
              (successor 0))
       (setf enter-fn
             (hir-to-host-function client (cleavir-ir:code instruction) lexical-environment)))))
