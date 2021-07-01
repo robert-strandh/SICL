@@ -13,7 +13,7 @@
     :type hash-table)
    ;; A counter tracking the length of the list of contents.
    (%counter
-    :initform 1
+    :initform 0
     :accessor lexical-environment-counter
     :type unsigned-byte)
    ;; A reversed list of the initial contents of the lexical environment.
