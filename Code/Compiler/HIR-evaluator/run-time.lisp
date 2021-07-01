@@ -6,7 +6,9 @@
 
 (defun enclose (entry-point static-environment-length lexical-locations)
   (let* ((static-environment
-           (make-array static-environment-length))
+           (if (zerop static-environment-length)
+               0
+               (make-array static-environment-length)))
          (closure (make-instance 'hir-closure
                     :environment static-environment)))
     (sicl-host-mop:set-funcallable-instance-function
