@@ -38,12 +38,11 @@
   (setf (svref lexical-locations lref)
         value))
 
-(defun lexical-environment-vector (lexical-environment parent-vector)
+(defun lexical-environment-vector (lexical-environment)
   (with-accessors ((counter lexical-environment-counter)
                    (contents lexical-environment-contents))
       lexical-environment
     (let ((vector (make-array counter)))
-      (setf (svref vector 0) parent-vector)
       (loop for elt in contents
             for index downfrom (1- counter)
             do (setf (svref vector index) elt))

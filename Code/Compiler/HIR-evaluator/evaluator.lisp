@@ -44,7 +44,7 @@
          (thunk
            (instruction-thunk client successor lexical-environment)))
     (lambda (arguments static-environment dynamic-environment lexical-locations)
-      (let ((lexical-locations (lexical-environment-vector lexical-environment lexical-locations))
+      (let ((lexical-locations (lexical-environment-vector lexical-environment))
             (thunk thunk))
         (macrolet ((lref (lref)
                      `(%lref lexical-locations ,lref)))
@@ -84,7 +84,7 @@
          (thunk
            (instruction-thunk client successor lexical-environment)))
     (lambda (constants-vector static-environment)
-      (let ((lexical-locations (lexical-environment-vector lexical-environment nil))
+      (let ((lexical-locations (lexical-environment-vector lexical-environment))
             (thunk thunk))
         (macrolet ((lref (lref)
                      `(%lref lexical-locations ,lref)))
