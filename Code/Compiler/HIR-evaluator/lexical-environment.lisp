@@ -5,12 +5,7 @@
 ;;; into a vector, and to create such a vector in the first place.
 
 (defclass lexical-environment ()
-  (;; Every lexical environment except the top level one has a parent.
-   (%parent
-    :initarg :parent
-    :reader lexical-environment-parent
-    :type (or null lexical-environment))
-   ;; A hash table mapping from lexical locations to the corresponding
+  (;; A hash table mapping from lexical locations to the corresponding
    ;; index in the vector of lexical locations.
    (%indices
     :initform (make-hash-table :test #'eq)
@@ -27,9 +22,8 @@
     :accessor lexical-environment-contents
     :type list)))
 
-(defun make-lexical-environment (&key parent)
-  (make-instance 'lexical-environment
-    :parent parent))
+(defun make-lexical-environment ()
+  (make-instance 'lexical-environment))
 
 (defstruct lref
   (depth nil :type (and unsigned-byte fixnum))
@@ -78,8 +72,7 @@
             contents))))
 
 (defun ensure-lref (entity lexical-environment)
-  (with-accessors ((parent lexical-environment-parent)
-                   (indices lexical-environment-indices))
+  (with-accessors ((indices lexical-environment-indices))
       lexical-environment
     (multiple-value-bind (index presentp)
         (gethash entity indices)

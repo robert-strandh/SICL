@@ -28,8 +28,7 @@
 ;;; Representing HIR as host functions.
 
 (defun hir-to-host-function (client enter-instruction lexical-environment)
-  (let* ((lexical-environment
-           (make-lexical-environment :parent lexical-environment))
+  (let* ((lexical-environment (make-lexical-environment))
          (static-environment-lref-1
            (ensure-lref 'static-environment lexical-environment))
          (static-environment-lref-2
