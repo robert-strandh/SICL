@@ -76,6 +76,11 @@
   (load-source-file "CLOS/standard-instance-access.lisp" e4)
   (satiate-generic-functions e4 e5)
   (update-all-objects e4 e5)
+  ;; Now that we have a cyclic graph, we must change the reader
+  ;; SICL-CLOS:ENVIRONMENT that we store in the CLIENT object, so that
+  ;; it now refers to the function with that name in E5.
+  (setf (sicl-boot-phase-5::static-environment-function (env:client e5))
+        (env:fdefinition (env:client e5) e5 'sicl-clos:environment))
   (load-source-file "CLOS/ensure-generic-function-defun.lisp" e5)
   (load-source-file "CLOS/ensure-method-defun.lisp" e5)
   (load-source-file "CLOS/ensure-class.lisp" e5)
