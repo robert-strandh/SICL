@@ -25,25 +25,17 @@
 (defun make-lexical-environment ()
   (make-instance 'lexical-environment))
 
-(defstruct lref
-  (depth nil :type (and unsigned-byte fixnum))
-  (index nil :type (integer 0 (#.(1- array-total-size-limit)))))
-
 (declaim (inline %lref))
 (defun %lref (lexical-locations lref)
   (declare (simple-vector lexical-locations)
-           (lref lref))
-  (loop repeat (lref-depth lref) do
-    (setf lexical-locations (svref lexical-locations 0)))
-  (svref lexical-locations (lref-index lref)))
+           (fixnum lref))
+  (svref lexical-locations lref))
 
 (declaim (inline (setf %lref)))
 (defun (setf %lref) (value lexical-locations lref)
   (declare (simple-vector lexical-locations)
-           (lref lref))
-  (loop repeat (lref-depth lref) do
-    (setf lexical-locations (svref lexical-locations 0)))
-  (setf (svref lexical-locations (lref-index lref))
+           (fixnum lref))
+  (setf (svref lexical-locations lref)
         value))
 
 (defun lexical-environment-vector (lexical-environment parent-vector)
@@ -62,7 +54,7 @@
                    (counter lexical-environment-counter)
                    (contents lexical-environment-contents))
       lexical-environment
-    (prog1 (make-lref :index counter :depth 0)
+    (prog1 counter
       (setf (gethash entity indices)
             counter)
       (incf counter)
@@ -77,5 +69,5 @@
     (multiple-value-bind (index presentp)
         (gethash entity indices)
       (if presentp
-          (make-lref :index index :depth 0)
+          index
           (insert-lref entity lexical-environment)))))
