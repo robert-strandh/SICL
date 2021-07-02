@@ -3,14 +3,11 @@
 (defun finalize-classes (e3)
   (format *trace-output* "Finalizing all classes in E3...")
   (finish-output *trace-output*)
-  (let ((visited (make-hash-table :test #'eq)))
-    (do-all-symbols (symbol)
-      (unless (or (gethash symbol visited)
-                  (eq symbol 'symbol))
-        (setf (gethash symbol visited) t)
-        (let ((class (env:find-class (env:client e3) e3 symbol)))
-          (unless (null class)
-            (sicl-host-mop:finalize-inheritance class))))))
+  (env:map-defined-classes
+   (env:client e3) e3
+   (lambda (name class)
+     (unless (eq name 'symbol)
+       (sicl-host-mop:finalize-inheritance class))))
   (format *trace-output* "done!~%"))
 
 (defun prepare-this-phase (e2 e3 e4)
