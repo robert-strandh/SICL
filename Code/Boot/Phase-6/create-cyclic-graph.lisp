@@ -7,16 +7,13 @@
        ,@body)))
 
 (defun create-class-translation-table (e4 e5)
-  (let ((result (make-hash-table :test #'eq))
-        (visited (make-hash-table :test #'eq)))
-    (do-all-symbols (symbol)
-      (unless (gethash symbol visited)
-        (setf (gethash symbol visited) t)
-        (let ((e4-class (env:find-class (env:client e4) e4 symbol)))
-          (unless (null e4-class)
-            (let ((e5-class (env:find-class (env:client e5) e5 symbol)))
-              (assert (not (null e5-class)))
-              (setf (gethash e4-class result) e5-class))))))
+  (let ((result (make-hash-table :test #'eq)))
+    (env:map-defined-classes
+     (env:client e4) e4
+     (lambda (name e4-class)
+       (let ((e5-class (env:find-class (env:client e5) e5 name)))
+         (assert (not (null e5-class)))
+         (setf (gethash e4-class result) e5-class))))
     result))
 
 ;;; All SICL objects have a class slot that may contain a non-SICL
