@@ -154,6 +154,9 @@
      (lambda (name class)
        (declare (ignore name))
        (update-class class table class-slots-function e5)))
-    (loop for template in (find-all-method-combination-templates e5)
-          do (update-method-combination-template
-              template table class-slots-function e5))))
+    (env:map-defined-method-combination-templates
+     (env:client e5) e5
+     (lambda (name template)
+       (declare (ignore name))
+       (update-method-combination-template
+        template table class-slots-function e5)))))
