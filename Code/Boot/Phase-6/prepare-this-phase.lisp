@@ -3,15 +3,14 @@
 (defun finalize-classes (e4 e5)
   (format *trace-output* "Finalizing all classes in ~a..." (sicl-boot:name e5))
   (finish-output *trace-output*)
-  (let ((visited (make-hash-table :test #'eq))
-        (finalized-p (env:fdefinition (env:client e4) e4 'sicl-clos::class-finalized-p))
+  (let ((finalized-p (env:fdefinition (env:client e4) e4 'sicl-clos::class-finalized-p))
         (finalize (env:fdefinition (env:client e4) e4 'sicl-clos:finalize-inheritance)))
-    (do-all-symbols (symbol)
-      (unless (gethash symbol visited)
-        (setf (gethash symbol visited) t)
-        (let ((class (env:find-class (env:client e5) e5 symbol)))
-          (unless (or (null class) (funcall finalized-p class))
-            (funcall finalize class))))))
+    (env:map-defined-classes
+     (env:client e5) e5
+     (lambda (name class)
+       (declare (ignore name))
+       (unless (funcall finalized-p class)
+         (funcall finalize class)))))
   (format *trace-output* "done~%")
   (finish-output *trace-output*))
 
