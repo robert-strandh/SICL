@@ -13,8 +13,6 @@
     (ld "CLOS/setf-documentation-defgeneric.lisp")
     (ld "CLOS/class-slots-defgeneric.lisp")
     (ld "CLOS/setf-class-slots-defgeneric.lisp")
-    (ld "CLOS/class-prototype-defgeneric.lisp")
-    (ld "CLOS/setf-class-prototype-defgeneric.lisp")
     (ld "CLOS/dependents-defgeneric.lisp")
     (ld "CLOS/setf-dependents-defgeneric.lisp")
     (ld "CLOS/accessor-method-slot-definition-defgeneric.lisp")
