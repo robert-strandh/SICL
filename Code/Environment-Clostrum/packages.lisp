@@ -43,6 +43,7 @@
            #:variable-cell
            #:traced-functions
            #:map-defined-functions
+           #:map-defined-classes
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
