@@ -19,24 +19,6 @@
               (setf (gethash e4-class result) e5-class))))))
     result))
 
-(defun find-all-functions (e5)
-  (let ((visited (make-hash-table :test #'eq))
-        (result '()))
-    (do-all-symbols (symbol)
-      (unless (gethash symbol visited)
-        (setf (gethash symbol visited) t)
-        (when (and (env:fboundp (env:client e5) e5 symbol)
-                   (not (env:special-operator (env:client e5) e5 symbol))
-                   (null (env:macro-function (env:client e5) e5 symbol)))
-          (push (env:fdefinition (env:client e5) e5 symbol) result))
-        (when (env:fboundp (env:client e5) e5 `(setf ,symbol))
-          (push (env:fdefinition (env:client e5) e5 `(setf ,symbol)) result))))
-    result))
-
-(defun find-all-sicl-functions (e5)
-  (remove-if-not (lambda (x) (typep x 'sicl-boot::header))
-                 (find-all-functions e5)))
-
 ;;; All SICL objects have a class slot that may contain a non-SICL
 ;;; class.  TRANSLATION-TABLE maps such non-SICL classes to
 ;;; corresponding SICL-CLASSES.  CLASS-SLOTS-FUNCTION is a function
