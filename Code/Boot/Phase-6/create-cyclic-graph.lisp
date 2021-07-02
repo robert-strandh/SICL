@@ -120,17 +120,6 @@
             do (update-effective-slot
                 slot translate-table class-slots-function e5)))))
 
-(defun find-all-classes (e5)
-  (let ((result '())
-        (visited (make-hash-table :test #'eq)))
-    (do-all-symbols (symbol)
-      (unless (gethash symbol visited)
-        (setf (gethash symbol visited) t)
-        (let ((class (env:find-class (env:client e5) e5 symbol)))
-          (unless (null class)
-            (push class result)))))
-    result))
-
 (defun update-method-combination-template
     (template translate-table class-slots-function e5)
   (with-impure-sicl-object template
