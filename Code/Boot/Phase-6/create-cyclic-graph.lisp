@@ -175,8 +175,12 @@
   (let ((table (create-class-translation-table e4 e5))
         (class-slots-function
           (env:fdefinition (env:client e5) e5 'sicl-clos:class-slots)))
-    (loop for function in (find-all-sicl-functions e5)
-          do (update-function function table class-slots-function e5))
+    (env:map-defined-functions
+     (env:client e5) e5
+     (lambda (name function)
+       (declare (ignore name))
+       (when (typep function 'sicl-boot::header)
+         (update-function function table class-slots-function e5))))
     (loop for class in (find-all-classes e5)
           do (update-class class table class-slots-function e5))
     (loop for template in (find-all-method-combination-templates e5)
