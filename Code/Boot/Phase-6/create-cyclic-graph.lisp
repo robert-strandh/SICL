@@ -128,17 +128,6 @@
       (loop for variant in variants
             do (update-object variant translate-table class-slots-function)))))
 
-(defun find-all-method-combination-templates (e5)
-  (let ((result '())
-        (visited (make-hash-table :test #'eq)))
-    (do-all-symbols (symbol)
-      (unless (gethash symbol visited)
-        (setf (gethash symbol visited) t)
-        (let ((template (env:find-method-combination-template symbol e5)))
-          (unless (null template)
-            (push template result)))))
-    result))
-
 (defun update-all-objects (e4 e5)
   (let ((table (create-class-translation-table e4 e5))
         (class-slots-function
