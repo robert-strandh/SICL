@@ -14,4 +14,5 @@
    (:file "variable-description")
    (:file "class-description")
    (:file "get-setf-expansion-defun")
-   (:file "map-defined-functions")))
+   (:file "map-defined-functions")
+   (:file "map-defined-classes")))
