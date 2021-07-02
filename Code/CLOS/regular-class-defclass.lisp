@@ -15,6 +15,13 @@
 ;;; the flag in the class that indicates that it is finalized.
 (defgeneric (setf class-finalized-p) (new-value class))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-prototype.html
+(defgeneric class-prototype (class))
+
+;;; This function sets the class prototype of the class.
+(defgeneric (setf class-prototype) (prototype class))
+
 (defclass regular-class (real-class)
   ((%direct-slots
     :initarg :direct-slots
