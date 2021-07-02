@@ -16,7 +16,7 @@
      (env:client e4) e4
      (lambda (name class)
        (declare (ignore name))
-       (unless (or (null class) (funcall finalized-p class))
+       (unless (funcall finalized-p class)
          (funcall finalize class)))))
   (format *trace-output* "done~%")
   (finish-output *trace-output*))
