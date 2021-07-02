@@ -17,29 +17,18 @@
 (defun satiate-generic-functions (e4 e5)
   (format *trace-output* "Satiating all generic functions in ~a..." (sicl-boot:name e5))
   (finish-output *trace-output*)
-  (let ((processed (make-hash-table :test #'eq))
-        (client (env:client e5))
-        (satiation-function
+  (let ((satiation-function
           (env:fdefinition (env:client e4) e4 'sicl-clos::satiate-generic-function))
         (generic-function-class
           (env:find-class (env:client e4) e4 'standard-generic-function)))
-    (do-all-symbols (symbol)
-      (unless (gethash symbol processed)
-        (setf (gethash symbol processed) t)
-        (when (and (env:fboundp client e5 symbol)
-                   (not (env:special-operator client e5 symbol))
-                   (null (env:macro-function client e5 symbol)))
-          (let ((fun (env:fdefinition client e5 symbol)))
-            (when (and (typep fun 'sicl-boot::header)
-                       (eq (slot-value fun 'sicl-boot::%class)
-                           generic-function-class))
-              (funcall satiation-function fun))))
-        (when (env:fboundp client e5 `(setf ,symbol))
-          (let ((fun (env:fdefinition client e5 `(setf ,symbol))))
-            (when (and (typep fun 'sicl-boot::header)
-                       (eq (slot-value fun 'sicl-boot::%class)
-                           generic-function-class))
-              (funcall satiation-function fun)))))))
+    (env:map-defined-functions
+     (env:client e5) e5
+     (lambda (name function)
+       (declare (ignore name))
+       (when (and (typep function 'sicl-boot::header)
+                  (eq (slot-value function 'sicl-boot::%class)
+                      generic-function-class))
+         (funcall satiation-function function)))))
   (format *trace-output* "done~%")
   (finish-output *trace-output*))
 
