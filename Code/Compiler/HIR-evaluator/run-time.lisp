@@ -7,7 +7,7 @@
 (defun enclose (entry-point static-environment-length)
   (let* ((static-environment
            (if (zerop static-environment-length)
-               0
+               nil
                (make-array static-environment-length)))
          (closure (make-instance 'hir-closure
                     :environment static-environment)))
