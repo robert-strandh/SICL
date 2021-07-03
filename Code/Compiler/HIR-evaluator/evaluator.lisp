@@ -17,6 +17,10 @@
 ;; The main entry point for converting instructions to thunks.
 (defgeneric instruction-thunk (client instruction lexical-environment))
 
+(defparameter *instruction-thunk-meter*
+  (make-instance 'cleavir-meter:basic-meter
+    :name "INSTRUCTION-THUNK"))
+
 (defmethod instruction-thunk :around
     (client instruction lexical-environment)
   (multiple-value-bind (thunk presentp)
@@ -42,7 +46,8 @@
          (successor
            (cleavir-ir:first-successor enter-instruction))
          (thunk
-           (instruction-thunk client successor lexical-environment)))
+           (cleavir-meter:with-meter (meter *instruction-thunk-meter*)
+             (instruction-thunk client successor lexical-environment))))
     (lambda (arguments static-environment dynamic-environment)
       (let ((lexical-locations (lexical-environment-vector lexical-environment))
             (thunk thunk))
@@ -82,7 +87,8 @@
          (successor
            (cleavir-ir:first-successor enter-instruction))
          (thunk
-           (instruction-thunk client successor lexical-environment)))
+           (cleavir-meter:with-meter (meter *instruction-thunk-meter*)
+             (instruction-thunk client successor lexical-environment))))
     (lambda (constants-vector static-environment)
       (let ((lexical-locations (lexical-environment-vector lexical-environment))
             (thunk thunk))
