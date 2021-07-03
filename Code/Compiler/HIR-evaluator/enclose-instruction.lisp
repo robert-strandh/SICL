@@ -19,7 +19,7 @@
                             env-length))
              (successor 0))
       (setf enter-fn
-            (hir-to-host-function client (cleavir-ir:code instruction) lexical-environment)))))
+            (hir-to-host-function client (cleavir-ir:code instruction))))))
 
 (defun dummy-enter-fn ()
   (error "Invocation of the dummy enter fn."))
