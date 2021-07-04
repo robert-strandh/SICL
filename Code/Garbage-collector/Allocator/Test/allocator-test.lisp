@@ -85,7 +85,7 @@
           (+ sicl-allocator::*start-sentinels-start* bin-offset))
         (end-sentinel-address
           (+ sicl-allocator::*end-sentinels-start* bin-offset)))
-    (loop for chunkprev = (sicl-memory:memory start-sentinel-address 64)
-            then (sicl-memory:memory (+ chunkprev 8) 64)
+    (loop for chunkprev = (sicl-memory:memory-unsigned start-sentinel-address 64)
+            then (sicl-memory:memory-unsigned (+ chunkprev 8) 64)
           until (= chunkprev end-sentinel-address)
           do (funcall function (- chunkprev 8)))))
