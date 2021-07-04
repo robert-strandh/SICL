@@ -2,7 +2,5 @@
 
 (defpackage #:sicl-memory
   (:use #:common-lisp)
-  (:export #:load-unsigned
-           #:store-unsigned
-           #:load-signed
-           #:store-signed))
+  (:export #:memory-unsigned
+           #:memory-signed))
