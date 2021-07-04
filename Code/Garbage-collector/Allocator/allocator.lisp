@@ -18,6 +18,8 @@
 (defparameter *heap-start*
   (+ *bin-sizes-start* (* *number-of-bins* 8)))
 
+(defparameter *heap-end* (expt 2 30))
+
 ;;; Bin i, where 0 <= i <= 63 contains i+4 words.  For 64 <= i <= 511,
 ;;; we express the max size of a chunk as a fixed multiplier of the
 ;;; max size of a chunk in bin i-1.  The additional constraint is that
@@ -38,15 +40,15 @@
 (defun init-bin-sizes ()
   (loop for index from 0 to 63
         for address = (+ *bin-sizes-start* (* index 8))
-        do (setf (sicl-gc-memory:memory-64 address)
+        do (setf (sicl-memory:memory address 64)
                  (* (+ index 4) 8)))
   (loop for index from 64 to 510
         for address = (+ *bin-sizes-start* (* index 8))
         for float-max-size = (* 67d0 8d0 *multiplier*)
           then (* float-max-size *multiplier*)
-        do (setf (sicl-gc-memory:memory-64 address)
+        do (setf (sicl-memory:memory address 64)
                  (* 8 (round float-max-size 8))))
-  (setf (sicl-gc-memory:memory-64 (+ *bin-sizes-start* (* 511 8)))
+  (setf (sicl-memory:memory (+ *bin-sizes-start* (* 511 8)) 64)
         (- (expt 2 64) 8)))
 
 (defun init-sentinels ()
@@ -54,9 +56,9 @@
         for sentinel-offset = (* index 8)
         for start-sentinel-address = (+ *start-sentinels-start* sentinel-offset)
         for end-sentinel-address = (+ *end-sentinels-start* sentinel-offset)
-        do (setf (sicl-gc-memory:memory-64 start-sentinel-address)
+        do (setf (sicl-memory:memory start-sentinel-address 64)
                  end-sentinel-address)
-           (setf (sicl-gc-memory:memory-64 end-sentinel-address)
+           (setf (sicl-memory:memory end-sentinel-address 64)
                  start-sentinel-address)))
 
 ;;; Given a chunk size in bytes, find the bin offset in bytes from the
@@ -81,7 +83,7 @@
                       ;; left of the middle so as to decide whether it
                       ;; is too small or not.
                       (address (- middle-address 8))
-                      (value (sicl-gc-memory:memory-64 address)))
+                      (value (sicl-memory:memory address 64)))
                  (if (< value size)
                      ;; The bin to the left of the middle is too
                      ;; small, so we exclude it by setting the left
@@ -96,8 +98,8 @@
 
 (defun link-chunk-by-address (chunk start-sentinel-address end-sentinel-address)
   (loop for pna = start-sentinel-address then (+ npa 8)
-        for npa = (sicl-gc-memory:memory-64 start-sentinel-address)
-          then (sicl-gc-memory:memory-64 (+ npa 8))
+        for npa = (sicl-memory:memory start-sentinel-address 64)
+          then (sicl-memory:memory (+ npa 8) 64)
         until (or (= npa end-sentinel-address)
                   (> npa chunk))
         finally (link-chunk-between chunk pna npa)))
@@ -106,8 +108,8 @@
     (chunk start-sentinel-address end-sentinel-address)
   (loop with size = (chunk-size chunk)
         for pna = start-sentinel-address then (+ npa 8)
-        for npa = (sicl-gc-memory:memory-64 start-sentinel-address)
-          then (sicl-gc-memory:memory-64 (+ npa 8))
+        for npa = (sicl-memory:memory start-sentinel-address 64)
+          then (sicl-memory:memory (+ npa 8) 64)
         until (or (= npa end-sentinel-address)
                   (> (chunk-size (- npa 8)) size)
                   (and (= (chunk-size (- npa 8)) size)
@@ -152,7 +154,7 @@
 (defun bin-empty-p (bin-offset)
   (let ((start-sentinel-address (+ *start-sentinels-start* bin-offset))
         (end-sentinel-address (+ *end-sentinels-start* bin-offset)))
-    (= (sicl-gc-memory:memory-64 start-sentinel-address) end-sentinel-address)))
+    (= (sicl-memory:memory start-sentinel-address 64) end-sentinel-address)))
 
 ;;; Given the offset of an initial bin, find the first one that is not
 ;;; empty.
@@ -169,8 +171,8 @@
 (defun find-first-big-enough-chunk (bin-offset size)
   (let ((start-sentinel-address (+ *start-sentinels-start* bin-offset))
         (end-sentinel-address (+ *end-sentinels-start* bin-offset)))
-    (loop for chunkprev = (sicl-gc-memory:memory-64 start-sentinel-address)
-            then (sicl-gc-memory:memory-64 (+ chunkprev 8))
+    (loop for chunkprev = (sicl-memory:memory start-sentinel-address 64)
+            then (sicl-memory:memory (+ chunkprev 8) 64)
           until (or (= chunkprev end-sentinel-address)
                     (<= size (chunk-size (- chunkprev 8))))
           finally (return (if (= chunkprev end-sentinel-address)
@@ -185,8 +187,8 @@
           do (if (<= offset (* 63 8))
                  ;; We have a non-empty bin with all chunks being the
                  ;; same size, so we just return the first chunk.
-                 (return (- (sicl-gc-memory:memory-64
-                             (+ *start-sentinels-start* offset))
+                 (return (- (sicl-memory:memory
+                             (+ *start-sentinels-start* offset) 64)
                             8))
                  ;; We have a non-empty bin that may or may not contain
                  ;; a big-enough chunk.
@@ -217,17 +219,17 @@
           (setf (chunk-free-p residue-chunk) t)
           ;; Before linking the residue chunk, we must make sure that the
           ;; PREV and NEXT links contain 1, indicating that the chunk is unlinked.
-          (setf (sicl-gc-memory:memory-64 (+ residue-chunk +prev-slot-offset+))
+          (setf (sicl-memory:memory (+ residue-chunk +prev-slot-offset+) 64)
                 1)
-          (setf (sicl-gc-memory:memory-64 (+ residue-chunk +next-slot-offset+))
+          (setf (sicl-memory:memory (+ residue-chunk +next-slot-offset+) 64)
                 1)
           (link-chunk residue-chunk)
           candidate))))
 
 (defun init-heap ()
   (let ((chunk *heap-start*)
-        (size (- (sicl-gc-memory:end-memory) *heap-start*)))
-    (setf (sicl-gc-memory:memory-64 chunk)
+        (size (- *heap-end* *heap-start*)))
+    (setf (sicl-memory:memory chunk 64)
           ;; Make sure we never attempt to coalesce with a preceding
           ;; (non-existing) chunk by setting the flag that indicates
           ;; that the previous chunk is in use.
@@ -237,7 +239,6 @@
     (link-chunk chunk)))
 
 (defun init ()
-  (sicl-gc-memory:init-memory)
   (init-bin-sizes)
   (init-sentinels)
   (init-heap))

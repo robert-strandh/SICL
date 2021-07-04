@@ -5,7 +5,7 @@
         with free-space = 0
         for chunk = sicl-allocator::*heap-start*
           then (+ chunk (sicl-allocator::chunk-size chunk))
-        until (= chunk (sicl-gc-memory:end-memory))
+        until (= chunk sicl-allocator::*heap-end*)
         do (if (sicl-allocator::chunk-free-p chunk)
                (incf free-space (sicl-allocator::chunk-size chunk))
                (incf allocated-space (sicl-allocator::chunk-size chunk)))
@@ -85,7 +85,7 @@
           (+ sicl-allocator::*start-sentinels-start* bin-offset))
         (end-sentinel-address
           (+ sicl-allocator::*end-sentinels-start* bin-offset)))
-    (loop for chunkprev = (sicl-gc-memory:memory-64 start-sentinel-address)
-            then (sicl-gc-memory:memory-64 (+ chunkprev 8))
+    (loop for chunkprev = (sicl-memory:memory start-sentinel-address 64)
+            then (sicl-memory:memory (+ chunkprev 8) 64)
           until (= chunkprev end-sentinel-address)
           do (funcall function (- chunkprev 8)))))
