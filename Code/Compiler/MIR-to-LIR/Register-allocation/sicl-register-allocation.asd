@@ -4,7 +4,8 @@
   :depends-on (#:cleavir-lir
                #:cleavir-mir
                #:cleavir-hir
-               #:sicl-register-arrangement)
+               #:sicl-register-arrangement
+               #:sicl-utilities)
   :serial t
   :components
   ((:file "packages")
@@ -19,7 +20,7 @@
    (:file "arrangement")
    (:file "spill-unspill")
    (:file "allocate-register")
+   (:file "introduce-registers")
    (:file "adapt-arrangement")
    (:file "allocate-registers-for-instructions")
-   (:file "introduce-registers")
    (:file "register-allocation")))
