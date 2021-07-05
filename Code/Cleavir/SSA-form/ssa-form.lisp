@@ -45,19 +45,19 @@
 
 (defun phi-function-nodes (dominance-frontiers live-p nodes)
   (let ((time (get-internal-run-time))
-	(result '())
-	(worklist nodes)
-	(processed-p (make-hash-table :test #'eq)))
+        (result '())
+        (worklist nodes)
+        (processed-p (make-hash-table :test #'eq)))
     (loop until (null worklist)
-	  for x = (pop worklist)
-	  for df = (cleavir-dominance:dominance-frontier dominance-frontiers x)
-	  do (loop for y in df
-		   do (when (and (not (member y result :test #'eq))
-				 (funcall live-p y))
-			(push y result)
-			(unless (gethash y processed-p)
-			  (setf (gethash y processed-p) t)
-			  (push y worklist)))))
+          for x = (pop worklist)
+          for df = (cleavir-dominance:dominance-frontier dominance-frontiers x)
+          do (loop for y in df
+                   do (when (and (not (member y result :test #'eq))
+                                 (funcall live-p y))
+                        (push y result)
+                        (unless (gethash y processed-p)
+                          (setf (gethash y processed-p) t)
+                          (push y worklist)))))
     (incf *ssa1-call-count*)
     (incf *ssa1-run-time* (- (get-internal-run-time) time))
     (incf *ssa1-node-count-1* (length nodes))
@@ -104,37 +104,33 @@
 
 (defun phi-instructions (top-node phi-nodes original-variable live-p dominees)
   (let ((time (get-internal-run-time))
-	(funs (loop for node in phi-nodes
-		    for count = (length (cleavir-ir:predecessors node))
-		    collect (cons node (make-list (1+ count)))))
-	(name (cleavir-ir:name original-variable)))
+        (funs (loop for node in phi-nodes
+                    for count = (length (cleavir-ir:predecessors node))
+                    collect (cons node (make-list (1+ count)))))
+        (name (cleavir-ir:name original-variable)))
     (labels
-	((traverse (node variable)
-	   (if (not (funcall live-p node))
-	       nil
-	       (let ((phi-fun (rest (assoc node funs :test #'eq))))
-		 (setf (cleavir-ir:inputs node)
-		       (substitute variable original-variable
-				   (cleavir-ir:inputs node)))
-		 (unless (null phi-fun)
-		   (setf variable (cleavir-ir:make-lexical-location name))
-		   (setf (first phi-fun) variable))
-		 (loop for succ in (cleavir-ir:successors node)
-		       for phi-fun = (rest (assoc succ funs :test #'eq))
-		       for pos = (position node (cleavir-ir:predecessors succ))
-		       do (unless (null phi-fun)
-			    (setf (first (nthcdr pos (rest phi-fun)))
-				  variable)))
-		 (loop for dominee in (funcall dominees node)
-		       do (traverse dominee variable))))))
+        ((traverse (node variable)
+           (if (not (funcall live-p node))
+               nil
+               (let ((phi-fun (rest (assoc node funs :test #'eq))))
+                 (setf (cleavir-ir:inputs node)
+                       (substitute variable original-variable
+                                   (cleavir-ir:inputs node)))
+                 (unless (null phi-fun)
+                   (setf variable (cleavir-ir:make-lexical-location name))
+                   (setf (first phi-fun) variable))
+                 (loop for succ in (cleavir-ir:successors node)
+                       for phi-fun = (rest (assoc succ funs :test #'eq))
+                       for pos = (position node (cleavir-ir:predecessors succ))
+                       do (unless (null phi-fun)
+                            (setf (first (nthcdr pos (rest phi-fun)))
+                                  variable)))
+                 (loop for dominee in (funcall dominees node)
+                       do (traverse dominee variable))))))
       (traverse top-node original-variable))
     (loop for (node output . inputs) in funs
-	  collect (let ((cleavir-ir:*policy*
-			  (cleavir-ir:policy node)))
-		    (cleavir-ir:make-phi-instruction inputs output node))
-	  finally (incf *ssa2-call-count*)
-		  (incf *ssa2-run-time* (- (get-internal-run-time) time)))))
-
-
-		       
-    
+          collect (let ((cleavir-ir:*policy*
+                          (cleavir-ir:policy node)))
+                    (cleavir-ir:make-phi-instruction inputs output node))
+          finally (incf *ssa2-call-count*)
+                  (incf *ssa2-run-time* (- (get-internal-run-time) time)))))
