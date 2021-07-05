@@ -17,7 +17,6 @@
     (ld "CLOS/setf-dependents-defgeneric.lisp")
     (ld "CLOS/accessor-method-slot-definition-defgeneric.lisp")
     (ld "CLOS/setf-accessor-method-slot-definition-defgeneric.lisp")
-    (ld "CLOS/variant-signature-defgeneric.lisp")
     (ld "CLOS/template-defgeneric.lisp")
     (ld "Arithmetic/numerator-defgeneric.lisp")
     (ld "Arithmetic/denominator-defgeneric.lisp")
