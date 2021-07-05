@@ -1,3 +1,4 @@
+(cl:in-package #:common-lisp-user)
 
 ;;; In the test package, we want to import all symbols of the
 ;;; COMMON-LISP package, except the ones that were shadowed in
@@ -9,6 +10,5 @@
 ;;; macro and again of the consing dot followed by a list. 
 (defpackage #:sicl-conditionals-test
   (:shadowing-import-from #:sicl-conditionals .
-			  #.(package-shadowing-symbols '#:sicl-conditionals))
+                          #.(package-shadowing-symbols '#:sicl-conditionals))
   (:use #:sicl-conditionals #:cl #:lisp-unit))
-
