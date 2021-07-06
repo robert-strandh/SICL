@@ -112,8 +112,12 @@
            (process-outputs
             (process-inputs predecessor instruction)
             instruction))
-         (arrangement (output-arrangement new-predecessor))
+         (arrangement (arr:copy-arrangement
+                       (output-arrangement new-predecessor)))
          (new-arrangement (arr:copy-arrangement arrangement)))
+    (arr:trim-arrangement
+     arrangement
+     (mapcar #'lexical-location (input-pool instruction)))
     (setf (input-arrangement instruction) arrangement)
     (arr:trim-arrangement new-arrangement (survivors instruction))
     (setf (output-arrangement instruction)

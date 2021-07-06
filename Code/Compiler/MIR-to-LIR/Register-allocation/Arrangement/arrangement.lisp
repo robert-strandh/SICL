@@ -62,6 +62,14 @@
        ,attribution-form
      ,@body))
 
+(defmethod print-object ((arrangement arrangement) stream)
+  (print-unreadable-object (arrangement stream :type t :identity t)
+    (with-arrangement arrangement
+      (format stream "~:a"
+              (loop for attribution in attributions
+                    collect (cleavir-ir:name
+                             (lexical-location attribution)))))))
+
 (defun copy-bit-vector (bit-vector)
   (let ((result (make-array (length bit-vector) :element-type 'bit)))
     (replace result bit-vector)
