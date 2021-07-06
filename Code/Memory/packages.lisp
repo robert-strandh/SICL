@@ -3,4 +3,6 @@
 (defpackage #:sicl-memory
   (:use #:common-lisp)
   (:export #:memory-unsigned
-           #:memory-signed))
+           #:memory-signed
+           #:object-to-fixnum
+           #:fixnum-to-object))
