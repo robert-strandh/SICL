@@ -4,6 +4,9 @@
 ;;; MIR-to-LIR.  A later pass after registers are introduced will
 ;;; replace an ADAPT-INSTRUCTION with instructions to adapt between
 ;;; arrangements.
+;;;
+;;; This instruction has no inputs or outputs, and has only one
+;;; predecessor and one successor.
 (defclass adapt-instruction (cleavir-ir:instruction)
   ())
 
@@ -28,57 +31,85 @@
 ;;; other free registers.
 (defvar *stack-copy-register* (register-number *r15*))
 
+(defun first-free-stack-slot (&rest arrangements)
+  (reduce #'max arrangements :key #'arr:first-stack-slot-past-arrangement))
+
 ;;; Generate instructions between PREDECESSOR and SUCCESSOR which
 ;;; adapt the arrangement from SOURCE-ARRANGEMENT to
 ;;; TARGET-ARRANGEMENT.
+;;;
+;;; Currently we use a simple algorithm which probably generates
+;;; sub-optimal code.  The basic idea is to copy every location onto
+;;; the stack, past any stack slots used by either attribution, and
+;;; then copy them into the registers and stack slots attributed to
+;;; them in the target arrangement.  One minor catch is that copying
+;;; from the stack to the stack requires a spare register; so we
+;;; ensure that one register (*STACK-COPY-REGISTER*) is free by saving
+;;; it first and restoring it last.
 (defun adapt-arrangements-between-instructions (predecessor successor
                                                 source-arrangement
                                                 target-arrangement)
-  (let ((next-location
-          (1+ (last-used-stack-slot initial-arrangement target-arrangement)))
+  (let ((next-slot
+          (first-free-stack-slot source-arrangement target-arrangement))
         (scr-save-instruction nil)
         (scr-restore-instruction nil))
+    ;; We maintain four "stages" of adaptation: we first save the
+    ;; location stored in the stack copy register (if there is one),
+    ;; then we save every other location, then we restore every other
+    ;; location, then we restore the location which needs to end up in
+    ;; the stack copy register (again, if there is one).
     (sicl-utilities:with-collectors ((stash   collect-stash-instruction)
                                      (restore collect-restore-instruction))
       (arr:map-attributions
        (lambda (location target-register target-stack-slot)
          (multiple-value-bind (source-register source-stack-slot)
-             (arr:find-attribution source-arrangement)
+             (arr:find-attribution source-arrangement location)
            (unless (and (eql target-register source-register)
                         (eql target-stack-slot source-stack-slot))
-             (let ((location next-location))
-               (incf next-location)
+             (let ((temporary-stack-slot next-slot))
+               (incf next-slot)
                ;; Save onto the stack.
                (cond
                  ((eql source-register *stack-copy-register*)
                   (setf scr-save-instruction
-                        (save-to-stack-instruction source-register location)))
+                        (save-to-stack-instruction source-register
+                                                   temporary-stack-slot)))
                  ((not (null source-register))
                   (collect-stash-instruction
-                   (save-to-stack-instruction source-register location)))
+                   (save-to-stack-instruction source-register
+                                              temporary-stack-slot)))
                  ((not (null source-stack-slot))
                   (collect-stash-instruction
-                   (emit-load-from-stack *stack-copy-register* source-stack-slot))
+                   (load-from-stack-instruction *stack-copy-register*
+                                                source-stack-slot))
                   (collect-stash-instruction
-                   (emit-save-to-stack *stack-copy-register* location)))
+                   (save-to-stack-instruction *stack-copy-register*
+                                              temporary-stack-slot)))
                  (t
-                  (error "How am I supposed to save ~s?" location)))
+                  (error "~s has neither a stack nor register location in the source arrangement."
+                         location)))
                ;; Load back from the stack.
                (cond
                  ((eql target-register *stack-copy-register*)
                   (setf scr-restore-instruction
-                        (load-from-stack-instruction target-register location)))
+                        (load-from-stack-instruction target-register
+                                                     temporary-stack-slot)))
                  ((not (null target-register))
                   (collect-restore-instruction
-                   (load-from-stack-instruction target-register location)))
+                   (load-from-stack-instruction target-register
+                                                temporary-stack-slot)))
                  ((not (null source-stack-slot))
                   (collect-restore-instruction
-                   (load-from-stack-instruction *stack-copy-register* location))
+                   (load-from-stack-instruction *stack-copy-register*
+                                                temporary-stack-slot))
                   (collect-restore-instruction
-                   (save-to-stack-instruction *stack-copy-register* target-stack-slot)))
+                   (save-to-stack-instruction *stack-copy-register*
+                                              target-stack-slot)))
                  (t
-                  (error "How am I supposed to recover ~s?" location)))))))
+                  (error "~s has neither a stack nor register location in the target arrangement."
+                         location)))))))
        target-arrangement)
+      ;; Now thread the generated instructions together.
       (let ((last-instruction predecessor))
         (flet ((insert-instruction (instruction)
                  (cleavir-ir:insert-instruction-between
@@ -90,3 +121,11 @@
           (mapc #'insert-instruction (restore))
           (unless (null scr-restore-instruction)
             (insert-instruction scr-restore-instruction)))))))
+
+(defmethod introduce-registers-for-instruction ((instruction adapt-instruction))
+  (destructuring-bind (successor)
+      (cleavir-ir:successors instruction)
+    (adapt-arrangements-between-instructions instruction successor
+                                             (input-arrangement instruction)
+                                             (output-arrangement instruction))
+    (cleavir-ir:delete-instruction instruction)))

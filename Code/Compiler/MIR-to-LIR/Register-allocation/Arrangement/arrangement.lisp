@@ -94,6 +94,17 @@
         (values nil nil)
         (values (stack-slot attribution) (register-number attribution)))))
 
+;;; Call FUNCTION with every lexical location, register number and
+;;; stack slot.
+(defun map-attributions (function arrangement)
+  (with-arrangement arrangement
+    (dolist (attribution attributions)
+      (with-attribution attribution
+        (funcall function
+                 lexical-location
+                 register-number
+                 stack-slot)))))
+
 ;;; Determine if the NEXT arrangement is compatible with the PREVIOUS
 ;;; arrangement, i.e. all the attributions in NEXT are present in the
 ;;; PREVIOUS arrangement.  Note that compatibility is not symmetric.
@@ -103,6 +114,11 @@
             always (with-attribution attribution
                      (multiple-value-bind (other-register-number other-stack-slot)
                          (find-attribution previous lexical-location)
+                       (assert (not (and (null other-register-number)
+                                         (null other-stack-slot)))
+                               ()
+                               "~S is not attributed in ~S"
+                               lexical-location previous)
                        (and (eql other-register-number register-number)
                             (eql other-stack-slot stack-slot)))))))
 
@@ -258,6 +274,18 @@
 (defun unattributed-register-count (arrangement candidates)
   (with-arrangement arrangement
     (count 1 (bit-andc2 candidates register-map))))
+
+;;; Return the first stack slot which is unused and has no more used
+;;; stack slots past it.  I am not sure if this is a good choice of
+;;; function to include in the protocol, but it is necessary for
+;;; ADAPT-ARRANGEMENTS-BETWEEN-INSTRUCTIONS and it cannot be
+;;; constructed (easily) from other protocol functions.
+(defun first-stack-slot-past-arrangement (arrangement)
+  (with-arrangement arrangement
+    (let ((last-used (position 1 stack-map :from-end t)))
+      (if (null last-used)
+          (length stack-map)
+          (1+ last-used)))))
 
 ;;; Destructively modify arrangement by keeping only the arrangements
 ;;; with a lexical location that is a member of LEXICAL-LOCATIONS.

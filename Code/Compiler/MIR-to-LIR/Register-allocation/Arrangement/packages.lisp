@@ -11,11 +11,13 @@
            #:lexical-location-in-register-p
            #:arrangements-compatible-p
            #:unattributed-register-count
+           #:first-stack-slot-past-arrangement
            #:attribute-stack-slot
            #:attribute-register-for-existing-lexical-location
            #:attribute-register-for-new-lexical-location
            #:reattribute-register
            #:unattribute-register
            #:find-attribution
+           #:map-attributions
            #:trim-arrangement
            #:copy-register-attribution))
