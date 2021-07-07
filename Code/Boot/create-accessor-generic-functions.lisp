@@ -15,8 +15,6 @@
     (ld "CLOS/setf-class-slots-defgeneric.lisp")
     (ld "CLOS/dependents-defgeneric.lisp")
     (ld "CLOS/setf-dependents-defgeneric.lisp")
-    (ld "CLOS/accessor-method-slot-definition-defgeneric.lisp")
-    (ld "CLOS/setf-accessor-method-slot-definition-defgeneric.lisp")
     (ld "Arithmetic/numerator-defgeneric.lisp")
     (ld "Arithmetic/denominator-defgeneric.lisp")
     (ld "Array/array-dimensions-defgeneric.lisp")
