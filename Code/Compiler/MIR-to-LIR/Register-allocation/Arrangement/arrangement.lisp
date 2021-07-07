@@ -113,20 +113,29 @@
                  register-number
                  stack-slot)))))
 
+(defun check-arrangement-is-subset (previous next)
+  (when (eq previous next)
+    (return-from check-arrangement-is-subset))
+  (loop for attribution in (attributions next)
+        do (with-attribution attribution
+             (multiple-value-bind (previous-register previous-stack)
+                 (find-attribution previous lexical-location)
+               (assert (not (and (null previous-register)
+                                 (null previous-stack)))
+                       ()
+                       "~S is not attributed in ~S"
+                       lexical-location previous)))))
+
 ;;; Determine if the NEXT arrangement is compatible with the PREVIOUS
 ;;; arrangement, i.e. all the attributions in NEXT are present in the
 ;;; PREVIOUS arrangement.  Note that compatibility is not symmetric.
 (defun arrangements-compatible-p (previous next)
+  (check-arrangement-is-subset previous next)
   (or (eq previous next)
       (loop for attribution in (attributions next)
             always (with-attribution attribution
                      (multiple-value-bind (other-register-number other-stack-slot)
                          (find-attribution previous lexical-location)
-                       (assert (not (and (null other-register-number)
-                                         (null other-stack-slot)))
-                               ()
-                               "~S is not attributed in ~S"
-                               lexical-location previous)
                        (and (eql other-register-number register-number)
                             (eql other-stack-slot stack-slot)))))))
 

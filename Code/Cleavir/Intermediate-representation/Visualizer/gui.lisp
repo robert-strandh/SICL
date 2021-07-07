@@ -167,6 +167,12 @@
 (defgeneric draw-datum (datum pane))
 
 (defmethod draw-datum :around (datum pane)
+  ;; Avoid drawing data which have coordinates too high for xlib to
+  ;; handle.
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (when (or (> hpos 20000)
+              (> vpos 20000))
+      (return-from draw-datum)))
   (let ((line-thickness
           (if (datum-should-be-highlighted-p datum) 2 1))
         (ink
