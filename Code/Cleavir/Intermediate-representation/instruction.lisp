@@ -124,7 +124,7 @@
   ;; Add this instruction as an assigning instruction to its outputs.
   (loop for output in (outputs obj)
         do (push obj (defining-instructions output)))
-  ;; Add this instruction as a successor of its predecessors.
+  ;; Add this instruction as a predecessor of its successors.
   (loop for successor in (successors obj)
         do (push obj (predecessors successor))))
 
