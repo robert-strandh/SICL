@@ -33,8 +33,8 @@
   (let* ((arrangement (output-arrangement predecessor))
          (new-arrangement (arr:copy-arrangement arrangement))
          (new-instruction (make-instance 'cleavir-ir:nop-instruction
-                            :input lexical-location
-                            :output lexical-location)))
+                            :inputs '()
+                            :outputs '())))
     (arr:unattribute-register new-arrangement lexical-location)
     (setf (input-arrangement new-instruction) arrangement
           (output-arrangement new-instruction) new-arrangement)
