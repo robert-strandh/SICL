@@ -68,6 +68,11 @@ By not using callee-saves registers, we are also able to simplify both
 the register allocator, the compiler, and the root-finding phase of
 the garbage collector.
 
+We use the \texttt{FS} segment register to hold an instance of the
+\texttt{thread} class.  Such an instance will be used in a variety of
+situations including for multiple return values, debugging support,
+etc.
+
 \section{Representation of function objects}
 
 \begin{itemize}
