@@ -222,7 +222,9 @@ Return from callee to caller with more than $5$ values:
 
 \begin{enumerate}
 \item Store the first $5$ values to return in RAX, RDX, RCX, RSI, R9.
-\item Store the remaining (up to 15) values in [RBP-8], [RBP-16], etc.
+\item Store the remaining values in storage in the \texttt{thread}
+  instance (contained in segment register \texttt{FS}) reserved for
+  this purpose.
 \item Store the number of values in RDI, represented as a fixnum.
 \item Store the value of \texttt{RBP}$ - 8$ in RSP so that the stack frame
   contains only the return address.  To accomplish this effect, the
