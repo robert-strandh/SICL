@@ -8,26 +8,18 @@ debugger we plan to support is described in a separate repository.%
 chapter, we describe only the support that \sysname{} contains in
 order to make such a debugger possible.
 
-The execution of every function starts by testing a \emph{flag} passed
-in a register.%
-\footnote{For the x86-64 platform, it is register RAX.}
-This flag indicates whether the current thread is being debugged.  The
-function contains two versions of the code, called the \emph{normal}
-version and the \emph{debugging} version.%
+Each function contains two versions of the code, called the
+\emph{normal} version and the \emph{debugging} version.%
 \footnote{This idea was suggested by Michael Raskin.}
-The flag determines which version is chosen.  Thus, when the thread is
-not being debugged, the only overhead is this single test at the
-beginning of the function.  Furthermore, once the test is done, the
-register is no longer needed for this purpose, and is at the disposal
-of the register allocator for the remainder of the function body.
+Calls from a normal version of a caller are made to the normal version
+of callees, and calls from a debugging version of a caller are made to
+the debugging version of callees.
 
 The normal version is used when the thread is not run under the
 control of the debugger, so this version does not contain any code for
 communicating with the debugger.  Furthermore, this version is highly
 optimized.  In particular, variables that occur in the source code may
-have been eliminated by various optimization passes.  A function call
-in the normal version clears the flag register, so that the callee can
-choose its normal version as well.
+have been eliminated by various optimization passes.
 
 The debugging version starts by examining a special variable that
 contains information about the current thread.  In particular, this
@@ -52,13 +44,11 @@ is made.  The program counter is checked against a hash table in the
 thread instance to see whether some action must be taken.  If so, the
 thread gives up control to the debugger.
 
-A function call in the debugging version sets the flag register to 1,
-so that the callee can choose its debugging version as well.  The
-debugging version does not have optimizations applied to it that may
-make debugging harder.  Lexical variables that appear in source code
-may be kept, or code may be included that can compute their values
-from the lexical variables that \emph{are} kept, for the duration of
-their scope.
+The debugging version does not have optimizations applied to it that
+may make debugging harder.  Lexical variables that appear in source
+code may be kept, or code may be included that can compute their
+values from the lexical variables that \emph{are} kept, for the
+duration of their scope.
 
 %% For each possible breakpoint, the system must keep a description of
 %% the lexical environment.  This includes mappings from variable names
