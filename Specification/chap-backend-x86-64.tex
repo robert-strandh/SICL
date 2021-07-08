@@ -196,7 +196,7 @@ with a single POP instruction, using [\texttt{RBP}$ - 8$] as the
 destination.  When fewer than $5$ arguments are passed, the return
 address is already in the right place.
 
-Return from callee to caller with no values:
+Return from callee to caller, with no values:
 
 \begin{enumerate}
 \item Store NIL in RAX.
@@ -207,18 +207,7 @@ Return from callee to caller with no values:
 \item Return to the caller by executing the RET instruction.
 \end{enumerate}
 
-Return from callee to caller with a $1 - 5$ values:
-
-\begin{enumerate}
-\item Store the values to return in RAX, RDX, RCX, RSI, R9.
-\item Store the number of values in RDI, represented as a fixnum.
-\item Store the value of \texttt{RBP}$ - 8$ in RSP so that the stack frame
-  contains only the return address.  To accomplish this effect, the
-  callee can use the LEA instruction.
-\item Return to the caller by executing the RET instruction.
-\end{enumerate}
-
-Return from callee to caller with more than $5$ values:
+Return from callee to caller, with at least one value:
 
 \begin{enumerate}
 \item Store the first $5$ values to return in RAX, RDX, RCX, RSI, R9.
