@@ -113,15 +113,15 @@
             (process-inputs predecessor instruction)
             instruction))
          (arrangement (arr:copy-arrangement
-                       (output-arrangement new-predecessor)))
-         (new-arrangement (arr:copy-arrangement arrangement)))
+                       (output-arrangement new-predecessor))))
     (arr:trim-arrangement
      arrangement
      (mapcar #'lexical-location (input-pool instruction)))
     (setf (input-arrangement instruction) arrangement)
-    (arr:trim-arrangement new-arrangement (survivors instruction))
-    (setf (output-arrangement instruction)
-          (compute-output-arrangement instruction new-arrangement))))
+    (let ((new-arrangement (arr:copy-arrangement arrangement)))
+      (arr:trim-arrangement new-arrangement (survivors instruction))
+      (setf (output-arrangement instruction)
+            (compute-output-arrangement instruction new-arrangement)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
