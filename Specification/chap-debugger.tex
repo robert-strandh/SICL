@@ -24,20 +24,33 @@ have been eliminated by various optimization passes.
 In the debugging version of a function, the compiler associates
 additional code with the program point immediately preceding the
 evaluation of a form and with the program point immediately following
-the evaluation of a form.  This code consists of a sequence of
-instructions that consult a \emph{dictionary}%
-\footnote{Different implementations for the dictionary are possible,
-  like a hash table or a sorted vector of values of the program
-  counter.}
-in the thread object to determine whether this thread has a breakpoint
-associated with the program point, and if so, gives up control to the
-debugger.  This additional code is immediately preceded by an
-unconditional \texttt{jump} instruction that normally contains the
-address of the end of the additional code, so that the additional code
-is never executed.  When a breakpoint is set at some program point,
-the target field of the unconditional jump instruction is altered so
-that it instead contains the address of its own successor.  As a
-result the additional code is then executed.
+the evaluation of a form.  This code consists of a single call to a
+global function, the name of which is yet to be determined.  For now,
+let us call it \texttt{breakpoint}.  It is a function of no arguments.
+However, recall that functions take implicit arguments, and the
+important one for this discussion is the \emph{call-site information}
+implicit argument.  It contains information about the call site such
+as locations of live objects, and information for the garbage
+collector.  The call is a \emph{named call}, and the code generated
+such a call is just an unconditional \texttt{jump} instruction.  The
+\emph{call-site manager} is responsible for allocating a
+\emph{trampoline snippet} to mediate between the call-site and the
+callee, and it then modifies the target field of the instruction to
+contain the address of the snippet.  The call-site manager handles
+calls to the \texttt{breakpoint} function differently.  By default, no
+snippet is allocated, and the target field of the unconditional
+\texttt{jump} is just the next instruction.  However, when a
+breakpoint is set at some program point, the call-site manager
+generates a snippet that will actually call the \texttt{breakpoint}
+function, providing it with call-site information in the implicit
+argument.  The \texttt{breakpoint} starts by consulting the
+\texttt{thread} object, to determine whether this particular
+application thread has a breakpoint at this particular program point.
+If it does, the \texttt{breakpoint} function then accesses the
+relevant information about live variables etc., collects it in a form
+acceptable to the debugger, and then calls the debugger with this
+information.  Typically, the debugger will then block the thread and
+interact with the user for further actions.
 
 The debugging version does not have optimizations applied to it that
 may make debugging harder.  Lexical variables that appear in source
