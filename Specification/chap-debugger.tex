@@ -21,6 +21,12 @@ communicating with the debugger.  Furthermore, this version is highly
 optimized.  In particular, variables that occur in the source code may
 have been eliminated by various optimization passes.
 
+The debugging version does not have optimizations applied to it that
+may make debugging harder.  Lexical variables that appear in source
+code may be kept, or code may be included that can compute their
+values from the lexical variables that \emph{are} kept, for the
+duration of their scope.
+
 In the debugging version of a function, the compiler associates
 additional code with the program point immediately preceding the
 evaluation of a form and with the program point immediately following
@@ -51,12 +57,6 @@ relevant information about live variables etc., collects it in a form
 acceptable to the debugger, and then calls the debugger with this
 information.  Typically, the debugger will then block the thread and
 interact with the user for further actions.
-
-The debugging version does not have optimizations applied to it that
-may make debugging harder.  Lexical variables that appear in source
-code may be kept, or code may be included that can compute their
-values from the lexical variables that \emph{are} kept, for the
-duration of their scope.
 
 %% For each possible breakpoint, the system must keep a description of
 %% the lexical environment.  This includes mappings from variable names
