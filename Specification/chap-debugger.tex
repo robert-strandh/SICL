@@ -11,8 +11,8 @@ order to make such a debugger possible.
 Each function contains two versions of the code, called the
 \emph{normal} version and the \emph{debugging} version.%
 \footnote{This idea was suggested by Michael Raskin.}
-Calls from a normal version of a caller are made to the normal version
-of callees, and calls from a debugging version of a caller are made to
+Calls from the normal version of a caller are made to the normal version
+of callees, and calls from the debugging version of a caller are made to
 the debugging version of callees.
 
 The normal version is used when the thread is not run under the
@@ -21,28 +21,23 @@ communicating with the debugger.  Furthermore, this version is highly
 optimized.  In particular, variables that occur in the source code may
 have been eliminated by various optimization passes.
 
-The debugging version starts by examining a special variable that
-contains information about the current thread.  In particular, this
-information includes a table in the form of a bit vector containing
-summary information about breakpoints.  In this version of the
-function body the compiler inserts a call to a small subroutine before
-and after every form to be evaluated.  The subroutine does not use the
-full \commonlisp{} function-call protocol.  Instead, it is just a very
-fast call that can be done with a \texttt{jsr} instruction (or
-equivalent) on must architectures.
-
-The subroutine does a test in two steps.  In the first step, the value
-of the program counter is taken modulo some reasonably large value
-such as 256, and a the bit vector is queried to see whether the
-corresponding entry is a 1.  If it is 0, the subroutine simply
-returns.  This first step will slow down every debugged thread a
-little bit, but most of the time, the value will be 0, and then,
-normal function execution is resumed.
-
-If the entry in the bit vector turns out to be 1, then the final test
-is made.  The program counter is checked against a hash table in the
-thread instance to see whether some action must be taken.  If so, the
-thread gives up control to the debugger.
+In the debugging version of a function, the compiler associates
+additional code with the program point immediately preceding the
+evaluation of a form and with the program point immediately following
+the evaluation of a form.  This code consists of a sequence of
+instructions that consult a \emph{dictionary}%
+\footnote{Different implementations for the dictionary are possible,
+  like a hash table or a sorted vector of values of the program
+  counter.}
+in the thread object to determine whether this thread has a breakpoint
+associated with the program point, and if so, gives up control to the
+debugger.  This additional code is immediately preceded by an
+unconditional \texttt{jump} instruction that normally contains the
+address of the end of the additional code, so that the additional code
+is never executed.  When a breakpoint is set at some program point,
+the target field of the unconditional jump instruction is altered so
+that it instead contains the address of its own successor.  As a
+result the additional code is then executed.
 
 The debugging version does not have optimizations applied to it that
 may make debugging harder.  Lexical variables that appear in source
