@@ -57,10 +57,3 @@ relevant information about live variables etc., collects it in a form
 acceptable to the debugger, and then calls the debugger with this
 information.  Typically, the debugger will then block the thread and
 interact with the user for further actions.
-
-%% For each possible breakpoint, the system must keep a description of
-%% the lexical environment.  This includes mappings from variable names
-%% to registers or stack locations, information about liveness of
-%% registers and stack location, how a variable is stored in a location
-%% (immediate value, pointer, with or without type tag, etc).
-
