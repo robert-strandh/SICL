@@ -12,6 +12,7 @@
 (defun compile-ast (client ast)
   (eliminate-fdefinition-asts ast)
   (let* ((cleavir-cst-to-ast::*origin* nil)
+         (*gensym-counter* 0)
          (parameter-ast
            (make-instance 'cleavir-ast:lexical-ast
              :name (gensym))))
