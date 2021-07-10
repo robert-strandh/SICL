@@ -50,7 +50,7 @@ RDI & First argument, value count\\
 R8  & Fifth argument\\
 R9  &  Argument count, fifth return value\\
 R10 & Static env. argument\\
-R11 & Scratch\\
+R11 & Call-site descriptor\\
 R12 & Register variable\\
 R13 & Register variable\\
 R14 & Register variable\\
@@ -72,6 +72,9 @@ We use the \texttt{FS} segment register to hold an instance of the
 \texttt{thread} class.  Such an instance will be used in a variety of
 situations including for multiple return values, debugging support,
 etc.
+
+For information about the call-site descriptor, see
+\refSec{sec-call-site-descriptor}.
 
 \section{Representation of function objects}
 
@@ -102,6 +105,7 @@ Normal call to external function, passing at most $5$ arguments:
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
+\item Load the call-site descriptor into R11.
 \item Push the value of \texttt{RBP} on the stack.
 \item Copy the value of RSP into \texttt{RBP}, establishing the
   (empty) stack frame for the callee.
