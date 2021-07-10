@@ -131,6 +131,7 @@ Normal call to external function, passing more than $5$ arguments:
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
+\item Load the call-site descriptor into R11.
 \item Store the value of \texttt{RBP} into [RSP + 8(N - 4)]
 \item Copy the value of RSP$ + 8(N - 4)$ into \texttt{RBP}, establishing the
   stack frame for the callee.  The instruction LEA can be used for
@@ -151,7 +152,9 @@ processor makes the right guess about the eventual address to be used.
 upon entry to a function when more than $5$ arguments are passed.
 Notice that the return address is not in its final place, and the
 final place for the return address is marked ``unused'' in
-\refFig{fig-x86-64-stack-frame-at-entry}.
+\refFig{fig-x86-64-stack-frame-at-entry}.  Similarly, the call-site
+descriptor is in register R11 and has not yet been copied to its final
+place in the stack frame.
 
 \begin{figure}
 \begin{center}
