@@ -1,0 +1,20 @@
+\chapter{AST evaluator}
+
+This backend is used during bootstrapping to execute \sysname{} code
+in the host, relative to a \sysname{} first-class global environment.
+The compiler translates source code first to an abstract syntax tree,
+and this backend is used in those first-class global environments
+where there is no need for further translation to native instructions,
+because the sole purpose of the code is to be executed in the host.
+
+During bootstrapping, the abstract syntax tree is translated to host
+code in such a way that references to objects in the global
+environment refer to a first-class global environment.  The resulting
+host code is then compiled by the host compiler and ultimately
+executed to accomplish its purpose.
+
+At the center of this backend is a \sysname{} first-class global
+environment represented as a host class instance.  This environment
+contains mappings from names to all objects that are part of any
+global environment, such as functions, macros, variables, classes,
+packages, types, \texttt{setf} expanders, etc.
