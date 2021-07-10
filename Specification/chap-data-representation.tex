@@ -228,11 +228,12 @@ The call-site descriptor contains the following information about the
 caller containing the call site:
 
 \begin{itemize}
+\item Source location information for the call site.
 \item A list of stack locations that may contain objects that the
   garbage collector must trace.
 \item For each argument to the call that is still \emph{available}
   after the call, its location.  If the argument is a lexical
-  location, then the location is an offset from the frame pointer. 
+  location, then the location is an offset from the frame pointer.
   If the argument is a literal object, then the location is the object
   itself.
 \item For each live lexical location corresponding to a variable that
