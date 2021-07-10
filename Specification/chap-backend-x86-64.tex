@@ -121,9 +121,10 @@ Normal call to external function, passing more than $5$ arguments:
 \begin{enumerate}
 \item Compute the callee function object and the arguments into
   temporary locations.
-\item Subtract $8(N - 3)$ from RSP, where $N$ is the number of
+\item Subtract $8(N - 2)$ from RSP, where $N$ is the number of
   arguments to pass, thus leaving room in the callee stack frame for
-  the $N - 5$ arguments, the return address, and the caller \texttt{RBP}.
+  the $N - 5$ arguments, the call-site descriptor, the return address,
+  and the caller \texttt{RBP}.
 \item Store the first $5$ arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the remaining arguments in [RSP$ + 0$], [RSP$ + 8$],
   $\ldots$, [RSP$ + 8(N - 6)$] in that order, so that the sixth
