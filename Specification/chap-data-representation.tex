@@ -263,6 +263,13 @@ collector.  Therefore, every safe point corresponds to a function
 call, and thus the information is needed by the garbage collector only
 at function calls.
 
+Similarly, a debugger breakpoint corresponds to a function call to the
+debugger.  Therefore, information about live variables need to be
+available only at call sites.  In this case, the source location
+information of the call-site descriptor is a location immediately
+preceding a form that is about to be evaluated, or immediately
+following a form that has just been evaluated.
+
 \section{Code objects}
 \label{data-representation-code-objects}
 
@@ -277,8 +284,6 @@ A code object contains the following information:
 \begin{itemize}
 \item The executable native instructions in the form of a vector of
   unsigned bytes.
-\item Tables providing support for commands of the debugger.  See
-  below for more detailed information about these tables.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
@@ -286,19 +291,6 @@ A code object contains the following information:
   compilation unit of which this code object is part.
 \item The \emph{concrete syntax tree} corresponding to the source code
   of the compilation unit of which this code object is part.
-\end{itemize}
-
-The following tables are used for debugger support:
-
-\begin{itemize}
-\item A table mapping source locations (i.e. line and column
-  information corresponding to the location in the source code of the
-  expression being evaluated) to values of the program counter.  When
-  the user of the debugger sets a breakpoint at a particular source
-  location, the debugger uses this information to determine a value of
-  the program counter at which the program should stop its execution.
-\item A table mapping values of the program counter to \emph{variable
-  liveness information}.
 \end{itemize}
 
 \section{Instances of built-in classes}
