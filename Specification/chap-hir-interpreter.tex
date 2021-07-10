@@ -1,10 +1,17 @@
-\chapter{HIR interpreter}
+\chapter{HIR evaluator}
 
-This backend is characterized by the fact that source code is compiled
-to the high-level intermediate representation (HIR).  The HIR code is
-then interpreted by a \commonlisp{} program.  Recall that the
-high-level intermediate code only manipulates \commonlisp{} objects so
-that all address calculations are implicit.
+This backend is used during bootstrapping to execute \sysname{} code
+in the host, relative to a \sysname{} first-class global environment.
+The compiler translates source code first to an abstract syntax tree
+and then to high-level intermediate representation (HIR).  In the
+native backend, the HIR code is then further translated so as to
+obtain native instructions.
+
+During bootstrapping, the HIR code is also translated to a graph of
+host \emph{thunks}, where each thunk is the result of translating a
+single HIR instruction.  Recall that the high-level intermediate code
+only manipulates \commonlisp{} objects so that all address
+calculations are implicit.
 
 At the center of this backend is a \sysname{} first-class global
 environment represented as a host class instance.  This environment
