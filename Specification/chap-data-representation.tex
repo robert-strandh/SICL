@@ -254,6 +254,15 @@ caller containing the call site:
   \end{itemize}
 \end{itemize}
 
+The bitmap meant for the garbage collector is present only in
+call-site descriptors. At every \emph{safe point} the thread tests the
+flag \texttt{gc-requested} described in
+\refSec{sec-garbage-collection-synchronization-between-collectors}.
+If that flag is set, a function call is made to the local garbage
+collector.  Therefore, every safe point corresponds to a function
+call, and thus the information is needed by the garbage collector only
+at function calls.
+
 \section{Code objects}
 \label{data-representation-code-objects}
 
@@ -262,15 +271,6 @@ A \emph{code object} is a standard object that represents the
 code and an environment.  The code object is common to all functions
 that share the same code.
 
-The tables described below that are meant for the garbage collector
-have entries only for the values of the program counter corresponding
-to function calls.  At every \emph{safe point} the thread tests the
-flag \texttt{gc-requested} described in
-\refSec{sec-garbage-collection-synchronization-between-collectors}.
-If that flag is set, a function call is made to the local garbage
-collector.  Therefore, every safe point corresponds to a function
-call, and thus the information is needed by the garbage collector only
-at function calls.
 
 A code object contains the following information:
 
