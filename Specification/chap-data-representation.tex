@@ -230,7 +230,11 @@ caller containing the call site:
 \begin{itemize}
 \item Source location information for the call site.
 \item A bitmap indicating stack locations that may contain objects
-  that the garbage collector must trace.
+  that the garbage collector must trace.  The compiler may omit stack
+  locations that are known to contain \commonlisp{} objects that the
+  garbage collector does not have to trace.  For a typical backend,
+  index $i$ of the bitmap represents the stack location at address
+  $b-i$ where $b$ is the value of the base pointer.
 \item For each argument to the call that is still \emph{available}
   after the call, its location.  If the argument is a lexical
   location, then the location is an offset from the frame pointer.
@@ -275,16 +279,6 @@ A code object contains the following information:
   unsigned bytes.
 \item Tables providing support for commands of the debugger.  See
   below for more detailed information about these tables.
-\item A hash table mapping a value of the program counter to a
-  \emph{frame map}.  A frame map is a bitmap containing information
-  that is used by the garbage collector to determine which stack
-  locations contain \commonlisp{} objects that should be traced.
-  Stack locations containing data owned by the current function
-  invocation are present in the table.  The compiler may omit stack
-  locations that are known to contain immediate \commonlisp{} objects
-  that the garbage collector does not have to trace.  For a typical
-  backend, index $i$ of the bitmap represents the stack location at
-  address $b-i$ where $b$ is the value of the base pointer.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
