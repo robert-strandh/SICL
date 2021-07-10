@@ -20,4 +20,5 @@
            #:find-attribution
            #:map-attributions
            #:trim-arrangement
-           #:copy-register-attribution))
+           #:copy-register-attribution
+           #:frozen-p))

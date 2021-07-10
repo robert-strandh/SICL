@@ -13,7 +13,8 @@
 
 (defun (setf input-arrangement) (arrangement instruction)
   (unless (null arrangement)
-    (arr::check-arrangement-integrity arrangement))
+    (arr::check-arrangement-integrity arrangement)
+    (setf (arr:frozen-p arrangement) t))
   (setf (gethash instruction *input-arrangements*) arrangement))
 
 (defvar *output-arrangements*)
@@ -26,5 +27,6 @@
 
 (defun (setf output-arrangement) (arrangement instruction)
   (unless (null arrangement)
-    (arr::check-arrangement-integrity arrangement))
+    (arr::check-arrangement-integrity arrangement)
+    (setf (arr:frozen-p arrangement) t))
   (setf (gethash instruction *output-arrangements*) arrangement))

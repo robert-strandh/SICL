@@ -14,12 +14,17 @@
     :accessor stack-slot)))
 
 (defclass arrangement ()
-  ((%stack-map :initarg :stack-map :accessor stack-map)
+  ((%frozen :initform nil :accessor frozen-p)
+   (%stack-map :initarg :stack-map :accessor stack-map)
    (%register-map :initarg :register-map :accessor register-map)
    (%attributions
     :initform '()
     :initarg :attributions
     :accessor attributions)))
+
+(defun check-arrangement-not-frozen (arrangement)
+  (when (frozen-p arrangement)
+    (error "An update on ~s was attempted but it is frozen." arrangement)))
 
 (defun check-arrangement-integrity (arrangement)
   (let ((register-count 0)
@@ -145,6 +150,7 @@
 ;;; attribution for LEXICAL-LOCATION already has a stack slot, then
 ;;; signal an error.
 (defun attribute-stack-slot (arrangement lexical-location)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((attribution (find lexical-location attributions
@@ -172,6 +178,7 @@
 ;;; in CANDIDATES is unattributed, then signal an error.
 (defun attribute-register-for-existing-lexical-location
     (arrangement lexical-location candidates)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((free-register (position 1 (bit-andc2 candidates register-map)))
@@ -193,6 +200,7 @@
 ;;; signal an error.
 (defun attribute-register-for-new-lexical-location
     (arrangement lexical-location candidates)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((free-register (position 1 (bit-andc2 candidates register-map)))
@@ -215,6 +223,7 @@
 ;;; If the attribution for LEXICAL-LOCATION does not have a stack
 ;;; slot, then signal an error.
 (defun unattribute-register (arrangement lexical-location)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((attribution (find lexical-location attributions
@@ -229,6 +238,7 @@
 
 (defun reattribute-register
     (arrangement lexical-location candidates)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((free-register (position 1 (bit-andc2 candidates register-map)))
@@ -307,6 +317,7 @@
 ;;; Destructively modify arrangement by keeping only the arrangements
 ;;; with a lexical location that is a member of LEXICAL-LOCATIONS.
 (defun trim-arrangement (arrangement lexical-locations)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (setf attributions
@@ -333,6 +344,7 @@
 ;;; TO-ARRANGEMENT, then an error is signaled.
 (defun copy-register-attribution
     (from-arrangement from-lexical-location to-arrangement to-lexical-location)
+  (check-arrangement-not-frozen to-arrangement)
   (check-arrangement-integrity from-arrangement)
   (check-arrangement-integrity to-arrangement)
   (let ((from-attribution (find from-lexical-location
