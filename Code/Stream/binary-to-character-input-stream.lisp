@@ -31,3 +31,7 @@
                                         (- byte4 #b10000000))))))))))
       (prog1 (unread-character stream)
         (setf (unread-character stream) nil))))
+
+(defmethod stream-unread-char
+    ((stream binary-to-character-input-stream) character)
+  (setf (unread-character stream) character))
