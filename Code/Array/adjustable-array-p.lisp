@@ -7,6 +7,6 @@
          :datum array
          :expected-type 'array))
 
-;;; FIXME: Are displaced arrays adjustable? 
+;;; FIXME: Are displaced arrays adjustable?
 (defmethod adjustable-array-p ((array array))
   t)
