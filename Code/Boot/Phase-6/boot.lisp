@@ -54,6 +54,7 @@
     (load-source-file "Data-and-control-flow/setf-defmacro.lisp" e5)
     (load-source-file "Data-and-control-flow/values-define-setf-expander.lisp" e5)
     (load-source-file "Data-and-control-flow/equalp-defgeneric.lisp" e5)
+    (load-source-file "Data-and-control-flow/values-list-defun.lisp" e5)
     (load-source-file "Evaluation-and-compilation/compiler-macro-function-defun.lisp" e5)
     (load-source-file "Evaluation-and-compilation/setf-compiler-macro-function-defun.lisp" e5)
     (load-source-file "CLOS/with-accessors-defmacro.lisp" e5)
