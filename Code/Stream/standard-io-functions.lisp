@@ -52,3 +52,8 @@
             (error 'end-of-file :error-stream input-stream)
             eof-value)
         result)))
+
+(defun unread-char
+    (character &optional (input-stream *standard-input*))
+  (stream-unread-char input-stream character)
+  nil)
