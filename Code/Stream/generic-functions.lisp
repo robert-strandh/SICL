@@ -29,4 +29,3 @@
 (defgeneric stream-read-char (stream))
 
 (defgeneric stream-unread-char (stream character))
-
