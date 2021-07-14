@@ -16,6 +16,26 @@
    (%end :initarg :end :accessor end)
    (%index :initform 0 :accessor index)))
 
+(defun make-string-input-stream
+    (string &optional (start 0) end)
+  (unless (stringp string)
+    (error 'type-error
+           :datum string
+           :expected-type 'string))
+  (unless (typep start `(integer 0 ,(length string)))
+    (error 'type-error
+           :datum start
+           :expected-type `(integer 0 ,(length string))))
+  (unless (typep end `(or null (integer 0 ,(length string))))
+    (error 'type-error
+           :datum end
+           :expected-type `(or null (integer 0 ,(length string)))))
+  (assert (or (null end) (<= start end)))
+  (make-instance 'string-input-stream
+    :string string
+    :start start
+    :end end))
+
 (defmethod stream-read-char ((stream string-input-stream))
   (if (>= (index stream) (end stream))
       :eof
