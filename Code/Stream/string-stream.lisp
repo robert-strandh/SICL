@@ -36,6 +36,22 @@
     :start start
     :end end))
 
+(defmacro with-input-from-string
+    ((var string &key index start end)
+     &body body)
+  (multiple-value-bind (declarations forms)
+      (cleavir-code-utilities:separate-ordinary-body body)
+    `(let ((,var ,(if (null end)
+                      `(make-string-input-stream
+                        ,string ,@(if (null start) '() (list start)))
+                      `(make-string-input-stream
+                        ,string ,(if (null start) 0 start) ,end))))
+       ,@declarations
+       (multiple-value-prog1
+           (progn ,@forms)
+         ,@(unless (null index)
+             `((setf ,index (index ,var))))))))
+
 (defmethod stream-read-char ((stream string-input-stream))
   (if (>= (index stream) (end stream))
       :eof
