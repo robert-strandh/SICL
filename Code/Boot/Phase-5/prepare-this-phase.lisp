@@ -31,6 +31,7 @@
   (import-functions-from-host-into-e5
    '(cleavir-code-utilities:parse-generic-function-lambda-list
      cleavir-code-utilities:parse-specialized-lambda-list
+     cleavir-code-utilities:separate-ordinary-body
      cleavir-code-utilities:separate-function-body
      cleavir-code-utilities:required
      intern
