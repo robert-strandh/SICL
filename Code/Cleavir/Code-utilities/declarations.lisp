@@ -57,26 +57,26 @@
 (defun canonicalize-declaration-specifier (declaration-specifier
                                            alien-identifiers)
   (cond ((member (car declaration-specifier)
-		 '(declaration dynamic-extent ignore ignorable
-		   inline notinline special))
-	 (loop for entity in (cdr declaration-specifier)
-	       collect `(,(car declaration-specifier) ,entity)))
-	((eq (car declaration-specifier) 'optimize)
-	 (loop for entity in (cdr declaration-specifier)
-	       collect `(optimize ,entity)))
-	((member (car declaration-specifier) '(type ftype))
-	 (loop for entity in (cddr declaration-specifier)
-	       collect `(,(car declaration-specifier)
-			 ,(cadr declaration-specifier) ,entity)))
+                 '(declaration dynamic-extent ignore ignorable
+                   inline notinline special))
+         (loop for entity in (cdr declaration-specifier)
+               collect `(,(car declaration-specifier) ,entity)))
+        ((eq (car declaration-specifier) 'optimize)
+         (loop for entity in (cdr declaration-specifier)
+               collect `(optimize ,entity)))
+        ((member (car declaration-specifier) '(type ftype))
+         (loop for entity in (cddr declaration-specifier)
+               collect `(,(car declaration-specifier)
+                         ,(cadr declaration-specifier) ,entity)))
         ((member (car declaration-specifier) alien-identifiers)
          ;; This means that the declaration is one specified by
          ;; (declaim (declaration ...))
          ;; It has some user- or implementation- specified meaning
          ;; that we don't care about, so we ignore it.
          nil)
-	(t
-	 (loop for entity in (cdr declaration-specifier)
-	       collect `(type ,(car declaration-specifier) ,entity)))))
+        (t
+         (loop for entity in (cdr declaration-specifier)
+               collect `(type ,(car declaration-specifier) ,entity)))))
 
 (defun canonicalize-declaration-specifiers (declaration-specifiers
                                             alien-identifiers)
@@ -101,14 +101,14 @@
 (defun separate-ordinary-body (body)
   (unless (proper-list-p body)
     (error 'ordinary-body-must-be-proper-list
-	   :body body))
+           :body body))
   (let ((pos (position-if-not (lambda (item)
-				(and (consp item)
-				     (eq (car item) 'declare)))
-			      body)))
+                                (and (consp item)
+                                     (eq (car item) 'declare)))
+                              body)))
     (if (null pos)
-	(values body '())
-	(values (subseq body 0 pos) (subseq body pos)))))
+        (values body '())
+        (values (subseq body 0 pos) (subseq body pos)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -125,21 +125,21 @@
 (defun separate-function-body (body)
   (unless (proper-list-p body)
     (error 'function-body-must-be-proper-list
-	   :body body))
+           :body body))
   (let ((declarations '())
-	(documentation nil)
-	(forms '()))
+        (documentation nil)
+        (forms '()))
     (loop for (expr . rest) on body
-	  do (cond ((not (null forms))
-		    (push expr forms))
-		   ((and (consp expr) (eq (car expr) 'declare))
-		    (push expr declarations))
-		   ((stringp expr)
-		    (if (or (null rest)
-			    (not (null documentation))
-			    (not (null forms)))
-			(push expr forms)
-			(setf documentation expr)))
-		   (t
-		    (push expr forms))))
+          do (cond ((not (null forms))
+                    (push expr forms))
+                   ((and (consp expr) (eq (car expr) 'declare))
+                    (push expr declarations))
+                   ((stringp expr)
+                    (if (or (null rest)
+                            (not (null documentation))
+                            (not (null forms)))
+                        (push expr forms)
+                        (setf documentation expr)))
+                   (t
+                    (push expr forms))))
     (values (nreverse declarations) documentation (nreverse forms))))
