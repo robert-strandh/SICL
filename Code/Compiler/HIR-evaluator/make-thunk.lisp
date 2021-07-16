@@ -88,6 +88,7 @@
                              ((dynamic-environment (lref ,dynamic-environment-gensym-2)))
                            (lambda (,lexical-locations)
                              (declare (simple-vector ,lexical-locations))
+                             (declare (ignorable ,lexical-locations))
                              #+(or)(prologue
                               ,lexical-locations
                               ,dynamic-environment-gensym-1
