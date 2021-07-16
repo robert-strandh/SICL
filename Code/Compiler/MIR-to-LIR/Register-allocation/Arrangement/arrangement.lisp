@@ -122,14 +122,14 @@
   (when (eq previous next)
     (return-from check-arrangement-is-subset))
   (loop for attribution in (attributions next)
-        do (with-attribution attribution
-             (multiple-value-bind (previous-register previous-stack)
-                 (find-attribution previous lexical-location)
-               (assert (not (and (null previous-register)
-                                 (null previous-stack)))
-                       ()
-                       "~S is not attributed in ~S"
-                       lexical-location previous)))))
+        for location = (lexical-location attribution)
+        do (multiple-value-bind (previous-register previous-stack)
+               (find-attribution previous location)
+             (assert (not (and (null previous-register)
+                               (null previous-stack)))
+                     ()
+                     "~S is not attributed in ~S"
+                     location previous)))))
 
 ;;; Determine if the NEXT arrangement is compatible with the PREVIOUS
 ;;; arrangement, i.e. all the attributions in NEXT are present in the

@@ -80,8 +80,8 @@
                                               temporary-stack-slot)))
                  ((not (null source-stack-slot))
                   (collect-stash-instruction
-                   (load-from-stack-instruction *stack-copy-register*
-                                                source-stack-slot))
+                   (load-from-stack-instruction source-stack-slot
+                                                *stack-copy-register*))
                   (collect-stash-instruction
                    (save-to-stack-instruction *stack-copy-register*
                                               temporary-stack-slot)))
@@ -92,16 +92,16 @@
                (cond
                  ((eql target-register *stack-copy-register*)
                   (setf scr-restore-instruction
-                        (load-from-stack-instruction target-register
-                                                     temporary-stack-slot)))
+                        (load-from-stack-instruction temporary-stack-slot
+                                                     target-register)))
                  ((not (null target-register))
                   (collect-restore-instruction
-                   (load-from-stack-instruction target-register
-                                                temporary-stack-slot)))
-                 ((not (null source-stack-slot))
+                   (load-from-stack-instruction temporary-stack-slot
+                                                target-register)))
+                 ((not (null target-stack-slot))
                   (collect-restore-instruction
-                   (load-from-stack-instruction *stack-copy-register*
-                                                temporary-stack-slot))
+                   (load-from-stack-instruction temporary-stack-slot
+                                                *stack-copy-register*))
                   (collect-restore-instruction
                    (save-to-stack-instruction *stack-copy-register*
                                               target-stack-slot)))
