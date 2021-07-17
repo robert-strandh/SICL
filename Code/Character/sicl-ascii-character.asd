@@ -10,6 +10,7 @@
    (:file "characterp-defun")
    (:file "upper-case-p-ascii-defun")
    (:file "lower-case-p-ascii-defun")
+   (:file "graphic-char-p-ascii-defun")
    (:file "char-upcase-ascii-defun")
    (:file "char-downcase-ascii-defun")
    (:file "alpha-char-p-ascii-defun")
