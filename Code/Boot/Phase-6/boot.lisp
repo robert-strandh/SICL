@@ -76,6 +76,7 @@
     (enable-deftype e5)
     (enable-conditions e5)
     (load-asdf-system '#:sicl-hash-table e5)
+    (load-asdf-system '#:sicl-ascii-character e5)
     (load-source-file "Cons/member-defun.lisp" e5)
     (load-source-file "Cons/union-defun.lisp" e5)
     (load-source-file "Cons/nunion-defun.lisp" e5)
