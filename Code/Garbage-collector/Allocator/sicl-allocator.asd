@@ -5,5 +5,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "dyads")
    (:file "chunk")
    (:file "allocator")))
