@@ -3,7 +3,7 @@
 (defparameter *number-of-bins* 512)
 
 ;;; The address in memory where the vector of start sentinels starts.
-(defparameter *start-sentinels-start* 0)
+(defparameter *start-sentinels-start* *dyads-end*)
 
 ;;; The address in memory where the vector of end sentinels starts.
 (defparameter *end-sentinels-start*
