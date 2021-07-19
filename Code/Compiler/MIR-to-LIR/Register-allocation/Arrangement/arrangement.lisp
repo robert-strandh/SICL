@@ -129,7 +129,7 @@
                                (null previous-stack)))
                      ()
                      "~S is not attributed in ~S"
-                     location previous)))))
+                     location previous))))
 
 ;;; Determine if the NEXT arrangement is compatible with the PREVIOUS
 ;;; arrangement, i.e. all the attributions in NEXT are present in the
