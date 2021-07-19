@@ -27,6 +27,10 @@
   (assert (equal (multiple-value-list (eval (form test)))
                  (results test))))
 
+(deftest loop-finish-in-simple-loop
+    (loop do (loop (loop-finish)))
+  nil)
+
 (deftest loop-until-t
     (loop until t)
   nil)
