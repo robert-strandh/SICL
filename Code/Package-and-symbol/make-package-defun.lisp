@@ -28,5 +28,5 @@
                      ;; import and check for errors.
                      :use-list use)))
       (loop for name in all-name-strings
-            do (setf (find-package name) package))
+            do (setf (%find-package name) package))
       package)))
