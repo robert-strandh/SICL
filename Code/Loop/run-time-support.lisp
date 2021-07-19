@@ -5,8 +5,8 @@
 (defun sum (x y)
   (unless (numberp y)
     (error 'sum-argument-must-be-number
-           :datum y))
-           :expected-type 'number
+           :datum y
+           :expected-type 'number))
   (+ x y))
 
 ;;; This function is called in a MAX clause in order to compute the
@@ -14,8 +14,8 @@
 (defun maximize (x y)
   (unless (realp y)
     (error 'max-argument-must-be-real
-           :datum y))
-           :expected-type 'real
+           :datum y
+           :expected-type 'real))
   (max x y))
 
 ;;; This function is called in a MIN clause in order to compute the
@@ -23,8 +23,8 @@
 (defun minimize (x y)
   (unless (realp y)
     (error 'min-argument-must-be-real
-           :datum y))
-           :expected-type 'real
+           :datum y
+           :expected-type 'real))
   (min x y))
 
 ;;; This function is called during restructuring to compute the CAR of
