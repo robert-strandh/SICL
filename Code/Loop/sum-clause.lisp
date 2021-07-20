@@ -85,19 +85,19 @@
 (defmethod body-form ((clause sum-form-clause) end-tag)
   (declare (ignore end-tag))
   `(setq ,*accumulation-variable*
-         (+ ,*accumulation-variable* ,(form clause))))
+         (sum ,*accumulation-variable* ,(form clause))))
 
 (defmethod body-form ((clause sum-form-into-clause) end-tag)
   (declare (ignore end-tag))
   `(setq ,(into-var clause)
-         (+ ,(into-var clause) ,(form clause))))
+         (sum ,(into-var clause) ,(form clause))))
 
 (defmethod body-form ((clause sum-it-clause) end-tag)
   (declare (ignore end-tag))
   `(setq ,*accumulation-variable*
-         (+ ,*accumulation-variable* ,*it-var*)))
+         (sum ,*accumulation-variable* ,*it-var*)))
 
 (defmethod body-form ((clause sum-it-into-clause) end-tag)
   (declare (ignore end-tag))
   `(setq ,(into-var clause)
-         (+ ,(into-var clause) ,*it-var*)))
+         (sum ,(into-var clause) ,*it-var*)))
