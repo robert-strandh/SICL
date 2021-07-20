@@ -15,7 +15,7 @@
    #:new-temporary
    #:name #:encoding
    #:external-input #:make-external-input
-   #:register-location
+   #:register-location #:stack-location
    #:layer #:index
    #:insert-instruction-before
    #:insert-instruction-between
