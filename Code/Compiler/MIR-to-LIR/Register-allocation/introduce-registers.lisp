@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-register-allocation)
 
-(defun find-register-in-arrangement (arrangement datum)
+(defun find-register-in-arrangement (arrangement datum &key (accept-stack nil))
   ;; Any datum that is not a lexical location does not need to be
   ;; replaced.
   (unless (typep datum 'cleavir-ir:lexical-location)
@@ -12,9 +12,12 @@
        (aref *registers* register-number))
       ;; Try to make a useful error...
       ((not (null stack-slot))
-       (error "~S has an attributed stack slot but no attributed register.
+       (if accept-stack
+           (make-instance 'cleavir-ir:stack-location
+                          :offset stack-slot)
+           (error "~S has an attributed stack slot but no attributed register.
 Did you forget to call ENSURE-INPUT-AVAILABLE?"
-              datum))
+                  datum)))
       (t
        (error "~S has no attribution." datum)))))
 
@@ -153,23 +156,20 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
 ;;; NAMED-CALL-INSTRUCTION and MULTIPLE-VALUE-CALL-INSTRUCTION, but I
 ;;; am not sure of what just yet.
 
-(defmethod introduce-registers-for-instruction
-    ((instruction cleavir-ir:named-call-instruction))
-  nil)
-
-(defmethod introduce-registers-for-instruction
-    ((instruction cleavir-ir:funcall-instruction))
-  nil)
-
-(defmethod introduce-registers-for-instruction
-    ((instruction cleavir-ir:multiple-value-call-instruction))
-  nil)
-
-;;; The same goes for INITIALIZE-CLOSURE-INSTRUCTION
-
-(defmethod introduce-registers-for-instruction
-    ((instruction cleavir-ir:initialize-closure-instruction))
-  nil)
+(macrolet ((def (class)
+             `(defmethod introduce-registers-for-instruction
+                  ((instruction ,class))
+                (let ((input-arrangement (input-arrangement instruction)))
+                  (setf (cleavir-ir:inputs instruction)
+                        (mapcar (lambda (location)
+                                  (find-register-in-arrangement input-arrangement
+                                                                location
+                                                                :accept-stack t))
+                                (cleavir-ir:inputs instruction)))))))
+  (def cleavir-ir:named-call-instruction)
+  (def cleavir-ir:funcall-instruction)
+  (def cleavir-ir:multiple-value-call-instruction)
+  (def cleavir-ir:initialize-closure-instruction))
 
 (defun introduce-registers (mir)
   (cleavir-ir:map-local-instructions
