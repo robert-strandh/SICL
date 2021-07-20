@@ -37,7 +37,7 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
 (defun save-to-stack-instruction (from-register to-stack-slot)
   (mark-as-generated
    (make-instance 'cleavir-ir:memset2-instruction
-     :inputs (list *rsp*
+     :inputs (list *rbp*
                    (make-instance 'cleavir-ir:immediate-input
                                   :value (* to-stack-slot +stack-slot-size+))
                    (aref *registers* from-register)))))
@@ -45,7 +45,7 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
 (defun load-from-stack-instruction (from-stack-slot to-register)
   (mark-as-generated
    (make-instance 'cleavir-ir:memref2-instruction
-     :inputs (list *rsp*
+     :inputs (list *rbp*
                    (make-instance 'cleavir-ir:immediate-input
                                   :value (* from-stack-slot +stack-slot-size+)))
      :outputs (list (aref *registers* to-register)))))
