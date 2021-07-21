@@ -8,3 +8,13 @@
     (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type '(or package character string symbol)))
+
+(define-condition nicknames-must-be-proper-list
+    (type-error acclimation:condition)
+  ()
+  (:default-initargs :expected-type 'list))
+
+(define-condition use-list-must-be-proper-list
+    (type-error acclimation:condition)
+  ()
+  (:default-initargs :expected-type 'list))
