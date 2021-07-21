@@ -9,4 +9,3 @@
 (defmethod equal :around (x y)
   (or (eq x y)
       (call-next-method)))
-
