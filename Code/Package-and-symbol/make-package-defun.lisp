@@ -1,8 +1,12 @@
 (cl:in-package #:sicl-package)
 
-;;; FIXME: check that nicknames is a proper list of string designators
-;;; FIXME: check that use is a proper list of package designators.
 (defun make-package (name &key nicknames use)
+  (unless (cleavir-code-utilities:proper-list-p nicknames)
+    (error 'nicknames-must-be-proper-list
+           :datum nicknames))
+  (unless (cleavir-code-utilities:proper-list-p use)
+    (error 'use-list-must-be-proper-list
+           :datum use))
   (let* ((name-string (string name))
          (nickname-strings (mapcar #'string nicknames))
          (all-name-strings (cons name-string nickname-strings))
