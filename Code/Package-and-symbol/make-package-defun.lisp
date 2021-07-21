@@ -1,6 +1,5 @@
 (cl:in-package #:sicl-package)
 
-;;; FIXME: signal correctable errors.
 ;;; FIXME: check that nicknames is a proper list of string designators
 ;;; FIXME: check that use is a proper list of package designators.
 (defun make-package (name &key nicknames use)
