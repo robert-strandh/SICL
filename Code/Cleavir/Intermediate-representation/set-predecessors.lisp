@@ -18,8 +18,8 @@
 (defun set-predecessors (initial-instruction)
   (cleavir-meter:with-meter (m *set-predecessors-meter*)
     ;; First, set the list of predecessors of each instruction to the
-    ;; empty list, just in case there are some spurious predecessors on
-    ;; any instruction.
+    ;; empty list, just in case there are some spurious predecessors
+    ;; on any instruction.
     (map-instructions-arbitrary-order
      (lambda (instruction)
        (cleavir-meter:increment-size m)
@@ -30,5 +30,5 @@
     (map-instructions-arbitrary-order
      (lambda (instruction)
        (loop for successor in (successors instruction)
-	     do (push instruction (predecessors successor))))
+             do (push instruction (predecessors successor))))
      initial-instruction)))

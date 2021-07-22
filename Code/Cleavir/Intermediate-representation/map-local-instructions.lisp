@@ -4,11 +4,11 @@
 ;;;
 ;;; Function MAP-LOCAL-INSTRUCTIONS
 ;;;
-;;; Traverse an instruction graph in depth first order.
-;;; The traversal starts from an ENTER-INSTRUCTION, and does not
-;;; descend into enclosed functions; thus all instructions mapped have
-;;; the input ENTER as their owner, and all reachable instructions
-;;; with the ENTER as their owner are mapped.
+;;; Traverse an instruction graph in depth first order.  The traversal
+;;; starts from an ENTER-INSTRUCTION, and does not descend into
+;;; enclosed functions; thus all instructions mapped have the input
+;;; ENTER as their owner, and all reachable instructions with the
+;;; ENTER as their owner are mapped.
 
 (defun map-local-instructions (function enter-instruction)
   (let ((visited-instructions (make-hash-table :test #'eq))
@@ -28,16 +28,15 @@
 ;;;
 ;;; Function FILTER-LOCAL-INSTRUCTIONS
 ;;;
-;;; Return, in some arbitrary order, a list of all local
-;;; instructions that satisfy a predicate.
-;;; Sort of like REMOVE-IF-NOT.
+;;; Return, in some arbitrary order, a list of all local instructions
+;;; that satisfy a predicate.  Sort of like REMOVE-IF-NOT.
 
 (defun filter-local-instructions (predicate enter-instruction)
   (let (result)
     (map-local-instructions
      (lambda (instruction)
        (when (funcall predicate instruction)
-	 (push instruction result)))
+         (push instruction result)))
      enter-instruction)
     result))
 
@@ -45,9 +44,8 @@
 ;;;
 ;;; Function LOCAL-INSTRUCTIONS-OF-TYPE
 ;;;
-;;; Return, in some arbitrary order, a list of all local
-;;; instructions that are of some type.
-;;; This is useful for many transformations.
+;;; Return, in some arbitrary order, a list of all local instructions
+;;; that are of some type.  This is useful for many transformations.
 
 (defun local-instructions-of-type (enter-instruction type)
   (filter-local-instructions (lambda (i) (typep i type))

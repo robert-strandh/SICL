@@ -1,8 +1,8 @@
 (in-package #:cleavir-mir)
 
-;;;; Reduce an instruction graph.  The input is the initial instruction
-;;;; of a valid instruction graph.  Pruning it consists of removing
-;;;; instructions that can not be reached from the initial
+;;;; Reduce an instruction graph.  The input is the initial
+;;;; instruction of a valid instruction graph.  Pruning it consists of
+;;;; removing instructions that can not be reached from the initial
 ;;;; instruction.
 ;;;;
 ;;;; The general idea is as follows:
