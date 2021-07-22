@@ -70,11 +70,15 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
 (defmethod introduce-registers-for-instruction
     ((instruction cleavir-ir:instruction))
   (let ((input-arrangement (input-arrangement instruction)))
-      (setf (cleavir-ir:inputs instruction)
-            (mapcar (lambda (input)
-                      (find-register-in-arrangement input-arrangement
-                                                    input))
-                    (cleavir-ir:inputs instruction))))
+    (setf (cleavir-ir:inputs instruction)
+          (mapcar (lambda (input)
+                    (find-register-in-arrangement input-arrangement
+                                                  input))
+                  (cleavir-ir:inputs instruction))
+          (cleavir-ir:dynamic-environment-location instruction)
+          (find-register-in-arrangement
+           input-arrangement
+           (cleavir-ir:dynamic-environment-location instruction))))
   (let ((output-arrangement (output-arrangement instruction)))
     (setf (cleavir-ir:outputs instruction)
           (mapcar (lambda (output)
@@ -152,6 +156,10 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
     ((instruction cleavir-ir:nop-instruction))
   nil)
 
+(defmethod introduce-registers-for-instruction
+    ((instruction cleavir-ir:unreachable-instruction))
+  nil)
+
 ;;; We have to do something for FUNCALL-INSTRUCTION,
 ;;; NAMED-CALL-INSTRUCTION and MULTIPLE-VALUE-CALL-INSTRUCTION, but I
 ;;; am not sure of what just yet.
@@ -165,7 +173,12 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
                                   (find-register-in-arrangement input-arrangement
                                                                 location
                                                                 :accept-stack t))
-                                (cleavir-ir:inputs instruction)))))))
+                                (cleavir-ir:inputs instruction)))
+                  (setf (cleavir-ir:dynamic-environment-location instruction)
+                        (find-register-in-arrangement
+                         input-arrangement
+                         (cleavir-ir:dynamic-environment-location instruction)
+                         :accept-stack t))))))
   (def cleavir-ir:named-call-instruction)
   (def cleavir-ir:funcall-instruction)
   (def cleavir-ir:multiple-value-call-instruction)
