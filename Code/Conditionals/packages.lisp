@@ -1,3 +1,5 @@
+(cl:in-package #:common-lisp-user)
+
 (defpackage #:sicl-conditionals
   (:use #:common-lisp #:cleavir-code-utilities)
   (:export #:or #:or-expander
