@@ -74,11 +74,7 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
           (mapcar (lambda (input)
                     (find-register-in-arrangement input-arrangement
                                                   input))
-                  (cleavir-ir:inputs instruction))
-          (cleavir-ir:dynamic-environment-location instruction)
-          (find-register-in-arrangement
-           input-arrangement
-           (cleavir-ir:dynamic-environment-location instruction))))
+                  (cleavir-ir:inputs instruction))))
   (let ((output-arrangement (output-arrangement instruction)))
     (setf (cleavir-ir:outputs instruction)
           (mapcar (lambda (output)
@@ -179,10 +175,14 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
                          input-arrangement
                          (cleavir-ir:dynamic-environment-location instruction)
                          :accept-stack t))))))
-  (def cleavir-ir:named-call-instruction)
   (def cleavir-ir:funcall-instruction)
-  (def cleavir-ir:multiple-value-call-instruction)
-  (def cleavir-ir:initialize-closure-instruction))
+  (def cleavir-ir:named-call-instruction)
+  (def cleavir-ir:catch-instruction)
+  (def cleavir-ir:bind-instruction)
+  (def cleavir-ir:unwind-instruction)
+  (def cleavir-ir:initialize-values-instruction)
+  (def cleavir-ir:enclose-instruction)
+  (def cleavir-ir:multiple-value-call-instruction))
 
 (defun introduce-registers (mir)
   (cleavir-ir:map-local-instructions
