@@ -37,6 +37,7 @@
            cleavir-ir:bind-instruction
            cleavir-ir:unwind-instruction
            cleavir-ir:initialize-values-instruction
+           cleavir-ir:initialize-closure-instruction
            cleavir-ir:enclose-instruction
            cleavir-ir:multiple-value-call-instruction)))
 

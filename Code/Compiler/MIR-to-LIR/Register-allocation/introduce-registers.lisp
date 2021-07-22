@@ -181,6 +181,7 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
   (def cleavir-ir:bind-instruction)
   (def cleavir-ir:unwind-instruction)
   (def cleavir-ir:initialize-values-instruction)
+  (def cleavir-ir:initialize-closure-instruction)
   (def cleavir-ir:enclose-instruction)
   (def cleavir-ir:multiple-value-call-instruction))
 
