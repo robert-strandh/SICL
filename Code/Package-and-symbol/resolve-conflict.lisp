@@ -2,7 +2,7 @@
 
 (defun symbol-is-present-p (symbol package)
   (or (eq symbol (gethash (symbol-name symbol) (internal-symbols package)))
-      (eq symbol (gethash (symbol-name symbol) (extternal-symbols package)))))
+      (eq symbol (gethash (symbol-name symbol) (external-symbols package)))))
 
 (defun symbol-is-accessible-p (symbol package)
   (not (null (nth-value 1 (find-symbol (symbol-name symbol) package)))))
