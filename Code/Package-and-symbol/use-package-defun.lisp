@@ -19,6 +19,9 @@
       (loop for package-to-use in packages-to-use
             do (do-external-symbols (symbol package-to-use)
                  (maybe-add-symbol (symbol-name symbol) symbol)))
+      (loop for used-package in (use-list package)
+            do (do-external-symbols (symbol used-package)
+                 (maybe-add-symbol (symbol-name symbol) symbol)))
       (maphash (lambda (name symbol)
                  (maybe-add-symbol name symbol))
                (external-symbols package))
