@@ -29,7 +29,7 @@
           do (remhash (symbol-name shadowing-symbol) conflicts))
     (loop for symbols being each hash-value of conflicts
           when (> (length symbols) 1)
-            do (let ((choice (handle-conflicts symbols package)))
+            do (let ((choice (resolve-conflicts symbols package)))
                  (if (eq (symbol-package choice) package)
                      ;; The choice was a symbol that is already
                      ;; present in PACKAGE, and we had a conflict
