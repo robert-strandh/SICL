@@ -25,6 +25,8 @@
       (maphash (lambda (name symbol)
                  (maybe-add-symbol name symbol))
                (internal-symbols package)))
+    (loop for shadowing-symbol in (shadowing-symbols package)
+          do (remhash (symbol-name shadowing-symbol) conflicts))
     (loop for symbols being each hash-value of conflicts
           when (> (length symbols) 1)
             do (let ((choice (handle-conflicts symbols package)))
