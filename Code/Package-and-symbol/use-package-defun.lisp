@@ -27,7 +27,26 @@
                (internal-symbols package)))
     (loop for symbols being each hash-value of conflicts
           when (> (length symbols) 1)
-            do (handle-conflicts symbols))
+            do (let ((choice (handle-conflicts symbols package)))
+                 (if (eq (symbol-package choice) package)
+                     ;; The choice was a symbol that is already
+                     ;; present in PACKAGE, and we had a conflict
+                     ;; involving that symbol, so it can not have been
+                     ;; a shadowing symbol.  Make it one.
+                     (push choice (shadowing-symbols package))
+                     ;; The choice was a symbol in one of the packages
+                     ;; to use.  The chosen symbol must be turned into
+                     ;; a shadowing symbol in PACKAGE.
+                     (let ((name (symbol-name choice)))
+                       (remhash name (internal-symbol package))
+                       (remhash name (external-symbols package))
+                       (setf (shadowing-symbols package)
+                             (remove name (shadowing-symbols package)
+                                     :key #'symbol-name
+                                     :test #'equal))
+                       (setf (gethash name (internal-symbols package))
+                             choice)
+                       (push choice (shadowing-symbols package))))))
     (loop for package-to-use in packages-to-use
           do (pushnew package-to-use (use-list package) :test #'eq)
              (pushnew package (used-by-list package-to-use) :test #'eq))))
