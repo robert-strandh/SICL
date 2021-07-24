@@ -18,3 +18,9 @@
     (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'list))
+
+(define-condition symbol-conflict
+    (package-error acclimation:condition)
+  ((%conflicting-symbols
+    :initarg :conflicting-symbols
+    :reader conflicting-symbols)))
