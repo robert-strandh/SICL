@@ -1,15 +1,9 @@
 (cl:in-package #:sicl-package)
 
-(defun import (symbols &optional (package-designator *package*))
-  (when (and (atom symbols) (not (null symbols)))
-    (setf symbol (list symbols)))
-  (unless (cleavir-code-utilities:proper-list-p symbols)
-    ;; FIXME: signal a more specific error.
-    (error "argument must be a proper list"))
-  (unless (every #'symbolp symbols)
-    ;; FIXME: signal a more specific error.
-    (error "argument must be a designator for a list of symbols"))
-  (let ((conflicts (make-hash-table :test #'equal)))
+(defun import (symbols-designator &optional (package-designator *package*))
+  (let ((package (package-designator-to-package package-designator))
+        (symbols (designated-list-of-symbols symbols-designator))
+        (conflicts (make-hash-table :test #'equal)))
     (labels ((add-symbol (name symbol)
                (pushnew symbol (gethash name conflicts '()) :test #'eq))
              (maybe-add-symbol (name symbol)
