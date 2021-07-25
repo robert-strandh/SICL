@@ -33,6 +33,13 @@
              (funcall function value))
            (internal-symbols package)))
 
+;;; Call FUNCTION for each external symbol in package.
+(defun map-external-symbols (function package)
+  (maphash (lambda (key value)
+             (declare (ignore key))
+             (funcall function value))
+           (external-symbols package)))
+
 (defun symbol-is-present-p (symbol package)
   (multiple-value-bind (result present-p)
       (find-external-symbol (symbol-name symbol) package)
