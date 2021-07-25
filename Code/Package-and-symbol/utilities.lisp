@@ -25,6 +25,14 @@
         (values nil nil)
         (values (first result) t))))
 
+;;; Call FUNCTION for each symbol in package that is both present and
+;;; internal.
+(defun map-internal-symbols (function package)
+  (maphash (lambda (key value)
+             (declare (ignore key))
+             (funcall function value))
+           (internal-symbols package)))
+
 (defun symbol-is-present-p (symbol package)
   (multiple-value-bind (result present-p)
       (find-external-symbol (symbol-name symbol) package)
