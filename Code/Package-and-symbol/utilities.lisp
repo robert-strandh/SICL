@@ -25,7 +25,7 @@
         (values nil nil)
         (values (first result) t))))
 
-;;; Call FUNCTION for each symbol in package that is both present and
+;;; Call FUNCTION for each symbol in PACKAGE that is both present and
 ;;; internal.
 (defun map-internal-symbols (function package)
   (maphash (lambda (key value)
@@ -33,12 +33,16 @@
              (funcall function value))
            (internal-symbols package)))
 
-;;; Call FUNCTION for each external symbol in package.
+;;; Call FUNCTION for each external symbol in PACKAGE.
 (defun map-external-symbols (function package)
   (maphash (lambda (key value)
              (declare (ignore key))
              (funcall function value))
            (external-symbols package)))
+
+;;; Call FUNCTION for each shadowing symbol in PACKAGE.
+(defun map-shadowing-symbols (function package)
+  (mapc function (shadowing-symbols package)))
 
 (defun symbol-is-present-p (symbol package)
   (multiple-value-bind (result present-p)
