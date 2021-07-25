@@ -58,6 +58,11 @@
       (gethash (symbol-name symbol) (external-symbols package))
     (and present-p (eq symbol result))))
 
+;;; Return true if and only if SYMBOL is a shadowing symbol of
+;;; PACKAGE.
+(defun symbol-is-shadowing (symbol package)
+  (member symbol (shadowing-symbols package)))
+
 (defun symbol-is-present-p (symbol package)
   (multiple-value-bind (result present-p)
       (find-external-symbol (symbol-name symbol) package)
