@@ -6,11 +6,24 @@
 (defun find-internal-symbol (name package)
   (gethash name (internal-symbols package)))
 
-;;; Find an external and present symbol named NAME in PACKAGE.  If
-;;; there is such a symbol, return two values, the symbol found, and
-;;; true.  If there is no such symbol, return two values, NIL and NIL.
+;;; Find an external (and thus present) symbol named NAME in PACKAGE.
+;;; If there is such a symbol, return two values, the symbol found,
+;;; and true.  If there is no such symbol, return two values, NIL and
+;;; NIL.
 (defun find-external-symbol (name package)
   (gethash name (internal-symbols package)))
+
+;;; Find a shadowing (and thus present) symbol named NAME in PACKAGE.
+;;; If there is such a symbol, return two values, the symbol found,
+;;; and true.  If there is no such symbol, return two values, NIL and
+;;; NIL.
+(defun find-shadowing-symbol (name package)
+  (let ((result (member name (shadowing-symbols package)
+                        :key #'symbol-name
+                        :test #'equal)))
+    (if (null result)
+        (values nil nil)
+        (values (first result) t))))
 
 (defun symbol-is-present-p (symbol package)
   (multiple-value-bind (result present-p)
