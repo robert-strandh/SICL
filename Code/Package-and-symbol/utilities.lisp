@@ -44,11 +44,18 @@
 (defun map-shadowing-symbols (function package)
   (mapc function (shadowing-symbols package)))
 
-;;; Return true if and only if SYMBOL is present and internal symbol
-;;; of PACKAGE.
+;;; Return true if and only if SYMBOL is present and is internal
+;;; symbol of PACKAGE.
 (defun symbol-is-internal-p (symbol package)
   (multiple-value-bind (result present-p)
       (gethash (symbol-name symbol) (internal-symbols package))
+    (and present-p (eq symbol result))))
+
+;;; Return true if and only if SYMBOL is an external symbol of
+;;; PACKAGE.
+(defun symbol-is-external-p (symbol package)
+  (multiple-value-bind (result present-p)
+      (gethash (symbol-name symbol) (external-symbols package))
     (and present-p (eq symbol result))))
 
 (defun symbol-is-present-p (symbol package)
