@@ -64,12 +64,8 @@
   (member symbol (shadowing-symbols package)))
 
 (defun symbol-is-present-p (symbol package)
-  (multiple-value-bind (result present-p)
-      (find-external-symbol (symbol-name symbol) package)
-    (or (and present-p (eq symbol result))
-        (multiple-value-bind (result present-p)
-            (find-internal-symbol (symbol-name symbol) package)
-          (and present-p (eq symbol result))))))
+  (or (symbol-is-internal-p symbol package)
+      (symbol-is-external-p symbol package)))
 
 ;;; Find a symbol named NAME that is accessible as an inherited symbol
 ;;; in PACKAGE.  If there is such a symbol, return two values, the
