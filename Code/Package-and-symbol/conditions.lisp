@@ -20,3 +20,7 @@
   ((%conflicting-symbols
     :initarg :conflicting-symbols
     :reader conflicting-symbols)))
+
+(define-condition symbol-is-not-accessible
+    (package-error acclimation:condition)
+  ((%symbol :initarg :symbol :reader inaccessible-symbol)))
