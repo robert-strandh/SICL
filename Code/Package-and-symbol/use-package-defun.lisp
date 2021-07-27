@@ -6,8 +6,8 @@
     (setf designators-of-packages-to-use
           (list designators-of-packages-to-use)))
   (unless (cleavir-code-utilities:proper-list-p designators-of-packages-to-use)
-    ;; FIXME: signal a more specific error.
-    (error "argument must be a proper list"))
+    (error 'use-list-must-be-proper-list
+           :datum designators-of-packages-to-use))
   (let ((packages-to-use
           (mapcar #'package-designator-to-package
                   designators-of-packages-to-use))
