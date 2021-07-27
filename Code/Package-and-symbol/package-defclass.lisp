@@ -22,11 +22,7 @@
 
 (defgeneric external-symbols (package))
 
-(defgeneric (setf external-symbols) (new-external-symbols package))
-
 (defgeneric internal-symbols (package))
-
-(defgeneric (setf internal-symbols) (new-internal-symbols package))
 
 (defgeneric shadowing-symbols (package))
 
