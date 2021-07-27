@@ -7,7 +7,6 @@
   :components ((:file "packages")
                (:file "package-defclass")
                (:file "symbol-defclass")
-               (:file "functions")
 	       (:file "conditions")
 	       (:file "condition-reporters-english")
 	       (:file "documentation-strings-english")))
