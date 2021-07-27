@@ -18,6 +18,7 @@
                (:file "unexport-defun")
                (:file "import-defun")
                (:file "intern-defun")
+               (:file "unintern-defun")
                (:file "shadow-defun")
                (:file "shadowing-import-defun")
                (:file "use-package-defun")
