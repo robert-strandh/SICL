@@ -26,7 +26,7 @@
              unless (consp argument)
                do (error 'package-local-nickname-argument-must-be-cons
                          :argument argument)
-             unless (cleavir-code-utilities:proper-list-p argument)
+             unless (proper-list-p argument)
                do (error 'package-local-nickname-argument-must-be-proper-list
                          :argument argument)
              unless (= (length argument) 2)

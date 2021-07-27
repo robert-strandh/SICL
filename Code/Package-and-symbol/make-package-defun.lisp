@@ -1,10 +1,10 @@
 (cl:in-package #:sicl-package)
 
 (defun make-package (name &key nicknames use)
-  (unless (cleavir-code-utilities:proper-list-p nicknames)
+  (unless (proper-list-p nicknames)
     (error 'nicknames-must-be-proper-list
            :datum nicknames))
-  (unless (cleavir-code-utilities:proper-list-p use)
+  (unless (proper-list-p use)
     (error 'use-list-must-be-proper-list
            :datum use))
   (let* ((name-string (string name))

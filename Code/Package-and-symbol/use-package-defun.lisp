@@ -5,7 +5,7 @@
   (when (atom designators-of-packages-to-use)
     (setf designators-of-packages-to-use
           (list designators-of-packages-to-use)))
-  (unless (cleavir-code-utilities:proper-list-p designators-of-packages-to-use)
+  (unless (proper-list-p designators-of-packages-to-use)
     (error 'use-list-must-be-proper-list
            :datum designators-of-packages-to-use))
   (let ((packages-to-use
