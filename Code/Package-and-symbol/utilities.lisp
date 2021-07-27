@@ -1,5 +1,8 @@
 (cl:in-package #:sicl-package)
 
+(defun proper-list-p (list)
+  (integerp (ignore-errors (list-length list))))
+
 ;;; Find an internal and present symbol named NAME in PACKAGE.  If
 ;;; there is such a symbol, return two values, the symbol found, and
 ;;; true.  If there is no such symbol, return two values, NIL and NIL.
