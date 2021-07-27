@@ -10,7 +10,3 @@ There is a lot to be done in this directory:
    action to take in such a restart.  For example the error that
    signals NOT-A-PACKAGE-DESIGNATOR should have a restart for
    supplying a valid package designator.
-
- * Calls to ASSERT should be replaced by calls to ERROR with specific
-   signals and they should also have associated restarts whenever
-   reasonable.
