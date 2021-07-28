@@ -59,9 +59,10 @@
                             ;; accessible by inheritance.  We intern
                             ;; the new symbol and make it a shadowing
                             ;; one.
-                            (setf (gethash name (internal-symbols using-package))
-                                  choice)
-                            (push choice (shadowing-symbols using-package))))
+                            (progn
+                              (setf (gethash name (internal-symbols using-package))
+                                    choice)
+                              (push choice (shadowing-symbols using-package)))))
                        (t
                         ;; The choice was a symbol accessible by inheritance
                         (setf (gethash name (internal-symbols using-package))
