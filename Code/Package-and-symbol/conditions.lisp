@@ -15,6 +15,10 @@
   ()
   (:default-initargs :expected-type 'list))
 
+(define-condition package-error
+    (error acclimation:condition)
+  ((%package :initarg :package :reader package-error-package)))
+
 (define-condition symbol-conflict
     (package-error acclimation:condition)
   ((%conflicting-symbols
