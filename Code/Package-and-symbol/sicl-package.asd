@@ -11,7 +11,6 @@
                (:file "package-use-list-defun")
                (:file "package-used-by-list-defun")
                (:file "package-shadowing-symbols-defun")
-               (:file "symbol-defclass")
                (:file "utilities")
                (:file "resolve-conflict")
                (:file "export-defun")
