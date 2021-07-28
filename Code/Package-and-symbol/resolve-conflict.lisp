@@ -4,7 +4,7 @@
 (defun resolve-conflict (symbols package)
   (restart-case (error 'symbol-conflict
                        :conflicting-symbols symbols
-                       :package)
+                       :package package)
     (choose-a-symbol ()
       :report
       (lambda (stream)
