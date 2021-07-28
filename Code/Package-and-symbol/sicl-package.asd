@@ -24,6 +24,7 @@
                (:file "use-package-defun")
                (:file "do-symbols-defmacro")
                (:file "do-external-symbols-defmacro")
+               (:file "make-package-defun")
                (:file "defpackage-defmacro")
 	       (:file "conditions")
 	       (:file "condition-reporters-english")
