@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-package)
 
 (defun export-to-one-using-package (symbols using-package)
-  (let ((conflicts (make-hash-table :teest #'equal))
+  (let ((conflicts (make-hash-table :test #'equal))
         (used-packages (use-list using-package)))
     (flet ((maybe-add-symbol (name symbol)
              (unless
