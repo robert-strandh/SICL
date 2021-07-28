@@ -10,7 +10,7 @@
                (:file "package-name-defun")
                (:file "package-use-list-defun")
                (:file "package-used-by-list-defun")
-               (:file "packages-shadowing-symbols-defun")
+               (:file "package-shadowing-symbols-defun")
                (:file "symbol-defclass")
                (:file "utilities")
                (:file "resolve-conflict")
