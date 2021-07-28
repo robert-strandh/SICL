@@ -17,5 +17,5 @@
                        ,@body-forms))))
            (let ((,package-var (package-designator-to-package ,package-form)))
              (loop for symbol being each hash-value of (external-symbols ,package-var)
-                   do (,funcation-name symbol))))
+                   do (,function-name symbol))))
          ,result-form))))
