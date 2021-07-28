@@ -12,6 +12,7 @@
    #:package-use-list
    #:package-used-by-list
    #:package-error
+   #:package-error-package
    #:rename-package
    #:make-package
    #:import
@@ -47,4 +48,6 @@
            #:package-shadowing-symbols
            #:package-use-list
            #:package-used-by-list
-           #:packagep))
+           #:packagep
+           #:package-error
+           #:package-error-package))
