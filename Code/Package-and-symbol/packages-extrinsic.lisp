@@ -28,6 +28,7 @@
    #:do-symbols
    #:do-external-symbols)
   (:export #:package
+           #:*package*
            #:export
            #:find-symbol
            #:shadow

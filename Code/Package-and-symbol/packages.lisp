@@ -20,6 +20,7 @@
                      #:do-external-symbols)
    #-sicl-host-test ())
   (:export #:package
+           #:*package*
            #:export
            #:find-symbol
            #:import
