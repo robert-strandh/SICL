@@ -1,9 +1,9 @@
 (cl:in-package #:asdf-user)
 
-(defsystem sicl-package-extrinsic
+(defsystem #:sicl-package-extrinsic
   :serial t
   :description "SICL-Specific Package System, extrinsic version"
-  :depends-on (:acclimation)
+  :depends-on (#:acclimation)
   :components ((:file "packages-extrinsic")
                (:file "package-defclass")
                (:file "package-designator-deftype")
