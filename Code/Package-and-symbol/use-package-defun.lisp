@@ -43,7 +43,7 @@
                      ;; to use.  The chosen symbol must be turned into
                      ;; a shadowing symbol in PACKAGE.
                      (let ((name (symbol-name choice)))
-                       (remhash name (internal-symbol package))
+                       (remhash name (internal-symbols package))
                        (remhash name (external-symbols package))
                        (setf (shadowing-symbols package)
                              (remove name (shadowing-symbols package)
