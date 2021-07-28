@@ -82,7 +82,8 @@
         do (multiple-value-bind (symbol present-p)
                (find-external-symbol symbol used-package)
              (when present-p
-               (return-from find-inherited-symbol symbol used-package))))
+               (return-from find-inherited-symbol
+                 (values symbol used-package)))))
   (values nil nil))
 
 ;;; Recall that a designator for a list of symbols is either a non-nil
