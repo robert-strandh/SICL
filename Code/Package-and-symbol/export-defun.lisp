@@ -18,11 +18,11 @@
                (internal-symbols using-package)))
     (loop for shadowing-symbol in (shadowing-symbols package)
           do (remhash (symbol-name shadowing-symbol) conflicts))
-    (loop for symbols being each hash-value of conflicts
-          when (> (length symbols) 1)
-            do (let* ((choice (resolve-conflicts symbols package))
+    (loop for conflict being each hash-value of conflicts
+          when (> (length conflict) 1)
+            do (let* ((choice (resolve-conflicts conflict package))
                       (name (symbol-name choice))
-                      (other (first (remove choice symbols))))
+                      (other (first (remove choice conflict))))
                  (cond ((symbol-is-present-p choice using-package)
                         ;; The choice was a symbol that is already
                         ;; present in USING-PACKAGE, and we had a
@@ -54,7 +54,7 @@
                                            other
                                            (shadowing-symbols using-package))))
                                 (unless (null cell)
-                                  (setf (car cell choice)))))
+                                  (setf (car cell) choice))))
                             ;; The conflict was with a symbol
                             ;; accessible by inheritance.  We intern
                             ;; the new symbol and make it a shadowing
