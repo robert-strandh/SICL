@@ -80,7 +80,7 @@
 (defun find-inherited-symbol (name package)
   (loop for used-package in (package-use-list package)
         do (multiple-value-bind (symbol present-p)
-               (find-external-symbol symbol used-package)
+               (find-external-symbol name used-package)
              (when present-p
                (return-from find-inherited-symbol
                  (values symbol used-package)))))
