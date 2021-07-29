@@ -17,10 +17,12 @@
                (external-symbols package))
       (maphash (lambda (name symbol)
                  (add-symbol name symbol))
-               (internal-symbols package)))
-    (loop for symbols being each hash-value of conflicts
-          when (> (length symbols) 1)
-            do (let ((choice (resolve-conflict symbols package)))
+               (internal-symbols package))
+      (loop for symbol in symbols
+            do (add-symbol (symbol-name symbol) symbol)))
+    (loop for conflict being each hash-value of conflicts
+          when (> (length conflict) 1)
+            do (let ((choice (resolve-conflict conflict package)))
                  (if (symbol-is-present-p choice package)
                      ;; The choice was a symbol that is already
                      ;; present in PACKAGE, and we had a conflict
@@ -31,7 +33,7 @@
                      ;; determine whether the conflict was with a
                      ;; symbol present in PACKAGE.
                      (let ((name (symbol-name choice))
-                           (other (first (remove choice symbols))))
+                           (other (first (remove choice conflict))))
                        (if (symbol-is-present-p other package)
                            ;; The conflict was with a symbol present
                            ;; in PACKAGE.  We must replace the
