@@ -12,9 +12,7 @@
                (let ((symbol (cond (internal-present-p internal)
                                    (external-present-p external)
                                    (t
-                                    (let ((new (make-instance 'symbol
-                                                 :name string-name
-                                                 :package package)))
+                                    (let ((new (intern string-name package)))
                                       (setf (gethash string-name internals)
                                             new)
                                       new)))))
