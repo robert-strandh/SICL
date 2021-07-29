@@ -6,6 +6,7 @@
   :depends-on (#:acclimation #:cleavir-code-utilities)
   :components ((:file "packages-extrinsic")
                (:file "package-defclass")
+               (:file "string-designator-deftype")
                (:file "package-designator-deftype")
                (:file "package-name-defun")
                (:file "package-use-list-defun")
