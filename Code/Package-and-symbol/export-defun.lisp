@@ -20,7 +20,7 @@
           do (remhash (symbol-name shadowing-symbol) conflicts))
     (loop for conflict being each hash-value of conflicts
           when (> (length conflict) 1)
-            do (let* ((choice (resolve-conflicts conflict package))
+            do (let* ((choice (resolve-conflict conflict package))
                       (name (symbol-name choice))
                       (other (first (remove choice conflict))))
                  (cond ((symbol-is-present-p choice using-package)

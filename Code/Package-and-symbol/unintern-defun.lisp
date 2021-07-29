@@ -17,7 +17,7 @@
                          (when present-p
                            (pushnew symbol conflicts :test #'eq))))
               (when (> (length conflicts) 1)
-                (let ((choice (resolve-conflicts name package)))
+                (let ((choice (resolve-conflict name package)))
                   (setf (gethash name (internal-symbols package))
                         choice)
                   (push choice (shadowing-symbols package))))))

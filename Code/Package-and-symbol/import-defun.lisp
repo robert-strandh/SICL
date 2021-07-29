@@ -20,7 +20,7 @@
                (internal-symbols package)))
     (loop for symbols being each hash-value of conflicts
           when (> (length symbols) 1)
-            do (let ((choice (resolve-conflicts symbols package)))
+            do (let ((choice (resolve-conflict symbols package)))
                  (if (symbol-is-present-p choice package)
                      ;; The choice was a symbol that is already
                      ;; present in PACKAGE, and we had a conflict
