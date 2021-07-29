@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-package)
 
-(defun shadow (symbol-names &optional (package *package*))
-  (loop with internals = (internal-symbols package)
+(defun shadow (symbol-names &optional (package-designator *package*))
+  (loop with package = (package-designator-to-package package-designator)
+        with internals = (internal-symbols package)
         with externals = (external-symbols package)
         for name in symbol-names
         for string-name = (string name)
