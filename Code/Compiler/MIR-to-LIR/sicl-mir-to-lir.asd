@@ -6,6 +6,7 @@
                #:cleavir-hir
                #:sicl-ast-to-hir
                #:sicl-hir-to-mir
+               #:sicl-x86-64-registers
                #:sicl-register-allocation)
   :serial t
   :components

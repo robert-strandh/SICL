@@ -9,14 +9,6 @@
 ;;; previous instructions, so we are left to generate code for the
 ;;; rest of the process.
 
-;; FIXME: Should we export these locations or put them in another package?
-(defvar *argument-registers*
-  (list sicl-register-allocation::*rdi*
-        sicl-register-allocation::*rsi*
-        sicl-register-allocation::*rdx*
-        sicl-register-allocation::*rcx*
-        sicl-register-allocation::*r8*))
-
 (defmethod finish-lir-for-instruction
     ((instruction cleavir-ir:funcall-instruction))
   (destructuring-bind (function &rest arguments)
@@ -24,7 +16,10 @@
     (let* ((argument-count (length arguments))
            (start-of-sequence (make-instance 'cleavir-ir:nop-instruction))
            (predecessor start-of-sequence)
-           (function-register sicl-register-allocation::*r11*))
+           (function-register x86-64:*r11*))
+      (cleavir-ir:insert-instruction-before
+       start-of-sequence
+       instruction)
       (flet ((emit (instruction)
                (cleavir-ir:insert-instruction-after
                 instruction
@@ -32,26 +27,24 @@
                (setf predecessor instruction)))
         ;; 1. Load the function into some register. We need to get at
         ;; the rack.
+        #+(or)
         (emit
-         (sicl-register-allocation::load-from-stack-instruction
+         (x86-64:load-from-stack-instruction
           (cleavir-ir:offset function) function-register))
         (cond
-          ((<= argument-count (length *argument-registers*))
+          ((<= argument-count (length x86-64:*argument-registers*))
            ;; 2. Store the arguments in RDI, RSI, RDX, RCX, and R8.
            (loop for argument in arguments
-                 for register in *argument-registers*
-                 for slot = (cleavir-ir:offset argument)
-                 ;; FIXME: Also put this helper function somewhere better?
-                 do (emit
-                     (sicl-register-allocation::load-from-stack-instruction
-                      slot register)))
+                 for register in x86-64:*argument-registers*
+                 do (x86-64:load-from-location-instruction argument
+                                                           register))
            ;; 3. Store the argument count in R9 as a fixnum.
            ;; (Does this really have to be boxed though?)
            (emit
             (make-instance 'cleavir-ir:assignment-instruction
               :inputs (list (make-instance 'cleavir-ir:immediate-input
                               :value (ash argument-count 1)))
-              :outputs (list sicl-register-allocation::*r9*)))
+              :outputs (list x86-64:*r9*)))
            ;; 4. Load the static environment of the callee from the
            ;; callee function object into R10.  As per
            ;; CLOS/funcallable-standard-object-defclass.lisp the
@@ -62,15 +55,15 @@
            ;; 6. Copy the value of RSP into RBP.
            (emit
             (make-instance 'cleavir-ir:assignment-instruction
-              :inputs (list sicl-register-allocation::*rsp*)
-              :outputs (list sicl-register-allocation::*rbp*)))
+              :inputs (list x86-64:*rsp*)
+              :outputs (list x86-64:*rbp*)))
            ;; 7. Load the entry point address of the callee into an
            ;; available scratch register, typically RAX.
 
            ;; 8. Use the CALL instruction with that register as an argument.
            ;; We will just reuse this CALL instruction.
            (setf (cleavir-ir:inputs instruction)
-                 (list sicl-register-allocation::*rax*)))
+                 (list x86-64:*rax*)))
           (t
            (error "Can't handle more than 5 arguments so far.")))))))
 

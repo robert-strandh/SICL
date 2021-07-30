@@ -9,7 +9,7 @@
       (arr:find-attribution arrangement datum)
     (cond
       ((not (null register-number))
-       (aref *registers* register-number))
+       (aref x86-64:*registers* register-number))
       ;; Try to make a useful error...
       ((not (null stack-slot))
        (if accept-stack
@@ -20,10 +20,6 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
                   datum)))
       (t
        (error "~S has no attribution." datum)))))
-
-;; For what it's worth, we should put the 8 bytes-per-word number
-;; somewhere in my opinion.
-(defconstant +stack-slot-size+ 8)
 
 ;; A set of instructions which were generated as part of introducing
 ;; registers, and thus should not be processed.
@@ -39,19 +35,15 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
 
 (defun save-to-stack-instruction (from-register to-stack-slot)
   (mark-as-generated
-   (make-instance 'cleavir-ir:memset2-instruction
-     :inputs (list *rbp*
-                   (make-instance 'cleavir-ir:immediate-input
-                                  :value (* to-stack-slot +stack-slot-size+))
-                   (aref *registers* from-register)))))
+   (x86-64:save-to-stack-instruction
+    (aref x86-64:*registers* from-register)
+    to-stack-slot)))
 
 (defun load-from-stack-instruction (from-stack-slot to-register)
   (mark-as-generated
-   (make-instance 'cleavir-ir:memref2-instruction
-     :inputs (list *rbp*
-                   (make-instance 'cleavir-ir:immediate-input
-                                  :value (* from-stack-slot +stack-slot-size+)))
-     :outputs (list (aref *registers* to-register)))))
+   (x86-64:load-from-stack-instruction
+    from-stack-slot
+    (aref x86-64:*registers* to-register))))
 
 (defun replace-instruction (instruction new-instruction)
   (cleavir-ir:insert-instruction-after new-instruction instruction)
@@ -137,9 +129,9 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
           ((and (not (null in-register)) (not (null in-register)))
            ;; This instruction is a plain register to register assignment.
            (setf (cleavir-ir:inputs instruction)
-                 (list (aref *registers* in-register))
+                 (list (aref x86-64:*registers* in-register))
                  (cleavir-ir:outputs instruction)
-                 (list (aref *registers* out-register))))
+                 (list (aref x86-64:*registers* out-register))))
           (t
            (error "Not sure what the assignment of (~A, ~A) to (~A, ~A) is meant to be."
                   in-register in-stack out-register out-stack)))))))

@@ -5,6 +5,7 @@
                #:cleavir-mir
                #:cleavir-hir
                #:sicl-register-arrangement
+               #:sicl-x86-64-registers
                #:sicl-utilities)
   :serial t
   :components
@@ -15,7 +16,6 @@
    (:file "pool")
    (:file "work-list")
    (:file "estimated-distance-to-use")
-   (:file "registers")
    (:file "stack-map")
    (:file "arrangement")
    (:file "spill-unspill")

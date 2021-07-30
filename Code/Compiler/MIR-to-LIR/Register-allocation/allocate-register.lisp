@@ -77,8 +77,8 @@
 (defun filter-for-lexical-location (lexical-location)
   (let ((type (cleavir-ir:element-type lexical-location)))
     (if (member type '(single-float double-float))
-        *xmm*
-        *gpr*)))
+        x86-64:*xmm*
+        x86-64:*gpr*)))
 
 (defun determine-candidates (lexical-location pool
                              &key (filter
@@ -86,25 +86,25 @@
   (let* ((pool-item (find lexical-location pool
                           :key #'lexical-location :test #'eq)))
     (if (or (null pool-item) (< (call-probability pool-item) 3))
-        (register-map-intersection *caller-saves* filter)
+        (x86-64:register-map-intersection x86-64:*caller-saves* filter)
         (let ((register-map
-                (register-map-intersection *callee-saves* filter)))
-          (if (register-map-empty-p register-map)
-              (register-map-intersection *caller-saves* filter)
+                (x86-64:register-map-intersection x86-64:*callee-saves* filter)))
+          (if (x86-64:register-map-empty-p register-map)
+              (x86-64:register-map-intersection x86-64:*caller-saves* filter)
               register-map)))))
 
 (defun lexical-location-in-register-p (arrangement lexical-location register)
   (arr:lexical-location-in-register-p
    arrangement
    lexical-location
-   (register-number register)))
+   (x86-64:register-number register)))
 
 ;;; Make sure that REGISTER is not attributed to any lexical variable
 ;;; in the predecessor of INSTRUCTION.
 (defun ensure-register-attributions-transferred
     (predecessor instruction pool register
-     &optional (registers-to-avoid (make-register-map register)))
-  (let* ((map (make-register-map register))
+     &optional (registers-to-avoid (x86-64:make-register-map register)))
+  (let* ((map (x86-64:make-register-map register))
          (arrangement (output-arrangement predecessor))
          (lexical-locations
            (arr:lexical-locations-in-register arrangement map)))
@@ -113,8 +113,8 @@
       (return-from ensure-register-attributions-transferred predecessor))
     (let* ((location (first lexical-locations))
            (candidates
-             (register-map-difference (determine-candidates location pool)
-                                      registers-to-avoid)))
+             (x86-64:register-map-difference (determine-candidates location pool)
+                                             registers-to-avoid)))
       ;; If this location has a higher EDU than any other which is
       ;; attributed, spill this location.
       (unless (should-transfer-p location pool arrangement candidates)

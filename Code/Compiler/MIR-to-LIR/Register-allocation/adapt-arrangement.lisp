@@ -29,7 +29,7 @@
 ;;; A totally arbitrary choice of register, used temporarily to
 ;;; transfer values from the stack back to the stack, should there be no
 ;;; other free registers.
-(defvar *stack-copy-register* (register-number *r15*))
+(defvar *stack-copy-register* (x86-64:register-number x86-64:*r15*))
 
 (defun first-free-stack-slot (&rest arrangements)
   (reduce #'max arrangements :key #'arr:first-stack-slot-past-arrangement))
