@@ -43,7 +43,7 @@
            (emit
             (make-instance 'cleavir-ir:assignment-instruction
               :inputs (list (make-instance 'cleavir-ir:immediate-input
-                              :value (ash argument-count 1)))
+                              :value argument-count))
               :outputs (list x86-64:*r9*)))
            ;; 4. Load the static environment of the callee from the
            ;; callee function object into R10.  As per
