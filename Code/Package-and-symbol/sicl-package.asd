@@ -9,6 +9,7 @@
                (:file "package-defclass")
                (:file "string-designator-deftype")
                (:file "package-designator-deftype")
+               (:file "package-designator-to-package-defun")
                (:file "package-name-defun")
                (:file "package-use-list-defun")
                (:file "package-used-by-list-defun")
