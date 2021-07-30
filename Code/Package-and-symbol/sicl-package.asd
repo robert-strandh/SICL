@@ -5,6 +5,7 @@
   :description "SICL-Specific Package System"
   :depends-on (#:acclimation #:cleavir-code-utilities)
   :components ((:file "packages")
+               (:file "generic-functions")
                (:file "package-defclass")
                (:file "string-designator-deftype")
                (:file "package-designator-deftype")

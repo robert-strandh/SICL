@@ -5,6 +5,7 @@
   :description "SICL-Specific Package System, extrinsic version"
   :depends-on (#:acclimation #:cleavir-code-utilities)
   :components ((:file "packages-extrinsic")
+               (:file "generic-functions")
                (:file "package-defclass")
                (:file "string-designator-deftype")
                (:file "package-designator-deftype")
