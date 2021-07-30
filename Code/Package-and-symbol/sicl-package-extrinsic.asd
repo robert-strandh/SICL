@@ -7,6 +7,7 @@
   :components ((:file "packages-extrinsic")
                (:file "generic-functions")
                (:file "package-defclass")
+               (:file "packagep-defgeneric")
                (:file "string-designator-deftype")
                (:file "package-designator-deftype")
                (:file "package-designator-to-package-defun")
