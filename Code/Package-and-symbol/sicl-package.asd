@@ -17,6 +17,7 @@
                (:file "package-shadowing-symbols-defun")
                (:file "package-defparameter")
                (:file "utilities")
+               (:file "find-symbol-defun")
                (:file "resolve-conflict")
                (:file "export-defun")
                (:file "unexport-defun")
