@@ -10,7 +10,7 @@
               do (multiple-value-bind (symbol status)
                      (find-present-symbol symbol-name used-package)
                    (unless (null status)
-                     (return-from find-symbol
+                     (return-from generic-find-symbol
                        (values symbol :inherited))))
               finally (return (values nil nil)))
         (values symbol status))))
