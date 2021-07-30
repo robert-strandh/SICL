@@ -31,13 +31,13 @@
 (defun find-present-symbol (symbol-name package)
   (multiple-value-bind (symbol present-p)
       (find-internal-symbol symbol-name package)
-    (if (null present-p)
+    (if present-p
+        (values symbol :internal)
         (multiple-value-bind (symbol present-p)
             (find-external-symbol symbol-name package)
-          (if (null present-p)
-              (values nil nil)
-              (values symbol :external)))
-        (values symbol :internal))))
+          (if present-p
+              (values symbol :external)
+              (values nil nil))))))
 
 ;;; Call FUNCTION for each symbol in PACKAGE that is both present and
 ;;; internal.
