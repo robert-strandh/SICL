@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-package)
 
-(defgeneric home-package (symbol))
-
-(defgeneric (setf home-package) (new-home-package symbol))
-
 (defun intern (symbol-name &optional (package-designator *package*))
   (let ((package (package-designator-to-package package-designator)))
     (multiple-value-bind (symbol-or-nil status)
