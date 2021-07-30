@@ -2,17 +2,6 @@
 
 (defgeneric generic-find-symbol (symbol-name package))
 
-(defun find-present-symbol (symbol-name package)
-  (multiple-value-bind (symbol status)
-      (gethash symbol-name (internal-symbols package))
-    (if (null status)
-        (multiple-value-bind (symbol status)
-            (gethash symbol-name (internal-symbols package))
-          (if (null status)
-              (values nil nil)
-              (values symbol :external)))
-        (values symbol :internal))))
-
 (defmethod generic-find-symbol ((symbol-name string) (package package))
   (multiple-value-bind (symbol status)
       (find-present-symbol symbol-name package)

@@ -28,6 +28,17 @@
         (values nil nil)
         (values (first result) t))))
 
+(defun find-present-symbol (symbol-name package)
+  (multiple-value-bind (symbol status)
+      (gethash symbol-name (internal-symbols package))
+    (if (null status)
+        (multiple-value-bind (symbol status)
+            (gethash symbol-name (internal-symbols package))
+          (if (null status)
+              (values nil nil)
+              (values symbol :external)))
+        (values symbol :internal))))
+
 ;;; Call FUNCTION for each symbol in PACKAGE that is both present and
 ;;; internal.
 (defun map-internal-symbols (function package)
