@@ -16,11 +16,11 @@
       (maphash (lambda (name symbol)
                  (maybe-add-symbol name symbol))
                (internal-symbols using-package)))
-    (loop for shadowing-symbol in (shadowing-symbols package)
+    (loop for shadowing-symbol in (shadowing-symbols using-package)
           do (remhash (symbol-name shadowing-symbol) conflicts))
     (loop for conflict being each hash-value of conflicts
           when (> (length conflict) 1)
-            do (let* ((choice (resolve-conflict conflict package))
+            do (let* ((choice (resolve-conflict conflict using-package))
                       (name (symbol-name choice))
                       (other (first (remove choice conflict))))
                  (cond ((symbol-is-present-p choice using-package)
