@@ -22,5 +22,8 @@
 
 (defmethod mir-to-lir (client mir)
   (cleavir-ir:reinitialize-data mir)
-  (mapc #'sicl-register-allocation:do-register-allocation
-        (sicl-hir-to-mir:gather-enter-instructions mir)))
+  (let ((instructions (sicl-hir-to-mir:gather-enter-instructions mir)))
+    (mapc #'sicl-register-allocation:do-register-allocation
+          instructions)
+    (mapc #'finish-lir instructions))
+  mir)
