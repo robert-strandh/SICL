@@ -9,7 +9,7 @@
              (maybe-add-symbol (name symbol)
                (unless (nth-value 1 (gethash name (shadowing-symbols package)))
                  (add-symbol name symbol))))
-      (loop for used-package in (use-list packages)
+      (loop for used-package in (use-list package)
             do (do-external-symbols (symbol used-package)
                  (maybe-add-symbol (symbol-name symbol) symbol)))
       (maphash (lambda (name symbol)
