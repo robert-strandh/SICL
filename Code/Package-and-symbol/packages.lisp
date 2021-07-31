@@ -2,47 +2,7 @@
 
 (defpackage sicl-package
   (:use #:common-lisp)
-  (:shadow
-   .
-   #+sicl-host-test (#:package
-                     #:packagep
-                     #:*package*
-                     #:package-name
-                     #:package-shadowing-symbols
-                     #:package-use-list
-                     #:package-used-by-list
-                     #:package-error
-                     #:make-package
-                     #:intern
-                     #:find-symbol
-                     #:export
-                     #:do-symbols
-                     #:do-external-symbols)
-   #-sicl-host-test ())
-  (:export #:package
-           #:*package*
-           #:export
-           #:find-symbol
-           #:import
-           #:rename-package
-           #:shadow
-           #:shadowing-import
-           #:make-package
-           #:with-package-iterator
-           #:unexport
-           #:unintern
-           #:unuse-package
-           #:use-package
-           #:defpackage
-           #:do-symbols
-           #:do-external-symbols
-           #:intern
-           #:package-name
-           #:package-nicknames
-           #:package-shadowing-symbols
-           #:package-use-list
-           #:package-used-by-list
-           #:packagep))
+  (:export . #.asdf-user:*sicl-package-string-designators*))
 
 (defpackage #:sicl-symbol
   (:use #:common-lisp)
