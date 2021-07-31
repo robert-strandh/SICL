@@ -18,7 +18,7 @@
     (loop until (null existing-packages)
           do (restart-case (error 'package-already-exists
                                   :packages existing-packages)
-               (force (stuff)
+               (force ()
                  :report (lambda (stream)
                            (format stream
                                    "Replace the existing packages."))
