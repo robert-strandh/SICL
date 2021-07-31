@@ -2,6 +2,7 @@
 
 (defpackage sicl-package
   (:use #:common-lisp)
+  (:shadow #:find-package)
   (:export . #.asdf-user:*sicl-package-string-designators*))
 
 (defpackage #:sicl-symbol
