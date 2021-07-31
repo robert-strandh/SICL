@@ -3,7 +3,7 @@
 (defsystem #:sicl-package
   :serial t
   :description "SICL-Specific Package System"
-  :depends-on (#:acclimation #:cleavir-code-utilities)
+  :depends-on (#:sicl-package-base)
   :components ((:file "packages")
                (:file "generic-functions")
                (:file "package-defclass")

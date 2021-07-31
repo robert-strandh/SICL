@@ -3,7 +3,7 @@
 (defsystem #:sicl-package-extrinsic
   :serial t
   :description "SICL-Specific Package System, extrinsic version"
-  :depends-on (#:acclimation #:cleavir-code-utilities)
+  :depends-on (#:sicl-package-base)
   :components ((:file "packages-extrinsic")
                (:file "generic-functions")
                (:file "package-defclass")
