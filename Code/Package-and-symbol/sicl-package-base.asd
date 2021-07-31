@@ -61,6 +61,8 @@
     #:shadowing-import
     #:unuse-package
     #:use-package
+    #:defpackage
+    #:with-package-iterator
     #:do-symbols
     #:do-external-symbols))
 
