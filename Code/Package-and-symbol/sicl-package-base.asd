@@ -39,7 +39,9 @@
 
 
 (defparameter *sicl-package-string-designators*
-  '(#:package
+  '(#:home-package
+    #:find-package
+    #:package
     #:packagep
     #:*package*
     #:package-name
