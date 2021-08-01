@@ -65,7 +65,7 @@
     (ld "String/string-defclass.lisp")
     (ld "Cons/list-defclass.lisp")
     (ld "Cons/cons-defclass.lisp")
-    (ld "Package-and-symbol/symbol-defclass.lisp")
+    (ld "Symbol/symbol-defclass.lisp")
     (ld "Cons/null-defclass.lisp")
     (ld "Package-and-symbol/package-defclass.lisp")
     (ld "Arithmetic/number-defclass.lisp")
