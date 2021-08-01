@@ -29,8 +29,7 @@
    (:file "generic-function-initialization-support")
    ;; This file contains code for generating the discriminating
    ;; automaton of generic functions.
-   (:file "discriminating-automaton")
-   (:file "default-superclasses-defgeneric")))
+   (:file "discriminating-automaton")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer superclasses subclasses
