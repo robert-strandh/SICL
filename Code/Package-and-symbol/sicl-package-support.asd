@@ -3,5 +3,5 @@
 (defsystem :sicl-package-support
   :serial t
   :description "Support code for SICL-specific package system"
-  :depends-on (:acclimation)
+  :depends-on (#:sicl-package-base)
   :components ((:file "packages")))
