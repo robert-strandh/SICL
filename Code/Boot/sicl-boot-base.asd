@@ -15,6 +15,7 @@
                #:sicl-method-combination-support
                #:sicl-array-support
                #:sicl-package-support
+               #:sicl-symbol-support
                #:sicl-string-support
                #:sicl-character-support
                #:sicl-type-support
