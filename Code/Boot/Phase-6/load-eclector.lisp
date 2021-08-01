@@ -2,7 +2,7 @@
 
 (defun load-eclector (e5)
   (load-source-file "Array/make-array-defun.lisp" e5)
-  (load-source-file "Package-and-symbol/make-symbol-defun.lisp" e5)
+  (load-source-file "Symbol/make-symbol-defun.lisp" e5)
   (setf (env:special-operator (env:client e5) e5 'sicl-primop:rack)
         '(:special-operator t))
   (setf (env:special-operator (env:client e5) e5 'sicl-primop:set-rack)
