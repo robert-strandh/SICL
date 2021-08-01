@@ -148,12 +148,6 @@
   (setf (env:fdefinition
          client
          environment
-         '(setf sicl-package::%find-package))
-        (lambda (package name)
-          (setf (env:find-package client environment name) package)))
-  (setf (env:fdefinition
-         client
-         environment
          'sicl-data-and-control-flow:function-cell)
         (lambda (name)
           (let* ((override-entry
