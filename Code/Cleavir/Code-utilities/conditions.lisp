@@ -180,15 +180,3 @@
 (define-condition suspect-lambda-list-keyword
     (style-warning code-condition acclimation:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;  Conditions for forms with BODY.
-
-(define-condition ordinary-body-must-be-proper-list
-    (style-warning acclimation:condition)
-  ((%body :initarg :body :reader body)))
-
-(define-condition function-body-must-be-proper-list
-    (style-warning acclimation:condition)
-  ((%body :initarg :body :reader body)))
