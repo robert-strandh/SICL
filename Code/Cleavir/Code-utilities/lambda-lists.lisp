@@ -95,13 +95,13 @@
 
 ;;; Use this function for lambda lists that can be proper or dotted.
 (defun check-lambda-list-not-circular (lambda-list)
-  (when (eq (nth-value 1 (list-structure lambda-list)) :circular)
+  (when (circular-list-p lambda-list)
     (error 'lambda-list-must-not-be-circular
            :code lambda-list)))
 
 ;;; Use this function for lambda lists that must be proper lists.
 (defun check-lambda-list-proper (lambda-list)
-  (unless (eq (nth-value 1 (list-structure lambda-list)) :proper)
+  (unless (proper-list-p lambda-list)
     (error 'lambda-list-must-be-proper-list
            :code lambda-list)))
 
