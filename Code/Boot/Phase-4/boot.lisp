@@ -9,7 +9,8 @@
     (change-class e4 'environment
                   :client (make-instance 'client :environment e4))
     (import-functions-from-host
-     '(cleavir-code-utilities:parse-generic-function-lambda-list
+     '(cleavir-code-utilities:proper-list-p
+       cleavir-code-utilities:parse-generic-function-lambda-list
        cleavir-code-utilities:parse-specialized-lambda-list
        cleavir-code-utilities:separate-function-body
        cleavir-code-utilities:required
