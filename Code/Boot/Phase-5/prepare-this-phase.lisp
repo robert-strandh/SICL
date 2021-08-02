@@ -31,6 +31,7 @@
   (import-functions-from-host
    '(cleavir-code-utilities:proper-list-p
      cleavir-code-utilities:list-structure
+     cleavir-code-utilities:optionals
      cleavir-code-utilities:parse-generic-function-lambda-list
      cleavir-code-utilities:parse-specialized-lambda-list
      cleavir-code-utilities:separate-ordinary-body
