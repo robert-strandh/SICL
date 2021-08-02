@@ -2,7 +2,8 @@
 
 (defsystem #:cleavir-code-utilities
   :depends-on (#:cleavir-code-utilities-base
-               #:cleavir-code-utilities-list-structure)
+               #:cleavir-code-utilities-list-structure
+               #:cleavir-code-utilities-separate-body)
   :serial t
   :components
   ((:file "conditions")
