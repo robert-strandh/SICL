@@ -4,7 +4,8 @@
   :serial t
   :description "SICL-Specific Package System, base system"
   :depends-on (#:acclimation
-               #:cleavir-code-utilities))
+               #:cleavir-code-utilities-list-structure
+               #:cleavir-code-utilities-separate-body))
 
 (defparameter *sicl-package-component-designators*
   '((:file "generic-functions")
