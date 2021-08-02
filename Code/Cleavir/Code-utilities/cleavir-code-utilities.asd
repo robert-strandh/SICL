@@ -7,7 +7,6 @@
   ((:file "conditions")
    (:file "condition-reporters-english")
    (:file "argcount")
-   (:file "form")
    (:file "list-structure")
    (:file "declarations")
    (:file "lambda-lists")
