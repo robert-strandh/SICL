@@ -305,8 +305,7 @@
     (define-environment-functions client environment)
     (define-constants client environment)
     (import-functions-from-host
-     '(cleavir-code-utilities:list-structure
-       cleavir-code-utilities:optionals
+     '(cleavir-code-utilities:optionals
        cleavir-code-utilities:rest-body
        cleavir-code-utilities:parse-define-modify-macro-lambda-list)
      environment)

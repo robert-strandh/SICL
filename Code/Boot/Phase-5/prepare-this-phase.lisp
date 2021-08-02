@@ -30,6 +30,7 @@
   (enable-object-creation e3 e4)
   (import-functions-from-host-into-e5
    '(cleavir-code-utilities:proper-list-p
+     cleavir-code-utilities:list-structure
      cleavir-code-utilities:parse-generic-function-lambda-list
      cleavir-code-utilities:parse-specialized-lambda-list
      cleavir-code-utilities:separate-ordinary-body
