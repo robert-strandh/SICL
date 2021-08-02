@@ -1,13 +1,13 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:cleavir-code-utilities
-  :depends-on (#:cleavir-code-utilities-base)
+  :depends-on (#:cleavir-code-utilities-base
+               #:cleavir-code-utilities-list-structure)
   :serial t
   :components
   ((:file "conditions")
    (:file "condition-reporters-english")
    (:file "argcount")
-   (:file "list-structure")
    (:file "declarations")
    (:file "lambda-lists")
    (:file "destructuring")))
