@@ -1,11 +1,10 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:cleavir-code-utilities
-  :depends-on (#:acclimation)
+  :depends-on (#:cleavir-code-utilities-base)
   :serial t
   :components
-  ((:file "packages")
-   (:file "conditions")
+  ((:file "conditions")
    (:file "condition-reporters-english")
    (:file "argcount")
    (:file "form")
