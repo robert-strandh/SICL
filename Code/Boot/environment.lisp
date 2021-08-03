@@ -193,7 +193,7 @@
      getf
      assoc rassoc acons
      set-difference set-exclusive-or union adjoin
-     last butlast
+     last butlast list-length
      ;; Data and control flow
      apply not eq eql equal values constantly identity some
      every
