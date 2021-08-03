@@ -42,6 +42,8 @@
 (defparameter *sicl-package-string-designators*
   '(#:home-package
     #:find-package
+    #:delete-package
+    #:make-symbol
     #:package
     #:packagep
     #:*package*
