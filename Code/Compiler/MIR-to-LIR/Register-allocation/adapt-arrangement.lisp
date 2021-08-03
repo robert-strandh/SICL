@@ -29,98 +29,133 @@
 ;;; A totally arbitrary choice of register, used temporarily to
 ;;; transfer values from the stack back to the stack, should there be no
 ;;; other free registers.
-(defvar *stack-copy-register* (x86-64:register-number x86-64:*r15*))
+(defvar *stack-copy-register* x86-64:*r15*)
 
 (defun first-free-stack-slot (&rest arrangements)
   (reduce #'max arrangements :key #'arr:first-stack-slot-past-arrangement))
+
+;;; A class which just makes it easier to find instructions generated
+;;; by adaptation.
+(defclass adapt-assignment-instruction (cleavir-ir:assignment-instruction)
+  ())
 
 ;;; Generate instructions between PREDECESSOR and SUCCESSOR which
 ;;; adapt the arrangement from SOURCE-ARRANGEMENT to
 ;;; TARGET-ARRANGEMENT.
 ;;;
-;;; Currently we use a simple algorithm which probably generates
-;;; sub-optimal code.  The basic idea is to copy every location onto
-;;; the stack, past any stack slots used by either attribution, and
-;;; then copy them into the registers and stack slots attributed to
-;;; them in the target arrangement.  One minor catch is that copying
-;;; from the stack to the stack requires a spare register; so we
-;;; ensure that one register (*STACK-COPY-REGISTER*) is free by saving
-;;; it first and restoring it last.
+;;; Currently we use an algorithm which generates acceptable code.
+;;; The basic idea is to try to copy every location normally, but if
+;;; we need to use a register we already overwrote, we spill it before
+;;; any register assignments are actually done.  One minor catch is
+;;; that copying from the stack to the stack requires a spare
+;;; register; so we ensure that one register (*STACK-COPY-REGISTER*)
+;;; is free by saving it first and restoring it last.
 (defun adapt-arrangements-between-instructions (predecessor successor
                                                 source-arrangement
                                                 target-arrangement)
-  (let ((next-slot
-          (first-free-stack-slot source-arrangement target-arrangement))
-        (scr-save-instruction nil)
-        (scr-restore-instruction nil))
-    ;; We maintain four "stages" of adaptation: we first save the
-    ;; location stored in the stack copy register (if there is one),
-    ;; then we save every other location, then we restore every other
-    ;; location, then we restore the location which needs to end up in
-    ;; the stack copy register (again, if there is one).
-    (sicl-utilities:with-collectors ((stash   collect-stash-instruction)
-                                     (restore collect-restore-instruction))
+  ;; TODO: pick a register unused in either arrangement if possible.
+  ;; We redirect loads from and stores to the stack copy register to a
+  ;; slot on the stack, and then emit spill and unspill instructions if
+  ;; we found we used the register.
+  (let* ((stack-copy-register *stack-copy-register*)
+         (stack-copy-number (x86-64:register-number stack-copy-register))
+         (stack-copy-slot
+           (first-free-stack-slot source-arrangement target-arrangement))
+         (next-slot (1+ stack-copy-slot))
+         (clobbered-registers (list stack-copy-number))
+         (clobbered-stack-slots '())
+         (loaded-stack-copy-p nil)
+         (stored-stack-copy-p nil))
+    (sicl-utilities:with-collectors ((spills    add-spill-instruction)
+                                     (transfers add-transfer-instruction))
       (arr:map-attributions
        (lambda (location target-register target-stack-slot)
-         (multiple-value-bind (source-register source-stack-slot)
+         (multiple-value-bind (source-stack-slot source-register)
              (arr:find-attribution source-arrangement location)
-           (unless (and (eql target-register source-register)
-                        (eql target-stack-slot source-stack-slot))
-             (let ((temporary-stack-slot next-slot))
-               (incf next-slot)
-               ;; Save onto the stack.
-               (cond
-                 ((eql source-register *stack-copy-register*)
-                  (setf scr-save-instruction
-                        (save-to-stack-instruction source-register
-                                                   temporary-stack-slot)))
-                 ((not (null source-register))
-                  (collect-stash-instruction
-                   (save-to-stack-instruction source-register
-                                              temporary-stack-slot)))
-                 ((not (null source-stack-slot))
-                  (collect-stash-instruction
-                   (load-from-stack-instruction source-stack-slot
-                                                *stack-copy-register*))
-                  (collect-stash-instruction
-                   (save-to-stack-instruction *stack-copy-register*
-                                              temporary-stack-slot)))
-                 (t
-                  (error "~s has neither a stack nor register location in the source arrangement."
-                         location)))
-               ;; Load back from the stack.
-               (cond
-                 ((eql target-register *stack-copy-register*)
-                  (setf scr-restore-instruction
-                        (load-from-stack-instruction temporary-stack-slot
-                                                     target-register)))
-                 ((not (null target-register))
-                  (collect-restore-instruction
-                   (load-from-stack-instruction temporary-stack-slot
-                                                target-register)))
-                 ((not (null target-stack-slot))
-                  (collect-restore-instruction
-                   (load-from-stack-instruction temporary-stack-slot
-                                                *stack-copy-register*))
-                  (collect-restore-instruction
-                   (save-to-stack-instruction *stack-copy-register*
-                                              target-stack-slot)))
-                 (t
-                  (error "~s has neither a stack nor register location in the target arrangement."
-                         location)))))))
+           (assert (not (and (null source-stack-slot)
+                             (null source-register))))
+           ;; Redirect loads from the stack copy register.
+           (when (eql source-register stack-copy-number)
+             (setf source-register     nil
+                   source-stack-slot   stack-copy-slot
+                   loaded-stack-copy-p t))
+           (when (eql target-register stack-copy-number)
+             (setf target-register     nil
+                   target-stack-slot   stack-copy-slot
+                   stored-stack-copy-p t))
+           ;; Don't emit anything for no-ops.  Note that we still need
+           ;; to track if a location is always in the stack copy
+           ;; register, so the rewriting logic must be unconditional.
+           (unless (and (eql source-register target-register)
+                        (eql source-stack-slot target-stack-slot))
+             ;; Check that we won't attempt to read from a location we
+             ;; already wrote to.
+             (when (or (member source-register clobbered-registers)
+                       (member source-stack-slot clobbered-stack-slots))
+               ;; If we have spilled, pick a fresh stack slot, then
+               ;; spill to that stack slot.
+               (let ((spill-slot next-slot))
+                 (incf next-slot)
+                 (cond
+                   ((null source-stack-slot)
+                    (add-spill-instruction
+                     (x86-64:save-to-stack-instruction
+                      (aref x86-64:*registers* source-register)
+                      spill-slot)))
+                   (t
+                    ;; Copy from stack to stack.
+                    (add-spill-instruction
+                     (x86-64:load-from-stack-instruction
+                      source-stack-slot stack-copy-register))
+                    (add-spill-instruction
+                     (x86-64:save-to-stack-instruction
+                      stack-copy-register spill-slot))))
+                 (setf source-stack-slot spill-slot
+                       source-register   nil)))
+             (cond
+               ((not (null target-register))
+                (add-transfer-instruction
+                 (if (not (null source-register))
+                     (make-instance 'adapt-assignment-instruction
+                       :inputs  (list (aref x86-64:*registers* source-register))
+                       :outputs (list (aref x86-64:*registers* target-register)))
+                     (x86-64:load-from-stack-instruction
+                      source-stack-slot
+                      (aref x86-64:*registers* target-register))))
+                (push target-register clobbered-registers))
+               ((not (null target-stack-slot))
+                (cond
+                  ((not (null source-register))
+                   (add-transfer-instruction
+                    (x86-64:save-to-stack-instruction
+                     (aref x86-64:*registers* source-register)
+                     target-stack-slot)))
+                  (t
+                   (add-transfer-instruction
+                    (x86-64:load-from-stack-instruction
+                     source-stack-slot stack-copy-register))
+                   (add-transfer-instruction
+                    (x86-64:save-to-stack-instruction
+                     stack-copy-register target-stack-slot))))
+                (push target-stack-slot clobbered-stack-slots))))))
        target-arrangement)
       ;; Now thread the generated instructions together.
       (let ((last-instruction predecessor))
         (flet ((insert-instruction (instruction)
+                 (mark-as-generated instruction)
                  (cleavir-ir:insert-instruction-between
                   instruction last-instruction successor)
                  (setf last-instruction instruction)))
-          (unless (null scr-save-instruction)
-            (insert-instruction scr-save-instruction))
-          (mapc #'insert-instruction (stash))
-          (mapc #'insert-instruction (restore))
-          (unless (null scr-restore-instruction)
-            (insert-instruction scr-restore-instruction)))))))
+          (when loaded-stack-copy-p
+            (insert-instruction
+             (x86-64:save-to-stack-instruction
+              stack-copy-register stack-copy-slot)))
+          (mapc #'insert-instruction (spills))
+          (mapc #'insert-instruction (transfers))
+          (when stored-stack-copy-p
+            (insert-instruction
+             (x86-64:load-from-stack-instruction
+              stack-copy-slot stack-copy-register))))))))
 
 (defmethod introduce-registers-for-instruction ((instruction adapt-instruction))
   (destructuring-bind (successor)

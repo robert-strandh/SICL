@@ -314,6 +314,11 @@
           (length stack-map)
           (1+ last-used)))))
 
+;;; Return the first register which is unused.
+(defun first-free-register (arrangement)
+  (with-arrangement arrangement
+    (position 1 register-map)))
+
 ;;; Destructively modify arrangement by keeping only the arrangements
 ;;; with a lexical location that is a member of LEXICAL-LOCATIONS.
 (defun trim-arrangement (arrangement lexical-locations)
