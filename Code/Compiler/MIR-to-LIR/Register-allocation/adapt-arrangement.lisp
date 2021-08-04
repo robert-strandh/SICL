@@ -39,123 +39,88 @@
 (defclass adapt-assignment-instruction (cleavir-ir:assignment-instruction)
   ())
 
-;;; Generate instructions between PREDECESSOR and SUCCESSOR which
-;;; adapt the arrangement from SOURCE-ARRANGEMENT to
-;;; TARGET-ARRANGEMENT.
-;;;
-;;; Currently we use an algorithm which generates acceptable code.
-;;; The basic idea is to try to copy every location normally, but if
-;;; we need to use a register we already overwrote, we spill it before
-;;; any register assignments are actually done.  One minor catch is
-;;; that copying from the stack to the stack requires a spare
-;;; register; so we ensure that one register (*STACK-COPY-REGISTER*)
-;;; is free by saving it first and restoring it last.
-(defun adapt-arrangements-between-instructions (predecessor successor
-                                                source-arrangement
-                                                target-arrangement)
-  ;; TODO: pick a register unused in either arrangement if possible.
-  ;; We redirect loads from and stores to the stack copy register to a
-  ;; slot on the stack, and then emit spill and unspill instructions if
-  ;; we found we used the register.
-  (let* ((stack-copy-register *stack-copy-register*)
-         (stack-copy-number (x86-64:register-number stack-copy-register))
-         (stack-copy-slot
-           (first-free-stack-slot source-arrangement target-arrangement))
-         (next-slot (1+ stack-copy-slot))
-         (clobbered-registers (list stack-copy-number))
-         (clobbered-stack-slots '())
-         (loaded-stack-copy-p nil)
-         (stored-stack-copy-p nil))
-    (sicl-utilities:with-collectors ((spills    add-spill-instruction)
-                                     (transfers add-transfer-instruction))
-      (arr:map-attributions
-       (lambda (location target-register target-stack-slot)
-         (multiple-value-bind (source-stack-slot source-register)
-             (arr:find-attribution source-arrangement location)
-           (assert (not (and (null source-stack-slot)
-                             (null source-register))))
-           ;; Redirect loads from the stack copy register.
-           (when (eql source-register stack-copy-number)
-             (setf source-register     nil
-                   source-stack-slot   stack-copy-slot
-                   loaded-stack-copy-p t))
-           (when (eql target-register stack-copy-number)
-             (setf target-register     nil
-                   target-stack-slot   stack-copy-slot
-                   stored-stack-copy-p t))
-           ;; Don't emit anything for no-ops.  Note that we still need
-           ;; to track if a location is always in the stack copy
-           ;; register, so the rewriting logic must be unconditional.
-           (unless (and (eql source-register target-register)
-                        (eql source-stack-slot target-stack-slot))
-             ;; Check that we won't attempt to read from a location we
-             ;; already wrote to.
-             (when (or (member source-register clobbered-registers)
-                       (member source-stack-slot clobbered-stack-slots))
-               ;; If we have spilled, pick a fresh stack slot, then
-               ;; spill to that stack slot.
-               (let ((spill-slot next-slot))
-                 (incf next-slot)
-                 (cond
-                   ((null source-stack-slot)
-                    (add-spill-instruction
-                     (x86-64:save-to-stack-instruction
-                      (aref x86-64:*registers* source-register)
-                      spill-slot)))
-                   (t
-                    ;; Copy from stack to stack.
-                    (add-spill-instruction
-                     (x86-64:load-from-stack-instruction
-                      source-stack-slot stack-copy-register))
-                    (add-spill-instruction
-                     (x86-64:save-to-stack-instruction
-                      stack-copy-register spill-slot))))
-                 (setf source-stack-slot spill-slot
-                       source-register   nil)))
-             (cond
-               ((not (null target-register))
-                (add-transfer-instruction
-                 (if (not (null source-register))
-                     (make-instance 'adapt-assignment-instruction
-                       :inputs  (list (aref x86-64:*registers* source-register))
-                       :outputs (list (aref x86-64:*registers* target-register)))
-                     (x86-64:load-from-stack-instruction
-                      source-stack-slot
-                      (aref x86-64:*registers* target-register))))
-                (push target-register clobbered-registers))
-               ((not (null target-stack-slot))
-                (cond
-                  ((not (null source-register))
-                   (add-transfer-instruction
-                    (x86-64:save-to-stack-instruction
-                     (aref x86-64:*registers* source-register)
-                     target-stack-slot)))
-                  (t
-                   (add-transfer-instruction
-                    (x86-64:load-from-stack-instruction
-                     source-stack-slot stack-copy-register))
-                   (add-transfer-instruction
-                    (x86-64:save-to-stack-instruction
-                     stack-copy-register target-stack-slot))))
-                (push target-stack-slot clobbered-stack-slots))))))
-       target-arrangement)
-      ;; Now thread the generated instructions together.
-      (let ((last-instruction predecessor))
-        (flet ((insert-instruction (instruction)
-                 (mark-as-generated instruction)
-                 (cleavir-ir:insert-instruction-between
-                  instruction last-instruction successor)
-                 (setf last-instruction instruction)))
-          (when loaded-stack-copy-p
-            (insert-instruction
-             (x86-64:save-to-stack-instruction
-              stack-copy-register stack-copy-slot)))
-          (mapc #'insert-instruction (spills))
-          (mapc #'insert-instruction (transfers))
-          (when stored-stack-copy-p
-            (insert-instruction
-             (x86-64:load-from-stack-instruction
-              stack-copy-slot stack-copy-register))))))))
+;;; First, we make a list of parallel assignments which need to be
+;;; performed to adapt between arrangements.
+(defun identify-assignments (target-arrangement source-arrangement)
+  (let ((assignments (make-hash-table :test 'equal)))
+    (arr:map-attributions
+     (lambda (location target-stack target-register)
+       (multiple-value-bind (source-stack source-register)
+           (arr:find-attribution source-arrangement location)
+         (assert (not (and (null source-stack)
+                           (null source-register))))
+         (unless (and (eql target-stack source-stack)
+                      (eql target-register source-register))
+           (setf (gethash (list target-stack target-register)
+                          assignments)
+                 (list source-stack source-register)))))
+     target-arrangement)
+    assignments))
+
+(defstruct assignment-chain
+  (assignments '()))
+
+;;; For some parallel assignments like B <- A; A <- B, we generate the
+;;; sequential assignments C <- A; A <- B; B <- C.
+(defun spill-chain (chain location source)
+  (setf (assignment-chain-assignments chain)
+        (append (list (list 'spill source))
+                (assignment-chain-assignments chain)
+                (list (list location 'spill)))))
+
+;;; The new algorithm for adapting arrangements identifies "chains" of
+;;; assignments which can be performed sequentially.  If a loop is
+;;; found, then it is broken by emitting assignments to a virtual
+;;; SPILL location, which is replaced with a real location when we
+;;; generate code for the adaptation.
+(defun identify-chains (assignments)
+  (let ((chains (make-hash-table :test 'equal))
+        (locations-to-check (alexandria:hash-table-keys assignments)))
+    (flet ((traverse-chain (first-location)
+             ;; Build up a chain by traversing the sources of each
+             ;; assignment.  We either create a new chain or join onto
+             ;; an already existing chain.
+             (loop with chain = (make-assignment-chain)
+                   for location = first-location then source
+                   for source = (gethash location assignments)
+                   for existing-chain = (gethash source chains)
+                   do (alexandria:removef locations-to-check location
+                                          :test #'equal)
+                   when (null source)
+                     do (return chain)
+                   unless (null existing-chain)
+                     do (cond
+                          ;; If a location was already assigned in
+                          ;; this chain, then we have discovered a
+                          ;; loop.
+                          ((eq existing-chain chain)
+                           (spill-chain chain location source))
+                          ;; Otherwise, we found part of a chain that
+                          ;; was not traversed before.  Note that
+                          ;; joining chains cannot possibly form a
+                          ;; loop; as we would have traversed this
+                          ;; part before if the chain looped.
+                          (t
+                           (setf (assignment-chain-assignments existing-chain)
+                                 (append (assignment-chain-assignments chain)
+                                         (assignment-chain-assignments existing-chain)))
+                           ;; Replace all uses of this chain with
+                           ;; the already existing chain.
+                           (maphash (lambda (source other-chain)
+                                      (when (eq chain other-chain)
+                                        (setf (gethash source chains)
+                                              existing-chain)))
+                                    chains)))
+                        (return existing-chain)
+                   do (push (list location source)
+                            (assignment-chain-assignments chain))
+                      (setf (gethash location chains) chain))))
+      (loop until (null locations-to-check)
+            do (traverse-chain (pop locations-to-check)))
+      (remove-duplicates
+       (alexandria:hash-table-values chains)))))
+
+
 
 (defmethod introduce-registers-for-instruction ((instruction adapt-instruction))
   (destructuring-bind (successor)

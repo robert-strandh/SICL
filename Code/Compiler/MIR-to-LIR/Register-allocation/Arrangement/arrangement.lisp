@@ -107,23 +107,23 @@
         (values nil nil)
         (values (stack-slot attribution) (register-number attribution)))))
 
-;;; Call FUNCTION with every lexical location, register number and
-;;; stack slot.
+;;; Call FUNCTION with every lexical location, stack slot and register
+;;; number.
 (defun map-attributions (function arrangement)
   (with-arrangement arrangement
     (dolist (attribution attributions)
       (with-attribution attribution
         (funcall function
                  lexical-location
-                 register-number
-                 stack-slot)))))
+                 stack-slot
+                 register-number)))))
 
 (defun check-arrangement-is-subset (previous next)
   (when (eq previous next)
     (return-from check-arrangement-is-subset))
   (loop for attribution in (attributions next)
         for location = (lexical-location attribution)
-        do (multiple-value-bind (previous-register previous-stack)
+        do (multiple-value-bind (previous-stack previous-register)
                (find-attribution previous location)
              (assert (not (and (null previous-register)
                                (null previous-stack)))
@@ -314,10 +314,11 @@
           (length stack-map)
           (1+ last-used)))))
 
-;;; Return the first register which is unused.
-(defun first-free-register (arrangement)
-  (with-arrangement arrangement
-    (position 1 register-map)))
+;;; Return the first register which is unused by all arrangements.
+(defun free-registers (arrangement &rest arrangements)
+  (reduce #'bit-ior arrangements
+          :key #'register-map
+          :initial-value (register-map arrangement)))
 
 ;;; Destructively modify arrangement by keeping only the arrangements
 ;;; with a lexical location that is a member of LEXICAL-LOCATIONS.

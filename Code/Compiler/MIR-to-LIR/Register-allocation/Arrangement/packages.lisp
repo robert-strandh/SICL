@@ -12,7 +12,7 @@
            #:arrangements-compatible-p
            #:unattributed-register-count
            #:first-stack-slot-past-arrangement
-           #:first-free-register
+           #:free-registers
            #:attribute-stack-slot
            #:attribute-register-for-existing-lexical-location
            #:attribute-register-for-new-lexical-location
