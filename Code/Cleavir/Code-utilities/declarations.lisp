@@ -42,7 +42,6 @@
 ;;; is an abbreviated type specifier.  This is not quite correct,
 ;;; because it could be a symbol introduced by DECLARATION.
 
-;;; FIXME: use specific conditions
 (defun check-declaration-specifier (declaration-specifier)
   (unless (proper-list-p declaration-specifier)
     (error 'declaration-specifier-must-be-proper-list
