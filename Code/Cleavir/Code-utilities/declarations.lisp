@@ -45,7 +45,8 @@
 ;;; FIXME: use specific conditions
 (defun check-declaration-specifier (declaration-specifier)
   (unless (proper-list-p declaration-specifier)
-    (error "declaration specifier must be a proper list"))
+    (error 'declaration-specifier-must-be-proper-list
+           :declaration-specifier declaration-specifier))
   (when (null declaration-specifier)
     (error "declaration specifier can not be nil"))
   (when (eq (car declaration-specifier) 'type)
