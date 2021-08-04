@@ -48,7 +48,7 @@
     (error 'declaration-specifier-must-be-proper-list
            :declaration-specifier declaration-specifier))
   (when (null declaration-specifier)
-    (error "declaration specifier can not be nil"))
+    (error 'declaration-specifier-can-not-be-nil))
   (when (eq (car declaration-specifier) 'type)
     (unless (>= (length declaration-specifier) 2)
       (error "TYPE declaration specifier must have a type specifier"))))
