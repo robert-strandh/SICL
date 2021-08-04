@@ -43,8 +43,8 @@
 (defun register-map-union (register-map-1 register-map-2)
   (bit-ior register-map-1 register-map-2))
 
-(defun find-any-register-in-map (register-map)
-  (position 1 register-map))
+(defun find-any-register-in-map (register-map &key (start 0))
+  (position 1 register-map :start start))
 
 (defun register-map-empty-p (register-map)
   (null (find-any-register-in-map register-map)))
