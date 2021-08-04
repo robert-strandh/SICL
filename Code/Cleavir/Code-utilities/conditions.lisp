@@ -35,6 +35,10 @@
     :initarg :declaration-specifier
     :reader declaration-specifier)))
 
+(define-condition declaration-specifier-can-not-be-nil
+    (program-error code-condition acclimation:condition)
+  ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;  Lambda list conditions.
