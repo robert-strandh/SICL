@@ -51,7 +51,8 @@
     (error 'declaration-specifier-can-not-be-nil))
   (when (eq (car declaration-specifier) 'type)
     (unless (>= (length declaration-specifier) 2)
-      (error "TYPE declaration specifier must have a type specifier"))))
+      (error 'type-declaration-specifier-must-have-a-type-specifier
+             :declaration-specifier declaration-specifier))))
 
 ;;; Take a single declaration specifier and return a list of
 ;;; canonicalized declaration specifiers.
