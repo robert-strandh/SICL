@@ -27,6 +27,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;;  Declaration conditions.
+
+(define-condition declaration-specifier-must-be-proper-list
+    (program-error code-condition acclimation:condition)
+  ((%declaration-specifier
+    :initarg :declaration-specifier
+    :reader declaration-specifier)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;;  Lambda list conditions.
 
 (define-condition lambda-list-must-be-list
