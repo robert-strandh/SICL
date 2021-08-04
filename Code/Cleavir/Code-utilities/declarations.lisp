@@ -28,19 +28,19 @@
 ;;;
 ;;;   * Abbreviations for TYPE declaration specifiers are expanded so
 ;;;     that they contain the word TYPE.
-;;; 
+;;;
 ;;;   * A declaration specifier with an empty list of entities is
 ;;;     removed.
-;;; 
+;;;
 ;;; We do NOT check whether the type in a TYPE declaration specifier
 ;;; is a valid type.
-;;; 
+;;;
 ;;; FIXME:
 ;;; At the moment, we assume that a declaration specifier where the
 ;;; CAR is not one of the symbols DECLARATION, DYNAMIC-EXTENT, FTYPE,
 ;;; IGNORE, IGNORABLE, INLINE, NOTINLINE, OPTIMIZE, SPECIAL, or TYPE
 ;;; is an abbreviated type specifier.  This is not quite correct,
-;;; because it could be a symbol introduced by DECLARATION.  
+;;; because it could be a symbol introduced by DECLARATION.
 
 ;;; FIXME: use specific conditions
 (defun check-declaration-specifier (declaration-specifier)

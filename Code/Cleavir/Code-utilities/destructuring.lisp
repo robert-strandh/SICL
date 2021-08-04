@@ -679,7 +679,7 @@
                (declare (ignore ,@ignored-variables))
                ,@declarations
                ,@forms)))))))
-        
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; PARSE-COMPILER-MACRO
@@ -715,7 +715,7 @@
            (let* ,bindings
              (declare (ignore ,@ignored-variables))
              ,@body))))))
-        
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; PARSE-DEFTYPE
