@@ -39,6 +39,12 @@
     (program-error code-condition acclimation:condition)
   ())
 
+(define-condition type-declaration-specifier-must-have-a-type-specifier
+    (program-error code-condition acclimation:condition)
+  ((%declaration-specifier
+    :initarg :declaration-specifier
+    :reader declaration-specifier)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;  Lambda list conditions.
