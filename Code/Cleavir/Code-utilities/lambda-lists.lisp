@@ -4,8 +4,8 @@
 ;;;
 ;;; Lambda list utilities.
 
-;;; There is much to say about lambda lists.  
-;;; 
+;;; There is much to say about lambda lists.
+;;;
 ;;; There are 10 different types of lambda lists and they vary both
 ;;; with respect to syntax and semantics.  It gets pretty messy in
 ;;; fact.
@@ -26,7 +26,7 @@
 ;;; an implementation-specific lambda list keyword means, nor how it
 ;;; is used or even in which type of lambda list it is allowed.  There
 ;;; is also no indication as to whether implementation-specific lambda
-;;; list keywords must begin with `&'.  
+;;; list keywords must begin with `&'.
 ;;;
 ;;; The lambda list keywords that are recognized by the CLHS are:
 ;;; &allow-other-keys, &aux, &body, &environment, &key, &optional,
@@ -58,7 +58,7 @@
 ;;; lambda list it occurs in.  Thus &allow-other-keys always has arity
 ;;; 0 (zero), &rest, &body, &whole, and &environment always have arity
 ;;; 1 (one), and the remaining ones (&aux, &key, and &optional) can
-;;; take any number of items, so have arbitrary arity.  
+;;; take any number of items, so have arbitrary arity.
 ;;;
 ;;; Another piece of relatively good news is that the order in which
 ;;; lambda list keywords can occur in a lambda list is independent of
@@ -71,7 +71,7 @@
 ;;; allowed, must appear first in the lambda list.  That is, not only
 ;;; first as in the first lambda list keyword, but as the first item
 ;;; in the lambda list, before the list of required variables.  This
-;;; rule messes up syntax checking a bit.  
+;;; rule messes up syntax checking a bit.
 
 ;;; A list of lambda list keywords in the order that they can occur in
 ;;; a lambda list (except &environment, which can occur anywhere, and
@@ -138,7 +138,7 @@
 ;;;    be dotted in the first place.
 ;;;
 ;;;  * We do not check the nature of the arguments to the lambda list
-;;;    keywords.  The parser for each type of lambda list must do that. 
+;;;    keywords.  The parser for each type of lambda list must do that.
 (defun check-lambda-list-keywords (lambda-list keywords)
   ;; We assume that KEYWORDS is a subset of LAMBDA-LIST-KEYWORDS, in
   ;; other words that we are given only valid lambda list keywords as
@@ -153,12 +153,12 @@
 
          ;; All symbols in the lambda list that are also lambda-list
          ;; keywords as defined by the system, in the order that they
-         ;; occur in the lambda list. 
+         ;; occur in the lambda list.
          (real (remove-if-not (lambda (x) (member x lambda-list-keywords))
                               potential))
          ;; All symbols in the lambda list that look like they might
          ;; be lambda-list keywords, but that are not lambda list
-         ;; keywords defined by the system, in any old order. 
+         ;; keywords defined by the system, in any old order.
          (suspect (set-difference potential lambda-list-keywords))
          ;; All symbols in the lambda list that are also lambda-list
          ;; keywords as defined by the system, but that are not in the
@@ -223,7 +223,7 @@
                (not (eq (car lambda-list) '&whole)))
       (error 'whole-must-appear-first
              :code lambda-list))))
-                     
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; A pattern is either:
@@ -384,7 +384,7 @@
         for rest = (nthcdr start lambda-list) then (cdr rest)
         for required = (car rest)
         collect (funcall item-parser required)))
-  
+
 ;;; Parse an ordinary &optional item.
 ;;; We canonicalize it a bit, so that instead of having the original
 ;;; 4 different possible forms:
@@ -437,7 +437,7 @@
 ;;; by replacing (var) by var.
 (defun parse-defgeneric-optional (optional)
   (if (consp optional)
-      (progn 
+      (progn
         (unless (and (null (cdr optional))
                      (symbolp (car optional))
                      (not (constantp (car optional))))
@@ -524,8 +524,8 @@
 ;;;   * ((keyword var) init-form)
 ;;;   * ((keyword var) init-form supplied-p-parameter)
 ;;;
-;;; by replacing var or (var) by ((:var var) nil), 
-;;; by replacing (var init-form) by ((:var var) init-form), and 
+;;; by replacing var or (var) by ((:var var) nil),
+;;; by replacing (var init-form) by ((:var var) init-form), and
 ;;; by replacing (var init-form supplied-p-parameter) by
 ;;; ((:var var) init-form supplied-p-parameter).
 (defun parse-ordinary-key (key)
@@ -574,7 +574,7 @@
 ;;; by replacing var and (var) by ((:var var))
 (defun parse-defgeneric-key (key)
   (if (consp key)
-      (progn 
+      (progn
         (unless (and (null (cdr key))
                      (or (and (symbolp (car key))
                               (not (constantp (car key))))
@@ -613,8 +613,8 @@
 ;;;   * ((keyword pattern) init-form)
 ;;;   * ((keyword pattern) init-form supplied-p-parameter)
 ;;;
-;;; by replacing var or (var) by ((:var var) <default>), 
-;;; by replacing (var init-form) by ((:var var) init-form), and 
+;;; by replacing var or (var) by ((:var var) <default>),
+;;; by replacing (var init-form) by ((:var var) init-form), and
 ;;; by replacing (var init-form supplied-p-parameter) by
 ;;; ((:var var) init-form supplied-p-parameter).
 (defun parse-destructuring/deftype-key (key default)
@@ -666,14 +666,14 @@
         (t
          (values :none positions))))
 
-;;; Parse an &aux item.  
-;;; We canonicalize it, so that instead of having the original 
+;;; Parse an &aux item.
+;;; We canonicalize it, so that instead of having the original
 ;;; 3 different possible forms:
 ;;;
 ;;;   * var
 ;;;   * (var)
 ;;;   * (var intitform)
-;;; 
+;;;
 ;;; we boil it down to just 1:
 ;;;
 ;;;   * (var initform)
@@ -788,7 +788,7 @@
 ;;; Compute the position of each of the allowed keywords
 ;;; that appears in the lambda list, and add the length
 ;;; of the lambda list (i.e., the number of CONS cells it has)
-;;; at the end of the computed list. 
+;;; at the end of the computed list.
 (defun compute-keyword-positions (lambda-list allowed)
   (loop for rest = lambda-list then (cdr rest)
         for i from 0
@@ -822,7 +822,7 @@
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
-        
+
 (defun parse-generic-function-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys)))
     (check-lambda-list-proper lambda-list)
@@ -846,7 +846,7 @@
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
-        
+
 (defun parse-specialized-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys &aux)))
     (check-lambda-list-proper lambda-list)
@@ -872,7 +872,7 @@
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
-        
+
 (defun parse-macro-lambda-list (lambda-list)
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
@@ -904,7 +904,7 @@
                                                   2 (car positions)
                                                   #'parse-pattern))))
                   (if (eq (car lambda-list) '&environment)
-                      (progn 
+                      (progn
                         (setf (values (environment result) positions)
                               (parse-environment lambda-list positions))
                         (setf (required result)
@@ -961,7 +961,7 @@
                                                   2 (car positions)
                                                   #'parse-pattern))))
                   (if (eq (car lambda-list) '&environment)
-                      (progn 
+                      (progn
                         (setf (values (environment result) positions)
                               (parse-environment lambda-list positions))
                         (setf (required result)
@@ -1086,7 +1086,7 @@
               result))))))
 
 ;;; FIXME: there is considerable code duplication between this one
-;;; and the macro lambda list. 
+;;; and the macro lambda list.
 (defun parse-deftype-lambda-list  (lambda-list)
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
@@ -1118,7 +1118,7 @@
                                                   2 (car positions)
                                                   #'parse-pattern))))
                   (if (eq (car lambda-list) '&environment)
-                      (progn 
+                      (progn
                         (setf (values (environment result) positions)
                               (parse-environment lambda-list positions))
                         (setf (required result)
@@ -1175,7 +1175,7 @@
                                                   2 (car positions)
                                                   #'parse-pattern))))
                   (if (eq (car lambda-list) '&environment)
-                      (progn 
+                      (progn
                         (setf (values (environment result) positions)
                               (parse-environment lambda-list positions))
                         (setf (required result)
@@ -1243,7 +1243,7 @@
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
-        
+
 (defun parse-define-modify-macro-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest)))
     (check-lambda-list-proper lambda-list)
@@ -1289,7 +1289,7 @@
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
-        
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; From a lambda list, exctract a list of all the varibles
@@ -1365,7 +1365,7 @@
 ;;;
 ;;; 1. Each lambda list must have the same number of required
 ;;;    parameters.
-;;;   
+;;;
 ;;; 2. Each lambda list must have the same number of optional
 ;;;    parameters.  Each method can supply its own default for an
 ;;;    optional parameter.
@@ -1390,7 +1390,7 @@
 ;;;    keyword arguments may be mentioned in the call to the generic
 ;;;    function.
 ;;;
-;;; 6. The use of &aux need not be consistent across methods. 
+;;; 6. The use of &aux need not be consistent across methods.
 
 ;;; Check rule number 1.
 (defun congruent-required-p (lambda-list-1 lambda-list-2)
@@ -1417,13 +1417,13 @@
            (or (not (eq (rest-body lambda-list-2) :none))
                (not (eq (keys lambda-list-2) :none))))))
 
-(defun same-keys-accepted-p 
+(defun same-keys-accepted-p
     (generic-function-lambda-list method-lambda-list)
   (or (eq (keys generic-function-lambda-list) :none)
       (null (set-exclusive-or
              (keys generic-function-lambda-list)
              (keys method-lambda-list)
-             :test #'eq 
+             :test #'eq
              :key #'caar))
       (not (eq (allow-other-keys method-lambda-list) :none))
       (and (not (eq (rest-body method-lambda-list) :none))
