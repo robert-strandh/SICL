@@ -29,6 +29,12 @@
 ;;;
 ;;;  Declaration conditions.
 
+(define-condition declaration-specifiers-must-be-proper-list
+    (program-error code-condition acclimation:condition)
+  ((%declaration-specifiers
+    :initarg :declaration-specifiers
+    :reader declaration-specifiers)))
+
 (define-condition declaration-specifier-must-be-proper-list
     (program-error code-condition acclimation:condition)
   ((%declaration-specifier
