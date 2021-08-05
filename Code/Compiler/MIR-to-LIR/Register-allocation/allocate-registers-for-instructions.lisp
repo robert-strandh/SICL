@@ -721,6 +721,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; CONSTANT-ARGUMENT-INSTRUCTION
+;;;
+;;; We note that, assuming that only one ARGUMENT instruction loads a
+;;; constant argument index, the register attributed to the bogus
+;;; argument location will be free to use.
+
+(defmethod process-outputs
+    (predecessor (instruction constant-argument-instruction))
+  predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction constant-argument-instruction) arrangement)
+  (arr:attribute-register-for-new-lexical-location
+   arrangement
+   (first (cleavir-ir:outputs instruction))
+   (x86-64:make-register-map (register instruction)))
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; INITIALIZE-RETURN-VALUES-INSTRUCTION
 
 (defmethod process-outputs
@@ -829,10 +849,10 @@
                               do (process-pair instruction successor))))))
     (let* ((outputs (cleavir-ir:outputs mir))
            (static-environment-location (first outputs))
-           (dynamic-environment-location (second outputs)))
-      (setf (output-arrangement mir)
+           (dynamic-environment-location (second outputs))
+           (arrangement
             (make-instance 'arr:arrangement
-              :register-map x86-64:*initial*
+              :register-map (x86-64:copy-register-map x86-64:*initial*)
               :stack-map #*
               :attributions
               (list
@@ -843,5 +863,12 @@
                (make-instance 'arr:attribution
                  :lexical-location dynamic-environment-location
                  :stack-slot nil
-                 :register-number (x86-64:register-number x86-64:*dynamic-environment*)))))
+                 :register-number (x86-64:register-number x86-64:*dynamic-environment*))))))
+      (loop for location in *bogus-argument-locations*
+            for register in x86-64:*argument-registers*
+            do (arr:attribute-register-for-new-lexical-location
+                arrangement
+                location
+                (x86-64:make-register-map register)))
+      (setf (output-arrangement mir) arrangement)
       (process-pair mir (cleavir-ir:first-successor mir)))))

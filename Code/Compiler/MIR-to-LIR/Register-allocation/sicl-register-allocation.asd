@@ -21,6 +21,7 @@
    (:file "spill-unspill")
    (:file "allocate-register")
    (:file "introduce-registers")
+   (:file "argument-liveness")
    (:file "adapt-arrangement")
    (:file "allocate-registers-for-instructions")
    (:file "register-allocation")))
