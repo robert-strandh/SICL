@@ -82,7 +82,8 @@
 (defun canonicalize-declaration-specifiers (declaration-specifiers
                                             alien-identifiers)
   (unless (proper-list-p declaration-specifiers)
-    (error "declaration specifiers must be a proper list"))
+    (error 'declaration-specifiers-must-be-proper-list
+           :declaration-specifiers declaration-specifiers))
   (reduce #'append
           (mapcar (lambda (spec)
                     (canonicalize-declaration-specifier
