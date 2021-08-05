@@ -24,8 +24,9 @@
         do (setf (gethash instruction *instruction-table*) t)))
 
 (defun next-instruction-layer (layer)
-  (loop for instruction in layer
-        append (cleavir-ir:successors instruction)))
+  (remove-duplicates
+   (loop for instruction in layer
+         append (cleavir-ir:successors instruction))))
 
 (defun compute-layers (enter-instruction)
   (let ((longest-path (find-longest-simple-path enter-instruction)))

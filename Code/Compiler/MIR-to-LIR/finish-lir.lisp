@@ -1,8 +1,9 @@
 (cl:in-package #:sicl-mir-to-lir)
 
 ;;; At this point in register allocation, we nearly have a LIR graph.
-;;; However, some instructions need to be introduced for: - calling
-;;; unnamed functions.
+;;; However, some instructions need to be introduced for:
+;;; - calling unnamed functions
+;;; - argument and return values
 
 (defgeneric finish-lir-for-instruction (instruction))
 
