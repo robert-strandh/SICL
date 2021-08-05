@@ -55,8 +55,8 @@
 
 ;;; Take a single declaration specifier and return a list of
 ;;; canonicalized declaration specifiers.
-(defun canonicalize-declaration-specifier (declaration-specifier
-                                           alien-identifiers)
+(defun canonicalize-declaration-specifier
+    (declaration-specifier alien-identifiers)
   (cond ((member (car declaration-specifier)
                  '(declaration dynamic-extent ignore ignorable
                    inline notinline special))
@@ -79,8 +79,8 @@
          (loop for entity in (cdr declaration-specifier)
                collect `(type ,(car declaration-specifier) ,entity)))))
 
-(defun canonicalize-declaration-specifiers (declaration-specifiers
-                                            alien-identifiers)
+(defun canonicalize-declaration-specifiers
+    (declaration-specifiers alien-identifiers)
   (unless (proper-list-p declaration-specifiers)
     (error 'declaration-specifiers-must-be-proper-list
            :declaration-specifiers declaration-specifiers))
