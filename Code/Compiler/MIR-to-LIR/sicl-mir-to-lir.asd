@@ -13,4 +13,5 @@
   ((:file "packages")
    (:file "finish-lir")
    (:file "call-instruction")
+   (:file "arguments")
    (:file "mir-to-lir")))
