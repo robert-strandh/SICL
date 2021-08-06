@@ -829,6 +829,14 @@
 (defun finalize-rest-body (rest-body)
   (if (eq rest-body :none) '() (list (list '&rest rest-body))))
 
+(defun finalize-keys (keys allow-other-keys)
+  (if (eq keys :none)
+      '()
+      (list (append (cons '&key keys)
+                    (if (null allow-other-keys)
+                        '()
+                        (list '&allow-other-keys))))))
+
 (defun parse-generic-function-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys)))
     (check-lambda-list-proper lambda-list)
@@ -854,12 +862,7 @@
       (append (list required)
               (finalize-optionals optionals)
               (finalize-rest-body rest-body)
-              (if (eq keys :none)
-                  '()
-                  (list (append (cons '&key keys)
-                                (if (null allow-other-keys)
-                                    '()
-                                    (list '&allow-other-keys)))))))))
+              (finalize-keys keys allow-other-keys)))))
 
 (defun parse-specialized-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys &aux)))
