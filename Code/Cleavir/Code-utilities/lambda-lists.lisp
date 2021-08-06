@@ -826,6 +826,9 @@
 (defun finalize-optionals (optionals)
   (if (eq optionals :none) '() (list (cons '&optional optionals))))
 
+(defun finalize-rest-body (rest-body)
+  (if (eq rest-body :none) '() (list (list '&rest rest-body))))
+
 (defun parse-generic-function-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys)))
     (check-lambda-list-proper lambda-list)
@@ -850,7 +853,7 @@
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       (append (list required)
               (finalize-optionals optionals)
-              (if (eq rest-body :none) '() (list (list '&rest rest-body)))
+              (finalize-rest-body rest-body)
               (if (eq keys :none)
                   '()
                   (list (append (cons '&key keys)
