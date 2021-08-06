@@ -872,26 +872,30 @@
     (check-lambda-list-proper lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
-          (result (make-instance 'lambda-list)))
-      (setf (required result)
+          required optionals rest-body keys allow-other-keys aux)
+      (setf required
             (parse-all-required
              lambda-list 0 (car positions) #'parse-specialized-required))
-      (setf (values (optionals result) positions)
+      (setf (values optionals positions)
             (parse-all-optionals
              lambda-list positions #'parse-ordinary-optional))
-      (setf (values (rest-body result) positions)
+      (setf (values rest-body positions)
             (parse-rest/body lambda-list positions))
-      (setf (values (keys result) positions)
+      (setf (values keys positions)
             (parse-all-keys
              lambda-list positions #'parse-ordinary-key))
-      (setf (values (allow-other-keys result) positions)
+      (setf (values allow-other-keys positions)
             (parse-allow-other-keys lambda-list positions))
-      (setf (values (aux result) positions)
+      (setf (values aux positions)
             (parse-all-aux lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
-      result)))
+      (append (list required)
+              (finalize-optionals optionals)
+              (finalize-rest-body rest-body)
+              (finalize-keys keys allow-other-keys)
+              (finalize-aux aux)))))
 
 (defun parse-macro-lambda-list (lambda-list)
   (multiple-value-bind (length structure) (list-structure lambda-list)
