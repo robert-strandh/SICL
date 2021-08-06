@@ -837,6 +837,9 @@
                         '()
                         (list '&allow-other-keys))))))
 
+(defun finalize-aux (aux)
+  (if (eq aux :none) '() (list (cons '&aux aux))))
+
 (defun parse-generic-function-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys)))
     (check-lambda-list-proper lambda-list)
