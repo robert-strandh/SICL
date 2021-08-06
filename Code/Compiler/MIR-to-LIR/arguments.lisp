@@ -8,10 +8,11 @@
   ;; right location at runtime.
   (destructuring-bind (input)
       (cleavir-ir:inputs instruction)
-    ;; As per section 27.7 of the SICL specification, we will
-    ;; arrange for a prologue to copy the arguments stored in
-    ;; registers to the stack, and to adjust the frame pointer.
-    ;; Really, this sequence should be MOV Result, [RSP - Index * 8]
+    ;; As per section 27.7 of the SICL specification, we will arrange
+    ;; for a prologue to copy the arguments stored in registers to the
+    ;; stack, and to adjust the frame pointer.  Really, this sequence
+    ;; should be MOV Result, [RSP - Index * 4].  Note that the index
+    ;; is a boxed fixnum, so we divide the scale by 2 to "unbox" it.
     (destructuring-bind (result)
         (cleavir-ir:outputs instruction)
       (cleavir-ir:insert-instruction-before
@@ -21,7 +22,7 @@
        instruction)
       (cleavir-ir:insert-instruction-before
        (make-instance 'cleavir-ir:fixnum-multiply-instruction
-         :inputs (list result (cleavir-ir:make-immediate-input -8))
+         :inputs (list result (cleavir-ir:make-immediate-input -4))
          :outputs (list result))
        instruction)
       (cleavir-ir:insert-instruction-before
