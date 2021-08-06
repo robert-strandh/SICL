@@ -6,14 +6,14 @@
 ;;; We assume that an argument is only used once, which is true of the
 ;;; current argument parsing code.
 
-(defclass constant-argument-instruction (cleavir-ir:instruction)
-  ((register :initarg :register :reader register)))
-
 (defvar *bogus-argument-locations*)
+(defvar *bogus-argument-count-location*)
 
 (defun make-bogus-argument-locations ()
   (loop for register in x86-64:*argument-registers*
         for n from 1
         collect (cleavir-ir:make-lexical-location
-                 (format nil "~:r argument" n))))
+                 (format nil "~:r-argument" n))))
 
+(defun make-bogus-argument-count-location ()
+  (cleavir-ir:make-lexical-location "argument-count"))

@@ -58,7 +58,7 @@
 (defparameter *xmm* #*00000000000000001111111111111111)
 (defparameter *gpr* #*11111111111111110000000000000000)
 
-(defparameter *initial* #*01000000001000000000000000000000)
+(defparameter *initial* #*01000000011000000000000000000000)
 
 (defparameter *argument-registers*
   (list *rdi* *rsi* *rdx* *rcx* *r8*))

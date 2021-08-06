@@ -709,6 +709,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; ARGUMENT-INSTRUCTION
+;;;
+;;; Note that we have eliminated non-constant ARGUMENT instructions,
+;;; as well as all COMPUTE-ARGUMENT-COUNT instructions.
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:argument-instruction))
@@ -718,26 +721,6 @@
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:argument-instruction) arrangement)
   (compute-output-arrangement-default instruction arrangement))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; CONSTANT-ARGUMENT-INSTRUCTION
-;;;
-;;; We note that, assuming that only one ARGUMENT instruction loads a
-;;; constant argument index, the register attributed to the bogus
-;;; argument location will be free to use.
-
-(defmethod process-outputs
-    (predecessor (instruction constant-argument-instruction))
-  predecessor)
-
-(defmethod compute-output-arrangement
-    ((instruction constant-argument-instruction) arrangement)
-  (arr:attribute-register-for-new-lexical-location
-   arrangement
-   (first (cleavir-ir:outputs instruction))
-   (x86-64:make-register-map (register instruction)))
-  arrangement)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -863,7 +846,11 @@
                (make-instance 'arr:attribution
                  :lexical-location dynamic-environment-location
                  :stack-slot nil
-                 :register-number (x86-64:register-number x86-64:*dynamic-environment*))))))
+                 :register-number (x86-64:register-number x86-64:*dynamic-environment*))
+               (make-instance 'arr:attribution
+                 :lexical-location *bogus-argument-count-location*
+                 :stack-slot nil
+                 :register-number (x86-64:register-number x86-64:*argument-count*))))))
       (loop for location in *bogus-argument-locations*
             for register in x86-64:*argument-registers*
             do (arr:attribute-register-for-new-lexical-location

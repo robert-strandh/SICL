@@ -65,15 +65,23 @@
     ((instruction cleavir-ir:argument-instruction))
   (destructuring-bind (index)
       (cleavir-ir:inputs instruction)
+    ;; Note that the input is a boxed fixnum, so we have to scale
+    ;; everything down by 2.
     (when (and (typep index 'cleavir-ir:immediate-input)
                (< (cleavir-ir:value index)
-                  (length x86-64:*argument-registers*)))
-      (let ((value (cleavir-ir:value index)))
+                  (* 2 (length x86-64:*argument-registers*))))
+      (let ((value (floor (cleavir-ir:value index) 2)))
         (change-class instruction
-          'constant-argument-instruction
-          :register (nth value x86-64:*argument-registers*))
+          'cleavir-ir:assignment-instruction)
         (setf (cleavir-ir:inputs instruction)
               (list (nth value *bogus-argument-locations*)))))))
+
+(defmethod preprocess-instruction
+    ((instruction cleavir-ir:compute-argument-count-instruction))
+  (change-class instruction
+                'cleavir-ir:assignment-instruction)
+  (setf (cleavir-ir:inputs instruction)
+        (list *bogus-argument-count-location*)))
 
 (defun preprocess-instructions (enter-instruction)
   (cleavir-ir:map-local-instructions

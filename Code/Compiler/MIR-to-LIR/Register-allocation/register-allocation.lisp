@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-register-allocation)
 
 (defun do-register-allocation (enter-instruction)
-  (let ((*bogus-argument-locations* (make-bogus-argument-locations)))
+  (let ((*bogus-argument-locations* (make-bogus-argument-locations))
+        (*bogus-argument-count-location* (make-bogus-argument-count-location)))
     (preprocess-instructions enter-instruction)
     (let ((back-arcs (find-back-arcs enter-instruction))
           (*input-pools* (make-hash-table :test #'eq))
