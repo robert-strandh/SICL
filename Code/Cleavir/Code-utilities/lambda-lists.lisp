@@ -823,29 +823,40 @@
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
 
+(defun finalize-optionals (optionals)
+  (if (eq optionals :none) '() (list (cons '&optional optionals))))
+
 (defun parse-generic-function-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys)))
     (check-lambda-list-proper lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
-          (result (make-instance 'lambda-list)))
-      (setf (required result)
+          required optionals rest-body keys allow-other-keys)
+      (setf required
             (parse-all-required
              lambda-list 0 (car positions) #'parse-ordinary-required))
-      (setf (values (optionals result) positions)
+      (setf (values optionals positions)
             (parse-all-optionals
              lambda-list positions #'parse-defgeneric-optional))
-      (setf (values (rest-body result) positions)
+      (setf (values rest-body positions)
             (parse-rest/body lambda-list positions))
-      (setf (values (keys result) positions)
+      (setf (values keys positions)
             (parse-all-keys
              lambda-list positions #'parse-defgeneric-key))
-      (setf (values (allow-other-keys result) positions)
+      (setf (values allow-other-keys positions)
             (parse-allow-other-keys lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
-      result)))
+      (append (list required)
+              (finalize-optionals optionals)
+              (if (eq rest-body :none) '() (list (list '&rest rest-body)))
+              (if (eq keys :none)
+                  '()
+                  (list (append (cons '&key keys)
+                                (if (null allow-other-keys)
+                                    '()
+                                    (list '&allow-other-keys)))))))))
 
 (defun parse-specialized-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys &aux)))
