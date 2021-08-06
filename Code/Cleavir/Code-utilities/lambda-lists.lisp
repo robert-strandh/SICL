@@ -797,6 +797,23 @@
         when (member (car rest) allowed)
           collect i))
 
+(defun finalize-optionals (optionals)
+  (if (eq optionals :none) '() (list (cons '&optional optionals))))
+
+(defun finalize-rest-body (rest-body)
+  (if (eq rest-body :none) '() (list (list '&rest rest-body))))
+
+(defun finalize-keys (keys allow-other-keys)
+  (if (eq keys :none)
+      '()
+      (list (append (cons '&key keys)
+                    (if (null allow-other-keys)
+                        '()
+                        (list '&allow-other-keys))))))
+
+(defun finalize-aux (aux)
+  (if (eq aux :none) '() (list (cons '&aux aux))))
+
 (defun parse-ordinary-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys &aux)))
     (check-lambda-list-proper lambda-list)
@@ -822,23 +839,6 @@
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
-
-(defun finalize-optionals (optionals)
-  (if (eq optionals :none) '() (list (cons '&optional optionals))))
-
-(defun finalize-rest-body (rest-body)
-  (if (eq rest-body :none) '() (list (list '&rest rest-body))))
-
-(defun finalize-keys (keys allow-other-keys)
-  (if (eq keys :none)
-      '()
-      (list (append (cons '&key keys)
-                    (if (null allow-other-keys)
-                        '()
-                        (list '&allow-other-keys))))))
-
-(defun finalize-aux (aux)
-  (if (eq aux :none) '() (list (cons '&aux aux))))
 
 (defun parse-generic-function-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &key &allow-other-keys)))
