@@ -2,7 +2,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Reader programming
+;;; Reader programming.
 
 (defparameter *io-readtable* (copy-readtable))
 
@@ -15,7 +15,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Printer programming
+;;; Printer programming.
 
 (defgeneric save-info (object)
   (:method-combination append :most-specific-last))
@@ -25,10 +25,10 @@
     (pprint-logical-block (stream nil :prefix "[" :suffix "]")
       (format stream "~s ~2i" (class-name (class-of obj)))
       (loop for info in (reverse (save-info obj))
-	    do (format stream
-		       "~_~s ~_~W "
-		       (car info)
-		       (funcall (cadr info) obj))))))
+            do (format stream
+                       "~_~s ~_~W "
+                       (car info)
+                       (funcall (cadr info) obj))))))
 
 (defmacro define-save-info (type &body save-info)
   `(progn
@@ -43,7 +43,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; I/O
+;;; I/O.
 
 (define-condition model-condition (error) ())
 
@@ -64,7 +64,7 @@
   (with-open-file (stream filename :direction :input)
     (let* ((version (read-line stream)))
       (assert (member version allowed-version-names :test #'string=)
-	      () 'unknown-file-version)
+              () 'unknown-file-version)
       (let ((*read-eval* nil)
             (*readtable* *io-readtable*))
         (read stream)))))
