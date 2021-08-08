@@ -80,6 +80,7 @@
            #:*ordinary-canonicalizers*
            #:*specialized-canonicalizers*
            #:*generic-function-canonicalizers*
+           #:*defsetf-canonicalizers*
            #:canonicalize-lambda-list
            #:canonicalize-ordinary-lambda-list
            #:canonicalize-specialized-lambda-list
