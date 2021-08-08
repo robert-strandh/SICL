@@ -118,7 +118,7 @@
     (&optional . ,#'parse-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
-    (&allow-other-keys . nil)
+    (&allow-other-keys . ,#'identity)
     (&aux . ,#'parse-aux)))
 
 (defparameter *specialized-canonicalizers*
@@ -126,7 +126,7 @@
     (&optional . ,#'parse-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
-    (&allow-other-keys . nil)
+    (&allow-other-keys . ,#'identity)
     (&aux . ,#'parse-aux)))
 
 (defun parse-lambda-list-no-whole (lambda-list positions)
