@@ -80,4 +80,5 @@
            #:*ordinary-canonicalizers*
            #:canonicalize-lambda-list
            #:canonicalize-ordinary-lambda-list
-           #:extract-required))
+           #:extract-required
+           #:extract-named-group))
