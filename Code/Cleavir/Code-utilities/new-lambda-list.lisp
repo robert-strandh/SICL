@@ -118,7 +118,8 @@
     (&optional . ,#'parse-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
-    (&allow-other-keys . nil)))
+    (&allow-other-keys . nil)
+    (&aux . ,#'parse-aux)))
 
 (defun parse-lambda-list-no-whole (lambda-list positions)
   (loop for start = 0 then end
