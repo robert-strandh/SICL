@@ -71,4 +71,13 @@
            #:malformed-destructuring-tree
            #:malformed-aux
            #:malformed-lambda-list-pattern
-           #:required-must-be-variable))
+           #:required-must-be-variable
+           ;; From new lambda-list canonicalizers
+           #:intrinsic-feature
+           #:*intrinsic-features*
+           #:canonicalize-ordinary-required
+           #:canonicalize-ordinary-rest
+           #:*ordinary-canonicalizers*
+           #:canonicalize-lambda-list
+           #:canonicalize-ordinary-lambda-list
+           #:extract-required))
