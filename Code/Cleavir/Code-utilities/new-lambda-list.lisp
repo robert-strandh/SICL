@@ -164,6 +164,9 @@
 (defun canonicalize-ordinary-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *ordinary-canonicalizers*))
 
+(defun canonicalize-specialized-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *specialized-canonicalizers*))
+
 (defun extract-required (canonicalized-lambda-list)
   (loop with keywords = (intrinsic-keywords)
         for group in canonicalized-lambda-list
