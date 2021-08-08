@@ -78,6 +78,7 @@
            #:canonicalize-ordinary-required
            #:canonicalize-ordinary-rest
            #:*ordinary-canonicalizers*
+           #:*specialized-canonicalizers*
            #:canonicalize-lambda-list
            #:canonicalize-ordinary-lambda-list
            #:extract-required
