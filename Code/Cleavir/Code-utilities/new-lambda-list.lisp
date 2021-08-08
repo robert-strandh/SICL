@@ -210,6 +210,9 @@
 (defun canonicalize-generic-function-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *generic-function-canonicalizers*))
 
+(defun canonicalize-defsetf-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *defsetf-canonicalizers*))
+
 (defun extract-required (canonicalized-lambda-list)
   (loop with keywords = (intrinsic-keywords)
         for group in canonicalized-lambda-list
