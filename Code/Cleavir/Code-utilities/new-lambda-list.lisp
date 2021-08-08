@@ -149,6 +149,14 @@
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'parse-aux)))
 
+(defparameter *defsetf-canonicalizers*
+  `((nil . ,#'canonicalize-ordinary-required)
+    (&environment . ,#'canonicalize-environment)
+    (&optional . ,#'parse-ordinary-optional)
+    (&rest . ,#'canonicalize-ordinary-rest)
+    (&key . ,#'parse-ordinary-key)
+    (&allow-other-keys . ,#'identity)))
+
 (defun parse-lambda-list-no-whole (lambda-list positions)
   (loop for start = 0 then end
         for end in positions
