@@ -121,6 +121,13 @@
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'parse-aux)))
 
+(defparameter *generic-function-canonicalizers*
+  `((nil . ,#'canonicalize-ordinary-required)
+    (&optional . ,#'parse-defgeneric-optional)
+    (&rest . ,#'canonicalize-ordinary-rest)
+    (&key . ,#'parse-defgeneric-key)
+    (&allow-other-keys . ,#'identity)))
+
 (defparameter *specialized-canonicalizers*
   `((nil . ,#'parse-specialized-required)
     (&optional . ,#'parse-ordinary-optional)
