@@ -137,6 +137,18 @@
 (defun intrinsic-keywords ()
   (mapcar #'lambda-list-keyword *intrinsic-features*))
 
+(defun canonicalize-groups (groups canonicalizers)
+  (loop with keywords = (intrinsic-keywords)
+        for group in groups
+        collect
+        (if (or (null group)
+                (not (member (first group) keywords :test #'eq)))
+            (mapcar (cdr (assoc nil canonicalizers :test #'eq))
+                    group)
+            (cons (first group)
+                  (mapcar (cdr (assoc (first group) canonicalizers :test #'eq))
+                          (rest group))))))
+
 (defun canonicalize-lambda-list (lambda-list canonicalizers)
   (let* ((keywords (intrinsic-keywords))
          (positions (compute-positions lambda-list keywords))
