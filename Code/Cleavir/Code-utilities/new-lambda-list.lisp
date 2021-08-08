@@ -121,6 +121,14 @@
     (&allow-other-keys . nil)
     (&aux . ,#'parse-aux)))
 
+(defparameter *specialized-canonicalizers*
+  `((nil . ,#'parse-specialized-required)
+    (&optional . ,#'parse-ordinary-optional)
+    (&rest . ,#'canonicalize-ordinary-rest)
+    (&key . ,#'parse-ordinary-key)
+    (&allow-other-keys . nil)
+    (&aux . ,#'parse-aux)))
+
 (defun parse-lambda-list-no-whole (lambda-list positions)
   (loop for start = 0 then end
         for end in positions
