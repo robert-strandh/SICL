@@ -171,7 +171,7 @@
     (check-all-allowed present-keywords canonicalizers)
     (check-occurrence-counts present-keywords)
     (check-order present-keywords)
-    result))
+    (canonicalize-groups result canonicalizers)))
 
 (defun canonicalize-ordinary-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *ordinary-canonicalizers*))
