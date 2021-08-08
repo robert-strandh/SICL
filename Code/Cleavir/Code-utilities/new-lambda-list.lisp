@@ -161,3 +161,10 @@
         when (or (null group)
                  (not (member (first group) keywords :test #'eq)))
           return group))
+
+(defun extract-named-group (canonicalized-lambda-list lambda-list-keyword)
+  (loop with keywords = (intrinsic-keywords)
+        for group in canonicalized-lambda-list
+        when (and (not (null group))
+                  (eq (first group) lambda-list-keyword))
+          return group))
