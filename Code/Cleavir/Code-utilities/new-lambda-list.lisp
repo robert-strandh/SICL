@@ -126,6 +126,12 @@
     (error 'environment-must-be-followed-by-variable
            :code parameter)))
 
+(defun canonicalize-whole (parameter)
+  (unless (and (symbolp parameter)
+               (not (constantp parameter)))
+    (error 'whole-must-be-followed-by-variable
+           :code parameter)))
+
 (defparameter *ordinary-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
     (&optional . ,#'parse-ordinary-optional)
@@ -161,6 +167,15 @@
   `((nil . ,#'canonicalize-ordinary-required)
     (&optional . ,#'parse-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)))
+
+(defparameter *define-method-combination-canonicalizers*
+  `((nil . ,#'canonicalize-ordinary-required)
+    (&whole . ,#'canonicalize-whole)
+    (&optional . ,#'parse-ordinary-optional)
+    (&rest . ,#'canonicalize-ordinary-rest)
+    (&key . ,#'parse-ordinary-key)
+    (&allow-other-keys . ,#'identity)
+    (&aux . ,#'parse-aux)))
 
 (defun parse-lambda-list-no-whole (lambda-list positions)
   (loop for start = 0 then end
@@ -220,6 +235,9 @@
 
 (defun canonicalize-define-modify-macro-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *define-modify-macro-canonicalizers*))
+
+(defun canonicalize-define-method-combination-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *define-method-combination-canonicalizers*))
 
 (defun extract-required (canonicalized-lambda-list)
   (loop with keywords = (intrinsic-keywords)
