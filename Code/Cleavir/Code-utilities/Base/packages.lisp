@@ -79,6 +79,7 @@
            #:canonicalize-ordinary-rest
            #:*ordinary-canonicalizers*
            #:*specialized-canonicalizers*
+           #:*generic-function-canonicalizers*
            #:canonicalize-lambda-list
            #:canonicalize-ordinary-lambda-list
            #:canonicalize-specialized-lambda-list
