@@ -11,4 +11,5 @@
    (:file "argcount")
    (:file "declarations")
    (:file "lambda-lists")
+   (:file "new-lambda-list")
    (:file "destructuring")))
