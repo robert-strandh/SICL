@@ -81,10 +81,12 @@
            #:*specialized-canonicalizers*
            #:*generic-function-canonicalizers*
            #:*defsetf-canonicalizers*
+           #:*define-modify-macro-canonicalizers*
            #:canonicalize-lambda-list
            #:canonicalize-ordinary-lambda-list
            #:canonicalize-specialized-lambda-list
            #:canonicalize-generic-function-lambda-list
            #:canonicalize-defsetf-lambda-list
+           #:canonicalize-define-modify-macro-lambda-list
            #:extract-required
            #:extract-named-group))

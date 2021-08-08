@@ -157,6 +157,11 @@
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)))
 
+(defparameter *define-modify-macro-canonicalizers*
+  `((nil . ,#'canonicalize-ordinary-required)
+    (&optional . ,#'parse-ordinary-optional)
+    (&rest . ,#'canonicalize-ordinary-rest)))
+
 (defun parse-lambda-list-no-whole (lambda-list positions)
   (loop for start = 0 then end
         for end in positions
@@ -212,6 +217,9 @@
 
 (defun canonicalize-defsetf-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *defsetf-canonicalizers*))
+
+(defun canonicalize-define-modify-macro-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *define-modify-macro-canonicalizers*))
 
 (defun extract-required (canonicalized-lambda-list)
   (loop with keywords = (intrinsic-keywords)
