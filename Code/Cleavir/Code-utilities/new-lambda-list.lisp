@@ -1,5 +1,10 @@
 (cl:in-package #:cleavir-code-utilities)
 
+(defgeneric lambda-list-keyword (intrinsic-feature))
+(defgeneric arity (intrinsic-feature))
+(defgeneric ocurrence-count (intrinsic-feature))
+(defgeneric order (intrinsic-feature))
+
 (defclass intrinsic-feature ()
   ((%lambda-list-keyword
     :initarg :lambda-list-keyword
@@ -104,13 +109,21 @@
       (error "Lambda-list keywords occur in the wrong order"))))
 
 (defun canonicalize-ordinary-required (parameter)
-  (unless (symbolp parameter)
+  (unless (and (symbolp parameter)
+               (not (constantp parameter)))
     (error 'required-must-be-variable
            :code parameter)))
 
 (defun canonicalize-ordinary-rest (parameter)
-  (unless (symbolp parameter)
-    (error 'required-must-be-variable
+  (unless (and (symbolp parameter)
+               (not (constantp parameter)))
+    (error 'rest/body-must-be-followed-by-variable
+           :code parameter)))
+
+(defun canonicalize-environment (parameter)
+  (unless (and (symbolp parameter)
+               (not (constantp parameter)))
+    (error 'environment-must-be-followed-by-variable
            :code parameter)))
 
 (defparameter *ordinary-canonicalizers*
