@@ -35,23 +35,23 @@
     (cleavir-ir:map-instructions-with-owner
      (lambda (instruction owner)
        (let ((preds (cleavir-ir:predecessors instruction)))
-	 (when (or (/= (length preds) 1)
-		   (/= (length (cleavir-ir:successors (first preds))) 1))
-	   (setf (gethash instruction leaders)
+         (when (or (/= (length preds) 1)
+                   (/= (length (cleavir-ir:successors (first preds))) 1))
+           (setf (gethash instruction leaders)
                  (make-instance 'basic-block
                                 :owner owner
                                 :first-instruction instruction)))))
      initial-instruction)
     (flet ((leaderp (instruction)
-	     (nth-value 1 (gethash instruction leaders))))
+             (nth-value 1 (gethash instruction leaders))))
       (loop for first being each hash-key of leaders using (hash-value basic-block)
-	    collect
+            collect
             (loop with last = first
-		  for successors = (cleavir-ir:successors last)
-		  until (or (/= (length successors) 1)
-			    (leaderp (first successors)))
-		  do (setf last (first successors))
-		  finally
+                  for successors = (cleavir-ir:successors last)
+                  until (or (/= (length successors) 1)
+                            (leaderp (first successors)))
+                  do (setf last (first successors))
+                  finally
                      (let ((basic-block (gethash first leaders)))
                        (setf (last-instruction basic-block) last)
                        (dolist (successor (cleavir-ir:successors last))

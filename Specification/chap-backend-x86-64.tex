@@ -50,7 +50,7 @@ RDI & First argument, value count\\
 R8  & Fifth argument\\
 R9  &  Argument count, fifth return value\\
 R10 & Static env. argument\\
-R11 & Scratch\\
+R11 & Call-site descriptor\\
 R12 & Register variable\\
 R13 & Register variable\\
 R14 & Register variable\\
@@ -72,6 +72,9 @@ We use the \texttt{FS} segment register to hold an instance of the
 \texttt{thread} class.  Such an instance will be used in a variety of
 situations including for multiple return values, debugging support,
 etc.
+
+For information about the call-site descriptor, see
+\refSec{sec-call-site-descriptor}.
 
 \section{Representation of function objects}
 
@@ -102,6 +105,7 @@ Normal call to external function, passing at most $5$ arguments:
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
+\item Load the call-site descriptor into R11.
 \item Push the value of \texttt{RBP} on the stack.
 \item Copy the value of RSP into \texttt{RBP}, establishing the
   (empty) stack frame for the callee.
@@ -117,9 +121,10 @@ Normal call to external function, passing more than $5$ arguments:
 \begin{enumerate}
 \item Compute the callee function object and the arguments into
   temporary locations.
-\item Subtract $8(N - 3)$ from RSP, where $N$ is the number of
+\item Subtract $8(N - 2)$ from RSP, where $N$ is the number of
   arguments to pass, thus leaving room in the callee stack frame for
-  the $N - 5$ arguments, the return address, and the caller \texttt{RBP}.
+  the $N - 5$ arguments, the call-site descriptor, the return address,
+  and the caller \texttt{RBP}.
 \item Store the first $5$ arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the remaining arguments in [RSP$ + 0$], [RSP$ + 8$],
   $\ldots$, [RSP$ + 8(N - 6)$] in that order, so that the sixth
@@ -127,6 +132,7 @@ Normal call to external function, passing more than $5$ arguments:
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
+\item Load the call-site descriptor into R11.
 \item Store the value of \texttt{RBP} into [RSP + 8(N - 4)]
 \item Copy the value of RSP$ + 8(N - 4)$ into \texttt{RBP}, establishing the
   stack frame for the callee.  The instruction LEA can be used for
@@ -147,7 +153,9 @@ processor makes the right guess about the eventual address to be used.
 upon entry to a function when more than $5$ arguments are passed.
 Notice that the return address is not in its final place, and the
 final place for the return address is marked ``unused'' in
-\refFig{fig-x86-64-stack-frame-at-entry}.
+\refFig{fig-x86-64-stack-frame-at-entry}.  Similarly, the call-site
+descriptor is in register R11 and has not yet been copied to its final
+place in the stack frame.
 
 \begin{figure}
 \begin{center}

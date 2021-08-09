@@ -85,27 +85,31 @@
 (defmethod body-form ((clause maximize-form-clause) end-tag)
   (declare (ignore end-tag))
   `(if (null ,*accumulation-variable*)
-       (setq ,*accumulation-variable* ,(form clause))
        (setq ,*accumulation-variable*
-             (max ,*accumulation-variable* ,(form clause)))))
+             (ensure-real ,(form clause) 'max-argument-must-be-real))
+       (setq ,*accumulation-variable*
+             (maximize ,*accumulation-variable* ,(form clause)))))
 
 (defmethod body-form ((clause maximize-form-into-clause) end-tag)
   (declare (ignore end-tag))
   `(if (null ,(into-var clause))
-       (setq ,(into-var clause) ,(form clause))
        (setq ,(into-var clause)
-             (max ,(into-var clause) ,(form clause)))))
+             (ensure-real ,(form clause) 'max-argument-must-be-real))
+       (setq ,(into-var clause)
+             (maximize ,(into-var clause) ,(form clause)))))
 
 (defmethod body-form ((clause maximize-it-clause) end-tag)
   (declare (ignore end-tag))
   `(if (null ,*accumulation-variable*)
-       (setq ,*accumulation-variable* ,*it-var*)
        (setq ,*accumulation-variable*
-             (max ,*accumulation-variable* ,*it-var*))))
+             (ensure-real ,*it-var* 'max-argument-must-be-real))
+       (setq ,*accumulation-variable*
+             (maximize ,*accumulation-variable* ,*it-var*))))
 
 (defmethod body-form ((clause maximize-it-into-clause) end-tag)
   (declare (ignore end-tag))
   `(if (null ,(into-var clause))
-       (setq ,(into-var clause) ,*it-var*)
        (setq ,(into-var clause)
-             (max ,(into-var clause) ,*it-var*))))
+             (ensure-real ,*it-var* 'max-argument-must-be-real))
+       (setq ,(into-var clause)
+             (maximize ,(into-var clause) ,*it-var*))))

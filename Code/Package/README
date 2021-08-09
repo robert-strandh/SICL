@@ -1,0 +1,9 @@
+There is a lot to be done in this directory:
+
+ * There are several FIXME comments in the files in this directory.
+   They should be taken care of accordingly.
+
+ * Calls to ERROR should have restarts whenever there is a reasonable
+   action to take in such a restart.  For example the error that
+   signals NOT-A-PACKAGE-DESIGNATOR should have a restart for
+   supplying a valid package designator.

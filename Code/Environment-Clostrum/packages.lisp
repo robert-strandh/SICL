@@ -2,13 +2,18 @@
 
 (defpackage #:sicl-environment
   (:use #:common-lisp)
-  (:shadow #:get-setf-expansion type)
+  (:shadow #:get-setf-expansion type #:find-package)
   (:shadowing-import-from
    #:clostrum
    .
    #.(loop for symbol being each external-symbol in '#:clostrum
            unless (member symbol '(clostrum:run-time-environment
-                                   clostrum:compilation-environment))
+                                   clostrum:compilation-environment
+                                   ;; Clostrum refuses to set a
+                                   ;; package that is not a host
+                                   ;; package, which we can't live
+                                   ;; with at bootstrapping time.
+                                   clostrum:find-package))
              collect (symbol-name symbol)))
   (:import-from #:clostrum/virtual
                 #:function-cell

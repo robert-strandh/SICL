@@ -19,6 +19,4 @@
     (ld "Arithmetic/denominator-defgeneric.lisp")
     (ld "Array/array-dimensions-defgeneric.lisp")
     (ld "Array/vector-fill-pointer-defgeneric.lisp")
-    (ld "Array/setf-vector-fill-pointer-defgeneric.lisp")
-    (ld "Package-and-symbol/symbol-name-defgeneric.lisp")
-    (ld "Package-and-symbol/symbol-package-defgeneric.lisp")))
+    (ld "Array/setf-vector-fill-pointer-defgeneric.lisp")))

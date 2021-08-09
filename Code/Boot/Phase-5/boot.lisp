@@ -1,18 +1,5 @@
 (cl:in-package #:sicl-boot-phase-5)
 
-(defun import-functions-from-host-into-e5
-    (names e3 e5)
-  (loop with e3-client = (env:client e3)
-        with make-instance = (env:fdefinition e3-client e3 'make-instance)
-        with e5-client = (env:client e5)
-        for name in names
-        for host-function = (fdefinition name)
-        for sicl-function = (funcall make-instance 'sicl-clos:simple-function)
-        do (setf (sicl-boot:original-function sicl-function) host-function)
-           (sicl-host-mop:set-funcallable-instance-function
-            sicl-function host-function)
-           (setf (env:fdefinition e5-client e5 name) sicl-function)))
-
 (defun boot (boot)
   (format *trace-output* "Start phase 5~%")
   (with-accessors ((e0 sicl-boot:e0)
@@ -30,7 +17,7 @@
                             (env:fdefinition
                              (env:client e4) e4 'sicl-clos:environment)))
     (prepare-this-phase e3 e4 e5)
-    (load-source-file "Package-and-symbol/symbol-value-etc-defuns.lisp" e5)
+    (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e5)
     (sicl-boot:create-accessor-defgenerics e5)
     (sicl-boot:create-mop-classes e5)
     (create-additional-generic-functions e5)

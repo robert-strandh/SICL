@@ -27,3 +27,5 @@
 (defgeneric stream-read-byte (stream))
 
 (defgeneric stream-read-char (stream))
+
+(defgeneric stream-unread-char (stream character))

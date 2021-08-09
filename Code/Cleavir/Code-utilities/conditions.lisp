@@ -1,8 +1,5 @@
 (cl:in-package #:cleavir-code-utilities)
 
-(define-condition code-condition ()
-  ((%code :initarg :code :reader code)))
-
 (define-condition form-must-be-proper-list
     (program-error acclimation:condition)
   ((%form :initarg :form :reader form)))
@@ -27,6 +24,32 @@
 (define-condition odd-number-of-keyword-arguments
     (program-error acclimation:condition)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;  Declaration conditions.
+
+(define-condition declaration-specifiers-must-be-proper-list
+    (program-error code-condition acclimation:condition)
+  ((%declaration-specifiers
+    :initarg :declaration-specifiers
+    :reader declaration-specifiers)))
+
+(define-condition declaration-specifier-must-be-proper-list
+    (program-error code-condition acclimation:condition)
+  ((%declaration-specifier
+    :initarg :declaration-specifier
+    :reader declaration-specifier)))
+
+(define-condition declaration-specifier-can-not-be-nil
+    (program-error code-condition acclimation:condition)
+  ())
+
+(define-condition type-declaration-specifier-must-have-a-type-specifier
+    (program-error code-condition acclimation:condition)
+  ((%declaration-specifier
+    :initarg :declaration-specifier
+    :reader declaration-specifier)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -183,15 +206,3 @@
 (define-condition suspect-lambda-list-keyword
     (style-warning code-condition acclimation:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;  Conditions for forms with BODY.
-
-(define-condition ordinary-body-must-be-proper-list
-    (style-warning acclimation:condition)
-  ((%body :initarg :body :reader body)))
-
-(define-condition function-body-must-be-proper-list
-    (style-warning acclimation:condition)
-  ((%body :initarg :body :reader body)))

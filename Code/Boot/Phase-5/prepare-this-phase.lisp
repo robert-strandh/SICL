@@ -28,9 +28,15 @@
   (enable-typep e3 e4)
   (load-source-file "Types/type-of-defgeneric.lisp" e4)
   (enable-object-creation e3 e4)
-  (import-functions-from-host-into-e5
-   '(cleavir-code-utilities:parse-generic-function-lambda-list
+  (import-functions-from-host
+   '(cleavir-code-utilities:proper-list-p
+     cleavir-code-utilities:list-structure
+     cleavir-code-utilities:optionals
+     cleavir-code-utilities:rest-body
+     cleavir-code-utilities:parse-define-modify-macro-lambda-list
+     cleavir-code-utilities:parse-generic-function-lambda-list
      cleavir-code-utilities:parse-specialized-lambda-list
+     cleavir-code-utilities:separate-ordinary-body
      cleavir-code-utilities:separate-function-body
      cleavir-code-utilities:required
      intern
@@ -46,7 +52,10 @@
      ;; Boolean arguments, but it is applied only to contstants so we
      ;; can use the host EVAL.
      eval)
-   e3 e5)
+   e5)
+  (import-functions-from-host
+   '(logtest)
+   e5)
   (enable-method-combinations e3 e4 e5)
   (setf (env:special-operator (env:client e5) e5 'cleavir-primop:multiple-value-call) t)
   (setf (env:fdefinition (env:client e4) e4 'compile)

@@ -9,6 +9,7 @@
   ((:file "packages")
    (:file "generic-functions")
    (:file "environment")
+   (:file "find-package")
    (:file "trucler-methods")
    (:file "function-description")
    (:file "variable-description")

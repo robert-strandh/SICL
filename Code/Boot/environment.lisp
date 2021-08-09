@@ -193,7 +193,7 @@
      getf
      assoc rassoc acons
      set-difference set-exclusive-or union adjoin
-     last butlast
+     last butlast list-length
      ;; Data and control flow
      apply not eq eql equal values constantly identity some
      every
@@ -210,7 +210,7 @@
      ;; Sequence
      elt length count reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
-     nreverse replace delete copy-seq mismatch
+     position-if-not nreverse replace delete copy-seq mismatch
      ;; For debugging
      format
      ;; Conditions
@@ -228,6 +228,9 @@
     (setf (env:fdefinition client environment '(setf cadr))
           (lambda (new-value cons)
             (setf (cadr cons) new-value)))
+    (setf (env:fdefinition client environment '(setf second))
+          (lambda (new-value cons)
+            (setf (second cons) new-value)))
     (setf (env:fdefinition client environment '(setf cddr))
           (lambda (new-value cons)
             (setf (cddr cons) new-value)))
@@ -301,13 +304,6 @@
     (define-setf-functions environment)
     (define-environment-functions client environment)
     (define-constants client environment)
-    (import-functions-from-host
-     '(cleavir-code-utilities:proper-list-p
-       cleavir-code-utilities:list-structure
-       cleavir-code-utilities:optionals
-       cleavir-code-utilities:rest-body
-       cleavir-code-utilities:parse-define-modify-macro-lambda-list)
-     environment)
     (setf (env:special-variable client environment '*trace-output* t)
           *trace-output*)
     ;; Make DEFPACKAGE create a package in the host environment

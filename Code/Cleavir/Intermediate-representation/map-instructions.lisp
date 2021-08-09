@@ -20,11 +20,11 @@
 
 (defun map-instructions (function initial-instruction)
   (let ((visited-instructions (make-hash-table :test #'eq))
-	(instructions-to-process '()))
+        (instructions-to-process '()))
     (flet ((register-if-unvisited (instruction)
-	     (unless (gethash instruction visited-instructions)
-	       (setf (gethash instruction visited-instructions) t)
-	       (push instruction instructions-to-process)))
+             (unless (gethash instruction visited-instructions)
+               (setf (gethash instruction visited-instructions) t)
+               (push instruction instructions-to-process)))
            (register-last-if-unvisited (instruction)
              (unless (gethash instruction visited-instructions)
                (setf (gethash instruction visited-instructions) t)
@@ -34,28 +34,28 @@
                          (list instruction))))))
       (register-if-unvisited initial-instruction)
       (loop until (null instructions-to-process)
-	    do (let ((instruction (pop instructions-to-process)))
-		 (funcall function instruction)
-		 (when (typep instruction 'enclose-instruction)
-		   ;; When the instruction is an ENCLOSE-INSTRUCTION,
-		   ;; we must also account for the CODE slot of the
-		   ;; instruction, because it contains the
-		   ;; ENTER-INSTRUCTION of a nested function.  We put
-		   ;; this ENTER-INSTRUCTION last on the list of
-		   ;; instructions to process.  By doing it this way,
-		   ;; we make sure that all the instructions that are
-		   ;; reachable from the initial ENTER-INSTRUCTION of
-		   ;; a particular function are processed before any
-		   ;; instruction of a nested function is processed.
+            do (let ((instruction (pop instructions-to-process)))
+                 (funcall function instruction)
+                 (when (typep instruction 'enclose-instruction)
+                   ;; When the instruction is an ENCLOSE-INSTRUCTION,
+                   ;; we must also account for the CODE slot of the
+                   ;; instruction, because it contains the
+                   ;; ENTER-INSTRUCTION of a nested function.  We put
+                   ;; this ENTER-INSTRUCTION last on the list of
+                   ;; instructions to process.  By doing it this way,
+                   ;; we make sure that all the instructions that are
+                   ;; reachable from the initial ENTER-INSTRUCTION of
+                   ;; a particular function are processed before any
+                   ;; instruction of a nested function is processed.
                    (register-last-if-unvisited (code instruction)))
-		 ;; For each successor of the current instruction, check
-		 ;; whether it has already been visited, and if not,
-		 ;; make sure it gets processed later by pushing it onto
-		 ;; the list of instructions yet to process.  By putting
-		 ;; the successors first on the list, the traversal
-		 ;; becomes depth-first.
-		 (loop for successor in (successors instruction)
-		       do (register-if-unvisited successor)))))))
+                 ;; For each successor of the current instruction, check
+                 ;; whether it has already been visited, and if not,
+                 ;; make sure it gets processed later by pushing it onto
+                 ;; the list of instructions yet to process.  By putting
+                 ;; the successors first on the list, the traversal
+                 ;; becomes depth-first.
+                 (loop for successor in (successors instruction)
+                       do (register-if-unvisited successor)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -80,12 +80,12 @@
 
 (defun map-instructions-with-owner (function initial-instruction)
   (let ((visited-instructions (make-hash-table :test #'eq))
-	(instructions-to-process '())
+        (instructions-to-process '())
         (current-owner initial-instruction))
     (flet ((register-if-unvisited (instruction)
-	     (unless (gethash instruction visited-instructions)
-	       (setf (gethash instruction visited-instructions) t)
-	       (push instruction instructions-to-process)))
+             (unless (gethash instruction visited-instructions)
+               (setf (gethash instruction visited-instructions) t)
+               (push instruction instructions-to-process)))
            (register-last-if-unvisited (instruction)
              (unless (gethash instruction visited-instructions)
                (setf (gethash instruction visited-instructions) t)
@@ -95,11 +95,11 @@
                          (list instruction))))))
       (register-if-unvisited initial-instruction)
       (loop until (null instructions-to-process)
-	    do (let ((instruction (pop instructions-to-process)))
+            do (let ((instruction (pop instructions-to-process)))
                  (when (typep instruction 'enter-instruction)
                    (setf current-owner instruction))
-		 (funcall function instruction current-owner)
-		 (when (typep instruction 'enclose-instruction)
+                 (funcall function instruction current-owner)
+                 (when (typep instruction 'enclose-instruction)
                    (register-last-if-unvisited (code instruction)))
-		 (loop for successor in (successors instruction)
-		       do (register-if-unvisited successor)))))))
+                 (loop for successor in (successors instruction)
+                       do (register-if-unvisited successor)))))))

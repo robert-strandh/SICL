@@ -52,3 +52,44 @@
             (error 'end-of-file :error-stream input-stream)
             eof-value)
         result)))
+
+(defun unread-char
+    (character &optional (input-stream *standard-input*))
+  (stream-unread-char input-stream character)
+  nil)
+
+;;; Eclector calls PEEK-CHAR of the implementation, but never when
+;;; PEEK-TYPE is T.  For the case when PEEK-TYPE is t, Eclector uses
+;;; its own implementation, which is normal because it has to consult
+;;; its readtable to determine whether something is a whitespace
+;;; character.
+(defun peek-char
+    (&optional
+       peek-type
+       (input-stream *standard-input*)
+       (eof-error-p t)
+       eof-value
+       recursive-p)
+  (flet ((aux ()
+           (let ((character (stream-read-char input-stream)))
+             (when (eq character :eof)
+               (if (or eof-error-p recursive-p)
+                   (error 'end-of-file :stream input-stream)
+                   (return-from peek-char eof-value)))
+             character)))
+    (cond ((eq peek-type t)
+           (eclector.reader:peek-char
+            peek-type input-stream eof-error-p recursive-p))
+          ((null peek-type)
+           (let ((character (aux)))
+             (stream-unread-char input-stream character)
+             character))
+          ((characterp peek-type)
+           (loop for character = (aux)
+                 until (char= character peek-type)
+                 finally (stream-unread-char input-stream character)
+                         (return character)))
+          (t
+           (error 'type-error
+                  :datum peek-type
+                  :expected-type '(or character (member t nil)))))))

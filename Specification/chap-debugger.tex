@@ -11,8 +11,8 @@ order to make such a debugger possible.
 Each function contains two versions of the code, called the
 \emph{normal} version and the \emph{debugging} version.%
 \footnote{This idea was suggested by Michael Raskin.}
-Calls from a normal version of a caller are made to the normal version
-of callees, and calls from a debugging version of a caller are made to
+Calls from the normal version of a caller are made to the normal version
+of callees, and calls from the debugging version of a caller are made to
 the debugging version of callees.
 
 The normal version is used when the thread is not run under the
@@ -21,38 +21,39 @@ communicating with the debugger.  Furthermore, this version is highly
 optimized.  In particular, variables that occur in the source code may
 have been eliminated by various optimization passes.
 
-The debugging version starts by examining a special variable that
-contains information about the current thread.  In particular, this
-information includes a table in the form of a bit vector containing
-summary information about breakpoints.  In this version of the
-function body the compiler inserts a call to a small subroutine before
-and after every form to be evaluated.  The subroutine does not use the
-full \commonlisp{} function-call protocol.  Instead, it is just a very
-fast call that can be done with a \texttt{jsr} instruction (or
-equivalent) on must architectures.
-
-The subroutine does a test in two steps.  In the first step, the value
-of the program counter is taken modulo some reasonably large value
-such as 256, and a the bit vector is queried to see whether the
-corresponding entry is a 1.  If it is 0, the subroutine simply
-returns.  This first step will slow down every debugged thread a
-little bit, but most of the time, the value will be 0, and then,
-normal function execution is resumed.
-
-If the entry in the bit vector turns out to be 1, then the final test
-is made.  The program counter is checked against a hash table in the
-thread instance to see whether some action must be taken.  If so, the
-thread gives up control to the debugger.
-
 The debugging version does not have optimizations applied to it that
 may make debugging harder.  Lexical variables that appear in source
 code may be kept, or code may be included that can compute their
 values from the lexical variables that \emph{are} kept, for the
 duration of their scope.
 
-%% For each possible breakpoint, the system must keep a description of
-%% the lexical environment.  This includes mappings from variable names
-%% to registers or stack locations, information about liveness of
-%% registers and stack location, how a variable is stored in a location
-%% (immediate value, pointer, with or without type tag, etc).
-
+In the debugging version of a function, the compiler associates
+additional code with the program point immediately preceding the
+evaluation of a form and with the program point immediately following
+the evaluation of a form.  This code consists of a single call to a
+global function, the name of which is yet to be determined.  For now,
+let us call it \texttt{breakpoint}.  It is a function of no arguments.
+However, recall that functions take implicit arguments, and the
+important one for this discussion is the \emph{call-site information}
+implicit argument.  It contains information about the call site such
+as locations of live objects, and information for the garbage
+collector.  The call is a \emph{named call}, and the code generated
+such a call is just an unconditional \texttt{jump} instruction.  The
+\emph{call-site manager} is responsible for allocating a
+\emph{trampoline snippet} to mediate between the call-site and the
+callee, and it then modifies the target field of the instruction to
+contain the address of the snippet.  The call-site manager handles
+calls to the \texttt{breakpoint} function differently.  By default, no
+snippet is allocated, and the target field of the unconditional
+\texttt{jump} is just the next instruction.  However, when a
+breakpoint is set at some program point, the call-site manager
+generates a snippet that will actually call the \texttt{breakpoint}
+function, providing it with call-site information in the implicit
+argument.  The \texttt{breakpoint} starts by consulting the
+\texttt{thread} object, to determine whether this particular
+application thread has a breakpoint at this particular program point.
+If it does, the \texttt{breakpoint} function then accesses the
+relevant information about live variables etc., collects it in a form
+acceptable to the debugger, and then calls the debugger with this
+information.  Typically, the debugger will then block the thread and
+interact with the user for further actions.

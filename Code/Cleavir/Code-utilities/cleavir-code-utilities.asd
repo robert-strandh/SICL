@@ -1,15 +1,15 @@
 (cl:in-package #:asdf-user)
 
-(defsystem cleavir-code-utilities
-  :depends-on (:acclimation)
+(defsystem #:cleavir-code-utilities
+  :depends-on (#:cleavir-code-utilities-base
+               #:cleavir-code-utilities-list-structure
+               #:cleavir-code-utilities-separate-body)
   :serial t
   :components
-  ((:file "packages")
-   (:file "conditions")
+  ((:file "conditions")
    (:file "condition-reporters-english")
    (:file "argcount")
-   (:file "form")
-   (:file "list-structure")
    (:file "declarations")
    (:file "lambda-lists")
+   (:file "new-lambda-list")
    (:file "destructuring")))
