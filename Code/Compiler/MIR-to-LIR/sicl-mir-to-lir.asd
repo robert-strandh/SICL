@@ -14,4 +14,5 @@
    (:file "finish-lir")
    (:file "call-instruction")
    (:file "arguments")
+   (:file "values")
    (:file "mir-to-lir")))

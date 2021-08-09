@@ -46,6 +46,7 @@
 
 (defvar *dynamic-environment* *rbx*)
 (defvar *argument-count*      *r9*)
+(defvar *return-value-count*  *rdi*)
 (defvar *static-environment*  *r10*)
 
 (defparameter *caller-saves*  #*10110011111100001111111111111111)

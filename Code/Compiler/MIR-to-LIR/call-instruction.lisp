@@ -1,4 +1,4 @@
- (cl:in-package #:sicl-mir-to-lir)
+(cl:in-package #:sicl-mir-to-lir)
 
 ;;; We need to store arguments into the appropriate registers and
 ;;; stack slots (relative to RSP now), and then adjust RBP.
