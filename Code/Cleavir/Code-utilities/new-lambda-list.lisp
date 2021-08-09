@@ -105,32 +105,52 @@
                       unless (null order)
                         collect order)))
     ;; FIXME: give more details in errors.
-    (unless (apply #'< orders)
+    (unless (apply #'< -2 -1 orders)
       (error "Lambda-list keywords occur in the wrong order"))))
 
 (defun canonicalize-ordinary-required (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
     (error 'required-must-be-variable
-           :code parameter)))
+           :code parameter))
+  parameter)
 
 (defun canonicalize-ordinary-rest (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
     (error 'rest/body-must-be-followed-by-variable
-           :code parameter)))
+           :code parameter))
+  parameter)
 
 (defun canonicalize-environment (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
     (error 'environment-must-be-followed-by-variable
-           :code parameter)))
+           :code parameter))
+  parameter)
 
 (defun canonicalize-whole (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
     (error 'whole-must-be-followed-by-variable
-           :code parameter)))
+           :code parameter))
+  parameter)
+
+(defun canonicalize-destructuring-required (parameter)
+  (cond ((and (symbolp parameter) (not (constantp parameter)))
+         parameter)
+        ((consp parameter)
+         (canonicalize-destructuring-lambda-list parameter))
+        (t
+         (error "Required must be a variable or a CONS."))))
+
+(defun canonicalize-destructuring-rest (parameter)
+  (cond ((and (symbolp parameter) (not (constantp parameter)))
+         parameter)
+        ((consp parameter)
+         (canonicalize-destructuring-lambda-list parameter))
+        (t
+         (error "&REST or &BODY parameter must be a variable or a CONS."))))
 
 (defparameter *ordinary-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
@@ -154,6 +174,23 @@
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'parse-aux)))
+
+(defparameter *macro-canonicalizers*
+  `((nil . ,#'canonicalize-destructuring-required)
+    (&whole . ,#'canonicalize-whole)
+    (&environment . ,#'canonicalize-environment)
+    (&optional . ,#'parse-ordinary-optional)
+    (&rest . ,#'canonicalize-destructuring-rest)
+    (&key . ,#'parse-ordinary-key)
+    (&allow-other-keys . ,#'identity)))
+
+(defparameter *destructuring-canonicalizers*
+  `((nil . ,#'canonicalize-destructuring-required)
+    (&whole . ,#'canonicalize-whole)
+    (&optional . ,#'parse-ordinary-optional)
+    (&rest . ,#'canonicalize-destructuring-rest)
+    (&key . ,#'parse-ordinary-key)
+    (&allow-other-keys . ,#'identity)))
 
 (defparameter *defsetf-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
@@ -224,11 +261,17 @@
 (defun canonicalize-ordinary-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *ordinary-canonicalizers*))
 
+(defun canonicalize-generic-function-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *generic-function-canonicalizers*))
+
 (defun canonicalize-specialized-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *specialized-canonicalizers*))
 
-(defun canonicalize-generic-function-lambda-list (lambda-list)
-  (canonicalize-lambda-list lambda-list *generic-function-canonicalizers*))
+(defun canonicalize-macro-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *macro-canonicalizers*))
+
+(defun canonicalize-destructuring-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *destructuring-canonicalizers*))
 
 (defun canonicalize-defsetf-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *defsetf-canonicalizers*))
