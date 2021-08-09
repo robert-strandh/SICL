@@ -40,10 +40,10 @@
            :inputs (list function-register
                          (cleavir-ir:make-immediate-input (- 8 +standard-object-tag+)))
            :outputs (list function-register)))
-        ;; 2. Store the argument count in R9.
+        ;; 2. Store the (boxed) argument count in R9.
         (emit
          (make-instance 'cleavir-ir:assignment-instruction
-           :inputs (list (cleavir-ir:make-immediate-input argument-count))
+           :inputs (list (cleavir-ir:make-immediate-input (ash argument-count 1)))
            :outputs (list x86-64:*r9*)))
         ;; 3. Store the arguments in RDI, RSI, RDX, RCX, and R8.
         (loop for argument in arguments
