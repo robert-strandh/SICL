@@ -68,12 +68,16 @@
 ;;; The default way of computing an output arrangement is valid when
 ;;; there is exactly one output, and the register attributed to it can
 ;;; be chosen arbitrarily.
-(defun compute-output-arrangement-default (instruction arrangement)
+(defun compute-output-arrangement-default
+    (instruction arrangement
+     &key (disallowed-registers (x86-64:make-register-map)))
   (let* ((output (first (cleavir-ir:outputs instruction)))
          (pool (output-pool instruction)))
     ;; We must include a new register in the arrangement.  We know
     ;; there is an unattributed register of the right kind.
-    (let ((candidates (determine-candidates output pool)))
+    (let ((candidates (x86-64:register-map-difference
+                       (determine-candidates output pool)
+                       disallowed-registers)))
       (arr:attribute-register-for-new-lexical-location
        arrangement output candidates))
     arrangement))
@@ -758,7 +762,9 @@
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:compute-return-value-count-instruction) arrangement)
-  (compute-output-arrangement-default instruction arrangement))
+  (compute-output-arrangement-default
+   instruction arrangement
+   :disallowed-registers x86-64:*return-values*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -772,7 +778,9 @@
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:return-value-instruction) arrangement)
-  (compute-output-arrangement-default instruction arrangement))
+  (compute-output-arrangement-default
+   instruction arrangement
+   :disallowed-registers x86-64:*return-values*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
