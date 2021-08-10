@@ -302,8 +302,7 @@
 (defun extract-required (canonicalized-lambda-list)
   (loop with keywords = (intrinsic-keywords)
         for group in canonicalized-lambda-list
-        when (or (null group)
-                 (not (member (first group) keywords :test #'eq)))
+        unless (member (first group) keywords :test #'eq)
           return group))
 
 (defun extract-named-group (canonicalized-lambda-list lambda-list-keyword)
