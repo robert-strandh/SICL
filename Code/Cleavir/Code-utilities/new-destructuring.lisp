@@ -5,6 +5,13 @@
        (not (null (first remaining)))
        (eq (first (first remaining)) lambda-list-keyword)))
 
+(defun handle-aux (remaining body)
+  (if (first-group-is remaining '&aux)
+      (values (rest remaining)
+              `(let* ,(rest (first remaining))
+                 ,body))
+      (values remaining body)))
+
 (defun new-destructure-lambda-list (canonicalized-lambda-list variable body)
   (let ((remaining (reverse canonicalized-lambda-list))
         (result body)
