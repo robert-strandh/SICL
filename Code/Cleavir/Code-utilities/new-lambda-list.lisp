@@ -66,11 +66,31 @@
           :occurrence-count 1
           :order 600)))
 
+(defun find-feature (keyword)
+  (find keyword *intrinsic-features*
+        :test #'eq :key #'lambda-list-keyword))
+
 (defun compute-positions (lambda-list keywords)
-  (append (loop for i from 0
+  (append (loop with end-position = -1
+                with result = '()
+                for i from 0
                 for element in lambda-list
-                when (member element keywords)
-                  collect i)
+                do (when (member element keywords)
+                     (when (<= i end-position)
+                       ;; This means that the previous keyword had
+                       ;; fewer or equal number of arguments compared
+                       ;; to its declared arity.  Then we don't want
+                       ;; to pick up the position corresponding to
+                       ;; that arity, and we instead just pick up the
+                       ;; current one.
+                       (setf end-position -1))
+                     (let ((arity (arity (find-feature element))))
+                       (when (integerp arity)
+                         (setf end-position (+ i arity 1)))
+                       (push i result)))
+                   (when (= i end-position)
+                     (push end-position result))
+                finally (return (reverse result)))
           (list (length lambda-list))))
 
 (defun check-allowed (keyword canonicalizers)
@@ -80,10 +100,6 @@
 (defun check-all-allowed (keywords canonicalizers)
   (loop for keyword in keywords
         do (check-allowed keyword canonicalizers)))
-
-(defun find-feature (keyword)
-  (find keyword *intrinsic-features*
-        :test #'eq :key #'lambda-list-keyword))
 
 (defun check-occurrence-counts (keywords)
   (let ((occurrences '()))
@@ -181,6 +197,7 @@
     (&environment . ,#'canonicalize-environment)
     (&optional . ,#'parse-ordinary-optional)
     (&rest . ,#'canonicalize-destructuring-rest)
+    (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)))
 
@@ -189,6 +206,7 @@
     (&whole . ,#'canonicalize-whole)
     (&optional . ,#'parse-ordinary-optional)
     (&rest . ,#'canonicalize-destructuring-rest)
+    (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)))
 
@@ -214,11 +232,6 @@
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'parse-aux)))
 
-(defun parse-lambda-list-no-whole (lambda-list positions)
-  (loop for start = 0 then end
-        for end in positions
-        collect (subseq lambda-list start end)))
-
 (defun intrinsic-keywords ()
   (mapcar #'lambda-list-keyword *intrinsic-features*))
 
@@ -237,22 +250,26 @@
 (defun canonicalize-lambda-list (lambda-list canonicalizers)
   (let* ((keywords (intrinsic-keywords))
          (positions (compute-positions lambda-list keywords))
+         (effective-positions
+           ;; If the first position is 0, then that could mean two
+           ;; things.  Either the lamda list is entirely empty, or the
+           ;; first element of the lambda list is a lambda-list
+           ;; keyword.  In the first case, we want the result to be
+           ;; the empty list, so by making the EFFECTIVE-POSITIONS the
+           ;; empty list, we will accomplish this effect.  In the
+           ;; second case, we want the first group to start with 0 and
+           ;; end with a value greater than 0, so we eliminate the
+           ;; first element of POSITIONS to accomlish this effect.
+           (if (zerop (first positions)) (rest positions) positions))
          (result 
-           (if (and (not (null lambda-list))
-                    (eq (first lambda-list) '&whole))
-               (progn (unless (>= (second positions) 2)
-                        (error "Incorrect arity for lambda-list keyword &WHOLE: ~s"
-                               (1- (second positions))))
-                      (let* ((no-whole (subseq lambda-list 2))
-                             (new-positions
-                               (compute-positions no-whole keywords)))
-                        (cons (subseq lambda-list 0 2)
-                              (parse-lambda-list-no-whole
-                               no-whole new-positions))))
-               (parse-lambda-list-no-whole lambda-list positions)))
+           (loop for start = 0 then end
+                 for end in effective-positions
+                 collect (subseq lambda-list start end)))
          (present-keywords
            (loop for position in (butlast positions)
-                 collect (nth position lambda-list))))
+                 for element = (nth position lambda-list)
+                 when (member element keywords :test #'eq)
+                   collect element)))
     (check-all-allowed present-keywords canonicalizers)
     (check-occurrence-counts present-keywords)
     (check-order present-keywords)
