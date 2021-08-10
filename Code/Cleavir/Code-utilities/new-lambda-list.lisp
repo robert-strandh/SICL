@@ -37,7 +37,7 @@
           :order nil)
         (make-instance 'intrinsic-feature
           :lambda-list-keyword '&optional
-          :arity *
+          :arity '*
           :occurrence-count 1
           :order 200)
         (make-instance 'intrinsic-feature
@@ -52,7 +52,7 @@
           :order 300)
         (make-instance 'intrinsic-feature
           :lambda-list-keyword '&key
-          :arity *
+          :arity '*
           :occurrence-count 1
           :order 400)
         (make-instance 'intrinsic-feature
@@ -62,7 +62,7 @@
           :order 500)
         (make-instance 'intrinsic-feature
           :lambda-list-keyword '&aux
-          :arity *
+          :arity '*
           :occurrence-count 1
           :order 600)))
 
@@ -123,6 +123,18 @@
     ;; FIXME: give more details in errors.
     (unless (apply #'< -2 -1 orders)
       (error "Lambda-list keywords occur in the wrong order"))))
+
+(defun check-arities (canonicalized-lambda-list)
+  (loop with keywords = (intrinsic-keywords)
+        for group in canonicalized-lambda-list
+        for first = (first group)
+        do (when (member first keywords :test #'eq)
+             (let* ((feature (find-feature first))
+                    (arity (arity feature)))
+               (unless (or (eq arity '*)
+                           (= arity (length (rest group))))
+                 (error "Incorrect arity for lambda-list keyword ~s"
+                        first))))))
 
 (defun canonicalize-ordinary-required (parameter)
   (unless (and (symbolp parameter)
@@ -273,6 +285,7 @@
     (check-all-allowed present-keywords canonicalizers)
     (check-occurrence-counts present-keywords)
     (check-order present-keywords)
+    (check-arities result)
     (canonicalize-groups result canonicalizers)))
 
 (defun canonicalize-ordinary-lambda-list (lambda-list)
