@@ -31,7 +31,7 @@
                          bindings)
                    (multiple-value-bind
                          (nested-bindings nested-ignored-variables)
-                       (new-destructure-lambda-list pattern temp)
+                       (new-destructure-lambda-list pattern temp invoking-form-variable)
                      (setf bindings
                            (append nested-bindings bindings))
                      (setf ignored-variables
@@ -60,7 +60,7 @@
           (push `(,temp ,variable)
                 bindings)
           (multiple-value-bind (nested-bindings nested-ignored-variables)
-              (new-destructure-lambda-list pattern invoking-form-variable)
+              (new-destructure-lambda-list pattern temp invoking-form-variable)
             (setf bindings
                   (append nested-bindings bindings))
             (setf ignored-variables
@@ -82,11 +82,12 @@
              `(let ((,temp ,variable))
                 (tagbody
                  again
-                   (if (null temp) (go out))
-                   (if (not (member (first temp)
+                   (if (null ,temp) (go out))
+                   (if (not (member (first ,temp)
                                     '(:allow-other-keys ,@keywords)
                                     :test #'eq))
                        (error 'invalid-keyword
+                              :keyword (first ,temp)
                               :lambda-list
                               ',(reduce #'append canonicalized-lambda-list)
                               :invoking-form ,invoking-form-variable)
