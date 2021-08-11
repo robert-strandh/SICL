@@ -293,3 +293,23 @@
            But the following was found instead:~@
            ~s"
           (code c)))
+
+(defmethod acclimation:report-condition
+    ((c too-few-arguments) stream (language acclimation:english))
+  (format stream
+          "Too few arguments supplied by the invoking form:~@
+           ~s~@
+           for the lambda list:~@
+           ~s"
+          (invoking-form c)
+          (lambda-list c)))
+
+(defmethod acclimation:report-condition
+    ((c too-many-arguments) stream (language acclimation:english))
+  (format stream
+          "Too many arguments supplied by the invoking form:~@
+           ~s~@
+           for the lambda list:~@
+           ~s"
+          (invoking-form c)
+          (lambda-list c)))
