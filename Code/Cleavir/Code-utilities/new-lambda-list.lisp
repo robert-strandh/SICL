@@ -211,7 +211,8 @@
     (&rest . ,#'canonicalize-destructuring-rest)
     (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-ordinary-key)
-    (&allow-other-keys . ,#'identity)))
+    (&allow-other-keys . ,#'identity)
+    (&aux . ,#'parse-aux)))
 
 (defparameter *destructuring-canonicalizers*
   `((nil . ,#'canonicalize-destructuring-required)
@@ -220,7 +221,8 @@
     (&rest . ,#'canonicalize-destructuring-rest)
     (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-ordinary-key)
-    (&allow-other-keys . ,#'identity)))
+    (&allow-other-keys . ,#'identity)
+    (&aux . ,#'parse-aux)))
 
 (defparameter *defsetf-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
