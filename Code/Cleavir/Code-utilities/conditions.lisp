@@ -18,6 +18,9 @@
 (define-condition odd-number-of-keyword-arguments (argument-mismatch)
   ())
 
+(define-condition invalid-keyword (argument-mismatch)
+  ((%keyword :initarg :keyword :reader given-keyword)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;  Declaration conditions.
