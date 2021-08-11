@@ -401,12 +401,6 @@
             unless (null rest)
               collect `(,(car rest) ,supplied-p-temp))))
 
-;;; Generate code to check that there is an even number of keyword
-;;; arguments.
-(defun check-even-number-of-keyword-arguments (first-count arg-count-op)
-  `(unless (,(if (evenp first-count) 'evenp 'oddp) (,arg-count-op))
-     (error "odd number of keyword arguments")))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Preprocess an ordinary lambda list.
