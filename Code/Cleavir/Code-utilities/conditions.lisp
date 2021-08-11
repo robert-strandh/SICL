@@ -4,13 +4,6 @@
     (program-error acclimation:condition)
   ((%form :initarg :form :reader form)))
 
-;;; A max-argcount of NIL means no upper bound.
-(define-condition invalid-number-of-arguments 
-    (program-error acclimation:condition)
-  ((%form :initarg :form :reader form)
-   (%min-argcount :initarg :min-argcount :reader min-argcount)
-   (%max-argcount :initarg :max-argcount :reader max-argcount)))
-
 ;;; FIXME: improve these conditions!
 
 (define-condition too-few-arguments
