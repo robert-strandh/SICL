@@ -466,33 +466,6 @@
               (setq ,counter (+ ,counter 2))
               (go again))))))))
 
-(defun check-arg-count
-    (variable arg-count-var required-count optional-count rest-p key-p)
-  `((,variable
-     (progn
-       ,@(if (plusp required-count)
-             `((if (< ,arg-count-var ,required-count)
-                   (error 'too-few-arguments)))
-             '())
-       ,@(if (and (not rest-p) (not key-p))
-             `((if (> ,arg-count-var
-                      ,(+ required-count optional-count))
-                   (error 'too-many-arguments)))
-             '())
-       ,@(if key-p
-             (if (evenp (+ required-count optional-count))
-                 `((when (and (> ,arg-count-var
-                                 ,(+ required-count
-                                     optional-count))
-                              (oddp ,arg-count-var))
-                     (error 'odd-number-of-keyword-arguments)))
-                 `((when (and (> ,arg-count-var
-                                 ,(+ required-count
-                                     optional-count))
-                              (evenp ,arg-count-var))
-                     (error 'odd-number-of-keyword-arguments))))
-             '())))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Preprocess an ordinary lambda list.
