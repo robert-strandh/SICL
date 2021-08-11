@@ -407,65 +407,6 @@
   `(unless (,(if (evenp first-count) 'evenp 'oddp) (,arg-count-op))
      (error "odd number of keyword arguments")))
 
-;;; Generate code to check that either :ALLOW-OTHER KEYS <true> is a
-;;; keyword argument or that all the keyword arguments are valid.  The
-;;; HyperSpec says that :ALLOW-OTHER-KEYS <something> is always valid,
-;;; so even if we have :ALLOW-OTHER-KEYS <false>, it is valid.
-;;; Furthermore, since there can be multiple instances of keyword
-;;; arguments, and the first one is used to determine the ultimate
-;;; value of the corresponding variable, we must determine whether
-;;; :ALLOW-OTHER-KEYS is true or not from the first occurrence.  This
-;;; function is only called when &allow-other-keys is not given in the
-;;; lambda list.
-(defun check-keyword-validity
-    (variable keywords first-count arg-count-var arg-op)
-  (let ((counter (gensym)))
-    `((,variable
-       (let ((,counter ,first-count))
-         (block nil
-           (tagbody
-              ;; In phase 1 we search for the first
-              ;; occurrence of :allow-other-keys.
-            phase1
-              (when (>= ,counter ,arg-count-var)
-                ;; We ran out of arguments without finding any
-                ;; :allow-other-keys.  We must now go check that
-                ;; each keyword argument is a valid one.
-                (go phase2))
-              (if (eq (,arg-op ,counter) :allow-other-keys)
-                  ;; We found the first :allow-other-keys.
-                  ;; We look no further.
-                  (if (,arg-op (1+ ,counter))
-                      ;; The argument following :allow-other keys is
-                      ;; true.  Then any keyword is allowed, so we are
-                      ;; done checking.
-                      (return nil)
-                      ;; The argument following :allow-other keys is
-                      ;; false, which means that only explicitly
-                      ;; mentioned keywords are allowed, so we do the
-                      ;; next phase.
-                      (go phase2))
-                  ;; The keyword we found is something other than
-                  ;; :allow-other-keys.  Try the next one.
-                  (progn (setq ,counter (+ ,counter 2))
-                         (go phase1)))
-            phase2
-              ;; Start over from the first keyword argument.
-              (setq ,counter ,first-count)
-            again
-              (when (>= ,counter ,arg-count-var)
-                ;; We ran out of arguments without finding any
-                ;; invalid keywords.  We are done.
-                (return nil))
-              ;; Check that the current keyword is valid.
-              (unless (member (,arg-op ,counter) ',keywords)
-                ;; Found an invalid keyword.
-                (error "invalid keyword ~s" (,arg-op ,counter)))
-              ;; Come here if the current keyword is not invalid.
-              ;; Try the next one.
-              (setq ,counter (+ ,counter 2))
-              (go again))))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Preprocess an ordinary lambda list.
