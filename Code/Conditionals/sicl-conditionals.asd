@@ -44,5 +44,4 @@
    (:file "conditions")
    (:file "condition-reporters-en")
    (:file "docstrings-en")
-   (:file "macros")
-   (:file "compiler-macros")))
+   (:file "macros")))
