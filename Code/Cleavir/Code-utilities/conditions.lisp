@@ -4,18 +4,18 @@
     (program-error acclimation:condition)
   ((%form :initarg :form :reader form)))
 
-;;; FIXME: improve these conditions!
-
-(define-condition too-few-arguments
+(define-condition argument-mismatch
     (program-error acclimation:condition)
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%invoking-form :initarg :invoking-form :reader invoking-form)))
+
+(define-condition too-few-arguments (argument-mismatch)
   ())
 
-(define-condition too-many-arguments
-    (program-error acclimation:condition)
+(define-condition too-many-arguments (argument-mismatch)
   ())
 
-(define-condition odd-number-of-keyword-arguments
-    (program-error acclimation:condition)
+(define-condition odd-number-of-keyword-arguments (argument-mismatch)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
