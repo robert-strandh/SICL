@@ -8,7 +8,6 @@
   :components
   ((:file "conditions")
    (:file "condition-reporters-english")
-   (:file "argcount")
    (:file "declarations")
    (:file "lambda-lists")
    (:file "new-lambda-list")
