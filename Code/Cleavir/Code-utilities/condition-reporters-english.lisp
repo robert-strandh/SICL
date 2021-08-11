@@ -313,3 +313,26 @@
            ~s"
           (invoking-form c)
           (lambda-list c)))
+
+(defmethod acclimation:report-condition
+    ((c odd-number-of-keyword-arguments) stream (language acclimation:english))
+  (format stream
+          "Odd number of keyword arguments supplied by the invoking form:~@
+           ~s~@
+           for the lambda list:~@
+           ~s"
+          (invoking-form c)
+          (lambda-list c)))
+
+(defmethod acclimation:report-condition
+    ((c invalid-keyword) stream (language acclimation:english))
+  (format stream
+          "Invalid keyword argument:~@
+           ~s~@
+           supplied by the invoking form:~@
+           ~s~@
+           for the lambda list:~@
+           ~s"
+          (given-keyword c)
+          (invoking-form c)
+          (lambda-list c)))
