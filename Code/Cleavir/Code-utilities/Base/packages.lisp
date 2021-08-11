@@ -34,7 +34,6 @@
            #:parse-define-method-combination-arguments-lambda-list
            #:lambda-list-variables
            #:destructure-lambda-list
-           #:match-lambda-list
            #:parse-macro
            #:parse-compiler-macro
            #:parse-deftype
