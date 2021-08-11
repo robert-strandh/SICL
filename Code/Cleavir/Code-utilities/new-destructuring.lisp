@@ -137,7 +137,19 @@
               (append nested-ignored-variables ignored-variables))))
     (when (first-group-is remaining '&optional)
       (setf bindings
-            (append (handle-optional (rest (pop remaining)) variable))))
+            (append (handle-optional (rest (pop remaining)) variable)
+                    bindings)))
+    (unless (or (member '&rest remaining :key #'first :test #'eq)
+                (member '&body remaining :key #'first :test #'eq)
+                (member '&key remaining :key #'first :test #'eq))
+      (let ((temp (gensym)))
+        (push temp ignored-variables)
+        (push `(,temp (if (not (null ,variable))
+                          (error 'too-many-arguments
+                                 :lambda-list
+                                 ',(reduce #'append canonicalized-lambda-list)
+                                 :invoking-form ,invoking-form-variable)))
+              bindings)))
     (when (or (first-group-is remaining '&rest)
               (first-group-is remaining '&body))
       (multiple-value-bind (nested-bindings nested-ignored-variables)
@@ -147,7 +159,6 @@
               (append nested-bindings bindings))
         (setf ignored-variables
               (append nested-ignored-variables ignored-variables))))
-
     (when (first-group-is remaining '&key)
       (let* ((group (pop remaining))
              (allow-other-keys
