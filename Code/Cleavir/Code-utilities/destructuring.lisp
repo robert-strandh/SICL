@@ -493,58 +493,6 @@
                      (error 'odd-number-of-keyword-arguments))))
              '())))))
 
-(defun match-lambda-list (lambda-list arg-count-op arg-op)
-  (with-accessors ((required required)
-                   (optionals optionals)
-                   (rest-body rest-body)
-                   (keys keys)
-                   (allow-other-keys allow-other-keys))
-      lambda-list
-    (let* ((arg-count-var (gensym))
-           (arg-count-check-temp (gensym))
-           (keyword-validity-check-temp (gensym))
-           (ignored (list arg-count-check-temp)))
-      (values
-       (append (if (or (and (not (eq required :none))
-                            (plusp (length required)))
-                       (not (eq keys :none))
-                       (eq rest-body :none))
-                   `((,arg-count-var ,arg-count-op))
-                   '())
-               (check-arg-count arg-count-check-temp
-                                arg-count-var
-                                (if (eq required :none) 0 (length required))
-                                (if (eq optionals :none) 0 (length optionals))
-                                (not (eq rest-body :none))
-                                (not (eq keys :none)))
-               (match-required required arg-op)
-               (match-optionals optionals
-                                (if (eq required :none) 0 (length required))
-                                arg-count-var
-                                arg-op)
-               (match-rest/body rest-body
-                                (+ (if (eq required :none) 0 (length required))
-                                   (if (eq optionals :none) 0 (length optionals)))
-                                arg-count-var
-                                arg-op)
-               (if (or (eq keys :none)
-                       allow-other-keys)
-                   '()
-                   (progn (push keyword-validity-check-temp ignored)
-                          (check-keyword-validity
-                           keyword-validity-check-temp
-                           (mapcar #'caar keys)
-                           (+ (if (eq required :none) 0 (length required))
-                              (if (eq optionals :none) 0 (length optionals)))
-                           arg-count-var
-                           arg-op)))
-               (match-keys keys
-                           (+ (if (eq required :none) 0 (length required))
-                              (if (eq optionals :none) 0 (length optionals)))
-                           arg-count-var
-                           arg-op))
-       ignored))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Preprocess an ordinary lambda list.
