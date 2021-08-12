@@ -319,6 +319,9 @@
 (defun canonicalize-defsetf-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *defsetf-canonicalizers*))
 
+(defun canonicalize-deftype-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *deftype-canonicalizers*))
+
 (defun canonicalize-define-modify-macro-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *define-modify-macro-canonicalizers*))
 
