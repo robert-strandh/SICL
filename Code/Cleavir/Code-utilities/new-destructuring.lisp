@@ -321,3 +321,29 @@
                (declare (ignore ,@ignored-variables))
                ,@declarations
                ,@forms)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; PARSE-DESTRUCTURING-BIND
+
+(defun parse-destructuring-bind (lambda-list form body)
+  (let* ((canonicalized-lambda-list
+           (canonicalize-destructuring-lambda-list lambda-list))
+         (whole-group
+           (extract-named-group canonicalized-lambda-list '&whole))
+         (whole-parameter
+           (if (null whole-group) (gensym) (second whole-group)))
+         (remaining
+           (remove '&whole canonicalized-lambda-list
+                   :key #'first :test #'eq))
+         (args-var (gensym)))
+    (multiple-value-bind (declarations forms)
+        (separate-ordinary-body body)
+      (multiple-value-bind (bindings ignored-variables)
+          (new-destructure-lambda-list remaining args-var whole-parameter)
+        `(let* ((,whole-parameter ,form)
+                (,args-var ,whole-parameter)
+                ,@(reverse bindings))
+           (declare (ignore ,@ignored-variables))
+           ,@declarations
+           ,@forms)))))
