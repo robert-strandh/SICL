@@ -28,4 +28,3 @@
       ,@(if (null aux)
             '()
             (mapcar #'first (rest aux))))))
-    
