@@ -61,7 +61,7 @@
 ;;; Destructure a list of required parameters.  A required parameter
 ;;; may be a variable or a pattern.  Return a list of bindings and a
 ;;; list of variables to ignore.
-(defun handle-required
+(defun destructure-required
     (required variable canonicalized-lambda-list invoking-form-variable)
   (let ((bindings '())
         (ignored-variables '())
@@ -95,7 +95,7 @@
     (values bindings ignored-variables)))
 
 ;;; Destructure an optional parameter.  Return a list of bindings.
-(defun handle-optional (optional variable)
+(defun destructure-optional (optional variable)
   (let ((bindings '()))
     (loop for (var default supplied-p) in optional
           do (unless (null supplied-p)
@@ -114,7 +114,7 @@
 ;;; Destructure a &REST or &BODY parameter which can be a variable or
 ;;; a pattern.  Return a list of bindings and a list of variables to
 ;;; ignore.
-(defun handle-rest/body
+(defun destructure-rest/body
     (pattern variable invoking-form-variable)
   (let ((bindings '())
         (ignored-variables '()))
@@ -133,7 +133,7 @@
 
 ;;; Destructure a list of &KEY parameters.  Return a list of bindings
 ;;; and a list of variables to ignore.
-(defun handle-key
+(defun destructure-key
     (key variable canonicalized-lambda-list invoking-form-variable allow-other-keys)
   (let* ((bindings '())
          (ignored-variables '())
@@ -200,7 +200,7 @@
                 (member (first (first remaining)) (intrinsic-keywords)
                         :test #'eq))
       (multiple-value-bind (nested-bindings nested-ignored-variables)
-          (handle-required
+          (destructure-required
            (pop remaining) variable canonicalized-lambda-list invoking-form-variable)
         (setf bindings
               (append nested-bindings bindings))
@@ -208,7 +208,7 @@
               (append nested-ignored-variables ignored-variables))))
     (when (first-group-is remaining '&optional)
       (setf bindings
-            (append (handle-optional (rest (pop remaining)) variable)
+            (append (destructure-optional (rest (pop remaining)) variable)
                     bindings)))
     (unless (or (member '&rest remaining :key #'first :test #'eq)
                 (member '&body remaining :key #'first :test #'eq)
@@ -224,7 +224,7 @@
     (when (or (first-group-is remaining '&rest)
               (first-group-is remaining '&body))
       (multiple-value-bind (nested-bindings nested-ignored-variables)
-          (handle-rest/body
+          (destructure-rest/body
            (second (pop remaining)) variable invoking-form-variable)
         (setf bindings
               (append nested-bindings bindings))
@@ -237,7 +237,7 @@
                    (progn (pop remaining) t)
                    nil)))
         (multiple-value-bind (nested-bindings nested-ignored-variables)
-            (handle-key
+            (destructure-key
              (rest group)
              variable
              canonicalized-lambda-list
