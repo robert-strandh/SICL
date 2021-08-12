@@ -311,10 +311,22 @@
   (canonicalize-lambda-list lambda-list *specialized-canonicalizers*))
 
 (defun canonicalize-macro-lambda-list (lambda-list)
-  (canonicalize-lambda-list lambda-list *macro-canonicalizers*))
+  (let ((no-dotted (if (dotted-list-p lambda-list)
+                       (append (butlast lambda-list)
+                               (list (car (last lambda-list))
+                                     '&rest
+                                     (cdr (last lambda-list))))
+                       lambda-list)))
+    (canonicalize-lambda-list no-dotted *macro-canonicalizers*)))
 
 (defun canonicalize-destructuring-lambda-list (lambda-list)
-  (canonicalize-lambda-list lambda-list *destructuring-canonicalizers*))
+  (let ((no-dotted (if (dotted-list-p lambda-list)
+                       (append (butlast lambda-list)
+                               (list (car (last lambda-list))
+                                     '&rest
+                                     (cdr (last lambda-list))))
+                       lambda-list)))
+    (canonicalize-lambda-list no-dotted *destructuring-canonicalizers*)))
 
 (defun canonicalize-defsetf-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *defsetf-canonicalizers*))
