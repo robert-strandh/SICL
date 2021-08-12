@@ -87,7 +87,7 @@
                          bindings)
                    (multiple-value-bind
                          (nested-bindings nested-ignored-variables)
-                       (new-destructure-lambda-list pattern temp invoking-form-variable)
+                       (destructure-lambda-list pattern temp invoking-form-variable)
                      (setf bindings
                            (append nested-bindings bindings))
                      (setf ignored-variables
@@ -124,7 +124,7 @@
           (push `(,temp ,variable)
                 bindings)
           (multiple-value-bind (nested-bindings nested-ignored-variables)
-              (new-destructure-lambda-list pattern temp invoking-form-variable)
+              (destructure-lambda-list pattern temp invoking-form-variable)
             (setf bindings
                   (append nested-bindings bindings))
             (setf ignored-variables
@@ -191,7 +191,7 @@
 ;;;
 ;;; DESTRUCTURE-LAMBDA-LIST
 
-(defun new-destructure-lambda-list
+(defun destructure-lambda-list
     (canonicalized-lambda-list variable invoking-form-variable)
   (let* ((remaining canonicalized-lambda-list)
          (bindings '())
@@ -279,7 +279,7 @@
     (multiple-value-bind (declarations documentation forms)
         (separate-function-body body)
       (multiple-value-bind (bindings ignored-variables)
-          (new-destructure-lambda-list remaining args-var whole-parameter)
+          (destructure-lambda-list remaining args-var whole-parameter)
         `(lambda (,whole-parameter ,environment-parameter)
            ,@(if (null documentation) '() (list documentation))
            ;; If the lambda list does not contain &environment, then
@@ -324,7 +324,7 @@
     (multiple-value-bind (declarations documentation forms)
         (separate-function-body body)
       (multiple-value-bind (bindings ignored-variables)
-          (new-destructure-lambda-list remaining args-var whole-parameter)
+          (destructure-lambda-list remaining args-var whole-parameter)
         `(lambda (,whole-parameter ,environment-parameter)
            ,@(if (null documentation) '() (list documentation))
            ;; If the lambda list does not contain &environment, then
@@ -371,7 +371,7 @@
     (multiple-value-bind (declarations documentation forms)
         (separate-function-body body)
       (multiple-value-bind (bindings ignored-variables)
-          (new-destructure-lambda-list remaining args-var whole-parameter)
+          (destructure-lambda-list remaining args-var whole-parameter)
         `(lambda (,whole-parameter ,environment-parameter)
            ,@(if (null documentation) '() (list documentation))
            ;; If the lambda list does not contain &environment, then
@@ -406,7 +406,7 @@
     (multiple-value-bind (declarations forms)
         (separate-ordinary-body body)
       (multiple-value-bind (bindings ignored-variables)
-          (new-destructure-lambda-list remaining args-var whole-parameter)
+          (destructure-lambda-list remaining args-var whole-parameter)
         `(let* ((,whole-parameter ,form)
                 (,args-var ,whole-parameter)
                 ,@(reverse bindings))
