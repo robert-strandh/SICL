@@ -9,5 +9,4 @@
    (:file "defun-support")
    (:file "shiftf-support")
    (:file "psetf-support")
-   (:file "rotatef-support")
-   (:file "destructuring-bind-support")))
+   (:file "rotatef-support")))
