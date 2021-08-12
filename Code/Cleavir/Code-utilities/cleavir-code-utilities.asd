@@ -11,4 +11,4 @@
    (:file "declarations")
    (:file "lambda-lists")
    (:file "new-lambda-list")
-   (:file "new-destructuring")))
+   (:file "destructuring")))
