@@ -46,7 +46,11 @@
                      bindings))
              (push `(,var (if (null ,variable)
                               ,default
-                              (pop ,variable)))
+                              (first ,variable)))
+                   bindings)
+             (push `(,variable (if (null ,variable)
+                                   ,variable
+                                   (rest ,variable)))
                    bindings))
     bindings))
 
@@ -182,7 +186,13 @@
             (append (reverse (rest (pop remaining))) bindings)))
     (values bindings ignored-variables)))
 
-(defun new-parse-macro (name lambda-list body &optional environment)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; PARSE-MACRO
+;;;
+;;; According to CLtL2.
+
+(defun parse-macro (name lambda-list body &optional environment)
   (declare (ignore name environment)) ; For now.
   (let* ((canonicalized-lambda-list
            (canonicalize-macro-lambda-list lambda-list))
