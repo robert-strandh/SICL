@@ -232,6 +232,17 @@
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)))
 
+(defparameter *deftype-canonicalizers*
+  `((nil . ,#'canonicalize-destructuring-required)
+    (&whole . ,#'canonicalize-whole)
+    (&environment . ,#'canonicalize-environment)
+    (&optional . ,#'parse-deftype-optional)
+    (&rest . ,#'canonicalize-destructuring-rest)
+    (&body . ,#'canonicalize-destructuring-rest)
+    (&key . ,#'parse-deftype-key)
+    (&allow-other-keys . ,#'identity)
+    (&aux . ,#'parse-aux)))
+
 (defparameter *define-modify-macro-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
     (&optional . ,#'parse-ordinary-optional)
