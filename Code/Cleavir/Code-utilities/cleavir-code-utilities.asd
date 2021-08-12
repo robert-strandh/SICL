@@ -12,4 +12,5 @@
    (:file "lambda-lists")
    (:file "new-lambda-list")
    (:file "lambda-list-congruency")
+   (:file "lambda-list-variables")
    (:file "destructuring")))
