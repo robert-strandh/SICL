@@ -35,6 +35,7 @@
            #:parse-macro
            #:parse-compiler-macro
            #:parse-deftype
+           #:parse-destructuring-bind
            #:lambda-lists-congruent-p
            #:generate-congruent-lambda-list
            #:lambda-list-type-specifier
