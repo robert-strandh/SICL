@@ -1383,35 +1383,3 @@
           (rest-body-variables (rest-body lambda-list))
           (key-variables (keys lambda-list))
           (aux-variables (aux lambda-list))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Given an ordinary lambda list, create an argument type specifier
-;;; that is correctly describes calls to functions with such a lambda
-;;; list.
-
-(defun lambda-list-type-specifier (lambda-list)
-  (let* ((parsed-lambda-list (parse-ordinary-lambda-list lambda-list))
-         (remaining parsed-lambda-list)
-         (result '()))
-    (loop repeat (length (pop remaining))
-          do (push t result))
-    (unless (or (null remaining)
-                (not (eq (first (first remaining)) '&optional)))
-      (push '&optional result)
-      (loop repeat (length (pop remaining))
-            do (push t result)))
-    (unless (or (null remaining)
-                (not (eq (first (first remaining)) '&rest)))
-      (pop remaining)
-      (push '&rest result)
-      (push t result))
-    (unless (or (null remaining)
-                (not (eq (first (first remaining)) '&key)))
-      (push '&key result)
-      (loop for key in (pop remaining)
-            if (eq key '&allow-other-keys)
-              do (push key result)
-            else
-              do (push (list (first (first key)) t) result)))
-    (reverse result)))
