@@ -26,7 +26,6 @@
            #:parse-specialized-lambda-list
            #:parse-macro-lambda-list
            #:parse-destructuring-lambda-list
-           #:parse-deftype-lambda-list
            #:parse-defsetf-lambda-list
            #:parse-define-modify-macro-lambda-list
            #:parse-define-method-combination-arguments-lambda-list
