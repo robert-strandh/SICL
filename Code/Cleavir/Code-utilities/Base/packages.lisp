@@ -22,7 +22,6 @@
            #:allow-other-keys
            #:aux
            #:parse-generic-function-lambda-list
-           #:parse-specialized-lambda-list
            #:parse-destructuring-lambda-list
            #:parse-defsetf-lambda-list
            #:parse-define-modify-macro-lambda-list
