@@ -21,7 +21,6 @@
            #:keys
            #:allow-other-keys
            #:aux
-           #:parse-ordinary-lambda-list
            #:parse-generic-function-lambda-list
            #:parse-specialized-lambda-list
            #:parse-destructuring-lambda-list
