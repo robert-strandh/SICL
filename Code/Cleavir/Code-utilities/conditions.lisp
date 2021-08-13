@@ -4,26 +4,22 @@
     (program-error acclimation:condition)
   ((%form :initarg :form :reader form)))
 
-;;; A max-argcount of NIL means no upper bound.
-(define-condition invalid-number-of-arguments 
+(define-condition argument-mismatch
     (program-error acclimation:condition)
-  ((%form :initarg :form :reader form)
-   (%min-argcount :initarg :min-argcount :reader min-argcount)
-   (%max-argcount :initarg :max-argcount :reader max-argcount)))
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%invoking-form :initarg :invoking-form :reader invoking-form)))
 
-;;; FIXME: improve these conditions!
-
-(define-condition too-few-arguments
-    (program-error acclimation:condition)
+(define-condition too-few-arguments (argument-mismatch)
   ())
 
-(define-condition too-many-arguments
-    (program-error acclimation:condition)
+(define-condition too-many-arguments (argument-mismatch)
   ())
 
-(define-condition odd-number-of-keyword-arguments
-    (program-error acclimation:condition)
+(define-condition odd-number-of-keyword-arguments (argument-mismatch)
   ())
+
+(define-condition invalid-keyword (argument-mismatch)
+  ((%keyword :initarg :keyword :reader given-keyword)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

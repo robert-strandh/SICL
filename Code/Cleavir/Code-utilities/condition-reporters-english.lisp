@@ -6,22 +6,6 @@
                   but the following was found instead:~@
                   ~s" (form condition)))
 
-(defmethod acclimation:report-condition
-    ((condition invalid-number-of-arguments)
-     stream
-     (language acclimation:english))
-  (format stream
-          "Invalid number of arguments.~@
-           There must be at least ~d arguments.~%"
-          (min-argcount condition))
-  (unless (null (max-argcount condition))
-    (format stream
-            "And there must be at most ~d arguments.~%"
-            (max-argcount condition)))
-  (format stream
-          "The form that causes the problem was:~%~s"
-          (form condition)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;  Lambda list conditions.
@@ -309,3 +293,46 @@
            But the following was found instead:~@
            ~s"
           (code c)))
+
+(defmethod acclimation:report-condition
+    ((c too-few-arguments) stream (language acclimation:english))
+  (format stream
+          "Too few arguments supplied by the invoking form:~@
+           ~s~@
+           for the lambda list:~@
+           ~s"
+          (invoking-form c)
+          (lambda-list c)))
+
+(defmethod acclimation:report-condition
+    ((c too-many-arguments) stream (language acclimation:english))
+  (format stream
+          "Too many arguments supplied by the invoking form:~@
+           ~s~@
+           for the lambda list:~@
+           ~s"
+          (invoking-form c)
+          (lambda-list c)))
+
+(defmethod acclimation:report-condition
+    ((c odd-number-of-keyword-arguments) stream (language acclimation:english))
+  (format stream
+          "Odd number of keyword arguments supplied by the invoking form:~@
+           ~s~@
+           for the lambda list:~@
+           ~s"
+          (invoking-form c)
+          (lambda-list c)))
+
+(defmethod acclimation:report-condition
+    ((c invalid-keyword) stream (language acclimation:english))
+  (format stream
+          "Invalid keyword argument:~@
+           ~s~@
+           supplied by the invoking form:~@
+           ~s~@
+           for the lambda list:~@
+           ~s"
+          (given-keyword c)
+          (invoking-form c)
+          (lambda-list c)))

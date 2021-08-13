@@ -37,7 +37,7 @@
           :order nil)
         (make-instance 'intrinsic-feature
           :lambda-list-keyword '&optional
-          :arity *
+          :arity '*
           :occurrence-count 1
           :order 200)
         (make-instance 'intrinsic-feature
@@ -52,7 +52,7 @@
           :order 300)
         (make-instance 'intrinsic-feature
           :lambda-list-keyword '&key
-          :arity *
+          :arity '*
           :occurrence-count 1
           :order 400)
         (make-instance 'intrinsic-feature
@@ -62,15 +62,35 @@
           :order 500)
         (make-instance 'intrinsic-feature
           :lambda-list-keyword '&aux
-          :arity *
+          :arity '*
           :occurrence-count 1
           :order 600)))
 
+(defun find-feature (keyword)
+  (find keyword *intrinsic-features*
+        :test #'eq :key #'lambda-list-keyword))
+
 (defun compute-positions (lambda-list keywords)
-  (append (loop for i from 0
+  (append (loop with end-position = -1
+                with result = '()
+                for i from 0
                 for element in lambda-list
-                when (member element keywords)
-                  collect i)
+                do (when (member element keywords)
+                     (when (<= i end-position)
+                       ;; This means that the previous keyword had
+                       ;; fewer or equal number of arguments compared
+                       ;; to its declared arity.  Then we don't want
+                       ;; to pick up the position corresponding to
+                       ;; that arity, and we instead just pick up the
+                       ;; current one.
+                       (setf end-position -1))
+                     (let ((arity (arity (find-feature element))))
+                       (when (integerp arity)
+                         (setf end-position (+ i arity 1)))
+                       (push i result)))
+                   (when (= i end-position)
+                     (push end-position result))
+                finally (return (reverse result)))
           (list (length lambda-list))))
 
 (defun check-allowed (keyword canonicalizers)
@@ -80,10 +100,6 @@
 (defun check-all-allowed (keywords canonicalizers)
   (loop for keyword in keywords
         do (check-allowed keyword canonicalizers)))
-
-(defun find-feature (keyword)
-  (find keyword *intrinsic-features*
-        :test #'eq :key #'lambda-list-keyword))
 
 (defun check-occurrence-counts (keywords)
   (let ((occurrences '()))
@@ -105,32 +121,64 @@
                       unless (null order)
                         collect order)))
     ;; FIXME: give more details in errors.
-    (unless (apply #'< orders)
+    (unless (apply #'< -2 -1 orders)
       (error "Lambda-list keywords occur in the wrong order"))))
+
+(defun check-arities (canonicalized-lambda-list)
+  (loop with keywords = (intrinsic-keywords)
+        for group in canonicalized-lambda-list
+        for first = (first group)
+        do (when (member first keywords :test #'eq)
+             (let* ((feature (find-feature first))
+                    (arity (arity feature)))
+               (unless (or (eq arity '*)
+                           (= arity (length (rest group))))
+                 (error "Incorrect arity for lambda-list keyword ~s"
+                        first))))))
 
 (defun canonicalize-ordinary-required (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
     (error 'required-must-be-variable
-           :code parameter)))
+           :code parameter))
+  parameter)
 
 (defun canonicalize-ordinary-rest (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
     (error 'rest/body-must-be-followed-by-variable
-           :code parameter)))
+           :code parameter))
+  parameter)
 
 (defun canonicalize-environment (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
     (error 'environment-must-be-followed-by-variable
-           :code parameter)))
+           :code parameter))
+  parameter)
 
 (defun canonicalize-whole (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
     (error 'whole-must-be-followed-by-variable
-           :code parameter)))
+           :code parameter))
+  parameter)
+
+(defun canonicalize-destructuring-required (parameter)
+  (cond ((and (symbolp parameter) (not (constantp parameter)))
+         parameter)
+        ((consp parameter)
+         (canonicalize-destructuring-lambda-list parameter))
+        (t
+         (error "Required must be a variable or a CONS."))))
+
+(defun canonicalize-destructuring-rest (parameter)
+  (cond ((and (symbolp parameter) (not (constantp parameter)))
+         parameter)
+        ((consp parameter)
+         (canonicalize-destructuring-lambda-list parameter))
+        (t
+         (error "&REST or &BODY parameter must be a variable or a CONS."))))
 
 (defparameter *ordinary-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
@@ -155,6 +203,27 @@
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'parse-aux)))
 
+(defparameter *macro-canonicalizers*
+  `((nil . ,#'canonicalize-destructuring-required)
+    (&whole . ,#'canonicalize-whole)
+    (&environment . ,#'canonicalize-environment)
+    (&optional . ,#'parse-ordinary-optional)
+    (&rest . ,#'canonicalize-destructuring-rest)
+    (&body . ,#'canonicalize-destructuring-rest)
+    (&key . ,#'parse-ordinary-key)
+    (&allow-other-keys . ,#'identity)
+    (&aux . ,#'parse-aux)))
+
+(defparameter *destructuring-canonicalizers*
+  `((nil . ,#'canonicalize-destructuring-required)
+    (&whole . ,#'canonicalize-whole)
+    (&optional . ,#'parse-ordinary-optional)
+    (&rest . ,#'canonicalize-destructuring-rest)
+    (&body . ,#'canonicalize-destructuring-rest)
+    (&key . ,#'parse-ordinary-key)
+    (&allow-other-keys . ,#'identity)
+    (&aux . ,#'parse-aux)))
+
 (defparameter *defsetf-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
     (&environment . ,#'canonicalize-environment)
@@ -162,6 +231,17 @@
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)))
+
+(defparameter *deftype-canonicalizers*
+  `((nil . ,#'canonicalize-destructuring-required)
+    (&whole . ,#'canonicalize-whole)
+    (&environment . ,#'canonicalize-environment)
+    (&optional . ,#'parse-deftype-optional)
+    (&rest . ,#'canonicalize-destructuring-rest)
+    (&body . ,#'canonicalize-destructuring-rest)
+    (&key . ,#'parse-deftype-key)
+    (&allow-other-keys . ,#'identity)
+    (&aux . ,#'parse-aux)))
 
 (defparameter *define-modify-macro-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
@@ -176,11 +256,6 @@
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'parse-aux)))
-
-(defun parse-lambda-list-no-whole (lambda-list positions)
-  (loop for start = 0 then end
-        for end in positions
-        collect (subseq lambda-list start end)))
 
 (defun intrinsic-keywords ()
   (mapcar #'lambda-list-keyword *intrinsic-features*))
@@ -200,38 +275,64 @@
 (defun canonicalize-lambda-list (lambda-list canonicalizers)
   (let* ((keywords (intrinsic-keywords))
          (positions (compute-positions lambda-list keywords))
+         (effective-positions
+           ;; If the first position is 0, then that could mean two
+           ;; things.  Either the lamda list is entirely empty, or the
+           ;; first element of the lambda list is a lambda-list
+           ;; keyword.  In the first case, we want the result to be
+           ;; the empty list, so by making the EFFECTIVE-POSITIONS the
+           ;; empty list, we will accomplish this effect.  In the
+           ;; second case, we want the first group to start with 0 and
+           ;; end with a value greater than 0, so we eliminate the
+           ;; first element of POSITIONS to accomlish this effect.
+           (if (zerop (first positions)) (rest positions) positions))
          (result 
-           (if (and (not (null lambda-list))
-                    (eq (first lambda-list) '&whole))
-               (progn (unless (>= (second positions) 2)
-                        (error "Incorrect arity for lambda-list keyword &WHOLE: ~s"
-                               (1- (second positions))))
-                      (let* ((no-whole (subseq lambda-list 2))
-                             (new-positions
-                               (compute-positions no-whole keywords)))
-                        (cons (subseq lambda-list 0 2)
-                              (parse-lambda-list-no-whole
-                               no-whole new-positions))))
-               (parse-lambda-list-no-whole lambda-list positions)))
+           (loop for start = 0 then end
+                 for end in effective-positions
+                 collect (subseq lambda-list start end)))
          (present-keywords
            (loop for position in (butlast positions)
-                 collect (nth position lambda-list))))
+                 for element = (nth position lambda-list)
+                 when (member element keywords :test #'eq)
+                   collect element)))
     (check-all-allowed present-keywords canonicalizers)
     (check-occurrence-counts present-keywords)
     (check-order present-keywords)
+    (check-arities result)
     (canonicalize-groups result canonicalizers)))
 
 (defun canonicalize-ordinary-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *ordinary-canonicalizers*))
 
-(defun canonicalize-specialized-lambda-list (lambda-list)
-  (canonicalize-lambda-list lambda-list *specialized-canonicalizers*))
-
 (defun canonicalize-generic-function-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *generic-function-canonicalizers*))
 
+(defun canonicalize-specialized-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *specialized-canonicalizers*))
+
+(defun canonicalize-macro-lambda-list (lambda-list)
+  (let ((no-dotted (if (dotted-list-p lambda-list)
+                       (append (butlast lambda-list)
+                               (list (car (last lambda-list))
+                                     '&rest
+                                     (cdr (last lambda-list))))
+                       lambda-list)))
+    (canonicalize-lambda-list no-dotted *macro-canonicalizers*)))
+
+(defun canonicalize-destructuring-lambda-list (lambda-list)
+  (let ((no-dotted (if (dotted-list-p lambda-list)
+                       (append (butlast lambda-list)
+                               (list (car (last lambda-list))
+                                     '&rest
+                                     (cdr (last lambda-list))))
+                       lambda-list)))
+    (canonicalize-lambda-list no-dotted *destructuring-canonicalizers*)))
+
 (defun canonicalize-defsetf-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *defsetf-canonicalizers*))
+
+(defun canonicalize-deftype-lambda-list (lambda-list)
+  (canonicalize-lambda-list lambda-list *deftype-canonicalizers*))
 
 (defun canonicalize-define-modify-macro-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *define-modify-macro-canonicalizers*))
@@ -242,8 +343,7 @@
 (defun extract-required (canonicalized-lambda-list)
   (loop with keywords = (intrinsic-keywords)
         for group in canonicalized-lambda-list
-        when (or (null group)
-                 (not (member (first group) keywords :test #'eq)))
+        unless (member (first group) keywords :test #'eq)
           return group))
 
 (defun extract-named-group (canonicalized-lambda-list lambda-list-keyword)

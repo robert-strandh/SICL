@@ -10,7 +10,6 @@
            #:proper-or-dotted-list-length
            #:form-must-be-proper-list
            #:check-form-proper-list
-           #:invalid-number-of-arguments
            #:check-argcount
            #:circular-list-p
            #:lambda-list
@@ -27,20 +26,18 @@
            #:parse-specialized-lambda-list
            #:parse-macro-lambda-list
            #:parse-destructuring-lambda-list
-           #:preprocess-lambda-list
            #:parse-deftype-lambda-list
            #:parse-defsetf-lambda-list
            #:parse-define-modify-macro-lambda-list
            #:parse-define-method-combination-arguments-lambda-list
            #:lambda-list-variables
            #:destructure-lambda-list
-           #:match-lambda-list
            #:parse-macro
            #:parse-compiler-macro
            #:parse-deftype
+           #:parse-destructuring-bind
            #:lambda-lists-congruent-p
            #:generate-congruent-lambda-list
-           #:lambda-list-type-specifier
            #:canonicalize-declaration-specifiers
            #:separate-ordinary-body
            #:separate-function-body
@@ -78,15 +75,19 @@
            #:canonicalize-ordinary-required
            #:canonicalize-ordinary-rest
            #:*ordinary-canonicalizers*
-           #:*specialized-canonicalizers*
            #:*generic-function-canonicalizers*
+           #:*specialized-canonicalizers*
+           #:*macro-canonicalizers*
+           #:*destructuring-canonicalizers*
            #:*defsetf-canonicalizers*
            #:*define-modify-macro-canonicalizers*
            #:*define-method-combination-canonicalizers*
            #:canonicalize-lambda-list
            #:canonicalize-ordinary-lambda-list
-           #:canonicalize-specialized-lambda-list
            #:canonicalize-generic-function-lambda-list
+           #:canonicalize-specialized-lambda-list
+           #:canonicalize-macro-lambda-list
+           #:canonicalize-destructuring-lambda-list
            #:canonicalize-defsetf-lambda-list
            #:canonicalize-define-modify-macro-lambda-list
            #:canonicalize-define-method-combination-lambda-list

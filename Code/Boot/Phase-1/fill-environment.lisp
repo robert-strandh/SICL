@@ -161,7 +161,7 @@
        client environment 'sicl-data-and-control-flow:rotatef-expander)
       (ld "Data-and-control-flow/rotatef-defmacro.lisp")
       (import-function
-       client environment 'sicl-data-and-control-flow:destructuring-bind-expander)
+       client environment 'cleavir-code-utilities:parse-destructuring-bind)
       (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:shiftf-expander)

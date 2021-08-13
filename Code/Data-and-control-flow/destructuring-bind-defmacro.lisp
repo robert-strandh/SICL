@@ -1,4 +1,4 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(defmacro destructuring-bind (lambda-list expression &body body)
-  (destructuring-bind-expander lambda-list expression body))
+(defmacro destructuring-bind (lambda-list form &body body)
+  (cleavir-code-utilities:parse-destructuring-bind lambda-list form body))
