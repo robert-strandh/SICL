@@ -39,9 +39,9 @@
      cleavir-code-utilities:separate-ordinary-body
      cleavir-code-utilities:separate-function-body
      cleavir-code-utilities:required
+     cleavir-code-utilities:lambda-list-variables
      intern
      cleavir-code-utilities:parse-deftype
-     sicl-method-combination::lambda-list-variables
      sicl-loop::list-car sicl-loop::list-cdr
      env:type-expander
      ;; For Ctype.
