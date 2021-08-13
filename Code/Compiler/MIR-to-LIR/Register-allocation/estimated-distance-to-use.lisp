@@ -25,7 +25,7 @@
 
 (defmethod lexical-location-inputs (instruction)
   (loop for input in (cleavir-ir:inputs instruction)
-        when (typep input 'cleavir-ir:lexical-location)
+        when (typep input '(or cleavir-ir:lexical-location cleavir-ir:raw-datum))
           collect input))
 
 (defun call-instruction-p (instruction)

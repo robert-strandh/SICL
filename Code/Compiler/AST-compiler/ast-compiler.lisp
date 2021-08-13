@@ -4,7 +4,7 @@
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
      (dolist (input (cleavir-ir:inputs instruction))
-       (when (and (typep input 'cleavir-ir:lexical-location)
+       (when (and (typep input '(or cleavir-ir:lexical-location cleavir-ir:raw-datum))
                   (null (cleavir-ir:defining-instructions input)))
          (error "~s is used but never defined" input))))
    mir))

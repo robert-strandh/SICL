@@ -14,7 +14,7 @@
 ;;; either an immediate input, or it is a lexical location, and that
 ;;; lexical location has a register attributed to it.
 (defun ensure-input-available (predecessor instruction input)
-  (if (typep input 'cleavir-ir:lexical-location)
+  (if (typep input '(or cleavir-ir:lexical-location cleavir-ir:raw-datum))
       (ensure-lexical-location-has-attributed-register
        predecessor instruction input)
       predecessor))

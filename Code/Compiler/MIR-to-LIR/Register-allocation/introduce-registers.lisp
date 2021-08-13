@@ -3,7 +3,8 @@
 (defun find-register-in-arrangement (arrangement datum &key (accept-stack nil))
   ;; Any datum that is not a lexical location does not need to be
   ;; replaced.
-  (unless (typep datum 'cleavir-ir:lexical-location)
+  (unless (typep datum '(or cleavir-ir:lexical-location
+                            cleavir-ir:raw-datum))
     (return-from find-register-in-arrangement datum))
   (multiple-value-bind (stack-slot register-number)
       (arr:find-attribution arrangement datum)
