@@ -5,7 +5,6 @@
   :serial t
   :components
   ((:file "utilities")
-   (:file "data")
    (:file "memory-access-instructions")
    (:file "integer-arithmetic-instructions")
    (:file "shift-instructions")

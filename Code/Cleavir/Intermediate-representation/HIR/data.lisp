@@ -58,24 +58,65 @@
 ;;; for any lexical variable.  
 
 (defclass lexical-location (datum)
-  ((%name :initarg :name :reader name)
-   (%element-type :initarg :element-type
-                  :initform 't
-                  :reader element-type)))
+  ((%name :initarg :name :reader name)))
 
-(defun make-lexical-location (name &optional (element-type 't))
-  (make-instance 'lexical-location
-                 :name name
-                 :element-type element-type))
+(defun make-lexical-location (name &optional (class 'lexical-location))
+  (make-instance class :name name))
 
 (defmethod print-object ((object lexical-location) stream)
   (print-unreadable-object (object stream :type t)
     (format stream "~a" (name object))))
 
+(defmethod element-type ((object lexical-location))
+  't)
+
 ;;; Generate a new lexical location
-(defun new-temporary (&optional (thing nil thing-p) (element-type 't))
+(defun new-temporary (&optional (thing nil thing-p) (class 'lexical-location))
   (make-lexical-location (if thing-p (gensym thing) (gensym))
-                         element-type))
+                         class))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum class RAW-DATUM.
+;;;
+;;; This class is the base class for all raw data.  It contains a size
+;;; attribute that determines the number of bits that this datum
+;;; consists of.
+
+(defclass raw-datum (lexical-location)
+  ((%size :initarg :size :reader size))
+  (:default-initargs :name (gensym "RAW")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum class RAW-INTEGER.
+
+(defclass raw-integer (raw-datum)
+  ())
+
+(defmethod element-type ((raw raw-integer))
+  't)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum class RAW-FLOAT.
+
+(defclass raw-float (raw-datum)
+  ())
+
+(defmethod element-type ((raw raw-float))
+  'double-float)
+
+;;; Return a class specifier for a subclass of RAW-DATUM which could
+;;; store a value of the given type.
+(defun raw-datum-class-for-type (type)
+  (cond
+    ((member type '(single-float double-float))
+     'cleavir-ir:raw-float)
+    ((subtypep type '(or (signed-byte 64) (unsigned-byte 64)))
+     'cleavir-ir:raw-integer)
+    (t
+     (error "What location class would a ~s fit in?" type))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -12,6 +12,9 @@
 ;;;
 ;;; Compile an AREF-AST
 
+(defun boxing-temp-for-type (type)
+  (make-temp :class (cleavir-ir:raw-datum-class-for-type type)))
+
 (defmethod compile-ast (client (ast cleavir-ast:aref-ast) context)
   (assert-context ast context 1 1)
   (let* ((array-temp (make-temp))
@@ -20,7 +23,7 @@
          (unboxed (if (cleavir-ast:boxed-p ast)
                       (results context)
                       ;; need an additional boxing step.
-                      (list (make-temp type))))
+                      (list (boxing-temp-for-type type))))
          (succ (if (cleavir-ast:boxed-p ast)
                    (successors context)
                    (list (box-for-type type unboxed context)))))
@@ -58,8 +61,10 @@
 (defmethod compile-ast (client (ast cleavir-ast:aset-ast) context)
   (let* ((array-temp (make-temp))
          (index-temp (make-temp))
-         (element-temp (make-temp))
          (type (cleavir-ast:element-type ast))
+         (element-temp (if (cleavir-ast:boxed-p ast)
+                           (make-temp)
+                           (boxing-temp-for-type type)))
          (aset (make-instance 'cleavir-ir:aset-instruction
                  :element-type type
                  :simple-p (cleavir-ast:simple-p ast)
@@ -89,7 +94,7 @@
              (clone-context
               context
               :result element-temp
-              :successor  aset)
+              :successor aset)
              ;; if we have to unbox the new value first, compile
              ;; the element-ast in a context where the successor
              ;; is an unboxer and the output is a different temp.

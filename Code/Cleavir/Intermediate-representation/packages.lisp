@@ -174,4 +174,5 @@
    ;; MIR data
    #:raw-datum
    #:raw-integer
-   #:raw-float))
+   #:raw-float
+   #:raw-datum-class-for-type))
