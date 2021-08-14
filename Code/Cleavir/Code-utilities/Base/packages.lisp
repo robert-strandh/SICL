@@ -23,7 +23,6 @@
            #:aux
            #:parse-generic-function-lambda-list
            #:parse-destructuring-lambda-list
-           #:parse-defsetf-lambda-list
            #:lambda-list-variables
            #:destructure-lambda-list
            #:parse-macro
