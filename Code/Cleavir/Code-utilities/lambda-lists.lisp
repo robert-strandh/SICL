@@ -962,30 +962,3 @@
       (unless (null (cdr positions))
         (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
-
-(defun parse-define-method-combination-arguments-lambda-list
-    (lambda-list)
-  (let ((allowed '(&whole &optional &rest &key &allow-other-keys &aux)))
-    (check-lambda-list-proper lambda-list)
-    (check-lambda-list-keywords lambda-list allowed)
-    (let ((positions (compute-keyword-positions lambda-list allowed))
-          (result (make-instance 'lambda-list)))
-      (setf (required result)
-            (parse-all-required
-             lambda-list 0 (car positions) #'parse-ordinary-required))
-      (setf (values (optionals result) positions)
-            (parse-all-optionals
-             lambda-list positions #'parse-ordinary-optional))
-      (setf (values (rest-body result) positions)
-            (parse-rest/body lambda-list positions))
-      (setf (values (keys result) positions)
-            (parse-all-keys
-             lambda-list positions #'parse-ordinary-key))
-      (setf (values (allow-other-keys result) positions)
-            (parse-allow-other-keys lambda-list positions))
-      (setf (values (aux result) positions)
-            (parse-all-aux lambda-list positions))
-      ;; We should have run out of parameters now.
-      (unless (null (cdr positions))
-        (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
-      result)))
