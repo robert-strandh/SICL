@@ -188,6 +188,58 @@
            :code parameter))
   parameter)
 
+;;; Parse an ordinary &key item.
+;;; We canonicalize it a bit, so that instead of having the original
+;;; 7 different possible forms:
+;;;
+;;;   * var
+;;;   * (var)
+;;;   * (var init-form)
+;;;   * (var init-form supplied-p-parameter)
+;;;   * ((keyword var))
+;;;   * ((keyword var) init-form)
+;;;   * ((keyword var) init-form supplied-p-parameter)
+;;;
+;;; we boil it down to 2:
+;;;
+;;;   * ((keyword var) init-form)
+;;;   * ((keyword var) init-form supplied-p-parameter)
+;;;
+;;; by replacing var or (var) by ((:var var) nil),
+;;; by replacing (var init-form) by ((:var var) init-form), and
+;;; by replacing (var init-form supplied-p-parameter) by
+;;; ((:var var) init-form supplied-p-parameter).
+(defun canonicalize-ordinary-key (key)
+  (if (consp key)
+      (multiple-value-bind (length structure)
+          (list-structure key)
+        (unless (and (eq structure :proper)
+                     (<= 1 length 3)
+                     (or (and (symbolp (car key))
+                              (not (constantp (car key))))
+                         (and (consp (car key))
+                              (symbolp (caar key))
+                              (consp (cdar key))
+                              (symbolp (cadar key))
+                              (not (constantp (cadar key)))
+                              (null (cddar key))))
+                     (or (< length 3)
+                         (symbolp (caddr key))
+                         (not (constantp (caddr key)))))
+          (error 'malformed-ordinary-key
+                 :code key))
+        `(,(if (symbolp (car key))
+               `(,(intern (symbol-name (car key)) :keyword) ,(car key))
+               (car key))
+          ,(if (> length 1) (cadr key) nil)
+          . ,(cddr key)))
+      (progn
+        (unless (and (symbolp key)
+                     (not (constantp key)))
+          (error 'malformed-ordinary-key
+                 :code key))
+        `((,(intern (symbol-name key) :keyword) ,key) nil))))
+
 (defun canonicalize-environment (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
@@ -252,7 +304,7 @@
   `((nil . ,#'canonicalize-ordinary-required)
     (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
-    (&key . ,#'parse-ordinary-key)
+    (&key . ,#'canonicalize-ordinary-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'canonicalize-aux)))
 
@@ -267,7 +319,7 @@
   `((nil . ,#'parse-specialized-required)
     (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
-    (&key . ,#'parse-ordinary-key)
+    (&key . ,#'canonicalize-ordinary-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'canonicalize-aux)))
 
@@ -278,7 +330,7 @@
     (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-destructuring-rest)
     (&body . ,#'canonicalize-destructuring-rest)
-    (&key . ,#'parse-ordinary-key)
+    (&key . ,#'canonicalize-ordinary-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'canonicalize-aux)))
 
@@ -288,7 +340,7 @@
     (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-destructuring-rest)
     (&body . ,#'canonicalize-destructuring-rest)
-    (&key . ,#'parse-ordinary-key)
+    (&key . ,#'canonicalize-ordinary-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'canonicalize-aux)))
 
@@ -297,7 +349,7 @@
     (&environment . ,#'canonicalize-environment)
     (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
-    (&key . ,#'parse-ordinary-key)
+    (&key . ,#'canonicalize-ordinary-key)
     (&allow-other-keys . ,#'identity)))
 
 (defparameter *deftype-canonicalizers*
@@ -321,7 +373,7 @@
     (&whole . ,#'canonicalize-whole)
     (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
-    (&key . ,#'parse-ordinary-key)
+    (&key . ,#'canonicalize-ordinary-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'canonicalize-aux)))
 
