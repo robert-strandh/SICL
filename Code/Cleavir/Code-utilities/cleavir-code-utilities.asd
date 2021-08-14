@@ -9,7 +9,6 @@
   ((:file "conditions")
    (:file "condition-reporters-english")
    (:file "declarations")
-   (:file "lambda-lists")
    (:file "new-lambda-list")
    (:file "lambda-list-congruency")
    (:file "lambda-list-variables")
