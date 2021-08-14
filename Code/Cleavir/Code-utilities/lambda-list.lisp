@@ -139,6 +139,9 @@
           :occurrence-count 1
           :order 600)))
 
+(defun intrinsic-keywords ()
+  (mapcar #'lambda-list-keyword *intrinsic-features*))
+
 (defun find-feature (keyword)
   (find keyword *intrinsic-features*
         :test #'eq :key #'lambda-list-keyword))
@@ -561,9 +564,6 @@
     (&key . ,#'canonicalize-ordinary-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'canonicalize-aux)))
-
-(defun intrinsic-keywords ()
-  (mapcar #'lambda-list-keyword *intrinsic-features*))
 
 (defun canonicalize-groups (groups canonicalizers)
   (loop with keywords = (intrinsic-keywords)
