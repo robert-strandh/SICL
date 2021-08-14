@@ -14,7 +14,6 @@
        cleavir-code-utilities:extract-required
        cleavir-code-utilities:canonicalize-specialized-lambda-list
        cleavir-code-utilities:separate-function-body
-       cleavir-code-utilities:required
        sicl-method-combination:define-method-combination-expander
        sicl-loop::list-car sicl-loop::list-cdr)
      e4)
