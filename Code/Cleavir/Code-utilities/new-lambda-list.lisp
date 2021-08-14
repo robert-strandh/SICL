@@ -249,6 +249,9 @@
 (defun canonicalize-ordinary-key (key)
   (canonicalize-nontrivial-key key 'nil))
 
+(defun canonicalize-deftype-key (key)
+  (canonicalize-nontrivial-key key '*))
+
 ;;; Canonicalize a defgeneric &optional item.
 ;;; We canonicalize it, so that instead of having the original
 ;;; 2 different possible forms:
@@ -468,7 +471,7 @@
     (&optional . ,#'canonicalize-deftype-optional)
     (&rest . ,#'canonicalize-destructuring-rest)
     (&body . ,#'canonicalize-destructuring-rest)
-    (&key . ,#'parse-deftype-key)
+    (&key . ,#'canonicalize-deftype-key)
     (&allow-other-keys . ,#'identity)
     (&aux . ,#'canonicalize-aux)))
 
