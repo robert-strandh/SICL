@@ -21,7 +21,6 @@
            #:keys
            #:allow-other-keys
            #:aux
-           #:parse-destructuring-lambda-list
            #:lambda-list-variables
            #:destructure-lambda-list
            #:parse-macro
