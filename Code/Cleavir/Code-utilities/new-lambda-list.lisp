@@ -569,7 +569,7 @@
 (defun canonicalize-define-modify-macro-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *define-modify-macro-canonicalizers*))
 
-(defun canonicalize-define-method-combination-lambda-list (lambda-list)
+(defun canonicalize-define-method-combination-arguments-lambda-list (lambda-list)
   (canonicalize-lambda-list lambda-list *define-method-combination-canonicalizers*))
 
 (defun extract-required (canonicalized-lambda-list)

@@ -86,6 +86,6 @@
            #:canonicalize-destructuring-lambda-list
            #:canonicalize-defsetf-lambda-list
            #:canonicalize-define-modify-macro-lambda-list
-           #:canonicalize-define-method-combination-lambda-list
+           #:canonicalize-define-method-combination-arguments-lambda-list
            #:extract-required
            #:extract-named-group))
