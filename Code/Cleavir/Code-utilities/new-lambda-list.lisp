@@ -184,6 +184,9 @@
 (defun canonicalize-ordinary-optional (optional)
   (canonicalize-nontrivial-optional optional 'nil))
 
+(defun canonicalize-deftype-optional (optional)
+  (canonicalize-nontrivial-optional optional '*))
+
 (defun canonicalize-ordinary-rest (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
@@ -459,7 +462,7 @@
   `((nil . ,#'canonicalize-destructuring-required)
     (&whole . ,#'canonicalize-whole)
     (&environment . ,#'canonicalize-environment)
-    (&optional . ,#'parse-deftype-optional)
+    (&optional . ,#'canonicalize-deftype-optional)
     (&rest . ,#'canonicalize-destructuring-rest)
     (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-deftype-key)
