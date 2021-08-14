@@ -31,9 +31,8 @@
   (import-functions-from-host
    '(cleavir-code-utilities:proper-list-p
      cleavir-code-utilities:list-structure
-     cleavir-code-utilities:optionals
-     cleavir-code-utilities:rest-body
-     cleavir-code-utilities:parse-define-modify-macro-lambda-list
+     cleavir-code-utilities:extract-named-group
+     cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
      cleavir-code-utilities:parse-generic-function-lambda-list
      cleavir-code-utilities:canonicalize-specialized-lambda-list
      cleavir-code-utilities:extract-required
