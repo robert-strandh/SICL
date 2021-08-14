@@ -268,6 +268,43 @@
                  :code optional))
         optional)))
 
+;;; Canonicalize a defgeneric &key item.
+;;; We canonicalize it, so that instead of having the original
+;;; 3 different possible forms:
+;;;
+;;;   * var
+;;;   * (var)
+;;;   * ((keyword var))
+;;;
+;;; we boil it down to just 1:
+;;;
+;;;   * ((keyword var))
+;;;
+;;; by replacing var and (var) by ((:var var))
+(defun canonicalize-defgeneric-key (key)
+  (if (consp key)
+      (progn
+        (unless (and (null (cdr key))
+                     (or (and (symbolp (car key))
+                              (not (constantp (car key))))
+                         (and (consp (car key))
+                              (symbolp (caar key))
+                              (consp (cdar key))
+                              (symbolp (cadar key))
+                              (not (constantp (cadar key)))
+                              (null (cddar key)))))
+          (error 'malformed-defgeneric-key
+                 :code key))
+        `(,(if (symbolp (car key))
+               `(,(intern (symbol-name (car key)) :keyword) ,(car key))
+               (car key))))
+      (progn
+        (unless (and (symbolp key)
+                     (not (constantp key)))
+          (error 'malformed-defgeneric-key
+                 :code key))
+        `(,(intern (symbol-name key) :keyword) ,key))))
+
 (defun canonicalize-environment (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
@@ -340,7 +377,7 @@
   `((nil . ,#'canonicalize-ordinary-required)
     (&optional . ,#'canonicalize-defgeneric-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
-    (&key . ,#'parse-defgeneric-key)
+    (&key . ,#'canonicalize-defgeneric-key)
     (&allow-other-keys . ,#'identity)))
 
 (defparameter *specialized-canonicalizers*
