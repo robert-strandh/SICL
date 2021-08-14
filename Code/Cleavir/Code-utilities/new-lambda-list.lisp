@@ -143,7 +143,7 @@
            :code parameter))
   parameter)
 
-;;; Parse an ordinary &optional item.
+;;; Canonicalize an ordinary &optional item.
 ;;; We canonicalize it a bit, so that instead of having the original
 ;;; 4 different possible forms:
 ;;;
@@ -188,7 +188,7 @@
            :code parameter))
   parameter)
 
-;;; Parse an ordinary &key item.
+;;; Canonicalize an ordinary &key item.
 ;;; We canonicalize it a bit, so that instead of having the original
 ;;; 7 different possible forms:
 ;;;
@@ -239,6 +239,34 @@
           (error 'malformed-ordinary-key
                  :code key))
         `((,(intern (symbol-name key) :keyword) ,key) nil))))
+
+;;; Canonicalize a defgeneric &optional item.
+;;; We canonicalize it, so that instead of having the original
+;;; 2 different possible forms:
+;;;
+;;;   * var
+;;;   * (var)
+;;;
+;;; we boil it down to just 1:
+;;;
+;;;   * var
+;;;
+;;; by replacing (var) by var.
+(defun canonicalize-defgeneric-optional (optional)
+  (if (consp optional)
+      (progn
+        (unless (and (null (cdr optional))
+                     (symbolp (car optional))
+                     (not (constantp (car optional))))
+          (error 'malformed-defgeneric-optional
+                 :code optional))
+        (car optional))
+      (progn
+        (unless (and (symbolp optional)
+                     (not (constantp optional)))
+          (error 'malformed-defgeneric-optional
+                 :code optional))
+        optional)))
 
 (defun canonicalize-environment (parameter)
   (unless (and (symbolp parameter)
@@ -310,7 +338,7 @@
 
 (defparameter *generic-function-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
-    (&optional . ,#'parse-defgeneric-optional)
+    (&optional . ,#'canonicalize-defgeneric-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-defgeneric-key)
     (&allow-other-keys . ,#'identity)))
