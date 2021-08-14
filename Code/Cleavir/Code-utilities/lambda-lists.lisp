@@ -814,33 +814,6 @@
 (defun finalize-aux (aux)
   (if (eq aux :none) '() (list (cons '&aux aux))))
 
-(defun parse-generic-function-lambda-list (lambda-list)
-  (let ((allowed '(&optional &rest &key &allow-other-keys)))
-    (check-lambda-list-proper lambda-list)
-    (check-lambda-list-keywords lambda-list allowed)
-    (let ((positions (compute-keyword-positions lambda-list allowed))
-          required optionals rest-body keys allow-other-keys)
-      (setf required
-            (parse-all-required
-             lambda-list 0 (car positions) #'parse-ordinary-required))
-      (setf (values optionals positions)
-            (parse-all-optionals
-             lambda-list positions #'parse-defgeneric-optional))
-      (setf (values rest-body positions)
-            (parse-rest/body lambda-list positions))
-      (setf (values keys positions)
-            (parse-all-keys
-             lambda-list positions #'parse-defgeneric-key))
-      (setf (values allow-other-keys positions)
-            (parse-allow-other-keys lambda-list positions))
-      ;; We should have run out of parameters now.
-      (unless (null (cdr positions))
-        (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
-      (append (list required)
-              (finalize-optionals optionals)
-              (finalize-rest-body rest-body)
-              (finalize-keys keys allow-other-keys)))))
-
 (defun parse-destructuring-lambda-list (lambda-list)
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
