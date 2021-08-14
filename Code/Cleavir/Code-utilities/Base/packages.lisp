@@ -24,7 +24,6 @@
            #:parse-generic-function-lambda-list
            #:parse-destructuring-lambda-list
            #:parse-defsetf-lambda-list
-           #:parse-define-modify-macro-lambda-list
            #:lambda-list-variables
            #:destructure-lambda-list
            #:parse-macro
