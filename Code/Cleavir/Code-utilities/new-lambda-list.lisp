@@ -143,6 +143,44 @@
            :code parameter))
   parameter)
 
+;;; Parse an ordinary &optional item.
+;;; We canonicalize it a bit, so that instead of having the original
+;;; 4 different possible forms:
+;;;
+;;;   * var
+;;;   * (var)
+;;;   * (var init-form)
+;;;   * (var init-form supplied-p-parameter)
+;;;
+;;; we boil it down to 2:
+;;;
+;;;   * (var init-form)
+;;;   * (var init-form supplied-p-parameter)
+;;;
+;;; by replacing var or (var) by (var nil)
+(defun canonicalize-ordinary-optional (optional)
+  (if (consp optional)
+      (multiple-value-bind (length structure)
+          (list-structure optional)
+        (unless (and (eq structure :proper)
+                     (<= 1 length 3)
+                     (symbolp (car optional))
+                     (not (constantp (car optional)))
+                     (or (< length 3)
+                         (symbolp (caddr optional))
+                         (not (constantp (caddr optional)))))
+          (error 'malformed-ordinary-optional
+                 :code optional))
+        `(,(car optional)
+          ,(if (> length 1) (cadr optional) nil)
+          . ,(cddr optional)))
+      (progn
+        (unless (and (symbolp optional)
+                     (not (constantp optional)))
+          (error 'malformed-ordinary-optional
+                 :code optional))
+        `(,optional nil))))
+
 (defun canonicalize-ordinary-rest (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
@@ -182,7 +220,7 @@
 
 (defparameter *ordinary-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
-    (&optional . ,#'parse-ordinary-optional)
+    (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
@@ -197,7 +235,7 @@
 
 (defparameter *specialized-canonicalizers*
   `((nil . ,#'parse-specialized-required)
-    (&optional . ,#'parse-ordinary-optional)
+    (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
@@ -207,7 +245,7 @@
   `((nil . ,#'canonicalize-destructuring-required)
     (&whole . ,#'canonicalize-whole)
     (&environment . ,#'canonicalize-environment)
-    (&optional . ,#'parse-ordinary-optional)
+    (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-destructuring-rest)
     (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-ordinary-key)
@@ -217,7 +255,7 @@
 (defparameter *destructuring-canonicalizers*
   `((nil . ,#'canonicalize-destructuring-required)
     (&whole . ,#'canonicalize-whole)
-    (&optional . ,#'parse-ordinary-optional)
+    (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-destructuring-rest)
     (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-ordinary-key)
@@ -227,7 +265,7 @@
 (defparameter *defsetf-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
     (&environment . ,#'canonicalize-environment)
-    (&optional . ,#'parse-ordinary-optional)
+    (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)))
@@ -245,13 +283,13 @@
 
 (defparameter *define-modify-macro-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
-    (&optional . ,#'parse-ordinary-optional)
+    (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)))
 
 (defparameter *define-method-combination-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
     (&whole . ,#'canonicalize-whole)
-    (&optional . ,#'parse-ordinary-optional)
+    (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
