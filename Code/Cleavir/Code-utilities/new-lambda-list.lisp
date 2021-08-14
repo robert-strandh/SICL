@@ -218,13 +218,43 @@
         (t
          (error "&REST or &BODY parameter must be a variable or a CONS."))))
 
+;;; Canonicalize an &aux item.
+;;; We canonicalize it, so that instead of having the original
+;;; 3 different possible forms:
+;;;
+;;;   * var
+;;;   * (var)
+;;;   * (var intitform)
+;;;
+;;; we boil it down to just 1:
+;;;
+;;;   * (var initform)
+;;;
+;;; by replacing var and (var) by (var nil)
+(defun canonicalize-aux (aux)
+  (if (consp aux)
+      (progn
+        (unless (and (symbolp (car aux))
+                     (not (constantp (car aux)))
+                     (or (null (cdr aux))
+                         (null (cddr aux))))
+          (error 'malformed-aux
+                 :code aux))
+        `(,(car aux) ,(if (null (cdr aux)) nil (cadr aux))))
+      (progn
+        (unless (and (symbolp aux)
+                     (not (constantp aux)))
+          (error 'malformed-aux
+                 :code aux))
+        `(,aux nil))))
+
 (defparameter *ordinary-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
     (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
-    (&aux . ,#'parse-aux)))
+    (&aux . ,#'canonicalize-aux)))
 
 (defparameter *generic-function-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
@@ -239,7 +269,7 @@
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
-    (&aux . ,#'parse-aux)))
+    (&aux . ,#'canonicalize-aux)))
 
 (defparameter *macro-canonicalizers*
   `((nil . ,#'canonicalize-destructuring-required)
@@ -250,7 +280,7 @@
     (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
-    (&aux . ,#'parse-aux)))
+    (&aux . ,#'canonicalize-aux)))
 
 (defparameter *destructuring-canonicalizers*
   `((nil . ,#'canonicalize-destructuring-required)
@@ -260,7 +290,7 @@
     (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
-    (&aux . ,#'parse-aux)))
+    (&aux . ,#'canonicalize-aux)))
 
 (defparameter *defsetf-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
@@ -279,7 +309,7 @@
     (&body . ,#'canonicalize-destructuring-rest)
     (&key . ,#'parse-deftype-key)
     (&allow-other-keys . ,#'identity)
-    (&aux . ,#'parse-aux)))
+    (&aux . ,#'canonicalize-aux)))
 
 (defparameter *define-modify-macro-canonicalizers*
   `((nil . ,#'canonicalize-ordinary-required)
@@ -293,7 +323,7 @@
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'parse-ordinary-key)
     (&allow-other-keys . ,#'identity)
-    (&aux . ,#'parse-aux)))
+    (&aux . ,#'canonicalize-aux)))
 
 (defun intrinsic-keywords ()
   (mapcar #'lambda-list-keyword *intrinsic-features*))
