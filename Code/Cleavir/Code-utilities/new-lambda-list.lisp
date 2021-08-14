@@ -215,7 +215,7 @@
 ;;; by replacing (var init-form) by ((:var var) init-form), and
 ;;; by replacing (var init-form supplied-p-parameter) by
 ;;; ((:var var) init-form supplied-p-parameter).
-(defun canonicalize-ordinary-key (key)
+(defun canonicalize-nontrivial-key (key default)
   (if (consp key)
       (multiple-value-bind (length structure)
           (list-structure key)
@@ -237,14 +237,17 @@
         `(,(if (symbolp (car key))
                `(,(intern (symbol-name (car key)) :keyword) ,(car key))
                (car key))
-          ,(if (> length 1) (cadr key) nil)
+          ,(if (> length 1) (cadr key) default)
           . ,(cddr key)))
       (progn
         (unless (and (symbolp key)
                      (not (constantp key)))
           (error 'malformed-ordinary-key
                  :code key))
-        `((,(intern (symbol-name key) :keyword) ,key) nil))))
+        `((,(intern (symbol-name key) :keyword) ,key) ,default))))
+
+(defun canonicalize-ordinary-key (key)
+  (canonicalize-nontrivial-key key 'nil))
 
 ;;; Canonicalize a defgeneric &optional item.
 ;;; We canonicalize it, so that instead of having the original
