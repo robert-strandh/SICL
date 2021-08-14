@@ -158,7 +158,7 @@
 ;;;   * (var init-form supplied-p-parameter)
 ;;;
 ;;; by replacing var or (var) by (var nil)
-(defun canonicalize-ordinary-optional (optional)
+(defun canonicalize-nontrivial-optional (optional default)
   (if (consp optional)
       (multiple-value-bind (length structure)
           (list-structure optional)
@@ -172,14 +172,17 @@
           (error 'malformed-ordinary-optional
                  :code optional))
         `(,(car optional)
-          ,(if (> length 1) (cadr optional) nil)
+          ,(if (> length 1) (cadr optional) default)
           . ,(cddr optional)))
       (progn
         (unless (and (symbolp optional)
                      (not (constantp optional)))
           (error 'malformed-ordinary-optional
                  :code optional))
-        `(,optional nil))))
+        `(,optional ,default))))
+
+(defun canonicalize-ordinary-optional (optional)
+  (canonicalize-nontrivial-optional optional 'nil))
 
 (defun canonicalize-ordinary-rest (parameter)
   (unless (and (symbolp parameter)
@@ -305,6 +308,41 @@
                  :code key))
         `(,(intern (symbol-name key) :keyword) ,key))))
 
+;;; Canonicalize a specialized required parameter.
+;;; We canonicalize it, so that instead of having the original
+;;; 3 different possible forms:
+;;;
+;;;   * var
+;;;   * (var)
+;;;   * (var specializer)
+;;;
+;;; we boil it down to just 1:
+;;;
+;;;   * (var specializer)
+;;;
+;;; by replacing var or (var) by (var t)
+(defun canonicalize-specialized-required (required)
+  (if (consp required)
+      (progn
+        (unless (and (symbolp (car required))
+                     (not (constantp (car required)))
+                     (or (null (cdr required))
+                         (and (null (cddr required))
+                              (or (symbolp (cadr required))
+                                  (and (consp (cadr required))
+                                       (consp (cdadr required))
+                                       (null (cddadr required))
+                                       (eq (caadr required) 'eql))))))
+          (error 'malformed-specialized-required
+                 :code required))
+        `(,(car required) ,(if (null (cdr required)) t (cadr required))))
+      (progn
+        (unless (and (symbolp required)
+                     (not (constantp required)))
+          (error 'malformed-specialized-required
+                 :code required))
+        `(,required t))))
+
 (defun canonicalize-environment (parameter)
   (unless (and (symbolp parameter)
                (not (constantp parameter)))
@@ -381,7 +419,7 @@
     (&allow-other-keys . ,#'identity)))
 
 (defparameter *specialized-canonicalizers*
-  `((nil . ,#'parse-specialized-required)
+  `((nil . ,#'canonicalize-specialized-required)
     (&optional . ,#'canonicalize-ordinary-optional)
     (&rest . ,#'canonicalize-ordinary-rest)
     (&key . ,#'canonicalize-ordinary-key)
