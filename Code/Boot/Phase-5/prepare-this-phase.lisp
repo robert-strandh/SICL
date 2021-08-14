@@ -33,7 +33,7 @@
      cleavir-code-utilities:list-structure
      cleavir-code-utilities:extract-named-group
      cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
-     cleavir-code-utilities:parse-generic-function-lambda-list
+     cleavir-code-utilities:canonicalize-generic-function-lambda-list
      cleavir-code-utilities:canonicalize-specialized-lambda-list
      cleavir-code-utilities:extract-required
      cleavir-code-utilities:separate-ordinary-body
