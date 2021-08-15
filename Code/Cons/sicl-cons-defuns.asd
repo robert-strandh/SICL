@@ -38,4 +38,6 @@
    (:file "mapcar-defun")
    (:file "mapc-defun")
    (:file "mapcan-defun")
-   (:file "mapcon-defun")))
+   (:file "mapcon-defun")
+   (:file "cxr")
+   (:file "setf-cxr")))
