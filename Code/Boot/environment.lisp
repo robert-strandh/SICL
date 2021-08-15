@@ -183,7 +183,7 @@
      log sqrt
      ;; CONSes
      cons list list* append nconc make-list copy-list subst
-     consp atom listp null endp
+     consp atom listp null endp nreconc
      car cdr caar cadr cdar cddr
      caaar caadr cadar caddr cdaar cdadr cddar cdddr cddadr nthcdr
      first second third fourth fifth nth rest
