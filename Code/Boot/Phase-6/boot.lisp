@@ -87,4 +87,5 @@
     (load-asdf-system '#:trucler-reference e5)
     (load-ctype e5)
     (load-source-file "Types/subtypep-defun.lisp" e5)
-    (load-closer-mop e5)))
+    (load-closer-mop e5)
+    (load-eclector e5)))
