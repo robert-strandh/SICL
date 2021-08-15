@@ -73,71 +73,45 @@
 ;;; in the lambda list, before the list of required variables.  This
 ;;; rule messes up syntax checking a bit.
 
-(defgeneric lambda-list-keyword (intrinsic-feature))
-(defgeneric arity (intrinsic-feature))
-(defgeneric ocurrence-count (intrinsic-feature))
-(defgeneric order (intrinsic-feature))
+;;; It may be possible to use generic functions here if we are clever
+;;; during bootstrapping and make sure the generic functions are
+;;; satiated before being used.  But for now, we use lists instead of
+;;; standard objects.
 
-(defclass intrinsic-feature ()
-  ((%lambda-list-keyword
-    :initarg :lambda-list-keyword
-    :reader lambda-list-keyword)
-   ;; The arity can be:
-   ;;
-   ;; - A non-negative fixnum, which is then the number of items that
-   ;;   must follow.
-   ;;
-   ;; - The symbol *, which means that any number of items can follow.
-   (%arity :initarg :arity :reader arity)
-   ;; The number of times this lambda-list keyword can occur in any
-   ;; lambda list.
-   (%occurence-count
-    :initform 0
-    :initarg :occurrence-count
-    :reader occurrence-count)
-   (%order :initarg :order :reader order)))
+(defun lambda-list-keyword (intrinsic-feature)
+  (first intrinsic-feature))
+
+(defun arity (intrinsic-feature)
+  (second intrinsic-feature))
+
+(defun occurrence-count (intrinsic-feature)
+  (third intrinsic-feature))
+
+(defun order (intrinsic-feature)
+  (fourth intrinsic-feature))
+
+;;; ARITY can be:
+;;;
+;;; - A non-negative fixnum, which is then the number of items that
+;;;   must follow.
+;;;
+;;; - The symbol *, which means that any number of items can follow.
+;;;
+;;; OCCURRENCE-COUNT is The number of times this lambda-list keyword
+;;; can occur in any lambda list.
+(defun make-intrinsic-feature
+    (lambda-list-keyword arity occurrence-count order)
+  (list lambda-list-keyword arity occurrence-count order))
 
 (defparameter *intrinsic-features*
-  (list (make-instance 'intrinsic-feature
-          :lambda-list-keyword '&whole
-          :arity 1
-          :occurrence-count 1
-          :order 100)
-        (make-instance 'intrinsic-feature
-          :lambda-list-keyword '&environment
-          :arity 1
-          :occurrence-count 1
-          :order nil)
-        (make-instance 'intrinsic-feature
-          :lambda-list-keyword '&optional
-          :arity '*
-          :occurrence-count 1
-          :order 200)
-        (make-instance 'intrinsic-feature
-          :lambda-list-keyword '&rest
-          :arity 1
-          :occurrence-count 1
-          :order 300)
-        (make-instance 'intrinsic-feature
-          :lambda-list-keyword '&body
-          :arity 1
-          :occurrence-count 1
-          :order 300)
-        (make-instance 'intrinsic-feature
-          :lambda-list-keyword '&key
-          :arity '*
-          :occurrence-count 1
-          :order 400)
-        (make-instance 'intrinsic-feature
-          :lambda-list-keyword '&allow-other-keys
-          :arity 0
-          :occurrence-count 1
-          :order 500)
-        (make-instance 'intrinsic-feature
-          :lambda-list-keyword '&aux
-          :arity '*
-          :occurrence-count 1
-          :order 600)))
+  (list (make-intrinsic-feature '&whole            1  1 100)
+        (make-intrinsic-feature '&environment      1  1 nil)
+        (make-intrinsic-feature '&optional         '* 1 200)
+        (make-intrinsic-feature '&rest             1  1 300)
+        (make-intrinsic-feature '&body             1  1 300)
+        (make-intrinsic-feature '&key              '* 1 400)
+        (make-intrinsic-feature '&allow-other-keys 0  1 500)
+        (make-intrinsic-feature '&aux              '* 1 600)))
 
 (defun intrinsic-keywords ()
   (mapcar #'lambda-list-keyword *intrinsic-features*))
