@@ -286,7 +286,7 @@
             (if (or (eq (car clause) 'otherwise)
                     (eq (car clause) t))
                 (if (null (cdr clauses))
-                    `(progn ,@(cdr clauses))
+                    `(progn ,@(cdr clause))
                     (error 'otherwise-clause-not-last
                            :name 'typecase
                            :clauses (cdr clauses)))
