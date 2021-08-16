@@ -15,4 +15,5 @@
    (:file "call-instruction")
    (:file "arguments")
    (:file "values")
+   (:file "fixnum-arithmetic")
    (:file "mir-to-lir")))
