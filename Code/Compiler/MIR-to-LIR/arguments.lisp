@@ -21,8 +21,14 @@
          :outputs (list input))
        instruction)
       (cleavir-ir:insert-instruction-before
-       (make-instance 'cleavir-ir:fixnum-multiply-instruction
-         :inputs (list result (cleavir-ir:make-immediate-input -4))
+       (make-instance 'cleavir-ir:negate-instruction
+         :inputs (list result)
+         :outputs (list result))
+       instruction)
+      (cleavir-ir:insert-instruction-before
+       (make-instance 'cleavir-ir:shift-left-instruction
+         :shift-count (cleavir-ir:make-immediate-input 2)
+         :shifted-input result
          :outputs (list result))
        instruction)
       (cleavir-ir:insert-instruction-before
