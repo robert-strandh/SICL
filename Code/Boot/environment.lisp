@@ -282,7 +282,7 @@
     (setf (env:fdefinition client environment 'funcall)
           (lambda (function-designator &rest arguments)
             (let ((function (if (symbolp function-designator)
-                                (progn (print function-designator) (env:fdefinition client environment function-designator))
+                                (env:fdefinition client environment function-designator)
                                 function-designator)))
               (apply function arguments))))
     (setf (env:fdefinition client environment 'apply)
