@@ -89,6 +89,8 @@
     (load-source-file "Types/subtypep-defun.lisp" e5)
     (load-closer-mop e5)
     (load-eclector e5)
+    (load-asdf-system '#:sicl-loop-support e5)
+    (load-asdf-system '#:sicl-loop e5)
     (load-asdf-system '#:cleavir-code-utilities e5)
     (load-asdf-system '#:sicl-arithmetic-defuns e5)
     (load-asdf-system '#:sicl-cons-defuns e5)))
