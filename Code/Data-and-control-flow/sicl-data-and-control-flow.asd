@@ -7,7 +7,7 @@
   ((:file "setf-defmacro")
    (:file "multiple-value-list-defmacro")
    (:file "nth-value")
-   (:file "get-setf-expansion-defun")
+   ;; (:file "get-setf-expansion-defun")
    (:file "return-defmacro")
    (:file "prog1-prog2-defmacro")
    (:file "prog-progstar-defmacro")
