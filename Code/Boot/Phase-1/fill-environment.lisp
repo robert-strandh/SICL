@@ -154,8 +154,7 @@
       (import-function
        client environment 'cleavir-code-utilities:separate-ordinary-body)
       (ld "Data-and-control-flow/prog-progstar-defmacro.lisp")
-      (import-function
-       client environment 'sicl-data-and-control-flow:psetf-expander)
+      (ld "Data-and-control-flow/psetf-support.lisp")
       (ld "Data-and-control-flow/psetf-defmacro.lisp")
       (import-function
        client environment 'sicl-data-and-control-flow:rotatef-expander)
