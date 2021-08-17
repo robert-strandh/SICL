@@ -37,7 +37,7 @@
 ;;;                     ...
 ;;;                     <storing-formn>))) ...))))
 
-(defun shiftf-expander (client environment arguments)
+(defun shiftf-expander (arguments)
   (let* ((places (butlast arguments))
          (new-value-form (first (last arguments)))
          (setf-expansions
@@ -45,8 +45,7 @@
            ;; values returned by GET-SETF-EXPANSION. 
            (loop for place in places
                  collect (multiple-value-list
-                          (sicl-environment:get-setf-expansion
-                           client environment place)))))
+                          (get-setf-expansion place)))))
     (flet ((make-let*-bindings (temporary-variables value-forms)
              (loop for var in temporary-variables
                    for form in value-forms
@@ -58,7 +57,6 @@
                                storing-form
                                accessing-form)
               (first setf-expansions)
-            (print 'hi)
             `(let* ,(make-let*-bindings temporary-variables value-forms)
                (prog1 ,accessing-form
                  (multiple-value-bind ,store-variables ,new-value-form
