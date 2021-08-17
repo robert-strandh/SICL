@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "identity-defun")
+   (:file "constantly-defun")
    (:file "setf-defmacro")
    (:file "multiple-value-list-defmacro")
    (:file "nth-value")
