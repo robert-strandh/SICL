@@ -163,8 +163,7 @@
       (import-function
        client environment 'cleavir-code-utilities:parse-destructuring-bind)
       (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
-      (import-function
-       client environment 'sicl-data-and-control-flow:shiftf-expander)
+      (ld "Data-and-control-flow/shiftf-support.lisp")
       (ld "Data-and-control-flow/shiftf-defmacro.lisp")
       ;; Load a file containing the definition of the macro PUSHNEW.
       (import-function client environment 'sicl-cons:pushnew-expander)
