@@ -41,7 +41,6 @@
      cleavir-code-utilities:lambda-list-variables
      intern
      cleavir-code-utilities:parse-deftype
-     sicl-loop::list-car sicl-loop::list-cdr
      env:type-expander
      ;; For Ctype.
      map substitute functionp lognot logcount subsetp member-if intersection

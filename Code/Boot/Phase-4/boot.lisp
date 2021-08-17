@@ -14,8 +14,7 @@
        cleavir-code-utilities:extract-required
        cleavir-code-utilities:canonicalize-specialized-lambda-list
        cleavir-code-utilities:separate-function-body
-       sicl-method-combination:define-method-combination-expander
-       sicl-loop::list-car sicl-loop::list-cdr)
+       sicl-method-combination:define-method-combination-expander)
      e4)
     (prepare-this-phase e2 e3 e4)
     (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e4)
