@@ -4,7 +4,8 @@
   :depends-on (:sicl-data-and-control-flow-support)
   :serial t
   :components
-  ((:file "setf-defmacro")
+  ((:file "identity-defun")
+   (:file "setf-defmacro")
    (:file "multiple-value-list-defmacro")
    (:file "nth-value")
    ;; (:file "get-setf-expansion-defun")
