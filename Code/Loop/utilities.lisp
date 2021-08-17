@@ -18,9 +18,6 @@
 ;;; list of bindings to be used in a LET* form.  These bindings
 ;;; destructure the root value until the leaves of the tree are
 ;;; reached, generating intermediate temporary variables as necessary.
-;;; The destructuring code calls the function LIST-CAR and LIST-CDR so
-;;; that an error is signaled whenever the corresponding place in the
-;;; value tree is not a CONS cell.
 (defun destructure-variables (d-var-spec form)
   (let ((bindings '()))
     (labels ((traverse (d-var-spec form)
@@ -34,8 +31,8 @@
                      (t
                       (let ((temp (gensym)))
                         (push `(,temp ,form) bindings)
-                        (traverse (car d-var-spec) `(list-car ,temp))
-                        (traverse (cdr d-var-spec) `(list-cdr ,temp)))))))
+                        (traverse (car d-var-spec) `(car ,temp))
+                        (traverse (cdr d-var-spec) `(cdr ,temp)))))))
       (traverse d-var-spec form)
       (reverse bindings))))
 
