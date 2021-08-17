@@ -156,8 +156,7 @@
       (ld "Data-and-control-flow/prog-progstar-defmacro.lisp")
       (ld "Data-and-control-flow/psetf-support.lisp")
       (ld "Data-and-control-flow/psetf-defmacro.lisp")
-      (import-function
-       client environment 'sicl-data-and-control-flow:rotatef-expander)
+      (ld "Data-and-control-flow/rotatef-support.lisp")
       (ld "Data-and-control-flow/rotatef-defmacro.lisp")
       (import-function
        client environment 'cleavir-code-utilities:parse-destructuring-bind)
