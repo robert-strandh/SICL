@@ -93,4 +93,7 @@
     (load-asdf-system '#:sicl-loop e5)
     (load-asdf-system '#:cleavir-code-utilities e5)
     (load-asdf-system '#:sicl-arithmetic-defuns e5)
+    (load-asdf-system '#:sicl-data-and-control-flow-support e5)
+    (load-asdf-system '#:sicl-data-and-control-flow e5)
+    (load-source-file "Cons/accessor-defuns.lisp" e5)
     (load-asdf-system '#:sicl-cons-defuns e5)))
