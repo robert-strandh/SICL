@@ -2,12 +2,11 @@
 
 (defmethod expt ((base integer) (power integer))
   (cond ((zerop power) 1)
-        ((minusp power)
-         ;; FIXME: handle this case
-         (error 'fixme-handle-negative-powers))
-        ((= power 1)
-         base)
-        ((evenp power)
-         (expt (* base base) (floor power 2)))
-        (t
-         (* base (expt base (1- power))))))
+        ((minusp power) (/ (expt base (- power))))
+        ((= power 1) base)
+        ((= base 2) (ash 1 power))
+        (t ; binary exponentiation
+         (do ((base base (* base base))
+              (power power (ash power -1))
+              (result 1 (if (oddp power) (* result base) result)))
+             ((zerop power result))))))
