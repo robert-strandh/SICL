@@ -3,7 +3,8 @@
 (defsystem :sicl-cons-defuns
   :serial t
   :components
-  ((:file "null-defun")
+  ((:file "acons-defun")
+   (:file "null-defun")
    (:file "endp-defun")
    (:file "consp-defun")
    (:file "atom-defun")
