@@ -17,4 +17,5 @@
    (:file "psetf-defmacro")
    (:file "rotatef-defmacro")
    (:file "destructuring-bind-defmacro")
-   (:file "shiftf-defmacro")))
+   (:file "shiftf-defmacro")
+   (:file "not-defun")))
