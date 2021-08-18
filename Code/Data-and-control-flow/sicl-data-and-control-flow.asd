@@ -18,4 +18,5 @@
    (:file "rotatef-defmacro")
    (:file "destructuring-bind-defmacro")
    (:file "shiftf-defmacro")
-   (:file "not-defun")))
+   (:file "not-defun")
+   (:file "eq-defun")))
