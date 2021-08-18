@@ -23,6 +23,7 @@
    (:file "append-defun")
    (:file "nconc-defun")
    (:file "nth-defun")
+   (:file "setf-nth-defun")
    (:file "nthcdr-defun")
    (:file "copy-list-defun")
    (:file "with-alist-elements-defmacro")
