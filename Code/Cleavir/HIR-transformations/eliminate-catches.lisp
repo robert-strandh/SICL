@@ -26,6 +26,18 @@
      initial-instruction)
     (dolist (catch death)
       ;; Modify the flow graph.
-      (cleavir-ir:bypass-instruction (cleavir-ir:first-successor catch) catch))
+      (let ((successor (cleavir-ir:first-successor catch)))
+        ;; Don't try to replace a CATCH instruction using itself.  This happens
+        ;; when the CATCH instruction is involved in an infinite loop.
+        (cond
+          ((eq successor catch)
+           (change-class catch 'cleavir-ir:nop-instruction)
+           (setf (cleavir-ir:inputs catch) '()
+                 (cleavir-ir:outputs catch) '()
+                 (cleavir-ir:successors catch) (list catch)))
+          (t
+           (cleavir-ir:bypass-instruction
+            (cleavir-ir:first-successor catch)
+            catch)))))
     (cleavir-ir:reinitialize-data initial-instruction)
     death))
