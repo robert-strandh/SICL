@@ -43,5 +43,6 @@
    (:file "mapcan-defun")
    (:file "mapcon-defun")
    (:file "nreconc-defun")
+   (:file "subst-defun")
    (:file "cxr")
    (:file "setf-cxr")))
