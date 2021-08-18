@@ -99,7 +99,8 @@
 ;;; S gains all of I's predecessors as predecessors.
 ;;; This function orphans I and anything it dominates that is not
 ;;; dominated by S, so you'll probably have to set-predecessors etc.
-;;; It is an error to try to replace an instruction with itself.
+;;; An error will be signalled if an attempt to replace an instruction
+;;; with itself was made.
 (defun bypass-instruction (new existing)
   (assert (not (eq new existing))
           ()
