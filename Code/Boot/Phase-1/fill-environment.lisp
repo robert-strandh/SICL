@@ -161,8 +161,9 @@
       (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
       (ld "Data-and-control-flow/shiftf-support.lisp")
       (ld "Data-and-control-flow/shiftf-defmacro.lisp")
-      ;; Load a file containing the definition of the macro PUSHNEW.
-      (import-function client environment 'sicl-cons:pushnew-expander)
+      ;; Define macro PUSHNEW.
+      (ld "Cons/make-bindings-defun.lisp")
+      (ld "Cons/pushnew-support.lisp")
       (ld "Cons/pushnew-defmacro.lisp")
       ;; Load a file containing the definition of the macro DOTIMES.
       (import-function client environment 'sicl-iteration:dotimes-expander)
