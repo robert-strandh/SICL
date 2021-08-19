@@ -20,4 +20,3 @@
   (let ((client (client environment)))
     (setf (clostrum:class-description client environment class-name)
           description)))
-  
