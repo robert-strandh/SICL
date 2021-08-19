@@ -174,8 +174,8 @@
       ;; Load a file containing the definition of the macros DO and DO*.
       (import-function client environment 'sicl-iteration:do-dostar-expander)
       (ld "Iteration/do-dostar-defmacro.lisp")
-      ;; Load a file containing the definition of the macro REMF.
-      (import-function client environment 'sicl-cons:remf-expander)
+      ;; Define macro REMF.
+      (ld "Cons/remf-support.lisp")
       (ld "Cons/remf-defmacro.lisp")
       ;; Load a file containing the definition of the macro
       ;; WITH-PROPER-LIST-RESTS used by the functions MEMBER,
