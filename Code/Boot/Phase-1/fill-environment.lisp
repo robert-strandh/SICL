@@ -139,10 +139,8 @@
       (ld "Arithmetic/incf-decf-defmacro.lisp")
       (import-function client environment 'sicl-loop:expand-body)
       (ld "Loop/loop-defmacro.lisp")
-      ;; Load a file containing the definitions of the macros PUSH and
-      ;; POP.
-      (import-function client environment 'sicl-cons:push-expander)
-      (import-function client environment 'sicl-cons:pop-expander)
+      ;; Load definitions of the macros PUSH and POP.
+      (ld "Cons/push-pop-support.lisp")
       (ld "Cons/push-pop-defmacro.lisp")
       ;; Load a file containing the definition of the macro RETURN.
       (ld "Data-and-control-flow/return-defmacro.lisp")
