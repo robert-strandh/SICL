@@ -7,7 +7,6 @@
 (defun load-clostrum (e5)
   ;; FIXME: undefine all environment functions here.
   (loop for name in '(env:type-expander
-                      env:compiler-macro-function (setf env:compiler-macro-function)
                       env:fdefinition)
         do (env:fmakunbound (env:client e5) e5 name))
   (load-source-file "Cons/getf-define-setf-expander.lisp" e5)
@@ -55,8 +54,6 @@
     (load-source-file "Data-and-control-flow/values-define-setf-expander.lisp" e5)
     (load-source-file "Data-and-control-flow/equalp-defgeneric.lisp" e5)
     (load-source-file "Data-and-control-flow/values-list-defun.lisp" e5)
-    (load-source-file "Evaluation-and-compilation/compiler-macro-function-defun.lisp" e5)
-    (load-source-file "Evaluation-and-compilation/setf-compiler-macro-function-defun.lisp" e5)
     (load-source-file "CLOS/with-accessors-defmacro.lisp" e5)
     (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)
     (load-source-file "Array/vector-push-defun.lisp" e5)
