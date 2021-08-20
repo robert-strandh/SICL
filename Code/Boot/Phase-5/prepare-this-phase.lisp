@@ -41,7 +41,6 @@
      cleavir-code-utilities:lambda-list-variables
      intern
      cleavir-code-utilities:parse-deftype
-     env:type-expander
      ;; For Ctype.
      map substitute functionp lognot logcount subsetp member-if intersection
      ;; For Eclector.
