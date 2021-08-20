@@ -161,9 +161,17 @@
         (lambda (name)
           (env:variable-cell client environment name)))
   (import-functions-from-host
-   '(env:fdefinition
-     env:compiler-macro-function (setf env:compiler-macro-function))
+   '(env:fdefinition)
    environment)
+  (setf (env:fdefinition
+         client environment 'compiler-macro-function)
+        (lambda (symbol)
+          (env:compiler-macro-function client environment symbol)))
+  (setf (env:fdefinition
+         client environment '(setf compiler-macro-function))
+        (lambda (function symbol)
+          (setf (env:compiler-macro-function client environment symbol)
+                function)))
   (setf (env:fdefinition
          client
          environment
@@ -275,8 +283,6 @@
             (if (null lexical-environment)
                 environment
                 (trucler:global-environment client lexical-environment))))
-    (setf (env:fdefinition client environment 'env:client)
-          #'env:client)
     (import-standard-functions environment)
     (import-run-time-functions environment)
     (setf (env:fdefinition client environment 'funcall)
