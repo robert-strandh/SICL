@@ -6,8 +6,7 @@
 
 (defun load-clostrum (e5)
   ;; FIXME: undefine all environment functions here.
-  (loop for name in '(env:type-expander
-                      env:fdefinition)
+  (loop for name in '(env:type-expander)
         do (env:fmakunbound (env:client e5) e5 name))
   (load-source-file "Cons/getf-define-setf-expander.lisp" e5)
   ;; Since we are not using file-compilation semantics, Clostrum is
