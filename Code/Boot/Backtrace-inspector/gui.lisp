@@ -9,6 +9,7 @@
                      :display-function 'display-arguments)
           (backtrace :application
                      :scroll-bars nil
+                     :incremental-redisplay t
                      :display-function 'display-backtrace)
           (source :application
                   :scroll-bars nil
