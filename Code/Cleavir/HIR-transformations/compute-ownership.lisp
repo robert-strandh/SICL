@@ -53,9 +53,8 @@
     (cleavir-ir:map-instructions-with-owner 
      (lambda (instruction owner)
        (loop for datum in (append (cleavir-ir:inputs instruction)
-				  (cleavir-ir:outputs instruction))
-	     do (when (null (gethash datum result))
-		  (setf (gethash datum result) owner))))
+                                  (cleavir-ir:outputs instruction))
+             do (when (null (gethash datum result))
+                  (setf (gethash datum result) owner))))
      initial-instruction)
     result))
-
