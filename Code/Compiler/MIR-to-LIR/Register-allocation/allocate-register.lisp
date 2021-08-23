@@ -61,18 +61,17 @@
                    (unattribute-any-register result instruction pool candidates)))
     result))
 
-;;; Return T when the estimated distance to use of LEXICAL-LOCATION is
-;;; lower than that of any location attributed to a register among the CANDIDATES.
+;;; Test if the estimated distance to use of LEXICAL-LOCATION is lower
+;;; than that of any location attributed to a register among the
+;;; CANDIDATES, or there are free candidate registers.
 (defun should-transfer-p (lexical-location pool arrangement candidates)
   (when (plusp (arr:unattributed-register-count arrangement candidates))
     (return-from should-transfer-p t))
-  (let ((potential-victims
-          (arr:lexical-locations-in-register arrangement candidates)))
-    (loop with location-distance = (augmented-distance lexical-location pool)
-          for potential-victim
-            in potential-victims
-          for victim-distance = (augmented-distance potential-victim pool)
-            thereis (> victim-distance location-distance))))
+  (loop with location-distance = (augmented-distance lexical-location pool)
+        for potential-victim
+          in (arr:lexical-locations-in-register arrangement candidates)
+        for victim-distance = (augmented-distance potential-victim pool)
+          thereis (> victim-distance location-distance)))
 
 (defun filter-for-lexical-location (lexical-location)
   (let ((type (cleavir-ir:element-type lexical-location)))
@@ -111,8 +110,9 @@
            (candidates
              (x86-64:register-map-difference (determine-candidates location pool)
                                              registers-to-avoid)))
-      ;; If this location has a higher EDU than any other which is
-      ;; attributed, spill this location.
+      ;; If this location has a higher EDU than any attributed
+      ;; location, spill this location instead of spilling another
+      ;; location.
       (unless (should-transfer-p location pool arrangement candidates)
         (return-from ensure-register-attributions-transferred
           (spill predecessor instruction location)))
@@ -131,7 +131,8 @@
       (let ((new-arrangement (arr:copy-arrangement arrangement))
             (assignment
               (make-instance 'cleavir-ir:assignment-instruction
-                :dynamic-environment-location (cleavir-ir:dynamic-environment-location instruction)
+                :dynamic-environment-location
+                (cleavir-ir:dynamic-environment-location instruction)
                 :input location
                 :output location)))
         (arr:reattribute-register
