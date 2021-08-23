@@ -198,6 +198,10 @@
                (setf predecessor instruction)))
         (cond
           ((and used-copy-register-p performed-stack-stack-copy-p)
+           ;; If we used the copy register and actually performed a
+           ;; stack to stack copy, we need to spill the copy register
+           ;; to the stack before any adaptation, and then unspill
+           ;; after adaptation.
            (add-instruction
             (x86-64:save-to-stack-instruction
              copy-register copy-stack-slot))
