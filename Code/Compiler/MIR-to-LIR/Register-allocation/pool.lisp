@@ -2,16 +2,14 @@
 
 (defclass pool-item ()
   ((%lexical-location :initarg :lexical-location :reader lexical-location)
-   (%distance :initarg :distance :reader distance)
-   (%call-probability :initarg :call-probability :reader call-probability)))
+   (%distance :initarg :distance :reader distance)))
 
 (defmethod print-object ((object pool-item) stream)
   (print-unreadable-object (object stream)
     (format stream
-            "location: ~s distance: ~s probability: ~s"
+            "location: ~s distance: ~s"
             (lexical-location object)
-            (distance object)
-            (call-probability object))))
+            (distance object))))
 
 (defgeneric item-meet (probability item1 item2))
 
@@ -20,16 +18,14 @@
     :lexical-location (lexical-location item2)
     :distance (if (= 1 probability)
                   1000000
-                  (floor (/ (distance item2) (- 1 probability))))
-    :call-probability (ceiling (* (- 1 probability) (call-probability item2)))))
+                  (floor (/ (distance item2) (- 1 probability))))))
 
 (defmethod item-meet (probability (item1 pool-item) (item2 null))
   (make-instance 'pool-item
     :lexical-location (lexical-location item1)
     :distance (if (zerop probability)
                   1000000
-                  (floor (/ (distance item1) probability)))
-    :call-probability (ceiling (* probability (call-probability item1)))))
+                  (floor (/ (distance item1) probability)))))
 
 (defun combine-distances (probability distance1 distance2)
   (if (or (zerop distance1) (zerop distance2))
@@ -40,20 +36,16 @@
 (defmethod item-meet (probability (item1 pool-item) (item2 pool-item))
   (make-instance 'pool-item
     :lexical-location (lexical-location item1)
-    :distance (combine-distances probability (distance item1) (distance item1))
-    :call-probability
-    (ceiling (+ (* probability (call-probability item1))
-                (* (- 1 probability) (call-probability item2))))))
+    :distance (combine-distances probability (distance item1) (distance item1))))
 
 (defun make-pool ()
   '())
 
 (defun make-pool-item
-    (lexical-location distance &optional (call-probability 0))
+    (lexical-location distance)
   (make-instance 'pool-item
     :lexical-location lexical-location
-    :distance distance
-    :call-probability call-probability))
+    :distance distance))
 
 ;;; Remove a variable from a pool
 (defun remove-variable (pool variable)
@@ -79,8 +71,7 @@
         for entry2 = (find (lexical-location entry1)  pool2
                            :test #'eq :key #'lexical-location)
         always (and (not (null entry2))
-                    (<= (distance entry2) (distance entry1))
-                    (<= (call-probability entry1) (call-probability entry2)))))
+                    (<= (distance entry2) (distance entry1)))))
 
 (defun pool-meet (probability pool1 pool2)
   (let ((result '()))
