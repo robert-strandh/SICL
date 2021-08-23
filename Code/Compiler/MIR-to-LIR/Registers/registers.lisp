@@ -49,12 +49,8 @@
 (defvar *return-value-count*  *rdi*)
 (defvar *static-environment*  *r10*)
 
-(defparameter *caller-saves*  #*10110011111100001111111111111111)
-(defparameter *callee-saves*  #*01000000000011110000000000000000)
+(defparameter *usable-registers* #*10110011111111111111111111111111)
 (defparameter *return-values* #*10110011010000000000000000000000)
-
-(defun register-number-is-callee-saves-p (register-number)
-  (= (bit *callee-saves* register-number) 1))
 
 (defparameter *xmm* #*00000000000000001111111111111111)
 (defparameter *gpr* #*11111111111111110000000000000000)

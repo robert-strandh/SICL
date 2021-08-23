@@ -86,8 +86,8 @@
   ;; I am not going to remove this function just yet, because I'm not
   ;; sure if DETERMINE-CANDIDATES really is this trivial without
   ;; callee-saves registers.
-  (declare (ignore lexical-location pool))
-  filter)
+  (declare (ignore pool))
+  (x86-64:register-map-intersection filter x86-64:*usable-registers*))
 
 (defun lexical-location-in-register-p (arrangement lexical-location register)
   (arr:lexical-location-in-register-p

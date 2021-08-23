@@ -9,8 +9,7 @@
            #:*xmm13* #:*xmm14* #:*xmm15* #:*registers* #:*initial*
            #:+register-count+ #:*xmm* #:*gpr* #:*dynamic-environment*
            #:*argument-count* #:*return-value-count* #:*static-environment*
-           #:*caller-saves* #:*callee-saves* #:*return-values*
-           #:register-number-is-callee-saves-p #:*argument-registers*
+           #:*usable-registers* #:*return-values* #:*argument-registers*
            #:*return-registers* #:register-map #:register-number-in-map-p
            #:make-empty-register-map #:mark-register #:unmark-register
            #:copy-register-map #:reserve-register #:free-register
