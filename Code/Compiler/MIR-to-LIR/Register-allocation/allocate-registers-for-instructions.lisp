@@ -140,9 +140,10 @@
   (let ((survivors (survivors instruction))
         (result predecessor))
     (arr:map-attributions
-     (lambda (location slot register)
+     (lambda (lexical-location slot register)
+       (declare (ignore slot))
        (unless (or (null register)
-                   (not (member location survivors)))
+                   (not (member lexical-location survivors)))
          (setf result
                (ensure-lexical-location-has-attributed-stack-slot
                 result instruction lexical-location))))
