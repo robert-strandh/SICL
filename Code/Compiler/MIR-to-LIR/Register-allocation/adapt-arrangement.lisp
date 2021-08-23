@@ -131,20 +131,25 @@
     (if (null first-free-register)
         ;; If there are no free registers, pick one at random for
         ;; stack-stack assignments, and a stack slot for spilling.
-        (values (aref x86-64:*registers* *stack-copy-register*)
+        (values *stack-copy-register*
                 first-stack-slot
                 (list (1+ first-stack-slot) nil))
         (let ((second-free-register
                 (x86-64:find-any-register-in-map free-registers
                                                  :start first-free-register)))
-          (values (aref x86-64:*registers* first-free-register)
+          (values first-free-register
                   first-stack-slot
                   (if (null second-free-register)
                       (list (1+ first-stack-slot) nil)
                       (list nil second-free-register)))))))
 
-(defun generate-code (chains predecessor successor
-                      copy-register copy-stack-slot spill-location)
+;;; Generate adaptation code based on assignment chains. We may
+;;; redirect uses of the stack copy register number COPY-REGISTER to a
+;;; stack slot COPY-STACK-SLOT, and use the SPILL-LOCATION to break
+;;; assignment cycles (which were identified with the previously
+;;; mentioned SPILL location) by spilling a register.
+(defun generate-adaptation-code (chains predecessor successor
+                                 copy-register copy-stack-slot spill-location)
   (sicl-utilities:with-collectors ((instructions add-instruction))
     (let ((used-copy-register-p nil)
           (performed-stack-stack-copy-p nil))
@@ -159,10 +164,10 @@
                       (setf performed-stack-stack-copy-p t)
                       (add-instruction
                        (x86-64:load-from-stack-instruction
-                        source-stack copy-register))
+                        source-stack (register copy-register)))
                       (add-instruction
                        (x86-64:save-to-stack-instruction
-                        copy-register target-stack)))
+                        (register copy-register) target-stack)))
                      ((null source-register)
                       (add-instruction
                        (x86-64:load-from-stack-instruction
@@ -189,28 +194,28 @@
                  (%emit (rewrite-spill target) (rewrite-spill source))))
         (dolist (chain chains)
           (loop for (target source) in (assignment-chain-assignments chain)
-                do (emit target source))))
-      (flet ((add-instruction (instruction)
-               (mark-as-generated instruction)
-               (cleavir-ir:insert-instruction-between
-                instruction
-                predecessor successor)
-               (setf predecessor instruction)))
-        (cond
-          ((and used-copy-register-p performed-stack-stack-copy-p)
-           ;; If we used the copy register and actually performed a
-           ;; stack to stack copy, we need to spill the copy register
-           ;; to the stack before any adaptation, and then unspill
-           ;; after adaptation.
-           (add-instruction
-            (x86-64:save-to-stack-instruction
-             copy-register copy-stack-slot))
-           (mapc #'add-instruction (instructions))
-           (add-instruction
-            (x86-64:load-from-stack-instruction
-             copy-stack-slot copy-register)))
-          (t
-           (mapc #'add-instruction (instructions))))))))
+                do (emit target source)))
+        (flet ((add-instruction (instruction)
+                 (mark-as-generated instruction)
+                 (cleavir-ir:insert-instruction-between
+                  instruction
+                  predecessor successor)
+                 (setf predecessor instruction)))
+          (cond
+            ((and used-copy-register-p performed-stack-stack-copy-p)
+             ;; If we used the copy register and actually performed a
+             ;; stack to stack copy, we need to spill the copy register
+             ;; to the stack before any adaptation, and then unspill
+             ;; after adaptation.
+             (add-instruction
+              (x86-64:save-to-stack-instruction
+               (register copy-register) copy-stack-slot))
+             (mapc #'add-instruction (instructions))
+             (add-instruction
+              (x86-64:load-from-stack-instruction
+               copy-stack-slot (register copy-register))))
+            (t
+             (mapc #'add-instruction (instructions)))))))))
 
 (defmethod introduce-registers-for-instruction ((instruction adapt-instruction))
   (destructuring-bind (successor)
@@ -219,7 +224,7 @@
           (source (input-arrangement instruction)))
       (multiple-value-bind (copy-register copy-stack spill-location)
           (temporary-locations target source)
-        (generate-code
+        (generate-adaptation-code
          (identify-chains
           (identify-assignments target source))
          instruction successor
