@@ -49,7 +49,7 @@
 (defvar *return-value-count*  *rdi*)
 (defvar *static-environment*  *r10*)
 
-(defparameter *usable-registers* #*10110011111111111111111111111111)
+(defparameter *usable-registers* #*11110011111111111111111111111111)
 (defparameter *return-values* #*10110011010000000000000000000000)
 
 (defparameter *xmm* #*00000000000000001111111111111111)
