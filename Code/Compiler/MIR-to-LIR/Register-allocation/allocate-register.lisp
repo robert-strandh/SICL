@@ -83,15 +83,11 @@
 (defun determine-candidates (lexical-location pool
                              &key (filter
                                    (filter-for-lexical-location lexical-location)))
-  (let* ((pool-item (find lexical-location pool
-                          :key #'lexical-location :test #'eq)))
-    (if (or (null pool-item) (< (call-probability pool-item) 3))
-        (x86-64:register-map-intersection x86-64:*caller-saves* filter)
-        (let ((register-map
-                (x86-64:register-map-intersection x86-64:*callee-saves* filter)))
-          (if (x86-64:register-map-empty-p register-map)
-              (x86-64:register-map-intersection x86-64:*caller-saves* filter)
-              register-map)))))
+  ;; I am not going to remove this function just yet, because I'm not
+  ;; sure if DETERMINE-CANDIDATES really is this trivial without
+  ;; callee-saves registers.
+  (declare (ignore lexical-location pool))
+  filter)
 
 (defun lexical-location-in-register-p (arrangement lexical-location register)
   (arr:lexical-location-in-register-p

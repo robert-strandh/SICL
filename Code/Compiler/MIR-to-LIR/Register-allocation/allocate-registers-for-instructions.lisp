@@ -134,20 +134,19 @@
 ;;;
 ;;; For call instructions, processing the inputs means making sure
 ;;; that every lexical location that survives the call and that has a
-;;; caller-saves register attributed to it, also has a stack slot
-;;; attributed to it.
+;;; register attributed to it, also has a stack slot attributed to it.
 
 (defun process-inputs-for-call-instruction (predecessor instruction)
-  (let* ((survivors (survivors instruction))
-         (in-caller-saves
-           (arr:lexical-locations-in-register
-            (output-arrangement predecessor) x86-64:*caller-saves*))
-         (both (intersection survivors in-caller-saves :test #'eq))
-         (result predecessor))
-    (loop for lexical-location in both
-          do (setf result
-                   (ensure-lexical-location-has-attributed-stack-slot
-                    result instruction lexical-location)))
+  (let ((survivors (survivors instruction))
+        (result predecessor))
+    (arr:map-attributions
+     (lambda (location slot register)
+       (unless (or (null register)
+                   (not (member location survivors)))
+         (setf result
+               (ensure-lexical-location-has-attributed-stack-slot
+                result instruction lexical-location))))
+     (output-arrangement predecessor))
     result))
 
 ;;; For named-call instructions, there are three ways of processing
@@ -182,19 +181,6 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:funcall-instruction))
-  ;; We need to save all the caller-saves registers, and registers
-  ;; involved in the calling convention such as the argument count,
-  ;; dynamic environment and static environment.  All but the dynamic
-  ;; environment register are already caller-saves, so we only handle
-  ;; the dynamic environment register specially.
-  (let ((in-dynamic-environment
-          (arr:lexical-locations-in-register
-           (output-arrangement predecessor)
-           (x86-64:make-register-map x86-64:*dynamic-environment*))))
-    (loop for location in in-dynamic-environment
-          do (setf predecessor
-                   (ensure-lexical-location-has-attributed-stack-slot
-                    predecessor instruction location))))
   (process-inputs-for-call-instruction predecessor instruction))
 
 (defmethod process-outputs
