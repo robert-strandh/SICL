@@ -23,7 +23,9 @@
 (defmethod mir-to-lir (client mir)
   (cleavir-ir:reinitialize-data mir)
   (let ((instructions (sicl-hir-to-mir:gather-enter-instructions mir)))
-    (mapc #'sicl-register-allocation:do-register-allocation
-          instructions)
-    (mapc #'finish-lir instructions))
+    (flet ((process (instruction)
+             (multiple-value-bind (stack-slots spill-arguments-p)
+                 (sicl-register-allocation:do-register-allocation instruction)
+               (finish-lir instruction))))
+    (mapc #'process instructions)))
   mir)

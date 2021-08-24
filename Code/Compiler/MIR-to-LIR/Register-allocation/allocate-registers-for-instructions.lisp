@@ -95,6 +95,9 @@
                   (cleavir-ir:outputs instruction)
                   :test #'eq))
 
+;;; The size the stack frame for the generated code will have to be.
+(defvar *stack-frame-size*)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; ALLOCATE-REGISTERS-FOR-INSTRUCTION.  This function is called for
@@ -125,8 +128,14 @@
     (setf (input-arrangement instruction) arrangement)
     (let ((new-arrangement (arr:copy-arrangement arrangement)))
       (arr:trim-arrangement new-arrangement (survivors instruction))
-      (setf (output-arrangement instruction)
-            (compute-output-arrangement instruction new-arrangement)))))
+      (let ((output-arrangement
+              (compute-output-arrangement instruction new-arrangement)))
+        (setf (output-arrangement instruction) output-arrangement)
+        (unless (null output-arrangement)
+          (setf *stack-frame-size*
+                (max *stack-frame-size*
+                     (arr:first-stack-slot-past-arrangement
+                      (output-arrangement instruction)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -845,7 +854,8 @@
                (make-instance 'arr:attribution
                  :lexical-location *bogus-argument-count-location*
                  :stack-slot nil
-                 :register-number (x86-64:register-number x86-64:*argument-count*))))))
+                 :register-number (x86-64:register-number x86-64:*argument-count*)))))
+           (*stack-frame-size* 0))
       (loop for location in *bogus-argument-locations*
             for register in x86-64:*argument-registers*
             do (arr:attribute-register-for-new-lexical-location
@@ -853,4 +863,5 @@
                 location
                 (x86-64:make-register-map register)))
       (setf (output-arrangement mir) arrangement)
-      (process-pair mir (cleavir-ir:first-successor mir)))))
+      (process-pair mir (cleavir-ir:first-successor mir))
+      *stack-frame-size*)))

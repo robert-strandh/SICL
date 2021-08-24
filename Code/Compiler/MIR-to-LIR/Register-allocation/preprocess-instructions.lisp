@@ -74,7 +74,9 @@
         (change-class instruction
           'cleavir-ir:assignment-instruction)
         (setf (cleavir-ir:inputs instruction)
-              (list (nth value *bogus-argument-locations*)))))))
+              (list (nth value *bogus-argument-locations*)))))
+    (unless (typep index 'cleavir-ir:immediate-input)
+      (setf *non-constant-argument-instruction-p* t))))
 
 (defmethod preprocess-instruction
     ((instruction cleavir-ir:compute-argument-count-instruction))

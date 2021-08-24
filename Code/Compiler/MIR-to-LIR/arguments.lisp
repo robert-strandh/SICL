@@ -27,10 +27,12 @@
                  (list x86-64:*rsp*
                        (cleavir-ir:make-immediate-input 1)
                        (sicl-ir:nowhere)
-                       (+ (* 4 (cleavir-ir:value input))
-                          (* 8 *stack-slots*))))
+                       (cleavir-ir:make-immediate-input
+                        (+ (* 4 (cleavir-ir:value input))
+                           (* 8 *stack-slots*)))))
                 (cleavir-ir:register-location
                  (list x86-64:*rsp*
                        (cleavir-ir:make-immediate-input 4)
                        input
-                       (* 8 *stack-slots*)))))))
+                       (cleavir-ir:make-immediate-input
+                        (* 8 *stack-slots*))))))))

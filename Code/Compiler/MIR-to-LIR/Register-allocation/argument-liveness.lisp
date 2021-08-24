@@ -8,6 +8,7 @@
 
 (defvar *bogus-argument-locations*)
 (defvar *bogus-argument-count-location*)
+(defvar *non-constant-argument-instruction-p*)
 
 (defun make-bogus-argument-locations ()
   (loop for register in x86-64:*argument-registers*
