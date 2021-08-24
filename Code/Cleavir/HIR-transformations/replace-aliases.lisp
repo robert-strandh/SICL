@@ -18,9 +18,11 @@
   (if (and (typep location 'cleavir-ir:lexical-location) (ssablep location))
       (let ((def (first (cleavir-ir:defining-instructions location))))
         (if (typep def 'cleavir-ir:assignment-instruction)
-            ;; okay, it's a temp; now, is it necessary?
+            ;; okay, it's a temp; now, is it necessary and of the same
+            ;; storage class?
             (let ((pre (first (cleavir-ir:inputs def))))
-              (if (ssablep pre)
+              (if (and (ssablep pre)
+                       (eq (class-of location) (class-of pre)))
                   ;; no - get a replacement by recursion,
                   ;; and mark the assignment for deletion
                   (progn (push def *assignments-to-delete*)
