@@ -5,14 +5,6 @@
 ;;; Trucler Methods
 
 (defmethod trucler:describe-variable
-    (client (environment base-run-time-environment) name)
-  (if (boundp client environment name)
-      (or (special-variable-description client environment name)
-          (constant-variable-description client environment name)
-          (symbol-macro-description client environment name))
-      nil))
-
-(defmethod trucler:describe-variable
     (client (environment compilation-environment) name)
   ;; FIXME: check the compilation environment for information about
   ;; the variable.
@@ -47,6 +39,14 @@
           :name name
           :type (variable-type client environment name)
           :expansion expansion))))
+
+(defmethod trucler:describe-variable
+    (client (environment base-run-time-environment) name)
+  (if (boundp client environment name)
+      (or (special-variable-description client environment name)
+          (constant-variable-description client environment name)
+          (symbol-macro-description client environment name))
+      nil))
 
 (defmethod trucler:describe-function
     (client (environment base-run-time-environment) name)
