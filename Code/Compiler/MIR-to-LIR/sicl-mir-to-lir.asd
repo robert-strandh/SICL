@@ -16,4 +16,5 @@
    (:file "arguments")
    (:file "values")
    (:file "fixnum-arithmetic")
+   (:file "enter-return")
    (:file "mir-to-lir")))
