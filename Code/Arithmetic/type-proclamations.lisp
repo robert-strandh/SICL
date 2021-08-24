@@ -67,9 +67,6 @@
 (declaim (ftype (function (number) (real 0.0))
 		abs))
 
-(declaim (ftype (function (t t list) list)
-		acons))
-
 (declaim (ftype (function (number) number)
 		acos))
 
