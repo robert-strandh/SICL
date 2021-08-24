@@ -169,8 +169,11 @@
   (let ((standard-object-transfers '())
         (non-standard-object-transfers '()))
     (loop for transfer in transfers
-          do (if (member (class-name (car transfer))
-                         '(fixnum cons character single-float))
+          for transfer-class = (car transfer)
+          do (if (or (eq transfer-class (find-class 'fixnum nil))
+                     (eq transfer-class (find-class 'cons nil))
+                     (eq transfer-class (find-class 'character nil))
+                     (eq transfer-class (find-class 'single-float nil)))
                  (push transfer non-standard-object-transfers)
                  (push transfer standard-object-transfers)))
     `(if (cleavir-primop:standard-object-p ,argument-var)

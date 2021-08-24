@@ -6,6 +6,6 @@
 
 (defun define-backquote-macros (client environment)
   (setf (env:fdefinition client environment 'eclector.reader::expand)
-        (fdefinition 'eclector.reader::transform))
+        (fdefinition 'eclector.reader::expand))
   (setf (env:macro-function client environment 'eclector.reader::quasiquote)
         (macro-function 'eclector.reader::quasiquote)))

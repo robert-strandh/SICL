@@ -5,11 +5,6 @@
   (load-asdf-system '#:alexandria e5))
 
 (defun load-clostrum (e5)
-  ;; FIXME: undefine all environment functions here.
-  (loop for name in '(env:type-expander
-                      env:compiler-macro-function (setf env:compiler-macro-function)
-                      env:fdefinition)
-        do (env:fmakunbound (env:client e5) e5 name))
   (load-source-file "Cons/getf-define-setf-expander.lisp" e5)
   ;; Since we are not using file-compilation semantics, Clostrum is
   ;; not definining these variables.
@@ -55,8 +50,6 @@
     (load-source-file "Data-and-control-flow/values-define-setf-expander.lisp" e5)
     (load-source-file "Data-and-control-flow/equalp-defgeneric.lisp" e5)
     (load-source-file "Data-and-control-flow/values-list-defun.lisp" e5)
-    (load-source-file "Evaluation-and-compilation/compiler-macro-function-defun.lisp" e5)
-    (load-source-file "Evaluation-and-compilation/setf-compiler-macro-function-defun.lisp" e5)
     (load-source-file "CLOS/with-accessors-defmacro.lisp" e5)
     (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)
     (load-source-file "Array/vector-push-defun.lisp" e5)
@@ -86,4 +79,14 @@
     (load-asdf-system '#:acclimation e5)
     (load-asdf-system '#:trucler-reference e5)
     (load-ctype e5)
-    (load-source-file "Types/subtypep-defun.lisp" e5)))
+    (load-source-file "Types/subtypep-defun.lisp" e5)
+    (load-closer-mop e5)
+    (load-eclector e5)
+    (load-asdf-system '#:sicl-loop-support e5)
+    (load-asdf-system '#:sicl-loop e5)
+    (load-asdf-system '#:cleavir-code-utilities e5)
+    (load-asdf-system '#:sicl-arithmetic-defuns e5)
+    (load-asdf-system '#:sicl-data-and-control-flow-support e5)
+    (load-asdf-system '#:sicl-data-and-control-flow e5)
+    (load-source-file "Cons/accessor-defuns.lisp" e5)
+    (load-asdf-system '#:sicl-cons-defuns e5)))

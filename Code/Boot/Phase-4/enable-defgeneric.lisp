@@ -30,7 +30,10 @@
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e3))
   (load-source-file "CLOS/discriminating-automaton.lisp" e3)
   (define-error-functions '(sicl-clos::compute-test-tree) e3)
-  (load-source-file "CLOS/discriminating-tagbody.lisp" e3)
+  (with-intercepted-function-cells
+      (e3
+       (find-class (env:function-cell (env:client e4) e4 'find-class)))
+    (load-source-file "CLOS/discriminating-tagbody.lisp" e3))
   (define-error-functions '(sicl-clos::make-cdr) e3)
   (load-source-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
   (load-source-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))

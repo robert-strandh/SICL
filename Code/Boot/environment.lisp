@@ -160,10 +160,15 @@
   (setf (env:fdefinition client environment 'sicl-symbol:variable-cell)
         (lambda (name)
           (env:variable-cell client environment name)))
-  (import-functions-from-host
-   '(env:fdefinition
-     env:compiler-macro-function (setf env:compiler-macro-function))
-   environment)
+  (setf (env:fdefinition
+         client environment 'compiler-macro-function)
+        (lambda (symbol)
+          (env:compiler-macro-function client environment symbol)))
+  (setf (env:fdefinition
+         client environment '(setf compiler-macro-function))
+        (lambda (function symbol)
+          (setf (env:compiler-macro-function client environment symbol)
+                function)))
   (setf (env:fdefinition
          client
          environment
@@ -183,9 +188,9 @@
      log sqrt
      ;; CONSes
      cons list list* append nconc make-list copy-list subst
-     consp atom listp null endp
+     consp atom listp null endp nreconc
      car cdr caar cadr cdar cddr
-     caaar caadr cadar caddr cdaar cdadr cddar cdddr nthcdr
+     caaar caadr cadar caddr cdaar cdadr cddar cdddr cddadr nthcdr
      first second third fourth fifth nth rest
      rplaca rplacd
      member
@@ -275,14 +280,12 @@
             (if (null lexical-environment)
                 environment
                 (trucler:global-environment client lexical-environment))))
-    (setf (env:fdefinition client environment 'env:client)
-          #'env:client)
     (import-standard-functions environment)
     (import-run-time-functions environment)
     (setf (env:fdefinition client environment 'funcall)
           (lambda (function-designator &rest arguments)
             (let ((function (if (symbolp function-designator)
-                                (progn (print function-designator) (env:fdefinition client environment function-designator))
+                                (env:fdefinition client environment function-designator)
                                 function-designator)))
               (apply function arguments))))
     (setf (env:fdefinition client environment 'apply)

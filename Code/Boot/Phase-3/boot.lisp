@@ -11,10 +11,9 @@
      '(slot-unbound
        no-applicable-method
        cleavir-code-utilities:proper-list-p
-       cleavir-code-utilities:required
-       cleavir-code-utilities:parse-generic-function-lambda-list
+       cleavir-code-utilities:extract-required
+       cleavir-code-utilities:canonicalize-generic-function-lambda-list
        sicl-method-combination:define-method-combination-expander
-       sicl-loop::list-car sicl-loop::list-cdr
        shared-initialize initialize-instance reinitialize-instance
        sicl-host-mop:method-function
        sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers

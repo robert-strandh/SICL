@@ -3,9 +3,11 @@
 (defsystem :sicl-cons-defuns
   :serial t
   :components
-  ((:file "null-defun")
+  ((:file "acons-defun")
+   (:file "null-defun")
    (:file "endp-defun")
    (:file "consp-defun")
+   (:file "getf-defun")
    (:file "atom-defun")
    (:file "listp-defun")
    (:file "list-defun")
@@ -21,6 +23,7 @@
    (:file "append-defun")
    (:file "nconc-defun")
    (:file "nth-defun")
+   (:file "setf-nth-defun")
    (:file "nthcdr-defun")
    (:file "copy-list-defun")
    (:file "with-alist-elements-defmacro")
@@ -38,4 +41,8 @@
    (:file "mapcar-defun")
    (:file "mapc-defun")
    (:file "mapcan-defun")
-   (:file "mapcon-defun")))
+   (:file "mapcon-defun")
+   (:file "nreconc-defun")
+   (:file "subst-defun")
+   (:file "cxr")
+   (:file "setf-cxr")))

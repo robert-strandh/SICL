@@ -58,15 +58,13 @@
                  (second method-class-option)))
            (documentation-option
              (assoc :documentation options))
-           (environment-var (gensym))
-           (client-var (gensym)))
+           (environment-var (gensym)))
       `(progn
          (eval-when (:compile-toplevel)
            (let* ((,environment-var
-                    (sicl-environment:global-environment ,environment))
-                  (client-var (sicl-environment:client ,environment-var)))
+                    (sicl-environment:global-environment ,environment)))
              (setf (sicl-environment:function-description
-                    ,client-var ,environment-var ',name)
+                    ,environment-var ',name)
                    (make-instance 'sicl-environment:generic-function-description
                      :lambda-list ',lambda-list
                      :class-name ',generic-function-class-name

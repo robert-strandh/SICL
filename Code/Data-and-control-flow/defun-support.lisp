@@ -5,14 +5,12 @@
 (defun defun-expander (name lambda-list body environment)
   (multiple-value-bind (declarations documentation forms)
       (cleavir-code-utilities:separate-function-body body)
-    (let ((env-var (gensym))
-          (client-var (gensym)))
+    (let ((env-var (gensym)))
       `(progn
          (eval-when (:compile-toplevel)
-           (let* ((,env-var (sicl-environment:global-environment ,environment))
-                  (,client-var (sicl-environment:client ,env-var)))
+           (let* ((,env-var (sicl-environment:global-environment ,environment)))
              (setf (sicl-environment:function-description
-                    ,client-var ,env-var ',name)
+                    ,env-var ',name)
                    (make-instance 'sicl-environment:simple-function-description
                      :lambda list ',lambda-list))))
          (eval-when (:load-toplevel :execute)

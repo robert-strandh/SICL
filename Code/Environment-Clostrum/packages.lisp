@@ -9,6 +9,9 @@
    #.(loop for symbol being each external-symbol in '#:clostrum
            unless (member symbol '(clostrum:run-time-environment
                                    clostrum:compilation-environment
+                                   clostrum:function-description
+                                   clostrum:class-description
+                                   clostrum:variable-description
                                    ;; Clostrum refuses to set a
                                    ;; package that is not a host
                                    ;; package, which we can't live

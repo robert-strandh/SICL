@@ -23,7 +23,6 @@
 (defun import-code-utilities (client environment)
   (import-function client environment 'cleavir-code-utilities:parse-macro)
   (import-function client environment 'cleavir-code-utilities:separate-function-body)
-  (import-function client environment 'cleavir-code-utilities:parse-destructuring-lambda-list)
   (import-function client environment 'cleavir-code-utilities:list-structure))
 
 (defun import-trucler-functions (client environment)

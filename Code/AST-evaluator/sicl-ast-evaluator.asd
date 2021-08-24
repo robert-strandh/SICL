@@ -6,7 +6,6 @@
                #:cleavir-ast-transformations
                #:cleavir-code-utilities
                #:concrete-syntax-tree
-               #:sicl-reader
                #:sicl-client
                #:sicl-environment
                #:sicl-source-tracking

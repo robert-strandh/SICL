@@ -2,7 +2,7 @@
 
 (defsystem #:sicl-source-tracking
   :depends-on (#:trivial-gray-streams
-               #:sicl-reader
+               #:eclector
                #:cleavir-io)
   :serial t
   :components

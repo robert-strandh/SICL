@@ -21,15 +21,6 @@
            #:keys
            #:allow-other-keys
            #:aux
-           #:parse-ordinary-lambda-list
-           #:parse-generic-function-lambda-list
-           #:parse-specialized-lambda-list
-           #:parse-macro-lambda-list
-           #:parse-destructuring-lambda-list
-           #:parse-deftype-lambda-list
-           #:parse-defsetf-lambda-list
-           #:parse-define-modify-macro-lambda-list
-           #:parse-define-method-combination-arguments-lambda-list
            #:lambda-list-variables
            #:destructure-lambda-list
            #:parse-macro
@@ -90,6 +81,6 @@
            #:canonicalize-destructuring-lambda-list
            #:canonicalize-defsetf-lambda-list
            #:canonicalize-define-modify-macro-lambda-list
-           #:canonicalize-define-method-combination-lambda-list
+           #:canonicalize-define-method-combination-arguments-lambda-list
            #:extract-required
            #:extract-named-group))

@@ -10,12 +10,11 @@
                   :client (make-instance 'client :environment e4))
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p
-       cleavir-code-utilities:parse-generic-function-lambda-list
-       cleavir-code-utilities:parse-specialized-lambda-list
+       cleavir-code-utilities:canonicalize-generic-function-lambda-list
+       cleavir-code-utilities:extract-required
+       cleavir-code-utilities:canonicalize-specialized-lambda-list
        cleavir-code-utilities:separate-function-body
-       cleavir-code-utilities:required
-       sicl-method-combination:define-method-combination-expander
-       sicl-loop::list-car sicl-loop::list-cdr)
+       sicl-method-combination:define-method-combination-expander)
      e4)
     (prepare-this-phase e2 e3 e4)
     (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e4)

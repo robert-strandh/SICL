@@ -10,7 +10,8 @@
 ;;; We do not support the :ARGUMENTS and :GENERIC-FUNCTION options
 ;;; yet.
 (defun long-form-expander (name lambda-list method-group-specifiers body)
-  (let ((lambda-list-variables (lambda-list-variables lambda-list)))
+  (let ((lambda-list-variables
+          (cleavir-code-utilities:lambda-list-variables lambda-list)))
     (multiple-value-bind (declarations documentation forms)
         (cleavir-code-utilities:separate-function-body body)
       `(let ((template (find-method-combination-template ',name)))

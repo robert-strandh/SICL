@@ -31,19 +31,16 @@
   (import-functions-from-host
    '(cleavir-code-utilities:proper-list-p
      cleavir-code-utilities:list-structure
-     cleavir-code-utilities:optionals
-     cleavir-code-utilities:rest-body
-     cleavir-code-utilities:parse-define-modify-macro-lambda-list
-     cleavir-code-utilities:parse-generic-function-lambda-list
-     cleavir-code-utilities:parse-specialized-lambda-list
+     cleavir-code-utilities:extract-named-group
+     cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
+     cleavir-code-utilities:canonicalize-generic-function-lambda-list
+     cleavir-code-utilities:canonicalize-specialized-lambda-list
+     cleavir-code-utilities:extract-required
      cleavir-code-utilities:separate-ordinary-body
      cleavir-code-utilities:separate-function-body
-     cleavir-code-utilities:required
+     cleavir-code-utilities:lambda-list-variables
      intern
      cleavir-code-utilities:parse-deftype
-     sicl-method-combination::lambda-list-variables
-     sicl-loop::list-car sicl-loop::list-cdr
-     env:type-expander
      ;; For Ctype.
      map substitute functionp lognot logcount subsetp member-if intersection
      ;; For Eclector.

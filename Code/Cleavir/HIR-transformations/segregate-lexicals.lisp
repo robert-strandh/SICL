@@ -142,9 +142,9 @@
   ;; the cell from the corresponding ENCLOSE-INSTRUCTION to the
   ;; ENTER-INSTRUCTION of that entry.
   (loop with dag-nodes = (dag-nodes function-dag)
-	for (enter . exclusive-location) in exclusive-locations
-	unless (eq enter owner)
-	  do (loop for node in (gethash enter dag-nodes)
+        for (enter . exclusive-location) in exclusive-locations
+        unless (eq enter owner)
+          do (loop for node in (gethash enter dag-nodes)
                    for enclose = (enclose-instruction node)
                    for parents = (parents node)
                    do (loop for parent in parents
@@ -257,11 +257,8 @@
     ;; We do this step last, so that we are sure that the CREATE-CELL
     ;; and FETCH instructions are inserted immediately after the ENTER
     ;; instruction.
-    (ensure-exclusive-location-available function-dag
-                                         exclusive-locations
-                                         owner
-                                         read-only-location-p
-                                         instruction-owners)))
+    (ensure-exclusive-location-available
+     function-dag exclusive-locations owner read-only-location-p instruction-owners)))
 
 (defun process-captured-variables (initial-instruction)
   ;; Make sure everything is up to date.
@@ -273,10 +270,8 @@
            (segregate-lexicals initial-instruction location-owners)))
     (loop for shared-location in shared-locations
           for owner = (gethash shared-location location-owners)
-          do (process-location shared-location
-                               function-dag
-                               instruction-owners
-                               owner))))
+          do (process-location
+              shared-location function-dag instruction-owners owner))))
 
 (defun segregate-only (initial-instruction)
   ;; Make sure everything is up to date.

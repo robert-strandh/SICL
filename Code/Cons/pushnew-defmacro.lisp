@@ -8,10 +8,9 @@
        (key nil key-p)
        (test nil test-p)
        (test-not nil test-not-p))
-  (let* ((global-env (sicl-environment:global-environment environment))
-         (client (sicl-environment:client global-env)))
+  (let* ((global-env (sicl-environment:global-environment environment)))
     (pushnew-expander
-     client item place environment args
+     item place environment args
      key key-p
      test test-p
      test-not test-not-p)))

@@ -139,10 +139,8 @@
       (ld "Arithmetic/incf-decf-defmacro.lisp")
       (import-function client environment 'sicl-loop:expand-body)
       (ld "Loop/loop-defmacro.lisp")
-      ;; Load a file containing the definitions of the macros PUSH and
-      ;; POP.
-      (import-function client environment 'sicl-cons:push-expander)
-      (import-function client environment 'sicl-cons:pop-expander)
+      ;; Load definitions of the macros PUSH and POP.
+      (ld "Cons/push-pop-support.lisp")
       (ld "Cons/push-pop-defmacro.lisp")
       ;; Load a file containing the definition of the macro RETURN.
       (ld "Data-and-control-flow/return-defmacro.lisp")
@@ -154,20 +152,18 @@
       (import-function
        client environment 'cleavir-code-utilities:separate-ordinary-body)
       (ld "Data-and-control-flow/prog-progstar-defmacro.lisp")
-      (import-function
-       client environment 'sicl-data-and-control-flow:psetf-expander)
+      (ld "Data-and-control-flow/psetf-support.lisp")
       (ld "Data-and-control-flow/psetf-defmacro.lisp")
-      (import-function
-       client environment 'sicl-data-and-control-flow:rotatef-expander)
+      (ld "Data-and-control-flow/rotatef-support.lisp")
       (ld "Data-and-control-flow/rotatef-defmacro.lisp")
       (import-function
        client environment 'cleavir-code-utilities:parse-destructuring-bind)
       (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
-      (import-function
-       client environment 'sicl-data-and-control-flow:shiftf-expander)
+      (ld "Data-and-control-flow/shiftf-support.lisp")
       (ld "Data-and-control-flow/shiftf-defmacro.lisp")
-      ;; Load a file containing the definition of the macro PUSHNEW.
-      (import-function client environment 'sicl-cons:pushnew-expander)
+      ;; Define macro PUSHNEW.
+      (ld "Cons/make-bindings-defun.lisp")
+      (ld "Cons/pushnew-support.lisp")
       (ld "Cons/pushnew-defmacro.lisp")
       ;; Load a file containing the definition of the macro DOTIMES.
       (import-function client environment 'sicl-iteration:dotimes-expander)
@@ -178,8 +174,8 @@
       ;; Load a file containing the definition of the macros DO and DO*.
       (import-function client environment 'sicl-iteration:do-dostar-expander)
       (ld "Iteration/do-dostar-defmacro.lisp")
-      ;; Load a file containing the definition of the macro REMF.
-      (import-function client environment 'sicl-cons:remf-expander)
+      ;; Define macro REMF.
+      (ld "Cons/remf-support.lisp")
       (ld "Cons/remf-defmacro.lisp")
       ;; Load a file containing the definition of the macro
       ;; WITH-PROPER-LIST-RESTS used by the functions MEMBER,

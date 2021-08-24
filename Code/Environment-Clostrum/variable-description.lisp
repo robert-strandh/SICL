@@ -11,3 +11,20 @@
 
 (defclass constant-variable-description (variable-description)
   ((%value :initarg :value :reader value)))
+
+(defgeneric variable-description
+    (environment variable-name))
+
+(defmethod variable-description
+    (environment variable-name)
+  (let ((client (client environment)))
+    (clostrum:variable-description client environment variable-name)))
+
+(defgeneric (setf variable-description)
+    (description environment variable-name))
+
+(defmethod (setf variable-description)
+    (description environment variable-name)
+  (let ((client (client environment)))
+    (setf (clostrum:variable-description client environment variable-name)
+          description)))

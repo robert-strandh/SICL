@@ -2,22 +2,29 @@
 
 (defmacro define-modify-macro
     (name lambda-list function &optional documentation)
-  (let* ((parsed-lambda-list
-           (cleavir-code-utilities:parse-define-modify-macro-lambda-list lambda-list))
-         (required (cleavir-code-utilities:required parsed-lambda-list))
-         (optionals (cleavir-code-utilities:optionals parsed-lambda-list))
-         (rest (cleavir-code-utilities:rest-body parsed-lambda-list))
+  (let* ((canonicalized-lambda-list
+           (cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
+            lambda-list))
+         (required
+           (cleavir-code-utilities:extract-required
+            canonicalized-lambda-list))
+         (optionals
+           (cleavir-code-utilities:extract-named-group
+            canonicalized-lambda-list '&optional))
+         (rest
+           (cleavir-code-utilities:extract-named-group
+            canonicalized-lambda-list '&rest))
          (place-var (gensym)))
     `(defmacro ,name (,place-var ,@lambda-list)
        ,@(if (null documentation) '() (list documentation))
        (let ((argument-forms
                (list* ,@required
-                      ,@(if (eq optionals :none)
+                      ,@(if (null optionals)
                             '()
-                            (mapcar #'first optionals))
-                      ,(if (eq rest :none)
+                            (mapcar #'first (rest optionals)))
+                      ,(if (null rest)
                            '()
-                           rest))))
+                           (second rest)))))
          (multiple-value-bind
                (vars vals store-vars writer-form reader-form)
              (get-setf-expansion ,place-var)

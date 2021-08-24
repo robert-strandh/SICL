@@ -7,3 +7,16 @@
   ((%name :initarg :name :reader name)
    (%superclass-names :initarg :superclass-names :reader superclass-names)
    (%metaclass-name :initarg :metaclass-name :reader metaclass-name)))
+
+(defgeneric class-description (environment class-name))
+
+(defmethod class-description (environment class-name)
+  (let ((client (client environment)))
+    (clostrum:class-description client environment class-name)))
+
+(defgeneric (setf class-description) (description environment class-name))
+
+(defmethod (setf class-description) (description environment class-name)
+  (let ((client (client environment)))
+    (setf (clostrum:class-description client environment class-name)
+          description)))

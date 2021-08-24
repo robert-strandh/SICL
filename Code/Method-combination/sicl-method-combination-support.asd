@@ -8,7 +8,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "lambda-list-variables")
    (:file "method-group-specifier")
    (:file "method-discriminator")
    (:file "long-form-expansion")

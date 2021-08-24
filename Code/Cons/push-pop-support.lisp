@@ -4,9 +4,9 @@
 ;;;
 ;;; Macro push
 
-(defun push-expander (client environment item place)
+(defun push-expander (environment item place)
   (multiple-value-bind (vars vals store-vars writer-form reader-form)
-      (sicl-environment:get-setf-expansion client environment place)
+      (get-setf-expansion place environment)
     (let ((item-var (gensym)))
       `(let* ((,item-var ,item)
               ,@(mapcar #'list vars vals)
@@ -17,9 +17,9 @@
 ;;;
 ;;; Macro pop
 
-(defun pop-expander (client environment place)
+(defun pop-expander (environment place)
   (multiple-value-bind (vars vals store-vars writer-form reader-form)
-      (sicl-environment:get-setf-expansion client environment place)
+      (get-setf-expansion place environment)
     `(let* (,@(mapcar #'list vars vals)
             (,(car store-vars) ,reader-form))
        (if (listp ,(car store-vars))

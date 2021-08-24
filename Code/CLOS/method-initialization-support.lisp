@@ -41,8 +41,8 @@
   ;; be signaled if it is not syntactically correct, but we also keep
   ;; the return value because we need to check the number of required
   ;; parameters against the specializers, below.
-  (let ((parsed-lambda-list
-          (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
+  (let ((canonicalized-lambda-list
+          (cleavir-code-utilities:canonicalize-ordinary-lambda-list lambda-list)))
     ;; Everything is OK.
     ;; Next, we do the SPECIALIZERS.  Again, the AMOP says that an error
     ;; is signaled if this argument is not supplied.
@@ -54,7 +54,9 @@
       (error "specializers must be a proper list"))
     ;; The AMOP says that list of specializers must have the same number
     ;; of elements as there are required parameters in the lambda list.
-    (unless (= (length specializers) (length (required parsed-lambda-list)))
+    (unless (= (length specializers)
+               (length (cleavir-code-utilities:extract-required
+                        canonicalized-lambda-list)))
       (error "there must be as many specializers as required parameters")))
   ;; Finally, the AMOP requires every specializer to be a specialier
   ;; metaobject.
