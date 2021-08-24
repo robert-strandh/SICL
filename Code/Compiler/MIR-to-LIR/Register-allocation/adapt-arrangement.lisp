@@ -125,7 +125,9 @@
   (reduce #'max arrangements :key #'arr:first-stack-slot-past-arrangement))
 
 (defun temporary-locations (target source)
-  (let* ((free-registers      (arr:free-registers target source))
+  (let* ((free-registers      (x86-64:register-map-intersection
+                               (arr:free-registers target source)
+                               x86-64:*usable-registers*))
          (first-stack-slot    (first-free-stack-slot target source))
          (first-free-register (x86-64:find-any-register-in-map free-registers)))
     (if (null first-free-register)
