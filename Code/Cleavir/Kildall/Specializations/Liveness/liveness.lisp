@@ -1,11 +1,11 @@
 (in-package #:cleavir-liveness)
 
-;;; class for holding liveness information.
+;;; Class for holding liveness information.
 (defclass liveness ()
   ((%before :initarg :before :reader before)
    (%after :initarg :after :reader after)))
 
-;;; traverse/domain for kildall.
+;;; Traverse/domain for kildall.
 ;;; Lists SEEM to be okay
 (defclass liveness-traverse
     (cleavir-kildall:iterate-mixin
@@ -24,9 +24,10 @@
 (defvar *input-sets*)
 (defvar *output-sets*)
 
-;;; Given a hash table whose values are an unbroken range of
-;;; positive fixnums including zero, returns a vector of the table.
-;;; Like: {"hello" -> 1, "world" -> 0} becomes #("world" "hello")
+;;; Given a hash table whose values are an unbroken range of positive
+;;; fixnums including zero, return a vector version of the inverse
+;;; mapping of the table.  Like: {"hello" -> 1, "world" -> 0} becomes
+;;; #("world" "hello").
 (defun hash-to-vector (hash)
   (declare (type hash-table hash)
            (optimize (speed 3)))
@@ -104,8 +105,8 @@
 
 (defun liveness (initial-instruction)
   (let* ((s (make-instance 'liveness-traverse))
-	 (after (cleavir-kildall:kildall s initial-instruction))
-	 (before (make-hash-table :test #'eq)))
+         (after (cleavir-kildall:kildall s initial-instruction))
+         (before (make-hash-table :test #'eq)))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (i)
        (let* ((after-set (cleavir-kildall:instruction-pool i after))
