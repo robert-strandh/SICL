@@ -26,6 +26,6 @@
     (flet ((process (instruction)
              (multiple-value-bind (stack-slots spill-arguments-p)
                  (sicl-register-allocation:do-register-allocation instruction)
-               (finish-lir instruction))))
+               (finish-lir instruction stack-slots spill-arguments-p))))
     (mapc #'process instructions)))
   mir)

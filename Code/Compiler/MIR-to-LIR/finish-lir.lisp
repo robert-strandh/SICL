@@ -16,11 +16,11 @@
 ;;; This number is used to generate code for loading arguments from
 ;;; the stack.
 (defvar *stack-slots*)
+(defvar *spill-arguments-p*)
 
-(defun finish-lir (initial-instruction)
-  ;; Definitely wrong. Register allocation should provide this number
-  ;; somehow.
-  (let ((*stack-slots* 0))
+(defun finish-lir (initial-instruction stack-slots spill-arguments-p)
+  (let ((*stack-slots* stack-slots)
+        (*spill-arguments-p* spill-arguments-p))
     (cleavir-ir:map-local-instructions
      #'finish-lir-for-instruction
      initial-instruction)))
