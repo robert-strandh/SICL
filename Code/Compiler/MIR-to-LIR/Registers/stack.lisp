@@ -4,16 +4,16 @@
 
 (defun save-to-stack-instruction (from-register to-stack-slot)
   (make-instance 'cleavir-ir:memset2-instruction
-    :inputs (list *rbp*
+    :inputs (list *rsp*
                   (make-instance 'cleavir-ir:immediate-input
-                    :value (* to-stack-slot +stack-slot-size+ -1))
+                    :value (* to-stack-slot +stack-slot-size+))
                   from-register)))
 
 (defun load-from-stack-instruction (from-stack-slot to-register)
  (make-instance 'cleavir-ir:memref2-instruction
-   :inputs (list *rbp*
+   :inputs (list *rsp*
                  (make-instance 'cleavir-ir:immediate-input
-                   :value (* from-stack-slot +stack-slot-size+ -1)))
+                   :value (* from-stack-slot +stack-slot-size+)))
    :outputs (list to-register)))
 
 (defun save-to-location-instruction (from-register location)
