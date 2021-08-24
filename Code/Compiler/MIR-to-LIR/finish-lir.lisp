@@ -12,7 +12,15 @@
 (defmethod finish-lir-for-instruction ((instruction cleavir-ir:instruction))
   nil)
 
+;;; The number of stack slots used for spilled lexical locations.
+;;; This number is used to generate code for loading arguments from
+;;; the stack.
+(defvar *stack-slots*)
+
 (defun finish-lir (initial-instruction)
-  (cleavir-ir:map-local-instructions
-   #'finish-lir-for-instruction
-   initial-instruction))
+  ;; Definitely wrong. Register allocation should provide this number
+  ;; somehow.
+  (let ((*stack-slots* 0))
+    (cleavir-ir:map-local-instructions
+     #'finish-lir-for-instruction
+     initial-instruction)))

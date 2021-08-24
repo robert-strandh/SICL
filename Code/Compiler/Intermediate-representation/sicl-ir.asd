@@ -10,4 +10,5 @@
    (:file "named-call-instruction")
    (:file "dynamic-environment")
    (:file "stack")
+   (:file "x86-addressing")
    (:file "standard-object-instructions")))

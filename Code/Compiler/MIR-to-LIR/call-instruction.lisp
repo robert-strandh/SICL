@@ -96,17 +96,15 @@
                             x86-64:*rsp*
                             (cleavir-ir:make-immediate-input
                              (* 8 (- argument-count 4))))))
-           ;; 5.5 Copy the value of RSP + 8(N - 4) into RBP. TODO: use
-           ;; LEA to do this.
+           ;; 5.5 Copy the value of RSP + 8(N - 4) into RBP.
            (emit
-            (make-instance 'cleavir-ir:assignment-instruction
-              :inputs (list x86-64:*rsp*)
-              :outputs (list x86-64:*rbp*)))
-           (emit
-            (make-instance 'cleavir-ir:fixnum-add-instruction
-              :inputs (list x86-64:*rbp*
+            (make-instance 'sicl-ir:load-effective-address-instruction
+              :inputs (list x86-64:*rsp*
+                            (cleavir-ir:make-immediate-input 0)
+                            (sicl-ir:nowhere)
                             (cleavir-ir:make-immediate-input
-                             (* 8 (- argument-count 4))))))))
+                             (* 8 (- argument-count 4))))
+              :outputs (list x86-64:*rbp*)))))
         ;; 6. Load the static environment of the callee from the
         ;; callee function object into R10.  As per
         ;; CLOS/funcallable-standard-object-defclass.lisp the
