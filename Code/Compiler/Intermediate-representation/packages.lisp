@@ -14,9 +14,9 @@
    #:establish-stack-frame-instruction
    #:push-instruction
    #:pop-instruction
+   #:effective-address
    #:load-effective-address-instruction
    #:memref-effective-address-instruction
    #:memset-effective-address-instruction
-   #:nowhere
    #:rack-instruction
    #:set-rack-instruction))

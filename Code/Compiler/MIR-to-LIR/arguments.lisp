@@ -32,23 +32,22 @@
     ;; the argument count, and that the arguments start with the first
     ;; argument.  So, in the latter case, Offset is instead defined to
     ;; be 8 * Slots + 8.
-    (let ((offset (if *spill-arguments-p*
-                      (* 8 (1+ *stack-slots*))
-                      (- (* 8 *stack-slots*)
-                         (* 8 (length x86-64:*argument-registers*))))))
+    (let ((displacement (if *spill-arguments-p*
+                            (* 8 (1+ *stack-slots*))
+                            (- (* 8 *stack-slots*)
+                               (* 8 (length x86-64:*argument-registers*))))))
       (change-class instruction
         'sicl-ir:memref-effective-address-instruction
-        :inputs (etypecase input
-                  (cleavir-ir:immediate-input
-                   (list x86-64:*rsp*
-                         (cleavir-ir:make-immediate-input 1)
-                         (sicl-ir:nowhere)
-                         (cleavir-ir:make-immediate-input
-                          (+ (* 4 (cleavir-ir:value input))
-                             offset))))
-                  (cleavir-ir:register-location
-                   (list x86-64:*rsp*
-                         (cleavir-ir:make-immediate-input 4)
-                         input
-                         (cleavir-ir:make-immediate-input
-                          offset))))))))
+        :inputs (list
+                 (etypecase input
+                   (cleavir-ir:immediate-input
+                    (sicl-ir:effective-address
+                     x86-64:*rsp*
+                     :displacement (+ (* 4 (cleavir-ir:value input))
+                                      displacement)))
+                   (cleavir-ir:register-location
+                    (sicl-ir:effective-address
+                     x86-64:*rsp*
+                     :scale 4
+                     :offset input
+                     :displacement displacement))))))))

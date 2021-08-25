@@ -99,11 +99,9 @@
            ;; 5.5 Copy the value of RSP + 8(N - 4) into RBP.
            (emit
             (make-instance 'sicl-ir:load-effective-address-instruction
-              :inputs (list x86-64:*rsp*
-                            (cleavir-ir:make-immediate-input 0)
-                            (sicl-ir:nowhere)
-                            (cleavir-ir:make-immediate-input
-                             (* 8 (- argument-count 4))))
+              :inputs (list (sicl-ir:effective-address
+                             x86-64:*rsp*
+                             :displacement (* 8 (- argument-count 4))))
               :outputs (list x86-64:*rbp*)))))
         ;; 6. Load the static environment of the callee from the
         ;; callee function object into R10.  As per
