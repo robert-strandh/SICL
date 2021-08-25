@@ -20,12 +20,19 @@
     (when *spill-arguments-p*
       (setf predecessor
             (spill-arguments predecessor successor)))
+    (setf predecessor
+          (grow-stack-frame predecessor *stack-slots*))
     (install-call-site-descriptor predecessor successor)))
 
 (defun save-return-address (predecessor successor)
   ;; If there are arguments on the stack, the return address will be
   ;; on the top of the stack, rather than in its slot.
-  (let ((instruction
+  (let ((successor
+          (make-instance 'cleavir-ir:nop-instruction
+            :inputs '()
+            :outputs '()
+            :successors (list successor)))
+        (instruction
           (make-instance 'cleavir-ir:fixnum-less-instruction
             :inputs (list x86-64:*argument-count*
                           (cleavir-ir:make-immediate-input
@@ -40,16 +47,34 @@
                                   x86-64:*rbp*
                                   :offset -8))
                   :successors (list successor))))
-    instruction))
+    successor))
+
+(defun grow-stack-frame (predecessor slots)
+  (cond
+    ((zerop slots)
+     predecessor)
+    (t
+     (let ((instruction
+             (make-instance 'cleavir-ir:fixnum-sub-instruction
+               :inputs (list x86-64:*rsp*
+                             (cleavir-ir:make-immediate-input (* slots 8)))
+               :outputs (list x86-64:*rsp*))))
+       (cleavir-ir:insert-instruction-after instruction predecessor)
+       instruction))))
 
 (defun spill-arguments (predecessor successor)
   ;; We extend the stack to contain the first five arguments and the
   ;; argument count (to allow for precise collection of arguments).
-  (loop for register in x86-64:*argument-registers*
-        for slot from 1
+  (setf predecessor
+        (grow-stack-frame predecessor
+                          (1+ (length x86-64:*argument-registers*))))
+  (loop for register in (cons x86-64:*argument-count*
+                              x86-64:*argument-registers*)
+        for slot from 0
         for instruction = (make-instance 'cleavir-ir:memset2-instruction
                             :inputs (list x86-64:*rsp*
-                                          (* slot 8)
+                                          (cleavir-ir:make-immediate-input
+                                           (* slot 8))
                                           register)
                             :outputs '())
         do (cleavir-ir:insert-instruction-between
