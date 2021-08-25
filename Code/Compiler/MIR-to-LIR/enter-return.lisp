@@ -30,17 +30,34 @@
             :inputs (list x86-64:*argument-count*
                           (cleavir-ir:make-immediate-input
                            (* 2 (1+ (length x86-64:*argument-registers*)))))
-            :outputs '()
-            :successors (list successor
-                              (make-instance 'sicl-ir:pop-instruction
-                                :inputs '()
-                                :outputs (list (sicl-ir:effective-address
-                                                x86-64:*rbp*
-                                                :offset -8)))))))
-    (cleavir-ir:insert-instruction-between instruction predecessor successor)
+            :outputs '())))
+    (cleavir-ir:insert-instruction-after instruction predecessor)
+    (setf (cleavir-ir:successors instruction)
+          (list successor
+                (make-instance 'sicl-ir:pop-instruction
+                  :inputs '()
+                  :outputs (list (sicl-ir:effective-address
+                                  x86-64:*rbp*
+                                  :offset -8))
+                  :successors (list successor))))
     instruction))
 
 (defun spill-arguments (predecessor successor)
+  ;; We extend the stack to contain the first five arguments and the
+  ;; argument count (to allow for precise collection of arguments).
+  (loop for register in x86-64:*argument-registers*
+        for slot from 1
+        for instruction = (make-instance 'cleavir-ir:memset2-instruction
+                            :inputs (list x86-64:*rsp*
+                                          (* slot 8)
+                                          register)
+                            :outputs '())
+        do (cleavir-ir:insert-instruction-between
+            instruction
+            predecessor
+            successor)
+           (setf predecessor instruction))
   predecessor)
+
 (defun install-call-site-descriptor (predecessor successor)
   predecessor)
