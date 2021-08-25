@@ -80,8 +80,9 @@
   (loop for specializer in (method-specializers method)
         for argument in arguments
         do (if (classp specializer)
-               (unless (subclassp (class-of argument) specializer)
-                 (return-from definitely-applicable-p nil))
+               (unless (eq specializer (find-class 't))
+                 (unless (subclassp (class-of argument) specializer)
+                   (return-from definitely-applicable-p nil)))
                (unless (eql (eql-specializer-object specializer) argument)
                  (return-from definitely-applicable-p nil)))
         finally (return t)))
@@ -103,7 +104,13 @@
 ;;; action below is valid for that method.
 
 (defun compute-applicable-methods-default (generic-function arguments)
-  (let* ((classes-of-arguments (mapcar #'class-of arguments))
+  (let* ((profile (specializer-profile generic-function))
+         (required-argument-count (length profile))
+         (required-arguments (subseq arguments 0 required-argument-count))
+         (classes-of-arguments
+           (loop for argument in required-arguments
+                 for p in profile
+                 collect (if p (class-of argument) (find-class 't))))
          (lambda-list (generic-function-lambda-list generic-function))
          (precedence-order (generic-function-argument-precedence-order generic-function))
          (indices (precedence-indices lambda-list precedence-order)))
