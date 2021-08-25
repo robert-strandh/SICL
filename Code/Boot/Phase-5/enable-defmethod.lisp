@@ -23,6 +23,7 @@
       (load-source-file "CLOS/ensure-method-defun.lisp" e5))))
 
 (defun enable-defmethod (e3 e4 e5)
+  (load-source-file "CLOS/make-specializer.lisp" e5)
   (define-generic-function-class-names e5)
   (define-ensure-method e3 e4 e5)
   (load-source-file "CLOS/make-method-lambda-support.lisp" e5)

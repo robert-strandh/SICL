@@ -30,18 +30,21 @@
           (env:function-cell client e2 'typep))
          (add-method
           (env:function-cell client e2 'add-method))
-         (find-class
-          (list (lambda (name &rest optionals)
-                  (case name
-                    ((t) (find-class 't))
-                    (null (find-class 'null))
-                    (t (apply (env:fdefinition (env:client e3) e3 'find-class)
-                              name optionals))))))
          (make-instance
           (env:function-cell client e1 'make-instance)))
       (load-source-file "CLOS/ensure-method-defun.lisp" e3))))
 
 (defun enable-defmethod (e1 e2 e3)
+  (with-intercepted-function-cells
+      (e3
+       (find-class
+        (list (lambda (name &rest optionals)
+                (case name
+                  ((t) (find-class 't))
+                  (null (find-class 'null))
+                  (t (apply (env:fdefinition (env:client e3) e3 'find-class)
+                            name optionals)))))))
+    (load-source-file "CLOS/make-specializer.lisp" e3))
   (define-generic-function-class-names e3)
   (define-ensure-method e1 e2 e3)
   (let ((client (env:client e2)))
