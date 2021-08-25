@@ -140,8 +140,9 @@
    (lambda (instruction)
      (loop for datum in (inputs instruction)
            do (push instruction (using-instructions datum)))
-     (push instruction
-           (using-instructions (dynamic-environment-location instruction)))
+     (unless (null (dynamic-environment-location instruction))
+       (push instruction
+             (using-instructions (dynamic-environment-location instruction))))
      (loop for datum in (outputs instruction)
            do (push instruction (defining-instructions datum))))
    initial-instruction))
