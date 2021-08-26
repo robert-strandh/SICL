@@ -5,8 +5,8 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "conditions")
-   (:file "condition-reporters-en")
    (:file "format")
    (:file "control-string-compiler")
-   (:file "format-define-compiler-macro")))
+   (:file "format-define-compiler-macro")
+   (:file "conditions")
+   (:file "condition-reporters-en")))
