@@ -90,3 +90,50 @@
                            :reader
                            ,(car parameter)))
           ,@slots))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking syntax, interpreting, and compiling directives.
+
+(defmethod check-directive-syntax progn (directive)
+  (with-accessors ((given-parameters given-parameters))
+    directive
+    (let ((parameter-specs (parameter-specs (class-name (class-of directive)))))
+      ;; When a parameter was explicitly given, check that
+      ;; what was given does not have an incompatible type
+      ;; with respect to the default value of the corresponding
+      ;; slot, and assign the explicitly given value to
+      ;; the slot.
+      (let ((parameter-number 1))
+        (mapc (lambda (parameter-spec parameter-value)
+                (unless (or (eq parameter-value '|#|)
+                            (eq parameter-value 'V))
+                  (unless
+                      (or
+                       ;; Either a parameter was not supplied, but it has a
+                       ;; default value
+                       (and (null parameter-value)
+                            (not (null (getf (cdr parameter-spec) :default-value))))
+                       ;; Or else it was supplied, and it is of the right type.
+                       (typep parameter-value (getf (cdr parameter-spec) :type)))
+                    (error 'parameter-type-error
+                           :expected-type
+                           (getf (cdr parameter-spec) :type)
+                           :datum parameter-value)))
+                (setf (slot-value directive (car parameter-spec))
+                      parameter-value)
+                (incf parameter-number))
+        parameter-specs
+        given-parameters)))))
+
+(defmethod check-directive-syntax progn ((directive named-parameters-directive))
+  (with-accessors ((given-parameters given-parameters))
+    directive
+    (let ((parameter-specs (parameter-specs (class-name (class-of directive)))))
+      ;; Check that the number of parameters given is no more than
+      ;; what this type of directive allows.
+      (when (> (length given-parameters) (length parameter-specs))
+        (error 'too-many-parameters
+               :directive directive
+               :at-most-how-many (length parameter-specs)
+               :how-many-found (length given-parameters))))))
