@@ -31,65 +31,9 @@
 
 (cl:in-package #:sicl-format)
 
-;;; A macro that helps us define directives. It takes a directive
-;;; character, a directive name (to be used for the class) and a body
-;;; in the form of a list of parameter specifications.  Each parameter
-;;; specification is a list where the first element is the name of the
-;;; parameter, and the remaining elemnts are keyword/value pairs.
-;;; Currently, the only keywords allowed are :type and
-;;; :default-value.
-(defmacro define-directive (character name superclasses parameters &body slots)
-  `(progn
-     (defmethod directive-subclass-name
-         ((char (eql ,(char-upcase character))) directive)
-       (declare (ignore directive))
-       ',name)
-
-     (eval-when (:compile-toplevel :load-toplevel :execute)
-       (defmethod parameter-specs ((directive-name (eql ',name)))
-         ',(loop for parameter in parameters
-                 collect (if (getf (cdr parameter) :default-value)
-                             parameter
-                             (cons (car parameter)
-                                   (list* :default-value nil (cdr parameter)))))))
-
-     (defclass ,name ,superclasses
-       (,@(loop for parameter in parameters
-                collect `(,(car parameter)
-                           :initform nil
-                           :reader
-                           ,(car parameter)))
-          ,@slots))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Checking syntax, interpreting, and compiling directives.
-
-;;; For certain common types used by FORMAT, return a string
-;;; explaining in English what the type means.  For other
-;;; types, return a string "an object of type <type>"
-(defun type-name (type)
-  (cond ((symbolp type)
-         (case type
-           (integer "an integer")
-           (character "a character")
-           (list "a list")
-           (t (format nil "an object of type ~s" type))))
-        ((and (consp type) (eq (car type) 'integer))
-         (case (length type)
-           (1 "an integer")
-           (2 (case (second type)
-                (0 "a nonnegative integer")
-                (1 "a strictly positive integer")
-                (t (format nil "an integer greater than or equal to ~d" (second type)))))
-           (3 (format nil "an integer between ~d and ~d" (second type) (third type)))
-           (t (format nil "an object of type ~s" type))))
-        (t (format nil "an object of type ~s" type))))
-
-;;; Specialize a directive according to a particular directive
-;;; character.
-(defun specialize-directive (directive)
-  (change-class directive (directive-subclass-name (directive-character directive) directive)))
 
 (defmethod check-directive-syntax progn (directive)
   (with-accessors ((given-parameters given-parameters))

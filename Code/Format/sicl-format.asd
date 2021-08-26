@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "utilities")
    (:file "generic-functions")
    (:file "directive")
    (:file "parse-control-string")

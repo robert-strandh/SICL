@@ -53,3 +53,40 @@
 ;;; Mixin class for structured directives
 (defclass structured-directive-mixin ()
   ((%items :initarg :items :reader items)))
+
+;;; Specialize a directive according to a particular directive
+;;; character.
+(defun specialize-directive (directive)
+  (change-class
+   directive
+   (directive-subclass-name (directive-character directive) directive)))
+
+;;; A macro that helps us define directives. It takes a directive
+;;; character, a directive name (to be used for the class) and a body
+;;; in the form of a list of parameter specifications.  Each parameter
+;;; specification is a list where the first element is the name of the
+;;; parameter, and the remaining elemnts are keyword/value pairs.
+;;; Currently, the only keywords allowed are :type and
+;;; :default-value.
+(defmacro define-directive (character name superclasses parameters &body slots)
+  `(progn
+     (defmethod directive-subclass-name
+         ((char (eql ,(char-upcase character))) directive)
+       (declare (ignore directive))
+       ',name)
+
+     (eval-when (:compile-toplevel :load-toplevel :execute)
+       (defmethod parameter-specs ((directive-name (eql ',name)))
+         ',(loop for parameter in parameters
+                 collect (if (getf (cdr parameter) :default-value)
+                             parameter
+                             (cons (car parameter)
+                                   (list* :default-value nil (cdr parameter)))))))
+
+     (defclass ,name ,superclasses
+       (,@(loop for parameter in parameters
+                collect `(,(car parameter)
+                           :initform nil
+                           :reader
+                           ,(car parameter)))
+          ,@slots))))
