@@ -852,11 +852,11 @@
                  :stack-slot nil
                  :register-number (x86-64:register-number x86-64:*dynamic-environment*))
                (make-instance 'arr:attribution
-                 :lexical-location *bogus-argument-count-location*
+                 :lexical-location *temporary-argument-count-location*
                  :stack-slot nil
                  :register-number (x86-64:register-number x86-64:*argument-count*)))))
            (*stack-frame-size* 0))
-      (loop for location in *bogus-argument-locations*
+      (loop for location in *temporary-argument-locations*
             for register in x86-64:*argument-registers*
             do (arr:attribute-register-for-new-lexical-location
                 arrangement

@@ -5,8 +5,10 @@
 ;;; stack.
 
 (defun do-register-allocation (enter-instruction)
-  (let ((*bogus-argument-locations* (make-bogus-argument-locations))
-        (*bogus-argument-count-location* (make-bogus-argument-count-location))
+  (let ((*temporary-argument-locations*
+          (make-temporary-argument-locations))
+        (*temporary-argument-count-location*
+          (make-temporary-argument-count-location))
         (*non-constant-argument-instruction-p* nil))
     (preprocess-instructions enter-instruction)
     (let ((back-arcs (find-back-arcs enter-instruction))

@@ -52,6 +52,7 @@
         ;; when code generation is again enabled.
         (cleavir-hir-transformations:replace-aliases hir)
         (establish-call-sites code-object)
+        #+(or)
         (setf (hir-thunks code-object)
               (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
         (sicl-hir-transformations:eliminate-append-values-instructions hir)
