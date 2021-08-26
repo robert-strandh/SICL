@@ -127,7 +127,13 @@
         ;; 8. Use the CALL instruction with that register as an argument.
         ;; We will just reuse this CALL instruction.
         (setf (cleavir-ir:inputs instruction)
-              (list x86-64:*rax*)))
+              (list x86-64:*rax*))
+        ;; 9. Pop to restore the old stack frame.
+        (cleavir-ir:insert-instruction-after
+         (make-instance 'sicl-ir:pop-instruction
+           :inputs '()
+           :outputs (list x86-64:*rbp*))
+         instruction))
       ;; Remove the NOP instruction.
       (cleavir-ir:delete-instruction start-of-sequence))))
 
