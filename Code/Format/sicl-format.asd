@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "generic-functions")
    (:file "format")
    (:file "control-string-compiler")
    (:file "format-define-compiler-macro")

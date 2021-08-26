@@ -244,22 +244,10 @@
                                     :at-signp at-signp)
                              (setf start end-of-directive-position))))))))
 
-
-;;; Return the name of a subclass to be used for a particular
-;;; directive.  Each particular directive subclass must be accompanied
-;;; by an eql-specialized method on this generic function.
-(defgeneric directive-subclass-name (directive-character directive))
-
 ;;; For the default case, signal an error
 (defmethod directive-subclass-name (directive-character directive)
   (error 'unknown-directive-character
          :directive directive))
-
-;;; Given a name of a type of a directive, return a list of parameter
-;;; specifiers for that type of directive.  Each type of directive
-;;; should supply an eql specialized method for this generic function.
-(eval-when (:compile-toplevel :load-toplevel)
-  (defgeneric parameter-specs (directive-name)))
 
 ;;; A macro that helps us define directives. It takes a directive
 ;;; character, a directive name (to be used for the class) and a body
@@ -275,7 +263,7 @@
        (declare (ignore directive))
        ',name)
 
-     (eval-when (:compile-toplevel :load-toplevel)
+     (eval-when (:compile-toplevel :load-toplevel :execute)
        (defmethod parameter-specs ((directive-name (eql ',name)))
          ',(loop for parameter in parameters
                  collect (if (getf (cdr parameter) :default-value)
@@ -320,10 +308,6 @@
 ;;; character.
 (defun specialize-directive (directive)
   (change-class directive (directive-subclass-name (directive-character directive) directive)))
-
-;;; Check the syntax of a directive.
-(defgeneric check-directive-syntax (directive)
-  (:method-combination progn :most-specific-last))
 
 (defmethod check-directive-syntax progn (directive)
   (with-accessors ((given-parameters given-parameters))
@@ -435,10 +419,6 @@
 
 ;;; The directive interpreter.
 
-;;; DIRECTIVE is an instance of a subclass of the DIRECTIVE class
-;;; describing the directive.
-(defgeneric interpret-format-directive (directive))
-
 (defmethod interpret-format-directive (directive)
   (error 'unknown-format-directive
          :control-string (control-string directive)
@@ -468,9 +448,6 @@
              :expected-type type
              :datum arg))
     arg))
-
-;;; The directive compiler.
-(defgeneric compile-format-directive (directive))
 
 (defmacro define-format-directive-compiler (class-name &body body)
   `(defmethod compile-format-directive ((directive ,class-name))
