@@ -8,6 +8,7 @@
    (:file "generic-functions")
    (:file "directive")
    (:file "parse-control-string")
+   (:file "split-control-string")
    (:file "format")
    (:file "control-string-compiler")
    (:file "format-define-compiler-macro")
