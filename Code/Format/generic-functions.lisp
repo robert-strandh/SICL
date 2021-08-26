@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-loop)
+(cl:in-package #:sicl-format)
 
 ;;; Return the name of a subclass to be used for a particular
 ;;; directive.  Each particular directive subclass must be accompanied
