@@ -1,5 +1,19 @@
 (cl:in-package #:sicl-format)
 
+(defgeneric control-string (directive))
+
+(defgeneric start (directive))
+
+(defgeneric end (directive))
+
+(defgeneric directive-character (directive))
+
+(defgeneric given-parameters (directive))
+
+(defgeneric colonp (directive))
+
+(defgeneric at-signp (directive))
+
 ;;; How we represent a directive.  It may seem wasteful to allocate
 ;;; a class instance for each directive, but most format directives
 ;;; are handled at compile time anyway.
