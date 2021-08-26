@@ -5,9 +5,12 @@
   (princ (package-name object) stream)
   (princ ">") stream)
 
+(defun print-symbol (symbol stream)
+  (princ (package-name (symbol-package symbol)) stream)
+  (princ ":" stream)
+  (princ (symbol-name symbol) stream))
+
 (defmethod print-object ((object sicl-boot::host-symbol) stream)
   (princ "#<HOST-SYMBOL " stream)
-  (princ (package-name (symbol-package object)) stream)
-  (princ ":" stream)
-  (princ (symbol-name object) stream)
+  (print-symbol object stream)
   (princ ">") stream)
