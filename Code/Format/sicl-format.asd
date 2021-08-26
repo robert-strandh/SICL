@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "generic-functions")
+   (:file "directive")
    (:file "parse-control-string")
    (:file "format")
    (:file "control-string-compiler")
