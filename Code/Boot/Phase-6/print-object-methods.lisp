@@ -14,3 +14,13 @@
   (princ "#<HOST-SYMBOL " stream)
   (print-symbol object stream)
   (princ ">") stream)
+
+(defmethod print-object ((object standard-generic-function) stream)
+  (princ "#<STANDARD-GENERIC-FUNCTION " stream)
+  (let ((name (sicl-clos:generic-function-name object)))
+    (if (symbolp name)
+        (print-symbol name stream)
+        (progn (princ "(SETF " stream)
+               (print-symbol (second name) stream)
+               (princ ")" stream))))
+  (princ ">") stream)
