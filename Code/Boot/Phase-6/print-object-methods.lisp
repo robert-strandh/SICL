@@ -24,3 +24,28 @@
                (print-symbol (second name) stream)
                (princ ")" stream))))
   (princ ">") stream)
+
+(defmethod print-object ((object built-in-class) stream)
+  (princ "#<BUILT-IN-CLASS " stream)
+  (print-symbol (class-name object) stream)
+  (princ ">") stream)
+
+(defmethod print-object ((object standard-class) stream)
+  (princ "#<STANDARD-CLASS " stream)
+  (print-symbol (class-name object) stream)
+  (princ ">") stream)
+
+(defmethod print-object ((object sicl-clos:forward-referenced-class) stream)
+  (princ "#<FORWARD-REFERENCED-CLASS " stream)
+  (print-symbol (class-name object) stream)
+  (princ ">") stream)
+
+(defmethod print-object ((object sicl-conditions:condition-class) stream)
+  (princ "#<CONDITION-CLASS " stream)
+  (print-symbol (class-name object) stream)
+  (princ ">") stream)
+
+(defmethod print-object ((object structure-class) stream)
+  (princ "#<STRUCTURE-CLASS " stream)
+  (print-symbol (class-name object) stream)
+  (princ ">") stream)
