@@ -49,3 +49,7 @@
   (princ "#<<STRUCTURE-CLASS " stream)
   (print-symbol (class-name object) stream)
   (princ ">>") stream)
+
+(defmethod print-object ((object standard-method) stream)
+  (princ "#<<STANDARD-METHOD" stream)
+  (princ ">>") stream)
