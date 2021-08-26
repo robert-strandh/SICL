@@ -143,7 +143,7 @@
                 2)
         (let ((second-free-register
                 (x86-64:find-any-register-in-map free-registers
-                                                 :start first-free-register)))
+                                                 :start (1+ first-free-register))))
           ;; If there is one free register, use it for stack-stack
           ;; assignments, and a stack slot for spilling.  (We don't
           ;; need to allocate a stack slot to spill that register to,
@@ -156,12 +156,12 @@
                       (list 0 nil)
                       (list nil second-free-register))
                   (if (null second-free-register)
-                      0
-                      1))))))
+                      1
+                      0))))))
 
-;;; Generate adaptation code based on assignment chains. We may
-;;; redirect uses of the stack copy register number COPY-REGISTER to a
-;;; stack slot COPY-STACK-SLOT, and use the SPILL-LOCATION to break
+;;; Generate adaptation code based on assignment chains. We redirect
+;;; uses of the stack copy register number COPY-REGISTER to a stack
+;;; slot COPY-STACK-SLOT, and use the SPILL-LOCATION to break
 ;;; assignment cycles (which were identified with the previously
 ;;; mentioned SPILL location) by spilling a register.
 (defun generate-adaptation-code (chains predecessor successor
