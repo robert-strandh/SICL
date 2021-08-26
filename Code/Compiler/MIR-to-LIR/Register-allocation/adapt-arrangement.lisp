@@ -64,7 +64,7 @@
 
 ;;; The new algorithm for adapting arrangements identifies "chains" of
 ;;; assignments which can be performed sequentially.  If a loop is
-;;; found, then it is broken by emitting assignments to a virtual
+;;; found, then it is broken by emitting assignments to a placeholder
 ;;; SPILL location, which is replaced with a real location when we
 ;;; generate code for the adaptation.
 (defun identify-chains (assignments)
@@ -124,26 +124,40 @@
 (defun first-free-stack-slot (&rest arrangements)
   (reduce #'max arrangements :key #'arr:first-stack-slot-past-arrangement))
 
+;;; Return information about temporary locations required to perform
+;;; an adaptation: a register number to use for stack-stack copies,
+;;; the stack slot that the stack-stack copy register should be
+;;; spilled to, a location for breaking circular assignments with, and
+;;; how many additional stack slots are needed.
 (defun temporary-locations (target source)
   (let* ((free-registers      (x86-64:register-map-intersection
                                (arr:free-registers target source)
                                x86-64:*usable-registers*))
-         (first-stack-slot    (first-free-stack-slot target source))
          (first-free-register (x86-64:find-any-register-in-map free-registers)))
     (if (null first-free-register)
         ;; If there are no free registers, pick one at random for
         ;; stack-stack assignments, and a stack slot for spilling.
         (values *stack-copy-register*
-                first-stack-slot
-                (list (1+ first-stack-slot) nil))
+                0
+                (list 1 nil)
+                2)
         (let ((second-free-register
                 (x86-64:find-any-register-in-map free-registers
                                                  :start first-free-register)))
+          ;; If there is one free register, use it for stack-stack
+          ;; assignments, and a stack slot for spilling.  (We don't
+          ;; need to allocate a stack slot to spill that register to,
+          ;; by definition.)  Else, there are two or more free
+          ;; registers, so use two registers for stack-stack
+          ;; assignments and spilling.
           (values first-free-register
-                  first-stack-slot
+                  nil
                   (if (null second-free-register)
-                      (list (1+ first-stack-slot) nil)
-                      (list nil second-free-register)))))))
+                      (list 0 nil)
+                      (list nil second-free-register))
+                  (if (null second-free-register)
+                      0
+                      1))))))
 
 ;;; Generate adaptation code based on assignment chains. We may
 ;;; redirect uses of the stack copy register number COPY-REGISTER to a
@@ -151,7 +165,8 @@
 ;;; assignment cycles (which were identified with the previously
 ;;; mentioned SPILL location) by spilling a register.
 (defun generate-adaptation-code (chains predecessor successor
-                                 copy-register copy-stack-slot spill-location)
+                                 copy-register copy-stack-slot
+                                 spill-location stack-offset)
   (sicl-utilities:with-collectors ((instructions add-instruction))
     (let ((used-copy-register-p nil)
           (performed-stack-stack-copy-p nil))
@@ -183,17 +198,24 @@
                        (make-instance 'adapt-assignment-instruction
                          :inputs (list (register source-register))
                          :outputs (list (register target-register))))))))
-               (rewrite-spill (location)
+               (rewrite-redirections (location)
+                 ;; Rewrite occurences of the placeholder SPILL
+                 ;; location and stack copy register, and correct
+                 ;; other stack locations if we needed more stack for
+                 ;; the spill and stack copy registers.
                  (cond
                    ((eql location 'spill)
                     spill-location)
                    ((equal location (list nil copy-register))
                     (setf used-copy-register-p t)
                     (list copy-stack-slot nil))
-                   (t
-                    location)))
+                   ((not (null (first location)))
+                    ;; Add an offset to the stack slot, as we may have temporarily bumped it.
+                    (list (+ (first location) stack-offset) nil))
+                   (t location)))
                (emit (target source)
-                 (%emit (rewrite-spill target) (rewrite-spill source))))
+                 (%emit (rewrite-redirections target)
+                        (rewrite-redirections source))))
         (dolist (chain chains)
           (loop for (target source) in (assignment-chain-assignments chain)
                 do (emit target source)))
@@ -203,6 +225,12 @@
                   instruction
                   predecessor successor)
                  (setf predecessor instruction)))
+          (when (plusp stack-offset)
+            (add-instruction
+             (make-instance 'cleavir-ir:fixnum-sub-instruction
+               :inputs (list x86-64:*rsp*
+                             (cleavir-ir:make-immediate-input (* 8 stack-offset)))
+               :outputs (list x86-64:*rsp*))))
           (cond
             ((and used-copy-register-p performed-stack-stack-copy-p)
              ;; If we used the copy register and actually performed a
@@ -217,18 +245,25 @@
               (x86-64:load-from-stack-instruction
                copy-stack-slot (register copy-register))))
             (t
-             (mapc #'add-instruction (instructions)))))))))
+             (mapc #'add-instruction (instructions))))
+          (when (plusp stack-offset)
+            (add-instruction
+             (make-instance 'cleavir-ir:fixnum-add-instruction
+               :inputs (list x86-64:*rsp*
+                             (cleavir-ir:make-immediate-input (* 8 stack-offset)))
+               :outputs (list x86-64:*rsp*)))))))))
 
 (defmethod introduce-registers-for-instruction ((instruction adapt-instruction))
   (destructuring-bind (successor)
       (cleavir-ir:successors instruction)
     (let ((target (output-arrangement instruction))
           (source (input-arrangement instruction)))
-      (multiple-value-bind (copy-register copy-stack spill-location)
+      (multiple-value-bind (copy-register copy-stack
+                            spill-location stack-offset)
           (temporary-locations target source)
         (generate-adaptation-code
          (identify-chains
           (identify-assignments target source))
          instruction successor
-         copy-register copy-stack spill-location))))
+         copy-register copy-stack spill-location stack-offset))))
   (cleavir-ir:delete-instruction instruction))

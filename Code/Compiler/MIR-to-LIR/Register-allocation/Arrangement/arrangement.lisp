@@ -314,11 +314,12 @@
           (length stack-map)
           (1+ last-used)))))
 
-;;; Return the first register which is unused by all arrangements.
+;;; Return a register map of registers which are unused by all arrangements.
 (defun free-registers (arrangement &rest arrangements)
-  (reduce #'bit-ior arrangements
-          :key #'register-map
-          :initial-value (register-map arrangement)))
+  (bit-not
+   (reduce #'bit-ior arrangements
+           :key #'register-map
+           :initial-value (register-map arrangement))))
 
 ;;; Destructively modify arrangement by keeping only the arrangements
 ;;; with a lexical location that is a member of LEXICAL-LOCATIONS.
