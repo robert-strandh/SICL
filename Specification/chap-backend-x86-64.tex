@@ -201,7 +201,7 @@ Upon function entry after an ordinary call, when more than $5$
 arguments are passed, the callee must pop the return address off the
 top of the stack and store it in its final location.  This can be done
 with a single POP instruction, using [\texttt{RBP}$ - 8$] as the
-destination.  When fewer than $5$ arguments are passed, the return
+destination.  When no more than $5$ arguments are passed, the return
 address is already in the right place.
 
 Return from callee to caller, with no values:
