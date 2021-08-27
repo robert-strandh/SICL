@@ -42,3 +42,30 @@
              :start start
              :end end
              :target string))))
+
+(defmacro with-checked-bounding-indices
+    (((string-var string-form)
+      (start-var start-form)
+      (end-var end-form))
+     &body body)
+  (let ((length-var (gensym)))
+    `(let ((,string-var ,string-form)
+           (,start-var ,start-form)
+           (,end-var ,end-form))
+       (let ((,length-var (length ,string-var)))
+         (unless (typep ,start-var `(integer 0 ,,length-var))
+           (error 'type-error
+                  :datum ,start-var
+                  :expected-type `(integer 0 ,,length-var)))
+         (unless (typep ,end-var `(or null (integer 0 ,,length-var)))
+           (error 'type-error
+                  :datum ,end-var
+                  :expected-type `(or null (integer 0 ,,length-var))))
+         (when (null ,end-var)
+           (setq ,end-var ,length-var))
+         (unless (<= ,start-var ,end-var)
+           (error 'invalid-bounding-indices
+                  :start ,start-var
+                  :end ,end-var
+                  :target ,string-var))
+         ,@body))))
