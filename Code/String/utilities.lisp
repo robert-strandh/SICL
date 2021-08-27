@@ -10,6 +10,14 @@
                    (char string source-index)))
     result))
 
+(defun string-designator-to-fresh-string (string-designator)
+  (let ((string (string string-designator)))
+    (if (characterp string-designator)
+        ;; The string is already freshly allocated, so there
+        ;; is no need to copy it again.
+        string
+        (extract-interval string 0 (length string)))))
+
 (defun check-bounding-indices (string start end)
   (let ((length (length string)))
     (unless (typep start `(integer 0 ,length))
