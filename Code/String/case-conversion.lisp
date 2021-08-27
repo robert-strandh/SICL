@@ -21,18 +21,15 @@
 ;;; Functions NSTRING-DOWNCASE and STRING-DOWNCASE.
 
 (defun nstring-downcase (string &key (start 0) end)
-  (let ((length (length string)))
-    (when (null end) (setf end length))
-    (check-bounding-indices string start end)
-    (loop for i from start below end
-          do (setf (char string i)
-                   (char-downcase (char string i)))))
-  string)
+  (with-checked-bounding-indices
+      ((string string) (start start) (end end))
+    (for-each-relevant-character
+        (character string start end)
+      (setf character (char-downcase character)))
+    string))
 
 (defun string-downcase (string-designator &key (start 0) end)
-  (let ((string (if (characterp string-designator)
-                    (string string-designator)
-                    (copy-string (string string-designator)))))
+  (let ((string (string-designator-to-fresh-string string-designator)))
     (nstring-downcase string :start start :end end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
