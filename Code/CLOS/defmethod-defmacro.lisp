@@ -27,6 +27,6 @@
             :method-class ',method-class-name
             :lambda-list ',lambda-list
             :qualifiers ',qualifiers
-            :specializers ',specializers
+            :specializers (list ,@(canonicalize-specializers specializers))
             :documentation ',documentation
             :function ,method-lambda))))))

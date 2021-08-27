@@ -50,17 +50,6 @@
 ;;; not supplied, an error is signaled.  If this argument is supplied,
 ;;; it must be a subclass of the class named DIRECT-SLOT-DEFINITION.
 
-(defun ensure-specializers (specializer-designators)
-  (loop for specializer-designator in specializer-designators
-        collect (etypecase specializer-designator
-                  (specializer
-                   specializer-designator)
-                  (symbol
-                   (find-class specializer-designator))
-                  ((cons (eql eql) (cons t null))
-                   (make-instance 'eql-specializer
-                     :object (second specializer-designator))))))
-
 (defun ensure-method
     (generic-function-or-name
      &key
@@ -115,7 +104,7 @@
             (make-instance method-class
               :lambda-list (extract-lambda-list lambda-list)
               :qualifiers qualifiers
-              :specializers (ensure-specializers specializers)
+              :specializers specializers
               :documentation documentation
               :function function)))
       (add-method generic-function method)

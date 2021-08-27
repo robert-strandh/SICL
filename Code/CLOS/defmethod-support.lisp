@@ -21,11 +21,11 @@
 
 (defun canonicalize-specializer (specializer)
   (cond ((symbolp specializer)
-         `(find-class ',specializer))
+         `(make-class-specializer ',specializer))
         ((and (consp specializer)
               (consp (cdr specializer))
               (null (cddr specializer)))
-         `(make-instance 'eql-specializer :object ,(second specializer)))
+         `(make-eql-specializer ,(second specializer)))
         (t
          (error 'malformed-specializer :specializer specializer))))
 
