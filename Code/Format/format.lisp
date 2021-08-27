@@ -31,6 +31,10 @@
 
 (cl:in-package #:sicl-format)
 
+;;; During runtime, this variable is bound to a stream to which
+;;; all the output goes.
+(defvar *destination*)
+
 (defun interpret-items (items)
   (loop for item across items
         do (if (stringp item)
@@ -38,10 +42,6 @@
                (interpret-format-directive item))))
 
 ;;; Runtime environment
-
-;;; During runtime, this variable is bound to a stream to which
-;;; all the output goes.
-(defvar *destination*)
 
 ;;; A vector of all the arguments that were passed to this
 ;;; invocation of FORMAT.
