@@ -31,6 +31,12 @@
 
 (cl:in-package #:sicl-format)
 
+(defun interpret-items (items)
+  (loop for item across items
+        do (if (stringp item)
+               (write-string item *destination*)
+               (interpret-format-directive item))))
+
 ;;; Runtime environment
 
 ;;; During runtime, this variable is bound to a stream to which
@@ -1689,12 +1695,6 @@
         (t
          ;; ignore both the newline and the following whitespace
          nil)))
-
-(defun interpret-items (items)
-  (loop for item across items
-        do (if (stringp item)
-               (write-string item *destination*)
-               (interpret-format-directive item))))
 
 ;;; The reason we define this function is that the ~? directive
 ;;; (recursive processing), when a @ modifier is used, reuses
