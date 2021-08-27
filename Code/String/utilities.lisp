@@ -18,6 +18,15 @@
         string
         (extract-interval string 0 (length string)))))
 
+(defmacro for-each-relevant-character
+    ((character-var string-form start-form end-form) &body body)
+  (let ((string-var (gensym))
+        (index-var (gensym)))
+    `(let ((,string-var ,string-form))
+       (symbol-macrolet ((,character-var (char ,string-var ,index-var)))
+         (loop for ,index-var from ,start-form below ,end-form
+               do ,@body)))))
+
 (defun check-bounding-indices (string start end)
   (let ((length (length string)))
     (unless (typep start `(integer 0 ,length))
