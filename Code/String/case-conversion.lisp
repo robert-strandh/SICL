@@ -37,23 +37,20 @@
 ;;; Functions NSTRING-CAPITALIZE and STRING-CAPITALIZE.
 
 (defun nstring-capitalize (string &key (start 0) (end nil))
-  (let ((length (length string)))
-    (when (null end) (setf end length))
-    (check-bounding-indices string start end)
-    (loop with state = nil
-        for i from start below end
-          for char = (char string i)
-          do (if state
-                 (if (alphanumericp char)
-                     (setf (char string i) (char-downcase char))
-                     (setf state nil))
-                 (when (alphanumericp char)
-                   (setf (char string i) (char-upcase char))
-                   (setf state t)))))
-  string)
+  (with-checked-bounding-indices
+      ((string string) (start start) (end end))
+    (let ((state nil))
+      (for-each-relevant-character
+          (character string start end)
+        (if state
+            (if (alphanumericp character)
+                (setf character (char-downcase character))
+                (setf state nil))
+            (when (alphanumericp character)
+              (setf character (char-upcase character))
+              (setf state t)))))
+    string))
 
 (defun string-capitalize (string-designator &key (start 0) end)
-  (let ((string (if (characterp string-designator)
-                    (string string-designator)
-                    (copy-string (string string-designator)))))
+  (let ((string (string-designator-to-fresh-string string-designator)))
     (nstring-capitalize string :start start :end end)))
