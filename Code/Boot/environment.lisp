@@ -213,7 +213,7 @@
      ;; Types and classes
      coerce
      ;; Sequence
-     elt length count reverse position subseq sort remove find
+     elt length count count-if reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
      position-if-not nreverse replace delete copy-seq mismatch
      ;; For debugging
