@@ -6,9 +6,9 @@
   :components
   ((:file "packages")
    (:file "utilities")
+   (:file "string")
    (:file "copy")
    (:file "case-conversion")
-   (:file "string")
    (:file "trim")
    (:file "comparison")
    (:file "conditions")
