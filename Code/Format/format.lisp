@@ -691,12 +691,6 @@
    (overflowchar :type character)
    (padchar :type character :default-value #\Space)))
 
-(define-format-directive-interpreter f-directive
-  (print-float-arg colonp at-signp w d k overflowchar padchar))
-
-(define-format-directive-compiler f-directive
-  `(print-float-arg ,colonp ,at-signp w d k overflowchar padchar))
-
 (defun print-float-arg (colonp at-signp w d k overflowchar padchar)
   (let ((argument (consume-next-argument t)))
     (if (numberp argument)
@@ -704,6 +698,12 @@
         (if (floatp argument)
             (format *destination* "float!")
             (format *destination* "aesthetic ~A" argument)))))
+
+(define-format-directive-interpreter f-directive
+  (print-float-arg colonp at-signp w d k overflowchar padchar))
+
+(define-format-directive-compiler f-directive
+  `(print-float-arg ,colonp ,at-signp w d k overflowchar padchar))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
