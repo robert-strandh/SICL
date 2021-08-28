@@ -7,7 +7,6 @@
   ((:file "packages")
    (:file "utilities")
    (:file "string")
-   (:file "copy")
    (:file "case-conversion")
    (:file "trim")
    (:file "comparison")
