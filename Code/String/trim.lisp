@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-string)
 
-(defun string-left trim (character-bag string-designator)
+(defun string-left-trim (character-bag string-designator)
   (let* ((string (string string-designator))
          (start 0)
          (end (length string)))
