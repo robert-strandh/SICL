@@ -208,6 +208,7 @@
      gensym symbolp
      ;; Characters
      characterp char-code code-char char= char-name standard-char-p
+     alphanumericp
      ;; Strings
      stringp char schar string string=
      ;; Types and classes
@@ -215,7 +216,7 @@
      ;; Sequence
      elt length count count-if reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
-     position-if-not nreverse replace delete copy-seq mismatch
+     position-if-not nreverse replace delete copy-seq mismatch fill
      ;; For debugging
      format
      ;; Conditions
