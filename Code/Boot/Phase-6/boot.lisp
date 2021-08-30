@@ -81,6 +81,7 @@
     (load-ctype e5)
     (load-source-file "Types/subtypep-defun.lisp" e5)
     (load-closer-mop e5)
+    (load-asdf-system '#:sicl-string e5)
     (load-eclector e5)
     (load-asdf-system '#:sicl-loop-support e5)
     (load-asdf-system '#:sicl-loop e5)
