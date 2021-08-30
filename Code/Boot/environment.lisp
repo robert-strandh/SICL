@@ -175,6 +175,9 @@
          'sicl-type:type-expander)
         (lambda (name)
           (env:type-expander client environment name)))
+  (setf (env:fdefinition client environment 'fmakunbound)
+        (lambda (name)
+          (env:fmakunbound client environment name)))
   (define-macroexpand environment))
 
 (defun import-standard-functions (environment)
