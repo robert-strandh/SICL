@@ -408,6 +408,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CATCH.
+
+(defmethod convert-special (client (symbol (eql 'catch)) cst environment)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (cst:db origin (catch-cst tag-cst . body-csts) cst
+    (declare (ignore catch-cst))
+    (cleavir-ast:make-ast 'cleavir-ast:catch-ast
+      :tag-ast (convert client tag-cst environment)
+      :body-ast
+      (process-progn (convert-sequence client body-csts environment)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting IF.
 
 (defmethod convert-special (client (symbol (eql 'if)) cst environment)
@@ -761,12 +775,6 @@
         :cleanup-thunk-ast (convert client
                             cleanup-thunk-cst
                             environment)))))
-
-(defmethod convert-special (client (symbol (eql 'catch)) cst environment)
-  (declare (ignore client environment))
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (error 'no-default-method :operator symbol :cst cst))
 
 (defmethod convert-special (client (symbol (eql 'throw)) cst environment)
   (declare (ignore client environment))
