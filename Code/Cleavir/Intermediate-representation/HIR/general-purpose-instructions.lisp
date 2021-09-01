@@ -228,27 +228,17 @@
 ;;; Instruction DYNAMIC-CATCH-INSTRUCTION.
 ;;;
 ;;; This instruction is used to mark a control point and stack frame
-;;; as an exit point. It has one input, one output, and two
-;;; successors.  This instruction can be generated from the CATCH-AST
-;;; which in turn is generated from the CATCH special form.  The input
-;;; is a CATCH TAG which is stored in the entry that is added to the
-;;; dynamic environment by this instruction.
-;;;
-;;; When reached normally, control proceeds unconditionally to the
-;;; first successor. It outputs a dynamic environment with a new entry
-;;; added. This is the only output.
-;;;
-;;; When A THROW spcial form is evaluated with the same TAG as the one
-;;; input to this instruction, and that tag is the most recently
-;;; introduced of all similar tags, the stack frame of the
-;;; DYNAMIC-CATCH-INSTRUCTION is put back into place, and control
-;;; proceeds to the second successor of the DYNAMIC-CATCH-INSTRUCTION.
-;;;
-;;; The tag can be used once, and cannot be used after the function
-;;; containing the DYNAMIC-CATCH has returned or been unwound from.
-;;; In Scheme terms, it is a one-shot escape continuation.
+;;; as an exit point. It has two inputs, one output, and a single
+;;; successor.  This instruction can be generated from the CATCH-AST
+;;; which in turn is generated from the CATCH special form.  The first
+;;; input is a CATCH TAG which is stored in the entry that is added to
+;;; the dynamic environment by this instruction.  The second input is
+;;; a function that, when called, the effect is the argumets are
+;;; thrown as values to the CATCH special form.  The output is a
+;;; dynamic environment with a new entry added. This is the only
+;;; output.
 
-(defclass dynamic-catch-instruction (instruction multiple-successors-mixin)
+(defclass dynamic-catch-instruction (instruction one-successor-mixin)
   ())
 
 (defmethod dynamic-environment-output ((instruction dynamic-catch-instruction))
