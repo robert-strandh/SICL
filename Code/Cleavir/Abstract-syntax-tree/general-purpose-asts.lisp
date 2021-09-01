@@ -438,18 +438,39 @@
 ;;;
 ;;; Class CATCH-AST.
 ;;;
-;;; This AST can be generated from the CATCH special operator.
+;;; This AST can be generated as part of converting the CATCH special
+;;; operator.  It has three children, a TAG-AST, a THROW-FUNCTION-AST,
+;;; and a BODY-AST.  The TAG-AST is an AST that produces a value used
+;;; as the TAG in the CATCH form.  The BODY-AST is an AST that
+;;; contains the forms of the body of the CATCH form.  The
+;;; THROW-FUNCTION-AST is a function of one argument, which is a list
+;;; of the return values to throw to the CATCH form.  The translation
+;;; works as follows:
+;;;
+;;; (catch tag form*)
+;;;
+;;; turns into
+;;;
+;;; (block <name>
+;;;   (catch-ast
+;;;     tag
+;;;     (lambda (values) (return-from <name> (values-list values)))
+;;;     form*))
+;;;
+;;; where CATCH-AST is this AST.
 
 (defclass catch-ast (ast)
   ((%tag-ast :initarg :tag-ast :reader tag-ast)
+   (%throw-function-ast :initarg :throw-function-ast :reader throw-function-ast)
    (%body-ast :initarg :body-ast :accessor body-ast)))
 
 (cleavir-io:define-save-info catch-ast
   (:tag-ast tag-ast)
+  (:throw-function-ast throw-function-ast)
   (:body-ast body-ast))
 
 (defmethod children ((ast catch-ast))
-  (list (tag-ast ast) (body-ast ast)))
+  (list (tag-ast ast) (throw-function-ast ast) (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
