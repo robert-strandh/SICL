@@ -9,6 +9,8 @@
            #:block/tagbody-entry
            #:stack-pointer
            #:frame-pointer
+           #:catch-entry
+           #:tag
            #:special-variable-entry
            #:identifier
            #:name
