@@ -431,20 +431,20 @@
   (cst:db origin (catch-cst tag-cst . body-csts) cst
     (declare (ignore catch-cst))
     (let* ((block-ast
-             (cleavir-ast:make-ast 'block-ast))
+             (cleavir-ast:make-ast 'cleavir-ast:block-ast))
            (argument-ast
-             (cleavir-ast:make-ast 'lexical-ast
+             (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                :name 'values))
            (call-ast
-             (cleavir-ast:make-ast 'named-call-ast
-               :name 'values-list
+             (cleavir-ast:make-ast 'cleavir-ast:named-call-ast
+               :callee-name 'values-list
                :argument-asts (list argument-ast)))
            (return-from-ast
-             (cleavir-ast:make-ast 'return-from-ast
+             (cleavir-ast:make-ast 'cleavir-ast:return-from-ast
                :block-ast block-ast
                :form-ast call-ast))
            (function-ast
-             (cleavir-ast:make-ast 'function-ast
+             (cleavir-ast:make-ast 'cleavir-ast:function-ast
                :lambda-list (list argument-ast)
                :body-ast return-from-ast))
            (tag-ast
@@ -453,7 +453,7 @@
              (process-progn
               (convert-sequence client body-csts environment)))
            (catch-ast
-             (cleavir-ast:make-ast 'catch-ast
+             (cleavir-ast:make-ast 'cleavir-ast:catch-ast
                :tag-ast tag-ast
                :throw-function-ast function-ast
                :body-ast body-ast)))
