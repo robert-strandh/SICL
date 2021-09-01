@@ -323,6 +323,7 @@
          client
          (cleavir-ast:throw-function-ast ast)
          (clone-context
+          context
           :result throw-function-temp
           :successor
           (let* ((dynenv-out (cleavir-ir:make-lexical-location (gensym "catch")))
