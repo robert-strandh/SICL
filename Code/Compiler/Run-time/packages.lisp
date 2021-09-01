@@ -11,6 +11,7 @@
            #:frame-pointer
            #:catch-entry
            #:tag
+           #:throw-function
            #:special-variable-entry
            #:identifier
            #:name
