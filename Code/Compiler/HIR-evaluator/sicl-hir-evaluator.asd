@@ -28,6 +28,7 @@
    (:file "fixnum-related-instructions")
    (:file "multiple-value-related-instructions")
    (:file "catch-instruction")
+   (:file "dynamic-catch-instruction")
    (:file "unwind-instruction")
    (:file "bind-instruction")
    (:file "unwind-protect-instruction")
