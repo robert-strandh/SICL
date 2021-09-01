@@ -4,7 +4,8 @@
   (:use #:common-lisp)
   (:shadow #:symbol-value
            #:makunbound
-           #:boundp)
+           #:boundp
+           #:throw)
   (:export #:*dynamic-environment*
            #:block/tagbody-entry
            #:stack-pointer
@@ -27,4 +28,5 @@
            #:find-special-variable-entry
            #:symbol-value
            #:makunbound
-           #:boundp))
+           #:boundp
+           #:throw))
