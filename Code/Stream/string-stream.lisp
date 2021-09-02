@@ -67,3 +67,12 @@
 
 (defclass string-output-stream (string-stream)
   ())
+
+(defun make-string-output-stream (&key (element-type 'character))
+  (assert (eq element-type 'character))
+  (make-instance 'string-output-stream
+    :string (make-array 10 :element-type 'character :fill-pointer 0)))
+
+(defmethod stream-write-char
+    ((stream string-output-stream) (character character))
+  (vector-push-extend character (stream-string stream)))
