@@ -19,4 +19,5 @@
    (:file "destructuring-bind-defmacro")
    (:file "shiftf-defmacro")
    (:file "not-defun")
-   (:file "eq-defun")))
+   (:file "eq-defun")
+   (:file "throw-defmacro")))
