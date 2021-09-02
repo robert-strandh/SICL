@@ -27,6 +27,10 @@
   nil)
 
 (defmethod process-instruction
+    ((instruction cleavir-ir:dynamic-catch-instruction) lexical-locations)
+  nil)
+
+(defmethod process-instruction
     ((instruction cleavir-ir:bind-instruction) lexical-locations)
   nil)
 
