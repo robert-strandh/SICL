@@ -1,0 +1,12 @@
+(cl:in-package #:sicl-array)
+
+(defun vector-push-extend (new-element vector &optional (extension 1))
+  (let ((current-size (array-dimension vector 0)))
+    (when (>= (fill-pointer vector) current-size)
+      (let* ((effective-extension (max extension current-size))
+             (new-size (+ current-size effective-extension)))
+        (adjust-array vector new-size))))
+  (prog1 (fill-pointer vector)
+    (setf (aref vector (fill-pointer vector))
+          new-element)
+    (incf (fill-pointer vector))))
