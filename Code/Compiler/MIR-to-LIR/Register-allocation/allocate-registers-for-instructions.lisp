@@ -279,6 +279,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; DYNAMIC-CATCH-INSTRUCTION
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:dynamic-catch-instruction))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:dynamic-catch-instruction))
+  (ensure-one-unattributed predecessor instruction
+                           (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:dynamic-catch-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; UNWIND-PROTECT-INSTRUCTION
 
 (defmethod process-inputs
