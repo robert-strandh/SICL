@@ -31,11 +31,17 @@
 
 (cl:in-package #:sicl-format)
 
-;;; Runtime environment
-
 ;;; During runtime, this variable is bound to a stream to which
 ;;; all the output goes.
 (defvar *destination*)
+
+(defun interpret-items (items)
+  (loop for item across items
+        do (if (stringp item)
+               (write-string item *destination*)
+               (interpret-format-directive item))))
+
+;;; Runtime environment
 
 ;;; A vector of all the arguments that were passed to this
 ;;; invocation of FORMAT.
@@ -685,14 +691,6 @@
    (overflowchar :type character)
    (padchar :type character :default-value #\Space)))
 
-(define-format-directive-interpreter f-directive
-  (print-float-arg colonp at-signp w d k overflowchar padchar))
-
-(define-format-directive-compiler f-directive
-  `(print-float-arg ,colonp ,at-signp w d k overflowchar padchar))
-
-; (defun format-fixed (stream number w d k ovf pad atsign)
-
 (defun print-float-arg (colonp at-signp w d k overflowchar padchar)
   (let ((argument (consume-next-argument t)))
     (if (numberp argument)
@@ -701,17 +699,11 @@
             (format *destination* "float!")
             (format *destination* "aesthetic ~A" argument)))))
 
-      #|
-      (if (floatp argument)
-          (format-fixed-aux stream number w d k ovf pad atsign)
-          (if (rationalp number)
-              (format-fixed-aux stream
-                                (coerce number 'single-float)
-                                w d k ovf pad atsign)
-              (format-write-field stream
-                                  (decimal-string number)
-                                  w 1 0 #\space t)))
-      |#
+(define-format-directive-interpreter f-directive
+  (print-float-arg colonp at-signp w d k overflowchar padchar))
+
+(define-format-directive-compiler f-directive
+  `(print-float-arg ,colonp ,at-signp w d k overflowchar padchar))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1689,65 +1681,6 @@
         (t
          ;; ignore both the newline and the following whitespace
          nil)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; The main entry point
-
-(defun structure-items (items end)
-  (loop with result = '()
-        with first = (car items)
-        do (cond ((null items)
-                  (if (null end)
-                      (return (values (coerce (nreverse result) 'vector)
-                                      '()))
-                      (error 'unmatched-directive
-                             :directive first
-                             :control-string (control-string first)
-                             :tilde-position (start first))))
-                 ((stringp (car items))
-                  (push (pop items) result))
-                 ((find (directive-character (car items))
-                        ">)}]")
-                  (if (eql (directive-character (car items)) end)
-                      (progn (push (pop items) result)
-                             (return (values (coerce (nreverse result) 'vector)
-                                             items)))
-                      (error 'nesting-violation
-                             :directive (car items))))
-                 ((find (directive-character (car items))
-                        "<({[")
-                  (let ((item (pop items)))
-                    (multiple-value-bind (nested-items rest)
-                        (structure-items items
-                                         (ecase (directive-character item)
-                                           (#\< #\>) (#\( #\)) (#\{ #\}) (#\[ #\])))
-                      (setf items rest)
-                      (ecase (directive-character item)
-                        (#\< (if (colonp (aref nested-items (1- (length nested-items))))
-                                 (change-class item 'logical-block-directive
-                                               :items nested-items)
-                                 (change-class item 'justification-directive
-                                               :items nested-items)))
-                        (#\( (change-class item 'case-conversion-directive
-                                           :items nested-items))
-                        (#\{ (change-class item 'iteration-directive
-                                           :items nested-items))
-                        (#\[ (change-class item 'conditional-directive
-                                           :items nested-items)))
-                      (check-directive-syntax item)
-                      (push item result))))
-                 (t
-                  (let ((item (pop items)))
-                    (specialize-directive item)
-                    (check-directive-syntax item)
-                    (push item result))))))
-
-(defun interpret-items (items)
-  (loop for item across items
-        do (if (stringp item)
-               (write-string item *destination*)
-               (interpret-format-directive item))))
 
 ;;; The reason we define this function is that the ~? directive
 ;;; (recursive processing), when a @ modifier is used, reuses

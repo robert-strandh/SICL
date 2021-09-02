@@ -15,6 +15,11 @@
              :name 'sicl-run-time:augment-with-block/tagbody-entry
              :instruction instruction)
            (call-sites code-object)))
+    (cleavir-ir:dynamic-catch-instruction
+     (push (make-instance 'call-site
+             :name 'sicl-run-time:augment-with-catch-entry
+             :instruction instruction)
+           (call-sites code-object)))
     (cleavir-ir:bind-instruction
      (push (make-instance 'call-site
              :name 'sicl-run-time:augment-with-special-variable-entry

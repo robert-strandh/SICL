@@ -408,6 +408,61 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CATCH.
+;;;
+;;; The conversion of the CATCH special form works as follows:
+;;;
+;;; (catch tag form*)
+;;;
+;;; turns into
+;;;
+;;; (block <name>
+;;;   (catch-ast
+;;;     tag
+;;;     (lambda (values) (return-from <name> (values-list values)))
+;;;     form*))
+;;;
+;;; where CATCH-AST is this AST.
+
+;;; FIXME: Transmit source information to various ASTs.
+(defmethod convert-special (client (symbol (eql 'catch)) cst environment)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (cst:db origin (catch-cst tag-cst . body-csts) cst
+    (declare (ignore catch-cst))
+    (let* ((block-ast
+             (cleavir-ast:make-ast 'cleavir-ast:block-ast))
+           (argument-ast
+             (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
+               :name 'values))
+           (call-ast
+             (cleavir-ast:make-ast 'cleavir-ast:named-call-ast
+               :callee-name 'values-list
+               :argument-asts (list argument-ast)))
+           (return-from-ast
+             (cleavir-ast:make-ast 'cleavir-ast:return-from-ast
+               :block-ast block-ast
+               :form-ast call-ast))
+           (function-ast
+             (cleavir-ast:make-ast 'cleavir-ast:function-ast
+               :lambda-list (list argument-ast)
+               :body-ast return-from-ast))
+           (tag-ast
+             (convert client tag-cst environment))
+           (body-ast
+             (process-progn
+              (convert-sequence client body-csts environment)))
+           (catch-ast
+             (cleavir-ast:make-ast 'cleavir-ast:catch-ast
+               :tag-ast tag-ast
+               :throw-function-ast function-ast
+               :body-ast body-ast)))
+      (setf (cleavir-ast:body-ast block-ast)
+            catch-ast)
+      block-ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting IF.
 
 (defmethod convert-special (client (symbol (eql 'if)) cst environment)
@@ -761,12 +816,6 @@
         :cleanup-thunk-ast (convert client
                             cleanup-thunk-cst
                             environment)))))
-
-(defmethod convert-special (client (symbol (eql 'catch)) cst environment)
-  (declare (ignore client environment))
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (error 'no-default-method :operator symbol :cst cst))
 
 (defmethod convert-special (client (symbol (eql 'throw)) cst environment)
   (declare (ignore client environment))

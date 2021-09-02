@@ -2,4 +2,3 @@
 
 (defun upper-case-p (character)
   (<= 65 (char-code character) 90))
-

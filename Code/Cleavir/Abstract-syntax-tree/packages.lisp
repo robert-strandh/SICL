@@ -45,6 +45,8 @@
    #:multiple-value-setq-ast #:lhs-asts
    #:tagbody-ast #:item-asts
    #:tag-ast #:name
+   #:catch-ast
+   #:throw-function-ast
    #:the-ast
    #:required-types #:optional-types #:rest-type
    #:typeq-ast #:type-specifier #:type-specifier-ast

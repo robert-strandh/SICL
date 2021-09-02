@@ -20,5 +20,5 @@
    #:funcallable-standard-object)
   (:export
    #:funcallable-standard-object
-   #.(loop for symbol being each external-symbol of "CL"
-           collect (symbol-name symbol))))
+   . #.(loop for symbol being each external-symbol of "CL"
+             collect (symbol-name symbol))))

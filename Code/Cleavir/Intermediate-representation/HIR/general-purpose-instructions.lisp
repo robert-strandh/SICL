@@ -225,6 +225,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction DYNAMIC-CATCH-INSTRUCTION.
+;;;
+;;; This instruction is used to mark a control point and stack frame
+;;; as an exit point. It has two inputs, one output, and a single
+;;; successor.  This instruction can be generated from the CATCH-AST
+;;; which in turn is generated from the CATCH special form.  The first
+;;; input is a CATCH TAG which is stored in the entry that is added to
+;;; the dynamic environment by this instruction.  The second input is
+;;; a function that, when called, the effect is the argumets are
+;;; thrown as values to the CATCH special form.  The output is a
+;;; dynamic environment with a new entry added. This is the only
+;;; output.
+
+(defclass dynamic-catch-instruction (instruction one-successor-mixin)
+  ())
+
+(defmethod dynamic-environment-output ((instruction dynamic-catch-instruction))
+  (first (outputs instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction BIND-INSTRUCTION.
 ;;;
 ;;; This instruction is used to bind a special variable to a value

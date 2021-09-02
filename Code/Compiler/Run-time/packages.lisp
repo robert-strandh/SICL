@@ -4,11 +4,15 @@
   (:use #:common-lisp)
   (:shadow #:symbol-value
            #:makunbound
-           #:boundp)
+           #:boundp
+           #:throw)
   (:export #:*dynamic-environment*
            #:block/tagbody-entry
            #:stack-pointer
            #:frame-pointer
+           #:catch-entry
+           #:tag
+           #:throw-function
            #:special-variable-entry
            #:identifier
            #:name
@@ -17,6 +21,7 @@
            #:thunk
            #:invalidate-entry
            #:augment-with-block/tagbody-entry
+           #:augment-with-catch-entry
            #:augment-with-special-variable-entry
            #:unwind
            #:initialize-values
@@ -24,4 +29,5 @@
            #:find-special-variable-entry
            #:symbol-value
            #:makunbound
-           #:boundp))
+           #:boundp
+           #:throw))

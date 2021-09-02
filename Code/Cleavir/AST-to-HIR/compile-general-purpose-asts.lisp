@@ -304,6 +304,42 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a CATCH-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:catch-ast) context)
+  (with-accessors ((results results)
+                   (successors successors))
+      context
+    (let ((tag-temp (make-temp))
+          (throw-function-temp (make-temp)))
+      (compile-ast
+       client
+       (cleavir-ast:tag-ast ast)
+       (clone-context
+        context
+        :result tag-temp
+        :successor
+        (compile-ast
+         client
+         (cleavir-ast:throw-function-ast ast)
+         (clone-context
+          context
+          :result throw-function-temp
+          :successor
+          (let* ((dynenv-out (cleavir-ir:make-lexical-location (gensym "catch")))
+                 (new-context (clone-context
+                               context
+                               :successor (first successors)
+                               :dynamic-environment-location dynenv-out))
+                 (body-successor
+                   (compile-ast client (cleavir-ast:body-ast ast) new-context)))
+            (make-instance 'cleavir-ir:dynamic-catch-instruction
+              :inputs (list tag-temp throw-function-temp)
+              :outputs (list dynenv-out)
+              :successors (list body-successor))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a BIND-AST.
 
 (defmethod compile-ast (client (ast cleavir-ast:bind-ast) context)

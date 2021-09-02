@@ -65,6 +65,7 @@
    #:the-values-instruction
    #:required-types #:optional-types #:rest-type
    #:catch-instruction
+   #:dynamic-catch-instruction
    #:unwind-instruction #:destination #:unwind-index
    #:bind-instruction
    #:unwind-protect-instruction

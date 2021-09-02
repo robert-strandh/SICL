@@ -5,11 +5,10 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "conditions")
-   (:file "condition-reporters-en")
    (:file "utilities")
-   (:file "copy")
-   (:file "case-conversion")
    (:file "string")
+   (:file "case-conversion")
    (:file "trim")
-   (:file "comparison")))
+   (:file "comparison")
+   (:file "conditions")
+   (:file "condition-reporters-en")))

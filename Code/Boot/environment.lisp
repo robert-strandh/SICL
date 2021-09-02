@@ -175,6 +175,9 @@
          'sicl-type:type-expander)
         (lambda (name)
           (env:type-expander client environment name)))
+  (setf (env:fdefinition client environment 'fmakunbound)
+        (lambda (name)
+          (env:fmakunbound client environment name)))
   (define-macroexpand environment))
 
 (defun import-standard-functions (environment)
@@ -208,14 +211,15 @@
      gensym symbolp
      ;; Characters
      characterp char-code code-char char= char-name standard-char-p
+     alphanumericp
      ;; Strings
-     stringp char schar string string=
+     stringp char schar string string= nstring-upcase nstring-downcase
      ;; Types and classes
      coerce
      ;; Sequence
-     elt length count reverse position subseq sort remove find
+     elt length count count-if reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
-     position-if-not nreverse replace delete copy-seq mismatch
+     position-if-not nreverse replace delete copy-seq mismatch fill
      ;; For debugging
      format
      ;; Conditions
@@ -244,7 +248,13 @@
             (setf (nth n list) new-value)))
     (setf (env:fdefinition client environment '(setf elt))
           (lambda (new-value sequence index)
-            (setf (elt sequence index) new-value)))))
+            (setf (elt sequence index) new-value)))
+    (setf (env:fdefinition client environment '(setf char))
+          (lambda (new-value string index)
+            (setf (char string index) new-value)))
+    (setf (env:fdefinition client environment '(setf schar))
+          (lambda (new-value string index)
+            (setf (schar string index) new-value)))))
 
 (defun define-special-operators (environment)
   (let ((client (env:client environment)))
