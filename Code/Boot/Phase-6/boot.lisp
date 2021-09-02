@@ -53,6 +53,7 @@
     (load-source-file "CLOS/with-accessors-defmacro.lisp" e5)
     (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)
     (load-source-file "Array/vector-push-defun.lisp" e5)
+    (load-source-file "Array/vector-push-extend-defun.lisp" e5)
     ;; Fake this macro for now
     (setf (env:macro-function (env:client e5) e5 'with-standard-io-syntax)
           (lambda (form environment)
