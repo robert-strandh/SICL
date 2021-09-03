@@ -11,4 +11,5 @@
   (load-source-file "Array/row-major-aref-defmethods.lisp" e5)
   (load-source-file "Array/aref-defuns.lisp" e5)
   (load-source-file "Array/array-rank-defun.lisp" e5)
-  (load-source-file "Array/adjustable-array-p.lisp" e5))
+  (load-source-file "Array/adjustable-array-p.lisp" e5)
+  (load-source-file "Array/array-has-fill-pointer-p.lisp" e5))
