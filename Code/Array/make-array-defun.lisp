@@ -85,13 +85,28 @@
                       :additional-space additional-space))))
         (if initial-contents-p
             (let ((index 0))
-              (labels ((init (dimensions)
-                         (if (atom dimensions)
-                             (progn (setf (row-major-aref result index) dimensions)
-                                    (incf index))
-                             (loop for dimension in dimensions
-                                   do (init dimension)))))
-                (init canonicalized-dimensions)))
+              (labels ((init (dimensions contents)
+                         (cond ((null dimensions)
+                                (setf (row-major-aref result 0) contents))
+                               ((null (rest dimensions))
+                                (if (listp contents)
+                                    (loop for element in contents
+                                          repeat (first dimensions)
+                                          do (setf (row-major-aref result index) element)
+                                             (incf index))
+                                    (loop for element across contents
+                                          repeat (first dimensions)
+                                          do (setf (row-major-aref result index) element)
+                                             (incf index))))
+                               (t
+                                (if (listp contents)
+                                    (loop for element in contents
+                                          repeat (first dimensions)
+                                          do (init (rest dimensions) element))
+                                    (loop for element across contents
+                                          repeat (first dimensions)
+                                          do (init (rest dimensions) element)))))))
+                (init canonicalized-dimensions initial-contents)))
             (let ((element (if initial-element-p initial-element default-element)))
               (loop for index from 0 below element-count
                     do (setf (row-major-aref result index) element))))
