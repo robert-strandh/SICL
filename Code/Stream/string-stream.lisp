@@ -96,4 +96,5 @@
        (let ((,stream-variable
                (make-instance 'string-output-stream
                  :string ,string-variable)))
-         ,@body))))
+         ,@body)
+       ,string-variable)))
