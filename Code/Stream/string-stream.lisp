@@ -76,3 +76,18 @@
 (defmethod stream-write-char
     ((stream string-output-stream) (character character))
   (vector-push-extend character (stream-string stream)))
+
+(defmacro with-output-to-string
+    ((stream-variable
+      &optional string-form
+      &key (element-type 'character))
+     &body body)
+  (let ((string-variable (gensym)))
+    `(let ((,string-variable ,string-form))
+       (when (null ,string-variable)
+         (setf ,string-variable
+               (make-array 10 :element-type ',element-type :fill-pointer t)))
+       (let ((,stream-variable
+               (make-instance 'string-output-stream
+                 :string ,string-variable)))
+         ,@body))))
