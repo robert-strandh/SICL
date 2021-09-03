@@ -71,7 +71,10 @@
 (defun make-string-output-stream (&key (element-type 'character))
   (assert (eq element-type 'character))
   (make-instance 'string-output-stream
-    :string (make-array 10 :element-type 'character :fill-pointer 0)))
+    :string (make-array 10
+             :element-type 'character
+             :adjustable t
+             :fill-pointer 0)))
 
 (defmethod stream-write-char
     ((stream string-output-stream) (character character))
@@ -86,7 +89,10 @@
     `(let ((,string-variable ,string-form))
        (when (null ,string-variable)
          (setf ,string-variable
-               (make-array 10 :element-type ',element-type :fill-pointer t)))
+               (make-array 10
+                           :element-type ',element-type
+                           :adjustable t
+                           :fill-pointer 0)))
        (let ((,stream-variable
                (make-instance 'string-output-stream
                  :string ,string-variable)))
