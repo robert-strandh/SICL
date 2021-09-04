@@ -69,6 +69,8 @@
        (make-instance (env:function-cell (env:client e2) e2 'make-instance))
        (sicl-clos:class-precedence-list
         (env:function-cell (env:client e2) e2 'sicl-clos:class-precedence-list))
+       (sicl-clos:class-finalized-p
+        (list (constantly t)))
        (sicl-clos:class-prototype
         (env:function-cell (env:client e2) e2 'sicl-clos:class-prototype)))
     (load-source-file "CLOS/ensure-generic-function-using-class-support.lisp" e3))
