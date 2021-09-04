@@ -38,3 +38,6 @@
                        (trucler:describe-tag
                         client environment new-tag-name)))))
     result))
+
+(defmethod declaration-proclamations (client environment)
+  '())
