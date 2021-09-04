@@ -38,6 +38,8 @@
     ;; this keyword argument is defaulted, but it has to be here,
     ;; because, this is where we find out that there is no generic
     ;; function with the name given as an argument.
+    (unless (class-finalized-p generic-function-class)
+      (finalize-inheritance generic-function-class))
     (let ((proto (class-prototype generic-function-class)))
       (setf method-combination
             (find-method-combination proto 'standard '()))))
