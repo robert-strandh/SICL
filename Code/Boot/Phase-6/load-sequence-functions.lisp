@@ -22,4 +22,5 @@
           new))
   (load-asdf-system '#:fast-generic-functions e5)
   (setf (env:proclamation (env:client e5) e5 'declaration)
-        '(fast-generic-functions:method-properties)))
+        (list (find-symbol (symbol-name '#:method-properties)
+                           '#:fast-generic-functions))))
