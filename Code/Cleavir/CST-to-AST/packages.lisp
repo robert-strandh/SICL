@@ -29,6 +29,7 @@
            #:lambda-list-from-parameter-group
            #:eval #:cst-eval
            #:origin
+           #:declaration-proclamations
            ;; Names of conditions.
            #:compilation-condition
            #:compilation-program-error
