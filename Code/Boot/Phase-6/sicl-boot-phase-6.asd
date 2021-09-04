@@ -25,4 +25,5 @@
    (:file "load-closer-mop")
    (:file "load-eclector")
    (:file "load-ctype")
+   (:file "load-sequence-functions")
    (:file "boot")))
