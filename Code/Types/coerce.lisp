@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-type)
 
+;;; COERCE is written as an ordinary function that calls
+;;; GENERIC-COERCE.  The reason COERCE itself is not generic is
+;;; because COERCE is needed during file loading, so if it is only
+;;; partially implemented, the file will fail to load.  By doing it
+;;; this way instead, COERCE itself is updated "atomically" so the
+;;; issue is no longer present.
+
 (defgeneric generic-coerce (object result-ctype))
 
 (defmethod generic-coerce (object result-ctype)
