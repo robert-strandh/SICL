@@ -111,7 +111,7 @@
       (fdefinition object)))
 
 (defun coerce (object result-type)
-  (let ((result-ctype (ctype:specifier-ctype result-type)))
-    (if (ctype:ctypep object result-ctype)
-        object
+  (if (typep object result-type)
+      object
+      (let ((result-ctype (ctype:specifier-ctype result-type)))
         (generic-coerce object result-ctype))))
