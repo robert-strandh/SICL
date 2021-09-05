@@ -3,9 +3,13 @@
 ;; A list of call stack entries.
 (defparameter *call-stack* '())
 
+(defparameter *call-stack-depth* 0)
+
 (defmacro with-new-call-stack-entry (entry &body body)
   `(let ((*call-stack* (cons ,entry *call-stack*)))
-     ,@body))
+     (incf *call-stack-depth*)
+     (unwind-protect (progn ,@body)
+       (decf *call-stack-depth*))))
 
 (defclass call-stack-entry ()
   ((%origin :initarg :origin :reader origin)
