@@ -9,6 +9,7 @@
            #:origin
            #:arguments
            #:*call-stack*
+           #:with-new-call-stack-entry
            #:enclose
            #:initialize-closure
            #:fill-environment
