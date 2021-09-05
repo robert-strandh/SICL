@@ -3,6 +3,10 @@
 ;; A list of call stack entries.
 (defparameter *call-stack* '())
 
+(defmacro with-new-call-stack-entry (entry &body body)
+  `(let ((*call-stack* (cons ,entry *call-stack*)))
+     ,@body))
+
 (defclass call-stack-entry ()
   ((%origin :initarg :origin :reader origin)
    (%arguments :initarg :arguments :reader arguments)))
