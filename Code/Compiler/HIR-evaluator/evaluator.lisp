@@ -7,6 +7,8 @@
 
 (defmacro with-new-call-stack-entry (entry &body body)
   `(let ((*call-stack* (cons ,entry *call-stack*)))
+     (when (> *call-stack-depth* 200)
+       (error "SICL call stack exhausted"))
      (incf *call-stack-depth*)
      (unwind-protect (progn ,@body)
        (decf *call-stack-depth*))))
