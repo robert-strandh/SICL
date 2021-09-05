@@ -20,6 +20,7 @@
                 (apply old name arguments))))
     (setf (env:fdefinition (env:client e5) e5 'ensure-generic-function)
           new))
+  (load-source-file "Types/coerce.lisp" e5)
   (load-asdf-system '#:fast-generic-functions e5)
   (setf (env:proclamation (env:client e5) e5 'declaration)
         (list (find-symbol (symbol-name '#:method-properties)
