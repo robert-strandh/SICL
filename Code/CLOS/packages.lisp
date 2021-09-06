@@ -85,6 +85,7 @@
    ;; Generic functions.
    #:class-direct-subclasses
    #:add-direct-subclass
+   #:remove-direct-subclass
    #:compute-effective-slot-definition
    #:compute-default-initargs
    #:class-of
