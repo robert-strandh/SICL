@@ -36,6 +36,11 @@
         result
         (call-next-method))))
 
+(defun fill-vector (list vector)
+  (loop for element in list
+        for index from 0
+        do (setf (aref vector index) element)))
+
 (defmethod generic-coerce
     ((object list) (result-ctype ctype:carray))
   (let* ((dimensions (ctype:carray-dims result-ctype))
@@ -61,9 +66,7 @@
           (t
            ;; Everything seems to be OK.
            (let ((result (make-array length :element-type element-type)))
-             (loop for element in object
-                   for index from 0
-                   do (setf (aref result index) element))
+             (fill-vector object result)
              result)))))
 
 (defmethod generic-coerce
@@ -109,6 +112,21 @@
           (special-operator-p object))
       (call-next-method)
       (fdefinition object)))
+
+(defmethod generic-coerce
+    ((object list) (result-ctype ctype:cclass))
+  (let ((vector-class (ctype:cclass-class result-ctype)))
+    (unless (member (find-class 'vector)
+                    (sicl-clos:class-precedence-list vector-class))
+      (call-next-method))
+    (let ((result (make-instance vector-class
+                    :dimensions (list (length object))
+                    ;; FIXME: this is not right.  We need to account
+                    ;; for the size of an element.
+                    :additional-space (length object)
+                    :fill-pointer nil)))
+      (fill-vector object result)
+      result)))
 
 (defun coerce (object result-type)
   (if (typep object result-type)
