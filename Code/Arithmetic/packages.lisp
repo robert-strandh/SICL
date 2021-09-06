@@ -17,4 +17,7 @@
    #:double-float-p
    #:complex-rational
    #:complex-single-float
-   #:complex-double-float))
+   #:complex-double-float
+   #:bignum
+   #:positive-bignum
+   #:negative-bignum))
