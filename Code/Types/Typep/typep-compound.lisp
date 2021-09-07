@@ -37,4 +37,4 @@
            (error "can't handle type-specifier ~s" type-specifier)
            ;; We found an expander.  Expand TYPE-SPECIFIER and call
            ;; TYPEP recursively with the expanded type specifier.
-           (typep object (funcall expander type-specifier)))))))
+           (typep object (funcall expander type-specifier nil)))))))
