@@ -1,25 +1,16 @@
 (in-package #:sicl-array)
 
-(deftype vector (&optional element-type size)
-  `(array ,element-type (,size)))
-
-(deftype simple-vector (&optional size)
-  `(simple-array t (,size)))
-
-(deftype string (&optional size)
-  `(array character (,size)))
+(deftype simple-array (&optional element-type dimension-spec)
+  `(array ,element-type ,dimension-spec))
 
 (deftype simple-string (&optional size)
-  `(simple-array character (,size)))
+  `(string ,size))
 
 (deftype base-string (&optional size)
-  `(array base-char (,size)))
+  `(string ,size))
 
 (deftype simple-base-string (&optional size)
-  `(simple-array base-char (,size)))
-
-(deftype bit-vector (&optional size)
-  `(array bit (,size)))
+  `(string ,size))
 
 (deftype simple-bit-vector (&optional size)
-  `(simple-array bit (,size)))
+  `(bit-vector ,size))
