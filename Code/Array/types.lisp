@@ -1,4 +1,4 @@
-(in-package #:sicl-global-environment)
+(in-package #:sicl-array)
 
 (deftype vector (&optional element-type size)
   `(array ,element-type (,size)))
