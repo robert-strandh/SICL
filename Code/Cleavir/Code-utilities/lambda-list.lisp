@@ -235,7 +235,7 @@
   (canonicalize-nontrivial-optional optional 'nil))
 
 (defun canonicalize-deftype-optional (optional)
-  (canonicalize-nontrivial-optional optional '*))
+  (canonicalize-nontrivial-optional optional ''*))
 
 (defun canonicalize-ordinary-rest (parameter)
   (unless (and (symbolp parameter)
