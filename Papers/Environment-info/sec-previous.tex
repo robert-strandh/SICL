@@ -8,7 +8,7 @@ Section 8.5 of ``Common Lisp, the Language, second edition'' describes
 a set of functions for obtaining information from environment
 objects and some other operators related to environments.
 
-For environment query, it describes three functions.  We describe them
+For environment query, it defines three functions.  We describe them
 briefly here.
 
 The function \texttt{variable-information} takes a symbol and an
@@ -41,8 +41,8 @@ To begin with, it is clear that this set of functions is insufficient
 to process all \commonlisp{} code, because no mechanism is described
 for querying the environment for information related to \emph{blocks}
 and \emph{go tags}.  Functions for this purpose are provided as
-extensions by Allegro Common Lisp.\footnote{FIXME: add
-  citation}\footnote{FIXME: describe changes to the protocol by ACL}
+extensions by Allegro Common Lisp as described in
+\refSec{sec-previous-allegro}.
 
 \subsubsection{Environment augmentation}
 
@@ -59,5 +59,15 @@ function \texttt{augment-environment}.
 \subsection{ECL}
 
 \subsection{Allegro}
+\label{sec-previous-allegro}
+
+\subsubsection{Native environments}
+
+\subsubsection{Support for CLtL2 protocol}
+
+The documentation for Allegro \commonlisp{} contains a separate
+document describing their protocol for environments in the spirit of
+CLtL2.%
+\footnote{https://franz.com/support/documentation/current/doc/environments.htm}
 
 \subsection{LispWorks}
