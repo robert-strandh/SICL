@@ -52,6 +52,10 @@ function \texttt{augment-environment}.
 
 \subsection{SBCL}
 
+\subsubsection{Native}
+
+\subsubsection{CLtL2}
+
 \subsection{CCL}
 
 \subsection{CMUCL}
@@ -69,5 +73,15 @@ The documentation for Allegro \commonlisp{} contains a separate
 document describing their protocol for environments in the spirit of
 CLtL2.%
 \footnote{https://franz.com/support/documentation/current/doc/environments.htm}
+We summarize the differences between the Allegro implementation and
+the CLtL2 protocol here.
+
+\begin{itemize}
+\item Information about blocks and tags have been added in the form of
+  two new functions \texttt{block-information} and
+  \texttt{tag-information}.
+\item (say more)
+\end{itemize}
+
 
 \subsection{LispWorks}
