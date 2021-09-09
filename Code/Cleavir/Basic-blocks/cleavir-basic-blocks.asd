@@ -2,7 +2,7 @@
 
 (defsystem #:cleavir-basic-blocks
   :depends-on (#:cleavir-utilities
-	       #:cleavir-hir)
+               #:cleavir-hir)
   :serial t
   :components
   ((:file "packages")
