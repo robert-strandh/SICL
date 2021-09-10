@@ -236,11 +236,26 @@ caller containing the call site:
   garbage collector does not have to trace.  For a typical backend,
   index $i$ of the bitmap represents the stack location at address
   $b-i$ where $b$ is the value of the base pointer.
-\item For each argument to the call that is still \emph{available}
-  after the call, its location.  If the argument is a lexical
-  location, then the location is an offset from the frame pointer.
-  If the argument is a literal object, then the location is the object
-  itself.
+\item The location of each argument to the call.  This information is
+  used by the call-site manager to generate code for accessing each
+  argument so that it can be passed to the callee, if required.%
+  \footnote{The argument may not be required by the callee, for
+    example if it is a keyword of a keyword/value pair.  In that case,
+    it is possible that the callee needs only the value and not the
+    keyword.}
+  There can be three types of locations:
+  \begin{enumerate}
+  \item A stack location, indicated by an offset from the frame
+    pointer.
+  \item A register location, indicated by the name of a register.
+  \item A literal object, indicated by the object itself.
+  \end{enumerate}
+\item For each argument representing a lexical location that is
+  \emph{live} after the call, its stack location.  The backtrace
+  inspector uses this information to display the arguments to a
+  particular call.  But arguments that represent lexical locations
+  that are not live after the call, may have been reclaimed by the
+  garbage collector, so they can not be displayed.
 \item For each live lexical location corresponding to a variable that
   is explicitly mentioned in source code:
   \begin{itemize}
