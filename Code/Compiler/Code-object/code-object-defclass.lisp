@@ -28,6 +28,9 @@
 
 (defclass call-site ()
   ((%instruction :initarg :instruction :reader instruction)
+   ;; This slot contains a function name whenever the call is to a
+   ;; named function whether global or a lexical.  When the call is to
+   ;; an anonymous function, this slot contains NIL.
    (%name :initarg :name :reader name)))
 
 (defgeneric instructions (code-object))
