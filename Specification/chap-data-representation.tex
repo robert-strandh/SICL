@@ -234,6 +234,8 @@ The call-site descriptor contains the following information about the
 caller containing the call site:
 
 \begin{itemize}
+\item The \emph{name} of the callee when the call site represents a
+  named call.
 \item Source location information for the call site.
 \item A bitmap indicating stack locations that may contain objects
   that the garbage collector must trace.  The compiler may omit stack
