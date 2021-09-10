@@ -42,7 +42,10 @@
    ;; that stack location is not live, or that it contains a live Lisp
    ;; object, but the object is of a type that the compiler has
    ;; determined need not be traced.
-   (%trace-map :initarg :trace-map :accessor trace-map)))
+   (%trace-map :initarg :trace-map :accessor trace-map)
+   ;; This slot contains source information about the call site.  If
+   ;; no source information is available, this slot contains NIL.
+   (%origin :initarg :origin :accessor origin)))
 
 (defgeneric instructions (code-object))
 
