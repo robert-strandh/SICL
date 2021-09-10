@@ -235,7 +235,12 @@ caller containing the call site:
 
 \begin{itemize}
 \item The \emph{name} of the callee when the call site represents a
-  named call.
+  named call.  This information is used by the backtrace inspector to
+  display useful information to the programmer.  When the callee is a
+  global function, this information is also used by the call-site
+  manager to associate this call site with a function name in the
+  global environment at the time when the caller is tied to that
+  environment.
 \item Source location information for the call site.
 \item A bitmap indicating stack locations that may contain objects
   that the garbage collector must trace.  The compiler may omit stack
@@ -243,9 +248,10 @@ caller containing the call site:
   garbage collector does not have to trace.  For a typical backend,
   index $i$ of the bitmap represents the stack location at address
   $b-i$ where $b$ is the value of the base pointer.
-\item The location of each argument to the call.  This information is
-  used by the call-site manager to generate code for accessing each
-  argument so that it can be passed to the callee, if required.%
+\item When the call represents a named call to a global function, the
+  location of each argument to the call.  This information is used by
+  the call-site manager to generate code for accessing each argument
+  so that it can be passed to the callee, if required.%
   \footnote{The argument may not be required by the callee, for
     example if it is a keyword of a keyword/value pair.  In that case,
     it is possible that the callee needs only the value and not the
