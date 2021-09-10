@@ -219,7 +219,12 @@ class \texttt{simple-function} which is a subclass of
 A \emph{call-site descriptor} is an object that is uniquely associated
 with a \emph{call site}, i.e., an instruction that invokes a function.
 The function being invoked can be a named global function, a lexical
-function, or an anonymous function.  The call-site descriptor is
+function, or an anonymous function.%
+\footnote{Though calls to lexical functions may be optimized, and
+  they may therefore not respect the ordinary function-call protocol.
+  In that case, it is possible that call-site information is not
+  available.}
+The call-site descriptor is
 passed as an implicit argument to the callee.  The callee stores the
 call-site descriptor in a fixed location relative to the frame pointer
 in its stack frame, so that it can be found by the garbage collector,
