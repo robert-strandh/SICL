@@ -31,7 +31,18 @@
    ;; This slot contains a function name whenever the call is to a
    ;; named function whether global or a lexical.  When the call is to
    ;; an anonymous function, this slot contains NIL.
-   (%name :initarg :name :reader name)))
+   (%name :initarg :name :reader name)
+   ;; This slot contains a bitmap to be used by the garbage collector.
+   ;; Each index represents an offset from the frame pointer into the
+   ;; stack frame of the caller.  If the bitmap contains a `1' at some
+   ;; index, it means that the stack location contains a Lisp object
+   ;; that may need to be traced by the garbage collector.  If the
+   ;; bitmap contains a `0', it means either that the stack location
+   ;; does not contain a Lisp object, that the object contained in
+   ;; that stack location is not live, or that it contains a live Lisp
+   ;; object, but the object is of a type that the compiler has
+   ;; determined need not be traced.
+   (%trace-map :initarg :trace-map :accessor trace-map)))
 
 (defgeneric instructions (code-object))
 
