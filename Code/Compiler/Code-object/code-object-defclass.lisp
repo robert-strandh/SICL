@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-compiler)
 
-(defgeneric instruction (call-site))
-
-(defgeneric name (call-site))
-
 ;;; A CALL-SITE or a "call-site descriptor" is an object that contains
 ;;; information about a call site, i.e., an instruction that results
 ;;; in a function being called.  An instance of this class is
@@ -25,6 +21,22 @@
 ;;;     the caller and the callee.  Such a snippet is created when the
 ;;;     code object is tied to a particular global environment, and
 ;;;     when the named callee is being redefined.
+
+(defgeneric instruction (call-site))
+
+(defgeneric name (call-site))
+
+(defgeneric trace-map (call-site))
+
+(defgeneric (setf trace-map) (trace-map call-site))
+
+(defgeneric origin (call-site))
+
+(defgeneric (setf origin) (origin call-site))
+
+(defgeneric arguments (call-site))
+
+(defgeneric (setf arguments) (arguments call-site))
 
 (defclass call-site ()
   ((%instruction :initarg :instruction :reader instruction)
