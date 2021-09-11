@@ -38,6 +38,10 @@
 
 (defgeneric (setf arguments) (arguments call-site))
 
+(defgeneric code (call-site))
+
+(defgeneric (setf code) (code call-site))
+
 (defclass call-site ()
   ((%instruction :initarg :instruction :reader instruction)
    ;; This slot contains a function name whenever the call is to a
@@ -55,6 +59,10 @@
    ;; object, but the object is of a type that the compiler has
    ;; determined need not be traced.
    (%trace-map :initarg :trace-map :accessor trace-map)
+   ;; This slot contains the code vector, which is a vector with
+   ;; element-type (UNSIGNED-BYTE 8), of the entire compilation unit
+   ;; that this call site is part of.
+   (%code :initarg code :accessor code)
    ;; This slot contains source information about the call site.  If
    ;; no source information is available, this slot contains NIL.
    (%origin :initarg :origin :accessor origin)
