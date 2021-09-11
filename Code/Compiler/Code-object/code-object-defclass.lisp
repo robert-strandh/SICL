@@ -42,6 +42,10 @@
 
 (defgeneric (setf code) (code call-site))
 
+(defgeneric offset (call-site))
+
+(defgeneric (setf offset) (offset call-site))
+
 (defclass call-site ()
   ((%instruction :initarg :instruction :reader instruction)
    ;; This slot contains a function name whenever the call is to a
@@ -63,6 +67,11 @@
    ;; element-type (UNSIGNED-BYTE 8), of the entire compilation unit
    ;; that this call site is part of.
    (%code :initarg code :accessor code)
+   ;; This slot contains a non-negative integer, representing the
+   ;; offset in to the code vector containing the unconditional jump
+   ;; instruction that will be modified to jump to a new trampoline
+   ;; snippet whenever the callee changes in some way.
+   (%offset :initarg offset :accessor offset)
    ;; This slot contains source information about the call site.  If
    ;; no source information is available, this slot contains NIL.
    (%origin :initarg :origin :accessor origin)
