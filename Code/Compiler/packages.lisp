@@ -5,7 +5,6 @@
   (:export #:debug-information
            #:code-object
            #:instructions
-           #:frame-maps
            #:constants
            #:ensure-constant
            #:establish-call-site

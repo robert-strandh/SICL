@@ -91,10 +91,6 @@
 
 (defgeneric (setf instructions) (instructions code-object))
 
-(defgeneric frame-maps (code-object))
-
-(defgeneric (setf frame-maps) (frame-maps code-object))
-
 (defgeneric constants (code-object))
 
 (defgeneric call-sites (code-object))
@@ -119,7 +115,6 @@
 
 (defclass code-object ()
   ((%instructions :initform '() :accessor instructions)
-   (%frame-maps :initform '() :accessor frame-maps)
    (%constants :initform (make-array 0 :adjustable t :fill-pointer t)
                :reader constants)
    (%call-sites :initform '() :accessor call-sites)
