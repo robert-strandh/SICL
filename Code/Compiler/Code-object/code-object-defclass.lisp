@@ -95,14 +95,6 @@
 
 (defgeneric (setf frame-maps) (frame-maps code-object))
 
-(defgeneric callee-saves-register-maps (code-object))
-
-(defgeneric (setf callee-saves-register-maps) (maps code-object))
-
-(defgeneric callee-saves-stack-maps (code-object))
-
-(defgeneric (setf callee-saves-stack-maps) (maps code-object))
-
 (defgeneric constants (code-object))
 
 (defgeneric call-sites (code-object))
@@ -128,12 +120,6 @@
 (defclass code-object ()
   ((%instructions :initform '() :accessor instructions)
    (%frame-maps :initform '() :accessor frame-maps)
-   (%callee-saves-register-maps
-    :initform '()
-    :accessor callee-saves-register-maps)
-   (%callee-saves-stack-maps
-    :initform '()
-    :accessor callee-saves-stack-maps)
    (%constants :initform (make-array 0 :adjustable t :fill-pointer t)
                :reader constants)
    (%call-sites :initform '() :accessor call-sites)

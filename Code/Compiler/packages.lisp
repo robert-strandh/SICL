@@ -6,8 +6,6 @@
            #:code-object
            #:instructions
            #:frame-maps
-           #:callee-saves-register-maps
-           #:callee-saves-stack-maps
            #:constants
            #:ensure-constant
            #:establish-call-site
