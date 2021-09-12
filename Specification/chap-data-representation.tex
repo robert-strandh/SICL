@@ -303,10 +303,8 @@ following a form that has just been evaluated.
 \label{data-representation-code-objects}
 
 A \emph{code object} is a standard object that represents the
-\emph{code} of a function.  Recall that a function consists of some
-code and an environment.  The code object is common to all functions
-that share the same code.
-
+\emph{code} of a compilation unit.  The code of every function in the
+compilation unit is present in a single code object.
 
 A code object contains the following information:
 
@@ -317,9 +315,7 @@ A code object contains the following information:
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
 \item Information about the file that contains the source code of the
-  compilation unit of which this code object is part.
-\item The \emph{concrete syntax tree} corresponding to the source code
-  of the compilation unit of which this code object is part.
+  compilation that the code object represents.
 \end{itemize}
 
 \section{Instances of built-in classes}
