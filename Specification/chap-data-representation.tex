@@ -242,12 +242,13 @@ caller containing the call site:
   global environment at the time when the caller is tied to that
   environment.
 \item Source location information for the call site.
-\item A bitmap indicating stack locations that may contain objects
-  that the garbage collector must trace.  The compiler may omit stack
-  locations that are known to contain \commonlisp{} objects that the
-  garbage collector does not have to trace.  For a typical backend,
-  index $i$ of the bitmap represents the stack location at address
-  $b-i$ where $b$ is the value of the base pointer.
+\item A \emph{trace map}, which is a bitmap indicating stack locations
+  that may contain objects that the garbage collector must trace.  The
+  compiler may omit stack locations that are known to contain
+  \commonlisp{} objects that the garbage collector does not have to
+  trace.  For a typical backend, index $i$ of the bitmap represents
+  the stack location at address $b-i$ where $b$ is the value of the
+  base pointer.
 \item When the call represents a named call to a global function, the
   location of each argument to the call.  This information is used by
   the call-site manager to generate code for accessing each argument

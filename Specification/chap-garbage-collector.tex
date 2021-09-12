@@ -391,8 +391,9 @@ know exactly when a location contains a root and when it does not.
 To find the roots owned by each stack frame, we use the
 \emph{call-site descriptor} \seesec{sec-call-site-descriptor} in the
 stack frame immediately above the one we are interested in.  That
-call-site descriptor contains a bitmap representing stack locations
-that may contain objects that the garbage collector must trace.
+call-site descriptor contains \emph{trace map} which is a bitmap
+representing stack locations that may contain objects that the garbage
+collector must trace.
 
 The stack is then traversed, frame by frame, starting with the second
 one from the top, and using the return address in the top frame.
