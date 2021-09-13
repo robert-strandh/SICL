@@ -7,6 +7,7 @@
                #:clouseau)
   :serial t
   :components
-  ((:file "packages")
+  ((:file "mcclim-configuration")
+   (:file "packages")
    (:file "gui")
    (:file "commands")))
