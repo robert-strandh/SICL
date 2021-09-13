@@ -38,6 +38,10 @@
 
 (defgeneric (setf arguments) (arguments call-site))
 
+(defgeneric live-arguments (call-site))
+
+(defgeneric (setf live-arguments) (live-arguments call-site))
+
 (defgeneric code (call-site))
 
 (defgeneric (setf code) (code call-site))
@@ -89,7 +93,21 @@
    ;; the call-site manager to construct a trampoline snippet that
    ;; accesses the arguments and puts each one in the corresponding
    ;; location where the callee expects it.
-   (%arguments :initarg :arguments :accessor arguments)))
+   (%arguments :initarg :arguments :accessor arguments)
+   ;; This slot contains a list with an element for each argument of
+   ;; the call.  An element is either NIL or of the form (<type>
+   ;; . <value>) where the <type> is a keyword symbol.  An element of
+   ;; the form (:STACK . <offset>) represents a stack location, and
+   ;; <offset> is a non-negative integer indicating the offset from
+   ;; the frame pointer of the caller into the stack frame of the
+   ;; caller).  An element of the form (:LITERAL . <value>) represents
+   ;; a literal datum where <value> is that datum.  An element NIL
+   ;; represents an argument that is not live after the call.  The
+   ;; backtrace inspector uses this information to display information
+   ;; about the arguments passed to a call, except that if the
+   ;; argument is not live after the call, it may no longer be
+   ;; accessible.
+   (%live-arguments :initarg :live-arguments :accessor live-arguments)))
 
 (defgeneric instructions (code-object))
 
