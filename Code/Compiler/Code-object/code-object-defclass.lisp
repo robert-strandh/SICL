@@ -76,15 +76,19 @@
    ;; no source information is available, this slot contains NIL.
    (%origin :initarg :origin :accessor origin)
    ;; When the call site represents a named call to a global function,
-   ;; this slot contains a list with an element for each argument
-   ;; being passed.  An element can be either a non-negative integer
-   ;; (representing a stack location in the form of an offset from the
-   ;; frame pointer of the caller into the stack frame of the caller),
-   ;; a register (representing itself), or a literal object (also
-   ;; representing itself).  This information is used by the call-site
-   ;; manager to construct a trampoline snippet that accesses the
-   ;; arguments and puts each one in the corresponding location where
-   ;; the callee expects it.
+   ;; this slot contains an association list with an element for each
+   ;; argument being passed.  An element is of the form (<type>
+   ;; . <value>) where the <type> is a keyword symbol.  An element of
+   ;; the form (:STACK . <offset>) represents a stack location, and
+   ;; <offset> is a non-negative integer indicating the offset from
+   ;; the frame pointer of the caller into the stack frame of the
+   ;; caller).  An element of the form (:REGISTER . <name>) represents
+   ;; a register, and <name> is a backend-specific register name.  An
+   ;; element of the form (:LITERAL . <value>) represents a literal
+   ;; datum where <value> is that datum.  This information is used by
+   ;; the call-site manager to construct a trampoline snippet that
+   ;; accesses the arguments and puts each one in the corresponding
+   ;; location where the callee expects it.
    (%arguments :initarg :arguments :accessor arguments)))
 
 (defgeneric instructions (code-object))
