@@ -313,10 +313,13 @@ A code object contains the following information:
 \item The executable native instructions in the form of a vector of
   unsigned bytes.
 \item A vector of strings representing the source code of the
-  compilation unit of which this code object is part.  Each string
+  compilation unit represented by this code object.  Each string
   corresponds to a line of code.
 \item Information about the file that contains the source code of the
   compilation that the code object represents.
+\item A list of \emph{call-site descriptors}
+  \seesec{sec-call-site-descriptor}, one for each call site in the
+  compilation unit.
 \end{itemize}
 
 \section{Instances of built-in classes}
