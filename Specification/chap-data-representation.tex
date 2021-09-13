@@ -257,12 +257,18 @@ caller containing the call site:
     example if it is a keyword of a keyword/value pair.  In that case,
     it is possible that the callee needs only the value and not the
     keyword.}
+  This list is an association list where each element is a pair
+  \texttt{(\emph{type} . \emph{value})}.
   There can be three types of locations:
   \begin{enumerate}
-  \item A stack location, indicated by an offset from the frame
+  \item A stack location.  Then the element type is the keyword symbol
+    \texttt{:stack}, and the value is an offset from the frame
     pointer.
-  \item A register location, indicated by the name of a register.
-  \item A literal object, indicated by the object itself.
+  \item A register location. Then the element type is the keyword
+    symbol \texttt{:register} and the value is the name of a
+    register.
+  \item A literal object.  Then the element type is the keyword symbol
+    \texttt{:literal} and the value is the object itself.
   \end{enumerate}
 \item For each argument representing a lexical location that is
   \emph{live} after the call, its stack location.  The backtrace
