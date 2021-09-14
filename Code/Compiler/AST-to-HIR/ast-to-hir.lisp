@@ -14,7 +14,6 @@
              (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
              (constants (make-array load-time-value-count
                                     :adjustable t :fill-pointer t)))
-        (declare (ignore constants))
         (cleavir-partial-inlining:do-inlining hir)
         (sicl-argument-processing:process-parameters hir)
         (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
@@ -28,4 +27,5 @@
         (sicl-hir-transformations:eliminate-fetch-instructions hir)
         (sicl-hir-transformations:eliminate-read-cell-instructions hir)
         (sicl-hir-transformations:eliminate-write-cell-instructions hir)
+        (process-constant-inputs hir constants)
         hir))))
