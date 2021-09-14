@@ -19,4 +19,5 @@
    (:file "standard-object")
    (:file "hoist-load-time-value")
    (:file "eliminate-fdefinition-asts")
+   (:file "process-constant-inputs")
    (:file "ast-to-hir")))
