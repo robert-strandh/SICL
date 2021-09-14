@@ -8,9 +8,24 @@
              :name (gensym))))
     (multiple-value-bind (hoisted-ast load-time-value-count)
         (hoist-load-time-value ast parameter-ast)
-      (declare (ignore load-time-value-count))
       (let* ((wrapped-ast (make-instance 'cleavir-ast:function-ast
                             :lambda-list (list parameter-ast)
                             :body-ast hoisted-ast))
-             (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast)))
+             (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
+             (constants (make-array load-time-value-count
+                                    :adjustable t :fill-pointer t)))
+        (declare (ignore constants))
+        (cleavir-partial-inlining:do-inlining hir)
+        (sicl-argument-processing:process-parameters hir)
+        (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
+        (sicl-hir-transformations:eliminate-multiple-to-fixed-instructions hir)
+        (cleavir-hir-transformations::process-captured-variables hir)
+        ;; Replacing aliases does not appear to have a great effect when
+        ;; code generation is disabled.  Try removing this commented line
+        ;; when code generation is again enabled.
+        ;; (cleavir-hir-transformations:replace-aliases hir)
+        (sicl-hir-transformations:eliminate-create-cell-instructions hir)
+        (sicl-hir-transformations:eliminate-fetch-instructions hir)
+        (sicl-hir-transformations:eliminate-read-cell-instructions hir)
+        (sicl-hir-transformations:eliminate-write-cell-instructions hir)
         hir))))
