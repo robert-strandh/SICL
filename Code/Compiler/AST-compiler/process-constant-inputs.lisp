@@ -36,7 +36,7 @@
 ;;; We store the list of constants we have seen in the code object.
 ;;; Later, this list will be stored in the second half of the
 ;;; constants vector and the entire vector will be passed to the
-;;; top-level function as an argument, wheen the code object is tied
+;;; top-level function as an argument, when the code object is tied
 ;;; to some environment.
 
 (defun process-constant-inputs (code-object)
