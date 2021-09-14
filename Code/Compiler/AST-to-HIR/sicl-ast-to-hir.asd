@@ -6,6 +6,7 @@
                #:cleavir-hir-transformations
                #:cleavir-remove-useless-instructions
                #:cleavir-partial-inlining
+               #:sicl-data-and-control-flow-support
                #:sicl-hir-transformations
                #:sicl-argument-processing)
   :serial t
@@ -15,4 +16,7 @@
    (:file "customization")
    (:file "dynamic-environment")
    (:file "stack")
-   (:file "standard-object")))
+   (:file "standard-object")
+   (:file "hoist-load-time-value")
+   (:file "eliminate-fdefinition-asts")
+   (:file "ast-to-hir")))
