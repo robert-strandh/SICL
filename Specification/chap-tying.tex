@@ -7,3 +7,39 @@ object \seesec{data-representation-code-objects} that is
 environment.  In this chapter, we describe how an untied code object
 is tied to a particular global environment, as well as the difference
 between an untied and a tied code object.
+
+\section{Untied code objects}
+
+Two things characterize an untied code object:
+
+\begin{enumerate}
+\item References to named global functions are unresolved.
+\item Load-time actions have not been performed.
+\end{enumerate}
+
+Tying the code object involves first resolving references to named
+global functions, and then executing the load-time actions.
+
+\subsection{Resolving references to named global functions}
+
+In executable code, a call to a named global function is represented
+as an unconditional \emph{jump} instruction with an invalid target
+address.
+
+The code object contains a list of \emph{call-site descriptors} as
+described in \refSec{sec-call-site-descriptor}.  Among other things,
+the call-site descriptor contains:
+
+\begin{enumerate}
+\item the name of the global function,
+\item an index into the code vector where the unconditional
+  \emph{jump} instruction is located, and
+\item information about the location of arguments to be passed to the
+  callee.
+\end{enumerate}
+
+The code vector and the list of call-site descriptors are passed to
+the \emph{call-site manager} which, for each call site, generates a
+\emph{trampoline snippet} that implements the call code, and modifies
+the target address of the unconditional \emph{jump} instruction so
+that it jumps to the beginning of the snippet.
