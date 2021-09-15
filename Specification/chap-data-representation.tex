@@ -241,6 +241,8 @@ caller containing the call site:
   manager to associate this call site with a function name in the
   global environment at the time when the caller is tied to that
   environment.
+\item An index into the code vector where the unconditional
+  \emph{jump} instruction that represents the call is located.
 \item Source location information for the call site.
 \item A \emph{trace map}, which is a bitmap indicating stack locations
   that may contain objects that the garbage collector must trace.  The
