@@ -28,4 +28,10 @@
         (sicl-hir-transformations:eliminate-read-cell-instructions hir)
         (sicl-hir-transformations:eliminate-write-cell-instructions hir)
         (process-constant-inputs hir constants)
+        (cleavir-ir:map-instructions-arbitrary-order
+         (lambda (instruction)
+           (when (typep instruction 'sicl-ir:load-constant-instruction)
+             (setf (sicl-ir:constants instruction) constants)))
+         hir)
+        (cleavir-remove-useless-instructions:remove-useless-instructions hir)
         hir))))
