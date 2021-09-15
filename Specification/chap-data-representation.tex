@@ -328,7 +328,11 @@ A code object contains the following information:
   compilation unit.
 \item A vector of \emph{literal objects}, including objects produced
   by \texttt{load-time-value} and then treated as literal objects at
-  run time.
+  run time.  This vector is used only by the garbage collector.
+  Literal objects are allocated in the global heap, so they do not
+  move.  This feature allows us to refer to literal objects as
+  constants in native code, but the garbage collector can not find
+  such references in native code, hence this vector.
 \end{itemize}
 
 \section{Instances of built-in classes}
