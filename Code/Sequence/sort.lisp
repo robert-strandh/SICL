@@ -112,9 +112,9 @@
             (introsort 0 n (* 2 (integer-length (1+ n))))
             vector))))))
 
-(replicate-for-each #1=#:bit-vector (bit-vector simple-bit-vector)
-  (defmethod sort ((#1# #1#) predicate &key key)
-    (stable-sort #1# predicate :key key)))
+(replicate-for-each-subclass #1=#:bit-vector bit-vector
+  (defmethod sort ((bit-vector bit-vector) predicate &key key)
+    (stable-sort bit-vector predicate :key key)))
 
 (seal-domain #'sort '(list t))
 (seal-domain #'sort '(vector t))

@@ -84,6 +84,9 @@
   `(progn
      ,@(loop for item in items append (subst item symbol body))))
 
+(defmacro replicate-for-each-subclass (symbol class &body body)
+  `(replicate-for-each ,symbol ,(mapcar #'class-name (class-subclasses (find-class class))) ,@body))
+
 (defmacro replicate-for-each-vector-class (symbol &body body)
   `(replicate-for-each ,symbol ,*vector-classes* ,@body))
 
