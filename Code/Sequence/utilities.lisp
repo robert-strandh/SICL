@@ -88,9 +88,6 @@
   `(replicate-for-each ,symbol ,(mapcar #'class-name (class-subclasses (find-class class))) ,@body))
 
 (defmacro replicate-for-each-vector-class (symbol &body body)
-  `(replicate-for-each ,symbol ,*vector-classes* ,@body))
-
-(defmacro replicate-for-each-relevant-vector-class (symbol &body body)
   `(replicate-for-each ,symbol ,*relevant-vector-classes* ,@body))
 
 ;;; A vector class is compatible with another vector class, if elements of
