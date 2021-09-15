@@ -22,7 +22,11 @@ different compilers:
 \begin{itemize}
 \item The \emph{file compiler}.  This compiler is invoked by
   \texttt{compile-file}.  It takes a \commonlisp{} source file and generates a
-  file containing object code (a so-called \emph{fasl} file).
+  file containing object code (a so-called \emph{fasl} file).  Since
+  \sysname{} \emph{fasl} files are merely textual versions of the
+  abstract syntax tree produced by the \texttt{cst-to-ast} phase of
+  \cleavir{} as described in \refChap{chap-compiled-files}, only that
+  phase is involved in file compilation.
 \item The \emph{lambda expression compiler}.  This compiler is invoked
   when \texttt{compile} is called with arguments \texttt{nil} and a
   \emph{lambda expression}, and by \texttt{coerce} to convert a lambda
