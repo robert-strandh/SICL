@@ -218,7 +218,7 @@
 ;;; Stable sorting of bit vectors is one of the few cases where counting
 ;;; sort really shines.
 
-(replicate-for-each #1=#:bit-vector (bit-vector simple-bit-vector)
+(replicate-for-each-subclass #1=#:bit-vector bit-vector
   (defmethod stable-sort ((bit-vector #1#) predicate &key key)
     (declare (#1# bit-vector))
     (let ((length (length bit-vector))
