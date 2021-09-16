@@ -80,7 +80,9 @@ For the purpose of bootstrapping, it is convenient to think of
 
 How tying a code object to a particular environment is accomplished in
 the native system is described in detail in
-\refChap{chap-tying-a-code-object}.
+\refChap{chap-tying-a-code-object}.  Tying a code object must also be
+possible during bootstrapping, and how this is accomplished is
+described in \refSec{sec-tying-a-code-object-during-bootstrapping}.
 
 \section{Loading code into an environment}
 
@@ -130,6 +132,96 @@ code.  It then calls the function
 environment.  This call results in the HIR code being translated to a
 graph of \emph{thunks}, where each thunk is a host function that, when
 called executes the effect of a single HIR instruction.
+
+\section{Tying a code-object during bootstrapping}
+\label{sec-tying-a-code-object-during-bootstrapping}
+
+Bootstrapping must ultimately produce environment contents that is
+analogous to that of the native system.  In particular, the HIR
+evaluator must be able to produce the same effect as the execution of
+the top-level function of a native code object, as describe in
+\refChap{chap-tying-a-code-object}.  In this section, we describe how
+tying by the HIR evaluator is accomplished.
+
+Recall that the following three actions must be accomplished:
+
+\begin{enumerate}
+\item References to named global functions must be resolved by the
+  creation of a \emph{trampoline snippet} and the modification of the
+  unconditional \emph{jump} instruction representing the call.
+\item Load-time actions must be performed, but the top-level function
+  in the form of HIR-evaluator chunks can accomplish these actions.
+\item References to literals computed as part of the previous step must
+  be resolved by the code vector being modified to refer to these
+  literals.
+\end{enumerate}
+
+The first action is accomplished in the same way as with native code.
+The main difficulty lies in the third action, and it occurs because a
+computed literal may be referred to by subsequent code in the
+top-level function.
+
+To solve this difficulty, we introduce a HIR instruction
+\texttt{load-literal}.  For a literal that is present in source code,
+it would be possible for the instruction itself to contain a slot
+holding the literal.  The HIR evaluator would then extract the value
+of the slot and close over that value in the generated thunk.  The
+code generator wold also extract this value and insert it into the
+instruction stream as an immediate datum.  However, for a literal that
+is computed by the top-level function, this solution is not possible.
+The reason is that the \texttt{load-literal} instruction would then
+have to be modified as a result of executing the top-level function.
+But at this point, a HIR thunk has already been built from the
+\texttt{load-literal} instruction.  HIR thunks must not close over
+instructions, because instructions are subsequently modified when HIR
+is turned into MIR, LIR, etc.
+
+We solve this conundrum by introducing an indirection in the form of a
+\texttt{cons} cell.  This cell is the value of a slot in the
+\texttt{load-literal} instruction.  The HIR thunk generated from the
+\texttt{load-literal} closes over this cell, and the execution of the
+HIR thunk consists of accessing the \texttt{car} of this call and
+write it to the output of the instruction.  We also introduce a HIR
+instruction \texttt{patch-literal} that will turn into a named call to
+\texttt{resolve-load-time-value} described in
+\refChap{chap-tying-a-code-object} by the code generator.  The
+\texttt{patch-literal} instruction takes a single input, namely the
+literal object created from the load-time action.  Three slots in the 
+\texttt{patch-literal} each contains a \texttt{cons} cell:
+
+\begin{enumerate}
+\item The \texttt{cons} cell that is also contained in the
+  \texttt{load-literal} instruction.
+\item A \texttt{cons} cell that (in its \texttt{car}) holds the index
+  into the code vector where the immediate object that the load-time
+  action generates, must be stored.
+\item A \texttt{cons} cell that (in its \texttt{car}) holds the index
+  into the vector of literals where the immediate that the load-time
+  action generates, must be stored for the benefit of the garbage
+  collector.
+\end{enumerate}
+
+The HIR thunk generated from the \texttt{patch-literal}
+instruction closes over these \texttt{cons} cells.  The actions of the
+HIR thunk are:
+
+\begin{enumerate}
+\item Store the input in the \texttt{car} of the first \texttt{cons}
+  cell.
+\item Store the input in the code vector, at the index indicated by
+  the \texttt{car} of the second \texttt{cons} cell.  The code vector
+  is the value of the special variable \texttt{*code-vector*} just as
+  described in \refChap{chap-tying-a-code-object}.
+\item Store the input in the vector of literals at the index indicated
+  by the \texttt{car} of the third \texttt{cons} cell.  The vector of
+  literals is the value of the special variable
+  \texttt{*literal-vector*} just as described in
+  \refChap{chap-tying-a-code-object}.
+\end{enumerate}
+
+The third \texttt{cons} cell is filled in by a HIR pass that gathers
+literals from the HIR graph.  The second \texttt{cons} cell is filled
+in by the code generator.
 
 \section{Bootstrapping phases}
 
