@@ -461,13 +461,17 @@
         (cst:separate-function-body body-cst)
       ;; FIXME: Handle documentation
       (declare (ignore documentation))
-      (let* ((declaration-specifiers
+      (let* ((global-environment
+               (trucler:global-environment client environment))
+             (declaration-proclamations
+               (declaration-proclamations client global-environment))
+             (declaration-specifiers
                (loop for declaration-cst in declaration-csts
                      append (cdr (cst:listify declaration-cst))))
              (canonicalized-dspecs
                (cst:canonicalize-declaration-specifiers
                 client
-                '()
+                declaration-proclamations
                 declaration-specifiers)))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers-by-parameter-group

@@ -388,13 +388,12 @@ complicate other aspects of the garbage collector.
 In \sysname{} we use \emph{precise} stack traversal, meaning that we
 know exactly when a location contains a root and when it does not.
 
-To find the roots owned by each stack frame, we use the \emph{return
-  address} stored in the stack frame immediately above the one we are
-interested in.  That return address is used to access the \emph{frame
-  map} as described in \refSec{data-representation-code-objects}.
-Recall that the \emph{frame map} is a bitmap that contains an element
-for each stack location containing a \commonlisp{} object that might
-be heap allocated.
+To find the roots owned by each stack frame, we use the
+\emph{call-site descriptor} \seesec{sec-call-site-descriptor} in the
+stack frame immediately above the one we are interested in.  That
+call-site descriptor contains \emph{trace map} which is a bitmap
+representing stack locations that may contain objects that the garbage
+collector must trace.
 
 The stack is then traversed, frame by frame, starting with the second
 one from the top, and using the return address in the top frame.

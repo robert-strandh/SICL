@@ -42,7 +42,7 @@
            (unless (gethash class table)
              (setf (gethash class table) t)
              (push class subclasses)
-             (mapc #'push-subclasses (sicl-host-mop:class-direct-subclasses class)))))
+             (mapc #'push-subclasses (class-direct-subclasses class)))))
       (push-subclasses class)
       subclasses)))
 
@@ -50,7 +50,7 @@
   (let ((prototype (coerce nil sequence-class)))
     (check-type prototype vector)
     (let ((direct-subclasses
-            (sicl-host-mop:class-direct-subclasses (class-of prototype))))
+            (class-direct-subclasses (class-of prototype))))
       (if (null direct-subclasses)
           (array-element-type prototype)
           `(or ,@(mapcar #'vector-class-element-type direct-subclasses))))))
@@ -84,10 +84,10 @@
   `(progn
      ,@(loop for item in items append (subst item symbol body))))
 
-(defmacro replicate-for-each-vector-class (symbol &body body)
-  `(replicate-for-each ,symbol ,*vector-classes* ,@body))
+(defmacro replicate-for-each-subclass (symbol class &body body)
+  `(replicate-for-each ,symbol ,(mapcar #'class-name (class-subclasses (find-class class))) ,@body))
 
-(defmacro replicate-for-each-relevant-vector-class (symbol &body body)
+(defmacro replicate-for-each-vector-class (symbol &body body)
   `(replicate-for-each ,symbol ,*relevant-vector-classes* ,@body))
 
 ;;; A vector class is compatible with another vector class, if elements of

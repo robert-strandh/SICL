@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-compiler)
+(cl:in-package #:sicl-ast-to-hir)
 
 (defgeneric trivial-constant-p (constant))
 
@@ -39,24 +39,29 @@
 ;;; top-level function as an argument, when the code object is tied
 ;;; to some environment.
 
-(defun process-constant-inputs (code-object)
-  (let ((initial-instruction (ir code-object)))
-    (cleavir-ir:map-instructions-arbitrary-order
-     (lambda (instruction)
-       (loop for remaining = (cleavir-ir:inputs instruction) then (rest remaining)
-             for input = (first remaining)
-             until (null remaining)
-             do (when (and (typep input 'cleavir-ir:constant-input)
-                           (not (trivial-constant-p (cleavir-ir:value input))))
-                  (let* ((value (cleavir-ir:value input))
-                         (pos (ensure-constant code-object value)))
-                    (let ((temp (make-instance 'cleavir-ir:lexical-location
-                                  :name (gensym))))
-                      (cleavir-ir:insert-instruction-before
-                       (make-instance 'sicl-ir:load-constant-instruction
-                         :location-info pos
-                         :output temp)
-                       instruction)
-                      (setf (first remaining) temp))))))
-     initial-instruction)
-    (cleavir-ir:reinitialize-data initial-instruction)))
+(defun ensure-constant (constants constant)
+  (let ((pos (position constant constants)))
+    (if (null pos)
+        (vector-push-extend constant constants)
+        pos)))
+
+(defun process-constant-inputs (initial-instruction constants)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (loop for remaining = (cleavir-ir:inputs instruction) then (rest remaining)
+           for input = (first remaining)
+           until (null remaining)
+           do (when (and (typep input 'cleavir-ir:constant-input)
+                         (not (trivial-constant-p (cleavir-ir:value input))))
+                (let* ((value (cleavir-ir:value input))
+                       (pos (ensure-constant constants value)))
+                  (let ((temp (make-instance 'cleavir-ir:lexical-location
+                                :name (gensym))))
+                    (cleavir-ir:insert-instruction-before
+                     (make-instance 'sicl-ir:load-constant-instruction
+                       :location-info pos
+                       :output temp)
+                     instruction)
+                    (setf (first remaining) temp))))))
+   initial-instruction)
+  (cleavir-ir:reinitialize-data initial-instruction))

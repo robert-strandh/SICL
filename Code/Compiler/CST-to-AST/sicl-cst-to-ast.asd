@@ -9,6 +9,7 @@
   :components
   ((:file "packages")
    (:file "symbol-value")
+   (:file "declaration-proclamations")
    (:file "dynamic-environment")
    (:file "stack")
    (:file "convert-standard-object-primops")))

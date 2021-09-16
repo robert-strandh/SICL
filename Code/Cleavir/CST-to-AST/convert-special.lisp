@@ -280,11 +280,13 @@
     (check-function-bindings definitions-cst 'flet)
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
-      (let* ((canonical-declaration-specifiers
-               ;; FIXME: replace the second argument with the result
-               ;; of calling DECLARATIONS in the global environment,
-               ;; once that protocol is in place.
-               (cst:canonicalize-declarations client '() declaration-csts))
+      (let* ((global-environment
+               (trucler:global-environment client environment))
+             (declaration-proclamations
+               (declaration-proclamations client global-environment))
+             (canonical-declaration-specifiers
+               (cst:canonicalize-declarations
+                client declaration-proclamations declaration-csts))
              (defs (convert-local-functions client
                                             definitions-cst
                                             environment))
@@ -320,11 +322,13 @@
     (check-function-bindings definitions-cst 'labels)
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
-      (let* ((canonical-declaration-specifiers
-               ;; FIXME: replace the second argument with the result
-               ;; of calling DECLARATIONS in the global environment,
-               ;; once that protocol is in place.
-               (cst:canonicalize-declarations client '() declaration-csts))
+      (let* ((global-environment
+               (trucler:global-environment client environment))
+             (declaration-proclamations
+               (declaration-proclamations client global-environment))
+             (canonical-declaration-specifiers
+               (cst:canonicalize-declarations
+                client declaration-proclamations declaration-csts))
              (new-environment
                (augment-environment-from-fdefs client
                                                environment
@@ -878,11 +882,13 @@
     (declare (ignore locally-cst))
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
-      (let* ((canonical-declaration-specifiers
-               ;; FIXME: replace the second argument with the result
-               ;; of calling DECLARATIONS in the global environment,
-               ;; once that protocol is in place.
-               (cst:canonicalize-declarations client '() declaration-csts))
+      (let* ((global-environment
+               (trucler:global-environment client environment))
+             (declaration-proclamations
+               (declaration-proclamations client global-environment))
+             (canonical-declaration-specifiers
+               (cst:canonicalize-declarations
+                client declaration-proclamations declaration-csts))
              (new-environment
                (augment-environment-with-declarations
                 client environment canonical-declaration-specifiers)))

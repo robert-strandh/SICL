@@ -219,7 +219,12 @@ class \texttt{simple-function} which is a subclass of
 A \emph{call-site descriptor} is an object that is uniquely associated
 with a \emph{call site}, i.e., an instruction that invokes a function.
 The function being invoked can be a named global function, a lexical
-function, or an anonymous function.  The call-site descriptor is
+function, or an anonymous function.%
+\footnote{Though calls to lexical functions may be optimized, and
+  they may therefore not respect the ordinary function-call protocol.
+  In that case, it is possible that call-site information is not
+  available.}
+The call-site descriptor is
 passed as an implicit argument to the callee.  The callee stores the
 call-site descriptor in a fixed location relative to the frame pointer
 in its stack frame, so that it can be found by the garbage collector,
@@ -229,18 +234,50 @@ The call-site descriptor contains the following information about the
 caller containing the call site:
 
 \begin{itemize}
+\item The \emph{name} of the callee when the call site represents a
+  named call.  This information is used by the backtrace inspector to
+  display useful information to the programmer.  When the callee is a
+  global function, this information is also used by the call-site
+  manager to associate this call site with a function name in the
+  global environment at the time when the caller is tied to that
+  environment.
+\item An index into the code vector where the unconditional
+  \emph{jump} instruction that represents the call is located.
 \item Source location information for the call site.
-\item A bitmap indicating stack locations that may contain objects
-  that the garbage collector must trace.  The compiler may omit stack
-  locations that are known to contain \commonlisp{} objects that the
-  garbage collector does not have to trace.  For a typical backend,
-  index $i$ of the bitmap represents the stack location at address
-  $b-i$ where $b$ is the value of the base pointer.
-\item For each argument to the call that is still \emph{available}
-  after the call, its location.  If the argument is a lexical
-  location, then the location is an offset from the frame pointer.
-  If the argument is a literal object, then the location is the object
-  itself.
+\item A \emph{trace map}, which is a bitmap indicating stack locations
+  that may contain objects that the garbage collector must trace.  The
+  compiler may omit stack locations that are known to contain
+  \commonlisp{} objects that the garbage collector does not have to
+  trace.  For a typical backend, index $i$ of the bitmap represents
+  the stack location at address $b-i$ where $b$ is the value of the
+  base pointer.
+\item When the call represents a named call to a global function, the
+  location of each argument to the call.  This information is used by
+  the call-site manager to generate code for accessing each argument
+  so that it can be passed to the callee, if required.%
+  \footnote{The argument may not be required by the callee, for
+    example if it is a keyword of a keyword/value pair.  In that case,
+    it is possible that the callee needs only the value and not the
+    keyword.}
+  This list is an association list where each element is a pair
+  \texttt{(\emph{type} . \emph{value})}.
+  There can be three types of locations:
+  \begin{enumerate}
+  \item A stack location.  Then the element type is the keyword symbol
+    \texttt{:stack}, and the value is an offset from the frame
+    pointer.
+  \item A register location. Then the element type is the keyword
+    symbol \texttt{:register} and the value is the name of a
+    register.
+  \item A literal object.  Then the element type is the keyword symbol
+    \texttt{:literal} and the value is the object itself.
+  \end{enumerate}
+\item For each argument representing a lexical location that is
+  \emph{live} after the call, its stack location.  The backtrace
+  inspector uses this information to display the arguments to a
+  particular call.  But arguments that represent lexical locations
+  that are not live after the call, may have been reclaimed by the
+  garbage collector, so they can not be displayed.
 \item For each live lexical location corresponding to a variable that
   is explicitly mentioned in source code:
   \begin{itemize}
@@ -275,10 +312,8 @@ following a form that has just been evaluated.
 \label{data-representation-code-objects}
 
 A \emph{code object} is a standard object that represents the
-\emph{code} of a function.  Recall that a function consists of some
-code and an environment.  The code object is common to all functions
-that share the same code.
-
+\emph{code} of a compilation unit.  The code of every function in the
+compilation unit is present in a single code object.
 
 A code object contains the following information:
 
@@ -286,12 +321,20 @@ A code object contains the following information:
 \item The executable native instructions in the form of a vector of
   unsigned bytes.
 \item A vector of strings representing the source code of the
-  compilation unit of which this code object is part.  Each string
+  compilation unit represented by this code object.  Each string
   corresponds to a line of code.
 \item Information about the file that contains the source code of the
-  compilation unit of which this code object is part.
-\item The \emph{concrete syntax tree} corresponding to the source code
-  of the compilation unit of which this code object is part.
+  compilation that the code object represents.
+\item A list of \emph{call-site descriptors}
+  \seesec{sec-call-site-descriptor}, one for each call site in the
+  compilation unit.
+\item A vector of \emph{literal objects}, including objects produced
+  by \texttt{load-time-value} and then treated as literal objects at
+  run time.  This vector is used only by the garbage collector.
+  Literal objects are allocated in the global heap, so they do not
+  move.  This feature allows us to refer to literal objects as
+  constants in native code, but the garbage collector can not find
+  such references in native code, hence this vector.
 \end{itemize}
 
 \section{Instances of built-in classes}

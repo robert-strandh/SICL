@@ -26,7 +26,7 @@
                                     collect (lref input-lref)))))
                       (setf *global-values-location*
                             (multiple-value-list
-                             (let* ((*call-stack* (cons call-stack-entry *call-stack*)))
+                             (with-new-call-stack-entry call-stack-entry
                                (funcall
                                 ,@(loop for lref below arity collect `(input ,lref))))))
                       (successor 0)))))
@@ -51,7 +51,7 @@
                            collect (lref input-lref)))))
              (setf *global-values-location*
                    (multiple-value-list
-                    (let ((*call-stack* (cons call-stack-entry *call-stack*)))
+                    (with-new-call-stack-entry call-stack-entry
                       (apply #'funcall
                              (loop for input-lref in input-indices
                                    collect (lref input-lref))))))
@@ -76,7 +76,7 @@
                                     collect (lref input-lref)))))
                       (setf *global-values-location*
                             (multiple-value-list
-                             (let* ((*call-stack* (cons call-stack-entry *call-stack*)))
+                             (with-new-call-stack-entry call-stack-entry
                                (funcall
                                 (caar function-cell-cell)
                                 ,@(loop for lref below arity collect `(input ,lref))))))
@@ -102,7 +102,7 @@
                            collect (lref input-lref)))))
              (setf *global-values-location*
                    (multiple-value-list
-                    (let ((*call-stack* (cons call-stack-entry *call-stack*)))
+                    (with-new-call-stack-entry call-stack-entry
                       (apply #'funcall
                              (caar function-cell-cell)
                              (loop for input-lref in input-indices

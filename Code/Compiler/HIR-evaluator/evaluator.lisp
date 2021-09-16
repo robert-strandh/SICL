@@ -3,6 +3,16 @@
 ;; A list of call stack entries.
 (defparameter *call-stack* '())
 
+(defparameter *call-stack-depth* 0)
+
+(defmacro with-new-call-stack-entry (entry &body body)
+  `(let ((*call-stack* (cons ,entry *call-stack*)))
+     (when (> *call-stack-depth* 200)
+       (error "SICL call stack exhausted"))
+     (incf *call-stack-depth*)
+     (unwind-protect (progn ,@body)
+       (decf *call-stack-depth*))))
+
 (defclass call-stack-entry ()
   ((%origin :initarg :origin :reader origin)
    (%arguments :initarg :arguments :reader arguments)))

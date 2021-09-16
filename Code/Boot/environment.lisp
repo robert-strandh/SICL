@@ -220,6 +220,7 @@
      elt length count count-if reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
      position-if-not nreverse replace delete copy-seq mismatch fill
+     notevery
      ;; For debugging
      format
      ;; Conditions

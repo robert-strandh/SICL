@@ -14,9 +14,9 @@
                   ((< m n) nil)
                   (t
                    (flet ((matchp (text-rest)
-                            (loop repeat n
-                                  for a in pattern-rest
+                            (loop for a in pattern-rest
                                   for b in text-rest
+                                  repeat n
                                   always (test (key a) (key b)))))
                      (for-each-relevant-cons (cons position text start2 (- end2 (1- n)) from-end)
                        (when (matchp cons)

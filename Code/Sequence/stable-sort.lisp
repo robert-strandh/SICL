@@ -16,8 +16,8 @@
                (sicl-utilities:with-gensyms (rest)
                  `(let ((,rest (cdr ,(first (last conses)))))
                     ;; Set the correct successor for each cons.
-                    ,@(loop repeat (1- n)
-                            for (i j) on permutation
+                    ,@(loop for (i j) on permutation
+                            repeat (1- n)
                             ;; As an optimization, do not set the CDR of a
                             ;; cons that already has the correct successor.
                             unless (= j (1+ i))
@@ -218,7 +218,7 @@
 ;;; Stable sorting of bit vectors is one of the few cases where counting
 ;;; sort really shines.
 
-(replicate-for-each #1=#:bit-vector (bit-vector simple-bit-vector)
+(replicate-for-each-subclass #1=#:bit-vector bit-vector
   (defmethod stable-sort ((bit-vector #1#) predicate &key key)
     (declare (#1# bit-vector))
     (let ((length (length bit-vector))

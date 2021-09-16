@@ -26,7 +26,8 @@
     (format stream "~s" (frame-pointer object))))
 
 (defclass catch-entry (exit-point)
-  ((%tag :initarg :tag :reader tag)
+  ((%frame-pointer :initarg :frame-pointer :reader frame-pointer)
+   (%tag :initarg :tag :reader tag)
    (%throw-function :initarg :throw-function :reader throw-function)))
 
 (defmethod print-object ((object catch-entry) stream)

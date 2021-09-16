@@ -25,6 +25,15 @@
                   ((functionp object)
                    (env:find-class client (sicl-boot:environment client)
                                    'function))
+                  ((integerp object)
+                   (env:find-class
+                    client (sicl-boot:environment client)
+                    (cond ((< object (- (expt 2 62)))
+                           'sicl-arithmetic:negative-bignum)
+                          ((>= object (expt 2 62))
+                           'sicl-arithmetic:positive-bignum)
+                          (t
+                           'fixnum))))
                   (t
                    (error "Class of ~s asked for in E5" object)))))
     (sicl-hir-evaluator:successor 0)))

@@ -2,7 +2,9 @@
 
 (defun upgraded-array-element-type (typespec &optional environment)
   (declare (ignore environment))
-  (cond ((subtypep typespec '(complex double-float)) '(complex double-float))
+  (cond ((eq typespec 't) 't)
+        ((subtypep typespec 'character) 'character)
+        ((subtypep typespec '(complex double-float)) '(complex double-float))
         ((subtypep typespec '(complex single-float)) '(complex single-float))
         ((subtypep typespec 'double-float) 'double-float)
         ((subtypep typespec 'single-float) 'single-float)
@@ -12,5 +14,4 @@
         ((subtypep typespec '(unsigned-byte 32)) '(unsigned-byte 32))
         ((subtypep typespec '(signed-byte 64)) '(signed-byte 64))
         ((subtypep typespec '(unsigned-byte 64)) '(unsigned-byte 64))
-        ((subtypep typespec 'character) 'character)
         (t 't)))

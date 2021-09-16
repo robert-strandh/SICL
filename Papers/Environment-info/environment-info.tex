@@ -44,18 +44,22 @@ The concept of an \emph{environment} is mentioned in many places in
 the \commonlisp{} standard, but the nature of the object is not
 specified.  For the purpose of this paper, an environment is a mapping
 from \emph{names} to \emph{meanings}.
-object.
 
-In this paper, we propose a replacement for the protocol documented in
-the book Common Lisp the Language, second edition.  Rather than using
-multiple values as that protocol does, the protocol suggested in this
-paper returns class instances.  Accessor functions on those supply the
-information that the compiler needs. 
+In this paper, we propose a replacement for the environment protocol
+documented in the book Common Lisp the Language, second edition.
+Rather than returning multiple values as the functions in that that
+protocol do, the protocol suggested in this paper is designed so that
+functions return instances of standard classes.  Accessor functions on
+those instances supply the information needed by a compiler or any
+other \emph{code walker} application.
 
-The advantage of this approach is that it is easier to extend than the
-previous protocol, so that implementations can suggest additional
-functionality on these objects.  Furthermore, CLOS dispatch can be
-used on these objects, thus enabling object-oriented techniques.
+The advantage of our approach is that a protocol based on generic
+functions and standard classes is easier to extend in
+backward-compatible ways than the previous protocol, so that
+implementations can suggest additional functionality on these objects.
+Furthermore, \clos{} features such as auxiliary methods can be used on
+these objects, making it possible to extend or override functionality
+provided by the protocol, for implementation-specific purposes.
 \end{abstract}
 
 \category{D.3.4}{Programming Languages}{Processors}

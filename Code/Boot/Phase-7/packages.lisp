@@ -6,5 +6,6 @@
   (:import-from #:sicl-boot
                 #:define-error-functions
                 #:load-source-file
+                #:load-asdf-system
                 #:with-intercepted-function-cells)
   (:export #:boot))

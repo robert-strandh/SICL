@@ -75,11 +75,13 @@
     (check-bindings bindings-cst 'let*)
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
-      (let* ((canonical-declaration-specifiers
-               ;; FIXME: replace the second argument with the result
-               ;; of calling DECLARATIONS in the global environment,
-               ;; once that protocol is in place.
-              (cst:canonicalize-declarations client '() declaration-csts))
+      (let* ((global-environment
+               (trucler:global-environment client environment))
+             (declaration-proclamations
+               (declaration-proclamations client global-environment))
+             (canonical-declaration-specifiers
+               (cst:canonicalize-declarations
+                client declaration-proclamations declaration-csts))
              (binding-csts (cst:listify bindings-cst))
              (variable-csts
                (loop for binding-cst in binding-csts

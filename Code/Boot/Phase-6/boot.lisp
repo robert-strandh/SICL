@@ -53,6 +53,7 @@
     (load-source-file "CLOS/with-accessors-defmacro.lisp" e5)
     (load-source-file "Data-and-control-flow/define-modify-macro-defmacro.lisp" e5)
     (load-source-file "Array/vector-push-defun.lisp" e5)
+    (load-source-file "Array/vector-push-extend-defun.lisp" e5)
     ;; Fake this macro for now
     (setf (env:macro-function (env:client e5) e5 'with-standard-io-syntax)
           (lambda (form environment)
@@ -86,8 +87,5 @@
     (load-asdf-system '#:sicl-loop-support e5)
     (load-asdf-system '#:sicl-loop e5)
     (load-asdf-system '#:cleavir-code-utilities e5)
-    (load-asdf-system '#:sicl-arithmetic-defuns e5)
     (load-asdf-system '#:sicl-data-and-control-flow-support e5)
-    (load-asdf-system '#:sicl-data-and-control-flow e5)
-    (load-source-file "Cons/accessor-defuns.lisp" e5)
-    (load-asdf-system '#:sicl-cons-defuns e5)))
+    (load-asdf-system '#:sicl-data-and-control-flow e5)))

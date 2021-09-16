@@ -5,4 +5,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "check-environment")))
+   (:file "load-sequence-functions")
+   (:file "check-environment")
+   (:file "boot")))

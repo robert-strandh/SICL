@@ -16,22 +16,43 @@ compiler.
 \section{Different uses of the compiler}
 
 The compiler is used in several different situations.  There are
-essentially three use cases, so it is appropriate to talk about three
-different compilers:
+different use cases, so it is appropriate to distinguish these cases
+and identify their respective roles.
 
 \begin{itemize}
-\item The \emph{file compiler}.  This compiler is invoked by
-  \texttt{compile-file}.  It takes a \commonlisp{} source file and generates a
-  file containing object code (a so-called \emph{fasl} file).
-\item The \emph{lambda expression compiler}.  This compiler is invoked
+\item File compilation.  This use case is relevant when
+  \texttt{compile-file} is invoked.  It takes a \commonlisp{} source
+  file and generates a so-called \emph{fasl} file.  Since \sysname{}
+  \emph{fasl} files are merely textual versions of the abstract syntax
+  tree produced by the \texttt{cst-to-ast} phase of \cleavir{} as
+  described in \refChap{chap-compiled-files}, only that phase is
+  involved in file compilation.
+
+\item AST compilation.  This use case is relevant when there is an
+  existing abstract syntax tree that must be converted into a
+  \emph{code object} as described in
+  \refSec{data-representation-code-objects}.  The code object is
+  initially independent of any particular global environment.  The act
+  of associating the code object with any particular environment is
+  called \emph{tying} it.  This process, as well as the difference
+  between an untied and a tied code object is described in
+  \refChap{chap-tying-a-code-object}.
+
+\item \emph{Lambda-expression} compilation.  This use case is relevant
   when \texttt{compile} is called with arguments \texttt{nil} and a
   \emph{lambda expression}, and by \texttt{coerce} to convert a lambda
   expression to a function.  It compiles the lambda expression in the
-  \emph{null lexical environment}.  It produces a \emph{function
-    object}.
-\item The \emph{top-level expression compiler}.  This compiler is
-  invoked by \texttt{eval}.  It produces a function with no parameters
-  which is then immediately \emph{called} by \texttt{eval}.
+  \emph{null lexical environment}, and it produces a \emph{function
+    object}.  This use case can be seen as the creation of an abstract
+  syntax tree from the lambda expression, followed by AST compilation.
+
+\item \emph{Top-level expression} compilation.  This use case is
+  relevant when \texttt{eval} is invoked.  It produces a function with
+  no parameters which is then immediately \emph{called} by
+  \texttt{eval}.  This use case can be thought of as wrapping the
+  top-level expression in a lambda expression and then applying
+  lambda-expression compilation to it.
+
 \end{itemize}
 
 In addition to these use cases, we also distinguish between different
@@ -45,8 +66,7 @@ compilers along an orthogonal dimension:
   compiler is also known as a \emph{cross compiler}.
 \end{itemize}
 
-We now have potentially 6 different compilers.  Specific issues
-related to cross compilation are discussed in
+Specific issues related to cross compilation are discussed in
 \refChap{chap-cross-compilation}.
 
 \section{Compilation phases}

@@ -70,3 +70,11 @@
 ;;; necessarily a generalized instance of STANDARD-OBJECT,
 ;;; STRUCTURE-OBJECT, or CONDITION.
 (defgeneric make-load-form-using-client (client object environment))
+
+;;; This generic function is called by CST-to-AST in order to obtain a
+;;; list of symbols that have been given as a DECLARATION proclamation
+;;; in the global environment.  The default method returns the empty
+;;; list, but client code can specialize the CLIENT and/or the
+;;; ENVIRONMENT parameter so that the global environment is consulted
+;;; for this information.
+(defgeneric declaration-proclamations (client environment))

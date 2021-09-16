@@ -67,3 +67,34 @@
 
 (defclass string-output-stream (string-stream)
   ())
+
+(defun make-string-output-stream (&key (element-type 'character))
+  (assert (eq element-type 'character))
+  (make-instance 'string-output-stream
+    :string (make-array 10
+             :element-type 'character
+             :adjustable t
+             :fill-pointer 0)))
+
+(defmethod stream-write-char
+    ((stream string-output-stream) (character character))
+  (vector-push-extend character (stream-string stream)))
+
+(defmacro with-output-to-string
+    ((stream-variable
+      &optional string-form
+      &key (element-type 'character))
+     &body body)
+  (let ((string-variable (gensym)))
+    `(let ((,string-variable ,string-form))
+       (when (null ,string-variable)
+         (setf ,string-variable
+               (make-array 10
+                           :element-type ',element-type
+                           :adjustable t
+                           :fill-pointer 0)))
+       (let ((,stream-variable
+               (make-instance 'string-output-stream
+                 :string ,string-variable)))
+         ,@body)
+       ,string-variable)))

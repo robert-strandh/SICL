@@ -1,12 +1,14 @@
 \section{Previous work}
 
-\subsection{Environment query}
+\subsection{\commonlisp{} the Language, second edition}
+
+\subsubsection{Environment query}
 
 Section 8.5 of ``Common Lisp, the Language, second edition'' describes
 a set of functions for obtaining information from environment
 objects and some other operators related to environments.
 
-For environment query, it describes three functions.  We describe them
+For environment query, it defines three functions.  We describe them
 briefly here.
 
 The function \texttt{variable-information} takes a symbol and an
@@ -39,11 +41,55 @@ To begin with, it is clear that this set of functions is insufficient
 to process all \commonlisp{} code, because no mechanism is described
 for querying the environment for information related to \emph{blocks}
 and \emph{go tags}.  Functions for this purpose are provided as
-extensions by Allegro Common Lisp.\footnote{FIXME: add
-  citation}\footnote{FIXME: describe changes to the protocol by ACL}
+extensions by Allegro Common Lisp as described in
+\refSec{sec-previous-allegro}.
 
-\subsection{Environment augmentation}
+\subsubsection{Environment augmentation}
 
 For augmenting an environment, i.e., creating a new, augmented,
 environment from an existing one, the same section describes the
 function \texttt{augment-environment}.
+
+\subsection{\sbcl{}}
+
+\subsubsection{Native}
+
+\subsubsection{CLtL2}
+
+The distribution of \sbcl{} contain a contribution that supplies some
+of the funtionality described in the book CLtL2 but that was not
+included in the \commonlisp{} standard.  Part of this contribution is
+an implementation of the environment protocol of CLtL2.
+
+\subsection{CCL}
+
+\subsection{CMUCL}
+
+\subsection{ECL}
+
+\subsection{Allegro}
+\label{sec-previous-allegro}
+
+\subsubsection{Native environments}
+
+\subsubsection{Support for CLtL2 protocol}
+
+The documentation for Allegro \commonlisp{} contains a separate
+document describing their protocol for environments in the spirit of
+CLtL2.%
+\footnote{https://franz.com/support/documentation/current/doc/environments.htm}
+We summarize the differences between the Allegro implementation and
+the CLtL2 protocol here.
+
+\begin{itemize}
+\item Information about blocks and tags have been added in the form of
+  two new functions \texttt{block-information} and
+  \texttt{tag-information}.
+\item (say more)
+\end{itemize}
+
+\subsection{LispWorks}
+
+\subsection{CLtL2 compatibility system}
+
+cl-environments

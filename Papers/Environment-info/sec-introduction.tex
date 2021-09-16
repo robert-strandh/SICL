@@ -5,7 +5,24 @@ Most of these references concern \emph{lexical} environments at
 \emph{compile time}, because they are needed in order to process forms
 in non-null lexical environments.  The standard does not specify the
 nature of these objects, though in CLtL2 \cite{Steele:1990:CLL:95411}
-there is a suggested protocol that is sometimes supplied in existing
+there is a suggested protocol that is sometimes supplied by existing
 \commonlisp{} implementations. 
+
+The protocol documented in CLtL2 has several problems.  Functions in
+the protocol return multiple values, which makes it hard to extend.
+Furthermore, the protocol is incomplete.  A typical compiler needs
+more information that the protocol provides, making
+implementation-specific extensions obligatory for the protocol to be
+useful.  For that reason, although existing \commonlisp{}
+implementations often provide this functionality, it is not what the
+native compiler of the implementation actually uses.
+
+In this paper, we propose an modern alternative protocol based on
+\clos{}.  Rather than returning multiple values, our protocol
+functions return instances of standard classes.  Accessors for those
+instances can be used by compilers and other \emph{code walker}
+applications in order to obtain the information needed for the task to
+be accomplished.
+
 
 %%  LocalWords:  startup runtime

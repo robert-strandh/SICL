@@ -25,7 +25,7 @@
                   t nil)))
            (otherwise
             (let ((expander (type-expander type-specifier))
-                  (type-class (find-class type-specifier)))
+                  (type-class (find-class type-specifier nil)))
               (cond ((not (null expander))
                      ;; We found an expander.  Expand TYPE-SPECIFIER and call
                      ;; TYPEP recursively with the expanded type specifier.

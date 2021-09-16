@@ -259,7 +259,7 @@
 ;;; According to CLtL2.
 
 (defun parse-macro (name lambda-list body &optional environment)
-  (declare (ignore name environment)) ; For now.
+  (declare (ignore environment)) ; For now.
   (let* ((canonicalized-lambda-list
            (canonicalize-macro-lambda-list lambda-list))
          (environment-group
@@ -290,11 +290,12 @@
            ,@(if (null environment-group)
                  `((declare (ignore ,environment-parameter)))
                  `())
-           (let ((,args-var (rest ,whole-parameter)))
-             (let* ,(reverse bindings)
-               (declare (ignore ,@ignored-variables))
-               ,@declarations
-               ,@forms)))))))
+           (block ,name
+             (let ((,args-var (rest ,whole-parameter)))
+               (let* ,(reverse bindings)
+                 (declare (ignore ,@ignored-variables))
+                 ,@declarations
+                 ,@forms))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
