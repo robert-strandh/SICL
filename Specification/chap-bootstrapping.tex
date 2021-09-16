@@ -72,16 +72,12 @@ For the purpose of bootstrapping, it is convenient to think of
   environment.
 \item Tie.  The untied code produced by the first step is \emph{tied}
   to a particular run-time environment.  Tying is accomplished by
-  calling the top-level function created by the compilation.  This
-  function takes a single argument, namely a ``function-cell finder''
-  function.  Calling that argument function with a function name,
-  returns a function cell in a particular environment, thereby tying
-  the code to that particular environment.
+  calling the top-level function created by the compilation.
 \end{itemize}
 
-The reason we need to separate these two operations is that for
-bootstrapping purposes, the two are going to use distinct global
-environments.
+How tying a code object to a particular environment is accomplished in
+the native system is described in detail in
+\refChap{chap-tying-a-code-object}.
 
 \section{Loading code into an environment}
 
