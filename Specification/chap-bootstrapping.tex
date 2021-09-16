@@ -10,8 +10,11 @@ bootstrapping process is an \emph{image} in the form of an executable
 file containing a \sysname{} system.  This system is called the
 \emph{target}.  We have not yet decided whether to generate a complete
 target system using the host, or whether to generate a partial system
-that would then load additional functionality from compiled files
-\seesec{sec-bootstrapping-viable-image}.
+that would then load additional functionality from compiled files.  At
+the very least, the generated imagine must be \emph{viable}, meaning
+that it is possible to obtain a complete \commonlisp{} system by
+starting with that image and loading a sequence of ordinary compiled
+files.
 
 In general, the target image can be thought of as containing
 \emph{graph} of \commonlisp{} objects that have been placed in memory
@@ -127,13 +130,6 @@ code.  It then calls the function
 environment.  This call results in the HIR code being translated to a
 graph of \emph{thunks}, where each thunk is a host function that, when
 called executes the effect of a single HIR instruction.
-
-\section{Viable image}
-\label{sec-bootstrapping-viable-image}
-
-An image I is said to be \emph{viable} if and only if it is possible
-to obtain a complete \commonlisp{} system by starting with I and loading a
-sequence of ordinary compiled files.
 
 \section{Bootstrapping phases}
 
