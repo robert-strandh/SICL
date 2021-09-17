@@ -377,13 +377,13 @@ containing definitions of most standard macros are loaded.  The result
 is an environment $e_0$ with a fairly complete set of standard
 macros.
 
-\subsection{Phase 1}
+\subsection{Phase 2}
 
 We define a class named
-\texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
+\texttt{sicl-boot-phase-2:funcallable-standard-class} in the host
 environment.  It is defined as a direct subclass of the host class
 \texttt{closer-mop:funcallable-standard-class}.  When we
-evaluate \texttt{defclass} forms in phase 2, the classes created are
+evaluate \texttt{defclass} forms in phase 3, the classes created are
 instances of this class.  We could have chosen this class only for
 instances that need to be executable in the host, and a subclass of
 the host class \texttt{standard-class} for the others, but the host
@@ -393,10 +393,10 @@ using one single class.
 
 We define an \texttt{:around} method on \texttt{initialize-instance}
 in the host environment, specialized to
-\texttt{sicl-boot-phase-1:funcallable-standard-class}.  The purpose of
+\texttt{sicl-boot-phase-2:funcallable-standard-class}.  The purpose of
 this \texttt{:around} method is to remove the \texttt{:reader} and
 \texttt{:accessor} slot options supplied in the \texttt{defclass}
-forms that we evaluate in phase 1.  Without this \texttt{:around}
+forms that we evaluate in phase 2.  Without this \texttt{:around}
 method, the host function \texttt{initialize-instance} would receive
 keyword arguments \texttt{:readers} and \texttt{:writers} and it would
 then add methods to host generic functions corresponding to the names
