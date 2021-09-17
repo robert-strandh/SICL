@@ -186,7 +186,7 @@ instruction \texttt{patch-literal} that will turn into a named call to
 \texttt{resolve-load-time-value} described in
 \refChap{chap-tying-a-code-object} by the code generator.  The
 \texttt{patch-literal} instruction takes a single input, namely the
-literal object created from the load-time action.  Three slots in the 
+literal object created from the load-time action.  Three slots in the
 \texttt{patch-literal} each contains a \texttt{cons} cell:
 
 \begin{enumerate}
@@ -313,10 +313,10 @@ host function \texttt{funcallable-standard-object} so it can be
 executed by the host.
 
 Arguments to a bridge generic function are ersatz instances.  The
-bridge generic function uses the 
+bridge generic function uses the
 \emph{stamp}
 \seesec{sec-generic-function-dispatch-the-discriminating-function} of
-the required arguments to dispatch on. 
+the required arguments to dispatch on.
 
 The methods on a bridge generic function are bridge methods.
 \end{definition}
@@ -336,7 +336,7 @@ We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, $E_4$, and $E_5$.
 
 Each environment is an instance of (often a subclass of) a class
 \texttt{environment} defined in the \texttt{sicl-boot} package.  As
-such, when created, each environment is automatically filled with 
+such, when created, each environment is automatically filled with
 several definitions such as:
 
 \begin{itemize}
@@ -358,7 +358,24 @@ the version defined this way is incorrect, because it uses the host
 compiler to compile the body of defined macros in the null lexical
 environment.  However, it is good enough to load definitions of
 a few additional macros required before the production version of
-\texttt{defmacro} can be loaded. 
+\texttt{defmacro} can be loaded.
+
+Additional functions are then imported from the host, in particular
+expander functions for conditional macros and functions for parsing
+macro bodies.
+
+Then, definitions of additional standard macros are loaded in a well
+defined order.  Initially, macros required to define \texttt{defmacro}
+are loaded, so that a pure \sysname{} version of \texttt{defmacro} can
+be loaded.  In particular, \texttt{lambda} and \texttt{setf} are
+needed.  This sequence ends with two subsequent load of the \sysname{}
+definition of \texttt{defmacro} in order to have a version of it with
+the macro function compiled by the \sysname{} compiler.
+
+Once a \sysname{} version of \texttt{defmacro} is available, files
+containing definitions of most standard macros are loaded.  The result
+is an environment $e_0$ with a fairly complete set of standard
+macros.
 
 \subsection{Phase 1}
 
@@ -544,7 +561,7 @@ In this phase, we also prepare for the creation of ersatz instances.
 \subsection{Phase 4}
 
 The purpose of this phase is to create ersatz generic functions and
-ersatz classes, by instantiating bridge classes.  
+ersatz classes, by instantiating bridge classes. 
 
 At the end of this phase, we have a set of ersatz instances, some of
 which are ersatz classes, except that the \texttt{class} slot of the
@@ -558,7 +575,7 @@ others.
 The first step of this phase is to finalize all the ersatz classes
 that were created in phase 4.  Finalization will create ersatz
 instances of bridge classes corresponding to effective slot
-definitions. 
+definitions.
 
 The second step repeats the creation of MOP generic functions and MOP
 classes, this time in environments $E_6$ and $E_5$ respectively.  As
@@ -571,11 +588,11 @@ header object is also an ersatz object, albeit impure.
 \subsection{Phase 7}
 
 The purpose of this phase is to create ersatz instances for all
-objects that are needed in order to obtain a viable image, including: 
+objects that are needed in order to obtain a viable image, including:
 
 \begin{itemize}
 \item ersatz built-in classes such as \texttt{package}, \texttt{symbol},
-  \texttt{string}, etc., 
+  \texttt{string}, etc.,
 \item ersatz instances of those classes, such as the required
   packages, the symbols contained in those packages, the names of
   those symbols, etc.
@@ -593,8 +610,8 @@ symbols, lists, and integers by their ersatz counterparts.
 \subsection{Phase 9}
 
 The purpose of this phase is to take the simulated graph of objects
-used so far and transfer it to a \emph{memory image}.  
+used so far and transfer it to a \emph{memory image}. 
 
 \subsection{Phase 10}
 
-Finally, the memory image is written to a binary file. 
+Finally, the memory image is written to a binary file.
