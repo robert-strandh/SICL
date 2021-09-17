@@ -696,7 +696,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LOAD-CONSTANT-INSTRUCTION
+;;; LOAD-LITERAL-INSTRUCTION
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:load-literal-instruction))
