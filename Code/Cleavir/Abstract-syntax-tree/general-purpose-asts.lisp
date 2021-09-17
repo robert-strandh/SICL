@@ -86,6 +86,10 @@
 ;;;
 ;;; Class LOAD-CONSTANT-AST.
 ;;;
+;;;
+;;; This AST class will be removed in favor of LOAD-LITERAL-AST, once
+;;; all uses of it are eliminated.
+;;;
 ;;; This class can be used by client code that wants to load constants
 ;;; through some kind of action.  The LOCATION-INFO can be any object.
 
@@ -97,6 +101,24 @@
   (:location-info location-info))
 
 (defmethod children ((ast load-constant-ast))
+  (declare (ignorable ast))
+  '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOAD-LITERAL-AST.
+;;;
+;;; This class can be used by client code that wants to load constants
+;;; through some kind of action.  The LOCATION-INFO can be any object.
+
+(defclass load-literal-ast
+    (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  ((%location-info :initarg :location-info :reader location-info)))
+
+(cleavir-io:define-save-info load-literal-ast
+  (:location-info location-info))
+
+(defmethod children ((ast load-literal-ast))
   (declare (ignorable ast))
   '())
 
