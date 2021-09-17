@@ -82,6 +82,7 @@
    #:phi-instruction
    #:use-instruction
    #:load-constant-instruction
+   #:load-literal-instruction
    #:location-info
    #:aref-instruction #:aset-instruction
    #:element-type #:simple-p #:boxed-p
