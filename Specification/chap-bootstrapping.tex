@@ -334,16 +334,31 @@ In addition to the host environment, six different \sysname{}
 first-class environments are involved in the bootstrapping procedure.
 We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, $E_4$, and $E_5$.
 
-\subsection{Phase 0}
+Each environment is an instance of (often a subclass of) a class
+\texttt{environment} defined in the \texttt{sicl-boot} package.  As
+such, when created, each environment is automatically filled with 
+several definitions such as:
 
-In phase $0$, we load enough functionality into environment $E0$ to be
+\begin{itemize}
+\item standard special operators,
+\item Cleavir primops,
+\item host functions for a variety of purposes,
+\item etc.
+\end{itemize}
+
+\subsection{Phase 1}
+
+In phase $1$, we load enough functionality into environment $E0$ to be
 able to produce abstract syntax trees (ASTs) from source files.  This
 functionality involves mainly standard macros that are required during
 compilation.
 
-Any code can be compiled, provided that the macros that are called by
-the code are defined in environment $E_0$.  In particular, code that
-defines macros can be compiled into abstract syntax trees.
+We start by defining the macro \texttt{defmacro} \emph{manually}, but
+the version defined this way is incorrect, because it uses the host
+compiler to compile the body of defined macros in the null lexical
+environment.  However, it is good enough to load definitions of
+a few additional macros required before the production version of
+\texttt{defmacro} can be loaded. 
 
 \subsection{Phase 1}
 
