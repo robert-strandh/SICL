@@ -10,8 +10,11 @@ bootstrapping process is an \emph{image} in the form of an executable
 file containing a \sysname{} system.  This system is called the
 \emph{target}.  We have not yet decided whether to generate a complete
 target system using the host, or whether to generate a partial system
-that would then load additional functionality from compiled files
-\seesec{sec-bootstrapping-viable-image}.
+that would then load additional functionality from compiled files.  At
+the very least, the generated imagine must be \emph{viable}, meaning
+that it is possible to obtain a complete \commonlisp{} system by
+starting with that image and loading a sequence of ordinary compiled
+files.
 
 In general, the target image can be thought of as containing
 \emph{graph} of \commonlisp{} objects that have been placed in memory
@@ -72,16 +75,14 @@ For the purpose of bootstrapping, it is convenient to think of
   environment.
 \item Tie.  The untied code produced by the first step is \emph{tied}
   to a particular run-time environment.  Tying is accomplished by
-  calling the top-level function created by the compilation.  This
-  function takes a single argument, namely a ``function-cell finder''
-  function.  Calling that argument function with a function name,
-  returns a function cell in a particular environment, thereby tying
-  the code to that particular environment.
+  calling the top-level function created by the compilation.
 \end{itemize}
 
-The reason we need to separate these two operations is that for
-bootstrapping purposes, the two are going to use distinct global
-environments.
+How tying a code object to a particular environment is accomplished in
+the native system is described in detail in
+\refChap{chap-tying-a-code-object}.  Tying a code object must also be
+possible during bootstrapping, and how this is accomplished is
+described in \refSec{sec-tying-a-code-object-during-bootstrapping}.
 
 \section{Loading code into an environment}
 
@@ -132,12 +133,95 @@ environment.  This call results in the HIR code being translated to a
 graph of \emph{thunks}, where each thunk is a host function that, when
 called executes the effect of a single HIR instruction.
 
-\section{Viable image}
-\label{sec-bootstrapping-viable-image}
+\section{Tying a code-object during bootstrapping}
+\label{sec-tying-a-code-object-during-bootstrapping}
 
-An image I is said to be \emph{viable} if and only if it is possible
-to obtain a complete \commonlisp{} system by starting with I and loading a
-sequence of ordinary compiled files.
+Bootstrapping must ultimately produce environment contents that is
+analogous to that of the native system.  In particular, the HIR
+evaluator must be able to produce the same effect as the execution of
+the top-level function of a native code object, as describe in
+\refChap{chap-tying-a-code-object}.  In this section, we describe how
+tying by the HIR evaluator is accomplished.
+
+Recall that the following three actions must be accomplished:
+
+\begin{enumerate}
+\item References to named global functions must be resolved by the
+  creation of a \emph{trampoline snippet} and the modification of the
+  unconditional \emph{jump} instruction representing the call.
+\item Load-time actions must be performed, but the top-level function
+  in the form of HIR-evaluator chunks can accomplish these actions.
+\item References to literals computed as part of the previous step must
+  be resolved by the code vector being modified to refer to these
+  literals.
+\end{enumerate}
+
+The first action is accomplished in the same way as with native code.
+The main difficulty lies in the third action, and it occurs because a
+computed literal may be referred to by subsequent code in the
+top-level function.
+
+To solve this difficulty, we introduce a HIR instruction
+\texttt{load-literal}.  For a literal that is present in source code,
+it would be possible for the instruction itself to contain a slot
+holding the literal.  The HIR evaluator would then extract the value
+of the slot and close over that value in the generated thunk.  The
+code generator wold also extract this value and insert it into the
+instruction stream as an immediate datum.  However, for a literal that
+is computed by the top-level function, this solution is not possible.
+The reason is that the \texttt{load-literal} instruction would then
+have to be modified as a result of executing the top-level function.
+But at this point, a HIR thunk has already been built from the
+\texttt{load-literal} instruction.  HIR thunks must not close over
+instructions, because instructions are subsequently modified when HIR
+is turned into MIR, LIR, etc.
+
+We solve this conundrum by introducing an indirection in the form of a
+\texttt{cons} cell.  This cell is the value of a slot in the
+\texttt{load-literal} instruction.  The HIR thunk generated from the
+\texttt{load-literal} closes over this cell, and the execution of the
+HIR thunk consists of accessing the \texttt{car} of this call and
+write it to the output of the instruction.  We also introduce a HIR
+instruction \texttt{patch-literal} that will turn into a named call to
+\texttt{resolve-load-time-value} described in
+\refChap{chap-tying-a-code-object} by the code generator.  The
+\texttt{patch-literal} instruction takes a single input, namely the
+literal object created from the load-time action.  Three slots in the
+\texttt{patch-literal} each contains a \texttt{cons} cell:
+
+\begin{enumerate}
+\item The \texttt{cons} cell that is also contained in the
+  \texttt{load-literal} instruction.
+\item A \texttt{cons} cell that (in its \texttt{car}) holds the index
+  into the code vector where the immediate object that the load-time
+  action generates, must be stored.
+\item A \texttt{cons} cell that (in its \texttt{car}) holds the index
+  into the vector of literals where the immediate that the load-time
+  action generates, must be stored for the benefit of the garbage
+  collector.
+\end{enumerate}
+
+The HIR thunk generated from the \texttt{patch-literal}
+instruction closes over these \texttt{cons} cells.  The actions of the
+HIR thunk are:
+
+\begin{enumerate}
+\item Store the input in the \texttt{car} of the first \texttt{cons}
+  cell.
+\item Store the input in the code vector, at the index indicated by
+  the \texttt{car} of the second \texttt{cons} cell.  The code vector
+  is the value of the special variable \texttt{*code-vector*} just as
+  described in \refChap{chap-tying-a-code-object}.
+\item Store the input in the vector of literals at the index indicated
+  by the \texttt{car} of the third \texttt{cons} cell.  The vector of
+  literals is the value of the special variable
+  \texttt{*literal-vector*} just as described in
+  \refChap{chap-tying-a-code-object}.
+\end{enumerate}
+
+The third \texttt{cons} cell is filled in by a HIR pass that gathers
+literals from the HIR graph.  The second \texttt{cons} cell is filled
+in by the code generator.
 
 \section{Bootstrapping phases}
 
@@ -229,10 +313,10 @@ host function \texttt{funcallable-standard-object} so it can be
 executed by the host.
 
 Arguments to a bridge generic function are ersatz instances.  The
-bridge generic function uses the 
+bridge generic function uses the
 \emph{stamp}
 \seesec{sec-generic-function-dispatch-the-discriminating-function} of
-the required arguments to dispatch on. 
+the required arguments to dispatch on.
 
 The methods on a bridge generic function are bridge methods.
 \end{definition}
@@ -250,24 +334,56 @@ In addition to the host environment, six different \sysname{}
 first-class environments are involved in the bootstrapping procedure.
 We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, $E_4$, and $E_5$.
 
-\subsection{Phase 0}
+Each environment is an instance of (often a subclass of) a class
+\texttt{environment} defined in the \texttt{sicl-boot} package.  As
+such, when created, each environment is automatically filled with
+several definitions such as:
 
-In phase $0$, we load enough functionality into environment $E0$ to be
+\begin{itemize}
+\item standard special operators,
+\item Cleavir primops,
+\item host functions for a variety of purposes,
+\item etc.
+\end{itemize}
+
+\subsection{Phase 1}
+
+In phase $1$, we load enough functionality into environment $E0$ to be
 able to produce abstract syntax trees (ASTs) from source files.  This
 functionality involves mainly standard macros that are required during
 compilation.
 
-Any code can be compiled, provided that the macros that are called by
-the code are defined in environment $E_0$.  In particular, code that
-defines macros can be compiled into abstract syntax trees.
+We start by defining the macro \texttt{defmacro} \emph{manually}, but
+the version defined this way is incorrect, because it uses the host
+compiler to compile the body of defined macros in the null lexical
+environment.  However, it is good enough to load definitions of
+a few additional macros required before the production version of
+\texttt{defmacro} can be loaded.
 
-\subsection{Phase 1}
+Additional functions are then imported from the host, in particular
+expander functions for conditional macros and functions for parsing
+macro bodies.
+
+Then, definitions of additional standard macros are loaded in a well
+defined order.  Initially, macros required to define \texttt{defmacro}
+are loaded, so that a pure \sysname{} version of \texttt{defmacro} can
+be loaded.  In particular, \texttt{lambda} and \texttt{setf} are
+needed.  This sequence ends with two subsequent load of the \sysname{}
+definition of \texttt{defmacro} in order to have a version of it with
+the macro function compiled by the \sysname{} compiler.
+
+Once a \sysname{} version of \texttt{defmacro} is available, files
+containing definitions of most standard macros are loaded.  The result
+is an environment $e_0$ with a fairly complete set of standard
+macros.
+
+\subsection{Phase 2}
 
 We define a class named
-\texttt{sicl-boot-phase-1:funcallable-standard-class} in the host
+\texttt{sicl-boot-phase-2:funcallable-standard-class} in the host
 environment.  It is defined as a direct subclass of the host class
 \texttt{closer-mop:funcallable-standard-class}.  When we
-evaluate \texttt{defclass} forms in phase 2, the classes created are
+evaluate \texttt{defclass} forms in phase 3, the classes created are
 instances of this class.  We could have chosen this class only for
 instances that need to be executable in the host, and a subclass of
 the host class \texttt{standard-class} for the others, but the host
@@ -277,10 +393,10 @@ using one single class.
 
 We define an \texttt{:around} method on \texttt{initialize-instance}
 in the host environment, specialized to
-\texttt{sicl-boot-phase-1:funcallable-standard-class}.  The purpose of
+\texttt{sicl-boot-phase-2:funcallable-standard-class}.  The purpose of
 this \texttt{:around} method is to remove the \texttt{:reader} and
 \texttt{:accessor} slot options supplied in the \texttt{defclass}
-forms that we evaluate in phase 1.  Without this \texttt{:around}
+forms that we evaluate in phase 2.  Without this \texttt{:around}
 method, the host function \texttt{initialize-instance} would receive
 keyword arguments \texttt{:readers} and \texttt{:writers} and it would
 then add methods to host generic functions corresponding to the names
@@ -445,7 +561,7 @@ In this phase, we also prepare for the creation of ersatz instances.
 \subsection{Phase 4}
 
 The purpose of this phase is to create ersatz generic functions and
-ersatz classes, by instantiating bridge classes.  
+ersatz classes, by instantiating bridge classes. 
 
 At the end of this phase, we have a set of ersatz instances, some of
 which are ersatz classes, except that the \texttt{class} slot of the
@@ -459,7 +575,7 @@ others.
 The first step of this phase is to finalize all the ersatz classes
 that were created in phase 4.  Finalization will create ersatz
 instances of bridge classes corresponding to effective slot
-definitions. 
+definitions.
 
 The second step repeats the creation of MOP generic functions and MOP
 classes, this time in environments $E_6$ and $E_5$ respectively.  As
@@ -472,11 +588,11 @@ header object is also an ersatz object, albeit impure.
 \subsection{Phase 7}
 
 The purpose of this phase is to create ersatz instances for all
-objects that are needed in order to obtain a viable image, including: 
+objects that are needed in order to obtain a viable image, including:
 
 \begin{itemize}
 \item ersatz built-in classes such as \texttt{package}, \texttt{symbol},
-  \texttt{string}, etc., 
+  \texttt{string}, etc.,
 \item ersatz instances of those classes, such as the required
   packages, the symbols contained in those packages, the names of
   those symbols, etc.
@@ -494,8 +610,8 @@ symbols, lists, and integers by their ersatz counterparts.
 \subsection{Phase 9}
 
 The purpose of this phase is to take the simulated graph of objects
-used so far and transfer it to a \emph{memory image}.  
+used so far and transfer it to a \emph{memory image}. 
 
 \subsection{Phase 10}
 
-Finally, the memory image is written to a binary file. 
+Finally, the memory image is written to a binary file.

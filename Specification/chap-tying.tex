@@ -10,15 +10,18 @@ between an untied and a tied code object.
 
 \section{Untied code objects}
 
-Two things characterize an untied code object:
+Three things characterize an untied code object:
 
 \begin{enumerate}
 \item References to named global functions are unresolved.
 \item Load-time actions have not been performed.
+\item References to literals computed as part of load-time actions are
+  unresolved.
 \end{enumerate}
 
 Tying the code object involves first resolving references to named
 global functions, and then executing the load-time actions.
+References to computed literals are resolved by the load-time actions.
 
 \subsection{Resolving references to named global functions}
 
@@ -28,7 +31,7 @@ address.
 
 The code object contains a list of \emph{call-site descriptors} as
 described in \refSec{sec-call-site-descriptor}.  Among other things,
-the call-site descriptor contains:
+a call-site descriptor contains:
 
 \begin{enumerate}
 \item the name of the global function,
@@ -43,3 +46,43 @@ the \emph{call-site manager} which, for each call site, generates a
 \emph{trampoline snippet} that implements the call code, and modifies
 the target address of the unconditional \emph{jump} instruction so
 that it jumps to the beginning of the snippet.
+
+\subsection{Executing load-time actions}
+
+The code for load-time actions, corresponding to top-level forms in
+the source code, is located first in the code vector as an ordinary
+function with no arguments.  Therefore, executing the load-time
+actions is a matter of passing obligatory implicit parameters in
+registers for the relevant backend and executing a \emph{call}
+instruction to the address of the first element in the code vector.
+
+\subsection{Resolving references to load-time literals}
+
+All non-trivial literals are loaded from the instruction stream using
+an instruction for loading a full-word immediate datum.  Literals that
+are present in source code are already present in the instruction
+stream in the untied code object, but objects computed as a result of
+\texttt{load-time-value} and then treated as literals during run time
+result in unresolved immediate data in such instructions.
+
+To resolve such a literal, load-time actions first compute the actions
+determined by the \texttt{load-time-value} \emph{form}, and then call
+a named function \texttt{resolve-load-time-value}, passing it three
+arguments:
+
+\begin{enumerate}
+\item The object resulting from the load-time computation.
+\item An index into the code vector where this object must be present
+  as an immediate datum.
+\item An index into the vector of literal objects where this object
+  should be stored in order to be accessible to the garbage
+  collector.
+\end{enumerate}
+
+The code vector and the vector of literal objects are \emph{not}
+passed as arguments to \texttt{resolve-load-time-value}.  Instead, the
+special variables \texttt{*code-vector*} and
+\texttt{*literals-vector*} bound to the code vector and the vector of
+literals by the code executing the tying action, so
+\texttt{resolve-load-time-value} accesses those vectors from the
+special variables.

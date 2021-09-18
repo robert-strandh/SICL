@@ -16,6 +16,7 @@
    #:constant-ast #:value
    #:immediate-ast
    #:load-constant-ast #:location-info
+   #:load-literal-ast
    #:lexical-ast
    #:symbol-value-ast
    #:set-symbol-value-ast
