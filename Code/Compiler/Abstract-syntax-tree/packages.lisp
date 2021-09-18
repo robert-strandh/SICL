@@ -24,4 +24,9 @@
    #:rack-ast
    #:standard-object-ast
    ;; This AST class is the result of converting the primop SET-RACK.
-   #:set-rack-ast))
+   #:set-rack-ast
+   #:patch-literal-ast
+   #:literal-ast
+   #:code-vector-index-ast
+   #:literals-vector-index-ast
+   #:literal-cell))
