@@ -8,4 +8,5 @@
    (:file "dynamic-environment-ast")
    (:file "stack-asts")
    (:file "with-dynamic-environment-ast")
-   (:file "standard-object-asts")))
+   (:file "standard-object-asts")
+   (:file "patch-literal-ast")))
