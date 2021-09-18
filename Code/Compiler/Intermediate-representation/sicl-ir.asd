@@ -11,4 +11,5 @@
    (:file "dynamic-environment")
    (:file "stack")
    (:file "x86-addressing")
-   (:file "standard-object-instructions")))
+   (:file "standard-object-instructions")
+   (:file "patch-literal-instruction")))
