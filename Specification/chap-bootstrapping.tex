@@ -185,43 +185,42 @@ write it to the output of the instruction.  We also introduce a HIR
 instruction \texttt{patch-literal} that will turn into a named call to
 \texttt{resolve-load-time-value} described in
 \refChap{chap-tying-a-code-object} by the code generator.  The
-\texttt{patch-literal} instruction takes a single input, namely the
-literal object created from the load-time action.  Three slots in the
-\texttt{patch-literal} each contains a \texttt{cons} cell:
+\texttt{patch-literal} instruction takes three inputs, namely:
 
 \begin{enumerate}
-\item The \texttt{cons} cell that is also contained in the
-  \texttt{load-literal} instruction.
-\item A \texttt{cons} cell that (in its \texttt{car}) holds the index
-  into the code vector where the immediate object that the load-time
-  action generates, must be stored.
-\item A \texttt{cons} cell that (in its \texttt{car}) holds the index
-  into the vector of literals where the immediate that the load-time
-  action generates, must be stored for the benefit of the garbage
-  collector.
+\item the literal object created from the load-time action,
+\item an index into the code vector where the immediate object that
+  the load-time action generates must be stored, and
+\item an index into the vector of literals where the immediate that
+  the load-time action generates, must be stored for the benefit of
+  the garbage collector.
 \end{enumerate}
 
-The HIR thunk generated from the \texttt{patch-literal}
-instruction closes over these \texttt{cons} cells.  The actions of the
-HIR thunk are:
+The \texttt{patch-literal} instruction also contains a \texttt{cons}
+cell that is also contained in the \texttt{load-literal} instruction.
+
+The HIR thunk generated from the \texttt{patch-literal} instruction
+closes over the \texttt{cons} cell.  The actions of the HIR thunk are:
 
 \begin{enumerate}
-\item Store the input in the \texttt{car} of the first \texttt{cons}
-  cell.
-\item Store the input in the code vector, at the index indicated by
-  the \texttt{car} of the second \texttt{cons} cell.  The code vector
-  is the value of the special variable \texttt{*code-vector*} just as
-  described in \refChap{chap-tying-a-code-object}.
-\item Store the input in the vector of literals at the index indicated
-  by the \texttt{car} of the third \texttt{cons} cell.  The vector of
-  literals is the value of the special variable
-  \texttt{*literal-vector*} just as described in
+\item Store the first input in the \texttt{car} of the first
+  \texttt{cons} cell.
+\item Store the first input in the code vector, at the index indicated
+  by the second input.  The code vector is the value of the special
+  variable \texttt{*code-vector*} just as described in
   \refChap{chap-tying-a-code-object}.
+\item Store the first input in the vector of literals at the index
+  indicated by the third input.  The vector of literals is the value
+  of the special variable \texttt{*literal-vector*} just as described
+  in \refChap{chap-tying-a-code-object}.
 \end{enumerate}
 
-The third \texttt{cons} cell is filled in by a HIR pass that gathers
-literals from the HIR graph.  The second \texttt{cons} cell is filled
-in by the code generator.
+The second and the third inputs of the \texttt{patch-literal}
+instruction are the outputs of \texttt{load-literal} instructions that
+contain fixnums.  Some of these fixnums might be so small that they
+could be represented as immediate inputs to the instruction, but this
+code is executed only at load time, so performance is not a major
+issue. 
 
 \section{Bootstrapping phases}
 
