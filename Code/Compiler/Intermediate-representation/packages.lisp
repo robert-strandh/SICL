@@ -21,6 +21,4 @@
    #:rack-instruction
    #:set-rack-instruction
    #:patch-literal-instruction
-   #:literal-cell
-   #:code-vector-index-cell
-   #:literals-vector-index-cell))
+   #:literal-cell))
