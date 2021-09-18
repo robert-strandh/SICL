@@ -19,4 +19,8 @@
    #:memref-effective-address-instruction
    #:memset-effective-address-instruction
    #:rack-instruction
-   #:set-rack-instruction))
+   #:set-rack-instruction
+   #:patch-literal-instruction
+   #:literal-cell
+   #:code-vector-index-cell
+   #:literals-vector-index-cell))
