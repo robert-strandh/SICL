@@ -18,8 +18,8 @@
         (setf (gethash ast *location-info*) location))))
 
 ;;; Convenience function to avoid having long function names.
-(defun make-temp (&optional (element-type 't))
-  (cleavir-ir:new-temporary "" element-type))
+(defun make-temp (&key (class 'cleavir-ir:lexical-location))
+  (cleavir-ir:new-temporary "" class))
 
 ;;; Given a list of results and a successor, generate a sequence of
 ;;; instructions preceding that successor, and that assign NIL to each

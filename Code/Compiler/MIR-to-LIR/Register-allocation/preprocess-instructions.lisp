@@ -61,8 +61,31 @@
 ;;; constants with FIXNUM-MULTIPLY-INSTRUCTION, as RDX will always be
 ;;; free to store the other input.
 
+(defmethod preprocess-instruction
+    ((instruction cleavir-ir:argument-instruction))
+  (destructuring-bind (index)
+      (cleavir-ir:inputs instruction)
+    ;; Note that the input is a boxed fixnum, so we have to scale
+    ;; everything down by 2.
+    (when (and (typep index 'cleavir-ir:immediate-input)
+               (< (cleavir-ir:value index)
+                  (* 2 (length x86-64:*argument-registers*))))
+      (let ((value (floor (cleavir-ir:value index) 2)))
+        (change-class instruction
+          'cleavir-ir:assignment-instruction)
+        (setf (cleavir-ir:inputs instruction)
+              (list (nth value *temporary-argument-locations*)))))
+    (unless (typep index 'cleavir-ir:immediate-input)
+      (setf *non-constant-argument-instruction-p* t))))
+
+(defmethod preprocess-instruction
+    ((instruction cleavir-ir:compute-argument-count-instruction))
+  (change-class instruction
+                'cleavir-ir:assignment-instruction)
+  (setf (cleavir-ir:inputs instruction)
+        (list *temporary-argument-count-location*)))
+
 (defun preprocess-instructions (enter-instruction)
-  (cleavir-ir:map-instructions-arbitrary-order
-   (lambda (instruction)
-     (preprocess-instruction instruction))
+  (cleavir-ir:map-local-instructions
+   #'preprocess-instruction
    enter-instruction))

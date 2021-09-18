@@ -1,76 +1,53 @@
 (cl:in-package #:sicl-mir-to-lir)
 
-(defmethod process-instruction
-    ((instruction cleavir-ir:compute-argument-count-instruction)
-     lexical-locations)
-  (assert (lexical-p (first (cleavir-ir:outputs instruction))))
-  (insert-memset-after
-   instruction
-   *r11*
-   (first (cleavir-ir:outputs instruction))
-   lexical-locations)
-  (cleavir-ir:insert-instruction-before
-   (make-instance 'cleavir-ir:memref1-instruction
-     :input *rsp*
-     :output *r11*)
-   instruction)
-  (change-class instruction 'cleavir-ir:nop-instruction
-                :inputs '()
-                :outputs '()))
-
-(defmethod process-instruction
-    ((instruction cleavir-ir:argument-instruction)
-     lexical-locations)
-  (assert (lexical-p (first (cleavir-ir:outputs instruction))))
-  (insert-memset-after
-   instruction
-   *r11*
-   (first (cleavir-ir:outputs instruction))
-   lexical-locations)
-  (if (lexical-p (first (cleavir-ir:inputs instruction)))
-      (progn (insert-memref-before
-              instruction
-              (first (cleavir-ir:inputs instruction))
-              *r11*
-              lexical-locations)
-             (cleavir-ir:insert-instruction-before
-              (make-instance 'cleavir-ir:unsigned-add-instruction
-                :inputs (list *r11*
-                              (make-instance 'cleavir-ir:immediate-input
-                                :value 2))
-                :output *r11*)
-              instruction)
-             (cleavir-ir:insert-instruction-before
-              (make-instance 'cleavir-ir:shift-left-instruction
-                :inputs (list *r11*
-                              (make-instance 'cleavir-ir:immediate-input
-                                :value 2))
-                :output *r11*)
-              instruction)
-             (cleavir-ir:insert-instruction-before
-              (make-instance 'cleavir-ir:unsigned-add-instruction
-                :inputs (list *r11* *rsp*)
-                :output *r11*)
-              instruction)
-             (cleavir-ir:insert-instruction-before
-              (make-instance 'cleavir-ir:memref1-instruction
-                :input *r11*
-                :output *r11*)
-              instruction))
-      ;; The value is an immediate input encoding a fixnum, so it is
-      ;; multiplied by 2 with respect to the "number" of the argument.
-      ;; The topmost stack location contains the argument count, so we
-      ;; need to skip that by adding 2 to the value before multiplying
-      ;; by 4.
-      (let* ((value (cleavir-ir:value (first (cleavir-ir:inputs instruction))))
-             (offset (* 4 (+ value 2))))
-        (cleavir-ir:insert-instruction-before
-         (make-instance 'cleavir-ir:memref2-instruction
-           :inputs (list *rsp*
-                         (make-instance 'cleavir-ir:immediate-input
-                           :value offset))
-           :output *r11*)
-         instruction)))
-  (change-class instruction 'cleavir-ir:nop-instruction
-                :inputs '()
-                :outputs '()))
+(defmethod finish-lir-for-instruction
+    ((instruction cleavir-ir:argument-instruction))
+  ;; We have to replace the instruction with either an assignment from
+  ;; the right register or stack location (if the input is an
+  ;; immediate value), or an instruction sequence which picks the
+  ;; right location at runtime.
+  (destructuring-bind (input)
+      (cleavir-ir:inputs instruction)
+    ;; As per section 27.7 of the SICL specification, we will arrange
+    ;; for a prologue to copy the arguments stored in registers to the
+    ;; stack, and to adjust the frame pointer.  At this point, the
+    ;; stack contains (going from RSP to RBP) space for spilled
+    ;; locations, then an argument count if spilling all arguments to
+    ;; the stack, arguments, the call site descriptor, the return
+    ;; address, and finally the caller RBP.
+    ;;
+    ;; So, in order to get at the N'th argument (when N is boxed), we
+    ;; load [RSP + 4N + Offset] where Offset is an offset which will
+    ;; be described next.  If N is constant, then we compute (4N +
+    ;; Offset) and use the result as a displacement.  Else, we use the
+    ;; forementioned effective address.
+    ;;
+    ;; The final thing to note is how to compute the Offset.
+    ;; Typically, we do not have to spill argument registers to the
+    ;; stack, and only the sixth and later arguments are on the stack;
+    ;; so Offset is defined as 8 * Slots - 40.  If we do spill
+    ;; argument registers (typically for parsing arguments with a
+    ;; lambda list containing &key or &rest), the argument count is
+    ;; placed on the stack, and so Offset must account for a slot for
+    ;; the argument count, and that the arguments start with the first
+    ;; argument.  So, in the latter case, Offset is instead defined to
+    ;; be 8 * Slots + 8.
+    (let ((displacement (if *spill-arguments-p*
+                            (* 8 (1+ *stack-slots*))
+                            (- (* 8 *stack-slots*)
+                               (* 8 (length x86-64:*argument-registers*))))))
+      (change-class instruction
+        'sicl-ir:memref-effective-address-instruction
+        :inputs (list
+                 (etypecase input
+                   (cleavir-ir:immediate-input
+                    (sicl-ir:effective-address
+                     x86-64:*rsp*
+                     :displacement (+ (* 4 (cleavir-ir:value input))
+                                      displacement)))
+                   (cleavir-ir:register-location
+                    (sicl-ir:effective-address
+                     x86-64:*rsp*
+                     :scale 4
+                     :offset input
+                     :displacement displacement))))))))

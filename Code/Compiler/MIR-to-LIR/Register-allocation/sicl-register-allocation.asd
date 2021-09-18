@@ -1,7 +1,12 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-register-allocation
-  :depends-on (#:sicl-register-arrangement)
+  :depends-on (#:cleavir-lir
+               #:cleavir-mir
+               #:cleavir-hir
+               #:sicl-register-arrangement
+               #:sicl-x86-64-registers
+               #:sicl-utilities)
   :serial t
   :components
   ((:file "packages")
@@ -11,10 +16,12 @@
    (:file "pool")
    (:file "work-list")
    (:file "estimated-distance-to-use")
-   (:file "registers")
    (:file "stack-map")
    (:file "arrangement")
    (:file "spill-unspill")
    (:file "allocate-register")
+   (:file "introduce-registers")
+   (:file "argument-liveness")
+   (:file "adapt-arrangement")
    (:file "allocate-registers-for-instructions")
    (:file "register-allocation")))

@@ -48,7 +48,7 @@
        (make-instance 'cleavir-ir:logic-shift-right-instruction
          :shifted-input index-location
          :shift-count shift-count-input
-         :output word-element-location
+         :output word-index-location
          :successor instruction)
        instruction)
       (let ((slot-location (compute-slot-location first-slot-location
@@ -125,7 +125,7 @@
        (make-instance 'cleavir-ir:logic-shift-right-instruction
          :shifted-input index-location
          :shift-count shift-count-input
-         :output word-element-location
+         :output word-index-location
          :successor instruction)
        instruction)
       (let ((slot-location (compute-slot-location first-slot-location

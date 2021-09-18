@@ -4,7 +4,7 @@
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
      (dolist (input (cleavir-ir:inputs instruction))
-       (when (and (typep input 'cleavir-ir:lexical-location)
+       (when (and (typep input '(or cleavir-ir:lexical-location cleavir-ir:raw-datum))
                   (null (cleavir-ir:defining-instructions input)))
          (error "~s is used but never defined" input))))
    mir))
@@ -12,6 +12,7 @@
 (defun compile-ast (client ast)
   (eliminate-fdefinition-asts ast)
   (let* ((cleavir-cst-to-ast::*origin* nil)
+         (*gensym-counter* 0)
          (parameter-ast
            (make-instance 'cleavir-ast:lexical-ast
              :name (gensym))))
@@ -33,14 +34,11 @@
         (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
         (sicl-hir-transformations:eliminate-multiple-to-fixed-instructions hir)
         (cleavir-hir-transformations::process-captured-variables hir)
-        ;; Replacing aliases does not appear to have a great effect when
-        ;; code generation is disabled.  Try removing this commented line
-        ;; when code generation is again enabled.
-        ;; (cleavir-hir-transformations:replace-aliases hir)
         (sicl-hir-transformations:eliminate-create-cell-instructions hir)
         (sicl-hir-transformations:eliminate-fetch-instructions hir)
         (sicl-hir-transformations:eliminate-read-cell-instructions hir)
         (sicl-hir-transformations:eliminate-write-cell-instructions hir)
+        (cleavir-hir-transformations:eliminate-catches hir)
         (process-constant-inputs code-object)
         (let ((constants (constants code-object)))
           (cleavir-ir:map-instructions-arbitrary-order
@@ -49,6 +47,10 @@
                (setf (sicl-ir:constants instruction) constants)))
            hir))
         (cleavir-remove-useless-instructions:remove-useless-instructions hir)
+        ;; Replacing aliases does not appear to have a great effect when
+        ;; code generation is disabled.  Try removing this commented line
+        ;; when code generation is again enabled.
+        (cleavir-hir-transformations:replace-aliases hir)
         (establish-call-sites code-object)
         (setf (hir-thunks code-object)
               (sicl-hir-evaluator:top-level-hir-to-host-function client hir))

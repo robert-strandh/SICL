@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-mir-to-lir
   (:use #:common-lisp)
+  (:local-nicknames (#:x86-64 #:sicl-x86-64-registers))
   (:export
    #:mir-to-lir
    #:*rax*

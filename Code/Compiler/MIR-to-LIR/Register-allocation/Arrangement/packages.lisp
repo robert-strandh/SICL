@@ -9,11 +9,17 @@
            #:lexical-location-has-attributed-register-p
            #:lexical-location-has-attributed-stack-slot-p
            #:lexical-location-in-register-p
+           #:arrangements-compatible-p
            #:unattributed-register-count
+           #:first-stack-slot-past-arrangement
+           #:free-registers
            #:attribute-stack-slot
            #:attribute-register-for-existing-lexical-location
            #:attribute-register-for-new-lexical-location
            #:reattribute-register
            #:unattribute-register
+           #:find-attribution
+           #:map-attributions
            #:trim-arrangement
-           #:copy-register-attribution))
+           #:copy-register-attribution
+           #:frozen-p))

@@ -167,6 +167,12 @@
 (defgeneric draw-datum (datum pane))
 
 (defmethod draw-datum :around (datum pane)
+  ;; Avoid drawing data which have coordinates too high for xlib to
+  ;; handle.
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (when (or (> hpos 20000)
+              (> vpos 20000))
+      (return-from draw-datum)))
   (let ((line-thickness
           (if (datum-should-be-highlighted-p datum) 2 1))
         (ink
@@ -182,10 +188,11 @@
                      (floor datum-width 2) (floor datum-height 2)
                      :filled nil)))
 
-(defun ink-for-element-type (type)
-  (case type
-    ((single-float double-float) clim:+purple+)
-    (t clim:+dark-green+)))
+(defun ink-for-location (location)
+  (etypecase location
+    (cleavir-ir:raw-integer      clim:+dark-blue+)
+    (cleavir-ir:raw-float        clim:+purple+)
+    (cleavir-ir:lexical-location clim:+dark-green+)))
 
 (defmethod draw-datum ((datum cleavir-ir:lexical-location) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
@@ -196,8 +203,7 @@
       (clim:draw-text* pane (string (cleavir-ir:name datum))
                        hpos vpos
                        :align-x :center :align-y :center
-                       :ink (ink-for-element-type
-                             (cleavir-ir:element-type datum))))))
+                       :ink (ink-for-location datum)))))
 
 (defmethod draw-datum ((datum cleavir-ir:constant-input) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
@@ -233,16 +239,6 @@
                          :align-x :center :align-y :center
                        :ink clim:+dark-blue+)))))
 
-(defmethod draw-datum ((datum cleavir-ir:raw-integer) pane)
-  (multiple-value-bind (hpos vpos) (datum-position datum)
-    (clim:draw-oval* pane hpos vpos
-                     (floor datum-width 2) (floor datum-height 2)
-                     :ink clim:+light-green+
-                     :filled t)
-    (clim:draw-oval* pane hpos vpos
-                     (floor datum-width 2) (floor datum-height 2)
-                     :filled nil)))
-
 (defmethod draw-datum ((datum cleavir-ir:register-location) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos
@@ -258,6 +254,23 @@
                        hpos vpos
                        :align-x :center :align-y :center
                        :ink clim:+dark-blue+))))
+
+(defmethod draw-datum ((datum cleavir-ir:stack-location) pane)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :ink clim:+light-pink+
+                     :filled t)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)
+    (clim:with-text-size (pane :small)
+      (clim:draw-text* pane
+                       (princ-to-string
+                        (cleavir-ir:offset datum))
+                       hpos vpos
+                       :align-x :center :align-y :center
+                       :ink clim:+red+))))
 
 (defvar *dynamic-environment-locations*)
 

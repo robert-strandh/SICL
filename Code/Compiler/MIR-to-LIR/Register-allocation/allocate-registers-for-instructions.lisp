@@ -14,7 +14,7 @@
 ;;; either an immediate input, or it is a lexical location, and that
 ;;; lexical location has a register attributed to it.
 (defun ensure-input-available (predecessor instruction input)
-  (if (typep input 'cleavir-ir:lexical-location)
+  (if (typep input '(or cleavir-ir:lexical-location cleavir-ir:raw-datum))
       (ensure-lexical-location-has-attributed-register
        predecessor instruction input)
       predecessor))
@@ -50,9 +50,10 @@
 ;;; it can then be attributed to the instruction output in the output
 ;;; arrangement.
 (defun ensure-one-unattributed (predecessor instruction lexical-location
-                                &key (disallowed-registers (make-register-map)))
+                                &key (disallowed-registers
+                                      (x86-64:make-register-map)))
   (let* ((pool (output-pool instruction))
-         (candidates (register-map-difference
+         (candidates (x86-64:register-map-difference
                       (determine-candidates lexical-location pool)
                       disallowed-registers)))
     (ensure-unattributed-registers
@@ -67,12 +68,16 @@
 ;;; The default way of computing an output arrangement is valid when
 ;;; there is exactly one output, and the register attributed to it can
 ;;; be chosen arbitrarily.
-(defun compute-output-arrangement-default (instruction arrangement)
+(defun compute-output-arrangement-default
+    (instruction arrangement
+     &key (disallowed-registers (x86-64:make-register-map)))
   (let* ((output (first (cleavir-ir:outputs instruction)))
          (pool (output-pool instruction)))
     ;; We must include a new register in the arrangement.  We know
     ;; there is an unattributed register of the right kind.
-    (let ((candidates (determine-candidates output pool)))
+    (let ((candidates (x86-64:register-map-difference
+                       (determine-candidates output pool)
+                       disallowed-registers)))
       (arr:attribute-register-for-new-lexical-location
        arrangement output candidates))
     arrangement))
@@ -89,6 +94,9 @@
   (set-difference (mapcar #'lexical-location (output-pool instruction))
                   (cleavir-ir:outputs instruction)
                   :test #'eq))
+
+;;; The size the stack frame for the generated code will have to be.
+(defvar *stack-frame-size*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -112,12 +120,22 @@
            (process-outputs
             (process-inputs predecessor instruction)
             instruction))
-         (arrangement (output-arrangement new-predecessor))
-         (new-arrangement (arr:copy-arrangement arrangement)))
+         (arrangement (arr:copy-arrangement
+                       (output-arrangement new-predecessor))))
+    (arr:trim-arrangement
+     arrangement
+     (mapcar #'lexical-location (input-pool instruction)))
     (setf (input-arrangement instruction) arrangement)
-    (arr:trim-arrangement new-arrangement (survivors instruction))
-    (setf (output-arrangement instruction)
-          (compute-output-arrangement instruction new-arrangement))))
+    (let ((new-arrangement (arr:copy-arrangement arrangement)))
+      (arr:trim-arrangement new-arrangement (survivors instruction))
+      (let ((output-arrangement
+              (compute-output-arrangement instruction new-arrangement)))
+        (setf (output-arrangement instruction) output-arrangement)
+        (unless (null output-arrangement)
+          (setf *stack-frame-size*
+                (max *stack-frame-size*
+                     (arr:first-stack-slot-past-arrangement
+                      (output-arrangement instruction)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -125,20 +143,20 @@
 ;;;
 ;;; For call instructions, processing the inputs means making sure
 ;;; that every lexical location that survives the call and that has a
-;;; caller-saves register attributed to it, also has a stack slot
-;;; attributed to it.
+;;; register attributed to it, also has a stack slot attributed to it.
 
 (defun process-inputs-for-call-instruction (predecessor instruction)
-  (let* ((survivors (survivors instruction))
-         (in-caller-saves
-           (arr:lexical-locations-in-register
-            (output-arrangement predecessor) *caller-saves*))
-         (both (intersection survivors in-caller-saves :test #'eq))
-         (result predecessor))
-    (loop for lexical-location in both
-          do (setf result
-                   (ensure-lexical-location-has-attributed-stack-slot
-                    result instruction lexical-location)))
+  (let ((survivors (survivors instruction))
+        (result predecessor))
+    (arr:map-attributions
+     (lambda (lexical-location slot register)
+       (declare (ignore slot))
+       (unless (or (null register)
+                   (not (member lexical-location survivors)))
+         (setf result
+               (ensure-lexical-location-has-attributed-stack-slot
+                result instruction lexical-location))))
+     (output-arrangement predecessor))
     result))
 
 ;;; For named-call instructions, there are three ways of processing
@@ -173,19 +191,6 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:funcall-instruction))
-  ;; We need to save all the caller-saves registers, and registers
-  ;; involved in the calling convention such as the argument count,
-  ;; dynamic environment and static environment.  All but the dynamic
-  ;; environment register are already caller-saves, so we only handle
-  ;; the dynamic environment register specially.
-  (let ((in-dynamic-environment
-          (arr:lexical-locations-in-register
-           (output-arrangement predecessor)
-           (make-register-map *dynamic-environment*))))
-    (loop for location in in-dynamic-environment
-          do (setf predecessor
-                   (ensure-lexical-location-has-attributed-stack-slot
-                    predecessor instruction location))))
   (process-inputs-for-call-instruction predecessor instruction))
 
 (defmethod process-outputs
@@ -274,6 +279,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; DYNAMIC-CATCH-INSTRUCTION
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:dynamic-catch-instruction))
+  (process-inputs-for-call-instruction predecessor instruction))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:dynamic-catch-instruction))
+  (ensure-one-unattributed predecessor instruction
+                           (first (cleavir-ir:outputs instruction))))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:dynamic-catch-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; UNWIND-PROTECT-INSTRUCTION
 
 (defmethod process-inputs
@@ -314,7 +336,9 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:unwind-instruction))
-  (process-inputs-for-call-instruction predecessor instruction))
+  (process-inputs-for-call-instruction
+   (ensure-inputs-available predecessor instruction)
+   instruction))
 
 ;;; The UNWIND-INSTRUCTION has no outputs.
 (defmethod process-outputs
@@ -482,49 +506,55 @@
 ;;; FIXNUM-DIVIDE-INSTRUCTION
 ;;;
 ;;; The x86 DIV instruction requires a peculiar arrangement of inputs
-;;; and outputs. The first input must be in RAX, the second input can
+;;; and outputs.  The first input must be in RAX, the second input can
 ;;; be in any register or in memory, and RDX (the high 64 bits of the
-;;; integer to divide) must be zero. The first output will then be in
+;;; integer to divide) must be zero.  The first output will then be in
 ;;; RAX, and the second output will be in RDX.
+
+;;; In an earlier version of register allocation, we planned to allow
+;;; reading inputs directly from the stack, rather than calling
+;;; ENSURE-INPUTS-AVAILABLE to put them in registers.  But in
+;;; hindsight, I don't have a clue if it is an actually useful
+;;; optimisation; if it was, it would also be applicable to any
+;;; instruction which could also load from memory, but it is a hassle
+;;; to implement, and I _think_ we would also want to track an
+;;; estimated distance between _two_ uses in order to decide if we
+;;; should use a register or not.
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
-  ;; We will load the inputs in whatever manner they need to be loaded
-  ;; as part of code generation, as DIV accepts a quotient in either a
-  ;; register or in memory.  It is only necessary to ensure RAX and
-  ;; RDX can be overwritten as part of register allocation.
-  predecessor)
+  (ensure-inputs-available predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
   (let ((output-pool (output-pool instruction))
         (dividend (first (cleavir-ir:inputs instruction)))
-        (used-registers (make-register-map *rax* *rdx*)))
+        (used-registers (x86-64:make-register-map x86-64:*rax* x86-64:*rdx*)))
     ;; If the dividend input does not outlive this instruction, and it
     ;; is already in RAX, then we can avoid transferring it to another
     ;; register.
     (unless (and (lexical-location-in-register-p
                   (output-arrangement predecessor)
-                  dividend *rax*)
+                  dividend x86-64:*rax*)
                  (not (variable-live-p output-pool dividend)))
       (setf predecessor
             (ensure-register-attributions-transferred
              predecessor instruction
              output-pool
-             *rax* used-registers)))
+             x86-64:*rax* used-registers)))
     (ensure-register-attributions-transferred
-     predecessor instruction output-pool *rdx* used-registers)))
+     predecessor instruction output-pool x86-64:*rdx* used-registers)))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:fixnum-divide-instruction) arrangement)
   (arr:attribute-register-for-new-lexical-location
    arrangement
    (first (cleavir-ir:outputs instruction))
-   (make-register-map *rax*))
+   (x86-64:make-register-map x86-64:*rax*))
   (arr:attribute-register-for-new-lexical-location
    arrangement
    (second (cleavir-ir:outputs instruction))
-   (make-register-map *rdx*))
+   (x86-64:make-register-map x86-64:*rdx*))
   arrangement)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -542,41 +572,40 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
-  ;; Again, we can load the inputs however we want.
-  predecessor)
+  (ensure-inputs-available predecessor instruction))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
   (let ((output-pool (output-pool instruction))
         (input1 (first (cleavir-ir:inputs instruction)))
-        (used-registers (make-register-map *rax* *rdx*)))
+        (used-registers (x86-64:make-register-map x86-64:*rax* x86-64:*rdx*)))
     ;; If the first input does not outlive this instruction, and it is
     ;; already in RAX, then we can avoid transferring it to another
     ;; register.
     (unless (and (lexical-location-in-register-p
                   (output-arrangement predecessor)
-                  input1 *rax*)
+                  input1 x86-64:*rax*)
                  (not (variable-live-p output-pool input1)))
       (setf predecessor
             (ensure-register-attributions-transferred
              predecessor instruction
              (output-pool instruction)
-             *rax* used-registers)))
+             x86-64:*rax* used-registers)))
     (ensure-register-attributions-transferred
      predecessor instruction
      (output-pool instruction)
-     *rdx* used-registers)))
+     x86-64:*rdx* used-registers)))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:fixnum-multiply-instruction) arrangement)
   (arr:attribute-register-for-new-lexical-location
    arrangement
    (first (cleavir-ir:outputs instruction))
-   (make-register-map *rdx*))
+   (x86-64:make-register-map x86-64:*rdx*))
   (arr:attribute-register-for-new-lexical-location
    arrangement
    (second (cleavir-ir:outputs instruction))
-   (make-register-map *rax*))
+   (x86-64:make-register-map x86-64:*rax*))
   arrangement)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -710,6 +739,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; ARGUMENT-INSTRUCTION
+;;;
+;;; Note that we have eliminated non-constant ARGUMENT instructions,
+;;; as well as all COMPUTE-ARGUMENT-COUNT instructions.
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:argument-instruction))
@@ -752,11 +784,13 @@
     (predecessor (instruction cleavir-ir:compute-return-value-count-instruction))
   (ensure-one-unattributed
    predecessor instruction (first (cleavir-ir:outputs instruction))
-   :disallowed-registers *return-values*))
+   :disallowed-registers x86-64:*return-values*))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:compute-return-value-count-instruction) arrangement)
-  (compute-output-arrangement-default instruction arrangement))
+  (compute-output-arrangement-default
+   instruction arrangement
+   :disallowed-registers x86-64:*return-values*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -766,11 +800,13 @@
     (predecessor (instruction cleavir-ir:return-value-instruction))
   (ensure-one-unattributed
    predecessor instruction (first (cleavir-ir:outputs instruction))
-   :disallowed-registers *return-values*))
+   :disallowed-registers x86-64:*return-values*))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:return-value-instruction) arrangement)
-  (compute-output-arrangement-default instruction arrangement))
+  (compute-output-arrangement-default
+   instruction arrangement
+   :disallowed-registers x86-64:*return-values*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -823,28 +859,39 @@
 (defun allocate-registers-for-instructions (mir)
   (labels ((process-pair (predecessor instruction)
              (if (input-arrangement-p instruction)
-                 ;; FIXME: adapt the output arrangement of PREDECESSOR
-                 ;; to the existing input arrangement of INSTRUCTION.
-                 nil
+                 (adapt-arrangements predecessor instruction)
                  (progn (allocate-registers-for-instruction
                          predecessor instruction)
                         (loop for successor in (cleavir-ir:successors instruction)
                               do (process-pair instruction successor))))))
     (let* ((outputs (cleavir-ir:outputs mir))
            (static-environment-location (first outputs))
-           (dynamic-environment-location (second outputs)))
-      (setf (output-arrangement mir)
+           (dynamic-environment-location (second outputs))
+           (arrangement
             (make-instance 'arr:arrangement
-              :register-map *initial*
+              :register-map (x86-64:copy-register-map x86-64:*initial*)
               :stack-map #*
               :attributions
               (list
                (make-instance 'arr:attribution
                  :lexical-location static-environment-location
                  :stack-slot nil
-                 :register-number (register-number *static-environment*))
+                 :register-number (x86-64:register-number x86-64:*static-environment*))
                (make-instance 'arr:attribution
                  :lexical-location dynamic-environment-location
                  :stack-slot nil
-                 :register-number (register-number *dynamic-environment*)))))
-      (process-pair mir (cleavir-ir:first-successor mir)))))
+                 :register-number (x86-64:register-number x86-64:*dynamic-environment*))
+               (make-instance 'arr:attribution
+                 :lexical-location *temporary-argument-count-location*
+                 :stack-slot nil
+                 :register-number (x86-64:register-number x86-64:*argument-count*)))))
+           (*stack-frame-size* 0))
+      (loop for location in *temporary-argument-locations*
+            for register in x86-64:*argument-registers*
+            do (arr:attribute-register-for-new-lexical-location
+                arrangement
+                location
+                (x86-64:make-register-map register)))
+      (setf (output-arrangement mir) arrangement)
+      (process-pair mir (cleavir-ir:first-successor mir))
+      *stack-frame-size*)))

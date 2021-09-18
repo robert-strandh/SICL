@@ -201,7 +201,7 @@ Upon function entry after an ordinary call, when more than $5$
 arguments are passed, the callee must pop the return address off the
 top of the stack and store it in its final location.  This can be done
 with a single POP instruction, using [\texttt{RBP}$ - 8$] as the
-destination.  When fewer than $5$ arguments are passed, the return
+destination.  When no more than $5$ arguments are passed, the return
 address is already in the right place.
 
 Return from callee to caller, with no values:
@@ -461,10 +461,31 @@ Address space layout for the x86-64 backend.}
 
 When the callee accepts keyword arguments, it is convenient to have
 all the arguments in a properly-ordered sequence somewhere in memory.
-We obtain this sequence by pushing the register arguments to the stack
-in reverse order, so that the first argument is at the top of the
-stack.  When more than $5$ arguments are passed, the program counter
+We obtain this sequence by pushing all of the register arguments to
+the stack in reverse order, so that the first argument is at the top
+of the stack.
+
+Pushing all of the register arguments when fewer arguments were
+provided would cause registers which do not hold arguments, and may
+not even hold valid Lisp data, to be stored on the stack.  While valid
+IR would not attempt to use these arguments, the garbage collector may
+still attempt to trace the arguments, and so it must be aware of how
+many arguments were actually provided. As such, we also store the
+argument count on the stack after the arguments.  This layout is
+illustrated in \refFig{fig-x86-64-stack-frame-with-pushed-arguments}.
+
+When more than $5$ arguments are passed, the program counter
 is popped off the top of the stack, thereby moving it to its final
 destination before the register arguments are pushed.
+
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-x86-64-stack-frame-with-pushed-arguments.pdf_t}
+\end{center}
+\caption{\label{fig-x86-64-stack-frame-with-pushed-arguments}
+  Stack frame with at most $5$ arguments, with all arguments pushed
+  to the stack.}
+\end{figure}
 
 %%  LocalWords:  callee

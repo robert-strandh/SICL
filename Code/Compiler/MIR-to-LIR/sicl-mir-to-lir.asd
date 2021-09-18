@@ -6,22 +6,15 @@
                #:cleavir-hir
                #:sicl-ast-to-hir
                #:sicl-hir-to-mir
+               #:sicl-x86-64-registers
                #:sicl-register-allocation)
   :serial t
   :components
   ((:file "packages")
-   (:file "registers")
-   (:file "move-return-address")
-   (:file "save-arguments")
-   (:file "process-instructions")
-   (:file "assignment")
+   (:file "finish-lir")
+   (:file "call-instruction")
    (:file "arguments")
-   (:file "integer-arithmetic")
-   (:file "tag-test")
-   (:file "funcall")
-   (:file "save-restore-multiple-values")
-   (:file "return")
-   (:file "return-values")
-   (:file "divide")
-   (:file "memory")
+   (:file "values")
+   (:file "fixnum-arithmetic")
+   (:file "enter-return")
    (:file "mir-to-lir")))

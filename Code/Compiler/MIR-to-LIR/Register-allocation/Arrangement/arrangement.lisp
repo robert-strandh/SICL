@@ -14,12 +14,17 @@
     :accessor stack-slot)))
 
 (defclass arrangement ()
-  ((%stack-map :initarg :stack-map :accessor stack-map)
+  ((%frozen :initform nil :accessor frozen-p)
+   (%stack-map :initarg :stack-map :accessor stack-map)
    (%register-map :initarg :register-map :accessor register-map)
    (%attributions
     :initform '()
     :initarg :attributions
     :accessor attributions)))
+
+(defun check-arrangement-not-frozen (arrangement)
+  (when (frozen-p arrangement)
+    (error "An update on ~s was attempted but it is frozen." arrangement)))
 
 (defun check-arrangement-integrity (arrangement)
   (let ((register-count 0)
@@ -62,6 +67,14 @@
        ,attribution-form
      ,@body))
 
+(defmethod print-object ((arrangement arrangement) stream)
+  (print-unreadable-object (arrangement stream :type t :identity t)
+    (with-arrangement arrangement
+      (format stream "~:a"
+              (loop for attribution in attributions
+                    collect (cleavir-ir:name
+                             (lexical-location attribution)))))))
+
 (defun copy-bit-vector (bit-vector)
   (let ((result (make-array (length bit-vector) :element-type 'bit)))
     (replace result bit-vector)
@@ -94,12 +107,50 @@
         (values nil nil)
         (values (stack-slot attribution) (register-number attribution)))))
 
+;;; Call FUNCTION with every lexical location, stack slot and register
+;;; number.
+(defun map-attributions (function arrangement)
+  (with-arrangement arrangement
+    (dolist (attribution attributions)
+      (with-attribution attribution
+        (funcall function
+                 lexical-location
+                 stack-slot
+                 register-number)))))
+
+(defun check-arrangement-is-subset (previous next)
+  (when (eq previous next)
+    (return-from check-arrangement-is-subset))
+  (loop for attribution in (attributions next)
+        for location = (lexical-location attribution)
+        do (multiple-value-bind (previous-stack previous-register)
+               (find-attribution previous location)
+             (assert (not (and (null previous-register)
+                               (null previous-stack)))
+                     ()
+                     "~S is not attributed in ~S"
+                     location previous))))
+
+;;; Determine if the NEXT arrangement is compatible with the PREVIOUS
+;;; arrangement, i.e. all the attributions in NEXT are present in the
+;;; PREVIOUS arrangement.  Note that compatibility is not symmetric.
+(defun arrangements-compatible-p (previous next)
+  (check-arrangement-is-subset previous next)
+  (or (eq previous next)
+      (loop for attribution in (attributions next)
+            always (with-attribution attribution
+                     (multiple-value-bind (other-register-number other-stack-slot)
+                         (find-attribution previous lexical-location)
+                       (and (eql other-register-number register-number)
+                            (eql other-stack-slot stack-slot)))))))
+
 ;;; Destructively update ARRANGEMENT so that the attribution for
 ;;; LEXICAL-LOCATION has a stack slot.  If there is no attribution for
 ;;; LEXICAL-LOCATION in ARRANGEMENT, then signal an error.  If the
 ;;; attribution for LEXICAL-LOCATION already has a stack slot, then
 ;;; signal an error.
 (defun attribute-stack-slot (arrangement lexical-location)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((attribution (find lexical-location attributions
@@ -127,6 +178,7 @@
 ;;; in CANDIDATES is unattributed, then signal an error.
 (defun attribute-register-for-existing-lexical-location
     (arrangement lexical-location candidates)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((free-register (position 1 (bit-andc2 candidates register-map)))
@@ -148,6 +200,7 @@
 ;;; signal an error.
 (defun attribute-register-for-new-lexical-location
     (arrangement lexical-location candidates)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((free-register (position 1 (bit-andc2 candidates register-map)))
@@ -170,6 +223,7 @@
 ;;; If the attribution for LEXICAL-LOCATION does not have a stack
 ;;; slot, then signal an error.
 (defun unattribute-register (arrangement lexical-location)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((attribution (find lexical-location attributions
@@ -184,6 +238,7 @@
 
 (defun reattribute-register
     (arrangement lexical-location candidates)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (let ((free-register (position 1 (bit-andc2 candidates register-map)))
@@ -247,9 +302,29 @@
   (with-arrangement arrangement
     (count 1 (bit-andc2 candidates register-map))))
 
+;;; Return the first stack slot which is unused and has no more used
+;;; stack slots past it.  I am not sure if this is a good choice of
+;;; function to include in the protocol, but it is necessary for
+;;; ADAPT-ARRANGEMENTS-BETWEEN-INSTRUCTIONS and it cannot be
+;;; constructed (easily) from other protocol functions.
+(defun first-stack-slot-past-arrangement (arrangement)
+  (with-arrangement arrangement
+    (let ((last-used (position 1 stack-map :from-end t)))
+      (if (null last-used)
+          (length stack-map)
+          (1+ last-used)))))
+
+;;; Return a register map of registers which are unused by all arrangements.
+(defun free-registers (arrangement &rest arrangements)
+  (bit-not
+   (reduce #'bit-ior arrangements
+           :key #'register-map
+           :initial-value (register-map arrangement))))
+
 ;;; Destructively modify arrangement by keeping only the arrangements
 ;;; with a lexical location that is a member of LEXICAL-LOCATIONS.
 (defun trim-arrangement (arrangement lexical-locations)
+  (check-arrangement-not-frozen arrangement)
   (check-arrangement-integrity arrangement)
   (with-arrangement arrangement
     (setf attributions
@@ -276,6 +351,7 @@
 ;;; TO-ARRANGEMENT, then an error is signaled.
 (defun copy-register-attribution
     (from-arrangement from-lexical-location to-arrangement to-lexical-location)
+  (check-arrangement-not-frozen to-arrangement)
   (check-arrangement-integrity from-arrangement)
   (check-arrangement-integrity to-arrangement)
   (let ((from-attribution (find from-lexical-location

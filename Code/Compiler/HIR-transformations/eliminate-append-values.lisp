@@ -100,6 +100,7 @@
                 cell-location
                 dynamic-environment-location)))
     (rplaca (cleavir-ir:successors increment) test)
+    (push increment (cleavir-ir:predecessors test))
     (make-instance 'cleavir-ir:assignment-instruction
       :input (make-instance 'cleavir-ir:constant-input
                :value 5)

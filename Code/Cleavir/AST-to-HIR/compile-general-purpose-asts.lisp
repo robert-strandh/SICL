@@ -814,9 +814,9 @@
 ;;;
 ;;; Compile ASTs that represent low-level operations.
 
-(defun make-temps (arguments &optional (element-type 't))
+(defun make-temps (arguments &key (class 'cleavir-ir:lexical-location))
   (loop for argument in arguments
-        collect (make-temp element-type)))
+        collect (make-temp :class class)))
 
 (defun compile-arguments (client arguments temps successor context)
   (loop with succ = successor

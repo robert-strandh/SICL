@@ -99,7 +99,13 @@
 ;;; S gains all of I's predecessors as predecessors.
 ;;; This function orphans I and anything it dominates that is not
 ;;; dominated by S, so you'll probably have to set-predecessors etc.
+;;; An error will be signalled if an attempt to replace an instruction
+;;; with itself was made.
 (defun bypass-instruction (new existing)
+  (assert (not (eq new existing))
+          ()
+          "Attempted to replace the instruction ~S with itself."
+          new)
   (setf (inputs existing) '()
         (outputs existing) '())
   (loop for predecessor in (predecessors existing)
@@ -134,8 +140,9 @@
    (lambda (instruction)
      (loop for datum in (inputs instruction)
            do (push instruction (using-instructions datum)))
-     (push instruction
-           (using-instructions (dynamic-environment-location instruction)))
+     (unless (null (dynamic-environment-location instruction))
+       (push instruction
+             (using-instructions (dynamic-environment-location instruction))))
      (loop for datum in (outputs instruction)
            do (push instruction (defining-instructions datum))))
    initial-instruction))

@@ -37,6 +37,7 @@
            cleavir-ir:bind-instruction
            cleavir-ir:unwind-instruction
            cleavir-ir:initialize-values-instruction
+           cleavir-ir:initialize-closure-instruction
            cleavir-ir:enclose-instruction
            cleavir-ir:multiple-value-call-instruction)))
 
@@ -87,11 +88,7 @@
 ;;; whether a lexical location exists among the inputs of the
 ;;; instruction.  So it is the output pool, minus the entries
 ;;; corresponding to lexical locations in the output of the
-;;; instruction, and with each distance incremented.  If the
-;;; instruction is a call instruction, then the call probability of an
-;;; entry in the derived input pool is 10.  Otherwise, it is the
-;;; preserved probability of the entry in the output pool it is
-;;; derived from.
+;;; instruction, and with each distance incremented.
 (defun compute-derived-input-pool (instruction)
   (let ((call-instruction-p (call-instruction-p instruction))
         (outputs (cleavir-ir:outputs instruction)))
@@ -99,20 +96,17 @@
      (loop for entry in (output-pool instruction)
            for lexical-location = (lexical-location entry)
            for distance = (distance entry)
-           for call-probability = (call-probability entry)
            unless (member lexical-location outputs :test #'eq)
              collect (make-instance 'pool-item
                        :lexical-location lexical-location
-                       :distance (1+ distance)
-                       :call-probability
-                      (if call-instruction-p 10 call-probability))))))
+                       :distance (1+ distance))))))
 
 (defgeneric compute-new-input-pool (instruction))
 
 ;;; We first compute the derived input pool.  Then, for every lexical
 ;;; input, if it appears in the derived input pool, we just set the
 ;;; distance of that entry to 0.  Otherwise, we add a new entry with
-;;; distance 0, and probability 0.
+;;; distance 0.
 (defmethod compute-new-input-pool (instruction)
   (let* ((derived (compute-derived-input-pool instruction))
          (result derived)
@@ -123,8 +117,7 @@
           do (if (null entry)
                  (push (make-instance 'pool-item
                          :lexical-location input
-                         :distance 0
-                         :call-probability 0)
+                         :distance 0)
                        result)
                  (reinitialize-instance entry :distance 0)))
     (check-pool-validity result)))
