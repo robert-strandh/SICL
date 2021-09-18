@@ -21,3 +21,14 @@
     :initarg :literals-vector-index-ast
     :reader literals-vector-index-ast)
    (%literal-cell :initarg :literal-cell :reader literal-cell)))
+
+(cleavir-io:define-save-info patch-literal-ast
+  (:literal-ast literal-ast)
+  (:code-vector-index-ast code-vector-index-ast)
+  (:literals-vector-index-ast literals-vector-index-ast)
+  (:literal-cell literal-cell))
+
+(defmethod cleavir-ast:children ((ast patch-literal-ast))
+  (list (literal-ast ast)
+        (code-vector-index-ast ast)
+        (literals-vector-index-ast ast)))
