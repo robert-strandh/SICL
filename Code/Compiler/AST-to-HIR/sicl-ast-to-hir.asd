@@ -20,4 +20,5 @@
    (:file "hoist-load-time-value")
    (:file "eliminate-fdefinition-asts")
    (:file "process-constant-inputs")
+   (:file "compile-patch-literal-ast")
    (:file "ast-to-hir")))
