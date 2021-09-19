@@ -13,4 +13,4 @@
                      (name (name call-site)))
                  (setf (car cell)
                        (funcall function-cell-function name))))
-    (funcall (hir-thunks code-object) (constants code-object) nil)))
+    (funcall (hir-thunks code-object) nil nil)))
