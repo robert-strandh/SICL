@@ -32,8 +32,3 @@
                   code-vector-index-location
                   literals-vector-index-location)
             :successors (cleavir-ast-to-hir:successors context))))))))))
-                     
-      
-   
-
-               
