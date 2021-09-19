@@ -351,6 +351,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; PATCH-LITERAL-INSTRUCTION
+
+(defmethod process-inputs
+    (predecessor (instruction sicl-ir:patch-literal-instruction))
+  (process-inputs-for-call-instruction
+   (ensure-inputs-available predecessor instruction)
+   instruction))
+
+;;; The PATCH-LITERAL-INSTRUCTION has no outputs.
+(defmethod process-outputs
+    (predecessor (instruction sicl-ir:patch-literal-instruction))
+  predecessor)
+
+(defmethod compute-output-arrangement
+    ((instruction sicl-ir:patch-literal-instruction) arrangement)
+  arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; ENCLOSE-INSTRUCTION
 
 (defmethod process-inputs

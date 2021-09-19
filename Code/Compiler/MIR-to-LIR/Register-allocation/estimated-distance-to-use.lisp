@@ -39,7 +39,8 @@
            cleavir-ir:initialize-values-instruction
            cleavir-ir:initialize-closure-instruction
            cleavir-ir:enclose-instruction
-           cleavir-ir:multiple-value-call-instruction)))
+           cleavir-ir:multiple-value-call-instruction
+           sicl-ir:patch-literal-instruction)))
 
 ;;; I suspect there might be call instructions that don't actually use
 ;;; the dynamic environment, for example ENCLOSE-INSTRUCTION, but this

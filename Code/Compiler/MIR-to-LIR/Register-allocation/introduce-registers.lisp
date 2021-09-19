@@ -176,7 +176,8 @@ Did you forget to call ENSURE-INPUT-AVAILABLE?"
   (def cleavir-ir:initialize-values-instruction)
   (def cleavir-ir:initialize-closure-instruction)
   (def cleavir-ir:enclose-instruction)
-  (def cleavir-ir:multiple-value-call-instruction))
+  (def cleavir-ir:multiple-value-call-instruction)
+  (def sicl-ir:patch-literal-instruction))
 
 (defun introduce-registers (mir)
   (cleavir-ir:map-local-instructions
