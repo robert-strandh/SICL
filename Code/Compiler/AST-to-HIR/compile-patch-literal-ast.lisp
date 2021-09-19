@@ -31,4 +31,5 @@
             (list literal-location
                   code-vector-index-location
                   literals-vector-index-location)
+            :literal-cell (sicl-ast:literal-cell ast)
             :successors (cleavir-ast-to-hir:successors context))))))))))
