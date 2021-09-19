@@ -40,6 +40,11 @@
      (push (make-instance 'call-site
              :name 'sicl-run-time:call-with-values
              :instruction instruction)
+           (call-sites code-object)))
+    (sicl-ir:patch-literal-instruction
+     (push (make-instance 'call-site
+             :name 'sicl-run-time:resolve-load-time-value
+             :instruction instruction)
            (call-sites code-object)))))
 
 (defun establish-call-sites (code-object)
