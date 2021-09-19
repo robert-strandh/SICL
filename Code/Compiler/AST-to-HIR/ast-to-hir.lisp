@@ -2,14 +2,11 @@
 
 (defun ast-to-hir (client ast)
     (eliminate-fdefinition-asts ast)
-  (let* ((cleavir-cst-to-ast::*origin* nil)
-         (parameter-ast
-           (make-instance 'cleavir-ast:lexical-ast
-             :name (gensym))))
+  (let ((cleavir-cst-to-ast::*origin* nil))
     (multiple-value-bind (hoisted-ast load-time-value-count)
-        (hoist-load-time-value ast parameter-ast)
+        (hoist-load-time-value ast)
       (let* ((wrapped-ast (make-instance 'cleavir-ast:function-ast
-                            :lambda-list (list parameter-ast)
+                            :lambda-list '()
                             :body-ast hoisted-ast))
              (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
              (constants (make-array load-time-value-count
