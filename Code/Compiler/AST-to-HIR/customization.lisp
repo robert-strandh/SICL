@@ -25,17 +25,3 @@
   
 (defmethod cleavir-ast-to-hir:compile-ast :around ((client client) ast context)
   (maybe-wrap client ast context #'call-next-method))
-
-(defmethod cleavir-ast-to-hir:compile-ast
-    ;; FIXME: figure out why we are not called with a CLIENT
-    ;; ((client client) (ast cleavir-ast:load-constant-ast) context)
-    (client (ast cleavir-ast:load-constant-ast) context)
-  ;; (format *trace-output* "**********************HERE***********~%")
-  (with-accessors ((results cleavir-ast-to-hir:results)
-                   (successors cleavir-ast-to-hir:successors))
-      context
-    (make-instance 'sicl-ir:load-constant-instruction
-      :location-info (cleavir-ast:location-info ast)
-      :inputs '()
-      :output (first results)
-      :successor (first successors))))
