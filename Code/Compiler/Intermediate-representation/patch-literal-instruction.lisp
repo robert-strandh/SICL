@@ -23,3 +23,7 @@
   (;; This slot holds a CONS cell that is shared with the LOAD-LITERAL
    ;; instruction.
    (%literal-cell :initarg :literal-cell :reader literal-cell)))
+
+(defmethod cleavir-ir:clone-initargs append
+    ((instruction patch-literal-instruction))
+  (list :literal-cell (literal-cell instruction)))
