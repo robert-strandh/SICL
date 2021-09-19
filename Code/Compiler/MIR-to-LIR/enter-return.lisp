@@ -85,4 +85,5 @@
   predecessor)
 
 (defun install-call-site-descriptor (predecessor successor)
+  (declare (ignore successor))
   predecessor)
