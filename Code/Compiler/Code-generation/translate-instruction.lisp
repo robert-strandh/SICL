@@ -105,3 +105,10 @@
     :mnemonic "JMP"
     :operands
     (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+
+(defmethod translate-simple-instruction
+    ((instruction sicl-ir:patch-literal-instruction))
+  (make-instance 'cluster:code-command
+    :mnemonic "JMP"
+    :operands
+    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
