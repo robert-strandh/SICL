@@ -32,24 +32,26 @@
 ;;; Since we want the innermost LOAD-TIME-VALUEs to be executed first,
 ;;; we must push them in the order of the outermost first.  For that
 ;;; reason, we REVERSE the list before processing it.
-(defun hoist-load-time-value (ast array-variable-ast)
+(defun hoist-load-time-value (ast)
   (let ((load-time-value-asts (find-load-time-value-asts ast))
         (form-asts (list ast)))
     (loop for count from 0
           for load-time-value-ast in (reverse load-time-value-asts)
           for form-ast = (cleavir-ast:form-ast load-time-value-ast)
-          for index-ast = (make-instance 'cleavir-ast:constant-ast
-                            :value count)
-          for aset-ast = (make-instance 'cleavir-ast:aset-ast
-                           :array-ast array-variable-ast
-                           :index-ast index-ast
-                           :element-ast form-ast
-                           :element-type t
-                           :simple-p t
-                           :boxed-p t)
-          do (change-class load-time-value-ast 'cleavir-ast:load-constant-ast
-                           :location-info count)
-             (push aset-ast form-asts)
+          for code-vector-index-ast
+            = (make-instance 'cleavir-ast:constant-ast :value 0)
+          for literals-vector-index-ast
+            = (make-instance 'cleavir-ast:constant-ast :value 0)
+          for literal-cell = (list nil)
+          for patch-literal-ast
+            = (make-instance 'sicl-ast:patch-literal-ast
+                :literal-cell literal-cell
+                :literal-ast form-ast
+                :code-vector-index-ast code-vector-index-ast
+                :literals-vector-index-ast literals-vector-index-ast)
+          do (change-class load-time-value-ast 'cleavir-ast:load-literal-ast
+                           :location-info literal-cell)
+             (push patch-literal-ast form-asts)
           finally (return (values (make-instance 'cleavir-ast:progn-ast
                                     :form-asts form-asts)
                                   count)))))
