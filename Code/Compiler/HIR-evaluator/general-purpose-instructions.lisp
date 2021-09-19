@@ -215,3 +215,13 @@
     (make-thunk (client instruction lexical-environment :outputs 1)
       (setf (output 0) (car cell))
       (successor 0))))
+
+(defmethod instruction-thunk
+    (client
+     (instruction sicl-ir:patch-literal-instruction)
+     lexical-environment)
+  (let ((cell (sicl-ir:literal-cell instruction)))
+    (make-thunk (client instruction lexical-environment :inputs 3)
+      (sicl-run-time:resolve-load-time-value (input 0) (input 1) (input 2))
+      (setf (car cell) (input 0))
+      (successor 0))))
