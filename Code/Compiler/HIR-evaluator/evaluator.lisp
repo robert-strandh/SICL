@@ -92,14 +92,13 @@
            (ensure-lref (cleavir-ir:dynamic-environment-output enter-instruction) lexical-environment))
          (arguments-lref
            (ensure-lref 'arguments lexical-environment))
-         (argument-lref
-           (ensure-lref (third (cleavir-ir:outputs enter-instruction)) lexical-environment))
          (successor
            (cleavir-ir:first-successor enter-instruction))
          (thunk
            (cleavir-meter:with-meter (meter *instruction-thunk-meter*)
              (instruction-thunk client successor lexical-environment))))
-    (lambda (constants-vector static-environment)
+    (lambda (unused static-environment)
+      (declare (ignore unused))
       (let ((lexical-locations (lexical-environment-vector lexical-environment))
             (thunk thunk))
         (macrolet ((lref (lref)
@@ -108,7 +107,6 @@
           (setf (lref static-environment-lref-2) static-environment)
           (setf (lref dynamic-environment-lref-1) '())
           (setf (lref dynamic-environment-lref-2) '())
-          (setf (lref arguments-lref) (vector constants-vector))
-          (setf (lref argument-lref) constants-vector))
+          (setf (lref arguments-lref) (vector nil)))
         (catch 'return
           (loop (setf thunk (funcall thunk lexical-locations))))))))
