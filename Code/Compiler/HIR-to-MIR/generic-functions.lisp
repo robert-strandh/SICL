@@ -16,6 +16,7 @@
     cleavir-ir:catch-instruction
     cleavir-ir:dynamic-catch-instruction
     cleavir-ir:unwind-instruction
+    sicl-ir:patch-literal-instruction
     cleavir-ir:eq-instruction
     cleavir-ir:multiple-value-call-instruction
     cleavir-ir:save-values-instruction
