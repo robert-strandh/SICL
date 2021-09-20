@@ -79,11 +79,12 @@
                       :callee-name 'make-instance
                       :input double-float-constant-location)))
              (cleavir-ir:insert-instruction-before
-              (make-instance 'cleavir-ir:load-constant-instruction
-                :dynamic-environment-location dynamic-environment
-                :output double-float-constant-location
-                :location-info
-                (sicl-compiler:ensure-constant code-object 'double-float))
+              (let ((literal 'double-float))
+                (sicl-compiler:ensure-constant code-object literal)
+                (make-instance 'cleavir-ir:load-literal-instruction
+                  :dynamic-environment-location dynamic-environment
+                  :output double-float-constant-location
+                  :location-info (list literal)))
               instruction)
              (cleavir-ir:insert-instruction-before call-instruction instruction)
              (cleavir-ir:insert-instruction-before
@@ -106,12 +107,12 @@
                    (make-instance 'cleavir-ir:lexical-location
                      :name (gensym))))
              (cleavir-ir:insert-instruction-before
-              (make-instance 'cleavir-ir:load-constant-instruction
-                :dynamic-environment-location dynamic-environment
-                :output message-constant-location
-                :location-info
-                (sicl-compiler:ensure-constant
-                 code-object "Can't box ((un)signed-byte 64) yet"))
+              (let ((literal "Can't box ((un)signed-byte 64) yet"))
+                (sicl-compiler:ensure-constant code-object literal)
+                (make-instance 'cleavir-ir:load-literal-instruction
+                  :dynamic-environment-location dynamic-environment
+                  :output message-constant-location
+                  :location-info (list literal)))
               instruction)
              (change-class instruction 'cleavir-ir:named-call-instruction
                :dynamic-environment-location dynamic-environment
