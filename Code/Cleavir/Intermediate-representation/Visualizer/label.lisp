@@ -186,7 +186,6 @@
 (defmethod label ((instruction cleavir-ir:store-to-static-environment-instruction))
   "Store")
 
-(defmethod label ((instruction sicl-ir:load-constant-instruction))
-  (format nil "Load constant ~a"
-          (aref (sicl-ir:constants instruction)
-                (cleavir-ir:location-info instruction))))
+(defmethod label ((instruction cleavir-ir:load-literal-instruction))
+  (format nil "Load literal ~a"
+          (car (cleavir-ir:location-info instruction))))
