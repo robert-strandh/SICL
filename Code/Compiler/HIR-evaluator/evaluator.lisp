@@ -107,6 +107,6 @@
           (setf (lref static-environment-lref-2) static-environment)
           (setf (lref dynamic-environment-lref-1) '())
           (setf (lref dynamic-environment-lref-2) '())
-          (setf (lref arguments-lref) (vector nil)))
+          (setf (lref arguments-lref) (vector)))
         (catch 'return
           (loop (setf thunk (funcall thunk lexical-locations))))))))

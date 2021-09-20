@@ -19,7 +19,7 @@
     (multiple-value-bind (hoisted-ast load-time-value-count)
         (hoist-load-time-value ast parameter-ast)
       (let* ((wrapped-ast (make-instance 'cleavir-ast:function-ast
-                            :lambda-list (list parameter-ast)
+                            :lambda-list '();(list parameter-ast)
                             :body-ast hoisted-ast))
              (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
              (code-object
