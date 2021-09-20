@@ -48,15 +48,16 @@
              until (null remaining)
              do (when (and (typep input 'cleavir-ir:constant-input)
                            (not (trivial-constant-p (cleavir-ir:value input))))
-                  (let* ((value (cleavir-ir:value input))
-                         (pos (ensure-constant code-object value)))
-                    (let ((temp (make-instance 'cleavir-ir:lexical-location
-                                  :name (gensym))))
-                      (cleavir-ir:insert-instruction-before
-                       (make-instance 'sicl-ir:load-constant-instruction
-                         :location-info pos
-                         :output temp)
-                       instruction)
-                      (setf (first remaining) temp))))))
+                  (let ((value (cleavir-ir:value input))
+                        (temp (make-instance 'cleavir-ir:lexical-location
+                                :name (gensym))))
+                    (cleavir-ir:insert-instruction-before
+                     (make-instance 'cleavir-ir:load-literal-instruction
+                       :location-info (list value)
+                       :output temp)
+                     instruction)
+                    (setf (first remaining) temp)))))
      initial-instruction)
     (cleavir-ir:reinitialize-data initial-instruction)))
+
+
