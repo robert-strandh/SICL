@@ -82,10 +82,6 @@
 (defun top-level-hir-to-host-function (client enter-instruction)
   (let* ((*instruction-thunks* (make-hash-table :test #'eq))
          (lexical-environment (make-lexical-environment))
-         (static-environment-lref-1
-           (ensure-lref 'static-environment lexical-environment))
-         (static-environment-lref-2
-           (ensure-lref (cleavir-ir:static-environment enter-instruction) lexical-environment))
          (dynamic-environment-lref-1
            (ensure-lref 'dynamic-environment lexical-environment))
          (dynamic-environment-lref-2
@@ -102,8 +98,6 @@
             (thunk thunk))
         (macrolet ((lref (lref)
                      `(%lref lexical-locations ,lref)))
-          (setf (lref static-environment-lref-1) nil)
-          (setf (lref static-environment-lref-2) nil)
           (setf (lref dynamic-environment-lref-1) '())
           (setf (lref dynamic-environment-lref-2) '())
           (setf (lref arguments-lref) (vector)))
