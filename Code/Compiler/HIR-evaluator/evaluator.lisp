@@ -97,8 +97,7 @@
          (thunk
            (cleavir-meter:with-meter (meter *instruction-thunk-meter*)
              (instruction-thunk client successor lexical-environment))))
-    (lambda (unused static-environment)
-      (declare (ignore unused))
+    (lambda (static-environment)
       (let ((lexical-locations (lexical-environment-vector lexical-environment))
             (thunk thunk))
         (macrolet ((lref (lref)
