@@ -38,7 +38,6 @@
     cleavir-ir:negate-instruction
     cleavir-ir:fixnump-instruction
     cleavir-ir:consp-instruction
-    sicl-ir:load-constant-instruction
     cleavir-ir:load-literal-instruction
     sicl-ir:named-call-instruction
     cleavir-ir:enclose-instruction
