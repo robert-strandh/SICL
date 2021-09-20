@@ -731,19 +731,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LOAD-CONSTANT-INSTRUCTION
-
-(defmethod process-outputs
-    (predecessor (instruction cleavir-ir:load-constant-instruction))
-  (ensure-one-unattributed
-   predecessor instruction (first (cleavir-ir:outputs instruction))))
-
-(defmethod compute-output-arrangement
-    ((instruction cleavir-ir:load-constant-instruction) arrangement)
-  (compute-output-arrangement-default instruction arrangement))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; LOAD-LITERAL-INSTRUCTION
 
 (defmethod process-outputs
