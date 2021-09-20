@@ -199,16 +199,6 @@
 
 (defmethod instruction-thunk
     (client
-     (instruction sicl-ir:load-constant-instruction)
-     lexical-environment)
-  (let ((index (cleavir-ir:location-info instruction))
-        (constants (sicl-ir:constants instruction)))
-    (make-thunk (client instruction lexical-environment :outputs 1)
-      (setf (output 0) (aref constants index))
-      (successor 0))))
-
-(defmethod instruction-thunk
-    (client
      (instruction cleavir-ir:load-literal-instruction)
      lexical-environment)
   (let ((cell (cleavir-ir:location-info instruction)))
