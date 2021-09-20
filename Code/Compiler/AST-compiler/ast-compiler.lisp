@@ -40,12 +40,6 @@
         (sicl-hir-transformations:eliminate-write-cell-instructions hir)
         (cleavir-hir-transformations:eliminate-catches hir)
         (process-constant-inputs code-object)
-        (let ((constants (constants code-object)))
-          (cleavir-ir:map-instructions-arbitrary-order
-           (lambda (instruction)
-             (when (typep instruction 'sicl-ir:load-constant-instruction)
-               (setf (sicl-ir:constants instruction) constants)))
-           hir))
         (cleavir-remove-useless-instructions:remove-useless-instructions hir)
         ;; Replacing aliases does not appear to have a great effect when
         ;; code generation is disabled.  Try removing this commented line
