@@ -81,7 +81,6 @@
    #:standard-object-class-of-instruction
    #:phi-instruction
    #:use-instruction
-   #:load-constant-instruction
    #:load-literal-instruction
    #:location-info
    #:aref-instruction #:aset-instruction
