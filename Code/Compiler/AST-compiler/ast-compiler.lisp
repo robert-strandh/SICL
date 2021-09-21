@@ -1,57 +1,19 @@
 (cl:in-package #:sicl-compiler)
 
-(defun check-every-location-is-defined (mir)
-  (cleavir-ir:map-instructions-arbitrary-order
-   (lambda (instruction)
-     (dolist (input (cleavir-ir:inputs instruction))
-       (when (and (typep input '(or cleavir-ir:lexical-location cleavir-ir:raw-datum))
-                  (null (cleavir-ir:defining-instructions input)))
-         (error "~s is used but never defined" input))))
-   mir))
-
 (defun compile-ast (client ast)
-  (eliminate-fdefinition-asts ast)
-  (let* ((cleavir-cst-to-ast::*origin* nil)
-         (*gensym-counter* 0)
-         (parameter-ast
-           (make-instance 'cleavir-ast:lexical-ast
-             :name (gensym))))
-    (multiple-value-bind (hoisted-ast load-time-value-count)
-        (hoist-load-time-value ast parameter-ast)
-      (let* ((wrapped-ast (make-instance 'cleavir-ast:function-ast
-                            :lambda-list '();(list parameter-ast)
-                            :body-ast hoisted-ast))
-             (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
-             (constants (make-array load-time-value-count
-                                    :adjustable t :fill-pointer t))
-             (code-object
-               (make-instance 'code-object
-                 :constants constants
-                 :ast ast
-                 :ir hir)))
-        ; (check-every-location-is-defined hir)
-        (cleavir-partial-inlining:do-inlining hir)
-        (sicl-argument-processing:process-parameters hir)
-        (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
-        (sicl-hir-transformations:eliminate-multiple-to-fixed-instructions hir)
-        (cleavir-hir-transformations::process-captured-variables hir)
-        (sicl-hir-transformations:eliminate-create-cell-instructions hir)
-        (sicl-hir-transformations:eliminate-fetch-instructions hir)
-        (sicl-hir-transformations:eliminate-read-cell-instructions hir)
-        (sicl-hir-transformations:eliminate-write-cell-instructions hir)
-        (cleavir-hir-transformations:eliminate-catches hir)
-        (process-constant-inputs code-object)
-        (cleavir-remove-useless-instructions:remove-useless-instructions hir)
-        ;; Replacing aliases does not appear to have a great effect when
-        ;; code generation is disabled.  Try removing this commented line
-        ;; when code generation is again enabled.
-        (cleavir-hir-transformations:replace-aliases hir)
-        (establish-call-sites code-object)
-        (setf (hir-thunks code-object)
-              (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
-        (sicl-hir-transformations:eliminate-append-values-instructions hir)
-        (sicl-hir-to-mir:hir-to-mir client code-object)
-        (sicl-mir-to-lir:mir-to-lir client hir)
-        ;; (multiple-value-bind (instructions label-map)
-        ;;   (cluster:assemble (sicl-code-generation:generate-code hir2))
-        code-object))))
+  (multiple-value-bind (hir constants)
+      (sicl-ast-to-hir:ast-to-hir client ast)
+    (let ((code-object
+            (make-instance 'code-object
+              :constants constants
+              :ast ast
+              :ir hir)))
+      (establish-call-sites code-object)
+      (setf (hir-thunks code-object)
+            (sicl-hir-evaluator:top-level-hir-to-host-function client hir))
+      (sicl-hir-transformations:eliminate-append-values-instructions hir)
+      (sicl-hir-to-mir:hir-to-mir client code-object)
+      (sicl-mir-to-lir:mir-to-lir client hir)
+      ;; (multiple-value-bind (instructions label-map)
+      ;;   (cluster:assemble (sicl-code-generation:generate-code hir2))
+      code-object)))
