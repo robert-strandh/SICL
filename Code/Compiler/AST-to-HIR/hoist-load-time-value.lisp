@@ -10,7 +10,7 @@
 ;;;; top-level function, and the ELEMENT-AST is the FORM-AST of the
 ;;;; LOAD-TIME-VALUE AST.  The index starts with 0 and is incremented
 ;;;; for each new LOAD-TIME-VALUE AST found.  The LOAD-TIME-VALUE AST
-;;;; itself is turned into a LOAD-CONSTANT-AST with the index as its
+;;;; itself is turned into a LOAD-LITERAL-AST with the index as its
 ;;;; LOCATION-INFO.  We return a new AST which is the one we were
 ;;;; given, preceded by these ASET-ASTs and all if it wrapped in a
 ;;;; PROGN-AST.  We also return the number of LOAD-TIME-VALUE ASTs
