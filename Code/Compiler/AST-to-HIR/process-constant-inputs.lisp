@@ -39,12 +39,6 @@
 ;;; top-level function as an argument, when the code object is tied
 ;;; to some environment.
 
-(defun ensure-constant (constants constant)
-  (let ((pos (position constant constants)))
-    (if (null pos)
-        (vector-push-extend constant constants)
-        pos)))
-
 (defun process-constant-inputs (initial-instruction constants)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)

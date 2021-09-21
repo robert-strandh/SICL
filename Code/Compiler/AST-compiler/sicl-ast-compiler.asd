@@ -13,7 +13,6 @@
   :serial t
   :components
   ((:file "hoist-load-time-value")
-   (:file "ensure-constant")
    (:file "process-constant-inputs")
    (:file "establish-call-sites")
    (:file "eliminate-fdefinition-asts")
