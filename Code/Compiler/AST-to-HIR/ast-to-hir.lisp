@@ -17,14 +17,12 @@
         (sicl-hir-transformations:eliminate-fixed-to-multiple-instructions hir)
         (sicl-hir-transformations:eliminate-multiple-to-fixed-instructions hir)
         (cleavir-hir-transformations::process-captured-variables hir)
-        ;; Replacing aliases does not appear to have a great effect when
-        ;; code generation is disabled.  Try removing this commented line
-        ;; when code generation is again enabled.
-        ;; (cleavir-hir-transformations:replace-aliases hir)
         (sicl-hir-transformations:eliminate-create-cell-instructions hir)
         (sicl-hir-transformations:eliminate-fetch-instructions hir)
         (sicl-hir-transformations:eliminate-read-cell-instructions hir)
         (sicl-hir-transformations:eliminate-write-cell-instructions hir)
+        (cleavir-hir-transformations:eliminate-catches hir)
         (process-constant-inputs hir constants)
         (cleavir-remove-useless-instructions:remove-useless-instructions hir)
-        hir))))
+        (cleavir-hir-transformations:replace-aliases hir)
+        (values hir constants)))))
