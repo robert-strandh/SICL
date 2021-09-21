@@ -2,4 +2,4 @@
 
 (defun ensure-literal (literals literal)
   (when (null (position literal literals))
-    (vector-push-extend literals literal)))
+    (vector-push-extend literal literals)))
