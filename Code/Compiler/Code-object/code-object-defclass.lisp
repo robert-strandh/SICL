@@ -137,8 +137,7 @@
 
 (defclass code-object ()
   ((%instructions :initform '() :accessor instructions)
-   (%constants :initform (make-array 0 :adjustable t :fill-pointer t)
-               :reader constants)
+   (%constants :initarg :constants :reader constants)
    ;; This slot contains a list of instances of the CALL-SITE class.
    (%call-sites :initform '() :accessor call-sites)
    (%function-names :initform '() :accessor function-names)

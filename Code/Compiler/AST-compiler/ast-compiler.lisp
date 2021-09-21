@@ -22,12 +22,13 @@
                             :lambda-list '();(list parameter-ast)
                             :body-ast hoisted-ast))
              (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
+             (constants (make-array load-time-value-count
+                                    :adjustable t :fill-pointer t))
              (code-object
                (make-instance 'code-object
+                 :constants constants
                  :ast ast
                  :ir hir)))
-        (adjust-array (constants code-object) load-time-value-count
-                      :fill-pointer t)
         ; (check-every-location-is-defined hir)
         (cleavir-partial-inlining:do-inlining hir)
         (sicl-argument-processing:process-parameters hir)
