@@ -51,6 +51,7 @@
                   (let ((value (cleavir-ir:value input))
                         (temp (make-instance 'cleavir-ir:lexical-location
                                 :name (gensym))))
+                    (ensure-constant code-object value)
                     (cleavir-ir:insert-instruction-before
                      (make-instance 'cleavir-ir:load-literal-instruction
                        :location-info (list value)
