@@ -12,9 +12,7 @@
                #:sicl-code-object)
   :serial t
   :components
-  ((:file "hoist-load-time-value")
-   (:file "process-constant-inputs")
-   (:file "establish-call-sites")
+  ((:file "establish-call-sites")
    (:file "eliminate-fdefinition-asts")
    (:file "ast-compiler")
    (:file "tie-code-object")
