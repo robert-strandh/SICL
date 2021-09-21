@@ -13,7 +13,6 @@
   :serial t
   :components
   ((:file "establish-call-sites")
-   (:file "eliminate-fdefinition-asts")
    (:file "ast-compiler")
    (:file "tie-code-object")
    (:file "cst-eval")))
