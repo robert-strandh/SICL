@@ -6,7 +6,7 @@
            #:code-object
            #:instructions
            #:constants
-           #:ensure-constant
+           #:ensure-literal
            #:establish-call-site
            #:function-names
            #:ir
