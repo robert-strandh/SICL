@@ -88,39 +88,20 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:bind-instruction))
-  (make-instance 'cluster:code-command
-    :mnemonic "JMP"
-    :operands
-    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+  (translate-named-call instruction))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unwind-instruction))
-  (list (make-instance 'cluster:code-command
-          :mnemonic "CALL"
-          :operands
-          (list (translate-datum (first (cleavir-ir:inputs instruction)))))
-        (make-instance 'cluster:code-command
-          :mnemonic "JMP"
-          :operands
-          (list (translate-datum sicl-mir-to-lir:*rax*)))))
+  (translate-named-call instruction))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:multiple-value-call-instruction))
-  (make-instance 'cluster:code-command
-    :mnemonic "JMP"
-    :operands
-    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+  (translate-named-call instruction))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:initialize-values-instruction))
-  (make-instance 'cluster:code-command
-    :mnemonic "JMP"
-    :operands
-    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+  (translate-named-call instruction))
 
 (defmethod translate-simple-instruction
     ((instruction sicl-ir:patch-literal-instruction))
-  (make-instance 'cluster:code-command
-    :mnemonic "JMP"
-    :operands
-    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+  (translate-named-call instruction))
