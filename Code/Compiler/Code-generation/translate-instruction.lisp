@@ -58,13 +58,11 @@
 ;;; target immediately follows the instruction.  But we set that jump
 ;;; target to all 0s because it is going to be filled in by the
 ;;; call-site manager.
-;;;
-;;; FIXME: The label generated as part of the code for named call
-;;; instructions needs to be associated with the IR instruction so
-;;; that it can be referred to later.
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:catch-instruction))
+(defun translate-named-call (instruction)
+  ;; FIXME: The label generated as part of the code for named call
+  ;; instructions needs to be associated with the IR instruction so
+  ;; that it can be referred to later.
+  (declare (ignore instruction))
   (list (make-instance 'cluster:code-command
           :mnemonic "JMP"
           :operands
@@ -72,6 +70,10 @@
         (make-instance 'cluster:label)
         (make-instance 'cluster:data-command
           :data-bytes '(0 0 0 0 0 0 0 0))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:catch-instruction))
+  (translate-named-call instruction))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:catch-instruction) next)
