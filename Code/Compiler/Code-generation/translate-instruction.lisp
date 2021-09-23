@@ -53,15 +53,25 @@
     :operands
     (list (translate-datum (first (cleavir-ir:inputs instruction))))))
 
-;;; The label to which we jump is bogus, because it is going to be set
-;;; by the call-site manager.  But we need to give some operand to
-;;; make-instance, so we take what we have.
+;;; For named call instructions we generate an indirect near jump.
+;;; The displacement is 0 because the address containing the jump
+;;; target immediately follows the instruction.  But we set that jump
+;;; target to all 0s because it is going to be filled in by the
+;;; call-site manager.
+;;;
+;;; FIXME: The label generated as part of the code for named call
+;;; instructions needs to be associated with the IR instruction so
+;;; that it can be referred to later.
+
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:catch-instruction))
-  (make-instance 'cluster:code-command
-    :mnemonic "JMP"
-    :operands
-    (find-instruction-label (cleavir-ir:first-successor instruction))))
+  (list (make-instance 'cluster:code-command
+          :mnemonic "JMP"
+          :operands
+          (cluster:make-memory-operand 64 :displacement 0))
+        (make-instance 'cluster:label)
+        (make-instance 'cluster:data-command
+          :data-bytes '(0 0 0 0 0 0 0 0))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:catch-instruction) next)
