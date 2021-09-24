@@ -79,6 +79,10 @@
     ((instruction cleavir-ir:catch-instruction))
   (translate-named-call instruction))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:dynamic-catch-instruction))
+  (translate-named-call instruction))
+
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:catch-instruction) next)
   (let ((successors (cleavir-ir:successors instruction)))
