@@ -33,7 +33,7 @@
             :outputs '()
             :successors (list successor)))
         (instruction
-          (make-instance 'cleavir-ir:fixnum-less-instruction
+          (make-instance 'cleavir-ir:signed-less-instruction
             :inputs (list x86-64:*argument-count*
                           (cleavir-ir:make-immediate-input
                            (* 2 (1+ (length x86-64:*argument-registers*)))))
