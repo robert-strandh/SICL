@@ -1,34 +1,28 @@
 (cl:in-package #:sicl-code-generation)
 
-(defgeneric translate-datum (datum))
+(defun translate-input (datum instruction)
+  (if (typep datum 'cleavir-ir:immediate-input)
+      (make-instance 'cluster:immediate-operand
+        :value (cleavir-ir:value datum))
+      (multiple-value-bind (stack-location register-number)
+          (arr::find-attribution (ra::input-arrangement instruction) datum)
+        (assert (not (and (null stack-location) (null register-number))))
+        (if (null stack-location)
+            (make-instance 'cluster:gpr-operand
+              :code-number register-number
+              :size 64)
+            (make-instance 'cluster:memory-operand
+              :base-register (x86-64::register-number x86-64::*rbp*)
+              :displacement (- (* 8 stack-location)))))))
 
-(defmethod translate-datum ((datum cleavir-ir:immediate-input))
-  (make-instance 'cluster:immediate-operand
-    :value (cleavir-ir:value datum)))
-
-(defun register-code-number (register-location)
-  (position register-location
-            (list x86-64:*rax*
-                  x86-64:*rbx*
-                  x86-64:*rcx*
-                  x86-64:*rdx*
-                  x86-64:*rsp*
-                  x86-64:*rbp*
-                  x86-64:*rsi*
-                  x86-64:*rdi*
-                  x86-64:*r8*
-                  x86-64:*r9*
-                  x86-64:*r10*
-                  x86-64:*r11*
-                  x86-64:*r12*
-                  x86-64:*r13*
-                  x86-64:*r14*
-                  x86-64:*r15*)))
-
-(defmethod translate-datum ((datum cleavir-ir:register-location))
-  (make-instance 'cluster:gpr-operand
-    :code-number (register-code-number datum)
-    :size 64))
-
-(defun translate-base-register (register-location)
-  (register-code-number register-location))
+(defun translate-output (datum instruction)
+  (multiple-value-bind (stack-location register-number)
+      (arr::find-attribution (ra::output-arrangement instruction) datum)
+    (assert (not (and (null stack-location) (null register-number))))
+    (if (null stack-location)
+        (make-instance 'cluster:gpr-operand
+          :code-number register-number
+          :size 64)
+        (make-instance 'cluster:memory-operand
+          :base-register (x86-64::register-number x86-64::*rbp*)
+          :displacement (- (* 8 stack-location))))))
