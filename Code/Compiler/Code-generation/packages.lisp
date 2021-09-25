@@ -3,5 +3,6 @@
 (defpackage #:sicl-code-generation
   (:use #:common-lisp)
   (:local-nicknames (#:arr #:sicl-register-arrangement)
-                    (#:x86-64 #:sicl-x86-64-registers))
+                    (#:x86-64 #:sicl-x86-64-registers)
+                    (#:ra #:sicl-register-allocation))
   (:export #:generate-code))
