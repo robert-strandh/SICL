@@ -75,6 +75,9 @@
     ((instruction sicl-ir:named-call-instruction))
   (translate-named-call instruction))
 
+;;; This method is called when the CATCH-INSTRUCTION has a single
+;;; successor.  The only way that I can see that happening would be
+;;; if there is an empty TAGBODY.
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:catch-instruction))
   (translate-named-call instruction))
@@ -86,13 +89,13 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:catch-instruction) next)
   (let ((successors (cleavir-ir:successors instruction)))
-    (cons (translate-simple-instruction instruction)
-          (if (eq (cleavir-ir:first-successor instruction) next)
-              '()
-              (list (make-instance 'cluster:code-command
-                      :mnemonic "JMP"
-                      :operands
-                      (list (find-instruction-label (first successors)))))))))
+    (append (translate-named-call instruction)
+            (if (eq (cleavir-ir:first-successor instruction) next)
+                '()
+                (list (make-instance 'cluster:code-command
+                        :mnemonic "JMP"
+                        :operands
+                        (list (find-instruction-label (first successors)))))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:bind-instruction))
