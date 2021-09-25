@@ -14,6 +14,5 @@
       (sicl-hir-transformations:eliminate-append-values-instructions hir)
       (sicl-hir-to-mir:hir-to-mir client code-object)
       (sicl-mir-to-lir:mir-to-lir client hir)
-      ;; (multiple-value-bind (instructions label-map)
-      ;;   (cluster:assemble (sicl-code-generation:generate-code hir2))
+      ;; (cluster:assemble (sicl-code-generation:generate-code hir))
       code-object)))
