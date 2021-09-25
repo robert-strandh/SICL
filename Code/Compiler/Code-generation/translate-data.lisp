@@ -8,22 +8,22 @@
 
 (defun register-code-number (register-location)
   (position register-location
-            (list sicl-mir-to-lir:*rax*
-                  sicl-mir-to-lir:*rbx*
-                  sicl-mir-to-lir:*rcx*
-                  sicl-mir-to-lir:*rdx*
-                  sicl-mir-to-lir:*rsp*
-                  sicl-mir-to-lir:*rbp*
-                  sicl-mir-to-lir:*rsi*
-                  sicl-mir-to-lir:*rdi*
-                  sicl-mir-to-lir:*r8*
-                  sicl-mir-to-lir:*r9*
-                  sicl-mir-to-lir:*r10*
-                  sicl-mir-to-lir:*r11*
-                  sicl-mir-to-lir:*r12*
-                  sicl-mir-to-lir:*r13*
-                  sicl-mir-to-lir:*r14*
-                  sicl-mir-to-lir:*r15*)))
+            (list x86-64:*rax*
+                  x86-64:*rbx*
+                  x86-64:*rcx*
+                  x86-64:*rdx*
+                  x86-64:*rsp*
+                  x86-64:*rbp*
+                  x86-64:*rsi*
+                  x86-64:*rdi*
+                  x86-64:*r8*
+                  x86-64:*r9*
+                  x86-64:*r10*
+                  x86-64:*r11*
+                  x86-64:*r12*
+                  x86-64:*r13*
+                  x86-64:*r14*
+                  x86-64:*r15*)))
 
 (defmethod translate-datum ((datum cleavir-ir:register-location))
   (make-instance 'cluster:gpr-operand
