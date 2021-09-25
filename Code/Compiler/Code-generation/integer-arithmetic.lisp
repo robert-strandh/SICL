@@ -28,14 +28,14 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:signed-add-instruction))
-  (assert (eq (first (cleavir-ir:inputs instruction))
-              (first (cleavir-ir:outputs instruction))))
-  (make-instance 'cluster:code-command
-    :mnemonic "ADD"
-    :operands
-    (list
-     (translate-datum (first (cleavir-ir:inputs instruction)))
-     (translate-datum (second (cleavir-ir:inputs instruction))))))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "ADD"
+      :operands
+      (list
+       (translate-output destination instruction)
+       (translate-input operand instruction)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-add-instruction) next)
@@ -45,14 +45,14 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:signed-sub-instruction))
-  (assert (eq (first (cleavir-ir:inputs instruction))
-              (first (cleavir-ir:outputs instruction))))
-  (make-instance 'cluster:code-command
-    :mnemonic "SUB"
-    :operands
-    (list
-     (translate-datum (first (cleavir-ir:inputs instruction)))
-     (translate-datum (second (cleavir-ir:inputs instruction))))))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "SUB"
+      :operands
+      (list
+       (translate-output destination instruction)
+       (translate-input operand instruction)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-sub-instruction) next)
@@ -62,12 +62,12 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:negate-instruction))
-  (assert (eq (first (cleavir-ir:inputs instruction))
-              (first (cleavir-ir:outputs instruction))))
   (make-instance 'cluster:code-command
     :mnemonic "NEG"
     :operands
-    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
+    (list (translate-output
+           (first (cleavir-ir:outputs instruction))
+           instruction))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:negate-instruction) next)
@@ -77,14 +77,14 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unsigned-add-instruction))
-  (assert (eq (first (cleavir-ir:inputs instruction))
-              (first (cleavir-ir:outputs instruction))))
-  (make-instance 'cluster:code-command
-    :mnemonic "ADD"
-    :operands
-    (list
-     (translate-datum (first (cleavir-ir:inputs instruction)))
-     (translate-datum (second (cleavir-ir:inputs instruction))))))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "ADD"
+      :operands
+      (list
+       (translate-output destination instruction)
+       (translate-input operand instruction)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:unsigned-add-instruction) next)
@@ -94,14 +94,14 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unsigned-sub-instruction))
-  (assert (eq (first (cleavir-ir:inputs instruction))
-              (first (cleavir-ir:outputs instruction))))
-  (make-instance 'cluster:code-command
-    :mnemonic "SUB"
-    :operands
-    (list
-     (translate-datum (first (cleavir-ir:inputs instruction)))
-     (translate-datum (second (cleavir-ir:inputs instruction))))))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "SUB"
+      :operands
+      (list
+       (translate-output destination instruction)
+       (translate-input operand instruction)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:unsigned-sub-instruction) next)
@@ -109,19 +109,21 @@
    (translate-simple-instruction instruction)
    (compute-branches instruction next "JC" "JNC")))
 
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:fixnum-divide-instruction))
-  (make-instance 'cluster:code-command
-    :mnemonic "DIV"
-    :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
+;; (defmethod translate-simple-instruction
+;;     ((instruction cleavir-ir:fixnum-divide-instruction))
+;;   (make-instance 'cluster:code-command
+;;     :mnemonic "DIV"
+;;     :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
 
 (defun make-cmp (instruction)
-  (make-instance 'cluster:code-command
-    :mnemonic "CMP"
-    :operands
-    (list
-     (translate-datum (first (cleavir-ir:inputs instruction)))
-     (translate-datum (second (cleavir-ir:inputs instruction))))))
+  (let ((destination (first (cleavir-ir:inputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "CMP"
+      :operands
+      (list
+       (translate-output destination instruction)
+       (translate-input operand instruction)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:unsigned-less-instruction) next)
