@@ -103,7 +103,14 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unwind-instruction))
-  (translate-named-call instruction))
+  (append (translate-named-call instruction)
+          (make-instance 'cluster:code-command
+            :mnemonic "JMP"
+            :operands
+            (list (find-instruction-label
+                   (nth (cleavir-ir:unwind-index instruction)
+                        (cleavir-ir:successors
+                         (cleavir-ir:destination instruction))))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:multiple-value-call-instruction))
