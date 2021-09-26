@@ -145,6 +145,13 @@
   (cons (make-cmp instruction)
         (compute-branches instruction next "JNE" "JE")))
 
+;;; This method is invoked when the EQ instruction has been simplified
+;;; because its two successors are the same.  So we generate no code
+;;; for it.  FIXME: But it should have been eliminated before.
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:eq-instruction))
+  '())
+
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:eq-instruction) next)
   (cons (make-cmp instruction)
