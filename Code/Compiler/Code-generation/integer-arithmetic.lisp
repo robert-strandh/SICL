@@ -108,11 +108,12 @@
    (translate-simple-instruction instruction)
    (compute-branches instruction next "JC" "JNC")))
 
-;; (defmethod translate-simple-instruction
-;;     ((instruction cleavir-ir:fixnum-divide-instruction))
-;;   (make-instance 'cluster:code-command
-;;     :mnemonic "DIV"
-;;     :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
+;;; FIXME: check this one.
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:fixnum-divide-instruction))
+  (make-instance 'cluster:code-command
+    :mnemonic "DIV"
+    :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
 
 (defun make-cmp (instruction)
   (let ((destination (first (cleavir-ir:inputs instruction)))
