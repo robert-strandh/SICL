@@ -13,8 +13,8 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:memset1-instruction))
-  (let ((destination (first (cleavir-ir:outputs instruction)))
-        (source (first (cleavir-ir:inputs instruction))))
+  (let ((destination (first (cleavir-ir:inputs instruction)))
+        (source (second (cleavir-ir:inputs instruction))))
     (make-instance 'cluster:code-command
       :mnemonic "MOV"
       :operands
