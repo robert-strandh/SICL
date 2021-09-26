@@ -21,6 +21,17 @@
   '())
 
 (defmethod translate-simple-instruction
+    ((instruction cleavir-ir:load-literal-instruction))
+  (let ((destination (first (cleavir-ir:outputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "MOV"
+      :operands
+      (list
+       (translate-datum destination)
+       (make-instance 'cluster:immediate-operand
+         :value (car (cleavir-ir:location-info instruction)))))))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:assignment-instruction))
   (let ((destination (first (cleavir-ir:outputs instruction)))
         (source (first (cleavir-ir:inputs instruction))))
