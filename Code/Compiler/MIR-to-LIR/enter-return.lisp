@@ -55,7 +55,7 @@
      predecessor)
     (t
      (let ((instruction
-             (make-instance 'cleavir-ir:fixnum-sub-instruction
+             (make-instance 'cleavir-ir:unsigned-sub-instruction
                :inputs (list x86-64:*rsp*
                              (cleavir-ir:make-immediate-input (* slots 8)))
                :outputs (list x86-64:*rsp*))))

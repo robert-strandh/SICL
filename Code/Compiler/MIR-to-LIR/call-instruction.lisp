@@ -65,7 +65,7 @@
            ;; 4. Subtract 8(N - 3) from RSP, where N is the number of
            ;; arguments to pass.
            (emit
-            (make-instance 'cleavir-ir:fixnum-sub-instruction
+            (make-instance 'cleavir-ir:unsigned-sub-instruction
               :inputs (list x86-64:*rsp*
                             (cleavir-ir:make-immediate-input
                              (* 8 (- argument-count 3))))
