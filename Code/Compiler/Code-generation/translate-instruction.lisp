@@ -31,6 +31,12 @@
        (make-instance 'cluster:immediate-operand
          :value (car (cleavir-ir:location-info instruction)))))))
 
+;;; FIXME: Add instruction LEA to Cluster and then
+;;; generate code here.
+(defmethod translate-simple-instruction
+    ((instruction sicl-ir:load-effective-address-instruction))
+  '())
+
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:assignment-instruction))
   (let ((destination (first (cleavir-ir:outputs instruction)))
