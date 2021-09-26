@@ -5,13 +5,11 @@
   (make-instance 'cluster:code-command
     :mnemonic "PUSH"
     :operands
-    (list (translate-input (first (cleavir-ir:inputs instruction))
-                           instruction))))
+    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
 
 (defmethod translate-simple-instruction
     ((instruction sicl-ir:pop-instruction))
   (make-instance 'cluster:code-command
     :mnemonic "POP"
     :operands
-    (list (translate-output (first (cleavir-ir:outputs instruction))
-                            instruction))))
+    (list (translate-datum (first (cleavir-ir:outputs instruction))))))

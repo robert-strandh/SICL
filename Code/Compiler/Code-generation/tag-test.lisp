@@ -5,8 +5,7 @@
   (make-instance 'cluster:code-command
     :mnemonic "BT"
     :operands
-    (list (translate-input (first (cleavir-ir:inputs instruction))
-                           instruction)
+    (list (translate-datum (first (cleavir-ir:inputs instruction)))
           (make-instance 'cluster:immediate-operand :value 0))))
 
 (defmethod translate-branch-instruction
@@ -21,14 +20,12 @@
    (make-instance 'cluster:code-command
      :mnemonic "AND"
      :operands
-     (list (translate-input (first (cleavir-ir:inputs instruction))
-                            instruction)
+     (list (translate-datum (first (cleavir-ir:inputs instruction)))
            (make-instance 'cluster:immediate-operand :value #b111)))
    (make-instance 'cluster:code-command
      :mnemonic "CMP"
      :operands
-     (list (translate-input (first (cleavir-ir:inputs instruction))
-                            instruction)
+     (list (translate-datum (first (cleavir-ir:inputs instruction)))
            (make-instance 'cluster:immediate-operand :value #b001)))))
 
 (defmethod translate-branch-instruction
@@ -43,14 +40,12 @@
    (make-instance 'cluster:code-command
      :mnemonic "AND"
      :operands
-     (list (translate-input (first (cleavir-ir:inputs instruction))
-                            instruction)
+     (list (translate-datum (first (cleavir-ir:inputs instruction)))
            (make-instance 'cluster:immediate-operand :value #b11111)))
    (make-instance 'cluster:code-command
      :mnemonic "CMP"
      :operands
-     (list (translate-input (first (cleavir-ir:inputs instruction))
-                            instruction)
+     (list (translate-datum (first (cleavir-ir:inputs instruction)))
            (make-instance 'cluster:immediate-operand :value #b00011)))))
 
 (defmethod translate-branch-instruction
@@ -65,14 +60,12 @@
    (make-instance 'cluster:code-command
      :mnemonic "AND"
      :operands
-     (list (translate-input (first (cleavir-ir:inputs instruction))
-                            instruction)
+     (list (translate-datum (first (cleavir-ir:inputs instruction)))
            (make-instance 'cluster:immediate-operand :value #b11111)))
    (make-instance 'cluster:code-command
      :mnemonic "CMP"
      :operands
-     (list (translate-input (first (cleavir-ir:inputs instruction))
-                            instruction)
+     (list (translate-datum (first (cleavir-ir:inputs instruction)))
            (make-instance 'cluster:immediate-operand :value #b10011)))))
 
 (defmethod translate-branch-instruction
@@ -87,14 +80,12 @@
    (make-instance 'cluster:code-command
      :mnemonic "AND"
      :operands
-     (list (translate-input (first (cleavir-ir:inputs instruction))
-                            instruction)
+     (list (translate-datum (first (cleavir-ir:inputs instruction)))
            (make-instance 'cluster:immediate-operand :value #b111)))
    (make-instance 'cluster:code-command
      :mnemonic "CMP"
      :operands
-     (list (translate-input (first (cleavir-ir:inputs instruction))
-                            instruction)
+     (list (translate-datum (first (cleavir-ir:inputs instruction)))
            (make-instance 'cluster:immediate-operand :value #b101)))))
 
 (defmethod translate-branch-instruction

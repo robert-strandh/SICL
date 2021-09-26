@@ -28,8 +28,8 @@
       :mnemonic "MOV"
       :operands
       (list
-       (translate-output destination instruction)
-       (translate-input source instruction)))))
+       (translate-datum destination)
+       (translate-datum source)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:shift-left-instruction))
@@ -39,8 +39,8 @@
       :mnemonic "SHL"
       :operands
       (list
-       (translate-output destination instruction)
-       (translate-input operand instruction)))))
+       (translate-datum destination)
+       (translate-datum operand)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:return-instruction))
@@ -53,8 +53,7 @@
   (make-instance 'cluster:code-command
     :mnemonic "CALL"
     :operands
-    (list (translate-input (first (cleavir-ir:inputs instruction))
-                           instruction))))
+    (list (translate-datum (first (cleavir-ir:inputs instruction))))))
 
 ;;; For named call instructions we generate an indirect near jump.
 ;;; The displacement is 0 because the address containing the jump

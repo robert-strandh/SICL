@@ -34,8 +34,8 @@
       :mnemonic "ADD"
       :operands
       (list
-       (translate-output destination instruction)
-       (translate-input operand instruction)))))
+       (translate-datum destination)
+       (translate-datum operand)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-add-instruction) next)
@@ -51,8 +51,8 @@
       :mnemonic "SUB"
       :operands
       (list
-       (translate-output destination instruction)
-       (translate-input operand instruction)))))
+       (translate-datum destination)
+       (translate-datum operand)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-sub-instruction) next)
@@ -65,9 +65,8 @@
   (make-instance 'cluster:code-command
     :mnemonic "NEG"
     :operands
-    (list (translate-output
-           (first (cleavir-ir:outputs instruction))
-           instruction))))
+    (list (translate-datum
+           (first (cleavir-ir:outputs instruction))))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:negate-instruction) next)
@@ -83,8 +82,8 @@
       :mnemonic "ADD"
       :operands
       (list
-       (translate-output destination instruction)
-       (translate-input operand instruction)))))
+       (translate-datum destination)
+       (translate-datum operand)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:unsigned-add-instruction) next)
@@ -100,8 +99,8 @@
       :mnemonic "SUB"
       :operands
       (list
-       (translate-output destination instruction)
-       (translate-input operand instruction)))))
+       (translate-datum destination)
+       (translate-datum operand)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:unsigned-sub-instruction) next)
@@ -122,8 +121,8 @@
       :mnemonic "CMP"
       :operands
       (list
-       (translate-output destination instruction)
-       (translate-input operand instruction)))))
+       (translate-datum destination)
+       (translate-datum operand)))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:unsigned-less-instruction) next)
