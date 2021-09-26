@@ -53,3 +53,14 @@
          :displacement (cleavir-ir:value offset-input)
          :size 64)
        (translate-datum value-input)))))
+
+(defmethod translate-simple-instruction
+    ((instruction sicl-ir:memref-effective-address-instruction))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (source (first (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "MOV"
+      :operands
+      (list
+       (translate-datum destination)
+       (translate-datum source)))))
