@@ -2,7 +2,5 @@
 
 (defpackage #:sicl-code-generation
   (:use #:common-lisp)
-  (:local-nicknames (#:arr #:sicl-register-arrangement)
-                    (#:x86-64 #:sicl-x86-64-registers)
-                    (#:ra #:sicl-register-allocation))
+  (:local-nicknames (#:x86-64 #:sicl-x86-64-registers))
   (:export #:generate-code))
