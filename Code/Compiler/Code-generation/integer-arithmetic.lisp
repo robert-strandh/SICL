@@ -174,11 +174,22 @@
        (translate-datum operand)))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:bitwise-OR-instruction))
+    ((instruction cleavir-ir:bitwise-or-instruction))
   (let ((destination (first (cleavir-ir:outputs instruction)))
         (operand (second (cleavir-ir:inputs instruction))))
     (make-instance 'cluster:code-command
       :mnemonic "OR"
+      :operands
+      (list
+       (translate-datum destination)
+       (translate-datum operand)))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:bitwise-exclusive-or-instruction))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "XOR"
       :operands
       (list
        (translate-datum destination)
