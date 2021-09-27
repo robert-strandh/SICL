@@ -108,6 +108,12 @@
    (translate-simple-instruction instruction)
    (compute-branches instruction next "JC" "JNC")))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:fixnum-multiply-instruction))
+  (make-instance 'cluster:code-command
+    :mnemonic "MUL"
+    :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
+
 ;;; FIXME: check this one.
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:fixnum-divide-instruction))
