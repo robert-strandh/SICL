@@ -202,3 +202,14 @@
       (list
        (translate-datum destination)
        (translate-datum operand)))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:sign-extend-instruction))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (first (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "MOVSXD"
+      :operands
+      (list
+       (translate-datum destination)
+       (translate-datum operand)))))
