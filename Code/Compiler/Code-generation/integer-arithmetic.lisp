@@ -114,7 +114,6 @@
     :mnemonic "MUL"
     :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
 
-;;; FIXME: check this one.
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:fixnum-divide-instruction))
   (make-instance 'cluster:code-command
