@@ -167,7 +167,18 @@
   (let ((destination (first (cleavir-ir:outputs instruction)))
         (operand (second (cleavir-ir:inputs instruction))))
     (make-instance 'cluster:code-command
-      :mnemonic "ADD"
+      :mnemonic "AND"
+      :operands
+      (list
+       (translate-datum destination)
+       (translate-datum operand)))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:bitwise-OR-instruction))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "OR"
       :operands
       (list
        (translate-datum destination)
