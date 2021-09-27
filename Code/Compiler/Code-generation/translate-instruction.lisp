@@ -101,6 +101,11 @@
         (make-instance 'cluster:data-command
           :data-bytes '(0 0 0 0 0 0 0 0))))
 
+;;; FIXME: We shouldn't really have any of these.
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:named-call-instruction))
+  (translate-named-call instruction))
+
 (defmethod translate-simple-instruction
     ((instruction sicl-ir:named-call-instruction))
   (translate-named-call instruction))
