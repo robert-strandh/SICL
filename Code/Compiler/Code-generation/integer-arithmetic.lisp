@@ -140,6 +140,14 @@
   (cons (make-cmp instruction)
         (compute-branches instruction next "JNL" "JL")))
 
+;;; This method is invoked when the SIGNED-NOT-GREATER instruction has
+;;; been simplified because its two successors are the same.  So we
+;;; generate no code for it.  FIXME: But it should have been
+;;; eliminated before.
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:signed-not-greater-instruction))
+  '())
+
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-not-greater-instruction) next)
   (cons (make-cmp instruction)
