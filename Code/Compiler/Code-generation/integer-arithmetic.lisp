@@ -161,3 +161,14 @@
     ((instruction cleavir-ir:eq-instruction) next)
   (cons (make-cmp instruction)
         (compute-branches instruction next "JNE" "JE")))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:bitwise-and-instruction))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "ADD"
+      :operands
+      (list
+       (translate-datum destination)
+       (translate-datum operand)))))
