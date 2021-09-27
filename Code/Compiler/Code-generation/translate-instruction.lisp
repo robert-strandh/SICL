@@ -71,6 +71,17 @@
        (translate-datum operand)))))
 
 (defmethod translate-simple-instruction
+    ((instruction cleavir-ir:logic-shift-right-instruction))
+  (let ((destination (first (cleavir-ir:outputs instruction)))
+        (operand (second (cleavir-ir:inputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "SHR"
+      :operands
+      (list
+       (translate-datum destination)
+       (translate-datum operand)))))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:return-instruction))
   (make-instance 'cluster:code-command
     :mnemonic "RET"
