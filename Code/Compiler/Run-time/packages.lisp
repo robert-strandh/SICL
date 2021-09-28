@@ -26,6 +26,7 @@
            #:unwind
            #:initialize-values
            #:call-with-values
+           #:save-values
            #:find-special-variable-entry
            #:symbol-value
            #:makunbound
