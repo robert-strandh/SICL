@@ -14,4 +14,5 @@
    (:file "tag-test")
    (:file "memory")
    (:file "stack")
+   (:file "return-values")
    (:file "generate-code")))
