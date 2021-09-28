@@ -27,6 +27,7 @@
            #:initialize-values
            #:call-with-values
            #:save-values
+           #:restore-values
            #:find-special-variable-entry
            #:symbol-value
            #:makunbound
