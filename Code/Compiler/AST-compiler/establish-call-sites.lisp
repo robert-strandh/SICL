@@ -25,6 +25,11 @@
              :name 'sicl-run-time:augment-with-special-variable-entry
              :instruction instruction)
            (call-sites code-object)))
+    (cleavir-ir:unwind-protect-instruction
+     (push (make-instance 'call-site
+             :name 'sicl-run-time:augment-with-unwind-protect-entry
+             :instruction instruction)
+           (call-sites code-object)))
     (cleavir-ir:unwind-instruction
      (push (make-instance 'call-site
              :name 'sicl-run-time:unwind
