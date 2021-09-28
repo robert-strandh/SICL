@@ -23,6 +23,7 @@
            #:augment-with-block/tagbody-entry
            #:augment-with-catch-entry
            #:augment-with-special-variable-entry
+           #:augment-with-unwind-protect-entry
            #:unwind
            #:initialize-values
            #:call-with-values
