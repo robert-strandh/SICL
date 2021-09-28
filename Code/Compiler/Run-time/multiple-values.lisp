@@ -35,3 +35,8 @@
 (defun save-values ()
   ;; FIXME: define the function
   nil)
+
+(defun restore-values ()
+  ;; FIXME: define the function
+  nil)
+  
