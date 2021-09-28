@@ -41,6 +41,11 @@
              :name 'sicl-run-time:call-with-values
              :instruction instruction)
            (call-sites code-object)))
+    (cleavir-ir:save-values-instruction
+     (push (make-instance 'call-site
+             :name 'sicl-run-time:save-values
+             :instruction instruction)
+           (call-sites code-object)))
     (sicl-ir:patch-literal-instruction
      (push (make-instance 'call-site
              :name 'sicl-run-time:resolve-load-time-value
