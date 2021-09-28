@@ -20,3 +20,8 @@
           :name name
           :value value)
         (sicl-primop:dynamic-environment)))
+
+(defun augment-with-unwind-protect-entry (thunk)
+  (cons (make-instance 'unwind-protect-entry
+          :thunk thunk)
+        (sicl-primop:dynamic-environment)))
