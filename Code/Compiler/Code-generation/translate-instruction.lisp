@@ -171,6 +171,10 @@
   (translate-named-call instruction))
 
 (defmethod translate-simple-instruction
+    ((instruction cleavir-ir:restore-values-instruction))
+  (translate-named-call instruction))
+
+(defmethod translate-simple-instruction
     ((instruction sicl-ir:patch-literal-instruction))
   (translate-named-call instruction))
 
