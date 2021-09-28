@@ -26,3 +26,12 @@
                for cell = (cdr values) then (cdr cell)
                until (eq cell end)
                collect (car cell))))
+
+;;; This function is called as a result of the HIR instruction
+;;; SAVE-VALUES-INSTRUCTION.  That instruction has no inputs and a
+;;; single output which is a new dynamic environment.  It conses an
+;;; entry that holds all the values in the globally reserved place for
+;;; them, so that these values can later be restored.
+(defun save-values ()
+  ;; FIXME: define the function
+  nil)
