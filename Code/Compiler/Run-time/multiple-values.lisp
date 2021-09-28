@@ -39,4 +39,3 @@
 (defun restore-values ()
   ;; FIXME: define the function
   nil)
-  
