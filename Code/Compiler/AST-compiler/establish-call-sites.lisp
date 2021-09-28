@@ -46,6 +46,11 @@
              :name 'sicl-run-time:save-values
              :instruction instruction)
            (call-sites code-object)))
+    (cleavir-ir:restore-values-instruction
+     (push (make-instance 'call-site
+             :name 'sicl-run-time:restore-values
+             :instruction instruction)
+           (call-sites code-object)))
     (sicl-ir:patch-literal-instruction
      (push (make-instance 'call-site
              :name 'sicl-run-time:resolve-load-time-value
