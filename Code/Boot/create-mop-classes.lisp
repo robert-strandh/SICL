@@ -79,7 +79,6 @@
     (ld "Arithmetic/single-float-defclass.lisp")
     (ld "Arithmetic/double-float-defclass.lisp")
     (ld "Arithmetic/complex-defclass.lisp")
-    (ld "Arithmetic/random-state-defclass.lisp")
     (ld "Character/character-defclass.lisp")
     (ld "Compiler/Code-object/code-object-defclass.lisp")
     (ld "Boot/host-classes.lisp")))
