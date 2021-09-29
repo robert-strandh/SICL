@@ -5,5 +5,6 @@
                #:cluster
                #:cluster-x86-instruction-database)
   :components
-  ((:file "registers")
+  ((:file "error-codes")
+   (:file "registers")
    (:file "exit")))
