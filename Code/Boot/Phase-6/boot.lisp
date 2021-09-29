@@ -90,4 +90,6 @@
     (load-asdf-system '#:sicl-loop e5)
     (load-asdf-system '#:cleavir-code-utilities e5)
     (load-asdf-system '#:sicl-data-and-control-flow-support e5)
-    (load-asdf-system '#:sicl-data-and-control-flow e5)))
+    (load-asdf-system '#:sicl-data-and-control-flow e5)
+    (sicl-boot:import-functions-from-host '(get-universal-time) e5)
+    (load-asdf-system '#:sicl-random-intrinsic e5)))
