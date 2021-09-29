@@ -41,14 +41,21 @@
 
 (defun random (limit &optional (random-state *random-state*))
   "Returns a non-negative pseudo-random number that is less than LIMIT."
-  (declare (type (or integer float) limit)
-           (type random-state random-state))
-  (cond ((typep limit 'float)
+  (declare (type (or integer real) limit)
+           (type random-state random-state)
+           (inline random-float stitch-together-numbers))
+  (cond ((and (typep limit 'float) (> limit 0))
          (random-float limit random-state))
-        ((> (log limit 2) (random-bits random-state))
+        ((and (typep limit 'integer) (> (log limit 2) (random-bits random-state)))
          (stitch-together-random-numbers limit random-state))
+        ((and (typep limit 'integer) (> limit 0))
+         (mod (read-random-state random-state) limit))
         (t
-         (mod (read-random-state random-state) limit))))
+         (error 'simple-type-error
+                :expected-type '(or (integer 1) (float (0)))
+                :datum limit
+                :format-control "~S is neither a positive integer nor a positive float."
+                :format-arguments (list limit)))))
 
 (defun make-random-state (&optional state)
   (declare (type (or random-state boolean) state))
