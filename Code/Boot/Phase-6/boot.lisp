@@ -75,6 +75,8 @@
     (load-source-file "Cons/union-defun.lisp" e5)
     (load-source-file "Cons/nunion-defun.lisp" e5)
     (load-alexandria e5)
+    (load-source-file "Random/packages-intrinsic.lisp" e5)
+    (load-source-file "Random/random-state-defclass.lisp" e5)
     (enable-printing e5)
     (load-clostrum e5)
     (load-asdf-system '#:acclimation e5)
