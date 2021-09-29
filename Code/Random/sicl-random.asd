@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "random-state-defclass")
    (:file "random")))
