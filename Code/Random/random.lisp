@@ -61,16 +61,6 @@
 (defconstant +mt19937-lower-mask+ #x7FFFFFFF)
 (defconstant +mt19937-upper-mask+ #x80000000)
 
-(defclass mt19937-random (random-state)
-  ((%random-bits :initform +mt19937-bits+)
-   (%state-array :initform (make-array +mt19937-size+
-                                       :element-type '(unsigned-byte 32))
-                 :initarg :state-array
-                 :reader state-array)
-   (%index :initform (1+ +mt19937-size+)
-           :initarg :index
-           :accessor index)))
-
 (defmethod seed-random-state ((state mt19937-random) (seed fixnum))
   (setf (aref (state-array state) 0) seed)
   (loop :for i :from 1 :below +mt19937-size+
