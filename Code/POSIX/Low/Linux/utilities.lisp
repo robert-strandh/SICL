@@ -116,7 +116,8 @@
         :size 64)
       (make-instance 'cluster:memory-operand
         :base-register source-register
-        :displacement 3)))))
+        :displacement 3
+        :size 64)))))
 
 (defun first-vector-element-from-rack (register)
   (list
