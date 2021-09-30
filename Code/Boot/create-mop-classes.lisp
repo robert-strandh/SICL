@@ -81,4 +81,5 @@
     (ld "Arithmetic/complex-defclass.lisp")
     (ld "Character/character-defclass.lisp")
     (ld "Compiler/Code-object/code-object-defclass.lisp")
+    (ld "Random/random-state-defclass.lisp")
     (ld "Boot/host-classes.lisp")))
