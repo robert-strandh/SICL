@@ -73,6 +73,7 @@
    #:slot-definition-readers
    #:slot-definition-writers
    #:slot-definition-location
+   #:slot-definition-documentation
    ;; Macros
    #:defclass #:defgeneric #:defmethod
    ;; Macro support
