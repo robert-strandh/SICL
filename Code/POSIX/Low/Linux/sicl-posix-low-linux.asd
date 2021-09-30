@@ -9,4 +9,5 @@
    (:file "registers")
    (:file "utilities")
    (:file "exit")
-   (:file "read")))
+   (:file "read")
+   (:file "write")))
