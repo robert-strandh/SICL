@@ -90,4 +90,4 @@
     (load-asdf-system '#:sicl-data-and-control-flow-support e5)
     (load-asdf-system '#:sicl-data-and-control-flow e5)
     (sicl-boot:import-functions-from-host '(get-universal-time) e5)
-    (load-source-file "Random/random.lisp" e5)))
+    #+(or)(load-source-file "Random/random.lisp" e5)))
