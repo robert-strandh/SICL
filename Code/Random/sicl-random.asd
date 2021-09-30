@@ -5,4 +5,7 @@
   :components
   ((:file "packages")
    (:file "random-state-defclass")
+   (:file "random-state-defgeneric")
+   (:file "mersenne-twister")
+   (:file "pcg32")
    (:file "random")))
