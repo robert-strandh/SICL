@@ -24,6 +24,11 @@
 ;;; http://metamodular.com/CLOS-MOP/slot-definition-initfunction.html
 (defgeneric slot-definition-initfunction (slot-definition))
 
+;;; This slot reader is not required by the specification,
+;;; but we define it anyway, so that it can be called by 
+;;; the standard function DOCUMENTATION.
+(defgeneric slot-definition-documentation (slot-definition))
+
 (defclass slot-definition (metaobject)
   ((%name 
     :initarg :name
@@ -44,7 +49,11 @@
     :initarg :initform 
     :initform nil
     :reader slot-definition-initform)
-   (%initfunction 
+   (%initfunction
     :initform nil
     :initarg :initfunction
-    :reader slot-definition-initfunction)))
+    :reader slot-definition-initfunction)
+   (%documentation
+    :initform nil
+    :initarg :documentation
+    :reader slot-definition-documentation)))
