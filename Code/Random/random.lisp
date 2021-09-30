@@ -25,7 +25,7 @@
 
 (defun stitch-together-random-numbers (limit random-state)
   (let ((bits (random-bits random-state)))
-    (let ((how-many (ceiling (/ (log limit 2) bits)))
+    (let ((how-many (ceiling (integer-length limit) bits))
           (result 0))
       (dotimes (i how-many)
         (setf result
@@ -120,7 +120,7 @@
            (inline random-float stitch-together-numbers))
   (cond ((and (typep limit 'float) (> limit 0))
          (random-float limit random-state))
-        ((and (typep limit 'integer) (> (log limit 2) (random-bits random-state)))
+        ((and (typep limit 'integer) (> (integer-length limit) (random-bits random-state)))
          (stitch-together-random-numbers limit random-state))
         ((and (typep limit 'integer) (> limit 0))
          (mod (read-random-state random-state) limit))
