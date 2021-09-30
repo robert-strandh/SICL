@@ -7,4 +7,5 @@
   :components
   ((:file "error-codes")
    (:file "registers")
+   (:file "utilities")
    (:file "exit")))
