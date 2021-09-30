@@ -39,6 +39,7 @@
              (load-source-file relative-file-name environment)))
       (host-load "Evaluation-and-compilation/packages.lisp")
       (host-load "Data-and-control-flow/packages.lisp")
+      (host-load "Random/packages-intrinsic.lisp")
       (define-function-global-environment client environment)
       ;; Load a file containing a definition of the macro LAMBDA.
       ;; This macro is particularly simple, so it doesn't really
