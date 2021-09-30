@@ -17,6 +17,17 @@
 
 (defun return-to-caller ()
   (list
+   ;; Set number of return values.
+   (make-instance 'cluster:code-command
+     :mnemonic "MOV"
+     :operands
+     (list
+      (make-instance 'cluster:gpr-operand
+        :code-number *rdi*
+        :size 64)
+      (make-instance 'cluster:immediate-operand
+        :value 2)))
+   ;; Return to caller.
    (make-instance 'cluster:code-command
      :mnemonic "RET"
      :operands '())))
