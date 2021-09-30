@@ -186,7 +186,7 @@
      + - * / < <= = > >= /= floor 1+ 1-
      plusp minusp integerp numberp
      logand logior logxor ash integer-length
-     zerop oddp evenp max min expt abs ldb byte random
+     zerop oddp evenp max min expt abs ldb dpb byte random
      mod truncate
      log sqrt
      ;; CONSes
