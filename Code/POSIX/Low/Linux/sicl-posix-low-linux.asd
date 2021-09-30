@@ -8,4 +8,5 @@
   ((:file "error-codes")
    (:file "registers")
    (:file "utilities")
-   (:file "exit")))
+   (:file "exit")
+   (:file "read")))
