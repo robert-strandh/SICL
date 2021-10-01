@@ -11,4 +11,5 @@
    (:file "utilities")
    (:file "exit")
    (:file "read")
-   (:file "write")))
+   (:file "write")
+   (:file "close")))
