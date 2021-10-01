@@ -2,8 +2,10 @@
 
 (defun write (file-descriptor vector &key (start 0) (end nil))
   (let ((end (if (null end) (length vector) end)))
-    (multiple-value-bind (effective-count error)
-        (low:write file-descriptor vector start end)
+    (let (effective-count error)
+      (loop do (multiple-value-setq (effective-count error)
+                 (low:write file-descriptor vector start end))
+            while (= error sicl-posix-low:+eintr+))
       (ecase error
         (0 effective-count)
         ((#.sicl-posix-low:+eagain+

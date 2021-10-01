@@ -2,8 +2,10 @@
 
 (defun read (file-descriptor vector-or-desired-count &key (start 0) (end nil))
   (let ((end (if (null end) (length vector-or-desired-count) end)))
-    (multiple-value-bind (effective-count error)
-        (low:read file-descriptor vector-or-desired-count start end)
+    (let (effective-count error)
+      (loop do (multiple-value-setq (effective-count error)
+                 (low:read file-descriptor vector-or-desired-count start end))
+            while (= error sicl-posix-low:+eintr+))
       (ecase error
         (0 effective-count)
         ((#.sicl-posix-low:+eagain+
