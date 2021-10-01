@@ -6,6 +6,7 @@
            #:write)
   (:export #:read
            #:write
+           #:exit
            #:+e2big+
            #:+eaccess+
            #:+eaddrinuse+
