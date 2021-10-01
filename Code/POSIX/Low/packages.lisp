@@ -3,9 +3,13 @@
 (defpackage #:sicl-posix-low
   (:use #:common-lisp)
   (:shadow #:read
-           #:write)
+           #:write
+           #:open
+           #:close)
   (:export #:read
            #:write
+           #:open
+           #:close
            #:exit
            #:+e2big+
            #:+eaccess+

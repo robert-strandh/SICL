@@ -4,9 +4,13 @@
   (:use #:common-lisp)
   (:local-nicknames (#:low #:sicl-posix-low))
   (:shadow #:read
-           #:write)
+           #:write
+           #:open
+           #:close)
   (:export #:read
            #:write
+           #:open
+           #:close
            ;; Conditions.
            #:write-would-block
            #:invalid-file-descriptor
