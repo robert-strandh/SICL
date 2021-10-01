@@ -3,6 +3,14 @@
 (define-condition file-descriptor-mixin ()
   ((%file-descriptor :initarg :file-descriptor :reader file-descriptor)))
 
+(define-condition file-descriptor-refers-to-directory
+    (error file-descriptor-mixin)
+  ())
+
+(define-condition read-would-block
+    (error file-descriptor-mixin)
+  ())
+
 (define-condition write-would-block
     (error file-descriptor-mixin)
   ())
