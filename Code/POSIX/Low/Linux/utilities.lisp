@@ -47,7 +47,25 @@
        (make-instance 'cluster:gpr-operand
           :code-number *rax*
           :size 64)))
-     ;; Then set the first return value to -1.
+     ;; Negate it.
+     (make-instance 'cluster:code-command
+       :mnemonic "NEG"
+       :operands
+       (list
+        (make-instance 'cluster:gpr-operand
+          :code-number *rdx*
+          :size 64)))
+     ;; Turn it into a fixnum.
+     (make-instance 'cluster:code-command
+       :mnemonic "SHL"
+       :operands
+       (list
+        (make-instance 'cluster:gpr-operand
+          :code-number *rdx*
+          :size 64)
+        (make-instance 'cluster:immediate-operand
+          :value 1)))
+     ;; Then set the first return value to the fixnum -1.
      (make-instance 'cluster:code-command
        :mnemonic "MOV"
        :operands
@@ -56,7 +74,7 @@
           :code-number *rax*
           :size 64)
         (make-instance 'cluster:immediate-operand
-          :value -1)))
+          :value -2)))
      ;; And skip the normal return-value processing
      (make-instance 'cluster:code-command
        :mnemonic "JMP"
