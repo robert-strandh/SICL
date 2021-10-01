@@ -6,4 +6,15 @@
   (:shadow #:read
            #:write)
   (:export #:read
-           #:write))
+           #:write
+           ;; Conditions.
+           #:write-would-block
+           #:invalid-file-descriptor
+           #:destination-address-not-set
+           #:write-exceeds-quota
+           #:write-exceeds-max-size
+           #:invalid-value
+           #:low-level-io-error
+           #:no-space-on-device
+           #:file-sealed
+           #:pipe-closed))
