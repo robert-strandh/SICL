@@ -4,6 +4,7 @@
   :depends-on (#:sicl-posix-low
                #:cluster
                #:cluster-x86-instruction-database)
+  :serial t
   :components
   ((:file "error-codes")
    (:file "registers")
