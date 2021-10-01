@@ -6,5 +6,6 @@
   :components
   ((:file "packages")
    (:file "conditions")
+   (:file "exit")
    (:file "read")
    (:file "write")))
