@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-elf
   (:use #:common-lisp)
+  (:shadow #:store-value)
   (:export))
