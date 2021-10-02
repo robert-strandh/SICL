@@ -10,9 +10,9 @@
     (6 . :program-header-table)))
 
 (defparameter *segment-attribute*
-  '((0x1 . :execute-permission)
-    (0x2 . :write-permission)
-    (0x4 . :read-permission)))
+  '((#x1 . :execute-permission)
+    (#x2 . :write-permission)
+    (#x4 . :read-permission)))
 
 (defclass segment ()
   ((%data-encoding
