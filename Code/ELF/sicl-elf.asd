@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "utilities")))
+   (:file "utilities")
+   (:file "elf")))
