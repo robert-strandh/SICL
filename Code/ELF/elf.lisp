@@ -101,10 +101,10 @@
     :accessor sections)))
 
 (defun store (elf)
-  (let* ((bytes (make-array 100 :element-type '(unsigned-byte 8)))
+  (let* ((bytes (make-array #x3000 :element-type '(unsigned-byte 8)))
          (pos (make-instance 'vector-position :bytes bytes))
          (encoding (data-encoding elf)))
-    (store-byte 0 pos)
+    (store-byte #x7f pos)
     (store-byte (char-code #\E) pos)
     (store-byte (char-code #\L) pos)
     (store-byte (char-code #\F) pos)
@@ -113,7 +113,7 @@
     (store-byte (encode (file-version elf) *file-version*) pos)
     (store-byte (encode (os/abi-identification elf) *os/abi-identification*) pos)
     (store-byte (abi-version elf) pos)
-    (loop repeat 8 do (store-byte 0 pos))
+    (loop repeat 7 do (store-byte 0 pos))
     (store-value (encode (file-type elf) *file-type*) 16 pos encoding)
     (store-value (encode (machine elf) *machine*) 16 pos encoding)
     (store-value (encode (file-version elf) *file-version*) 32 pos encoding)
@@ -137,5 +137,5 @@
     (store-value (length (sections elf)) 16 pos encoding)
     ;; For now, always store 0 for the section name string table index.
     (store-value 0 16 pos encoding)
-    bytes))
+   pos))
     
