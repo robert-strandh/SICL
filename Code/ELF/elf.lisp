@@ -86,7 +86,19 @@
     :accessor machine)
    (%entry-point-address
     :initarg :entry-point-address
-    :accessor entry-point-address)))
+    :accessor entry-point-address)
+   (%processor-specific-flags
+    :initform '()
+    :initarg :processor-specific-flags
+    :accessor processor-specific-flags)
+   (%segments
+    :initform '()
+    :initarg :segments
+    :accessor segments)
+   (%sections
+    :initform '()
+    :initarg :sections
+    :accessor sections)))
 
 (defun store (elf)
   (let* ((bytes (make-array 100 :element-type '(unsigned-byte 8)))
@@ -106,5 +118,24 @@
     (store-value (encode (machine elf) *machine*) 16 pos encoding)
     (store-value (encode (file-version elf) *file-version*) 32 pos encoding)
     (store-value (entry-point-address elf) 64 pos encoding)
+    ;; The program header offset is the same as the size of the header.
+    (store-value 64 64 pos encoding)
+    ;; For now, store 0 as the section-header offset, assuming there
+    ;; are no sections.
+    (store-value 0 64 pos encoding)
+    ;; For now, always store 0 for the processor-specific flags.
+    (store-value 0 32 pos encoding)
+    ;; Store the ELF header size.
+    (store-value 64 16 pos encoding)
+    ;; Store the program header entry size
+    (store-value 56 16 pos encoding)
+    ;; Store the number of program header entries.
+    (store-value (length (segments elf)) 16 pos encoding)
+    ;; Store the section header entry size
+    (store-value 64 16 pos encoding)
+    ;; Store the number of section header entries.
+    (store-value (length (sections elf)) 16 pos encoding)
+    ;; For now, always store 0 for the section name string table index.
+    (store-value 0 16 pos encoding)
     bytes))
     
