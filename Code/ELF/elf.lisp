@@ -113,7 +113,7 @@
     (store-byte (encode (file-version elf) *file-version*) pos)
     (store-byte (encode (os/abi-identification elf) *os/abi-identification*) pos)
     (store-byte (abi-version elf) pos)
-    (loop repeat 7 do (store-byte 0 pos))
+    (loop until (= (index pos) 16) do (store-byte 0 pos))
     (store-value (encode (file-type elf) *file-type*) 16 pos encoding)
     (store-value (encode (machine elf) *machine*) 16 pos encoding)
     (store-value (encode (file-version elf) *file-version*) 32 pos encoding)
