@@ -61,31 +61,22 @@
         byte)
   (incf (index vector-position)))
 
-;;; Functions for storing little-endian numbers.
-(defun store-little-endian-unsigned (value size-in-bits vector-position)
-  (if (= size-in-bits 8)
-      (store-byte value vector-position)
-      (let ((half (ash size-in-bits -1)))
-	(store-little-endian-unsigned
-	 (logand value (1- (ash 1 half))) half vector-position)
-	(store-little-endian-unsigned
-	 (ash value (- half)) half vector-position))))
-	      
-(defun store-little-endian-signed (value size-in-bits vector-position)
-  (store-little-endian-unsigned
-   (convert-signed-to-unsigned value size-in-bits) size-in-bits vector-position))
-  
-
-;;; Functions for storing big-endian numbers.
-(defun store-big-endian-unsigned (value size-in-bits vector-position)
-  (if (= size-in-bits 8)
-      (store-byte value vector-position)
-      (let ((half (ash size-in-bits -1)))
-	(store-big-endian-unsigned
-	 (ash value half) half vector-position)
-	(store-big-endian-unsigned
-	 (logand value (1- (ash 1 half))) half vector-position))))
-	      
-(defun store-big-endian-signed (value size-in-bits vector-position)
-  (store-big-endian-unsigned
-   (convert-signed-to-unsigned value size-in-bits) size-in-bits vector-position))
+(defun store-value (value size-in-bits vector-position encoding)
+  (cond ((minusp value)
+         (store-value
+          (convert-signed-to-unsigned value size-in-bits)
+          size-in-bits vector-position encoding))
+        ((= size-in-bits 8)
+         (store-byte value vector-position))
+        (t
+         (let* ((half (ash size-in-bits -1))
+                (upper (ash value (- half)))
+                (lower (logand value (1- (ash 1 half)))))
+           (cond ((eq encoding :little-endian)
+                  (store-value lower half vector-position encoding)
+                  (store-value upper half vector-position encoding))
+                 ((eq encoding :big-endian)
+                  (store-value upper half vector-position encoding)
+                  (store-value lower half vector-position encoding))
+                 (t
+                  (error "invalid encoding: ~s" encoding)))))))
