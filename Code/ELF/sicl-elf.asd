@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "utilities")
+   (:file "segment")
    (:file "elf")))
