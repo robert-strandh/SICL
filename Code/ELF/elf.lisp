@@ -100,12 +100,22 @@
     :initarg :sections
     :accessor sections)))
 
+(defun round-up-to-alignment (value alignment)
+  (* alignment (ceiling value alignment)))
+
+(defun process-segment (current-end segment)
+  (let* ((alignment (alignment segment))
+         (size (size-in-memory segment))
+         (offset (round-up-to-alignment current-end alignment)))
+    (setf (gethash segment *segment-offsets*) offset)
+    ;; Return the new value of the current end.
+    (+ offset size)))
+
 (defun compute-segment-offsets (elf)
-  (loop for segment in (segments elf)
-        for length = (length (contents segment))
-        for offset = #x1000
-          then (+ offset (* #x1000 (ceiling length #x1000)))
-        do (setf (gethash segment *segment-offsets*) offset)))
+  (loop with current-end = 64
+        for segment in (segments elf)
+        do (setf current-end (process-segment current-end segment))
+        finally (return current-end)))
 
 (defun store (elf)
   (let* ((bytes (make-array #x3000 :element-type '(unsigned-byte 8)))
