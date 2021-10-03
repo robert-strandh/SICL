@@ -62,5 +62,6 @@
     (store-value (length (contents segment)) 64 pos encoding)
     (store-value (alignment segment) 64 pos encoding)))
 
-(defun store-segment-contents (segment pos)
-  (replace (bytes pos) (contents segment) :start1 (index pos)))
+(defun store-segment-contents (segment bytes)
+  (let ((offset (segment-offset segment)))
+    (replace bytes (contents segment) :start1 offset)))
