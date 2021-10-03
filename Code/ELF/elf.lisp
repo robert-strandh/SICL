@@ -100,6 +100,13 @@
     :initarg :sections
     :accessor sections)))
 
+(defun compute-segment-offsets (elf)
+  (loop for segment in (segments elf)
+        for length = (length (contents segment))
+        for offset = #x1000
+          then (+ offset (* #x1000 (ceiling length #x1000)))
+        do (setf (gethash segment *segment-offsets*) offset)))
+
 (defun store (elf)
   (let* ((bytes (make-array #x3000 :element-type '(unsigned-byte 8)))
          (pos (make-instance 'vector-position :bytes bytes))
