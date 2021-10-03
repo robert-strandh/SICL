@@ -27,9 +27,6 @@
    (%virtual-address
     :initarg :virtual-address
     :reader virtual-address)
-   (%size-in-memory
-    :initarg :size-in-memory
-    :reader size-in-memory)
    (%alignment
     :initarg :alignment
     :reader alignment)
