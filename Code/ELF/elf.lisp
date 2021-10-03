@@ -105,7 +105,7 @@
 
 (defun process-segment (current-end segment)
   (let* ((alignment (alignment segment))
-         (size (size-in-memory segment))
+         (size (length (contents segment)))
          (offset (round-up-to-alignment current-end alignment)))
     (setf (gethash segment *segment-offsets*) offset)
     ;; Return the new value of the current end.
@@ -117,8 +117,17 @@
         do (setf current-end (process-segment current-end segment))
         finally (return current-end)))
 
+(defun store-segments (elf bytes)
+  (loop for segment in (segments elf)
+        do (store-segment-contents segment bytes)))
+
+(defun store-segment-headers (elf pos)
+  (loop for segment in (segments elf)
+        do (store-segment-header segment pos)))
+
 (defun store (elf)
-  (let* ((bytes (make-array #x3000 :element-type '(unsigned-byte 8)))
+  (let* ((bytes (make-array (compute-segment-offsets elf)
+                            :element-type '(unsigned-byte 8)))
          (pos (make-instance 'vector-position :bytes bytes))
          (encoding (data-encoding elf)))
     (store-byte #x7f pos)
@@ -154,5 +163,7 @@
     (store-value (length (sections elf)) 16 pos encoding)
     ;; For now, always store 0 for the section name string table index.
     (store-value 0 16 pos encoding)
-   pos))
-    
+    (store-segment-headers elf pos)
+    (store-segments elf bytes)
+    bytes))
+
