@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-code-generation
   :depends-on (#:sicl-mir-to-lir
+               #:sicl-memory
                #:cluster
                #:cluster-x86-instruction-database)
   :components
