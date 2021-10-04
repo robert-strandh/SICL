@@ -29,13 +29,19 @@
       (list
        (translate-datum destination)
        (make-instance 'cluster:immediate-operand
-         :value (car (cleavir-ir:location-info instruction)))))))
+         :value (sicl-memory:pointer
+                 (car (cleavir-ir:location-info instruction))))))))
 
-;;; FIXME: Add instruction LEA to Cluster and then
-;;; generate code here.
 (defmethod translate-simple-instruction
     ((instruction sicl-ir:load-effective-address-instruction))
-  '())
+  (let ((source (first (cleavir-ir:inputs instruction)))
+        (destination (first (cleavir-ir:outputs instruction))))
+    (make-instance 'cluster:code-command
+      :mnemonic "LEA"
+      :operands
+      (list
+       (translate-datum destination)
+       (translate-datum source)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:assignment-instruction))
@@ -107,7 +113,7 @@
   (list (make-instance 'cluster:code-command
           :mnemonic "JMP"
           :operands
-          (cluster:make-memory-operand 64 :displacement 0))
+          (list (cluster:make-memory-operand 64 :displacement 0)))
         (make-instance 'cluster:label)
         (make-instance 'cluster:data-command
           :data-bytes '(0 0 0 0 0 0 0 0))))
