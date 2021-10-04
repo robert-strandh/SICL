@@ -45,7 +45,7 @@
                   :inputs '()
                   :outputs (list (sicl-ir:effective-address
                                   x86-64:*rbp*
-                                  :offset -8))
+                                  :displacement -8))
                   :successors (list successor))))
     successor))
 
