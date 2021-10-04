@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "image")
-   (:file "object-fixnum")))
+   (:file "object-fixnum")
+   (:file "pointer")))
