@@ -6,4 +6,5 @@
            #:memory-unsigned
            #:memory-signed
            #:object-to-fixnum
-           #:fixnum-to-object))
+           #:fixnum-to-object
+           #:pointer))
