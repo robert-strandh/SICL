@@ -13,8 +13,10 @@
 
 (defmethod translate-datum ((datum sicl-ir:effective-address))
   (make-instance 'cluster:memory-operand
-    :base-register (sicl-ir::base datum)
-    :index-register (sicl-ir::offset datum)
+    :base-register (x86-64::register-number (sicl-ir::base datum))
+    :index-register
+    (let ((r (sicl-ir::offset datum)))
+      (if (null r) nil (x86-64::register-number r)))
     :scale (sicl-ir::scale datum)
     :displacement (sicl-ir::displacement datum)
     :size 64))
