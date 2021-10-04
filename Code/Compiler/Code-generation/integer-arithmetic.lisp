@@ -1,30 +1,29 @@
 (cl:in-package #:sicl-code-generation)
 
-(defun compute-branches (instruction next mnemonic1 mnemonic2)
-  (let ((successors (cleavir-ir:successors instruction)))
-    (cond ((eq (first successors) next)
-           (list (make-instance 'cluster:code-command
-                   :mnemonic mnemonic1
-                   :operands
-                   (list
-                    (find-instruction-label (second successors))))))
-          ((eq (second successors) next)
-           (list (make-instance 'cluster:code-command
-                   :mnemonic mnemonic2
-                   :operands
-                   (list
-                    (find-instruction-label (first successors))))))
-          (t
-           (list (make-instance 'cluster:code-command
-                   :mnemonic mnemonic1
-                   :operands
-                   (list
-                    (find-instruction-label (second successors))))
-                 (make-instance 'cluster:code-command
-                   :mnemonic "JMP"
-                   :operands
-                   (list
-                    (find-instruction-label (first successors)))))))))
+(defun compute-branches (successors next mnemonic1 mnemonic2)
+  (cond ((eq (first successors) next)
+         (list (make-instance 'cluster:code-command
+                 :mnemonic mnemonic1
+                 :operands
+                 (list
+                  (find-instruction-label (second successors))))))
+        ((eq (second successors) next)
+         (list (make-instance 'cluster:code-command
+                 :mnemonic mnemonic2
+                 :operands
+                 (list
+                  (find-instruction-label (first successors))))))
+        (t
+         (list (make-instance 'cluster:code-command
+                 :mnemonic mnemonic1
+                 :operands
+                 (list
+                  (find-instruction-label (second successors))))
+               (make-instance 'cluster:code-command
+                 :mnemonic "JMP"
+                 :operands
+                 (list
+                  (find-instruction-label (first successors))))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:signed-add-instruction))
@@ -41,7 +40,7 @@
     ((instruction cleavir-ir:signed-add-instruction) next)
   (cons
    (translate-simple-instruction instruction)
-   (compute-branches instruction next "JOF" "JNO")))
+   (compute-branches (cleavir-ir:successors instruction) next "JOF" "JNO")))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:signed-sub-instruction))
@@ -58,7 +57,7 @@
     ((instruction cleavir-ir:signed-sub-instruction) next)
   (cons
    (translate-simple-instruction instruction)
-   (compute-branches instruction next "JOF" "JNO")))
+   (compute-branches (cleavir-ir:successors instruction) next "JOF" "JNO")))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:negate-instruction))
@@ -72,7 +71,7 @@
     ((instruction cleavir-ir:negate-instruction) next)
   (cons
    (translate-simple-instruction instruction)
-   (compute-branches instruction next "JOF" "JNO")))
+   (compute-branches (cleavir-ir:successors instruction) next "JOF" "JNO")))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unsigned-add-instruction))
@@ -89,7 +88,7 @@
     ((instruction cleavir-ir:unsigned-add-instruction) next)
   (cons
    (translate-simple-instruction instruction)
-   (compute-branches instruction next "JC" "JNC")))
+   (compute-branches (cleavir-ir:successors instruction) next "JC" "JNC")))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unsigned-sub-instruction))
@@ -106,7 +105,7 @@
     ((instruction cleavir-ir:unsigned-sub-instruction) next)
   (cons
    (translate-simple-instruction instruction)
-   (compute-branches instruction next "JC" "JNC")))
+   (compute-branches (cleavir-ir:successors instruction) next "JC" "JNC")))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:fixnum-multiply-instruction))
@@ -120,9 +119,9 @@
     :mnemonic "DIV"
     :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
 
-(defun make-cmp (instruction)
-  (let ((destination (first (cleavir-ir:inputs instruction)))
-        (operand (second (cleavir-ir:inputs instruction))))
+(defun make-cmp (inputs)
+  (let ((destination (first inputs))
+        (operand (second inputs)))
     (make-instance 'cluster:code-command
       :mnemonic "CMP"
       :operands
@@ -132,13 +131,19 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:unsigned-less-instruction) next)
-  (cons (make-cmp instruction)
-        (compute-branches instruction next "JNB" "JB")))
+  (let ((successors (cleavir-ir:successors instruction))
+        (inputs (cleavir-ir:inputs instruction)))
+    (if (typep (first inputs) 'cleavir-ir:immediate-input)
+        (cons (make-cmp (reverse inputs))
+              (compute-branches successors next "JB" "JNB"))
+        (cons (make-cmp inputs)
+              (compute-branches successors next "JNB" "JB")))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-less-instruction) next)
-  (cons (make-cmp instruction)
-        (compute-branches instruction next "JNL" "JL")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (cons (make-cmp (cleavir-ir:inputs instruction))
+          (compute-branches successors next "JNL" "JL"))))
 
 ;;; This method is invoked when the SIGNED-NOT-GREATER instruction has
 ;;; been simplified because its two successors are the same.  So we
@@ -150,13 +155,15 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-not-greater-instruction) next)
-  (cons (make-cmp instruction)
-        (compute-branches instruction next "JG" "JNG")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (cons (make-cmp (cleavir-ir:inputs instruction))
+          (compute-branches successors next "JG" "JNG"))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:equal-instruction) next)
-  (cons (make-cmp instruction)
-        (compute-branches instruction next "JNE" "JE")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (cons (make-cmp (cleavir-ir:inputs instruction))
+          (compute-branches successors next "JNE" "JE"))))
 
 ;;; This method is invoked when the EQ instruction has been simplified
 ;;; because its two successors are the same.  So we generate no code
@@ -167,8 +174,9 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:eq-instruction) next)
-  (cons (make-cmp instruction)
-        (compute-branches instruction next "JNE" "JE")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (cons (make-cmp (cleavir-ir:inputs instruction))
+          (compute-branches successors next "JNE" "JE"))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:bitwise-and-instruction))

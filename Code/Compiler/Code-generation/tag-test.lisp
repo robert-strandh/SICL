@@ -10,9 +10,10 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:fixnump-instruction) next)
-  (cons
-   (translate-simple-instruction instruction)
-   (compute-branches instruction next "JC" "JNC")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (cons
+     (translate-simple-instruction instruction)
+     (compute-branches successors next "JC" "JNC"))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:consp-instruction))
@@ -30,9 +31,10 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:consp-instruction) next)
-  (append
-   (translate-simple-instruction instruction)
-   (compute-branches instruction next "JNE" "JE")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (append
+     (translate-simple-instruction instruction)
+     (compute-branches successors next "JNE" "JE"))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:characterp-instruction))
@@ -50,9 +52,10 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:characterp-instruction) next)
-  (append
-   (translate-simple-instruction instruction)
-   (compute-branches instruction next "JNE" "JE")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (append
+     (translate-simple-instruction instruction)
+     (compute-branches successors next "JNE" "JE"))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:single-float-p-instruction))
@@ -70,9 +73,10 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:single-float-p-instruction) next)
-  (append
-   (translate-simple-instruction instruction)
-   (compute-branches instruction next "JNE" "JE")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (append
+     (translate-simple-instruction instruction)
+     (compute-branches successors next "JNE" "JE"))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:standard-object-p-instruction))
@@ -90,6 +94,7 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:standard-object-p-instruction) next)
-  (append
-   (translate-simple-instruction instruction)
-   (compute-branches instruction next "JNE" "JE")))
+  (let ((successors (cleavir-ir:successors instruction)))
+    (append
+     (translate-simple-instruction instruction)
+     (compute-branches successors next "JNE" "JE"))))
