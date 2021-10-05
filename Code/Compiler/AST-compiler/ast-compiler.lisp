@@ -14,6 +14,10 @@
       (sicl-hir-transformations:eliminate-append-values-instructions hir)
       (sicl-hir-to-mir:hir-to-mir client code-object)
       (sicl-mir-to-lir:mir-to-lir client hir)
+      ;; Not sure why this one is necessary.  Sometime before this
+      ;; stage, there is an instruction I1 that has a successor I2,
+      ;; but I1 is not a predecessor of I2.
+      (cleavir-ir:set-predecessors hir)
       (sicl-code-generation:generate-code hir)
-      ;; (cluster:assemble (sicl-code-generation:generate-code hir))
+      (cluster:assemble (sicl-code-generation:generate-code hir))
       code-object)))
