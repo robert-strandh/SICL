@@ -63,7 +63,11 @@
       :operands
       (list
        (translate-datum destination)
-       (translate-datum operand)))))
+       (if (typep operand 'cleavir-ir:immediate-input)
+           (translate-datum operand)
+           (make-instance 'cluster:gpr-operand
+             :size 8
+             :code-number 2))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:arithmetic-shift-right-instruction))
@@ -74,7 +78,11 @@
       :operands
       (list
        (translate-datum destination)
-       (translate-datum operand)))))
+       (if (typep operand 'cleavir-ir:immediate-input)
+           (translate-datum operand)
+           (make-instance 'cluster:gpr-operand
+             :size 8
+             :code-number 2))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:logic-shift-right-instruction))
@@ -85,7 +93,11 @@
       :operands
       (list
        (translate-datum destination)
-       (translate-datum operand)))))
+       (if (typep operand 'cleavir-ir:immediate-input)
+           (translate-datum operand)
+           (make-instance 'cluster:gpr-operand
+             :size 8
+             :code-number 2))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:return-instruction))
