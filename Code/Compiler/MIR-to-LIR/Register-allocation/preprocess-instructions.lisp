@@ -48,7 +48,7 @@
   ;; register value or by a memory value, but not a constant.
   (destructuring-bind (dividend divisor)
       (cleavir-ir:inputs instruction)
-    (when (typep divisor 'cleavir-ir:constant-input)
+    (when (typep divisor 'cleavir-ir:immediate-input)
       (let ((lexical (cleavir-ir:make-lexical-location (gensym "DIVISOR"))))
         (cleavir-ir:insert-instruction-before
            (make-instance 'cleavir-ir:assignment-instruction
