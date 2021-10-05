@@ -141,9 +141,13 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-less-instruction) next)
-  (let ((successors (cleavir-ir:successors instruction)))
-    (cons (make-cmp (cleavir-ir:inputs instruction))
-          (compute-branches successors next "JNL" "JL"))))
+  (let ((successors (cleavir-ir:successors instruction))
+        (inputs (cleavir-ir:inputs instruction)))
+    (if (typep (first inputs) 'cleavir-ir:immediate-input)
+        (cons (make-cmp (reverse inputs))
+              (compute-branches successors next "JL" "JNL"))
+        (cons (make-cmp inputs)
+              (compute-branches successors next "JNL" "JL")))))
 
 ;;; This method is invoked when the SIGNED-NOT-GREATER instruction has
 ;;; been simplified because its two successors are the same.  So we
@@ -155,15 +159,23 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:signed-not-greater-instruction) next)
-  (let ((successors (cleavir-ir:successors instruction)))
-    (cons (make-cmp (cleavir-ir:inputs instruction))
-          (compute-branches successors next "JG" "JNG"))))
+  (let ((successors (cleavir-ir:successors instruction))
+        (inputs (cleavir-ir:inputs instruction)))
+    (if (typep (first inputs) 'cleavir-ir:immediate-input)
+        (cons (make-cmp (reverse inputs))
+              (compute-branches successors next "JNG" "JG"))
+        (cons (make-cmp inputs)
+              (compute-branches successors next "JG" "JNG")))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:equal-instruction) next)
-  (let ((successors (cleavir-ir:successors instruction)))
-    (cons (make-cmp (cleavir-ir:inputs instruction))
-          (compute-branches successors next "JNE" "JE"))))
+  (let ((successors (cleavir-ir:successors instruction))
+        (inputs (cleavir-ir:inputs instruction)))
+    (if (typep (first inputs) 'cleavir-ir:immediate-input)
+        (cons (make-cmp (reverse inputs))
+              (compute-branches successors next "JE" "JNE"))
+        (cons (make-cmp inputs)
+              (compute-branches successors next "JNE" "JE")))))
 
 ;;; This method is invoked when the EQ instruction has been simplified
 ;;; because its two successors are the same.  So we generate no code
@@ -174,9 +186,13 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:eq-instruction) next)
-  (let ((successors (cleavir-ir:successors instruction)))
-    (cons (make-cmp (cleavir-ir:inputs instruction))
-          (compute-branches successors next "JNE" "JE"))))
+  (let ((successors (cleavir-ir:successors instruction))
+        (inputs (cleavir-ir:inputs instruction)))
+    (if (typep (first inputs) 'cleavir-ir:immediate-input)
+        (cons (make-cmp (reverse inputs))
+              (compute-branches successors next "JE" "JNE"))
+        (cons (make-cmp inputs)
+              (compute-branches successors next "JNE" "JE")))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:bitwise-and-instruction))
