@@ -111,7 +111,9 @@
     ((instruction cleavir-ir:fixnum-multiply-instruction))
   (make-instance 'cluster:code-command
     :mnemonic "MUL"
-    :operands (list (translate-datum (second (cleavir-ir:inputs instruction))))))
+    :operands (list
+               (translate-datum (first (cleavir-ir:inputs instruction)))
+               (translate-datum (second (cleavir-ir:inputs instruction))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:fixnum-divide-instruction))
@@ -236,4 +238,6 @@
       :operands
       (list
        (translate-datum destination)
-       (translate-datum operand)))))
+       (make-instance 'cluster:gpr-operand
+         :code-number (x86-64::register-number operand)
+         :size 32)))))
