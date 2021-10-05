@@ -40,7 +40,7 @@
     ((instruction cleavir-ir:signed-add-instruction) next)
   (cons
    (translate-simple-instruction instruction)
-   (compute-branches (cleavir-ir:successors instruction) next "JOF" "JNO")))
+   (compute-branches (cleavir-ir:successors instruction) next "JO" "JNO")))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:signed-sub-instruction))
@@ -57,7 +57,7 @@
     ((instruction cleavir-ir:signed-sub-instruction) next)
   (cons
    (translate-simple-instruction instruction)
-   (compute-branches (cleavir-ir:successors instruction) next "JOF" "JNO")))
+   (compute-branches (cleavir-ir:successors instruction) next "JO" "JNO")))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:negate-instruction))
@@ -71,7 +71,7 @@
     ((instruction cleavir-ir:negate-instruction) next)
   (cons
    (translate-simple-instruction instruction)
-   (compute-branches (cleavir-ir:successors instruction) next "JOF" "JNO")))
+   (compute-branches (cleavir-ir:successors instruction) next "JO" "JNO")))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unsigned-add-instruction))
