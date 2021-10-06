@@ -515,6 +515,91 @@ list to the locations to the corresponding place expected by the
 calling conventions described in \refSec{sec-x86-calling-conventions}.
 The emitted code often needs to make use of a free temporary register,
 so it is crucial that a free register is available at each step.
+Furthermore, neither the stack pointer nor the frame pointer can
+be used as a temporary register.
 
+According to the calling conventions, a caller needs to pass the
+following items to the callee:
+
+\begin{itemize}
+\item The explicit arguments.
+\item The argument count.
+\item The dynamic environment.
+\item The static environment.
+\item The call-site descriptor.
+\end{itemize}
+
+The call-site descriptor contains information about each argument, and
+(implicitly) the argument count, as well as the location of the
+dynamic environment.  In other words, there are as many locations as
+there are arguments, plus $1$. The call-site descriptor is a literal,
+and the static environment is contained in the callee function object.
+
+Whenever an explicit or implicit argument must be loaded from its
+location in the caller to some target register, the following possible
+situations can occur:
+
+\begin{itemize}
+\item The argument is a literal object or is in a stack location, and
+  the target register $T$ is free.  Then the call-site manager emits
+  code to load the argument into $T$ and removes $T$ from the list of
+  free registers.
+\item The argument is a literal object or is in a stack location, and
+  the target register $T$ \emph{not} free.  Then the call-site manager
+  emits code to move the contents of $T$ to a free register $F$, and
+  code to load the argument into $T$.  It then updates its location
+  information so that what was previously in $T$ is subsequently in
+  $F$, and $F$ is removed from the list of free registers.
+\item The argument is already in the corresponding target register.
+  Then no code is emitted.  The list of free registers remains the
+  same.
+\item The argument is in some register $R$ that is different from the
+  target register $T$, and $T$ is free.  Then code is emitted to copy
+  the contents of $R$ to the $T$.  Finally $T$ is replaced by $R$ in
+  the list of free registers.
+\item The argument is in some register $R$ that is different from the
+  target register $T$, and $T$ is \emph{not} free.  Then code is
+  emitted to copy the contents of $T$ to a free register $F$, and to
+  copy the contents of $R$ to $T$.  Finally, location information is
+  updated so that what was previously in $T$ is instead in $F$, and
+  $F$ is replaced by $R$ in the list of free registers.
+\end{itemize}
+
+As we can see, if an argument is already in a register, the number of
+free registers remains the same after that argument is put in the
+target register.  If an argument is either a literal or in a stack
+location, a free register is used up to put it in the target register,
+but then more free registers are initially available instead.
+
+\subsection{Call with at most $5$ arguments}.
+
+When there are at most $5$ arguments, at most $8$ registers can be
+occupied, namely for the arguments, the dynamic environment, the stack
+pointer, and the frame pointer.  There are therefore initially always
+at least $8$ free registers.
+
+The following steps are performed:
+
+\begin{enumerate}
+\item Code is emitted for storing the arguments in RDI, RSI, RDX, RCX,
+  and R8.  After this step, these $5$ registers are no longer free,
+  but there are only a single item left in the call-site descriptor,
+  namely the location of the dynamic environment.  Therefore, there
+  must be at least $16 - 5 - 1 - 2 = 8$ free registers which is
+  enough for the remaining steps.
+\item Code is emitted for storing the argument count in R9 as a fixnum.
+\item Code is emitted for storing the dynamic environment into RBX.
+\item Code is emitted for loading the function object from the
+  function cell it is contained into a temporary register.
+\item Code is emitted for loading the static environment from the
+  function object into R10.
+\item Code is emitted for loading the call-site descriptor into R11.
+\item Code is emitted for loading the entry point from the function
+  object into a temporary location.
+\item A CALL instruction is emitted, followed by an unconditional JUMP
+  instruction back to the caller.
+\end{enumerate}
+
+\subsection{Call with more than $5$ arguments}.
 
 %%  LocalWords:  callee
