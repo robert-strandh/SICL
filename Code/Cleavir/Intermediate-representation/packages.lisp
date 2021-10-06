@@ -163,6 +163,7 @@
    #:unsigned-not-greater-instruction
    #:negate-instruction
    #:equal-instruction
+   #:shift-instruction
    #:shift-left-instruction
    #:logic-shift-right-instruction
    #:arithmetic-shift-right-instruction

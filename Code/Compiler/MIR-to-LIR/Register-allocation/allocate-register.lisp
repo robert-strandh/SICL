@@ -147,6 +147,7 @@
          instruction)
         assignment))))
 
+(defvar *registers-to-avoid* (x86-64:make-register-map))
 ;;; Ensure that LEXICAL-LOCATION has an attributed register.  We
 ;;; account for two possibilities.  If LEXICAL-LOCATION already has an
 ;;; attributed register, then we return PREDECESSOR.  If not, we first
@@ -163,7 +164,9 @@
          arrangement lexical-location)
         predecessor
         (let* ((pool (input-pool instruction))
-               (candidates (determine-candidates lexical-location pool))
+               (candidates (x86-64:register-map-difference
+                            (determine-candidates lexical-location pool)
+                            *registers-to-avoid*))
                (new-predecessor
                  (ensure-unattributed-registers
                   predecessor instruction pool candidates 1)))
