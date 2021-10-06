@@ -104,6 +104,7 @@ Normal call to external function, passing at most $5$ arguments:
   temporary locations.
 \item Store the arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the argument count in R9 as a fixnum.
+\item Load the dynamic environment into RBX.
 \item Load the static environment of the callee from the callee
   function object into R10.
 \item Load the call-site descriptor into R11.
@@ -131,6 +132,7 @@ Normal call to external function, passing more than $5$ arguments:
   $\ldots$, [RSP$ + 8(N - 6)$] in that order, so that the sixth
   argument is on top of the stack.
 \item Store the argument count in R9 as a fixnum.
+\item Load the dynamic environment into RBX.
 \item Load the static environment of the callee from the callee
   function object into R10.
 \item Load the call-site descriptor into R11.
@@ -173,6 +175,7 @@ Tail call to external function, passing at most $5$ arguments:
   temporary locations.
 \item Store the arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the argument count in R9 as a fixnum.
+\item Load the dynamic environment into RBX.
 \item Load the static environment of the callee from the callee
   function object into R10.
 \item Copy the value of \texttt{RBP}$ - 8$ to RSP, establishing the stack frame
