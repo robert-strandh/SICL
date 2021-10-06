@@ -85,6 +85,7 @@ For information about the call-site descriptor, see
 \end{itemize}
 
 \section{Calling conventions}
+\label{sec-x86-calling-conventions}
 
 \refFig{fig-x86-64-stack-frame} shows the layout of a stack frame.
 
@@ -487,5 +488,30 @@ destination before the register arguments are pushed.
   Stack frame with at most $5$ arguments, with all arguments pushed
   to the stack.}
 \end{figure}
+
+\section{Default call-site}
+
+The default call-site is created by the call-site manager in various
+situations:
+
+\begin{itemize}
+\item When a caller is tied to an environment, for the call sites
+  referring to undefined functions.
+\item When a is callee about to be redefined, all the call sites
+  referring to it are turned into default call sites before the new
+  definition is stored in the environment.
+\item When a callee has no information available that allows the
+  call-site manager to optimize the call.
+\end{itemize}
+
+The call-site examines the list of argument locations in the call-site
+descriptor as described in \refSec{sec-call-site-descriptor}.  It then
+emits code to copy the contents of each location indicated by the
+argument location in the list to the locations to the corresponding
+place expected by the call-site protocol described in
+\refSec{sec-x86-calling-conventions}.  The emitted code often needs to
+make use of a free temporary register, so it is crucial that a free
+register is available at each step.
+
 
 %%  LocalWords:  callee
