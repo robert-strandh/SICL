@@ -25,18 +25,18 @@
 
 (defun reset-memory ()
   (loop for i from 0 below 256
-	do (setf (aref *memory* i) nil)))
+        do (setf (aref *memory* i) nil)))
 
 
 (defun find-page-of-address (address)
   (let ((directory (loop with directory = *memory*
-			 for shift from -56 to -16 by 8
-			 for index = (logand (ash address shift) #xff)
-			 do (when (null (aref directory index))
-			      (setf (aref directory index) (make-directory)))
-			    (setf directory (aref directory index))
-			 finally (return directory)))
-	(index (logand (ash address -8) #xff)))
+                         for shift from -56 to -16 by 8
+                         for index = (logand (ash address shift) #xff)
+                         do (when (null (aref directory index))
+                              (setf (aref directory index) (make-directory)))
+                            (setf directory (aref directory index))
+                         finally (return directory)))
+        (index (logand (ash address -8) #xff)))
     (when (null (aref directory index))
       (setf (aref directory index) (make-page)))
     (aref directory index)))

@@ -25,8 +25,8 @@
   (if (= size-in-bits 8)
       (extract-byte vector-position)
       (let ((half (ash size-in-bits -1)))
-	(+ (extract-little-endian-unsigned half vector-position)
-	   (ash (extract-little-endian-unsigned half vector-position) half)))))
+        (+ (extract-little-endian-unsigned half vector-position)
+           (ash (extract-little-endian-unsigned half vector-position) half)))))
 
 (defun extract-little-endian-signed (size-in-bits vector-position)
   (convert-unsigned-to-signed
@@ -38,8 +38,8 @@
   (if (= size-in-bits 8)
       (extract-byte vector-position)
       (let ((half (ash size-in-bits -1)))
-	(+ (ash (extract-big-endian-unsigned half vector-position) half)
-	   (extract-big-endian-unsigned half vector-position)))))
+        (+ (ash (extract-big-endian-unsigned half vector-position) half)
+           (extract-big-endian-unsigned half vector-position)))))
 
 (defun extract-big-endian-signed (size-in-bits vector-position)
   (convert-unsigned-to-signed
