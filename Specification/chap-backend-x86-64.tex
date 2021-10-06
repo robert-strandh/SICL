@@ -594,6 +594,9 @@ The following steps are performed:
 \item Code is emitted for loading the static environment from the
   function object into R10.
 \item Code is emitted for loading the call-site descriptor into R11.
+\item Code is emitted for pushing RBP on the stack, and for copying
+  the value of RSP into RBP, thereby establishing an (empty) stack
+  frame for the calle.  
 \item Code is emitted for loading the entry point from the function
   object into a temporary location.
 \item A CALL instruction is emitted, followed by an unconditional JUMP
@@ -601,5 +604,55 @@ The following steps are performed:
 \end{enumerate}
 
 \subsection{Call with more than $5$ arguments}.
+
+When the call has more than $5$ arguments, it is possible that no free
+register is available, but there must be at least $13$ arguments plus
+the dynamic environment for that to happen.  Even so, the number of
+free registers may not be enough for the call-site manager to use the
+same strategy as in the previous section, so we discuss a general
+strategy when there are not enough free registers.
+
+The key to this strategy is the observation that, if there are no
+free registers available, then at least $13$ arguments must be in
+registers, and at least $8$ of those must be arguments beyond argument
+number $5$.  Since arguments beyond number $5$ are passed on the
+stack, our strategy is to store such arguments in their conventional
+stack locations first, thereby freeing up enough registers for the
+remainder of the call.
+
+\begin{enumerate}
+\item Code is emitted for subtracting $8(N - 2)$ from RSP, where $N$
+  is the number of arguments to pass, thus leaving room in the callee
+  stack frame for the $N - 5$ arguments, the call-site descriptor, the
+  return address, and the caller \texttt{RBP}
+\item For each argument with index $i > 5$ (starting from index $1$)
+  that is in some register $R$, code is emitted for storing the
+  contents of $R$ in stack location [RSP - $i$], and add $R$ to the
+  list of free registers.  After this step, there will be enough free
+  registers to accomplish the following steps.
+\item For each argument with index $i > 5$ (starting from index $1$)
+  that is either a literal, or in a stack location, using any single
+  free register $F$, code is emitted for copying the argument from its
+  location to $F$ and for copying $F$ to stack location [RSP - $i$].
+  $F$ remains free after this step.
+\item Code is emitted for storing arguments $1$ to $5$ in RDI, RSI,
+  RDX, RCX, and R8, using free registers if required.
+\item Code is emitted for storing the argument count in R9 as a fixnum.
+\item Code is emitted for storing the dynamic environment into RBX.
+\item Code is emitted for loading the function object from the
+  function cell it is contained into a temporary register.
+\item Code is emitted for loading the static environment from the
+  function object into R10.
+\item Code is emitted for loading the call-site descriptor into R11.
+\item Code is emitted for storing the value of \texttt{RBP} into [RSP
+  + 8(N - 4)].
+\item Code is emitted for copying the value of RSP$ + 8(N - 4)$ into
+  \texttt{RBP}, establishing the stack frame for the callee.  The
+  instruction LEA can be used for this purpose.
+\item Code is emitted for loading the entry point from the function
+  object into a temporary location.
+\item A CALL instruction is emitted, followed by an unconditional JUMP
+  instruction back to the caller.
+\end{enumerate}
 
 %%  LocalWords:  callee
