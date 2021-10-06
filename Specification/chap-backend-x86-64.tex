@@ -489,9 +489,9 @@ destination before the register arguments are pushed.
   to the stack.}
 \end{figure}
 
-\section{Default call-site}
+\section{Default call site}
 
-The default call-site is created by the call-site manager in various
+The default call site is created by the call-site manager in various
 situations:
 
 \begin{itemize}
@@ -504,14 +504,14 @@ situations:
   call-site manager to optimize the call.
 \end{itemize}
 
-The call-site examines the list of argument locations in the call-site
-descriptor as described in \refSec{sec-call-site-descriptor}.  It then
-emits code to copy the contents of each location indicated by the
-argument location in the list to the locations to the corresponding
-place expected by the call-site protocol described in
-\refSec{sec-x86-calling-conventions}.  The emitted code often needs to
-make use of a free temporary register, so it is crucial that a free
-register is available at each step.
+The call-site manager examines the list of argument locations in the
+call-site descriptor as described in
+\refSec{sec-call-site-descriptor}.  It then emits code to copy the
+contents of each location indicated by the argument location in the
+list to the locations to the corresponding place expected by the
+calling conventions described in \refSec{sec-x86-calling-conventions}.
+The emitted code often needs to make use of a free temporary register,
+so it is crucial that a free register is available at each step.
 
 
 %%  LocalWords:  callee
