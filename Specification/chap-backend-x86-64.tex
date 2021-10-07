@@ -105,17 +105,17 @@ Normal call to external function, passing at most $5$ arguments:
 \item Store the arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the argument count in R9 as a fixnum.
 \item Load the dynamic environment into RBX.
-\item Load the static environment of the callee from the callee
-  function object into R10.
+\item Load the rack of the callee function into a temporary register.
+\item Load the static environment of the callee from the rack of the
+  callee function object into R10.
 \item Load the call-site descriptor into R11.
 \item Push the value of \texttt{RBP} on the stack.
 \item Copy the value of RSP into \texttt{RBP}, establishing the
   (empty) stack frame for the callee.
-\item Load the entry point address of the callee from the callee
-  function object into an available scratch register, typically RAX.
-\item Use the CALL instruction with that register as an argument,
-  pushing the return address on the stack and transferring control to
-  the callee.
+\item Use the indirect CALL instruction on the temporary register
+  containing the rack of the callee function and the entry point
+  offset, thereby pushing the return address on the stack and
+  transferring control to the callee.
 \end{enumerate}
 
 Normal call to external function, passing more than $5$ arguments:
@@ -133,18 +133,18 @@ Normal call to external function, passing more than $5$ arguments:
   argument is on top of the stack.
 \item Store the argument count in R9 as a fixnum.
 \item Load the dynamic environment into RBX.
-\item Load the static environment of the callee from the callee
-  function object into R10.
+\item Load the rack of the callee function into a temporary register.
+\item Load the static environment of the callee from the rack of the
+  callee function object into R10.
 \item Load the call-site descriptor into R11.
 \item Store the value of \texttt{RBP} into [RSP + 8(N - 4)]
 \item Copy the value of RSP$ + 8(N - 4)$ into \texttt{RBP}, establishing the
   stack frame for the callee.  The instruction LEA can be used for
   this purpose.
-\item Load the entry point address of the callee from the callee
-  function object into an available scratch register, typically RAX.
-\item Use the CALL instruction with that register as an argument,
-  pushing the return address on the stack and transferring control to
-  the callee.
+\item Use the indirect CALL instruction on the temporary register
+  containing the rack of the callee function and the entry point
+  offset, thereby pushing the return address on the stack and
+  transferring control to the callee.
 \end{enumerate}
 
 By using a \texttt{CALL}/\texttt{RET} pair instead of (say) the caller
