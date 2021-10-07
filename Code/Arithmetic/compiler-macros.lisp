@@ -46,3 +46,17 @@
   (define-all-binary > binary-greater)
   (define-all-binary >= binary-not-less)
   (define-all-binary = binary-equal))
+
+(define-compiler-macro /= (&whole form &rest args)
+  (if (or (null args) (> (length args) 5)) ; 5 is arbitrary; should perhaps be tuned
+    form
+    (loop for arg in args
+          for var = (gensym)
+          collect var into vars
+          collect `(,var ,arg) into bindings
+          finally (return
+                    `(let ,bindings
+                       (not (or
+                              ,@(loop for x on vars
+                                      append (loop for y on (cdr x)
+                                                   collect `(binary-equal ,(car x) ,(car y)))))))))))
