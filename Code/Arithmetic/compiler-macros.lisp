@@ -4,58 +4,45 @@
   (cond ((null args) 0)
         ;; FIXME: check that we have a number
         ((null (cdr args)) (car args))
-        ((null (cddr args)) `(binary-add ,(car args) ,(cadr args)))
-        (t `(binary-add (+ ,@(butlast args)) ,(car (last args))))))
+        (t `(binary-add ,(car args) (+ ,@(cdr args))))))
 
 ;;; FIXME: do this better by not having a required argument
 ;;; and instead reporting a compilation error when no
 ;;; arguments are given
 (define-compiler-macro - (x &rest args)
   (cond ((null args) `(negate ,x))
-        ((null (cdr args)) `(binary-sub ,x ,(car args)))
-        (t `(binary-sub (- ,@(butlast args)) ,(car (last args))))))
+        ((null (cdr args)) `(binary-subtract ,x ,(car args)))
+        (t `(binary-subtract ,x (+ ,@args)))))
 
 (define-compiler-macro * (&rest args)
   (cond ((null args) 1)
         ;; FIXME: check that we have a number
         ((null (cdr args)) (car args))
-        ((null (cddr args)) `(binary-mul ,(car args) ,(cadr args)))
-        (t `(binary-mul (* ,@(butlast args)) ,(car (last args))))))
+        (t `(* (binary-multiply ,(car args) ,(cadr args)) ,@(cddr args)))))
 
 ;;; FIXME: do this better by not having a required argument
 ;;; and instead reporting a compilation error when no
 ;;; arguments are given
 (define-compiler-macro / (x &rest args)
   (cond ((null args) `(invert ,x))
-        ((null (cdr args)) `(binary-div ,x ,(car args)))
-        (t `(binary-div (/ ,@(butlast args)) ,(car (last args))))))
+        ((null (cdr args)) `(binary-divide ,x ,(car args)))
+        (t `(/ (binary-divide ,x ,(car args)) ,@(cdr args)))))
 
-(define-compiler-macro < (x &rest args)
-  (if (null args)
-      t
-      `(and (binary-less ,x ,(car args))
-            (< ,@args))))
 
-(define-compiler-macro <= (x &rest args)
-  (if (null args)
-      t
-      `(and (binary-not-greater ,x ,(car args))
-            (<= ,@args))))
-
-(define-compiler-macro > (x &rest args)
-  (if (null args)
-      t
-      `(and (binary-greater ,x ,(car args))
-            (> ,@args))))
-
-(define-compiler-macro >= (x &rest args)
-  (if (null args)
-      t
-      `(and (binary-not-less ,x ,(car args))
-            (>= ,@args))))
-
-(define-compiler-macro = (x &rest args)
-  (if (null args)
-      t
-      `(and (binary-equal ,x ,(car args))
-            (= ,@args))))
+(macrolet ((define-all-binary (name binary)
+             `(define-compiler-macro ,name (x &rest args)
+                (if (null args)
+                    t
+                    (loop for form in (cons x args)
+                          for previous-var = nil then var
+                          for var = (gensym)
+                          collect `(,var ,form) into bindings
+                          when previous-var collect `(,',binary ,previous-var ,var) into conditions
+                          finally (return
+                                    `(let ,bindings
+                                       (and ,@conditions))))))))
+  (define-all-binary < binary-less)
+  (define-all-binary <= binary-not-greater)
+  (define-all-binary > binary-greater)
+  (define-all-binary >= binary-not-less)
+  (define-all-binary = binary-equal))
