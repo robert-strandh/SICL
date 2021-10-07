@@ -1,10 +1,20 @@
 (cl:in-package #:sicl-arithmetic)
 
-(define-compiler-macro + (&rest args)
-  (cond ((null args) 0)
-        ;; FIXME: check that we have a number
-        ((null (cdr args)) (car args))
-        (t `(binary-add ,(car args) (+ ,@(cdr args))))))
+(macrolet ((define-binary-reducer (name binary type default)
+             `(define-compiler-macro ,name (&rest args)
+                (cond ((null args) ,default)
+                      ((null (cdr args)) (let ((sym (gensym)))
+                                           `(let ((,sym ,(car args)))
+                                              (check-type ,sym ,',type)
+                                              ,sym)))
+                      (t `(,',binary ,(car args) (,',name ,@(cdr args))))))))
+  (define-binary-reducer + binary-add number 0)
+  (define-binary-reducer * binary-multiply number 1)
+  (define-binary-reducer gcd binary-gcd integer 0)
+  (define-binary-reducer lcm binary-lcm integer 1)
+  (define-binary-reducer logand binary-logand integer -1)
+  (define-binary-reducer logior binary-logior integer 0)
+  (define-binary-reducer logxor binary-logxor integer 0))
 
 ;;; FIXME: do this better by not having a required argument
 ;;; and instead reporting a compilation error when no
@@ -13,12 +23,6 @@
   (cond ((null args) `(negate ,x))
         ((null (cdr args)) `(binary-subtract ,x ,(car args)))
         (t `(binary-subtract ,x (+ ,@args)))))
-
-(define-compiler-macro * (&rest args)
-  (cond ((null args) 1)
-        ;; FIXME: check that we have a number
-        ((null (cdr args)) (car args))
-        (t `(* (binary-multiply ,(car args) ,(cadr args)) ,@(cddr args)))))
 
 ;;; FIXME: do this better by not having a required argument
 ;;; and instead reporting a compilation error when no
