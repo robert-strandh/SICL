@@ -176,14 +176,14 @@ Tail call to external function, passing at most $5$ arguments:
 \item Store the arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the argument count in R9 as a fixnum.
 \item Load the dynamic environment into RBX.
-\item Load the static environment of the callee from the callee
-  function object into R10.
+\item Load the rack of the callee function into a temporary register.
+\item Load the static environment of the callee from the rack of the
+  callee function object into R10.
 \item Copy the value of \texttt{RBP}$ - 8$ to RSP, establishing the stack frame
   for the callee, containing only the return address.  The LEA
   instruction can be used for this purpose.
-\item Load the entry point address of the callee from the callee
-  function object into an available scratch register, typically RAX.
-\item Use the JMP instruction with that register as an argument,
+\item Use the indirect JMP instruction with the register containing
+  the rack of the callee, and the offset of the entry point, thereby
   transferring control to the callee.
 \end{enumerate}
 
