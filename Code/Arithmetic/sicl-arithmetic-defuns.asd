@@ -40,7 +40,6 @@
    (:file "plusp-defun")
    (:file "rem-defun")
    (:file "round-defun")
-   (:file "times-defun")
    (:file "truncate-defun")
    (:file "upgraded-complex-part-type-defun")
    (:file "zerop-defun")))

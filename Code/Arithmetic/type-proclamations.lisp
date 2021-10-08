@@ -4,19 +4,19 @@
                 binary-add
                 binary-subtract
                 binary-multiply
-                binary-divide))
+                binary-divide
+                binary-equal))
 
-(declaim (ftype (function (real real) t)
+(declaim (ftype (function (real real) boolean)
                 binary-less
                 binary-not-greater
                 binary-greater
-                binary-not-less
-                binary-equal))
+                binary-not-less))
 
 (declaim (ftype (function (list) number)
                 + - * /))
 
-(declaim (ftype (function (list) t)
+(declaim (ftype (function (list) boolean)
                 < <= > >= = /=))
 
 (declaim (ftype (function (float) integer)
