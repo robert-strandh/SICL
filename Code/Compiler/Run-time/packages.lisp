@@ -36,4 +36,5 @@
            #:throw
            #:*code-vector*
            #:*literals-vector*
-           #:resolve-load-time-value))
+           #:resolve-load-time-value
+           #:enclose))
