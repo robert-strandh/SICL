@@ -84,7 +84,7 @@
                     :shift-count immediate-input-1))))
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:aref-instruction) code-object)
+    (client (instruction cleavir-ir:aref-instruction))
   (let ((element-type (cleavir-ir:element-type instruction)))
     (cond ((equal element-type 'bit)
            (process-bit-aref-instruction instruction))
@@ -167,7 +167,7 @@
                     :value modified-word-element-location)))))
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:aset-instruction) code-object)
+    (client (instruction cleavir-ir:aset-instruction))
   (let ((element-type (cleavir-ir:element-type instruction)))
     (cond ((equal element-type 'bit)
            (process-bit-aset-instruction instruction))

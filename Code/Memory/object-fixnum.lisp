@@ -32,7 +32,7 @@
   (object-ast))
 
 (defmethod sicl-hir-to-mir:process-instruction
-    (client (instruction object-to-fixnum-instruction) code-object)
+    (client (instruction object-to-fixnum-instruction))
   (change-class instruction 'cleavir-ir:shift-left-instruction
                 :inputs
                 (list (cleavir-ir:inputs instruction)
@@ -71,7 +71,7 @@
   (fixnum-ast))
 
 (defmethod sicl-hir-to-mir:process-instruction
-    (client (instruction fixnum-to-object-instruction) code-object)
+    (client (instruction fixnum-to-object-instruction))
   (change-class instruction 'cleavir-ir:logic-shift-right-instruction
                 :inputs
                 (list (cleavir-ir:inputs instruction)

@@ -48,7 +48,7 @@
                   :inputs (list word-location-2 tag-input))))
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:box-instruction) code-object)
+    (client (instruction cleavir-ir:box-instruction))
   (let ((element-type (cleavir-ir:element-type instruction)))
     (cond ((member element-type
                    '(bit
@@ -81,7 +81,7 @@
              (cleavir-ir:insert-instruction-before
               (let ((literal 'double-float))
                 (sicl-compiler:ensure-literal
-                 (sicl-compiler:constants code-object) literal)
+                 (sicl-compiler:constants *code-object*) literal)
                 (make-instance 'cleavir-ir:load-literal-instruction
                   :dynamic-environment-location dynamic-environment
                   :output double-float-constant-location
@@ -110,7 +110,7 @@
              (cleavir-ir:insert-instruction-before
               (let ((literal "Can't box ((un)signed-byte 64) yet"))
                 (sicl-compiler:ensure-literal
-                 (sicl-compiler:constants code-object) literal)
+                 (sicl-compiler:constants *code-object*) literal)
                 (make-instance 'cleavir-ir:load-literal-instruction
                   :dynamic-environment-location dynamic-environment
                   :output message-constant-location
@@ -153,7 +153,7 @@
                   :inputs (list word-location))))
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:unbox-instruction) code-object)
+    (client (instruction cleavir-ir:unbox-instruction))
   (let ((element-type (cleavir-ir:element-type instruction)))
     (cond ((member element-type
                    '(bit

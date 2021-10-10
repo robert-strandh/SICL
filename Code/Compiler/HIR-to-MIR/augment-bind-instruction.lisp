@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-hir-to-mir)
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:bind-instruction) code-object)
+    (client (instruction cleavir-ir:bind-instruction))
   (let ((dynamic-environment-output
           (first (cleavir-ir:outputs instruction))))
     (setf (cleavir-ir:outputs instruction) '())

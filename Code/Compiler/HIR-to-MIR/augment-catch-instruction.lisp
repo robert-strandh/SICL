@@ -29,7 +29,7 @@
 ;;; additional successors of the CATCH-INSTRUCTION.
 
 ;; (defmethod process-instruction
-;;     (client (instruction cleavir-ir:catch-instruction) code-object)
+;;     (client (instruction cleavir-ir:catch-instruction))
 ;;   (destructuring-bind (continuation-output dynamic-environment-output)
 ;;       (cleavir-ir:outputs instruction)
 ;;     (setf (cleavir-ir:outputs instruction) '())

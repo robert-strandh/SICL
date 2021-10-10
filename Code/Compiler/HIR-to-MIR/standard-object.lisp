@@ -13,7 +13,7 @@
                   :address slot-location)))
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:nook-read-instruction) code-object)
+    (client (instruction cleavir-ir:nook-read-instruction))
   (destructuring-bind (object-location slot-number-location)
       (cleavir-ir:inputs instruction)
     (process-nook-read-instruction instruction
@@ -35,7 +35,7 @@
                   :outputs '())))
 
 (defmethod process-instruction
-    (client (instruction cleavir-ir:nook-write-instruction) code-object)
+    (client (instruction cleavir-ir:nook-write-instruction))
   (destructuring-bind (object-location slot-number-location value-location)
       (cleavir-ir:inputs instruction)
     (process-nook-write-instruction instruction
@@ -44,9 +44,7 @@
                                     value-location)))
 
 (defmethod process-instruction
-    (client
-     (instruction cleavir-ir:standard-object-class-of-instruction)
-     code-object)
+    (client (instruction cleavir-ir:standard-object-class-of-instruction))
   (destructuring-bind (object-location)
       (cleavir-ir:inputs instruction)
     (change-class instruction
@@ -56,9 +54,7 @@
                             :value -5))))
 
 (defmethod process-instruction
-    (client
-     (instruction sicl-ir:rack-instruction)
-     code-object)
+    (client (instruction sicl-ir:rack-instruction))
   (destructuring-bind (object-location)
       (cleavir-ir:inputs instruction)
     (change-class instruction
@@ -68,9 +64,7 @@
                             :value 3))))
 
 (defmethod process-instruction
-    (client
-     (instruction sicl-ir:set-rack-instruction)
-     code-object)
+    (client (instruction sicl-ir:set-rack-instruction))
   (destructuring-bind (object-location rack-location)
       (cleavir-ir:inputs instruction)
     (change-class instruction
