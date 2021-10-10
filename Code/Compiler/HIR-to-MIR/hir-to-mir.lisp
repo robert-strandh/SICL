@@ -10,7 +10,8 @@
           do (process-instruction client instruction code-object))))
 
 (defun hir-to-mir (client code-object)
-  (let ((top-level-enter-instruction (sicl-compiler:ir code-object)))
+  (let ((top-level-enter-instruction (sicl-compiler:ir code-object))
+        (*code-object* code-object))
     (expand-funcall-instructions top-level-enter-instruction)
     (let ((enter-instructions
             (gather-enter-instructions top-level-enter-instruction)))
