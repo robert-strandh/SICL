@@ -10,6 +10,11 @@
              :name (cleavir-ir:callee-name instruction)
              :instruction instruction)
            (call-sites code-object)))
+    (cleavir-ir:enclose-instruction
+     (push (make-instance 'call-site
+             :name 'sicl-run-time:enclose
+             :instruction instruction)
+           (call-sites code-object)))
     (cleavir-ir:catch-instruction
      (push (make-instance 'call-site
              :name 'sicl-run-time:augment-with-block/tagbody-entry
