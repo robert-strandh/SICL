@@ -236,7 +236,7 @@
     (update-chunk-trailer-size chunk)
     (link-chunk chunk)))
 
-(defun initialize-heap ()
+(defun initialize ()
   (initialize-dyads)
   (initialize-bin-sizes)
   (initialize-sentinels)
