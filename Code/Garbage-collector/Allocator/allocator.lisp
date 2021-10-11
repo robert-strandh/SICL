@@ -35,7 +35,7 @@
 (defparameter *multiplier*
   (exp (/ (log (/ (expt 2d0 61d0) 67d0)) (- 511d0 63d0))))
 
-(defun init-bin-sizes ()
+(defun initialize-bin-sizes ()
   (loop for index from 0 to 63
         for address = (+ *bin-sizes-start* (* index 8))
         do (setf (sicl-memory:memory-unsigned address 64)
@@ -49,7 +49,7 @@
   (setf (sicl-memory:memory-unsigned (+ *bin-sizes-start* (* 511 8)) 64)
         (- (expt 2 64) 8)))
 
-(defun init-sentinels ()
+(defun initialize-sentinels ()
   (loop for index from 0 below 512
         for sentinel-offset = (* index 8)
         for start-sentinel-address = (+ *start-sentinels-start* sentinel-offset)
@@ -224,7 +224,7 @@
           (link-chunk residue-chunk)
           candidate))))
 
-(defun init-heap ()
+(defun initialize-heap ()
   (let ((chunk *heap-start*)
         (size (- *heap-end* *heap-start*)))
     (setf (sicl-memory:memory-unsigned chunk 64)
@@ -236,7 +236,8 @@
     (update-chunk-trailer-size chunk)
     (link-chunk chunk)))
 
-(defun init ()
-  (init-bin-sizes)
-  (init-sentinels)
-  (init-heap))
+(defun initialize-heap ()
+  (initialize-dyads)
+  (initialize-bin-sizes)
+  (initialize-sentinels)
+  (initialize-heap))
