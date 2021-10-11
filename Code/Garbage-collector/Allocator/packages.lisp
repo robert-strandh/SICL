@@ -2,4 +2,7 @@
 
 (defpackage #:sicl-allocator
   (:use #:common-lisp)
-  (:export))
+  (:export #:initialize-heap
+           #:allocate-dyad
+           #:allocate-chunk
+           #:free))
