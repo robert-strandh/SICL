@@ -18,3 +18,7 @@
       (prog1 *free-list*
         (setf *free-list*
               (sicl-memory:memory-unsigned *free-list* 64)))))
+
+(defun initialize-dyads ()
+  (setf *next-dyad* *dyads-start*)
+  (setf *free-list* 0))
