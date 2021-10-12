@@ -5,7 +5,6 @@
 ;;; HyperSpec doesn't say what function to use for comparing the
 ;;; names.  We assume string= here, meaning that the names are case 
 ;;; sensitive. 
-
 (defun symbol-equal (symbol1 symbol2)
   (and (symbolp symbol1)
        (symbolp symbol2)
