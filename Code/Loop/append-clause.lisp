@@ -109,15 +109,8 @@
 
 (defmethod body-form ((clause append-form-into-clause) end-tag)
   (declare (ignore end-tag))
-  `(if (null ,(tail-variable (into-var clause)))
-       (progn (setq ,(into-var clause)
-                    (copy-list ,(form clause)))
-              (setq ,(tail-variable (into-var clause))
-                    (last ,(into-var clause))))
-       (progn (rplacd ,(tail-variable (into-var clause))
-                      (copy-list ,(form clause)))
-              (setq ,(tail-variable (into-var clause))
-                    (last ,(tail-variable (into-var clause)))))))
+  (append-clause-expander
+   (form clause) (into-var clause) (tail-variable (into-var clause))))
 
 (defmethod body-form ((clause append-it-clause) end-tag)
   (declare (ignore end-tag))

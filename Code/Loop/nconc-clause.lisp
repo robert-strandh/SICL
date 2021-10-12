@@ -107,15 +107,8 @@
 
 (defmethod body-form ((clause nconc-form-into-clause) end-tag)
   (declare (ignore end-tag))
-  `(if (null ,(tail-variable (into-var clause)))
-       (progn (setq ,(into-var clause)
-                    ,(form clause))
-              (setq ,(tail-variable (into-var clause))
-                    (last ,(into-var clause))))
-       (progn (rplacd ,(tail-variable (into-var clause))
-                      ,(form clause))
-              (setq ,(tail-variable (into-var clause))
-                    (last ,(tail-variable (into-var clause)))))))
+  (nconc-clause-expander
+   (form clause) (into-var clause) (tail-variable (into-var clause))))
 
 (defmethod body-form ((clause nconc-it-clause) end-tag)
   (declare (ignore end-tag))
