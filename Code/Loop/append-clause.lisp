@@ -85,7 +85,7 @@
        (setq ,*accumulation-variable* ,(form clause))
        ;; If the accumulation variable is not NIL, then the tail
        ;; variable may or may not be NIL.
-       (progn 
+       (progn
          ;; If the tail variable is NIL, then every CONS cell in the
          ;; list starting at the accumulation variable must be copied,
          ;; and we know that there is at least one.  So we can
