@@ -114,15 +114,8 @@
 
 (defmethod body-form ((clause append-it-clause) end-tag)
   (declare (ignore end-tag))
-  `(if (null ,*list-tail-accumulation-variable*)
-       (progn (setq ,*accumulation-variable*
-                    (copy-list ,*it-var*))
-              (setq ,*list-tail-accumulation-variable*
-                    (last ,*accumulation-variable*)))
-       (progn (rplacd ,*list-tail-accumulation-variable*
-                      (copy-list ,*it-var*))
-              (setq ,*list-tail-accumulation-variable*
-                    (last ,*list-tail-accumulation-variable*)))))
+  (append-clause-expander
+   *it-var*  *accumulation-variable* *list-tail-accumulation-variable*))
 
 (defmethod body-form ((clause append-it-into-clause) end-tag)
   (declare (ignore end-tag))

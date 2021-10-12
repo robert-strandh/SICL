@@ -112,15 +112,8 @@
 
 (defmethod body-form ((clause nconc-it-clause) end-tag)
   (declare (ignore end-tag))
-  `(if (null ,*list-tail-accumulation-variable*)
-       (progn (setq ,*accumulation-variable*
-                    ,*it-var*)
-              (setq ,*list-tail-accumulation-variable*
-                    (last ,*accumulation-variable*)))
-       (progn (rplacd ,*list-tail-accumulation-variable*
-                      ,*it-var*)
-              (setq ,*list-tail-accumulation-variable*
-                    (last ,*list-tail-accumulation-variable*)))))
+  (nconc-clause-expander
+   *it-var*  *accumulation-variable* *list-tail-accumulation-variable*))
 
 (defmethod body-form ((clause nconc-it-into-clause) end-tag)
   (declare (ignore end-tag))

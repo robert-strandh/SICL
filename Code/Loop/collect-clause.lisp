@@ -117,15 +117,8 @@
 
 (defmethod body-form ((clause collect-it-clause) end-tag)
   (declare (ignore end-tag))
-  `(if (null ,*list-tail-accumulation-variable*)
-       (progn (setq ,*list-tail-accumulation-variable*
-                    (list ,*it-var*))
-              (setq ,*accumulation-variable*
-                    ,*list-tail-accumulation-variable*))
-       (progn (rplacd ,*list-tail-accumulation-variable*
-                      (list ,*it-var*))
-              (setq ,*list-tail-accumulation-variable*
-                    (cdr ,*list-tail-accumulation-variable*)))))
+  (collect-clause-expander
+   *it-var*  *accumulation-variable* *list-tail-accumulation-variable*))
 
 (defmethod body-form ((clause collect-it-into-clause) end-tag)
   (declare (ignore end-tag))
