@@ -5,8 +5,10 @@
 
 (defun compute-pointer (object)
   (etypecase object
-    ((integer #.(- (expt 2 62)) #.(1- (expt 2 62)))
+    ((integer 0 #.(1- (expt 2 62)))
      (values (ash object 1) '()))
+    ((integer #.(- (expt 2 62)) -1)
+     (values (ash (logand object #.(1- (expt 2 63))) 1)))
     (character
      ;; FIXME: use a target-specific table instead of realying on the
      ;; host.
