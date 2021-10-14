@@ -4,7 +4,7 @@
   (make-hash-table :test #'eq))
 
 (defun compute-pointer (object)
-  (etypecase object
+  (typecase object
     ((integer 0 #.(1- (expt 2 62)))
      (values (ash object 1) '()))
     ((integer #.(- (expt 2 62)) -1)
@@ -13,15 +13,20 @@
      ;; FIXME: use a target-specific table instead of realying on the
      ;; host.
      (values (+ (ash (char-code object) 5) #x00011) '()))
-    (cons
-     (let* ((address (sicl-allocator:allocate-dyad))
-            (result (+ address 1)))
-       (setf (gethash object *ersatz-object-table*) result)
-       (values result
-               (list (cons address (car object))
-                     (cons (+ address 8) (cdr object))))))
-    ;; FIXME: add more types
-    ))
+    (otherwise
+     (let ((result (gethash object *ersatz-object-table*)))
+       (if (not (null result))
+           result
+           (etypecase object
+             (cons
+              (let* ((address (sicl-allocator:allocate-dyad))
+                     (result (+ address 1)))
+                (setf (gethash object *ersatz-object-table*) result)
+                (values result
+                        (list (cons address (car object))
+                              (cons (+ address 8) (cdr object))))))
+             ;; FIXME: add more types
+             ))))))
 
 (defun pointer (object)
   (multiple-value-bind (result work-list-items)
