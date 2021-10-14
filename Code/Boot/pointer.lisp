@@ -25,6 +25,17 @@
                 (values result
                         (list (cons address (car object))
                               (cons (+ address 8) (cdr object))))))
+             (string
+              (let* ((ms (env:fdefinition (env:client *e5*) *e5* 'make-string))
+                     (sa (env:fdefinition (env:client *e5*) *e5* '(setf aref)))
+                     (ersatz-string (funcall ms (length object))))
+                (loop for i from 0 below (length object)
+                      do (funcall sa (aref object i) i))
+                (multiple-value-bind (result work-list-items)
+                    (compute-pointer ersatz-string)
+                  (setf (gethash object *ersatz-object-table*) result)
+                  (remhash ersatz-string *ersatz-object-table*)
+                  (values result work-list-items))))
              ;; FIXME: add more types
              ))))))
 
