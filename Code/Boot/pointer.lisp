@@ -36,6 +36,18 @@
                   (setf (gethash object *ersatz-object-table*) result)
                   (remhash ersatz-string *ersatz-object-table*)
                   (values result work-list-items))))
+             (symbol
+              (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
+                     (ersatz-symbol
+                       (funcall mi
+                                :name (symbol-name object)
+                                ;; FIXME: Pass a package object.
+                                :package nil)))
+                (multiple-value-bind (result work-list-items)
+                    (compute-pointer ersatz-symbol)
+                  (setf (gethash object *ersatz-object-table*) result)
+                  (remhash ersatz-symbol *ersatz-object-table*)
+                  (values result work-list-items))))
              ;; FIXME: add more types
              ))))))
 
