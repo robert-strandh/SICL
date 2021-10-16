@@ -48,8 +48,9 @@
                   (setf (gethash object *ersatz-object-table*) result)
                   (remhash ersatz-symbol *ersatz-object-table*)
                   (values result work-list-items))))
-             ;; FIXME: add more types
-             ))))))
+             (header
+              (funcall (env:fdefinition (env:client *e5*) *e5* 'trace-prefix)
+                       object))))))))
 
 (defun pointer (object)
   (multiple-value-bind (result work-list-items)
