@@ -49,8 +49,24 @@
                   (remhash ersatz-symbol *ersatz-object-table*)
                   (values result work-list-items))))
              (header
-              (funcall (env:fdefinition (env:client *e5*) *e5* 'trace-prefix)
-                       object))))))))
+              (let* ((header-address (sicl-allocator:allocate-dyad))
+                     (rack (slot-value object '%rack))
+                     (rack-size (length rack))
+                     (rack-address (sicl-allocator:allocate-chunk rack-size))
+                     (rack-pointer (+ rack-address 7))
+                     (fun (env:fdefinition (env:client *e5*) *e5* 'trace-prefix))
+                     (prefix-size (funcall fun object))
+                     (result (+ header-address 5))
+                     (header-item (cons header-address
+                                        (slot-value object '%class)))
+                     (rack-items
+                       (loop for i from 0 below prefix-size
+                             for address from rack-address by 8
+                             collect (cons address (aref rack i)))))
+                ;; Set the rack slot in the header to point to the rack.
+                (setf (sicl-memory:memory-unsigned (+ header-address 8) 64)
+                      rack-pointer)
+                (values result (cons header-item rack-items))))))))))
 
 (defun pointer (object)
   (multiple-value-bind (result work-list-items)
