@@ -3,6 +3,17 @@
 (defparameter *ersatz-object-table*
   (make-hash-table :test #'eq))
 
+(defun host-char-to-target-code (char)
+  #+sb-unicode
+  (char-code char)
+  #-sb-unicode
+  (if (eql char #\Newline)
+      10  ; ASCII 10, LF
+      (let ((position (position char " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~")))
+        (if (not (null position))
+            (+ 32 position)
+            #xfffd)))) ; U+FFFD REPLACEMENT CHARACTER
+
 (defun compute-pointer (object)
   (typecase object
     ((integer 0 #.(1- (expt 2 62)))
@@ -10,9 +21,7 @@
     ((integer #.(- (expt 2 62)) -1)
      (values (ash (logand object #.(1- (expt 2 63))) 1)))
     (character
-     ;; FIXME: use a target-specific table instead of realying on the
-     ;; host.
-     (values (+ (ash (char-code object) 5) #x00011) '()))
+     (values (+ (ash (host-char-to-target-code object) 5) #x00011) '()))
     (otherwise
      (let ((result (gethash object *ersatz-object-table*)))
        (if (not (null result))
