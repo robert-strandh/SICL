@@ -542,27 +542,33 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
-  (ensure-inputs-available predecessor instruction))
+  ;; Don't allocate into a register which we will probably clear out
+  ;; in PROCESS-OUTPUTS.
+  (let ((*registers-to-avoid*
+          (x86-64:make-register-map x86-64:*rax* x86-64:*rdx*)))
+    (ensure-inputs-available predecessor instruction)))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-divide-instruction))
-  (let ((output-pool (output-pool instruction))
+  (let ((input-pool (input-pool instruction))
         (dividend (first (cleavir-ir:inputs instruction)))
         (used-registers (x86-64:make-register-map x86-64:*rax* x86-64:*rdx*)))
-    ;; If the dividend input does not outlive this instruction, and it
-    ;; is already in RAX, then we can avoid transferring it to another
-    ;; register.
+    ;; Don't bother copying the first input to another register if it is
+    ;; not live after this instruction.
     (unless (and (lexical-location-in-register-p
                   (output-arrangement predecessor)
                   dividend x86-64:*rax*)
-                 (not (variable-live-p output-pool dividend)))
+                 (not (variable-live-p (output-pool instruction) dividend)))
+      ;; The input pool will have the lowest estimated distances to use
+      ;; assigned to the inputs of this instruction, so they will
+      ;; still remain in registers after clearing out RAX and RDX.
       (setf predecessor
             (ensure-register-attributions-transferred
              predecessor instruction
-             output-pool
+             input-pool
              x86-64:*rax* used-registers)))
     (ensure-register-attributions-transferred
-     predecessor instruction output-pool x86-64:*rdx* used-registers)))
+     predecessor instruction input-pool x86-64:*rdx* used-registers)))
 
 (defmethod compute-output-arrangement
     ((instruction cleavir-ir:fixnum-divide-instruction) arrangement)
@@ -591,28 +597,32 @@
 
 (defmethod process-inputs
     (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
-  (ensure-inputs-available predecessor instruction))
+  (let ((*registers-to-avoid*
+          (x86-64:make-register-map x86-64:*rax* x86-64:*rdx*)))
+    (ensure-inputs-available predecessor instruction)))
 
 (defmethod process-outputs
     (predecessor (instruction cleavir-ir:fixnum-multiply-instruction))
-  (let ((output-pool (output-pool instruction))
+  (let ((input-pool (input-pool instruction))
         (input1 (first (cleavir-ir:inputs instruction)))
         (used-registers (x86-64:make-register-map x86-64:*rax* x86-64:*rdx*)))
-    ;; If the first input does not outlive this instruction, and it is
-    ;; already in RAX, then we can avoid transferring it to another
-    ;; register.
+    ;; Don't bother copying the first input to another register if it is
+    ;; not live after this instruction.
     (unless (and (lexical-location-in-register-p
                   (output-arrangement predecessor)
                   input1 x86-64:*rax*)
-                 (not (variable-live-p output-pool input1)))
+                 (not (variable-live-p (output-pool instruction) input1)))
+      ;; The input pool will have the lowest estimated distances to use
+      ;; assigned to the inputs of this instruction, so they will
+      ;; still remain in registers after clearing out RAX and RDX.
       (setf predecessor
             (ensure-register-attributions-transferred
              predecessor instruction
-             (output-pool instruction)
+             input-pool
              x86-64:*rax* used-registers)))
     (ensure-register-attributions-transferred
      predecessor instruction
-     (output-pool instruction)
+     input-pool
      x86-64:*rdx* used-registers)))
 
 (defmethod compute-output-arrangement
@@ -626,6 +636,46 @@
    (second (cleavir-ir:outputs instruction))
    (x86-64:make-register-map x86-64:*rax*))
   arrangement)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SHIFT-INSTRUCTION
+;;;
+;;; While you could nearly excuse the x86-64 ISA for putting the many
+;;; inputs and outputs of multiplication and division instructions in
+;;; fixed registers, it is beyond us why the number of bits to shift
+;;; by must be in the RCX register.
+
+(defmethod process-inputs
+    (predecessor (instruction cleavir-ir:shift-instruction))
+  (let ((*registers-to-avoid*
+          (x86-64:make-register-map x86-64:*rcx*)))
+    (ensure-inputs-available predecessor instruction)))
+
+(defmethod process-outputs
+    (predecessor (instruction cleavir-ir:shift-instruction))
+  (let ((input-pool (input-pool instruction))
+        (shift-count (cleavir-ir:shift-count instruction))
+        (used-registers (x86-64:make-register-map x86-64:*rcx*)))
+    ;; Don't bother copying the shift count to another register if it is
+    ;; not live after this instruction.
+    (unless (and (lexical-location-in-register-p
+                  (output-arrangement predecessor)
+                  shift-count x86-64:*rcx*)
+                 (not (variable-live-p (output-pool instruction) shift-count)))
+      ;; The input pool will have the lowest estimated distances to use
+      ;; assigned to the inputs of this instruction, so they will
+      ;; still remain in registers after clearing out RCX.
+      (setf predecessor
+            (ensure-register-attributions-transferred
+             predecessor instruction
+             input-pool
+             x86-64:*rcx* used-registers)))
+    predecessor))
+
+(defmethod compute-output-arrangement
+    ((instruction cleavir-ir:shift-instruction) arrangement)
+  (compute-output-arrangement-default instruction arrangement))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

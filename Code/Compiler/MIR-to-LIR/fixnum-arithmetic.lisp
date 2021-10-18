@@ -66,3 +66,18 @@
        :inputs (list quotient (cleavir-ir:make-immediate-input 1))
        :outputs (list quotient))
      instruction)))
+
+(defmethod finish-lir-for-instruction
+    ((instruction cleavir-ir:shift-instruction))
+  ;; Make sure the shift count is in RCX, or is immediate.
+  (destructuring-bind (shifted-input shift-count)
+      (cleavir-ir:inputs instruction)
+    (unless (or (eq shift-count x86-64:*rcx*)
+                (typep shift-count 'cleavir-ir:immediate-input))
+      (cleavir-ir:insert-instruction-before
+       (make-instance 'cleavir-ir:assignment-instruction
+         :inputs (list shift-count)
+         :outputs (list x86-64:*rcx*))
+       instruction)
+      (setf (cleavir-ir:inputs instruction)
+            (list shifted-input x86-64:*rcx*)))))
