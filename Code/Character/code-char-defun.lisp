@@ -3,5 +3,5 @@
 (defun code-char (code)
   (check-type code (integer 0 #.(1- char-code-limit)))
   (if (not (<= #xd800 code #xdfff))
-    nil
-    (cleavir-primop:code-char code)))
+    (cleavir-primop:code-char code)
+    nil))
