@@ -217,11 +217,11 @@
   (let ((char (consume-next-argument 'character)))
     (cond ((and (not colonp) (not at-signp))
            ;; Neither colon nor at-sign.
-           ;; The HyperSpec says to do what write-char does.
+           ;; The HyperSpec says to do what WRITE-CHAR does.
            (write-char char *destination*))
           ((not at-signp)
            ;; We have only a colon modifier.
-           ;; The HyperSpec says to do what write-char does for
+           ;; The HyperSpec says to do what WRITE-CHAR does for
            ;; printing characters, and what char-name does otherwise.
            ;; The definition of "printing char" is a graphic character
            ;; other than space.
@@ -232,7 +232,7 @@
            ;; We have only an at-sign modifier.
            ;; The HyperSpec says to print it the way the Lisp
            ;; reader can understand, which I take to mean "use PRIN1".
-           ;; It also says to bind *print-escape* to t.
+           ;; It also says to bind *PRINT-ESCAPE* to t.
            (let ((*print-escape* t))
              (prin1 char *destination*)))
           (t
@@ -466,7 +466,7 @@
     "quattuordecillion" "quindecillion" "sexdecillion"
     "septendecillion" "octodecillion" "novemdecillion" "vigintillion"))
 
-;;; print a cardinal number between 1 and 99
+;;; Print a cardinal number between 1 and 99.
 (defun print-cardinal-tenths (n stream)
   (cond ((< n 10)
          (princ (aref *cardinal-ones* n) stream))
@@ -479,7 +479,7 @@
              (princ "-" stream)
              (princ (aref *cardinal-ones* ones) stream))))))
 
-;;; print a cardinal number between 1 and 999
+;;; Print a cardinal number between 1 and 999.
 (defun print-cardinal-hundreds (n stream)
   (cond ((< n 100)
          (print-cardinal-tenths n stream))
@@ -491,7 +491,7 @@
              (princ " " stream)
              (print-cardinal-tenths rest stream))))))
 
-;;; print a cardinal number n such that 0 < n < 10^65
+;;; Print a cardinal number n such that 0 < n < 10^65.
 (defun print-cardinal-non-zero (n stream magnitude)
   (multiple-value-bind (thousands rest) (floor n 1000)
     (unless (zerop thousands)
@@ -504,7 +504,7 @@
         (princ " " stream)
         (princ (aref *groups-of-three* magnitude) stream)))))
 
-;;; print a cardinal number n such that - 10^65 < n < 10^65
+;;; Print a cardinal number n such that - 10^65 < n < 10^65.
 (defun print-cardinal-number (n stream)
   (cond ((minusp n)
          (princ "negative " stream)
@@ -525,7 +525,7 @@
   #(nil nil "twentieth" "thirtieth" "fourtieth"
     "fiftieth" "sixtieth" "seventieth" "eightieth" "ninetieth"))
 
-;;; print an ordinal number between 1 and 99
+;;; Print an ordinal number between 1 and 99.
 (defun print-ordinal-tenths (n stream)
   (cond ((< n 10)
          (princ (aref *ordinal-ones* n) stream))
@@ -539,7 +539,7 @@
                       (princ "-" stream)
                       (princ (aref *ordinal-ones* ones) stream)))))))
 
-;;; print an ordinal number n such that 0 < n < 1000
+;;; Print an ordinal number n such that 0 < n < 1000.
 (defun print-ordinal-hundreds (n stream)
   (cond ((< n 100)
          (print-ordinal-tenths n stream))
@@ -552,22 +552,22 @@
                (progn (princ " " stream)
                       (print-ordinal-tenths rest stream)))))))
 
-;;; print an ordinal number n such that 0 < n < 10^65
+;;; Print an ordinal number n such that 0 < n < 10^65.
 (defun print-ordinal-non-zero (n stream)
   (multiple-value-bind (hundreds rest) (floor n 100)
     (cond ((zerop rest)
-           ;; hudreds is nonzero
+           ;; Hudreds is nonzero.
            (print-cardinal-non-zero n stream 0)
            (princ "th" stream))
           ((zerop hundreds)
            (print-ordinal-hundreds rest stream))
           (t
-           ;; they are both nonzero
+           ;; They are both nonzero.
            (print-cardinal-non-zero (* 100 hundreds) stream 0)
            (princ " " stream)
            (print-ordinal-tenths rest stream)))))
 
-;;; print an ordninal number n such that - 10^65 < n < 10^65
+;;; Print an ordninal number n such that - 10^65 < n < 10^65.
 (defun print-ordinal-number (n stream)
   (cond ((minusp n)
          (princ "negative " stream)
