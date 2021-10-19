@@ -116,8 +116,8 @@
                    (cdr ,accumulation-variable)))
        (setf ,list-tail-accumulation-variable
              ,accumulation-variable))
-     ;; Now, whether the tail variable was initially NIL or not,
-     ;; now it no longer is.  And every CONS cell after the one
+     ;; At this point, whether the tail variable was initially NIL or
+     ;; not, now it no longer is.  And every CONS cell after the one
      ;; that the tail variable points to must be copied.
      (tagbody
       again
