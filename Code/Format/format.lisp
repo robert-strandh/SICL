@@ -51,7 +51,7 @@
 ;;; argument to treat.
 (defvar *next-argument-pointer*)
 
-;;; A tag for catch/throw to use by the ~^ directive
+;;; A tag for CATCH/THROW to use by the ~^ directive
 (defvar *catch-tag*)
 
 (defun compute-parameter-value (directive parameter-spec)
@@ -161,7 +161,7 @@
 ;;;
 ;;; Code for individual directives
 
-;;; Signal an error of a modifier has been given for such a directive.
+;;; Signal an error if a modifier has been given for such a directive.
 (defmethod check-directive-syntax progn ((directive no-modifiers-mixin))
   (with-accessors ((colonp colonp)
                    (at-signp at-signp)
@@ -172,7 +172,7 @@
       (error 'directive-takes-no-modifiers
              :directive directive))))
 
-;;; Signal an error of an at-sign has been given for such a directive.
+;;; Signal an error if an at-sign has been given for such a directive.
 (defmethod check-directive-syntax progn ((directive only-colon-mixin))
   (with-accessors ((at-signp at-signp)
                    (control-string control-string)
@@ -182,7 +182,7 @@
       (error 'directive-takes-only-colon
              :directive directive))))
 
-;;; Signal an error of a colon has been given for such a directive.
+;;; Signal an error if a colon has been given for such a directive.
 (defmethod check-directive-syntax progn ((directive only-at-sign-mixin))
   (with-accessors ((colonp colonp)
                    (control-string control-string)
