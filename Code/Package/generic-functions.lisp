@@ -4,10 +4,6 @@
 
 (defgeneric (setf home-package) (new-home-package symbol))
 
-(defgeneric find-package (name))
-
-(defgeneric (setf find-package) (package name))
-
 (defgeneric make-symbol (name))
 
 (defgeneric delete-package (package-designator))
