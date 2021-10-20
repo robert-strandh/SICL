@@ -199,3 +199,6 @@
          ,@(make-imports options package-var)
          ,(make-intern options package-var)
          ,(make-export options package-var)))))
+
+(defmacro defpackage (name &rest options)
+  (defpackage-expander name options))
