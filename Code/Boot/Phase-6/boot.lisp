@@ -90,4 +90,6 @@
     (load-asdf-system '#:sicl-data-and-control-flow-support e5)
     (load-asdf-system '#:sicl-data-and-control-flow e5)
     (sicl-boot:import-functions-from-host '(get-universal-time) e5)
-    (load-asdf-system '#:sicl-random-intrinsic e5)))
+    (load-asdf-system '#:sicl-random-intrinsic e5)
+    (setf (env:special-variable (env:client e5) e5 '*features* t)
+          '(:sicl))))
