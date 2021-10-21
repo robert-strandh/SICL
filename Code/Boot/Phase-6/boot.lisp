@@ -92,4 +92,5 @@
     (sicl-boot:import-functions-from-host '(get-universal-time) e5)
     (load-asdf-system '#:sicl-random-intrinsic e5)
     (setf (env:special-variable (env:client e5) e5 '*features* t)
-          '(:sicl))))
+          '(:sicl))
+    (load-asdf-system '#:closer-mop e5)))
