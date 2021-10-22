@@ -38,7 +38,7 @@
                 (trucler:describe-function client environment (first place))))
           (if (typep description 'trucler:macro-description)
               (let* ((expander (trucler:expander description))
-                     (expansion (funcall expander place)))
+                     (expansion (funcall expander place environment)))
                 (get-setf-expansion client environment expansion))
               (let ((expander (setf-expander client global-env (first place))))
                 (if (null expander)
