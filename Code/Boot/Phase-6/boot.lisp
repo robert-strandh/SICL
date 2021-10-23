@@ -96,4 +96,5 @@
     (load-asdf-system '#:closer-mop e5)
     (load-source-file "Cons/make-bindings-defun.lisp" e5)
     (load-source-file "Cons/pushnew-support.lisp" e5)
-    (load-source-file "Cons/pushnew-defmacro.lisp" e5)))
+    (load-source-file "Cons/pushnew-defmacro.lisp" e5)
+    (load-asdf-system "stealth-mixin" e5)))
