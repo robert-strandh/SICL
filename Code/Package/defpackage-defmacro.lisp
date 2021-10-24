@@ -191,7 +191,7 @@
                       :nicknames ',(gather-nicknames options)
                       :local-nicknames ',(gather-local-nicknames options))
                     ,package-var)))
-         (setf (find-package ',(string name))
+         (setf (%find-package ',(string name))
                ,package-var)
          ,@(make-shadowing-imports options package-var)
          ,(make-shadow options package-var)
