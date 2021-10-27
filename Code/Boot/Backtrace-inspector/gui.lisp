@@ -82,6 +82,7 @@
              (end-line-index (sicl-source-tracking:line-index end))
              (end-character-index (sicl-source-tracking:character-index end))
              (lines (sicl-source-tracking:lines start)))
+        (setf (clim:stream-drawing-p pane) nil)
         ;; Display all the lines preceding the source location
         (loop for i from 0 below start-line-index
               do (format pane "~a~%" (aref lines i)))
@@ -102,7 +103,9 @@
                 (format pane "~a" (subseq end-line 0 end-character-index)))
               (format pane "~a~%" (subseq end-line end-character-index))))
         (loop for i from (1+ end-line-index) below (length lines)
-              do (format pane "~a~%" (aref lines i)))))))
+              do (format pane "~a~%" (aref lines i)))
+        (setf (clim:stream-drawing-p pane) t)
+        (clim:replay (clim:stream-output-history pane) pane)))))
 
 (defun inspect (stack &key new-process-p)
   (let ((frame (clim:make-application-frame 'inspector
