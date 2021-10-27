@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "generic-functions")))
+   (:file "generic-functions")
+   (:file "methods")))
