@@ -36,21 +36,34 @@
        fill-pointer
        (displaced-to nil displaced-to-p)
        (displaced-index-offset nil displaced-index-offset-p))
-  (let* ((canonicalized-dimensions
-           (if (atom new-dimensions) (list new-dimensions) new-dimensions))
-         (old-dimensions (array-dimensions array))
-         (resulting-fill-pointer
-           (if (null fill-pointer)
-               fill-pointer
-               (fill-pointer array)))
-         (new-array
-           (apply #'make-array
-                  new-dimensions
-                  :element-type element-type
-                  :fill-pointer resulting-fill-pointer
-                  keyword-arguments)))
-    (unless initial-contents-p
-      (copy-elements
-       array new-array (mapcar #'min old-dimensions canonicalized-dimensions)))
-    (progn (sicl-primop:set-rack array (sicl-primop:rack new-array)) nil))
+  (let ((canonicalized-dimensions
+          (if (atom new-dimensions) (list new-dimensions) new-dimensions))
+        (old-dimensions (array-dimensions array)))
+    (unless (= (length old-dimensions) (length canonicalized-dimensions))
+      (error 'attempt-to-change-the-rank
+             :array array
+             :old-dimensions old-dimensions
+             :new-dimensions canonicalized-dimensions))
+    (let ((new-array
+            (if (= (length canonicalized-dimensions) 1)
+                (let ((resulting-fill-pointer
+                        (if (null fill-pointer)
+                            ;; The standard says that if FILL-POINTER is NIL, then
+                            ;; the fill pointer of the array should be left as it
+                            ;; is.
+                            (vector-fill-pointer array)
+                            fill-pointer)))
+                  (apply #'make-array
+                         new-dimensions
+                         :element-type element-type
+                         :fill-pointer resulting-fill-pointer
+                         keyword-arguments))
+                (apply #'make-array
+                       new-dimensions
+                       :element-type element-type
+                       keyword-arguments))))
+      (unless initial-contents-p
+        (copy-elements
+         array new-array (mapcar #'min old-dimensions canonicalized-dimensions)))
+      (progn (sicl-primop:set-rack array (sicl-primop:rack new-array)) nil)))
   array)
