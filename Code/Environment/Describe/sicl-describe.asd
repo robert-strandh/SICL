@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "generic-functions")
-   (:file "methods")))
+   (:file "methods")
+   (:file "describe")))
