@@ -7,4 +7,4 @@
   ((:file "packages")
    (:file "generic-functions")
    (:file "methods")
-   (:file "describe")))
+   (:file "describe-defun")))
