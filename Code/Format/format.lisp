@@ -1704,7 +1704,7 @@
              (format-aux destination items))
             ((null destination)
              (with-output-to-string (stream)
-                                    (format-aux stream items)))
+               (format-aux stream items)))
             ((eq destination t)
              (format-aux *standard-output* items))
             (t
