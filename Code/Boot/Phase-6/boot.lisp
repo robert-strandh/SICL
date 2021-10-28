@@ -106,4 +106,5 @@
     (load-source-file "String/char-schar.lisp" e5)
     (load-asdf-system '#:sicl-format e5)
     (load-source-file "Boot/Phase-6/print-object-methods.lisp" e5)
-    (load-asdf-system '#:sicl-describe e5)))
+    (load-asdf-system '#:sicl-describe e5)
+    (load-source-file "Types/coerce.lisp" e5)))
