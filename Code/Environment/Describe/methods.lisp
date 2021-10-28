@@ -9,7 +9,10 @@
   (format stream "Object of unknown type."))
 
 (defmethod describe-object ((object standard-object) stream)
-  (format stream "A standard object."))
+  (format stream "A standard object with the following slots:~%")
+  (loop for slot in (sicl-clos:class-slots (class-of object))
+        for name = (sicl-clos:slot-definition-name slot)
+        do (format stream "~s~%" name)))
 
 (defmethod describe-object ((object fixnum) stream)
   (format stream "A fixnum."))
