@@ -100,4 +100,6 @@
     (load-source-file "Cons/pushnew-defmacro.lisp" e5)
     (load-asdf-system "stealth-mixin" e5)
     (load-asdf-system "sicl-environment" e5)
-    (load-asdf-system "sicl-client" e5)))
+    (load-asdf-system "sicl-client" e5)
+    (env:fmakunbound (env:client e5) e5 'char)
+    (env:fmakunbound (env:client e5) e5 'schar)))
