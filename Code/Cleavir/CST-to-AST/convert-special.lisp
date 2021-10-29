@@ -643,11 +643,15 @@
     (convert-function-reference client name-cst info environment)))
 
 (defun convert-lambda-function (client lambda-form-cst environment)
-  (convert-code
-   client
-   (cst:second lambda-form-cst)
-   (cst:rest (cst:rest lambda-form-cst))
-   environment))
+  (let ((*origin*
+          (if (null (cst:source lambda-form-cst))
+              (cst:source (cst:second lambda-form-cst))
+              (cst:source lambda-form-cst))))
+    (convert-code
+     client
+     (cst:second lambda-form-cst)
+     (cst:rest (cst:rest lambda-form-cst))
+     environment)))
 
 (defun check-function-syntax (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
