@@ -117,6 +117,7 @@
             (check-maximum-argument-count
              argument-count-location
              (+ (length required-parameters) (length optional-parameters))
+             (cleavir-ast-to-hir:origin enter-instruction)
              dynamic-environment-location)
           (setf (cleavir-ir:successors last)
                 (list more-arguments-branch))
@@ -126,6 +127,7 @@
             (check-minimum-argument-count
              argument-count-location
              (length required-parameters)
+             (cleavir-ast-to-hir:origin enter-instruction)
              dynamic-environment-location)
           (setf (cleavir-ir:successors last)
                 (list more-arguments-branch))

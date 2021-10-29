@@ -2,6 +2,7 @@
 
 (defun call-error (error-name
                    dynamic-environment-location
+                   origin
                    &rest arguments)
   (let ((unreachable
           (make-instance 'cleavir-ir:unreachable-instruction
@@ -12,4 +13,5 @@
       :dynamic-environment-location dynamic-environment-location
       :callee-name 'error
       :inputs (cons error-name-input arguments)
-      :successor unreachable)))
+      :successor unreachable
+      :origin origin)))

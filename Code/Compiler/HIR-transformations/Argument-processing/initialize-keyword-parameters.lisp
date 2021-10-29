@@ -18,6 +18,7 @@
          (error-branch
            (call-error 'odd-number-of-keyword-arguments
                        dynamic-environment-location
+                       nil ; FIXME: Pass a better value for the origin
                        (make-instance 'cleavir-ir:constant-input :value :argument-count)
                        remaining-argument-count-location)))
     (let ((first (make-instance 'cleavir-ir:fixnum-equal-instruction
@@ -50,6 +51,7 @@
          (first
            (call-error 'invalid-keyword
                        dynamic-environment-location
+                       nil ; FIXME: Pass a better value for the origin
                        (make-instance 'cleavir-ir:constant-input :value :keyword)
                        keyword-location)))
     (let ((add-2 (make-instance 'cleavir-ir:fixnum-add-instruction
