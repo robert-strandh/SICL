@@ -81,7 +81,7 @@
 (defvar *dynamic-environment-location* nil)
 
 (stealth-mixin:define-stealth-mixin instruction-mixin () cleavir-ir:instruction
-  ((%origin :initform *origin* :reader origin))
+  ((%origin :initform *origin* :initarg :origin :reader origin))
   (:default-initargs :dynamic-environment-location *dynamic-environment-location*))
 
 (stealth-mixin:define-stealth-mixin location-mixin () cleavir-ir:datum
