@@ -9,7 +9,9 @@
   (let* ((expansion (trucler:expansion info))
          (expander (symbol-macro-expander expansion))
          (expanded-form (expand-macro expander cst environment))
-         (expanded-cst (cst:reconstruct expanded-form cst client)))
+         (default-source (cst:source cst))
+         (expanded-cst (cst:reconstruct expanded-form cst client
+                                        :default-source default-source)))
     (setf (cst:source expanded-cst) (cst:source cst))
     (with-preserved-toplevel-ness
       (convert client
@@ -53,7 +55,9 @@
     (client cst (info trucler:local-macro-description) environment)
   (let* ((expander (trucler:expander info))
          (expanded-form (expand-macro expander cst environment))
-         (expanded-cst (cst:reconstruct expanded-form cst client)))
+         (default-source (cst:source cst))
+         (expanded-cst (cst:reconstruct expanded-form cst client
+                                        :default-source default-source)))
     (setf (cst:source expanded-cst) (cst:source cst))
     (with-preserved-toplevel-ness
       (convert client expanded-cst environment))))
@@ -66,13 +70,15 @@
 (defmethod convert-cst
     (client cst (info trucler:global-macro-description) environment)
   (let ((compiler-macro (trucler:compiler-macro info))
+        (default-source (cst:source cst))
         (expander (trucler:expander info)))
     (with-preserved-toplevel-ness
       (if (null compiler-macro)
           ;; There is no compiler macro, so we just apply the macro
           ;; expander, and then convert the resulting form.
           (let* ((expanded-form (expand-macro expander cst environment))
-                 (expanded-cst (cst:reconstruct expanded-form cst client)))
+                 (expanded-cst (cst:reconstruct expanded-form cst client
+                                                :default-source default-source)))
             (setf (cst:source expanded-cst) (cst:source cst))
             (convert client expanded-cst environment))
           ;; There is a compiler macro, so we must see whether it will
@@ -86,14 +92,16 @@
                 ;; when there was no compiler macro present.
                 (let* ((expanded-form
                          (expand-macro expander cst environment))
-                       (expanded-cst (cst:reconstruct expanded-form cst client)))
+                       (expanded-cst (cst:reconstruct expanded-form cst client
+                                                      :default-source default-source)))
                   (setf (cst:source expanded-cst) (cst:source cst))
                   (convert client expanded-cst environment))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
                 ;; taking into account the real macro expander.
-                (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
+                (let ((expanded-cst (cst:reconstruct expanded-form cst client
+                                                     :default-source default-source)))
                   (setf (cst:source expanded-cst) (cst:source cst))
                   (convert client expanded-cst environment))))))))
 
@@ -130,6 +138,7 @@
   (when (and *current-form-is-top-level-p* *compile-time-too*)
     (cst-eval client cst environment))
   (let ((compiler-macro (trucler:compiler-macro info))
+        (default-source (cst:source cst))
         (notinline (eq 'notinline (trucler:inline info))))
     (if (or notinline (null compiler-macro))
         ;; There is no compiler macro.  Create the call.
@@ -147,7 +156,8 @@
               ;; If the two are not EQ, this means that the compiler
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
-              (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
+              (let ((expanded-cst (cst:reconstruct expanded-form cst client
+                                                   :default-source default-source)))
                 (setf (cst:source expanded-cst) (cst:source cst))
                 (convert client expanded-cst environment)))))))
 
