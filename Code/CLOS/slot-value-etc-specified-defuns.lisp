@@ -9,7 +9,7 @@
     ((object-var slot-name-var slot-var operation) &body body)
   `(let ((,slot-var (find-slot ,object-var ,slot-name-var)))
      (if (null ,slot-var)
-         (slot-missing (class-of ,object-var) ,slot-name-var ',operation)
+         (slot-missing (class-of ,object-var) ,object-var ,slot-name-var ',operation)
          (progn ,@body))))
 
 (defun slot-value (object slot-name)
