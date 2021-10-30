@@ -113,19 +113,21 @@
      &rest initargs
      &key
        direct-default-initargs
-       direct-superclasses
-       direct-slots
+       (direct-slots '() direct-slots-p)
      &allow-other-keys)
   (check-direct-default-initargs direct-default-initargs)
-  (let ((slots (check-and-instantiate-direct-slots class direct-slots)))
-    (apply call-next-method
-           class
-           slot-names
-           :direct-superclasses direct-superclasses
-           :direct-default-initargs direct-default-initargs
-           :direct-slots slots
-           initargs)
-    (create-readers-and-writers class slots))
+  (if direct-slots-p
+      (let ((slots (check-and-instantiate-direct-slots class direct-slots)))
+        (apply call-next-method
+               class
+               slot-names
+               :direct-slots slots
+               initargs)
+        (create-readers-and-writers class slots))
+      (apply call-next-method
+             class
+             slot-names
+             initargs))
   class)
 
 (defun shared-initialize-after-built-in-class-default (class)
