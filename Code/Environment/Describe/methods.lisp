@@ -14,6 +14,15 @@
         for name = (sicl-clos:slot-definition-name slot)
         do (format stream "~s~%" name)))
 
+(defmethod describe-object ((object standard-generic-function) stream)
+  (format stream "A standard generic function~%")
+  (format stream
+          "Lambda list: ~s~%"
+          (sicl-clos:generic-function-lambda-list object))
+  (format stream
+          "Argument precedence order: ~s~%"
+          (sicl-clos:generic-function-argument-precedence-order object)))
+
 (defmethod describe-object ((object fixnum) stream)
   (format stream "A fixnum."))
 
