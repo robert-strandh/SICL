@@ -38,3 +38,7 @@
 ;;; state the number of CONS cells.
 (defmethod describe-object ((object cons) stream)
   (format stream "A CONS cell."))
+
+(defmethod describe-object ((object string) stream)
+  (format stream "A string of length ~s~%"
+          (length object)))
