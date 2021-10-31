@@ -42,3 +42,7 @@
 (defmethod describe-object ((object string) stream)
   (format stream "A string of length ~s~%"
           (length object)))
+
+(defmethod describe-object ((object vector) stream)
+  (format stream "A vector of length ~s~%"
+          (length object)))
