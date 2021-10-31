@@ -46,3 +46,7 @@
 (defmethod describe-object ((object vector) stream)
   (format stream "A vector of length ~s~%"
           (length object)))
+
+(defmethod describe-object ((object array) stream)
+  (format stream "An array with dimensions: ~s~%"
+          (array-dimensions object)))
