@@ -5,4 +5,5 @@
   (:export
    #:hoist-load-time-value
    #:clone-ast
-   #:codegen-clone-ast))
+   #:codegen-clone-ast
+   #:map-asts))
