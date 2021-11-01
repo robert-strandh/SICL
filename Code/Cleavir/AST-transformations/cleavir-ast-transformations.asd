@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "clone")
    (:file "replace")
-   (:file "hoist-load-time-value")))
+   (:file "hoist-load-time-value")
+   (:file "closure-conversion")))
