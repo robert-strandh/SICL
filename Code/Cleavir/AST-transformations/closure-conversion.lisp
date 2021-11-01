@@ -2,10 +2,12 @@
 
 (defun find-shared-variables (ast)
   (let ((visited (make-hash-table :test #'eq))
-        (result (make-hash-table :test #'eq)))
+        (functions-containing-variable (make-hash-table :test #'eq))
+        (result '()))
     (labels ((traverse-function (function ast)
                (if (typep ast 'cleavir-ast:lexical-ast)
-                   (pushnew function (gethash ast result) :test #'eq)
+                   (pushnew function (gethash ast functions-containing-variable)
+                            :test #'eq)
                    (unless (gethash ast visited)
                      (setf (gethash ast visited) t)
                      (typecase ast
@@ -16,4 +18,8 @@
                         (loop for child in (cleavir-ast:children ast)
                               do (traverse-function function child))))))))
       (traverse-function nil ast))
+    (maphash (lambda (lexical functions)
+               (when (> (length functions) 1)
+                 (push lexical result)))
+             functions-containing-variable)
     result))
