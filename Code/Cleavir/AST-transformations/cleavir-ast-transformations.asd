@@ -9,4 +9,5 @@
    (:file "replace")
    (:file "hoist-load-time-value")
    (:file "map-asts")
+   (:file "remove-unused-block-asts")
    (:file "closure-conversion")))
