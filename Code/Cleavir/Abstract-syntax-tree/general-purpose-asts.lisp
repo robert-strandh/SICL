@@ -396,6 +396,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class LEXICAL-BIND-AST.
+;;;
+;;; This AST represents the binding of a lexical variable.
+;;; It does not return a value.
+
+(defclass lexical-bind-ast (ast no-value-ast-mixin)
+  ((%lexical-variable-ast
+    :initarg :lexical-variable-ast
+    :reader lexical-variable-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(cleavir-io:define-save-info lexical-bind-ast
+  (:lexical-variable-ast lexical-variable-ast)
+  (:value-ast value-ast))
+
+(defmethod children ((ast lexical-bind-ast))
+  (list (lexical-variable-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class TAG-AST.
 
 (defclass tag-ast (ast)
