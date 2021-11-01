@@ -6,4 +6,5 @@
    #:hoist-load-time-value
    #:clone-ast
    #:codegen-clone-ast
-   #:map-asts))
+   #:map-asts
+   #:remove-unused-block-asts))
