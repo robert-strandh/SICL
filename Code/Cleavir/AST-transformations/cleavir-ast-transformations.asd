@@ -8,4 +8,5 @@
    (:file "clone")
    (:file "replace")
    (:file "hoist-load-time-value")
+   (:file "map-asts")
    (:file "closure-conversion")))
