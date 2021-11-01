@@ -20,7 +20,7 @@
         (convert-special-binding
          client variable-cst value-ast body-function environment)
         (cleavir-ast:make-ast 'cleavir-ast:progn-ast
-         :form-asts (list (cleavir-ast:make-ast 'cleavir-ast:setq-ast
-                            :lhs-ast (trucler:identity info)
+         :form-asts (list (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
+                            :lexical-variable-ast (trucler:identity info)
                             :value-ast value-ast)
                      (funcall body-function))))))

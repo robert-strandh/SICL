@@ -258,8 +258,8 @@
 ;;; has a function name in its CAR and an AST in its CDR.
 (defun compute-function-init-asts (client functions environment)
   (loop for (name . fun-ast) in functions
-        collect (cleavir-ast:make-ast 'cleavir-ast:setq-ast
-                  :lhs-ast (function-lexical client environment name)
+        collect (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
+                  :lexical-variable-ast (function-lexical client environment name)
                   :value-ast fun-ast)))
 
 (defun check-function-bindings (bindings operator)
@@ -531,8 +531,8 @@
     (if *use-file-compilation-semantics-p*
         (let ((lexical-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                              :name (gensym))))
-          (push (cleavir-ast:make-ast 'cleavir-ast:setq-ast
-                  :lhs-ast lexical-ast
+          (push (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
+                  :lexical-variable-ast lexical-ast
                   :value-ast
                   (convert
                    client

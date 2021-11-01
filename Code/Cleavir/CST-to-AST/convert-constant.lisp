@@ -74,8 +74,8 @@
               :creation-form creation-form)))
       (setf (constant-record-cache object)
             constant-record)
-      (push (cleavir-ast:make-ast 'cleavir-ast:setq-ast
-              :lhs-ast lexical-ast
+      (push (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
+              :lexical-variable-ast lexical-ast
               :value-ast (convert client (cst:cst-from-expression creation-form) environment))
             *prologue*)
       (setf (creation-form-finalized-p constant-record)
