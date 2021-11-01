@@ -540,6 +540,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a LEXICAL-BIND-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:lexical-bind-ast) context)
+  (let ((location (find-or-create-location
+                   (cleavir-ast:lexical-variable-ast ast))))
+    (compile-ast
+     client
+     (cleavir-ast:value-ast ast)
+     (clone-context context :result location))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a THE-AST.
 
 (defun make-type-check (type-specifier var successor)
