@@ -161,6 +161,11 @@
          ,(translate-ast client (ast:value-ast ast) lexical-environment)))
 
 (defmethod translate-ast
+    (client (ast ast:lexical-bind-ast) lexical-environment)
+  `(setq ,(translate-ast client (ast:lexical-variable-ast ast) lexical-environment)
+         ,(translate-ast client (ast:value-ast ast) lexical-environment)))
+
+(defmethod translate-ast
     (client (ast ast:unwind-protect-ast) lexical-environment)
   (let ((thunk-form
           (translate-ast
