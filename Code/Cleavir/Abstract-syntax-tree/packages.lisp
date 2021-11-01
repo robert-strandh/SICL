@@ -43,6 +43,7 @@
    #:return-from-ast #:form-ast
    #:setq-ast #:lhs-ast #:value-ast
    #:multiple-value-setq-ast #:lhs-asts
+   #:lexical-bind-ast #:lexical-variable-ast
    #:tagbody-ast #:item-asts
    #:tag-ast #:name
    #:catch-ast
