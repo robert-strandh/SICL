@@ -94,7 +94,7 @@
   (destructuring-bind (name lambda-list . rest) case
     (multiple-value-bind (body report interactive test)
         (restart-case-pop-keywords-from-case rest)
-      (let ((tag (gensym (format nil "RESTART-~S-TAG" name)))
+      (let ((tag (gensym))
             (keywords `(,@(restart-case-make-report-subform report)
                         ,@(restart-case-make-test-subform test)
                         ,@(restart-case-make-interactive-subform interactive))))
