@@ -8,10 +8,6 @@
                 :e3 (setf *e3* (make-instance 'environment :name "E3"))
                 :e4 (setf *e4* (make-instance 'environment :name "E4"))
                 :e5 (setf *e5* (make-instance 'environment :name "E5")))))
-    (uiop:delete-directory-tree
-     (asdf:system-relative-pathname '#:sicl-boot "ASTs/")
-     :validate t
-     :if-does-not-exist :ignore)
     (sicl-boot-phase-1:boot boot)
     (sicl-boot-phase-2:boot boot)
     (sicl-boot-phase-3:boot boot)
