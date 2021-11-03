@@ -8,6 +8,11 @@
                 :e3 (setf *e3* (make-instance 'environment :name "E3"))
                 :e4 (setf *e4* (make-instance 'environment :name "E4"))
                 :e5 (setf *e5* (make-instance 'environment :name "E5")))))
+    (loop for env in (list *e0* *e1* *e2* *e3* *e4* *e5*)
+          for client = (env:client env)
+          do (reinitialize-instance client
+               :environment env
+               :macro-environment *e0*))
     (sicl-boot-phase-1:boot boot)
     (sicl-boot-phase-2:boot boot)
     (sicl-boot-phase-3:boot boot)
