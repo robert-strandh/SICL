@@ -5,8 +5,8 @@
                    (e2 sicl-boot:e2)
                    (e3 sicl-boot:e3))
       boot
-    (change-class e3 'environment
-                  :client (make-instance 'client :environment e3))
+    (change-class e3 'environment)
+    (change-class (env:client e3) 'client)
     (import-functions-from-host
      '(slot-unbound
        no-applicable-method

@@ -8,14 +8,13 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
-    (change-class e5 'environment
-                  :client (make-instance 'client
-                            :environment e5
-                            ;; Until we create a cyclic graph, we must
-                            ;; use the accessor from E4.
-                            :static-environment-function
-                            (env:fdefinition
-                             (env:client e4) e4 'sicl-clos:environment)))
+    (change-class e5 'environment)
+    (change-class (env:client e5) 'client
+                  ;; Until we create a cyclic graph, we must
+                  ;; use the accessor from E4.
+                  :static-environment-function
+                  (env:fdefinition
+                   (env:client e4) e4 'sicl-clos:environment))
     (prepare-this-phase e3 e4 e5)
     (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e5)
     (sicl-boot:create-accessor-defgenerics e5)

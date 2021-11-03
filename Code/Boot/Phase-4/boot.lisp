@@ -6,8 +6,8 @@
                    (e3 sicl-boot:e3)
                    (e4 sicl-boot:e4))
       boot
-    (change-class e4 'environment
-                  :client (make-instance 'client :environment e4))
+    (change-class e4 'environment)
+    (change-class (env:client e4) 'client)
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p
        cleavir-code-utilities:canonicalize-generic-function-lambda-list

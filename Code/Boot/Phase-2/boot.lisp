@@ -31,8 +31,8 @@
   (with-accessors ((e0 sicl-boot:e0)
                    (e2 sicl-boot:e2))
       boot
-    (change-class e2 'environment
-                  :client (make-instance 'client :environment e2))
+    (change-class e2 'environment)
+    (change-class (env:client e2) 'client)
     (import-from-host boot)
     (sicl-boot:copy-macro-functions e0 e2)
     (setf (env:fdefinition (env:client e2) e2 'sicl-boot:ast-eval)
