@@ -174,5 +174,17 @@
 ;;; form has no effect in the environment in which it is evaluated.
 (defun defmacro-macro-function (form environment)
   (declare (ignore environment))
-  (cleavir-cst-to-ast:eval (env:client *e0*)  form *e0*)
-  nil)
+  (destructuring-bind (name lambda-list . body)
+      (rest form)
+    (unless (member name
+                    '(alexandria:unwind-protect-case
+                      alexandria:doplist))
+      (format *trace-output* "Defining macro in E0: ~s~%" name)
+      (cleavir-cst-to-ast:eval (env:client *e0*)  form *e0*)
+      (format *trace-output* "Done defining macro in E0~%"))
+    (let ((expansion
+            (cleavir-code-utilities:parse-macro name lambda-list body)))
+      (list 'setf
+            (list 'macro-function
+                  (list 'quote name))
+            expansion))))
