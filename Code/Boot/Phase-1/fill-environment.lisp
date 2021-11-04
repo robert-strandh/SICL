@@ -214,6 +214,16 @@
        client environment 'sicl-conditions:restart-case-expand-signaling-form)
       (import-function
        client environment 'sicl-conditions:restart-case-parse-case)
+      (import-function
+       client environment 'symbol-name)
+      (import-function
+       client environment 'cleavir-code-utilities:extract-named-group)
+      (import-function
+       client environment 'cleavir-code-utilities:extract-required)
+      (import-function
+       client environment 'cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list)
+      (import-function
+       client environment 'cleavir-code-utilities:parse-deftype)
       (ld "Conditions/restart-case-defmacro.lisp")
       (ld "Conditions/with-simple-restart-defmacro.lisp")
       (ld "Conditions/with-condition-restarts-defmacro.lisp")
