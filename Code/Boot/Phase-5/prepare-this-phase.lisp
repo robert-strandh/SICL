@@ -24,6 +24,8 @@
 (defun prepare-this-phase (e3 e4 e5)
   (define-ast-eval e5)
   (sicl-boot:copy-macro-functions e4 e5)
+  (setf (env:macro-function (env:client e5) e5 'defmacro)
+        #'sicl-boot:defmacro-macro-function)
   (load-source-file "CLOS/class-of-defun.lisp" e4)
   (enable-typep e3 e4)
   (load-source-file "Types/type-of-defgeneric.lisp" e4)
@@ -43,8 +45,6 @@
      cleavir-code-utilities:parse-deftype
      ;; For Ctype.
      map substitute functionp lognot logcount subsetp member-if intersection
-     ;; For Eclector.
-     digit-char-p char-upcase
      ;; Eclector uses EVAL in some compiler macros to evaluate some
      ;; Boolean arguments, but it is applied only to contstants so we
      ;; can use the host EVAL.
