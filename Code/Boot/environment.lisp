@@ -211,7 +211,7 @@
      gensym symbolp
      ;; Characters
      characterp char-code code-char char= char-name standard-char-p
-     alphanumericp
+     alphanumericp digit-char-p char-upcase
      ;; Strings
      stringp char schar string string= nstring-upcase nstring-downcase
      ;; Types and classes
@@ -293,6 +293,9 @@
                 (trucler:global-environment client lexical-environment))))
     (import-standard-functions environment)
     (import-run-time-functions environment)
+    (import-functions-from-host
+     '(alexandria:make-gensym-list)
+     environment)
     (setf (env:fdefinition client environment 'funcall)
           (lambda (function-designator &rest arguments)
             (let ((function (if (symbolp function-designator)
