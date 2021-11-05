@@ -45,7 +45,7 @@
              :lhs-ast temp
              :value-ast form-ast)
            (cleavir-ast:make-ast 'cleavir-ast:set-symbol-value-ast
-             :name-ast (cleavir-ast:make-ast 'cleavir-ast:constant-ast
+             :name-ast (cleavir-ast:make-ast 'cleavir-ast:literal-ast
                          :value (trucler:name info))
              :value-ast temp)
            temp))))

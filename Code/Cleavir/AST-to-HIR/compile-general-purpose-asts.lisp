@@ -202,7 +202,7 @@
 ;;; Compile a TAGBODY-AST.
 ;;;
 ;;; The TAGBODY-AST is always the first AST of two ASTs in a
-;;; PROGN-AST.  The second AST in the PROGN-AST is a CONSTANT-AST
+;;; PROGN-AST.  The second AST in the PROGN-AST is a LITERAL-AST
 ;;; containing NIL.  Therefore, we know that the TAGBODY-AST is always
 ;;; compiled in a context where no values are required and that has a
 ;;; single successor.
@@ -635,7 +635,7 @@
 
 (defmethod compile-ast (client (ast cleavir-ast:symbol-value-ast) context)
   (let ((name-ast (cleavir-ast:name-ast ast)))
-    (if (typep name-ast 'cleavir-ast:constant-ast)
+    (if (typep name-ast 'cleavir-ast:literal-ast)
         (make-instance 'cleavir-ir:symbol-value-instruction
           :input (make-instance 'cleavir-ir:constant-input
                    :value (cleavir-ast:value name-ast))
@@ -658,7 +658,7 @@
 (defmethod compile-ast (client (ast cleavir-ast:set-symbol-value-ast) context)
   (let ((name-ast (cleavir-ast:name-ast ast))
         (value-ast (cleavir-ast:value-ast ast)))
-    (if (typep name-ast 'cleavir-ast:constant-ast)
+    (if (typep name-ast 'cleavir-ast:literal-ast)
         (let ((value-temp (make-temp)))
           (compile-ast
            client
@@ -698,7 +698,7 @@
 
 (defmethod compile-ast (client (ast cleavir-ast:fdefinition-ast) context)
   (let ((name-ast (cleavir-ast:name-ast ast)))
-    (if (typep name-ast 'cleavir-ast:constant-ast)
+    (if (typep name-ast 'cleavir-ast:literal-ast)
         (make-instance 'cleavir-ir:fdefinition-instruction
           :input (make-instance 'cleavir-ir:constant-input
                    :value (cleavir-ast:value name-ast))
@@ -844,13 +844,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a CONSTANT-AST.
+;;; Compile a LITERAL-AST.
 ;;;
-;;; The CONSTANT-AST is a subclass of ONE-VALUE-AST-MIXIN, so the
+;;; The LITERAL-AST is a subclass of ONE-VALUE-AST-MIXIN, so the
 ;;; :AROUND method on COMPILE-AST has adapted the context so that it
 ;;; has a single result.
 
-(defmethod compile-ast (client (ast cleavir-ast:constant-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:literal-ast) context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -906,9 +906,9 @@
        (compile-ast client
                     (make-instance 'cleavir-ast:if-ast
                       :test-ast ast
-                      :then-ast (make-instance 'cleavir-ast:constant-ast
+                      :then-ast (make-instance 'cleavir-ast:literal-ast
                                   :value (list 'quote t))
-                      :else-ast (make-instance 'cleavir-ast:constant-ast
+                      :else-ast (make-instance 'cleavir-ast:literal-ast
                                   :value (list 'quote nil)))
                     context))
       (2

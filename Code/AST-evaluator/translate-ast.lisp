@@ -20,7 +20,7 @@
     `(car ,(cdr pair))))
 
 (defmethod translate-ast
-    (client (ast ast:constant-ast) lexical-environment)
+    (client (ast ast:literal-ast) lexical-environment)
   `',(ast:value ast))
 
 (defmethod translate-ast

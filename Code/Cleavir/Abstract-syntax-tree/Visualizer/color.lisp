@@ -5,5 +5,5 @@
 (defmethod background-color (ast)
   clim:+white+)
 
-(defmethod background-color ((ast cleavir-ast:constant-ast))
+(defmethod background-color ((ast cleavir-ast:literal-ast))
   clim:+pink+)

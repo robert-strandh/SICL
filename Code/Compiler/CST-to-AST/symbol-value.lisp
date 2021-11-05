@@ -13,7 +13,7 @@
     :callee-name 'symbol-value
     :argument-asts
     (list
-     (cleavir-ast:make-ast 'cleavir-ast:constant-ast
+     (cleavir-ast:make-ast 'cleavir-ast:literal-ast
        :value (trucler:name info)))))
 
 (defmethod cleavir-cst-to-ast:convert-setq-special-variable
@@ -23,5 +23,5 @@
     :argument-asts
     (list
      form-ast
-     (cleavir-ast:make-ast 'cleavir-ast:constant-ast
+     (cleavir-ast:make-ast 'cleavir-ast:literal-ast
        :value (trucler:name info)))))

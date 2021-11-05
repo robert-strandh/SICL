@@ -75,8 +75,8 @@ operator \texttt{eval-when}.  The compiler takes action based on the
 context of the compilation and either evaluates or generates an
 abstract syntax tree.
 
-\subsubsection{\texttt{constant-ast}}
-\label{constant-ast}
+\subsubsection{\texttt{literal-ast}}
+\label{literal-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -86,7 +86,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-A \texttt{constant-ast} is typically used by an implementation to
+A \texttt{literal-ast} is typically used by an implementation to
 represent constants in the source code.
 
 This constant can either be in the form of a self-evaluating object,
@@ -115,11 +115,11 @@ operator, nor as a macro.  It can also be produced as an inline
 version of the function \texttt{fdefinition}.
 
 The \texttt{name-ast} is an AST that produces the name of function.
-It can be either a \texttt{constant-ast}, in which case the constant
+It can be either a \texttt{literal-ast}, in which case the constant
 is a function name, or it can be some other AST that evaluates to the
 name of a function.  When the \texttt{fdefinition-ast} is produced as
 a result of a name in the functional position of a form, then the
-\texttt{name-ast} is always a \texttt{constant-ast}.
+\texttt{name-ast} is always a \texttt{literal-ast}.
 
 \subsubsection{\texttt{symbol-value-ast}}
 \label{symbol-value-ast}
@@ -139,11 +139,11 @@ variable, nor as a symbol macro.  It can also be produced as an inline
 version of the function \texttt{symbol-value}.
 
 The \texttt{name-ast} is an AST that produces the name of the
-variable.  It can be either a \texttt{constant-ast}, in which case the
+variable.  It can be either a \texttt{literal-ast}, in which case the
 constant is a symbol, or it can be some other AST that evaluates to a
 symbol.  When the \texttt{symbol-value-ast} is produced as a result of
 a reference to a special variable, then the \texttt{name-ast} is
-always a \texttt{constant-ast}.
+always a \texttt{literal-ast}.
 
 \subsubsection{\texttt{set-symbol-value-ast}}
 \label{set-symbol-value-ast}
@@ -163,11 +163,11 @@ an assignment to a \emph{special variable}.  It can also be produced
 as an inline version of the function \texttt{(setf symbol-value)}.
 
 The \texttt{name-ast} is an AST that produces the name of the
-variable.  It can be either a \texttt{constant-ast}, in which case the
+variable.  It can be either a \texttt{literal-ast}, in which case the
 constant is a symbol, or it can be some other AST that evaluates to a
 symbol.  When the \texttt{symbol-value-ast} is produced as a result of
 an assignment to a special variable, then the \texttt{name-ast} is
-always a \texttt{constant-ast}.
+always a \texttt{literal-ast}.
 
 The \texttt{value-ast} is an AST that evaluates to the value to be
 assigned to the variable.

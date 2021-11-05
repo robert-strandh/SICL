@@ -33,7 +33,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class CONSTANT-AST.
+;;; Class LITERAL-AST.
 ;;;
 ;;; This class represents Lisp constants in source code.  
 ;;;
@@ -44,15 +44,15 @@
 ;;; value here represents the value of that constant variable at
 ;;; compile time.
 
-(defclass constant-ast (ast
+(defclass literal-ast (ast
                         one-value-ast-mixin
                         side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
-(cleavir-io:define-save-info constant-ast
+(cleavir-io:define-save-info literal-ast
   (:value value))
 
-(defmethod children ((ast constant-ast))
+(defmethod children ((ast literal-ast))
   (declare (ignorable ast))
   '())
 
@@ -60,13 +60,13 @@
 ;;;
 ;;; Class IMMEDIATE-AST.
 ;;;
-;;; This class is similar to CONSTANT-AST. It represents Lisp
+;;; This class is similar to LITERAL-AST. It represents Lisp
 ;;; constants in source code that are known to be possible to
 ;;; represent as immediate objects in native code.
 ;;;
 ;;; ASTs of this class are typically introduced in later stages of
 ;;; compilation, where the AST is adapted to a particular backend.
-;;; Then instances of CONSTANT-AST are either replaced by code to
+;;; Then instances of LITERAL-AST are either replaced by code to
 ;;; build a constant that is too complex to be an immediate, or they
 ;;; have their class changed to IMMEDIATE-AST.
 

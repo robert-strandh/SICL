@@ -42,7 +42,7 @@
       context
       :result temp1
       :successor
-      (if (typep nook-number-ast 'cleavir-ast:constant-ast)
+      (if (typep nook-number-ast 'cleavir-ast:literal-ast)
           (let ((nook-number-input
                   (make-instance 'cleavir-ir:constant-input
                     :value (cleavir-ast:value nook-number-ast))))

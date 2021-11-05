@@ -9,7 +9,7 @@
   (let ((name (string (class-name (class-of ast)))))
     (string-downcase (subseq name 0 (- (length name) 4)))))
 
-(defmethod label ((ast cleavir-ast:constant-ast))
+(defmethod label ((ast cleavir-ast:literal-ast))
   (let* ((label (format nil "~s" (cleavir-ast:value ast)))
          (length (length label)))
     (subseq label 0 (min length 30))))

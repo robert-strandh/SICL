@@ -55,7 +55,7 @@
     ,(to-source (cleavir-ast:form-ast ast) dictionary)
     ,(to-source (cleavir-ast:type-specifier-ast ast) dictionary)))
 
-(defmethod to-source ((ast cleavir-ast:constant-ast) dictionary)
+(defmethod to-source ((ast cleavir-ast:literal-ast) dictionary)
   (declare (ignore dictionary))
   `',(cleavir-ast:value ast))
 

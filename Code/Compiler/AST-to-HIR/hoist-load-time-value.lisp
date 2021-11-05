@@ -39,9 +39,9 @@
           for load-time-value-ast in (reverse load-time-value-asts)
           for form-ast = (cleavir-ast:form-ast load-time-value-ast)
           for code-vector-index-ast
-            = (make-instance 'cleavir-ast:constant-ast :value 0)
+            = (make-instance 'cleavir-ast:literal-ast :value 0)
           for literals-vector-index-ast
-            = (make-instance 'cleavir-ast:constant-ast :value 0)
+            = (make-instance 'cleavir-ast:literal-ast :value 0)
           for literal-cell = (list nil)
           for patch-literal-ast
             = (make-instance 'sicl-ast:patch-literal-ast

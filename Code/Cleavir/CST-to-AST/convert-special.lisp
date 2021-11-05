@@ -355,7 +355,7 @@
 ;;; Converting TAGBODY.
 ;;;
 ;;; The TAGBODY special form always returns NIL.  We generate a PROGN
-;;; with the TAGBODY-AST and a CONSTANT-AST in it, because the
+;;; with the TAGBODY-AST and a LITERAL-AST in it, because the
 ;;; TAGBODY-AST (unlike the TAGBODY special form) does not generate a
 ;;; value.
 

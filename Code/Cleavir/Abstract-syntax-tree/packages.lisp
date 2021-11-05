@@ -13,7 +13,7 @@
    #:two-values-ast-mixin
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
-   #:constant-ast #:value
+   #:literal-ast #:value
    #:immediate-ast
    #:load-literal-ast #:location-info
    #:lexical-ast

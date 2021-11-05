@@ -168,7 +168,7 @@
 
 (defmethod convert-special-variable (client cst info global-environment)
   (declare (ignore global-environment))
-  (let ((name-ast (cleavir-ast:make-ast 'cleavir-ast:constant-ast
+  (let ((name-ast (cleavir-ast:make-ast 'cleavir-ast:literal-ast
                     :value (trucler:name info))))
     (cleavir-ast:make-ast 'cleavir-ast:symbol-value-ast
       :name-ast name-ast)))

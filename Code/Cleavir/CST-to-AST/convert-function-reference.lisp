@@ -3,7 +3,7 @@
 (defmethod convert-global-function-reference (client cst info global-environment)
   (declare (ignore global-environment))
   (let* ((*origin* (cst:source cst))
-         (name-ast (cleavir-ast:make-ast 'cleavir-ast:constant-ast
+         (name-ast (cleavir-ast:make-ast 'cleavir-ast:literal-ast
                      :value (trucler:name info))))
     (cleavir-ast:make-ast 'cleavir-ast:fdefinition-ast
       :name-ast name-ast)))
