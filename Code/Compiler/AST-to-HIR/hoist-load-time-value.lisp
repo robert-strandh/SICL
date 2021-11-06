@@ -68,7 +68,10 @@
 ;;;; These addresses are known only after code generation is complete,
 ;;;; so the extrinsic loader must keep track of those addresses and
 ;;;; store them in the PATCH-LITERAL-INSTRUCTION before the load-time
-;;;; code can be executed by the HIR evaluator.
+;;;; code can be executed by the HIR evaluator.  Furthermore, if the
+;;;; object created by the load-time code is a heap-allocated object,
+;;;; the HIR evaluator must turn it into a native address by
+;;;; allocating space for it in the simulated global heap.
 
 ;;; Since we map in DEPTH-FIRST PRE-ORDER we accumulate the outermost
 ;;; ASTs first, but since we then PUSH them to a list, the list ends
