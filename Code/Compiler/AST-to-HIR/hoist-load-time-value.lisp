@@ -1,21 +1,74 @@
 (cl:in-package #:sicl-ast-to-hir)
 
-;;;; LOAD-TIME-VALUE ASTs are handled as follows.  To tie a code
-;;;; object to an environment, the top-level function is called with a
-;;;; vector as a single required argument.  That vector will contain
-;;;; constants, i.e., results of evaluating LOAD-TIME-VALUE forms and
-;;;; also non-trivial constants created by the reader of the FASL
-;;;; file.  So, we wrap the FORM-ATSs of the LOAD-TIME-VALUE ASTs in
-;;;; an ASET-AST, where the ARRAY-AST is the parameter of the
-;;;; top-level function, and the ELEMENT-AST is the FORM-AST of the
-;;;; LOAD-TIME-VALUE AST.  The index starts with 0 and is incremented
-;;;; for each new LOAD-TIME-VALUE AST found.  The LOAD-TIME-VALUE AST
-;;;; itself is turned into a LOAD-LITERAL-AST with the index as its
-;;;; LOCATION-INFO.  We return a new AST which is the one we were
-;;;; given, preceded by these ASET-ASTs and all if it wrapped in a
-;;;; PROGN-AST.  We also return the number of LOAD-TIME-VALUE ASTs
-;;;; found, so that we know at which index in the vector to start
-;;;; storing constants created by the reader.
+;;;; LOAD-TIME-VALUE-ASTs are handled as follows.  We separate the
+;;;; description into one part that describes how it works in the
+;;;; intrinsic (native) loader, and another part that describes how it
+;;;; works in the extrinsic (cross-) loader.  The difference between
+;;;; the two is that the code executed at load time is done by native
+;;;; processor instructions in the intrinsic loader, and by the HIR
+;;;; evaluator in the extrinsic loader.  Common between the two cases
+;;;; is that the LOAD-TIME-VALUE-AST is turned into a LOAD-LITERAL-AST
+;;;; and the FORM-AST of the LOAD-TIME-VALUE-AST is moved to the top
+;;;; level for evaluation at load time. The FORM-AST becomes the
+;;;; argument of a PATCH-LITERAL-AST that is connected to the
+;;;; LOAD-LITERAL-AST.  Both the LOAD-LITERAL-AST and the
+;;;; PATCH-LITERAL-AST have corresponding HIR instructions
+;;;; LOAD-LITERAL-INSTRUCTION and PATCH-LITERAL-INSTRUCTION.
+;;;; Typically, the LOAD-LITERAL-INSTRUCTION is not executed at load
+;;;; time, but it is entirely possible for load-time code to contain a
+;;;; LOAD-TIME-VALUE form, so that the LOAD-LITERAL-INSTRUCTION is
+;;;; also executed at load time.  Either way, it is processed by the
+;;;; code generator and turned into one or more native instructions
+;;;; that, when executed, construct a word in a register with a value
+;;;; corresponding to the object.  If the object is heap-allocated,
+;;;; then it is promoted to the global heap so that it remains a
+;;;; constant value at run time.  If the processor has an instruction
+;;;; that can load a full word from the instruction stream, then the
+;;;; object simply becomes the value of that word.  In most RISC
+;;;; processors, no such instruction exists, and then the object will
+;;;; have to be constructed from two or more parts, each parts
+;;;; supplied by a separate instruction.  Either way, the instruction
+;;;; stream will have to be patched once the object has been created
+;;;; by the load-time code, and that is the role of the
+;;;; PATCH-LITERAL-AST and the PATCH-LITERAL-INSTRUCTION.
+
+;;;; In the intrinsic loader, the PATCH-LITERAL-INSTRUCTION is turned
+;;;; into one or more memory-write instructions by the code generator.
+;;;; The purpose is to write the constructed object into the
+;;;; instruction stream where the instructions resulting from the
+;;;; LOAD-LITERAL-INSTRUCTION are located.  The constructed object
+;;;; will be present in a register, so the memory-write instructions
+;;;; write all or part of this register to the addresses where the
+;;;; instructions resulting from the LOAD-LITERAL-INSTRUCTION are
+;;;; located.  For that to work, the addresses of those instructions
+;;;; must be stored in the memory-write instructions.  But these
+;;;; addresses are not known until code has been fully generated for
+;;;; the entire compilation unit.  So the memory-write instructions
+;;;; must themselves be patched by the loader, once the code generator
+;;;; has fully processed the code.  Furthermore, the loader must keep
+;;;; track of the addresses of the instructions resulting from the
+;;;; LOAD-LITERAL-INSTRUCTION throughout the code-generation phase.
+
+;;;; In the extrinsic loader, the PATCH-LITERAL-INSTRUCTION is
+;;;; executed by the HIR evaluator after native code for the entire
+;;;; compilation unit has been generated.  The associated
+;;;; LOAD-LITERAL-INSTRUCTION might be executed by the HIR evaluator
+;;;; later during the execution of load-time code, or it may just
+;;;; become part of the native code to be executed at run time.  Both
+;;;; possibilities must be taken into account.  For the first case, a
+;;;; CONS cell is shared between the LOAD-LITERAL-AST and the
+;;;; PATCH-LITERAL-AST, and this CONS cell is transmitted to the
+;;;; corresponding HIR instructions.  When the HIR evaluator executes
+;;;; the PATCH-LITERAL-INSTRUCTION, it stores the constructed object
+;;;; in the CAR of the CONS cell.  When the HIR evaluator executes the
+;;;; LOAD-LITERAL-INSTRUCTION, it reads the CAR of the CONS cell to
+;;;; obtain the object.  For the second case, the
+;;;; PATCH-LITERAL-INSTRUCTION contains a slot that holds the
+;;;; addresses in the native instruction stream that must be patched.
+;;;; These addresses are known only after code generation is complete,
+;;;; so the extrinsic loader must keep track of those addresses and
+;;;; store them in the PATCH-LITERAL-INSTRUCTION before the load-time
+;;;; code can be executed by the HIR evaluator.
 
 ;;; Since we map in DEPTH-FIRST PRE-ORDER we accumulate the outermost
 ;;; ASTs first, but since we then PUSH them to a list, the list ends
