@@ -512,8 +512,6 @@
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
-    ;; FIXME: We only check whether the READ-ONLY-P flag is well
-    ;; formed, but we don't use it for anything.
     (unless (cst:null remaining-cst)
       (let ((read-only-p (cst:raw (cst:first remaining-cst))))
         (if (member read-only-p '(nil t))
@@ -529,17 +527,14 @@
     ;; the latter case, the form is evaluated in a null lexical environment
     ;; at compile time, and the result is used instead as a literal object.
     (if *use-file-compilation-semantics-p*
-        (let ((lexical-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
-                             :name (gensym))))
-          (push (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
-                  :lexical-variable-ast lexical-ast
-                  :value-ast
-                  (convert
-                   client
-                   form-cst
-                   (trucler:global-environment client environment)))
-                *prologue*)
-          lexical-ast)
+        (cleavir-ast:make-ast 'cleavir-ast:load-time-value-ast
+          :form-ast (convert
+                     client
+                     form-cst
+                     (trucler:global-environment client environment))
+          :read-only-p (if (cst:null remaining-cst)
+                           nil
+                           (cst:raw (cst:first remaining-cst))))
         (convert-constant
          client
          (cst:cst-from-expression
