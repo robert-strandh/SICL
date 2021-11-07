@@ -96,6 +96,14 @@
           collect ast into no
         finally (return (values (cons first yes) no))))
 
+(defun group-load-time-value-asts (load-time-value-asts)
+  (loop with remaining = load-time-value-asts
+        until (null remaining)
+        collect (multiple-value-bind (yes no)
+                    (split-load-time-value-ast-list remaining)
+                  (setf remaining no)
+                  yes)))
+
 (defun process-one-load-time-value-ast (load-time-value-ast)
   (let* ((form-ast (cleavir-ast:form-ast load-time-value-ast))
          (code-vector-index-ast
