@@ -85,6 +85,21 @@
      ast)
     result))
 
+(defun process-one-load-time-value-ast (load-time-value-ast)
+  (let* ((form-ast (cleavir-ast:form-ast load-time-value-ast))
+         (code-vector-index-ast
+           (make-instance 'cleavir-ast:literal-ast :value 0))
+         (literals-vector-index-ast
+           (make-instance 'cleavir-ast:literal-ast :value 0))
+         (literal-cell (list nil)))
+    (change-class load-time-value-ast 'cleavir-ast:load-literal-ast
+                  :location-info literal-cell)
+    (make-instance 'sicl-ast:patch-literal-ast
+      :literal-cell literal-cell
+      :literal-ast form-ast
+      :code-vector-index-ast code-vector-index-ast
+      :literals-vector-index-ast literals-vector-index-ast)))
+
 ;;; Since we want the innermost LOAD-TIME-VALUEs to be executed first,
 ;;; we must push them in the order of the outermost first.  For that
 ;;; reason, we REVERSE the list before processing it.
@@ -93,21 +108,9 @@
         (form-asts (list ast)))
     (loop for count from 0
           for load-time-value-ast in (reverse load-time-value-asts)
-          for form-ast = (cleavir-ast:form-ast load-time-value-ast)
-          for code-vector-index-ast
-            = (make-instance 'cleavir-ast:literal-ast :value 0)
-          for literals-vector-index-ast
-            = (make-instance 'cleavir-ast:literal-ast :value 0)
-          for literal-cell = (list nil)
           for patch-literal-ast
-            = (make-instance 'sicl-ast:patch-literal-ast
-                :literal-cell literal-cell
-                :literal-ast form-ast
-                :code-vector-index-ast code-vector-index-ast
-                :literals-vector-index-ast literals-vector-index-ast)
-          do (change-class load-time-value-ast 'cleavir-ast:load-literal-ast
-                           :location-info literal-cell)
-             (push patch-literal-ast form-asts)
+            = (process-one-load-time-value-ast load-time-value-ast)
+          do (push patch-literal-ast form-asts)
           finally (return (values (make-instance 'cleavir-ast:progn-ast
                                     :form-asts form-asts)
                                   count)))))
