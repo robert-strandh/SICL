@@ -118,6 +118,10 @@
       :code-vector-index-ast code-vector-index-ast
       :literals-vector-index-ast literals-vector-index-ast)))
 
+(defun process-one-load-time-value-ast-group (group lexical-ast)
+  (loop for load-time-value-ast in group
+        do (process-one-load-time-value-ast load-time-value-ast lexical-ast)))
+
 ;;; Since we want the innermost LOAD-TIME-VALUEs to be executed first,
 ;;; we must push them in the order of the outermost first.  For that
 ;;; reason, we REVERSE the list before processing it.
