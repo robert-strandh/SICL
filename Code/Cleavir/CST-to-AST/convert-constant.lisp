@@ -48,9 +48,9 @@
    (%creation-form :initarg :creation-form :reader creation-form)
    (%creation-form-finalized-p :initform nil :accessor creation-form-finalized-p)))
 
-(defgeneric constant-lexical-ast (client object environment))
+(defgeneric load-time-literal (client object environment))
 
-(defmethod constant-lexical-ast :around (client object environment)
+(defmethod load-time-literal :around (client object environment)
   (multiple-value-bind (constant-record present-p)
       (constant-record-cache object)
     (cond ((not present-p)
@@ -62,7 +62,7 @@
                     :creation-form (creation-form constant-record)))
            (lexical-ast constant-record)))))
 
-(defmethod constant-lexical-ast (client object environment)
+(defmethod load-time-literal (client object environment)
   (multiple-value-bind (creation-form initialization-form)
       (make-load-form-using-client client object environment)
     (let* ((lexical-ast
@@ -99,7 +99,7 @@
            (cleavir-ast:make-ast 'cleavir-ast:literal-ast
              :value object))
           (*use-file-compilation-semantics-p*
-           (constant-lexical-ast
+           (load-time-literal
             client
             (cst:raw constant-cst)
             (trucler:global-environment client environment))))))
