@@ -85,6 +85,17 @@
      ast)
     result))
 
+(defun split-load-time-value-ast-list (load-time-value-asts)
+  (assert (not (null load-time-value-asts)))
+  (loop with first = (first load-time-value-asts)
+        with first-form-ast = (cleavir-ast:form-ast first)
+        for ast in (rest load-time-value-asts)
+        if (eq (cleavir-ast:form-ast ast) first-form-ast)
+          collect ast into yes
+        else
+          collect ast into no
+        finally (return (values (cons first yes) no))))
+
 (defun process-one-load-time-value-ast (load-time-value-ast)
   (let* ((form-ast (cleavir-ast:form-ast load-time-value-ast))
          (code-vector-index-ast
