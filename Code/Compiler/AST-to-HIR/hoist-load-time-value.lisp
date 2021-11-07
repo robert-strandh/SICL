@@ -104,9 +104,8 @@
                   (setf remaining no)
                   yes)))
 
-(defun process-one-load-time-value-ast (load-time-value-ast)
-  (let* ((form-ast (cleavir-ast:form-ast load-time-value-ast))
-         (code-vector-index-ast
+(defun process-one-load-time-value-ast (load-time-value-ast lexical-ast)
+  (let* ((code-vector-index-ast
            (make-instance 'cleavir-ast:literal-ast :value 0))
          (literals-vector-index-ast
            (make-instance 'cleavir-ast:literal-ast :value 0))
@@ -115,7 +114,7 @@
                   :location-info literal-cell)
     (make-instance 'sicl-ast:patch-literal-ast
       :literal-cell literal-cell
-      :literal-ast form-ast
+      :literal-ast lexical-ast
       :code-vector-index-ast code-vector-index-ast
       :literals-vector-index-ast literals-vector-index-ast)))
 
@@ -127,9 +126,16 @@
         (form-asts (list ast)))
     (loop for count from 0
           for load-time-value-ast in (reverse load-time-value-asts)
+          for form-ast = (cleavir-ast:form-ast load-time-value-ast)
+          for lexical-ast = (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
+                              :name (gensym))
+          for bind-ast = (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
+                           :lexical-variable-ast lexical-ast
+                           :value-ast form-ast)
           for patch-literal-ast
-            = (process-one-load-time-value-ast load-time-value-ast)
+            = (process-one-load-time-value-ast load-time-value-ast lexical-ast)
           do (push patch-literal-ast form-asts)
+             (push bind-ast form-asts)
           finally (return (values (make-instance 'cleavir-ast:progn-ast
                                     :form-asts form-asts)
                                   count)))))
