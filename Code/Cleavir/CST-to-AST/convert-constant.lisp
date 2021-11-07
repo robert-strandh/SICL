@@ -24,7 +24,8 @@
 (defun coalesce (client object constant-record)
   (with-accessors ((eql-table eql-table)
                    (equal-table equal-table)
-                   (equalp-table equalp-table)) *similarity-table*
+                   (equalp-table equalp-table))
+      *similarity-table*
     (multiple-value-bind (equal-keys equalp-keys)
         (similarity-keys client object)
       (flet ((coalesce-using-table (key table)
