@@ -127,19 +127,20 @@
 ;;; we must push them in the order of the outermost first.  For that
 ;;; reason, we REVERSE the list before processing it.
 (defun hoist-load-time-value (ast)
-  (let ((load-time-value-asts (find-load-time-value-asts ast))
-        (form-asts (list ast)))
+  (let* ((load-time-value-asts (find-load-time-value-asts ast))
+         (groups (group-load-time-value-asts load-time-value-asts))
+         (form-asts (list ast)))
     (loop for count from 0
-          for load-time-value-ast in (reverse load-time-value-asts)
-          for form-ast = (cleavir-ast:form-ast load-time-value-ast)
+          for group in (reverse groups)
+          for form-ast = (cleavir-ast:form-ast (first group))
           for lexical-ast = (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                               :name (gensym))
           for bind-ast = (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
                            :lexical-variable-ast lexical-ast
                            :value-ast form-ast)
-          for patch-literal-ast
-            = (process-one-load-time-value-ast load-time-value-ast lexical-ast)
-          do (push patch-literal-ast form-asts)
+          for patch-literal-asts
+            = (process-one-load-time-value-ast-group group lexical-ast)
+          do (setf form-asts (append patch-literal-asts form-asts))
              (push bind-ast form-asts)
           finally (return (values (make-instance 'cleavir-ast:progn-ast
                                     :form-asts form-asts)
