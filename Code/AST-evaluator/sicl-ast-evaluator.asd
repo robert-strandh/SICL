@@ -33,5 +33,4 @@
    (:file "translate-fixnum-related-asts")
    (:file "translate-multiple-value-related-asts")
    (:file "translate-code")
-   (:file "eval-ast")
-   (:file "eval")))
+   (:file "eval-ast")))
