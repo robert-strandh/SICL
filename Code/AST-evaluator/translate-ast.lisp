@@ -185,3 +185,21 @@
     (client (ast ast:eq-ast) lexical-environment)
   `(eq ,(translate-ast client (ast:arg1-ast ast) lexical-environment)
        ,(translate-ast client (ast:arg2-ast ast) lexical-environment)))
+
+;;; We count on encountering the PATCH-LITERAL-AST before the
+;;; associated LOAD-LITERAL-AST.  So here, we set the CDR of the
+;;; shared CONS cell to a generated symbol, and we set the
+;;; SYMBOL-VALUE of that symbol.
+(defmethod translate-ast
+    (client (ast sicl-ast:patch-literal-ast) lexical-environment)
+  (let ((name (gensym)))
+    (setf (cdr (sicl-ast:literal-cell ast)) name)
+    `(setf (symbol-value ',name)
+           ,(translate-ast (sicl-ast:literal-ast ast) lexical-environment))))
+
+;;; Then, when we encounter the corresponding LOAD-LITERAL-AST, we
+;;; access that generated symbol we created and generate code to get
+;;; its symbol value.
+(defmethod translate-ast
+    (client (ast cleavir-ast:load-literal-ast) lexical-environment)
+  `(symbol-value ',(cdr (cleavir-ast:location-info ast))))
