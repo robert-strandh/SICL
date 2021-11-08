@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-ast-evaluator
   :depends-on (#:cleavir-ast
+               #:sicl-ast
                #:cleavir-cst-to-ast
                #:cleavir-ast-transformations
                #:cleavir-code-utilities
