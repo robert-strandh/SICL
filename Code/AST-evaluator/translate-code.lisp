@@ -38,8 +38,3 @@
                                 (funcall ,function-cell-finder-var ',function-name))))
          (declare (ignorable ,function-cell-finder-var))
          ,code))))
-
-(defun translate-code (client environment cst)
-  (let* ((ast1 (cst-to-ast client cst environment))
-         (ast2 (cleavir-ast-transformations:hoist-load-time-value ast1)))
-    (translate-top-level-ast client ast2)))
