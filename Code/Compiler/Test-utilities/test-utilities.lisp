@@ -186,5 +186,3 @@
 			      (name node)
 			      (name succ))))
     (format stream "}~%")))
-
-
