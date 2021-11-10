@@ -39,13 +39,13 @@
   (format stream
           "At least one list argument is required,~@
            but none was given."))
-          
+
 (defmethod acclimation:report-condition
     ((c at-least-one-argument-required) stream (language acclimation:english))
   (format stream
           "At least one argument is required,~@
            but none was given."))
-          
+
 (defmethod acclimation:report-condition
     ((c lists-must-have-the-same-length) stream (language acclimation:english))
   (format stream
@@ -77,7 +77,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile time conditions. 
+;;; Compile time conditions.
 
 (defmethod acclimation:report-condition
     ((c form-must-be-proper-list) stream (language acclimation:english))
