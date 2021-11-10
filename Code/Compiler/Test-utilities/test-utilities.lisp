@@ -19,7 +19,7 @@
 ;;; For each layer, the probability of giving a node zero successors
 ;;; is modified as follows: P(i+1) = 1 - ZSNF*(1 - P(i)), where ZSNF
 ;;; is the value of this variable.  The closer this value is to 1, the
-;;; more layers the graph will have. 
+;;; more layers the graph will have.
 (defparameter *zero-successor-narrowing-factor* 0.99)
 
 (defun new-zero-successor-probability
@@ -139,7 +139,7 @@
 			"   ~a -> ~a [style = bold];~%"
 			(name node)
 			(name succ)))))
-    
+
      ;; Draw all the variables.
      (let ((table (make-hash-table :test #'eq)))
        (sicl-compiler-utilities:map-nodes
