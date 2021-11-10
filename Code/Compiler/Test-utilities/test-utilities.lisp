@@ -130,7 +130,7 @@
        (format stream
 	       "   ~a [shape = box, label = \"~a\"];~%"
 	       (name node) (name node))))
-    ;; Next draw all the links between nodes
+    ;; Next draw all the links between nodes.
     (sicl-compiler-utilities:map-nodes
      initial-node #'successors
      (lambda (node)
@@ -139,7 +139,6 @@
 			"   ~a -> ~a [style = bold];~%"
 			(name node)
 			(name succ)))))
-
      ;; Draw all the variables.
      (let ((table (make-hash-table :test #'eq)))
        (sicl-compiler-utilities:map-nodes
@@ -175,7 +174,7 @@
 	  do (format stream
 		     "   ~a [label = \"~a\"];~%"
 		     (name node) (name node)))
-    ;; Now draw the arcs
+    ;; Now draw the arcs.
     (loop for node in preorder
 	  do (loop for succ in (successors node)
 		   do (format stream
