@@ -311,7 +311,7 @@
 ;;; Class PROGN-AST.
 
 (defclass progn-ast (ast)
-  ((%form-asts :initarg :form-asts :reader form-asts)))
+  ((%form-asts :initarg :form-asts :accessor form-asts)))
 
 (cleavir-io:define-save-info progn-ast
   (:form-asts form-asts))
