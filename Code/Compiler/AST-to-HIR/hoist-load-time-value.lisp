@@ -142,4 +142,4 @@
           do (setf (cleavir-ast:form-asts ast)
                    (cons bind-ast
                          (append patch-literal-asts (cleavir-ast:form-asts ast))))
-          finally (return (values ast count)))))
+          finally (return count))))

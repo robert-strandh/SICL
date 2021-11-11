@@ -9,11 +9,10 @@
     ;; we need to host LOAD-TIME-VALUE-ASTs after FDEFINITION-ASTs have
     ;; been eliminated.
     (eliminate-fdefinition-asts ast)
-    (multiple-value-bind (hoisted-ast load-time-value-count)
-        (hoist-load-time-value ast)
+    (let ((load-time-value-count (hoist-load-time-value ast)))
       (let* ((wrapped-ast (make-instance 'cleavir-ast:function-ast
                             :lambda-list '()
-                            :body-ast hoisted-ast))
+                            :body-ast ast))
              (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
              (constants (make-array load-time-value-count
                                     :adjustable t :fill-pointer t)))
