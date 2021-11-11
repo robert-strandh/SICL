@@ -17,7 +17,6 @@
    (:file "dynamic-environment")
    (:file "stack")
    (:file "standard-object")
-   (:file "hoist-load-time-value")
    (:file "eliminate-fdefinition-asts")
    (:file "process-constant-inputs")
    (:file "compile-patch-literal-ast")
