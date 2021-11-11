@@ -22,17 +22,29 @@
 ;;; Notice that the FDEFINITION-AST is not created as a result of a
 ;;; global function reference in a call position of a compound form.
 ;;; Then, instead a NAMED-CALL-AST is created.
-(defun eliminate-fdefinition-asts (ast)
-  (let ((fdefinition-asts (find-fdefinition-asts ast)))
+(defun eliminate-fdefinition-asts (top-level-ast)
+  (let ((fdefinition-asts (find-fdefinition-asts top-level-ast)))
     (loop for ast in fdefinition-asts
           for origin = (cleavir-cst-to-ast:origin ast)
           for name-ast = (cleavir-ast:name-ast ast)
+          for literal-cell = (list nil)
           for call-ast = (make-instance 'cleavir-ast:named-call-ast
                            :origin origin
                            :callee-name 'sicl-data-and-control-flow:function-cell
                            :argument-asts (list name-ast))
-          for load-time-value-ast = (make-instance 'cleavir-ast:load-time-value-ast
-                                      :origin origin
-                                      :form-ast call-ast)
-          do (change-class ast 'cleavir-ast:car-ast
-                           :cons-ast load-time-value-ast))))
+          for load-literal-ast = (make-instance 'cleavir-ast:load-literal-ast
+                                   :origin origin
+                                   :location-info literal-cell)
+          for patch-literal-ast = (make-instance 'sicl-ast:patch-literal-ast
+                                    :literal-cell literal-cell
+                                    :literal-ast call-ast
+                                    :code-vector-index-ast
+                                    (make-instance 'cleavir-ast:literal-ast
+                                      :value 0)
+                                    :literals-vector-index-ast
+                                    (make-instance 'cleavir-ast:literal-ast
+                                      :value 0))
+          do (push patch-literal-ast
+                   (cleavir-ast:form-asts top-level-ast))
+             (change-class ast 'cleavir-ast:car-ast
+                           :cons-ast load-literal-ast))))
