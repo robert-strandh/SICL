@@ -128,8 +128,7 @@
 ;;; reason, we REVERSE the list before processing it.
 (defun hoist-load-time-value (ast)
   (let* ((load-time-value-asts (find-load-time-value-asts ast))
-         (groups (group-load-time-value-asts load-time-value-asts))
-         (form-asts (list ast)))
+         (groups (group-load-time-value-asts load-time-value-asts)))
     (loop for count from 0
           for group in (reverse groups)
           for form-ast = (cleavir-ast:form-ast (first group))
@@ -140,8 +139,7 @@
                            :value-ast form-ast)
           for patch-literal-asts
             = (process-one-load-time-value-ast-group group lexical-ast)
-          do (setf form-asts (append patch-literal-asts form-asts))
-             (push bind-ast form-asts)
-          finally (return (values (make-instance 'cleavir-ast:progn-ast
-                                    :form-asts form-asts)
-                                  count)))))
+          do (setf (cleavir-ast:form-asts ast)
+                   (cons bind-ast
+                         (append patch-literal-asts (cleavir-ast:form-asts ast))))
+          finally (return (values ast count)))))
