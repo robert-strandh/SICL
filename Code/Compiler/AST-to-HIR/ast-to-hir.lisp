@@ -1,12 +1,14 @@
 (cl:in-package #:sicl-ast-to-hir)
 
 (defun ast-to-hir (client ast)
-  ;; Eliminating FDEFINITION-ASTs will create LOAD-TIME-VALUE-ASTs, so
-  ;; we need to host LOAD-TIME-VALUE-ASTs after FDEFINITION-ASTs have
-  ;; been eliminated.
-  (eliminate-fdefinition-asts ast)
-  (let ((cleavir-cst-to-ast::*origin* nil)
-        (*gensym-counter* 0))
+  (let* ((cleavir-cst-to-ast::*origin* nil)
+         (*gensym-counter* 0)
+         (ast (make-instance 'cleavir-ast:progn-ast
+                :form-asts (list ast))))
+    ;; Eliminating FDEFINITION-ASTs will create LOAD-TIME-VALUE-ASTs, so
+    ;; we need to host LOAD-TIME-VALUE-ASTs after FDEFINITION-ASTs have
+    ;; been eliminated.
+    (eliminate-fdefinition-asts ast)
     (multiple-value-bind (hoisted-ast load-time-value-count)
         (hoist-load-time-value ast)
       (let* ((wrapped-ast (make-instance 'cleavir-ast:function-ast
