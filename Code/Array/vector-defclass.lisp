@@ -8,3 +8,6 @@
     :initform nil
     :initarg :fill-pointer
     :accessor vector-fill-pointer)))
+
+(defun vectorp (object)
+  (typep object 'vector))

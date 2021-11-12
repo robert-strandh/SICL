@@ -240,6 +240,9 @@ See CLHS 9.1.2.1."
 (declaim (ftype (type-predicate array)
 		arrayp))
 
+(declaim (ftype (type-predicate vectr)
+		vectorp))
+
 (declaim (ftype (sfunction (t list
 			     &key (:key keyfun-designator)
 			     (:test testfun2-designator)

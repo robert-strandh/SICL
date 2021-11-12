@@ -21,6 +21,7 @@
    #:array-unsigned-byte-8
    #:array-complex-single-float
    #:array-complex-double-float
+   #:vectorp
    #:vector-single-float
    #:vector-double-float
    #:vector-signed-byte-32
