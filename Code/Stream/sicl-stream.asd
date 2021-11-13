@@ -1,11 +1,11 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-stream
+  :depends-on (#:cyclosis)
   :serial t
   :components
   ((:file "packages")
-   (:file "generic-functions")
-   (:file "stream")
-   (:file "standard-stream")
+   (:file "overrides")
    (:file "unix-byte-stream")
-   (:file "with-open-stream-defmacro")))
+   (:file "character-to-binary-output-stream")
+   (:file "binary-to-character-input-stream")))

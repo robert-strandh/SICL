@@ -2,21 +2,14 @@
 
 (defgeneric file-descriptor (stream))
 
-(defclass unix-byte-output-stream (stream buffered-output-stream-mixin)
+(defclass unix-byte-output-stream (cyclosis:binary-output-stream)
   ((%file-descriptor :initarg :file-descriptor :reader file-descriptor)))
 
-(defmethod stream-finish-output ((stream unix-byte-output-stream))
-  (sicl-posix-high:write
-   (file-descriptor stream)
-   (buffer stream)
-   :end (fill-pointer (buffer stream)))
-  (setf (fill-pointer (buffer stream)) 0))
+(defmethod cyclosis:stream-finish-output ((stream unix-byte-output-stream))
+  (sicl-posix-high:write (file-descriptor stream)
+                         (cyclosis:binary-output-stream-buffer stream)
+                         :end (fill-pointer (cyclosis:binary-output-stream-buffer stream)))
+  (setf (fill-pointer (cyclosis:binary-output-stream-buffer stream)) 0))
 
-(defmethod stream-write-byte ((stream unix-byte-output-stream) integer)
-  (when (= (fill-pointer (buffer stream))
-           (array-total-size (buffer stream)))
-    (stream-finish-output stream))
-  (vector-push integer (buffer stream)))
-
-(defclass unix-byte-input-stream (stream buffered-input-stream-mixin)
+(defclass unix-byte-input-stream (cyclosis:fundamental-binary-input-stream)
   ((%file-descriptor :initarg :file-descriptor :reader file-descriptor)))
