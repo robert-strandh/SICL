@@ -74,7 +74,38 @@
 ;;; This function is a trampoline to MAKE-INSTANCE.  The purpose is to
 ;;; make it easier to trace AST creation or to set breakpoints.
 
-(defgeneric make-ast (class-or-name &rest initargs))
+(defgeneric make-ast (class &rest initargs))
 
-(defmethod make-ast (class-or-name &rest initargs)
-  (apply #'make-instance class-or-name initargs))
+(defmethod make-ast (class &rest initargs)
+  (apply #'make-instance class initargs))
+
+;;; We want to make sure that MAKE-INSTANCE is not used directly when
+;;; an instance of an AST class is created.
+
+;;; The way we do it is that we define a special variable *MAKING-AST*
+;;; with a default value of NIL, i.e. false.
+(defparameter *making-ast* nil)
+
+;;; Then we define a :BEFORE method on INITIALIZE-INSTANCE that
+;;; signals an error when *MAKING-AST* is false.  Thus, calling
+;;; MAKE-INSTANCE to create an instance of an AST class will result in
+;;; an error being signaled.
+(defmethod initialize-instance :before ((object ast) &rest initargs)
+  (declare (ignore object initargs))
+  (unless *making-ast*
+    (error "To create an AST instance, use MAKE-AST.")))
+
+;;; Finally, we define an :AROUND method on MAKE-AST that binds
+;;; *MAKING-AST* to T, i.e., true during the invocation of the primary
+;;; method on MAKE-AST and therefore during the invocation of
+;;; MAKE-INSTANCE and INITIALIZE-INSTANCE.  Furthermore, we make sure
+;;; the primary method and any :BEFORE or :AFTER methods of MAKE-AST
+;;; are called with a class metaobject and not with a symbol.  This
+;;; way, it is more convenient to put auxiliary methods on MAKE-AST,
+;;; specialized to specific AST classes.
+(defmethod make-ast :around (class-or-name &rest initargs)
+  (let ((*making-ast* t)
+        (class (if (symbolp class-or-name)
+                   (find-class class-or-name)
+                   class-or-name)))
+    (apply #'call-next-method class initargs)))
