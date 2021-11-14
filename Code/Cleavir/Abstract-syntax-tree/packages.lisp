@@ -14,7 +14,6 @@
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
    #:literal-ast #:value
-   #:immediate-ast
    #:load-literal-ast #:location-info
    #:lexical-ast
    #:symbol-value-ast
