@@ -3,13 +3,13 @@
 (defun ast-to-hir (client ast)
   (let* ((cleavir-cst-to-ast::*origin* nil)
          (*gensym-counter* 0)
-         (ast (make-instance 'cleavir-ast:progn-ast
+         (ast (cleavir-ast:make-ast 'cleavir-ast:progn-ast
                 :form-asts (list ast))))
     ;; Eliminating FDEFINITION-ASTs will create LOAD-TIME-VALUE-ASTs, so
     ;; we need to host LOAD-TIME-VALUE-ASTs after FDEFINITION-ASTs have
     ;; been eliminated.
     (eliminate-fdefinition-asts ast)
-    (let* ((wrapped-ast (make-instance 'cleavir-ast:function-ast
+    (let* ((wrapped-ast (cleavir-ast:make-ast 'cleavir-ast:function-ast
                           :lambda-list '()
                           :body-ast ast))
            (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))

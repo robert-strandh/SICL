@@ -28,21 +28,21 @@
           for origin = (cleavir-cst-to-ast:origin ast)
           for name-ast = (cleavir-ast:name-ast ast)
           for literal-cell = (list nil)
-          for call-ast = (make-instance 'cleavir-ast:named-call-ast
+          for call-ast = (cleavir-ast:make-ast 'cleavir-ast:named-call-ast
                            :origin origin
                            :callee-name 'sicl-data-and-control-flow:function-cell
                            :argument-asts (list name-ast))
-          for load-literal-ast = (make-instance 'cleavir-ast:load-literal-ast
+          for load-literal-ast = (cleavir-ast:make-ast 'cleavir-ast:load-literal-ast
                                    :origin origin
                                    :location-info literal-cell)
-          for patch-literal-ast = (make-instance 'sicl-ast:patch-literal-ast
+          for patch-literal-ast = (cleavir-ast:make-ast 'sicl-ast:patch-literal-ast
                                     :literal-cell literal-cell
                                     :literal-ast call-ast
                                     :code-vector-index-ast
-                                    (make-instance 'cleavir-ast:literal-ast
+                                    (cleavir-ast:make-ast 'cleavir-ast:literal-ast
                                       :value 0)
                                     :literals-vector-index-ast
-                                    (make-instance 'cleavir-ast:literal-ast
+                                    (cleavir-ast:make-ast 'cleavir-ast:literal-ast
                                       :value 0))
           do (push patch-literal-ast
                    (cleavir-ast:form-asts top-level-ast))

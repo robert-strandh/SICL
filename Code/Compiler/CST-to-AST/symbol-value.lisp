@@ -9,7 +9,7 @@
 
 (defmethod cleavir-cst-to-ast:convert-special-variable
     ((client sicl-client:sicl) cst info global-env)
-  (make-instance 'cleavir-ast:named-call-ast
+  (cleavir-ast:make-ast 'cleavir-ast:named-call-ast
     :callee-name 'symbol-value
     :argument-asts
     (list
@@ -18,7 +18,7 @@
 
 (defmethod cleavir-cst-to-ast:convert-setq-special-variable
     ((client sicl-client:sicl) var-cst form-ast info global-env)
-  (make-instance 'cleavir-ast:named-call-ast
+  (cleavir-ast:make-ast 'cleavir-ast:named-call-ast
     :callee-name '(setf symbol-value)
     :argument-asts
     (list
