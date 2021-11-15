@@ -84,7 +84,8 @@
       (push (convert client (cst:cst-from-expression initialization-form) environment)
             *prologue*)
       (coalesce client object constant-record)
-      lexical-ast)))
+      (cleavir-ast:make-ast 'cleavir-ast:load-literal-ast
+        :location-info lexical-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
