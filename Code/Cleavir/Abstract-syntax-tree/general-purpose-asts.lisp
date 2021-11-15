@@ -65,7 +65,7 @@
 
 (defclass load-literal-ast
     (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%location-info :initarg :location-info :reader location-info)))
+  ((%location-info :initarg :location-info :accessor location-info)))
 
 (cleavir-io:define-save-info load-literal-ast
   (:location-info location-info))
