@@ -8,6 +8,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "cleavir-configuration")
    (:file "symbol-value")
    (:file "declaration-proclamations")
    (:file "dynamic-environment")
