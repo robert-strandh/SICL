@@ -29,6 +29,4 @@
   (:literal-cell literal-cell))
 
 (defmethod cleavir-ast:children ((ast patch-literal-ast))
-  (list (literal-ast ast)
-        (code-vector-index-ast ast)
-        (literals-vector-index-ast ast)))
+  (list (literal-ast ast)))
