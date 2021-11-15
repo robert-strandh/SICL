@@ -527,14 +527,14 @@
     ;; the latter case, the form is evaluated in a null lexical environment
     ;; at compile time, and the result is used instead as a literal object.
     (if *use-file-compilation-semantics-p*
-        (cleavir-ast:make-ast 'cleavir-ast:load-time-value-ast
-          :form-ast (convert
-                     client
-                     form-cst
-                     (trucler:global-environment client environment))
-          :read-only-p (if (cst:null remaining-cst)
-                           nil
-                           (cst:raw (cst:first remaining-cst))))
+        (let ((lexical-ast (cleavir-ast:make-ast 'lexical-ast
+                             :name (gensym "LTV"))))
+          (push (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
+                  :lexical-variable-ast lexical-ast
+                  :value-ast (convert client form-cst environment))
+                *prologue*)
+          (cleavir-ast:make-ast 'cleavir-ast:load-literal-ast
+            :location-info lexical-ast))
         (convert-constant
          client
          (cst:cst-from-expression
