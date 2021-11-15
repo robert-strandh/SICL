@@ -28,19 +28,30 @@
      ast)
     ;; Next, traverse the AST again, and look for LEXICAL-BIND-ASTs
     ;; that create the LEXICAL-ASTs collected.
-    (cleavir-ast:map-ast-depth-first-preorder
-     (lambda (ast-node)
-       (when (typep ast-node 'cleavir-ast:lexical-bind-ast)
-         (let* ((lexical-ast (cleavir-ast:lexical-variable-ast ast-node))
-                (load-literal-ast (gethash lexical-ast load-literal-ast-table)))
-           (unless (null load-literal-ast)
-             (let ((cell (list nil)))
-               (setf (cleavir-ast:location-info load-literal-ast) cell)
-               (change-class ast-node 'cleavir-ast:progn-ast
-                             :form-asts
-                             (list (cleavir-ast-transformations:clone-ast ast-node)
-                                   (cleavir-ast:make-ast 'sicl-ast:patch-literal-ast
-                                     :code-vector-index-ast 0
-                                     :literals-vector-index-ast 0
-                                     :literal-cell cell))))))))
-     ast)))
+    (let ((lexical-bind-asts '()))
+      (cleavir-ast:map-ast-depth-first-preorder
+       (lambda (ast-node)
+         (when (typep ast-node 'cleavir-ast:lexical-bind-ast)
+           (let* ((lexical-ast (cleavir-ast:lexical-variable-ast ast-node))
+                  (load-literal-ast (gethash lexical-ast load-literal-ast-table)))
+             (unless (null load-literal-ast)
+               (push ast-node lexical-bind-asts)))))
+       ast)
+      ;; Finally process the LEXICAL-BIND-ASTs found.
+      (loop for ast-node in lexical-bind-asts
+            do (let* ((cell (list nil))
+                      (lexical-ast (cleavir-ast:lexical-variable-ast ast-node))
+                      (load-literal-ast (gethash lexical-ast load-literal-ast-table)))
+                 (setf (cleavir-ast:location-info load-literal-ast) cell)
+                 (change-class ast-node 'cleavir-ast:progn-ast
+                               :form-asts
+                               (list (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
+                                       :origin (cleavir-cst-to-ast:origin ast-node)
+                                       :lexical-variable-ast lexical-ast
+                                       :value-ast (cleavir-ast:value-ast ast-node))
+                                     (cleavir-ast:make-ast 'sicl-ast:patch-literal-ast
+                                       :origin (cleavir-cst-to-ast:origin ast-node)
+                                       :literal-ast lexical-ast
+                                       :code-vector-index-ast 0
+                                       :literals-vector-index-ast 0
+                                       :literal-cell cell))))))))
