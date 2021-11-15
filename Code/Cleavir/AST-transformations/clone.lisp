@@ -15,7 +15,7 @@
     (cleavir-ast:map-ast-depth-first-preorder
      (lambda (node)
        (setf (gethash node dictionary)
-             (make-instance (class-of node))))
+             (cleavir-ast:make-ast (class-of node))))
      ast)
     dictionary))
 
