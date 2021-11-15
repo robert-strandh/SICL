@@ -195,7 +195,7 @@
   (let ((name (gensym)))
     (setf (cdr (sicl-ast:literal-cell ast)) name)
     `(setf (symbol-value ',name)
-           ,(translate-ast (sicl-ast:literal-ast ast) lexical-environment))))
+           ,(translate-ast client (sicl-ast:literal-ast ast) lexical-environment))))
 
 ;;; Then, when we encounter the corresponding LOAD-LITERAL-AST, we
 ;;; access that generated symbol we created and generate code to get
