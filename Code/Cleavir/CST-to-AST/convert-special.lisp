@@ -527,7 +527,7 @@
     ;; the latter case, the form is evaluated in a null lexical environment
     ;; at compile time, and the result is used instead as a literal object.
     (if *use-file-compilation-semantics-p*
-        (let ((lexical-ast (cleavir-ast:make-ast 'lexical-ast
+        (let ((lexical-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                              :name (gensym "LTV"))))
           (push (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
                   :lexical-variable-ast lexical-ast
