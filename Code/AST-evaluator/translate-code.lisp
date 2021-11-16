@@ -23,7 +23,11 @@
          (function-cell-finder-var (gensym))
          (*run-time-environment-name* (gensym))
          (*function-cells* '())
-         (code (translate-ast client ast lexical-environment)))
+         (code (translate-ast client ast lexical-environment))
+         (vars
+           (remove-duplicates
+            (loop for name being each hash-value of table
+                  collect name))))
     `(lambda (,*run-time-environment-name*)
        (declare (ignorable ,*run-time-environment-name*))
        (declare (optimize (speed 0) (compilation-speed 3) (debug 0) (safety 3) (space 0)))
@@ -37,4 +41,6 @@
                       collect `(,variable-name
                                 (funcall ,function-cell-finder-var ',function-name))))
          (declare (ignorable ,function-cell-finder-var))
-         ,code))))
+         (let ,vars
+           (declare (ignorable ,@vars))
+           ,code)))))
