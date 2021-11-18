@@ -3,9 +3,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Helper function to defeat the type inferencing of the 
-;;; compiler so there are no warnings
+;;; compiler so there are no warnings.
 
-;;; this function always returns true when given a list.
+;;; This function always returns true when given a proper list.
 (defun twisted (list)
   (if (null list)
       t
@@ -15,7 +15,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caar function 
+;;; Tests for the CAAR function.
 
 (define-test caar.1
   (assert-equal 'a (caar '((a)))))
@@ -28,7 +28,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cadr function
+;;; Tests for the CADR function.
 
 (define-test cdar.1
   (assert-equal 'b (cdar '((a . b)))))
@@ -41,7 +41,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cadr function
+;;; Tests for the CADR function.
 
 (define-test cadr.1
   (assert-equal 'b (cadr '(a b))))
@@ -54,7 +54,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cddr function
+;;; Tests for the CDDR function.
 
 (define-test cddr.1
   (assert-equal 'c (cddr '(a b . c))))
@@ -197,13 +197,13 @@
 
 (defvar *cons-test-4*
   (cons (cons (cons (cons 'a 'b)
-		    (cons 'c 'd))
-	      (cons (cons 'e 'f)
-		    (cons 'g 'h)))
-	(cons (cons (cons 'i 'j)
-		    (cons 'k 'l))
-	      (cons (cons 'm 'n)
-		    (cons 'o 'p)))))
+                    (cons 'c 'd))
+              (cons (cons 'e 'f)
+                    (cons 'g 'h)))
+        (cons (cons (cons 'i 'j)
+                    (cons 'k 'l))
+              (cons (cons 'm 'n)
+                    (cons 'o 'p)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -945,59 +945,59 @@
 
 (define-test |setf caar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caar list) 1))
     (assert-equal '((1                   . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caar error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (setf (caar list) 1))))
+                  (setf (caar list) 1))))
 
 (define-test |setf caar error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caar list) 1))))
+                  (setf (caar list) 1))))
 
 (define-test |setf caar error 3|
   (let ((list (copy-tree '(0 0))))
     (assert-error 'type-error
-		  (setf (caar list) 1))))
+                  (setf (caar list) 1))))
 
 (define-test |setf caar error 4|
   (let ((list (copy-tree '(() 0))))
     (assert-error 'type-error
-		  (setf (caar list) 1))))
+                  (setf (caar list) 1))))
 
 (define-test |setf caar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf caar) (list 1 list)))
     (assert-equal '((1                   . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caar apply error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (apply #'(setf caar) (list 1 list)))))
+                  (apply #'(setf caar) (list 1 list)))))
 
 (define-test |setf caar apply error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caar) (list 1 list)))))
+                  (apply #'(setf caar) (list 1 list)))))
 
 (define-test |setf caar apply error 3|
   (let ((list (copy-tree '(0 0))))
     (assert-error 'type-error
-		  (apply #'(setf caar) (list 1 list)))))
+                  (apply #'(setf caar) (list 1 list)))))
 
 (define-test |setf caar apply error 4|
   (let ((list (copy-tree '(() 0))))
     (assert-error 'type-error
-		  (apply #'(setf caar) (list 1 list)))))
+                  (apply #'(setf caar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1011,22 +1011,22 @@
 (define-test |setf cadr error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (setf (cadr list) 1))))
+                  (setf (cadr list) 1))))
 
 (define-test |setf cadr error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cadr list) 1))))
+                  (setf (cadr list) 1))))
 
 (define-test |setf cadr error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
-		  (setf (cadr list) 1))))
+                  (setf (cadr list) 1))))
 
 (define-test |setf cadr error 4|
   (let ((list (copy-tree '(0 . 0))))
     (assert-error 'type-error
-		  (setf (cadr list) 1))))
+                  (setf (cadr list) 1))))
 
 (define-test |setf cadr apply 1|
   (let ((list (copy-tree '(0 0))))
@@ -1036,22 +1036,22 @@
 (define-test |setf cadr apply error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (apply #'(setf cadr) (list 1 list)))))
+                  (apply #'(setf cadr) (list 1 list)))))
 
 (define-test |setf cadr apply error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cadr) (list 1 list)))))
+                  (apply #'(setf cadr) (list 1 list)))))
 
 (define-test |setf cadr apply error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
-		  (apply #'(setf cadr) (list 1 list)))))
+                  (apply #'(setf cadr) (list 1 list)))))
 
 (define-test |setf cadr apply error 4|
   (let ((list (copy-tree '(0 . 0))))
     (assert-error 'type-error
-		  (apply #'(setf cadr) (list 1 list)))))
+                  (apply #'(setf cadr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1065,22 +1065,22 @@
 (define-test |setf cdar error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (setf (cdar list) 1))))
+                  (setf (cdar list) 1))))
 
 (define-test |setf cdar error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdar list) 1))))
+                  (setf (cdar list) 1))))
 
 (define-test |setf cdar error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
-		  (setf (cdar list) 1))))
+                  (setf (cdar list) 1))))
 
 (define-test |setf cdar error 4|
   (let ((list (copy-tree '(()))))
     (assert-error 'type-error
-		  (setf (cdar list) 1))))
+                  (setf (cdar list) 1))))
 
 (define-test |setf cdar apply 1|
   (let ((list (copy-tree '((0) 0))))
@@ -1090,22 +1090,22 @@
 (define-test |setf cdar apply error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (apply #'(setf cdar) (list 1 list)))))
+                  (apply #'(setf cdar) (list 1 list)))))
 
 (define-test |setf cdar apply error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdar) (list 1 list)))))
+                  (apply #'(setf cdar) (list 1 list)))))
 
 (define-test |setf cdar apply error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
-		  (apply #'(setf cdar) (list 1 list)))))
+                  (apply #'(setf cdar) (list 1 list)))))
 
 (define-test |setf cdar apply error 4|
   (let ((list (copy-tree '(()))))
     (assert-error 'type-error
-		  (apply #'(setf cdar) (list 1 list)))))
+                  (apply #'(setf cdar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1119,22 +1119,22 @@
 (define-test |setf cddr error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (setf (cddr list) 1))))
+                  (setf (cddr list) 1))))
 
 (define-test |setf cddr error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cddr list) 1))))
+                  (setf (cddr list) 1))))
 
 (define-test |setf cddr error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
-		  (setf (cddr list) 1))))
+                  (setf (cddr list) 1))))
 
 (define-test |setf cddr error 4|
   (let ((list (copy-tree '(0 . 1))))
     (assert-error 'type-error
-		  (setf (cddr list) 1))))
+                  (setf (cddr list) 1))))
 
 (define-test |setf cddr apply 1|
   (let ((list (copy-tree '(0 0))))
@@ -1144,22 +1144,22 @@
 (define-test |setf cddr apply error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (apply #'(setf cddr) (list 1 list)))))
+                  (apply #'(setf cddr) (list 1 list)))))
 
 (define-test |setf cddr apply error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cddr) (list 1 list)))))
+                  (apply #'(setf cddr) (list 1 list)))))
 
 (define-test |setf cddr apply error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
-		  (apply #'(setf cddr) (list 1 list)))))
+                  (apply #'(setf cddr) (list 1 list)))))
 
 (define-test |setf cddr apply error 4|
   (let ((list (copy-tree '(0 . 1))))
     (assert-error 'type-error
-		  (apply #'(setf cddr) (list 1 list)))))
+                  (apply #'(setf cddr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1173,27 +1173,27 @@
 (define-test |setf caaar error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (setf (caaar list) 1))))
+                  (setf (caaar list) 1))))
 
 (define-test |setf caaar error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caaar list) 1))))
+                  (setf (caaar list) 1))))
 
 (define-test |setf caaar error 3|
   (let ((list (copy-tree '(0 0))))
     (assert-error 'type-error
-		  (setf (caaar list) 1))))
+                  (setf (caaar list) 1))))
 
 (define-test |setf caaar error 4|
   (let ((list (copy-tree '((0 0) 0))))
     (assert-error 'type-error
-		  (setf (caaar list) 1))))
+                  (setf (caaar list) 1))))
 
 (define-test |setf caaar error 5|
   (let ((list (copy-tree '((() 0) 0))))
     (assert-error 'type-error
-		  (setf (caaar list) 1))))
+                  (setf (caaar list) 1))))
 
 (define-test |setf caaar apply 1|
   (let ((list (copy-tree '(((0 0) 0) 0))))
@@ -1203,27 +1203,27 @@
 (define-test |setf caaar apply error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (apply #'(setf caaar) (list 1 list)))))
+                  (apply #'(setf caaar) (list 1 list)))))
 
 (define-test |setf caaar apply error 2|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caaar) (list 1 list)))))
+                  (apply #'(setf caaar) (list 1 list)))))
 
 (define-test |setf caaar apply error 3|
   (let ((list (copy-tree '(0 0))))
     (assert-error 'type-error
-		  (apply #'(setf caaar) (list 1 list)))))
+                  (apply #'(setf caaar) (list 1 list)))))
 
 (define-test |setf caaar apply error 4|
   (let ((list (copy-tree '((0 0) 0))))
     (assert-error 'type-error
-		  (apply #'(setf caaar) (list 1 list)))))
+                  (apply #'(setf caaar) (list 1 list)))))
 
 (define-test |setf caaar apply error 5|
   (let ((list (copy-tree '((() 0) 0))))
     (assert-error 'type-error
-		  (apply #'(setf caaar) (list 1 list)))))
+                  (apply #'(setf caaar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1231,53 +1231,53 @@
 
 (define-test |setf caadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caadr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    ((1       . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    ((1       . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caadr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caadr list) 1))))
+                  (setf (caadr list) 1))))
 
 (define-test |setf caadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   0                                         ))))
+                           0                                         ))))
     (assert-error 'type-error
-		  (setf (caadr list) 1))))
+                  (setf (caadr list) 1))))
 
 (define-test |setf caadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (0                   . ((0 . 0) . (0 . 0)))))))
+                           (0                   . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (setf (caadr list) 1))))
+                  (setf (caadr list) 1))))
 
 (define-test |setf caadr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf caadr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    ((1       . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    ((1       . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caadr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caadr) (list 1 list)))))
+                  (apply #'(setf caadr) (list 1 list)))))
 
 (define-test |setf caadr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   0                                         ))))
+                           0                                         ))))
     (assert-error 'type-error
-		  (apply #'(setf caadr) (list 1 list)))))
+                  (apply #'(setf caadr) (list 1 list)))))
 
 (define-test |setf caadr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (0                   . ((0 . 0) . (0 . 0)))))))
+                           (0                   . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (apply #'(setf caadr) (list 1 list)))))
+                  (apply #'(setf caadr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1285,53 +1285,53 @@
 
 (define-test |setf cadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cadar list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . (1       . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cadar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cadar list) 1))))
+                  (setf (cadar list) 1))))
 
 (define-test |setf cadar error 2|
   (let ((list (copy-tree '(0 .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (setf (cadar list) 1))))
+                  (setf (cadar list) 1))))
 
 (define-test |setf cadar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) .                   0) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (setf (cadar list) 1))))
+                  (setf (cadar list) 1))))
 
 (define-test |setf cadar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cadar) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . (1       . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cadar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cadar) (list 1 list)))))
+                  (apply #'(setf cadar) (list 1 list)))))
 
 (define-test |setf cadar apply error 2|
   (let ((list (copy-tree '(0 .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (apply #'(setf cadar) (list 1 list)))))
+                  (apply #'(setf cadar) (list 1 list)))))
 
 (define-test |setf cadar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) .                   0) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (apply #'(setf cadar) (list 1 list)))))
+                  (apply #'(setf cadar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1339,53 +1339,53 @@
 
 (define-test |setf caddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caddr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . (1       . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . (1       . (0 . 0))))
+                  list)))
 
 (define-test |setf caddr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caddr list) 1))))
+                  (setf (caddr list) 1))))
 
 (define-test |setf caddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   0                                          ))))
+                           0                                          ))))
     (assert-error 'type-error
-		  (setf (caddr list) 1))))
+                  (setf (caddr list) 1))))
 
 (define-test |setf caddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . 0                   )))))
+                           (((0 . 0) . (0 . 0)) . 0                   )))))
     (assert-error 'type-error
-		  (setf (caddr list) 1))))
+                  (setf (caddr list) 1))))
 
 (define-test |setf caddr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf caddr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . (1       . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . (1       . (0 . 0))))
+                  list)))
 
 (define-test |setf caddr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caddr) (list 1 list)))))
+                  (apply #'(setf caddr) (list 1 list)))))
 
 (define-test |setf caddr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   0                                          ))))
+                           0                                          ))))
     (assert-error 'type-error
-		  (apply #'(setf caddr) (list 1 list)))))
+                  (apply #'(setf caddr) (list 1 list)))))
 
 (define-test |setf caddr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . 0                   )))))
+                           (((0 . 0) . (0 . 0)) . 0                   )))))
     (assert-error 'type-error
-		  (apply #'(setf caddr) (list 1 list)))))
+                  (apply #'(setf caddr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1393,53 +1393,53 @@
 
 (define-test |setf cdaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdaar list) 1))
     (assert-equal '((((0 . 0) .       1) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdaar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdaar list) 1))))
+                  (setf (cdaar list) 1))))
 
 (define-test |setf cdaar error 2|
   (let ((list (copy-tree '(0 .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (setf (cdaar list) 1))))
+                  (setf (cdaar list) 1))))
 
 (define-test |setf cdaar error 3|
   (let ((list (copy-tree '((0                   . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (setf (cdaar list) 1))))
+                  (setf (cdaar list) 1))))
 
 (define-test |setf cdaar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cdaar) (list 1 list)))
     (assert-equal '((((0 . 0) .       1) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdaar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdaar) (list 1 list)))))
+                  (apply #'(setf cdaar) (list 1 list)))))
 
 (define-test |setf cdaar apply error 2|
   (let ((list (copy-tree '(0 .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (apply #'(setf cdaar) (list 1 list)))))
+                  (apply #'(setf cdaar) (list 1 list)))))
 
 (define-test |setf cdaar apply error 3|
   (let ((list (copy-tree '((0                   . ((0 . 0) . (0 . 0))) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (apply #'(setf cdaar) (list 1 list)))))
+                  (apply #'(setf cdaar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1447,53 +1447,53 @@
 
 (define-test |setf cdadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdadr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) .       1) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) .       1) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdadr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdadr list) 1))))
+                  (setf (cdadr list) 1))))
 
 (define-test |setf cdadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   0                                          ))))
+                           0                                          ))))
     (assert-error 'type-error
-		  (setf (cdadr list) 1))))
+                  (setf (cdadr list) 1))))
 
 (define-test |setf cdadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (0                   . ((0 . 0) . (0 . 0)))))))
+                           (0                   . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (setf (cdadr list) 1))))
+                  (setf (cdadr list) 1))))
 
 (define-test |setf cdadr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cdadr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) .       1) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) .       1) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdadr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdadr) (list 1 list)))))
+                  (apply #'(setf cdadr) (list 1 list)))))
 
 (define-test |setf cdadr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   0                                          ))))
+                           0                                          ))))
     (assert-error 'type-error
-		  (apply #'(setf cdadr) (list 1 list)))))
+                  (apply #'(setf cdadr) (list 1 list)))))
 
 (define-test |setf cdadr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-			   (0                   . ((0 . 0) . (0 . 0)))))))
+                           (0                   . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (apply #'(setf cdadr) (list 1 list)))))
+                  (apply #'(setf cdadr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1501,53 +1501,53 @@
 
 (define-test |setf cddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cddar list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) .        1)) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cddar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cddar list) 1))))
+                  (setf (cddar list) 1))))
 
 (define-test |setf cddar error 2|
   (let ((list (copy-tree '(0                                           .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (setf (cddar list) 1))))
+                  (setf (cddar list) 1))))
 
 (define-test |setf cddar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) .                   0) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (setf (cddar list) 1))))
+                  (setf (cddar list) 1))))
 
 (define-test |setf cddar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cddar) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) .        1)) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cddar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cddar) (list 1 list)))))
+                  (apply #'(setf cddar) (list 1 list)))))
 
 (define-test |setf cddar apply error 2|
   (let ((list (copy-tree '(0                                           .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (apply #'(setf cddar) (list 1 list)))))
+                  (apply #'(setf cddar) (list 1 list)))))
 
 (define-test |setf cddar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) .                   0) .
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
-		  (apply #'(setf cddar) (list 1 list)))))
+                  (apply #'(setf cddar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1555,57 +1555,57 @@
 
 (define-test |setf cdddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdddr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) .        1)))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) .        1)))
+                  list)))
 
 (define-test |setf cdddr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdddr list) 1))))
+                  (setf (cdddr list) 1))))
 
 (define-test |setf cdddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (cdddr list) 1))))
+                  (setf (cdddr list) 1))))
 
 (define-test |setf cdddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (setf (cdddr list) 1))))
+                  (setf (cdddr list) 1))))
 
 (define-test |setf cdddr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cdddr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) .        1)))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) .        1)))
+                  list)))
 
 (define-test |setf cdddr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdddr) (list 1 list)))))
+                  (apply #'(setf cdddr) (list 1 list)))))
 
 (define-test |setf cdddr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdddr) (list 1 list)))))
+                  (apply #'(setf cdddr) (list 1 list)))))
 
 (define-test |setf cdddr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdddr) (list 1 list)))))
+                  (apply #'(setf cdddr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1613,71 +1613,71 @@
 
 (define-test |setf caaaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caaaar list) 1))
     (assert-equal '((((1 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caaaar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caaaar list) 1))))
+                  (setf (caaaar list) 1))))
 
 (define-test |setf caaaar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (setf (caaaar list) 1))))
+                  (setf (caaaar list) 1))))
 
 (define-test |setf caaaar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
-		  (setf (caaaar list) 1))))
+                  (setf (caaaar list) 1))))
 
 (define-test |setf caaaar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caaar list) 0)
     (assert-error 'type-error
-		  (setf (caaaar list) 1))))
+                  (setf (caaaar list) 1))))
 
 (define-test |setf caaaar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf caaaar) (list 1 list)))
     (assert-equal '((((1 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caaaar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caaaar) (list 1 list)))))
+                  (apply #'(setf caaaar) (list 1 list)))))
 
 (define-test |setf caaaar apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaaar) (list 1 list)))))
+                  (apply #'(setf caaaar) (list 1 list)))))
 
 (define-test |setf caaaar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaaar) (list 1 list)))))
+                  (apply #'(setf caaaar) (list 1 list)))))
 
 (define-test |setf caaaar apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caaar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaaar) (list 1 list)))))
+                  (apply #'(setf caaaar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1685,71 +1685,71 @@
 
 (define-test |setf caaadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caaadr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((1 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((1 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caaadr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caaadr list) 1))))
+                  (setf (caaadr list) 1))))
 
 (define-test |setf caaadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (caaadr list) 1))))
+                  (setf (caaadr list) 1))))
 
 (define-test |setf caaadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
-		  (setf (caaadr list) 1))))
+                  (setf (caaadr list) 1))))
 
 (define-test |setf caaadr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caadr list) 0)
     (assert-error 'type-error
-		  (setf (caaadr list) 1))))
+                  (setf (caaadr list) 1))))
 
 (define-test |setf caaadr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf caaadr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((1 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((1 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caaadr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caaadr) (list 1 list)))))
+                  (apply #'(setf caaadr) (list 1 list)))))
 
 (define-test |setf caaadr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaadr) (list 1 list)))))
+                  (apply #'(setf caaadr) (list 1 list)))))
 
 (define-test |setf caaadr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaadr) (list 1 list)))))
+                  (apply #'(setf caaadr) (list 1 list)))))
 
 (define-test |setf caaadr apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caadr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaadr) (list 1 list)))))
+                  (apply #'(setf caaadr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1757,71 +1757,71 @@
 
 (define-test |setf caadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caadar list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((1 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caadar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caadar list) 1))))
+                  (setf (caadar list) 1))))
 
 (define-test |setf caadar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (setf (caadar list) 1))))
+                  (setf (caadar list) 1))))
 
 (define-test |setf caadar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
-		  (setf (caadar list) 1))))
+                  (setf (caadar list) 1))))
 
 (define-test |setf caadar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadar list) 0)
     (assert-error 'type-error
-		  (setf (caadar list) 1))))
+                  (setf (caadar list) 1))))
 
 (define-test |setf caadar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf caadar) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((1 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caadar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caadar) (list 1 list)))))
+                  (apply #'(setf caadar) (list 1 list)))))
 
 (define-test |setf caadar apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caadar) (list 1 list)))))
+                  (apply #'(setf caadar) (list 1 list)))))
 
 (define-test |setf caadar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caadar) (list 1 list)))))
+                  (apply #'(setf caadar) (list 1 list)))))
 
 (define-test |setf caadar apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caadar) (list 1 list)))))
+                  (apply #'(setf caadar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1829,71 +1829,71 @@
 
 (define-test |setf caaddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caaddr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((1 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((1 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caaddr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caaddr list) 1))))
+                  (setf (caaddr list) 1))))
 
 (define-test |setf caaddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (caaddr list) 1))))
+                  (setf (caaddr list) 1))))
 
 (define-test |setf caaddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (setf (caaddr list) 1))))
+                  (setf (caaddr list) 1))))
 
 (define-test |setf caaddr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caddr list) 0)
     (assert-error 'type-error
-		  (setf (caaddr list) 1))))
+                  (setf (caaddr list) 1))))
 
 (define-test |setf caaddr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf caaddr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((1 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((1 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caaddr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caaddr) (list 1 list)))))
+                  (apply #'(setf caaddr) (list 1 list)))))
 
 (define-test |setf caaddr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaddr) (list 1 list)))))
+                  (apply #'(setf caaddr) (list 1 list)))))
 
 (define-test |setf caaddr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaddr) (list 1 list)))))
+                  (apply #'(setf caaddr) (list 1 list)))))
 
 (define-test |setf caaddr apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caaddr) (list 1 list)))))
+                  (apply #'(setf caaddr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1901,71 +1901,71 @@
 
 (define-test |setf cadaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cadaar list) 1))
     (assert-equal '((((0 . 0) . (1 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cadaar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cadaar list) 1))))
+                  (setf (cadaar list) 1))))
 
 (define-test |setf cadaar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (setf (cadaar list) 1))))
+                  (setf (cadaar list) 1))))
 
 (define-test |setf cadaar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
-		  (setf (cadaar list) 1))))
+                  (setf (cadaar list) 1))))
 
 (define-test |setf cadaar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdaar list) 0)
     (assert-error 'type-error
-		  (setf (cadaar list) 1))))
+                  (setf (cadaar list) 1))))
 
 (define-test |setf cadaar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cadaar) (list 1 list)))
     (assert-equal '((((0 . 0) . (1 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cadaar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cadaar) (list 1 list)))))
+                  (apply #'(setf cadaar) (list 1 list)))))
 
 (define-test |setf cadaar apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadaar) (list 1 list)))))
+                  (apply #'(setf cadaar) (list 1 list)))))
 
 (define-test |setf cadaar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadaar) (list 1 list)))))
+                  (apply #'(setf cadaar) (list 1 list)))))
 
 (define-test |setf cadaar apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdaar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadaar) (list 1 list)))))
+                  (apply #'(setf cadaar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1973,71 +1973,71 @@
 
 (define-test |setf cadadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cadadr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (1 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (1 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cadadr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cadadr list) 1))))
+                  (setf (cadadr list) 1))))
 
 (define-test |setf cadadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (cadadr list) 1))))
+                  (setf (cadadr list) 1))))
 
 (define-test |setf cadadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
-		  (setf (cadadr list) 1))))
+                  (setf (cadadr list) 1))))
 
 (define-test |setf cadadr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdadr list) 0)
     (assert-error 'type-error
-		  (setf (cadadr list) 1))))
+                  (setf (cadadr list) 1))))
 
 (define-test |setf cadadr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cadadr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (1 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (1 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cadadr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cadadr) (list 1 list)))))
+                  (apply #'(setf cadadr) (list 1 list)))))
 
 (define-test |setf cadadr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadadr) (list 1 list)))))
+                  (apply #'(setf cadadr) (list 1 list)))))
 
 (define-test |setf cadadr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadadr) (list 1 list)))))
+                  (apply #'(setf cadadr) (list 1 list)))))
 
 (define-test |setf cadadr apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdadr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadadr) (list 1 list)))))
+                  (apply #'(setf cadadr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2045,71 +2045,71 @@
 
 (define-test |setf caddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caddar list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (1 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caddar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (caddar list) 1))))
+                  (setf (caddar list) 1))))
 
 (define-test |setf caddar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (setf (caddar list) 1))))
+                  (setf (caddar list) 1))))
 
 (define-test |setf caddar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
-		  (setf (caddar list) 1))))
+                  (setf (caddar list) 1))))
 
 (define-test |setf caddar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddar list) 0)
     (assert-error 'type-error
-		  (setf (caddar list) 1))))
+                  (setf (caddar list) 1))))
 
 (define-test |setf caddar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf caddar) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (1 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf caddar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf caddar) (list 1 list)))))
+                  (apply #'(setf caddar) (list 1 list)))))
 
 (define-test |setf caddar apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caddar) (list 1 list)))))
+                  (apply #'(setf caddar) (list 1 list)))))
 
 (define-test |setf caddar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caddar) (list 1 list)))))
+                  (apply #'(setf caddar) (list 1 list)))))
 
 (define-test |setf caddar apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf caddar) (list 1 list)))))
+                  (apply #'(setf caddar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2117,71 +2117,71 @@
 
 (define-test |setf cadddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cadddr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (1 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (1 . 0))))
+                  list)))
 
 (define-test |setf cadddr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cadddr list) 1))))
+                  (setf (cadddr list) 1))))
 
 (define-test |setf cadddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (cadddr list) 1))))
+                  (setf (cadddr list) 1))))
 
 (define-test |setf cadddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (setf (cadddr list) 1))))
+                  (setf (cadddr list) 1))))
 
 (define-test |setf cadddr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdddr list) 0)
     (assert-error 'type-error
-		  (setf (cadddr list) 1))))
+                  (setf (cadddr list) 1))))
 
 (define-test |setf cadddr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cadddr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (1 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (1 . 0))))
+                  list)))
 
 (define-test |setf cadddr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cadddr) (list 1 list)))))
+                  (apply #'(setf cadddr) (list 1 list)))))
 
 (define-test |setf cadddr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadddr) (list 1 list)))))
+                  (apply #'(setf cadddr) (list 1 list)))))
 
 (define-test |setf cadddr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadddr) (list 1 list)))))
+                  (apply #'(setf cadddr) (list 1 list)))))
 
 (define-test |setf cadddr apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cadddr) (list 1 list)))))
+                  (apply #'(setf cadddr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2189,71 +2189,71 @@
 
 (define-test |setf cdaaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdaaar list) 1))
     (assert-equal '((((0 . 1) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdaaar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdaaar list) 1))))
+                  (setf (cdaaar list) 1))))
 
 (define-test |setf cdaaar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (setf (cdaaar list) 1))))
+                  (setf (cdaaar list) 1))))
 
 (define-test |setf cdaaar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
-		  (setf (cdaaar list) 1))))
+                  (setf (cdaaar list) 1))))
 
 (define-test |setf cdaaar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caaar list) 0)
     (assert-error 'type-error
-		  (setf (cdaaar list) 1))))
+                  (setf (cdaaar list) 1))))
 
 (define-test |setf cdaaar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cdaaar) (list 1 list)))
     (assert-equal '((((0 . 1) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdaaar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdaaar) (list 1 list)))))
+                  (apply #'(setf cdaaar) (list 1 list)))))
 
 (define-test |setf cdaaar apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaaar) (list 1 list)))))
+                  (apply #'(setf cdaaar) (list 1 list)))))
 
 (define-test |setf cdaaar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaaar) (list 1 list)))))
+                  (apply #'(setf cdaaar) (list 1 list)))))
 
 (define-test |setf cdaaar apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caaar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaaar) (list 1 list)))))
+                  (apply #'(setf cdaaar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2261,71 +2261,71 @@
 
 (define-test |setf cdaadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdaadr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 1) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 1) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdaadr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdaadr list) 1))))
+                  (setf (cdaadr list) 1))))
 
 (define-test |setf cdaadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (cdaadr list) 1))))
+                  (setf (cdaadr list) 1))))
 
 (define-test |setf cdaadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
-		  (setf (cdaadr list) 1))))
+                  (setf (cdaadr list) 1))))
 
 (define-test |setf cdaadr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caadr list) 0)
     (assert-error 'type-error
-		  (setf (cdaadr list) 1))))
+                  (setf (cdaadr list) 1))))
 
 (define-test |setf cdaadr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cdaadr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 1) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 1) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdaadr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdaadr) (list 1 list)))))
+                  (apply #'(setf cdaadr) (list 1 list)))))
 
 (define-test |setf cdaadr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaadr) (list 1 list)))))
+                  (apply #'(setf cdaadr) (list 1 list)))))
 
 (define-test |setf cdaadr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaadr) (list 1 list)))))
+                  (apply #'(setf cdaadr) (list 1 list)))))
 
 (define-test |setf cdaadr apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caadr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaadr) (list 1 list)))))
+                  (apply #'(setf cdaadr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2333,71 +2333,71 @@
 
 (define-test |setf cdadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdadar list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 1) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdadar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdadar list) 1))))
+                  (setf (cdadar list) 1))))
 
 (define-test |setf cdadar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (setf (cdadar list) 1))))
+                  (setf (cdadar list) 1))))
 
 (define-test |setf cdadar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
-		  (setf (cdadar list) 1))))
+                  (setf (cdadar list) 1))))
 
 (define-test |setf cdadar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadar list) 0)
     (assert-error 'type-error
-		  (setf (cdadar list) 1))))
+                  (setf (cdadar list) 1))))
 
 (define-test |setf cdadar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cdadar) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 1) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdadar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdadar) (list 1 list)))))
+                  (apply #'(setf cdadar) (list 1 list)))))
 
 (define-test |setf cdadar apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdadar) (list 1 list)))))
+                  (apply #'(setf cdadar) (list 1 list)))))
 
 (define-test |setf cdadar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdadar) (list 1 list)))))
+                  (apply #'(setf cdadar) (list 1 list)))))
 
 (define-test |setf cdadar apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdadar) (list 1 list)))))
+                  (apply #'(setf cdadar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2405,71 +2405,71 @@
 
 (define-test |setf cdaddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdaddr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 1) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 1) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdaddr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdaddr list) 1))))
+                  (setf (cdaddr list) 1))))
 
 (define-test |setf cdaddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (cdaddr list) 1))))
+                  (setf (cdaddr list) 1))))
 
 (define-test |setf cdaddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (setf (cdaddr list) 1))))
+                  (setf (cdaddr list) 1))))
 
 (define-test |setf cdaddr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caddr list) 0)
     (assert-error 'type-error
-		  (setf (cdaddr list) 1))))
+                  (setf (cdaddr list) 1))))
 
 (define-test |setf cdaddr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cdaddr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 1) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 1) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdaddr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdaddr) (list 1 list)))))
+                  (apply #'(setf cdaddr) (list 1 list)))))
 
 (define-test |setf cdaddr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaddr) (list 1 list)))))
+                  (apply #'(setf cdaddr) (list 1 list)))))
 
 (define-test |setf cdaddr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaddr) (list 1 list)))))
+                  (apply #'(setf cdaddr) (list 1 list)))))
 
 (define-test |setf cdaddr apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdaddr) (list 1 list)))))
+                  (apply #'(setf cdaddr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2477,71 +2477,71 @@
 
 (define-test |setf cddaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cddaar list) 1))
     (assert-equal '((((0 . 0) . (0 . 1)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cddaar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cddaar list) 1))))
+                  (setf (cddaar list) 1))))
 
 (define-test |setf cddaar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (setf (cddaar list) 1))))
+                  (setf (cddaar list) 1))))
 
 (define-test |setf cddaar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
-		  (setf (cddaar list) 1))))
+                  (setf (cddaar list) 1))))
 
 (define-test |setf cddaar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdaar list) 0)
     (assert-error 'type-error
-		  (setf (cddaar list) 1))))
+                  (setf (cddaar list) 1))))
 
 (define-test |setf cddaar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cddaar) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 1)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cddaar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cddaar) (list 1 list)))))
+                  (apply #'(setf cddaar) (list 1 list)))))
 
 (define-test |setf cddaar apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddaar) (list 1 list)))))
+                  (apply #'(setf cddaar) (list 1 list)))))
 
 (define-test |setf cddaar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddaar) (list 1 list)))))
+                  (apply #'(setf cddaar) (list 1 list)))))
 
 (define-test |setf cddaar apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdaar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddaar) (list 1 list)))))
+                  (apply #'(setf cddaar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2549,71 +2549,71 @@
 
 (define-test |setf cddadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cddadr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 1)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 1)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cddadr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cddadr list) 1))))
+                  (setf (cddadr list) 1))))
 
 (define-test |setf cddadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (cddadr list) 1))))
+                  (setf (cddadr list) 1))))
 
 (define-test |setf cddadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
-		  (setf (cddadr list) 1))))
+                  (setf (cddadr list) 1))))
 
 (define-test |setf cddadr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdadr list) 0)
     (assert-error 'type-error
-		  (setf (cddadr list) 1))))
+                  (setf (cddadr list) 1))))
 
 (define-test |setf cddadr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cddadr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 1)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 1)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cddadr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cddadr) (list 1 list)))))
+                  (apply #'(setf cddadr) (list 1 list)))))
 
 (define-test |setf cddadr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddadr) (list 1 list)))))
+                  (apply #'(setf cddadr) (list 1 list)))))
 
 (define-test |setf cddadr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddadr) (list 1 list)))))
+                  (apply #'(setf cddadr) (list 1 list)))))
 
 (define-test |setf cddadr apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdadr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddadr) (list 1 list)))))
+                  (apply #'(setf cddadr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2621,71 +2621,71 @@
 
 (define-test |setf cdddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdddar list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 1))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdddar error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cdddar list) 1))))
+                  (setf (cdddar list) 1))))
 
 (define-test |setf cdddar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (setf (cdddar list) 1))))
+                  (setf (cdddar list) 1))))
 
 (define-test |setf cdddar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
-		  (setf (cdddar list) 1))))
+                  (setf (cdddar list) 1))))
 
 (define-test |setf cdddar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddar list) 0)
     (assert-error 'type-error
-		  (setf (cdddar list) 1))))
+                  (setf (cdddar list) 1))))
 
 (define-test |setf cdddar apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cdddar) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 1))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
+                  list)))
 
 (define-test |setf cdddar apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cdddar) (list 1 list)))))
+                  (apply #'(setf cdddar) (list 1 list)))))
 
 (define-test |setf cdddar apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdddar) (list 1 list)))))
+                  (apply #'(setf cdddar) (list 1 list)))))
 
 (define-test |setf cdddar apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdddar) (list 1 list)))))
+                  (apply #'(setf cdddar) (list 1 list)))))
 
 (define-test |setf cdddar apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddar list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cdddar) (list 1 list)))))
+                  (apply #'(setf cdddar) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2693,71 +2693,71 @@
 
 (define-test |setf cddddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cddddr list) 1))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 1))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 1))))
+                  list)))
 
 (define-test |setf cddddr error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (setf (cddddr list) 1))))
+                  (setf (cddddr list) 1))))
 
 (define-test |setf cddddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (setf (cddddr list) 1))))
+                  (setf (cddddr list) 1))))
 
 (define-test |setf cddddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (setf (cddddr list) 1))))
+                  (setf (cddddr list) 1))))
 
 (define-test |setf cddddr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdddr list) 0)
     (assert-error 'type-error
-		  (setf (cddddr list) 1))))
+                  (setf (cddddr list) 1))))
 
 (define-test |setf cddddr apply 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (apply #'(setf cddddr) (list 1 list)))
     (assert-equal '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
-		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 1))))
-		  list)))
+                    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 1))))
+                  list)))
 
 (define-test |setf cddddr apply error 1|
   (let ((list 0))
     (assert-error 'type-error
-		  (apply #'(setf cddddr) (list 1 list)))))
+                  (apply #'(setf cddddr) (list 1 list)))))
 
 (define-test |setf cddddr apply error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddddr) (list 1 list)))))
+                  (apply #'(setf cddddr) (list 1 list)))))
 
 (define-test |setf cddddr apply error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddddr) (list 1 list)))))
+                  (apply #'(setf cddddr) (list 1 list)))))
 
 (define-test |setf cddddr apply error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
-			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
+                           (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdddr list) 0)
     (assert-error 'type-error
-		  (apply #'(setf cddddr) (list 1 list)))))
+                  (apply #'(setf cddddr) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2771,8 +2771,8 @@
 (define-test |setf first error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (setf (first list) 1))))
-		  
+                  (setf (first list) 1))))
+                  
 (define-test |setf first 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (first list) 1))
@@ -2781,8 +2781,8 @@
 (define-test |setf first error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (setf (first list) 1))))
-		  
+                  (setf (first list) 1))))
+                  
 (define-test |setf first apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf first) (list 1 list)))
@@ -2791,8 +2791,8 @@
 (define-test |setf first apply error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (apply #'(setf first) (list 1 list)))))
-		  
+                  (apply #'(setf first) (list 1 list)))))
+                  
 (define-test |setf first apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf first) (list 1 list)))
@@ -2801,8 +2801,8 @@
 (define-test |setf first apply error 1|
   (let ((list '()))
     (assert-error 'type-error
-		  (apply #'(setf first) (list 1 list)))))
-		  
+                  (apply #'(setf first) (list 1 list)))))
+                  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf second) function and setf expander
@@ -2816,8 +2816,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 0 list)) 1)
     (assert-error 'type-error
-		  (setf (second list) 1))))
-		  
+                  (setf (second list) 1))))
+                  
 (define-test |setf second 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (second list) 1))
@@ -2827,8 +2827,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 0 list)) 1)
     (assert-error 'type-error
-		  (setf (second list) 1))))
-		  
+                  (setf (second list) 1))))
+                  
 (define-test |setf second apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf second) (list 1 list)))
@@ -2838,8 +2838,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 0 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf second) (list 1 list)))))
-		  
+                  (apply #'(setf second) (list 1 list)))))
+                  
 (define-test |setf second apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf second) (list 1 list)))
@@ -2849,8 +2849,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 0 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf second) (list 1 list)))))
-		  
+                  (apply #'(setf second) (list 1 list)))))
+                  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf third) function and setf expander
@@ -2864,7 +2864,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 1 list)) 1)
     (assert-error 'type-error
-		  (setf (third list) 1))))
+                  (setf (third list) 1))))
 
 (define-test |setf third 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2875,7 +2875,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 1 list)) 1)
     (assert-error 'type-error
-		  (setf (third list) 1))))
+                  (setf (third list) 1))))
 
 (define-test |setf third apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2886,7 +2886,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 1 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf third) (list 1 list)))))
+                  (apply #'(setf third) (list 1 list)))))
 
 (define-test |setf third apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2897,7 +2897,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 1 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf third) (list 1 list)))))
+                  (apply #'(setf third) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2912,7 +2912,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 2 list)) 1)
     (assert-error 'type-error
-		  (setf (fourth list) 1))))
+                  (setf (fourth list) 1))))
 
 (define-test |setf fourth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2923,7 +2923,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 2 list)) 1)
     (assert-error 'type-error
-		  (setf (fourth list) 1))))
+                  (setf (fourth list) 1))))
 
 (define-test |setf fourth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2934,7 +2934,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 2 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf fourth) (list 1 list)))))
+                  (apply #'(setf fourth) (list 1 list)))))
 
 (define-test |setf fourth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2945,7 +2945,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 2 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf fourth) (list 1 list)))))
+                  (apply #'(setf fourth) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2960,7 +2960,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 3 list)) 1)
     (assert-error 'type-error
-		  (setf (fifth list) 1))))
+                  (setf (fifth list) 1))))
 
 (define-test |setf fifth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2971,7 +2971,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 3 list)) 1)
     (assert-error 'type-error
-		  (setf (fifth list) 1))))
+                  (setf (fifth list) 1))))
 
 (define-test |setf fifth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2982,7 +2982,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 3 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf fifth) (list 1 list)))))
+                  (apply #'(setf fifth) (list 1 list)))))
 
 (define-test |setf fifth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2993,7 +2993,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 3 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf fifth) (list 1 list)))))
+                  (apply #'(setf fifth) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3008,7 +3008,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 4 list)) 1)
     (assert-error 'type-error
-		  (setf (sixth list) 1))))
+                  (setf (sixth list) 1))))
 
 (define-test |setf sixth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -3019,7 +3019,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 4 list)) 1)
     (assert-error 'type-error
-		  (setf (sixth list) 1))))
+                  (setf (sixth list) 1))))
 
 (define-test |setf sixth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -3030,7 +3030,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 4 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf sixth) (list 1 list)))))
+                  (apply #'(setf sixth) (list 1 list)))))
 
 (define-test |setf sixth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -3041,7 +3041,7 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 4 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf sixth) (list 1 list)))))
+                  (apply #'(setf sixth) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3056,8 +3056,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 5 list)) 1)
     (assert-error 'type-error
-		  (setf (seventh list) 1))))
-		  
+                  (setf (seventh list) 1))))
+                  
 (define-test |setf seventh 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (seventh list) 1))
@@ -3067,8 +3067,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 5 list)) 1)
     (assert-error 'type-error
-		  (setf (seventh list) 1))))
-		  
+                  (setf (seventh list) 1))))
+                  
 (define-test |setf seventh apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf seventh) (list 1 list)))
@@ -3078,8 +3078,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 5 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf seventh) (list 1 list)))))
-		  
+                  (apply #'(setf seventh) (list 1 list)))))
+                  
 (define-test |setf seventh apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf seventh) (list 1 list)))
@@ -3089,8 +3089,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 5 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf seventh) (list 1 list)))))
-		  
+                  (apply #'(setf seventh) (list 1 list)))))
+                  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf eighth) function and setf expander
@@ -3104,8 +3104,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 6 list)) 1)
     (assert-error 'type-error
-		  (setf (eighth list) 1))))
-		  
+                  (setf (eighth list) 1))))
+                  
 (define-test |setf eighth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (eighth list) 1))
@@ -3115,8 +3115,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 6 list)) 1)
     (assert-error 'type-error
-		  (setf (eighth list) 1))))
-		  
+                  (setf (eighth list) 1))))
+                  
 (define-test |setf eighth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf eighth) (list 1 list)))
@@ -3126,8 +3126,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 6 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf eighth) (list 1 list)))))
-		  
+                  (apply #'(setf eighth) (list 1 list)))))
+                  
 (define-test |setf eighth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf eighth) (list 1 list)))
@@ -3137,8 +3137,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 6 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf eighth) (list 1 list)))))
-		  
+                  (apply #'(setf eighth) (list 1 list)))))
+                  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf ninth) function and setf expander
@@ -3152,8 +3152,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 7 list)) 1)
     (assert-error 'type-error
-		  (setf (ninth list) 1))))
-		  
+                  (setf (ninth list) 1))))
+                  
 (define-test |setf ninth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (ninth list) 1))
@@ -3163,8 +3163,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 7 list)) 1)
     (assert-error 'type-error
-		  (setf (ninth list) 1))))
-		  
+                  (setf (ninth list) 1))))
+                  
 (define-test |setf ninth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf ninth) (list 1 list)))
@@ -3174,8 +3174,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 7 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf ninth) (list 1 list)))))
-		  
+                  (apply #'(setf ninth) (list 1 list)))))
+                  
 (define-test |setf ninth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf ninth) (list 1 list)))
@@ -3185,8 +3185,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 7 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf ninth) (list 1 list)))))
-		  
+                  (apply #'(setf ninth) (list 1 list)))))
+                  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf tenth) function and setf expander
@@ -3200,8 +3200,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 8 list)) 1)
     (assert-error 'type-error
-		  (setf (tenth list) 1))))
-		  
+                  (setf (tenth list) 1))))
+                  
 (define-test |setf tenth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (tenth list) 1))
@@ -3211,8 +3211,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 8 list)) 1)
     (assert-error 'type-error
-		  (setf (tenth list) 1))))
-		  
+                  (setf (tenth list) 1))))
+                  
 (define-test |setf tenth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf tenth) (list 1 list)))
@@ -3222,8 +3222,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 8 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf tenth) (list 1 list)))))
-		  
+                  (apply #'(setf tenth) (list 1 list)))))
+                  
 (define-test |setf tenth apply 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (apply #'(setf tenth) (list 1 list)))
@@ -3233,8 +3233,8 @@
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 8 list)) 1)
     (assert-error 'type-error
-		  (apply #'(setf tenth) (list 1 list)))))
-		  
+                  (apply #'(setf tenth) (list 1 list)))))
+                  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the rest function
@@ -3250,7 +3250,7 @@
 
 (define-test rest.error.1
   (assert-error 'type-error
-		(rest 1)))
+                (rest 1)))
 
 (define-test rest.apply.1
   (assert-equal '(1) (apply (second (list 'a #'rest)) '((0 1)))))
@@ -3267,7 +3267,7 @@
 (define-test |setf-rest error 1|
   (let ((list 1))
     (assert-error 'type-error
-		  (setf (rest list) 1))))
+                  (setf (rest list) 1))))
 
 (define-test |setf-rest apply 1|
   (let ((list (copy-list '(0))))
@@ -3277,7 +3277,7 @@
 (define-test |setf-rest apply error 1|
   (let ((list 1))
     (assert-error 'type-error
-		  (apply #'(setf rest) (list 1 list)))))
+                  (apply #'(setf rest) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3375,7 +3375,7 @@
 
 (define-test list*.error.1
   (assert-error 'error
-		(list*)))
+                (list*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3410,15 +3410,15 @@
 
 (define-test |last error 1|
   (assert-error 'type-error
-		(last 1)))
+                (last 1)))
 
 (define-test |last error 2|
   (assert-error 'type-error
-		(last '(1) 'a)))
+                (last '(1) 'a)))
 
 (define-test |last apply error 1|
   (assert-error 'type-error
-		(apply #'last (list 1))))
+                (apply #'last (list 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3446,71 +3446,71 @@
 
 (define-test |list-length proper-list 1|
   (assert-equal 0
-		(list-length '())))
-		
+                (list-length '())))
+                
 (define-test |list-length proper-list 2|
   (assert-equal 1
-		(list-length '(0))))
+                (list-length '(0))))
 
 (define-test |list-length proper-list 3|
   (assert-equal 2
-		(list-length '(0 0))))
+                (list-length '(0 0))))
 
 (define-test |list-length proper-list 4|
   (assert-equal 3
-		(list-length '(0 0 0))))
+                (list-length '(0 0 0))))
 
 (define-test |list-length proper-list 5|
   (assert-equal 4
-		(list-length '(0 0 0 0))))
+                (list-length '(0 0 0 0))))
 
 (define-test |list-length proper-list 6|
   (assert-equal 5
-		(list-length '(0 0 0 0 0))))
+                (list-length '(0 0 0 0 0))))
 
 (define-test |list-length circular-list 1|
   (assert-equal nil
-		(list-length '#1=(0 . #1#))))
+                (list-length '#1=(0 . #1#))))
 
 (define-test |list-length circular-list 2|
   (assert-equal nil
-		(list-length '#1=(0 0 . #1#))))
+                (list-length '#1=(0 0 . #1#))))
 
 (define-test |list-length circular-list 3|
   (assert-equal nil
-		(list-length '#1=(0 0 0 . #1#))))
+                (list-length '#1=(0 0 0 . #1#))))
 
 (define-test |list-length circular-list 4|
   (assert-equal nil
-		(list-length '#1=(0 0 0 0 . #1#))))
+                (list-length '#1=(0 0 0 0 . #1#))))
 
 (define-test |list-length dotted-list 1|
   (assert-error 'type-error
-		(list-length '(0 . 0))))
+                (list-length '(0 . 0))))
 
 (define-test |list-length dotted-list 2|
   (assert-error 'type-error
-		(list-length '(0 0 . 0))))
+                (list-length '(0 0 . 0))))
 
 (define-test |list-length dotted-list 3|
   (assert-error 'type-error
-		(list-length '(0 0 0 . 0))))
+                (list-length '(0 0 0 . 0))))
 
 (define-test |list-length dotted-list 4|
   (assert-error 'type-error
-		(list-length '(0 0 0 0 . 0))))
+                (list-length '(0 0 0 0 . 0))))
 
 (define-test |list-length not-a-list 1|
   (assert-error 'type-error
-		(list-length 0)))
+                (list-length 0)))
 
 (define-test |list-length not-a-list 2|
   (assert-error 'type-error
-		(list-length 'a)))
+                (list-length 'a)))
 
 (define-test |list-length not-a-list 3|
   (assert-error 'type-error
-		(list-length #(a))))
+                (list-length #(a))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3534,27 +3534,27 @@
 
 (define-test |nthcdr 1|
   (assert-equal '()
-		(nthcdr 0 '())))
+                (nthcdr 0 '())))
 
 (define-test |nthcdr 2|
   (assert-equal '()
-		(nthcdr 1 '())))
+                (nthcdr 1 '())))
 
 (define-test |nthcdr 3|
   (assert-equal '(0 0)
-		(nthcdr 1 '(0 0 0))))
+                (nthcdr 1 '(0 0 0))))
 
 (define-test |nthcdr error 1|
   (assert-error 'type-error
-		(nthcdr 'a '(0 0))))
+                (nthcdr 'a '(0 0))))
 
 (define-test |nthcdr error 2|
   (assert-error 'type-error
-		(nthcdr '-1 '(0 0))))
+                (nthcdr '-1 '(0 0))))
 
 (define-test |nthcdr error 3|
   (assert-error 'type-error
-		(nthcdr 2 '(0 . 0))))
+                (nthcdr 2 '(0 . 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3562,35 +3562,35 @@
 
 (define-test |nth 1|
   (assert-equal '()
-		(nth 0 '())))
+                (nth 0 '())))
 
 (define-test |nth 2|
   (assert-equal '()
-		(nth 1 '())))
+                (nth 1 '())))
 
 (define-test |nth 3|
   (assert-equal 1
-		(nth 0 '(1 2))))
+                (nth 0 '(1 2))))
 
 (define-test |nth 4|
   (assert-equal 2
-		(nth 1 '(1 2))))
+                (nth 1 '(1 2))))
 
 (define-test |nth 5|
   (assert-equal '()
-		(nth 3 '(1 2))))
+                (nth 3 '(1 2))))
 
 (define-test |nth error 1|
   (assert-error 'type-error
-		(nth 3 '(1 2 . 0))))
+                (nth 3 '(1 2 . 0))))
 
 (define-test |nth error 2|
   (assert-error 'type-error
-		(nth -1 '(1))))
+                (nth -1 '(1))))
 
 (define-test |nth error 2|
   (assert-error 'type-error
-		(nth 'a '(1))))
+                (nth 'a '(1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3599,70 +3599,70 @@
 (define-test |setf-nth 1|
   (let ((list (copy-list '(0 0 0))))
     (assert-equal 1
-		  (setf (nth 0 list) 1))
+                  (setf (nth 0 list) 1))
     (assert-equal '(1 0 0)
-		  list)))
+                  list)))
 
 (define-test |setf-nth 1|
   (let ((list (copy-list '(0 0 0))))
     (assert-equal 1
-		  (setf (nth 2 list) 1))
+                  (setf (nth 2 list) 1))
     (assert-equal '(0 0 1)
-		  list)))
+                  list)))
 
 (define-test |setf-nth error 1|
   (assert-error 'error
-		(setf (nth 0 '()) 1)))
+                (setf (nth 0 '()) 1)))
 
 (define-test |setf-nth error 2|
   (assert-error 'error
-		(setf (nth 1 (copy-list '(0))) 1)))
+                (setf (nth 1 (copy-list '(0))) 1)))
 
 (define-test |setf-nth error 3|
   (assert-error 'error
-		(setf (nth 2 (copy-list '(0))) 1)))
+                (setf (nth 2 (copy-list '(0))) 1)))
 
 (define-test |setf-nth error 4|
   (assert-error 'error
-		(setf (nth -1 (copy-list '(0))) 1)))
+                (setf (nth -1 (copy-list '(0))) 1)))
 
 (define-test |setf-nth error 5|
   (assert-error 'error
-		(setf (nth 'a (copy-list '(0))) 1)))
+                (setf (nth 'a (copy-list '(0))) 1)))
 
 (define-test |setf-nth apply 1|
   (let ((list (copy-list '(0 0 0))))
     (assert-equal 1
-		  (apply #'(setf nth) (list 1 0 list)))
+                  (apply #'(setf nth) (list 1 0 list)))
     (assert-equal '(1 0 0)
-		  list)))
+                  list)))
 
 (define-test |setf-nth apply 1|
   (let ((list (copy-list '(0 0 0))))
     (assert-equal 1
-		  (apply #'(setf nth) (list 1 2 list)))
+                  (apply #'(setf nth) (list 1 2 list)))
     (assert-equal '(0 0 1)
-		  list)))
+                  list)))
 
 (define-test |setf-nth apply error 1|
   (assert-error 'error
-		(apply #'(setf nth) (list 1 0 '()))))
+                (apply #'(setf nth) (list 1 0 '()))))
 
 (define-test |setf-nth apply error 2|
   (assert-error 'error
-		(apply #'(setf nth) (list 1 1 (copy-list '(0))))))
+                (apply #'(setf nth) (list 1 1 (copy-list '(0))))))
 
 (define-test |setf-nth apply error 3|
   (assert-error 'error
-		(apply #'(setf nth) (list 1 2 (copy-list '(0))))))
+                (apply #'(setf nth) (list 1 2 (copy-list '(0))))))
 
 (define-test |setf-nth apply error 4|
   (assert-error 'error
-		(apply #'(setf nth) (list 1 -1 (copy-list '(0))))))
+                (apply #'(setf nth) (list 1 -1 (copy-list '(0))))))
 
 (define-test |setf-nth apply error 5|
   (assert-error 'error
-		(apply #'(setf nth) (list 1 'a (copy-list '(0))))))
+                (apply #'(setf nth) (list 1 'a (copy-list '(0))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3848,63 +3848,63 @@
 
 (define-test |tree-equal test=other 2|
   (assert-false (tree-equal '(1) '(3)
-			    :test (lambda (x y)
-				    (or (eql x y)
-					(and (numberp x)
-					     (numberp y)
-					     (<= (abs (- x y)) 1)))))))
+                            :test (lambda (x y)
+                                    (or (eql x y)
+                                        (and (numberp x)
+                                             (numberp y)
+                                             (<= (abs (- x y)) 1)))))))
 
 (define-test |tree-equal test=other 3|
   (assert-false (tree-equal '(1) '((3))
-			    :test (lambda (x y)
-				    (or (eql x y)
-					(and (numberp x)
-					     (numberp y)
-					     (<= (abs (- x y)) 1)))))))
+                            :test (lambda (x y)
+                                    (or (eql x y)
+                                        (and (numberp x)
+                                             (numberp y)
+                                             (<= (abs (- x y)) 1)))))))
 
 (define-test |tree-equal test=other 4|
   (assert-false (tree-equal '((1)) '(3)
-			    :test (lambda (x y)
-				    (or (eql x y)
-					(and (numberp x)
-					     (numberp y)
-					     (<= (abs (- x y)) 1)))))))
+                            :test (lambda (x y)
+                                    (or (eql x y)
+                                        (and (numberp x)
+                                             (numberp y)
+                                             (<= (abs (- x y)) 1)))))))
 
 (define-test |tree-equal test-not=other 1|
   (assert-true (tree-equal '(1) '(2)
                            :test-not (lambda (x y)
-				       (not (or (eql x y)
-						(and (numberp x)
-						     (numberp y)
-						     (<= (abs (- x y)) 1))))))))
+                                       (not (or (eql x y)
+                                                (and (numberp x)
+                                                     (numberp y)
+                                                     (<= (abs (- x y)) 1))))))))
 
 (define-test |tree-equal test-not=other 2|
   (assert-false (tree-equal '(1) '(3)
-			    :test-not (lambda (x y)
-					(not (or (eql x y)
-						 (and (numberp x)
-						      (numberp y)
-						      (<= (abs (- x y)) 1))))))))
+                            :test-not (lambda (x y)
+                                        (not (or (eql x y)
+                                                 (and (numberp x)
+                                                      (numberp y)
+                                                      (<= (abs (- x y)) 1))))))))
 
 (define-test |tree-equal test-not=other 3|
   (assert-false (tree-equal '(1) '((3))
-			    :test-not (lambda (x y)
-					(not (or (eql x y)
-						 (and (numberp x)
-						      (numberp y)
-						      (<= (abs (- x y)) 1))))))))
+                            :test-not (lambda (x y)
+                                        (not (or (eql x y)
+                                                 (and (numberp x)
+                                                      (numberp y)
+                                                      (<= (abs (- x y)) 1))))))))
 
 (define-test |tree-equal test-not=other 4|
   (assert-false (tree-equal '((1)) '(3)
-			    :test-not (lambda (x y)
-					(not (or (eql x y)
-						 (and (numberp x)
-						      (numberp y)
-						      (<= (abs (- x y)) 1))))))))
+                            :test-not (lambda (x y)
+                                        (not (or (eql x y)
+                                                 (and (numberp x)
+                                                      (numberp y)
+                                                      (<= (abs (- x y)) 1))))))))
 
 (define-test |tree-equal test=other test-not=other 1|
   (assert-error 'error
-		(tree-equal '() '() :test #'eql :test-not #'eql)))
+                (tree-equal '() '() :test #'eql :test-not #'eql)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3982,7 +3982,7 @@
 
 (define-test |mapcar error 6|
   (assert-error 'type-error
-		(mapcar #'list '(a b c) '(d e . f))))
+                (mapcar #'list '(a b c) '(d e . f))))
 
 (define-test |mapcar order 1|
   (let ((i 0)
@@ -3992,15 +3992,15 @@
 
 (define-test |mapcar apply error 1|
   (assert-error 'error
-		(apply (cadr (list 'a #'mapcar)) #'car '())))
+                (apply (cadr (list 'a #'mapcar)) #'car '())))
 
 (define-test |mapcar apply error 2|
   (assert-error 'type-error
-		(apply (cadr (list 'a #'mapcar)) #'list '((a b c) (d e . f)))))
+                (apply (cadr (list 'a #'mapcar)) #'list '((a b c) (d e . f)))))
 
 (define-test |mapcar apply 1|
   (assert-equal '(a b c)
-		(apply (cadr (list 'a #'mapcar)) #'car '(((a) (b) (c))))))
+                (apply (cadr (list 'a #'mapcar)) #'car '(((a) (b) (c))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4027,9 +4027,9 @@
   (let ((i 0))
     (assert-equal '(1 2 3 12)
                   (append (apply (cadr (list 'a #'mapc))
-				 (list (lambda (x y) (incf i (+ x y)))
-				       '(1 2 3)
-				       '(1 2 3)))
+                                 (list (lambda (x y) (incf i (+ x y)))
+                                       '(1 2 3)
+                                       '(1 2 3)))
                           (list i)))))
 
 (define-test mapc.error.1
@@ -4049,7 +4049,7 @@
 
 (define-test mapc.apply.error.1
   (assert-error 'type-error
-		(apply #'mapc (list #'list '(1 2) '(3 . 4)))))
+                (apply #'mapc (list #'list '(1 2) '(3 . 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4063,8 +4063,8 @@
 
 (define-test maplist.apply.1
   (assert-equal '(1 2 3)
-		(apply (cadr (list 'a #'maplist))
-		       (list #'car '(1 2 3)))))
+                (apply (cadr (list 'a #'maplist))
+                       (list #'car '(1 2 3)))))
 
 (define-test maplist.error.1
   (assert-error 'type-error (maplist #'car (if (twisted '(a b c)) 1 '(a b c)))))
@@ -4083,7 +4083,7 @@
 
 (define-test maplist.apply.error.1
   (assert-error 'type-error
-		(apply #'maplist (list #'list '(1 2) '(3 . 4)))))
+                (apply #'maplist (list #'list '(1 2) '(3 . 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4106,8 +4106,8 @@
   (let ((i 0))
     (assert-equal 6
                   (progn (apply (cadr (list 'a #'mapl))
-				(list (lambda (sublist) (incf i (car sublist)))
-				      '(1 2 3)))
+                                (list (lambda (sublist) (incf i (car sublist)))
+                                      '(1 2 3)))
                          i))))
 
 (define-test mapl.error.1
@@ -4127,7 +4127,7 @@
 
 (define-test mapl.apply.error.1
   (assert-error 'type-error
-		(apply #'mapl (list #'list '(1 2) '(3 . 4)))))
+                (apply #'mapl (list #'list '(1 2) '(3 . 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4135,56 +4135,56 @@
 
 (define-test mapcan.1
   (assert-equal '(a b c)
-		(mapcan #'list '(a b c))))
+                (mapcan #'list '(a b c))))
 
 (define-test mapcan.2
   (assert-equal '(a d b e c f)
-		(mapcan #'list '(a b c) '(d e f))))
+                (mapcan #'list '(a b c) '(d e f))))
 
 (define-test mapcan.3
   (assert-equal '(a b c . f)
-		(mapcan #'cons '(a b c) '(d e f))))
+                (mapcan #'cons '(a b c) '(d e f))))
 
 (define-test mapcan.4
   (let ((a (list 'a))
-	(b (list 'b))
-	(c (list 'c)))
+        (b (list 'b))
+        (c (list 'c)))
     (assert-eq c
-	       (cddr (mapcan #'identity (list a b c))))))
+               (cddr (mapcan #'identity (list a b c))))))
 
 (define-test mapcan.5
   (assert-equal '()
-		(mapcan #'identity '())))
+                (mapcan #'identity '())))
 
 (define-test mapcan.apply.1
   (let ((a (list 'a))
-	(b (list 'b))
-	(c (list 'c)))
+        (b (list 'b))
+        (c (list 'c)))
     (assert-eq c
-	       (cddr (apply (cadr (list 'a #'mapcan))
-			    (list #'identity (list a b c)))))))
+               (cddr (apply (cadr (list 'a #'mapcan))
+                            (list #'identity (list a b c)))))))
 
 (define-test mapcan.error.1
   (assert-error 'type-error
-		(mapcan #'car (if (twisted '(a b c)) 1 '((a) (b) (c))))))
+                (mapcan #'car (if (twisted '(a b c)) 1 '((a) (b) (c))))))
 
 (define-test mapcan.error.2
   (assert-error 'type-error
-		(mapcan #'car (if (twisted '(a b c)) #(1 2 3) '((a) (b) (c))))))
+                (mapcan #'car (if (twisted '(a b c)) #(1 2 3) '((a) (b) (c))))))
 
 (define-test mapcan.error.3
   (assert-error 'type-error (mapcan #'car '(1 2 . 3))))
 
 (define-test mapcan.error.4
   (assert-error 'type-error
-		(mapcan #'car (if (twisted '(a b c)) "1" '((a) (b) (c))))))
+                (mapcan #'car (if (twisted '(a b c)) "1" '((a) (b) (c))))))
 
 (define-test mapcan.error.5
   (assert-error 'error (mapcan #'car)))
 
 (define-test mapcan.apply.error.1
   (assert-error 'type-error
-		(apply #'mapcan (list #'list '(1 2) '(3 . 4)))))
+                (apply #'mapcan (list #'list '(1 2) '(3 . 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4192,35 +4192,35 @@
 
 (define-test |macon 1|
   (assert-equal nil
-		(mapcon #'identity '())))
+                (mapcon #'identity '())))
 
 (define-test |mapcon 2|
   (assert-equal '(1 2 2)
-		(mapcon #'copy-list '(1 2))))
+                (mapcon #'copy-list '(1 2))))
 
 (define-test |mapcon 3|
   (assert-equal '((1 2) (3 4) (2) (4))
-		(mapcon #'list '(1 2) '(3 4))))
+                (mapcon #'list '(1 2) '(3 4))))
 
 (define-test |mapcon apply 1|
   (assert-equal '((1 2) (3 4) (2) (4))
-		(apply #'mapcon #'list '(1 2) '(3 4) '())))
+                (apply #'mapcon #'list '(1 2) '(3 4) '())))
 
 (define-test |mapcon error 1|
   (assert-error 'type-error
-		(mapcon #'copy-list '(1 . 2))))
+                (mapcon #'copy-list '(1 . 2))))
 
 (define-test |mapcon error 2|
   (assert-error 'type-error
-		(mapcon #'car (if (twisted '(a b c)) "1" '((a) (b) (c))))))
+                (mapcon #'car (if (twisted '(a b c)) "1" '((a) (b) (c))))))
 
 (define-test |mapcon error 3|
   (assert-error 'error
-		(mapcon #'car)))
+                (mapcon #'car)))
 
 (define-test |mapcon apply error 1|
   (assert-error 'type-error
-		(apply #'mapcon (list #'list '(1 2) '(3 . 4)))))
+                (apply #'mapcon (list #'list '(1 2) '(3 . 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4308,14 +4308,14 @@
 
 (define-test |nconc 5|
   (assert-equal '(a z)
-		(nconc (copy-tree '(a . b))
-		       (copy-tree '(z)))))
+                (nconc (copy-tree '(a . b))
+                       (copy-tree '(z)))))
 
 (define-test |nconc 6|
   (assert-equal '(x y z a z)
-		(nconc (copy-tree '(x y z))
-		       (copy-tree '(a . b))
-		       (copy-tree '(z)))))
+                (nconc (copy-tree '(x y z))
+                       (copy-tree '(a . b))
+                       (copy-tree '(z)))))
 
 (define-test |nconc order 1|
   (assert-equal
@@ -4339,7 +4339,7 @@
 
 (define-test |nconc error 1|
   (assert-error 'type-error
-		(nconc (copy-tree '(a b c)) 'd (copy-tree '(e f)))))
+                (nconc (copy-tree '(a b c)) 'd (copy-tree '(e f)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4347,48 +4347,48 @@
 
 (define-test revappend.1
   (assert-equal '()
-		(revappend '() '())))
+                (revappend '() '())))
 
 (define-test revappend.2
   (assert-equal '(a)
-		(revappend '(a) '())))
+                (revappend '(a) '())))
 
 (define-test revappend.3
   (assert-equal '(b a)
-		(revappend '(a b) '())))
+                (revappend '(a b) '())))
 
 (define-test revappend.4
   (assert-equal '(b a c)
-		(revappend '(a b) '(c))))
+                (revappend '(a b) '(c))))
 
 (define-test revappend.5
   (assert-equal '(b a . c)
-		(revappend '(a b) 'c)))
+                (revappend '(a b) 'c)))
 
 (define-test revappend.6
   (assert-equal 'c
-		(revappend '() 'c)))
+                (revappend '() 'c)))
 
 (define-test revappend.7
   (let ((l '(x)))
     (assert-equal l
-		  (cdr (revappend '(a) l)))))
+                  (cdr (revappend '(a) l)))))
 
 (define-test revappend.error.1
   (assert-error 'type-error
-		(revappend 'a '())))
+                (revappend 'a '())))
 
 (define-test revappend.error.2
   (assert-error 'type-error
-		(revappend '(a . b) '())))
+                (revappend '(a . b) '())))
 
 (define-test revappend.error.3
   (assert-error 'type-error
-		(revappend 1 '())))
+                (revappend 1 '())))
 
 (define-test revappend.error.4
   (assert-error 'type-error
-		(revappend #(a b) '())))
+                (revappend #(a b) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4396,48 +4396,48 @@
 
 (define-test nreconc.1
   (assert-equal '()
-		(nreconc '() '())))
+                (nreconc '() '())))
 
 (define-test nreconc.2
   (assert-equal '(a)
-		(nreconc (copy-list '(a)) '())))
+                (nreconc (copy-list '(a)) '())))
 
 (define-test nreconc.3
   (assert-equal '(b a)
-		(nreconc (copy-list '(a b)) '())))
+                (nreconc (copy-list '(a b)) '())))
 
 (define-test nreconc.4
   (assert-equal '(b a c)
-		(nreconc (copy-list '(a b)) '(c))))
+                (nreconc (copy-list '(a b)) '(c))))
 
 (define-test nreconc.5
   (assert-equal '(b a . c)
-		(nreconc (copy-list '(a b)) 'c)))
+                (nreconc (copy-list '(a b)) 'c)))
 
 (define-test nreconc.6
   (assert-equal 'c
-		(nreconc '() 'c)))
+                (nreconc '() 'c)))
 
 (define-test nreconc.7
   (let ((l '(x)))
     (assert-equal l
-		  (cdr (nreconc (copy-list '(a)) l)))))
+                  (cdr (nreconc (copy-list '(a)) l)))))
 
 (define-test nreconc.error.1
   (assert-error 'type-error
-		(nreconc 'a '())))
+                (nreconc 'a '())))
 
 (define-test nreconc.error.2
   (assert-error 'type-error
-		(nreconc (copy-tree '(a . b)) '())))
+                (nreconc (copy-tree '(a . b)) '())))
 
 (define-test nreconc.error.3
   (assert-error 'type-error
-		(nreconc 1 '())))
+                (nreconc 1 '())))
 
 (define-test nreconc.error.4
   (assert-error 'type-error
-		(nreconc #(a b) '())))
+                (nreconc #(a b) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4487,19 +4487,19 @@
 
 (define-test butlast.error.1
   (assert-error 'type-error
-		(butlast '(0 1 2) (if (twisted '(1 2 3)) -1 1))))
+                (butlast '(0 1 2) (if (twisted '(1 2 3)) -1 1))))
 
 (define-test butlast.error.2
   (assert-error 'type-error
-		(butlast '(0 1 2) (if (twisted '(1 2 3)) 'a 1))))
+                (butlast '(0 1 2) (if (twisted '(1 2 3)) 'a 1))))
 
 (define-test butlast.error.3
   (assert-error 'type-error
-		(butlast '#1=(0 . #1#))))
+                (butlast '#1=(0 . #1#))))
 
 (define-test butlast.error.4
   (assert-error 'type-error
-		(butlast 1)))
+                (butlast 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4507,146 +4507,146 @@
 
 (define-test |nbutlast n=1 1a|
   (assert-equal '()
-		(nbutlast '())))
+                (nbutlast '())))
 
 (define-test |nbutlast n=1 1b|
   (assert-equal '()
-		(nbutlast '() 1)))
+                (nbutlast '() 1)))
 
 (define-test |nbutlast n=1 2a|
   (let ((list (copy-list '(1))))
     (assert-equal '()
-		  (nbutlast list))))
+                  (nbutlast list))))
 
 (define-test |nbutlast n=1 2b|
   (let ((list (copy-list '(1))))
     (assert-equal '()
-		  (nbutlast list 1))))
+                  (nbutlast list 1))))
 
 (define-test |nbutlast n=1 3a|
   (let ((list (copy-list '(1 2))))
     (assert-equal '(1)
-		  (nbutlast list))
+                  (nbutlast list))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=1 3b|
   (let ((list (copy-list '(1 2))))
     (assert-equal '(1)
-		  (nbutlast list 1))
+                  (nbutlast list 1))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=1 4a|
   (let ((list (copy-list '(1 . 2))))
     (assert-equal '()
-		  (nbutlast list))))
+                  (nbutlast list))))
 
 (define-test |nbutlast n=1 4b|
   (let ((list (copy-list '(1 . 2))))
     (assert-equal '()
-		  (nbutlast list 1))))
+                  (nbutlast list 1))))
 
 (define-test |nbutlast n=1 5a|
   (let ((list (copy-list '(1 2 . 3))))
     (assert-equal '(1)
-		  (nbutlast list))
+                  (nbutlast list))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=1 5b|
   (let ((list (copy-list '(1 2 . 3))))
     (assert-equal '(1)
-		  (nbutlast list 1))
+                  (nbutlast list 1))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=1 6a|
   (let ((list (copy-list '(1 2 3 . 4))))
     (assert-equal '(1 2)
-		  (nbutlast list))
+                  (nbutlast list))
     (assert-equal '(1 2)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=1 6b|
   (let ((list (copy-list '(1 2 3 . 4))))
     (assert-equal '(1 2)
-		  (nbutlast list 1))
+                  (nbutlast list 1))
     (assert-equal '(1 2)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=1 7a|
   (let ((list (copy-list '(1 2 3 4))))
     (assert-equal '(1 2 3)
-		  (nbutlast list))
+                  (nbutlast list))
     (assert-equal '(1 2 3)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=1 7b|
   (let ((list (copy-list '(1 2 3 4))))
     (assert-equal '(1 2 3)
-		  (nbutlast list 1))
+                  (nbutlast list 1))
     (assert-equal '(1 2 3)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=other 1|
   (assert-equal '()
-		(nbutlast '() 2)))
+                (nbutlast '() 2)))
 
 (define-test |nbutlast n=other 2|
   (let ((list (copy-list '(1))))
     (assert-equal '()
-		  (nbutlast list 2))))
+                  (nbutlast list 2))))
 
 (define-test |nbutlast n=other 3|
   (let ((list (copy-list '(1 2))))
     (assert-equal '()
-		  (nbutlast list 2))))
+                  (nbutlast list 2))))
 
 (define-test |nbutlast n=other 4|
   (let ((list (copy-list '(1 2 3))))
     (assert-equal '(1)
-		  (nbutlast list 2))
+                  (nbutlast list 2))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |nbutlast n=other 5|
   (let ((list (copy-list '(1 2 . 3))))
     (assert-equal '()
-		  (nbutlast list 2))))
+                  (nbutlast list 2))))
 
 (define-test |nbutlast n=other 6|
   (let ((list (copy-list '(1 2 3 . 4))))
     (assert-equal '(1)
-		  (nbutlast list 2))
+                  (nbutlast list 2))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |nbutlast error 1|
   (assert-error 'type-error
-		(nbutlast 1)))
+                (nbutlast 1)))
 
 (define-test |nbutlast error 2|
   (assert-error 'type-error
-		(nbutlast '() 'a)))
+                (nbutlast '() 'a)))
 
 (define-test |nbutlast error 3|
   (let ((list (copy-list '(0))))
     (setf (cdr list) list)
     (assert-error 'type-error
-		  (nbutlast list 1))))
+                  (nbutlast list 1))))
 
 (define-test |nbutlast error 4|
   (let ((list (copy-list '(0))))
     (setf (cdr list) list)
     (assert-error 'type-error
-		  (nbutlast list 2))))
+                  (nbutlast list 2))))
 
 (define-test |nbutlast error 5|
   (let ((list (copy-list '(0))))
     (setf (cdr list) list)
     (assert-error 'type-error
-		  (nbutlast list 3))))
+                  (nbutlast list 3))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4654,143 +4654,143 @@
 
 (define-test |subst test=eql key=identity 1a|
   (assert-equal '()
-		(subst 'a 0 '())))
+                (subst 'a 0 '())))
 
 (define-test |subst test=eql key=identity 1b|
   (assert-equal '()
-		(subst 'a 0 '() :test #'eql)))
+                (subst 'a 0 '() :test #'eql)))
 
 (define-test |subst test=eql key=identity 1c|
   (assert-equal '()
-		(subst 'a 0 '() :test 'eql)))
+                (subst 'a 0 '() :test 'eql)))
 
 (define-test |subst test=eql key=identity 2a|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+                (subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
 
 (define-test |subst test=eql key=identity 2b|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		       :test #'eql)))
+                (subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                       :test #'eql)))
 
 (define-test |subst test=eql key=identity 2c|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		       :test 'eql)))
+                (subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                       :test 'eql)))
 
 (define-test |subst test=eql key=nil 1|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a
-		       0
-		       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		       :key nil)))
+                (subst 'a
+                       0
+                       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                       :key nil)))
 
 (define-test |subst test=eq key=identity 1|
   (assert-equal '()
-		(subst 'a 'b '()
-		       :test #'eq)))
+                (subst 'a 'b '()
+                       :test #'eq)))
 
 (define-test |subst test=eq key=identity 2|
   (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		(subst 'a 'b '(((b . c) . (f . b)) . ((b . d) . (e . b)))
-		       :test #'eq)))
+                (subst 'a 'b '(((b . c) . (f . b)) . ((b . d) . (e . b)))
+                       :test #'eq)))
 
 (define-test |subst test=other key=identity 1|
   (assert-equal '()
-		(subst 'a 0 '()
-		       :test (lambda (x y) (and (numberp y) (= x (1- y)))))))
+                (subst 'a 0 '()
+                       :test (lambda (x y) (and (numberp y) (= x (1- y)))))))
 
 (define-test |subst test=other key=identity 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		        :test (lambda (x y) (and (numberp y) (= x y))))))
+                (subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test (lambda (x y) (and (numberp y) (= x y))))))
 
 (define-test |subst test=eql key=other 1a|
   (assert-equal '()
-		(subst 'a 0 '()
-		       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst 'a 0 '()
+                       :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |subst test=eql key=other 1b|
   (assert-equal '()
-		(subst 'a 0 '()
-		       :key (lambda (x) (if (numberp x) (1+ x) x))
-		       :test #'eql)))
+                (subst 'a 0 '()
+                       :key (lambda (x) (if (numberp x) (1+ x) x))
+                       :test #'eql)))
 
 (define-test |subst test=eql key=other 1c|
   (assert-equal '()
-		(subst 'a 0 '()
-		       :key (lambda (x) (if (numberp x) (1+ x) x))
-		       :test 'eql)))
+                (subst 'a 0 '()
+                       :key (lambda (x) (if (numberp x) (1+ x) x))
+                       :test 'eql)))
 
 (define-test |subst test=eql key=other 2a|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                       :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |subst test=eql key=other 2b|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		       :key (lambda (x) (if (numberp x) (1+ x) x))
-		       :test #'eql)))
+                (subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                       :key (lambda (x) (if (numberp x) (1+ x) x))
+                       :test #'eql)))
 
 (define-test |subst test=eql key=other 2c|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		       :key (lambda (x) (if (numberp x) (1+ x) x))
-		       :test 'eql)))
+                (subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                       :key (lambda (x) (if (numberp x) (1+ x) x))
+                       :test 'eql)))
 
 (define-test |subst test=eq key=other 1|
   (assert-equal '()
-		(subst 'a 'bb '()
-		       :test #'eq
-		       :key (lambda (x) (if (eq x 'b) 'bb x)))))
+                (subst 'a 'bb '()
+                       :test #'eq
+                       :key (lambda (x) (if (eq x 'b) 'bb x)))))
 
 (define-test |subst test=eq key=other 2|
   (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		(subst 'a 'bb '(((b . c) . (f . b)) . ((b . d) . (e . b)))
-		       :test #'eq
-		       :key (lambda (x) (if (eq x 'b) 'bb x)))))
+                (subst 'a 'bb '(((b . c) . (f . b)) . ((b . d) . (e . b)))
+                       :test #'eq
+                       :key (lambda (x) (if (eq x 'b) 'bb x)))))
 
 (define-test |subst test=other key=other 1|
   (assert-equal '()
-		(subst 'a 0 '()
-		       :test (lambda (x y) (and (numberp y) (= x (1- y))))
-		       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst 'a 0 '()
+                       :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                       :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |subst test=other key=other 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		        :test (lambda (x y) (and (numberp y) (= x (1- y))))
-			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                        :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |subst test-not=any key=other 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
-			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+                        :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |subst test=other test-not=other|
   (assert-error 'error
-		(subst 0 1 2 :test #'= :test-not #'=)))
+                (subst 0 1 2 :test #'= :test-not #'=)))
 
 ;;; old one left over.  Is it still needed?
 (define-test subst.1
   (assert-equal '(a (c))
-		(subst 'c '(b) '(a ((b))) :test-not (complement #'equal))))
+                (subst 'c '(b) '(a ((b))) :test-not (complement #'equal))))
 
 (define-test |subst test=nil key=identity 1|
   (assert-error 'error
-		(subst 'a
-		       0
-		       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		       :test nil)))
+                (subst 'a
+                       0
+                       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                       :test nil)))
 
 (define-test |subst test-not=nil key=identity 1|
   (assert-error 'error
-		(subst 'a
-		       0
-		       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		       :test-not nil)))
+                (subst 'a
+                       0
+                       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                       :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4798,29 +4798,29 @@
 
 (define-test |subst-if key=identity 1|
   (assert-equal '()
-		(subst-if 'a
-			  (lambda (y) (and (numberp y) (zerop (1- y))))
-			  '())))
+                (subst-if 'a
+                          (lambda (y) (and (numberp y) (zerop (1- y))))
+                          '())))
 
 (define-test |subst-if key=identity 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst-if 'a
-			  (lambda (y) (and (numberp y) (zerop y)))
-			  '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+                (subst-if 'a
+                          (lambda (y) (and (numberp y) (zerop y)))
+                          '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
 
 (define-test |subst-if key=other 1|
   (assert-equal '()
-		(subst-if 'a
-			  (lambda (y) (and (numberp y) (zerop (1- y))))
-			  '()
-			  :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst-if 'a
+                          (lambda (y) (and (numberp y) (zerop (1- y))))
+                          '()
+                          :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |subst-if key=other 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst-if 'a
-			  (lambda (y) (and (numberp y) (zerop (1- y))))
-			  '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			  :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst-if 'a
+                          (lambda (y) (and (numberp y) (zerop (1- y))))
+                          '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                          :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4828,29 +4828,29 @@
 
 (define-test |subst-if-not key=identity 1|
   (assert-equal '()
-		(subst-if-not 'a
-			      (lambda (y) (not (and (numberp y) (zerop (1- y)))))
-			      '())))
+                (subst-if-not 'a
+                              (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+                              '())))
 
 (define-test |subst-if-not key=identity 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst-if-not 'a
-			      (lambda (y) (not (and (numberp y) (zerop y))))
-			      '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+                (subst-if-not 'a
+                              (lambda (y) (not (and (numberp y) (zerop y))))
+                              '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
 
 (define-test |subst-if-not key=other 1|
   (assert-equal '()
-		(subst-if-not 'a
-			      (lambda (y) (not (and (numberp y) (zerop (1- y)))))
-			      '()
-			      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst-if-not 'a
+                              (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+                              '()
+                              :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |subst-if-not key=other 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(subst-if-not 'a
-			      (lambda (y) (not (and (numberp y) (zerop (1- y)))))
-			      '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (subst-if-not 'a
+                              (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+                              '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                              :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4859,310 +4859,310 @@
 (define-test |nsubst test=eql key=identity 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree))))
+                  (nsubst 'a 0 tree))))
 
 (define-test |nsubst test=eql key=identity 1b|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree :test #'eql))))
+                  (nsubst 'a 0 tree :test #'eql))))
 
 (define-test |nsubst test=eql key=identity 1c|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree :test 'eql))))
+                  (nsubst 'a 0 tree :test 'eql))))
 
 (define-test |nsubst test=eql key=identity 2a|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 0 tree)))
+                  (setf tree2 (nsubst 'a 0 tree)))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=identity 2b|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 0 tree :test #'eql)))
+                  (setf tree2 (nsubst 'a 0 tree :test #'eql)))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=identity 2c|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 0 tree :test 'eql)))
+                  (setf tree2 (nsubst 'a 0 tree :test 'eql)))
     (assert-eq tree tree2)))    
 
 (define-test |nsubst test=eql key=identity 3a|
   (assert-equal 2
-		(nsubst 2 1 1)))
+                (nsubst 2 1 1)))
 
 (define-test |nsubst test=eql key=identity 3b|
   (assert-equal 2
-		(nsubst 2 1 1 :test #'eql)))
+                (nsubst 2 1 1 :test #'eql)))
 
 (define-test |nsubst test=eql key=identity 3c|
   (assert-equal 2
-		(nsubst 2 1 1 :test 'eql)))
+                (nsubst 2 1 1 :test 'eql)))
 
 (define-test |nsubst test=eql key=nil 1|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 0 tree :key nil)))
+                  (setf tree2 (nsubst 'a 0 tree :key nil)))
     (assert-eq tree tree2)))    
 
 (define-test |nsubst test=eq key=identity 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 'b tree :test #'eq))))
+                  (nsubst 'a 'b tree :test #'eq))))
 
 (define-test |nsubst test=eq key=identity 1b|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 'b tree :test 'eq))))
+                  (nsubst 'a 'b tree :test 'eq))))
 
 (define-test |nsubst test=eq key=identity 2a|
   (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		  (setf tree2 (nsubst 'a 'b tree :test #'eq)))
+                  (setf tree2 (nsubst 'a 'b tree :test #'eq)))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eq key=identity 2a|
   (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		  (setf tree2 (nsubst 'a 'b tree :test 'eq)))
+                  (setf tree2 (nsubst 'a 'b tree :test 'eq)))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eq key=identity 3a|
   (assert-equal 'b
-		(nsubst 'b 'a 'a :test #'eq)))
+                (nsubst 'b 'a 'a :test #'eq)))
 
 (define-test |nsubst test=eq key=identity 3b|
   (assert-equal 'b
-		(nsubst 'b 'a 'a :test 'eq)))
+                (nsubst 'b 'a 'a :test 'eq)))
 
 (define-test |nsubst test=other key=identity 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree
-			  :test (lambda (x y) (and (numberp y) (= x (1- y))))))))
+                  (nsubst 'a 0 tree
+                          :test (lambda (x y) (and (numberp y) (= x (1- y))))))))
 
 (define-test |nsubst test=other key=identity 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 0 tree
-				      :test (lambda (x y) (and (numberp y) (= x y))))))
+                  (setf tree2 (nsubst 'a 0 tree
+                                      :test (lambda (x y) (and (numberp y) (= x y))))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=other key=identity 3|
   (assert-equal 2
-		(nsubst 2 1 0 :test (lambda (x y)
-				      (and (numberp x)
-					   (numberp y)
-					   (<= (abs (- x y)) 1))))))
+                (nsubst 2 1 0 :test (lambda (x y)
+                                      (and (numberp x)
+                                           (numberp y)
+                                           (<= (abs (- x y)) 1))))))
 
 (define-test |nsubst test=eql key=other 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree
-			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+                  (nsubst 'a 0 tree
+                          :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsubst test=eql key=other 1b|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree
-			  :key (lambda (x) (if (numberp x) (1+ x) x))
-			  :test #'eql))))
+                  (nsubst 'a 0 tree
+                          :key (lambda (x) (if (numberp x) (1+ x) x))
+                          :test #'eql))))
 
 (define-test |nsubst test=eql key=other 1c|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree
-			  :key (lambda (x) (if (numberp x) (1+ x) x))
-			  :test 'eql))))
+                  (nsubst 'a 0 tree
+                          :key (lambda (x) (if (numberp x) (1+ x) x))
+                          :test 'eql))))
 
 (define-test |nsubst test=eql key=other 2a|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 1 tree
-				      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                  (setf tree2 (nsubst 'a 1 tree
+                                      :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=other 2b|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 1 tree
-				      :key (lambda (x) (if (numberp x) (1+ x) x))
-				      :test #'eql)))
+                  (setf tree2 (nsubst 'a 1 tree
+                                      :key (lambda (x) (if (numberp x) (1+ x) x))
+                                      :test #'eql)))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=other 2c|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 1 tree
-				      :key (lambda (x) (if (numberp x) (1+ x) x))
-				      :test 'eql)))
+                  (setf tree2 (nsubst 'a 1 tree
+                                      :key (lambda (x) (if (numberp x) (1+ x) x))
+                                      :test 'eql)))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=other 3a|
   (assert-equal 2
-		(nsubst 2 1 0 :key #'1+)))
+                (nsubst 2 1 0 :key #'1+)))
 
 (define-test |nsubst test=eql key=other 3b|
   (assert-equal 2
-		(nsubst 2 1 0 :key #'1+ :test #'eql)))
+                (nsubst 2 1 0 :key #'1+ :test #'eql)))
 
 (define-test |nsubst test=eql key=other 3c|
   (assert-equal 2
-		(nsubst 2 1 0 :key #'1+ :test 'eql)))
+                (nsubst 2 1 0 :key #'1+ :test 'eql)))
 
 (define-test |nsubst test=eq key=other 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 'bb tree
-			  :test #'eq
-			  :key (lambda (x) (if (eq x 'b) 'bb x))))))
+                  (nsubst 'a 'bb tree
+                          :test #'eq
+                          :key (lambda (x) (if (eq x 'b) 'bb x))))))
 
 (define-test |nsubst test=eq key=other 1b|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 'bb tree
-			  :test #'eq
-			  :key (lambda (x) (if (eq x 'b) 'bb x))))))
+                  (nsubst 'a 'bb tree
+                          :test #'eq
+                          :key (lambda (x) (if (eq x 'b) 'bb x))))))
 
 (define-test |nsubst test=eq key=other 2a|
   (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		  (setf tree2 (nsubst 'a 'bb tree
-				      :test #'eq
-				      :key (lambda (x) (if (eq x 'b) 'bb x)))))
+                  (setf tree2 (nsubst 'a 'bb tree
+                                      :test #'eq
+                                      :key (lambda (x) (if (eq x 'b) 'bb x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eq key=other 2b|
   (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		  (setf tree2 (nsubst 'a 'bb tree
-				      :test 'eq
-				      :key (lambda (x) (if (eq x 'b) 'bb x)))))
+                  (setf tree2 (nsubst 'a 'bb tree
+                                      :test 'eq
+                                      :key (lambda (x) (if (eq x 'b) 'bb x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=eq key=other 3a|
   (assert-equal 'b
-		(nsubst 'b 'a 'c
-			:test #'eq
-			:key (lambda (x) (if (eq x 'c) 'a x)))))
+                (nsubst 'b 'a 'c
+                        :test #'eq
+                        :key (lambda (x) (if (eq x 'c) 'a x)))))
 
 (define-test |nsubst test=eq key=other 3b|
   (assert-equal 'b
-		(nsubst 'b 'a 'c
-			:test 'eq
-			:key (lambda (x) (if (eq x 'c) 'a x)))))
+                (nsubst 'b 'a 'c
+                        :test 'eq
+                        :key (lambda (x) (if (eq x 'c) 'a x)))))
 
 (define-test |nsubst test=other key=other 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree
-			  :test (lambda (x y) (and (numberp y) (= x (1- y))))
-			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+                  (nsubst 'a 0 tree
+                          :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                          :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsubst test=other key=other 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 0 tree
-				      :test (lambda (x y) (and (numberp y) (= x (1- y))))
-				      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                  (setf tree2 (nsubst 'a 0 tree
+                                      :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                                      :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test=other key=other 3|
   (assert-equal 2
-		(nsubst 2 1 -1
-			:test (lambda (x y)
-				(and (numberp x)
-				     (numberp y)
-				     (<= (abs (- x y)) 1)))
-			:key #'1+)))
+                (nsubst 2 1 -1
+                        :test (lambda (x y)
+                                (and (numberp x)
+                                     (numberp y)
+                                     (<= (abs (- x y)) 1)))
+                        :key #'1+)))
 
 (define-test |nsubst test-not=other key=identity 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst 'a 0 tree
-			  :test-not (lambda (x y)
-				      (not (and (numberp y) (= x (1- y)))))))))
+                  (nsubst 'a 0 tree
+                          :test-not (lambda (x y)
+                                      (not (and (numberp y) (= x (1- y)))))))))
 
 (define-test |nsubst test-not=other key=identity 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 0 tree
-				      :test-not (lambda (x y)
-						  (not (and (numberp y) (= x y)))))))
+                  (setf tree2 (nsubst 'a 0 tree
+                                      :test-not (lambda (x y)
+                                                  (not (and (numberp y) (= x y)))))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test-not=other key=identity 3|
   (assert-equal 2
-		(nsubst 2 1 0
-			:test-not (lambda (x y)
-				    (not (and (numberp x)
-					      (numberp y)
-					      (<= (abs (- x y)) 1)))))))
+                (nsubst 2 1 0
+                        :test-not (lambda (x y)
+                                    (not (and (numberp x)
+                                              (numberp y)
+                                              (<= (abs (- x y)) 1)))))))
 
 (define-test |nsubst test-not=any key=other 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst 'a 0 tree
-				      :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
-				      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                  (setf tree2 (nsubst 'a 0 tree
+                                      :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+                                      :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst test-not=other key=other 3|
   (assert-equal 2
-		(nsubst 2 1 -1
-			:test-not (lambda (x y)
-				    (not (and (numberp x)
-					      (numberp y)
-					      (<= (abs (- x y)) 1))))
-			:key #'1+)))
+                (nsubst 2 1 -1
+                        :test-not (lambda (x y)
+                                    (not (and (numberp x)
+                                              (numberp y)
+                                              (<= (abs (- x y)) 1))))
+                        :key #'1+)))
 
 (define-test |nsubst test-not=other key=other 4|
   (assert-equal -1
-		(nsubst 2 1 -1
-			:test-not (lambda (x y)
-				    (not (and (numberp x)
-					      (numberp y)
-					      (<= (abs (- x y)) 1))))
-			:key #'1-)))
+                (nsubst 2 1 -1
+                        :test-not (lambda (x y)
+                                    (not (and (numberp x)
+                                              (numberp y)
+                                              (<= (abs (- x y)) 1))))
+                        :key #'1-)))
 
 (define-test |nsubst test=other test-not=other|
   (assert-error 'error
-		(nsubst 0 1 2 :test #'= :test-not #'=)))
+                (nsubst 0 1 2 :test #'= :test-not #'=)))
 
 (define-test |nsubst test=nil key=identity 1|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-error 'error
-		  (setf tree2 (nsubst 'a 0 tree :test nil)))))
+                  (setf tree2 (nsubst 'a 0 tree :test nil)))))
 
 (define-test |nsubst test-not=nil key=identity 1|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-error 'error
-		  (setf tree2 (nsubst 'a 0 tree :test-not nil)))))
+                  (setf tree2 (nsubst 'a 0 tree :test-not nil)))))
 
 ;;; old one left over.  Is it still needed?
 (define-test nsubst.1
   (let ((tree (copy-tree '(a ((b))))))
     (assert-equal '(a (c))
-		  (nsubst 'c '(b) tree :test-not (complement #'equal)))))
+                  (nsubst 'c '(b) tree :test-not (complement #'equal)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5171,48 +5171,48 @@
 (define-test |nsubst-if key=identity 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst-if 'a
-			     (lambda (y) (and (numberp y) (zerop (1- y))))
-			     tree))))
+                  (nsubst-if 'a
+                             (lambda (y) (and (numberp y) (zerop (1- y))))
+                             tree))))
 
 (define-test |nsubst-if key=identity 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst-if 'a
-					 (lambda (y) (and (numberp y) (zerop y)))
-					 tree)))
+                  (setf tree2 (nsubst-if 'a
+                                         (lambda (y) (and (numberp y) (zerop y)))
+                                         tree)))
     (assert-eq tree tree2)))
 
 (define-test |nsubst-if key=identity 3|
   (assert-equal 2
-		(nsubst-if 2 #'zerop 0)))
+                (nsubst-if 2 #'zerop 0)))
 
 (define-test |nsubst-if key=identity 4|
   (assert-equal 1
-		(nsubst-if 2 #'zerop 1)))
+                (nsubst-if 2 #'zerop 1)))
 
 (define-test |nsubst-if key=other 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst-if 'a
-			     (lambda (y) (and (numberp y) (zerop (1- y))))
-			     tree
-			     :key (lambda (x) (if (numberp x) (1+ x) x))))))
+                  (nsubst-if 'a
+                             (lambda (y) (and (numberp y) (zerop (1- y))))
+                             tree
+                             :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsubst-if key=other 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst-if 'a
-					 (lambda (y) (and (numberp y) (zerop (1- y))))
-					 tree
-					 :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                  (setf tree2 (nsubst-if 'a
+                                         (lambda (y) (and (numberp y) (zerop (1- y))))
+                                         tree
+                                         :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst-if key=other 3|
   (assert-equal 2
-		(nsubst-if 2 #'zerop 1 :key #'1-)))
+                (nsubst-if 2 #'zerop 1 :key #'1-)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5221,44 +5221,44 @@
 (define-test |nsubst-if-not key=identity 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst-if-not 'a
-				 (lambda (y) (not (and (numberp y) (zerop (1- y)))))
-				 tree))))
+                  (nsubst-if-not 'a
+                                 (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+                                 tree))))
 
 (define-test |nsubst-if-not key=identity 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst-if-not 'a
-					     (lambda (y) (not (and (numberp y) (zerop y))))
-					     tree)))
+                  (setf tree2 (nsubst-if-not 'a
+                                             (lambda (y) (not (and (numberp y) (zerop y))))
+                                             tree)))
     (assert-eq tree tree2)))
 
 (define-test |nsubst-if-not key=identity 3|
   (assert-equal 2
-		(nsubst-if-not 2 #'zerop 1)))
+                (nsubst-if-not 2 #'zerop 1)))
 
 (define-test |nsubst-if-not key=other 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsubst-if-not 'a
-				 (lambda (y) (not (and (numberp y) (zerop (1- y)))))
-				 tree
-				 :key (lambda (x) (if (numberp x) (1+ x) x))))))
+                  (nsubst-if-not 'a
+                                 (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+                                 tree
+                                 :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsubst-if-not key=other 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsubst-if-not 'a
-					     (lambda (y) (not (and (numberp y) (zerop (1- y)))))
-					     tree
-					     :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                  (setf tree2 (nsubst-if-not 'a
+                                             (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+                                             tree
+                                             :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsubst-if-not key=other 3|
   (assert-equal 2
-		(nsubst-if-not 2 #'zerop 0 :key #'1+)))
+                (nsubst-if-not 2 #'zerop 0 :key #'1+)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5266,23 +5266,23 @@
 
 (define-test null.1
   (assert-equal t
-		(null '())))
+                (null '())))
 
 (define-test null.2
   (assert-equal nil
-		(null 1)))
+                (null 1)))
 
 (define-test null.3
   (assert-equal nil
-		(null #\a)))
+                (null #\a)))
 
 (define-test null.4
   (assert-equal nil
-		(null #())))
+                (null #())))
 
 (define-test null.5
   (assert-equal nil
-		(null "")))
+                (null "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5290,15 +5290,15 @@
 
 (define-test acons.1
   (assert-equal '((a . b))
-		(acons 'a 'b '())))
+                (acons 'a 'b '())))
 
 (define-test acons.2
   (assert-equal '((a . b) c)
-		(acons 'a 'b '(c))))
+                (acons 'a 'b '(c))))
 
 (define-test acons.3
   (assert-equal '((a . b) . c)
-		(acons 'a 'b 'c)))
+                (acons 'a 'b 'c)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5306,151 +5306,151 @@
 
 (define-test |member test=eql key=identity 1|
   (assert-equal nil
-		(member 234 '())))
+                (member 234 '())))
 
 (define-test |member test=eql key=identity 2a|
   (assert-equal '(123 b c)
-		(member 123 '(a b 123 b c))))
+                (member 123 '(a b 123 b c))))
 
 (define-test |member test=eql key=identity 2b|
   (assert-equal '(123 b c)
-		(member 123 '(a b 123 b c) :test #'eql)))
+                (member 123 '(a b 123 b c) :test #'eql)))
 
 (define-test |member test=eql key=identity 2c|
   (assert-equal '(123 b c)
-		(member 123 '(a b 123 b c) :test 'eql)))
+                (member 123 '(a b 123 b c) :test 'eql)))
 
 (define-test |member test=eql key=identity 3|
   (assert-equal nil
-		(member 123 '(a b c d e))))
+                (member 123 '(a b c d e))))
 
 (define-test |member test=eql key=other 1|
   (assert-equal '(123 b c)
-		(member 124 '(a b 123 b c)
-			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (member 124 '(a b 123 b c)
+                        :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |member test=eql key=other 2|
   (assert-equal '(123 b c)
-		(member 124 '(a b 123 b c)
-			:key (lambda (x) (if (numberp x) (1+ x) x))
-			:test 'eql)))
+                (member 124 '(a b 123 b c)
+                        :key (lambda (x) (if (numberp x) (1+ x) x))
+                        :test 'eql)))
 
 (define-test |member test=eql key=nil 1|
   (assert-equal '(123 b c)
-		(member 123 '(a b 123 b c) :key nil)))
+                (member 123 '(a b 123 b c) :key nil)))
 
 (define-test |member test=eq key=identity 1|
   (assert-equal '(d e)
-		(member 'd '(a b c d e)
-			:test #'eq)))
+                (member 'd '(a b c d e)
+                        :test #'eq)))
 
 (define-test |member test=eq key=identity 2|
   (assert-equal nil
-		(member 'f '(a b c d e)
-			:test #'eq)))
+                (member 'f '(a b c d e)
+                        :test #'eq)))
 
 (define-test |member test=eq key=other 1|
   (assert-equal '((d) (e))
-		(member 'd '((a) (b) (c) (d) (e))
-			:key #'car
-			:test #'eq)))
+                (member 'd '((a) (b) (c) (d) (e))
+                        :key #'car
+                        :test #'eq)))
 
 (define-test |member test=eq key=other 2|
   (assert-equal nil
-		(member 'f '((a) (b) (c) (d) (e))
-			:key #'car
-			:test #'eq)))
+                (member 'f '((a) (b) (c) (d) (e))
+                        :key #'car
+                        :test #'eq)))
 
 (define-test |member test-not=eql key=identity 1|
   (assert-equal '(3 4 5 2)
-		(member 2 '(2 2 2 3 4 5 2)
-			:test-not #'eql)))
+                (member 2 '(2 2 2 3 4 5 2)
+                        :test-not #'eql)))
 
 (define-test |member test-not=eql key=identity 2|
   (assert-equal nil
-		(member 2 '(2 2 2)
-			:test-not #'eql)))
+                (member 2 '(2 2 2)
+                        :test-not #'eql)))
 
 (define-test |member test-not=eql key=other 1|
   (assert-equal '(3 4 5 2)
-		(member 3 '(2 2 2 3 4 5 2)
-			:key #'1+
-			:test-not #'eql)))
+                (member 3 '(2 2 2 3 4 5 2)
+                        :key #'1+
+                        :test-not #'eql)))
 
 (define-test |member test-not=eql key=other 2|
   (assert-equal nil
-		(member 3 '(2 2 2)
-			:key #'1+
-			:test-not #'eql)))
+                (member 3 '(2 2 2)
+                        :key #'1+
+                        :test-not #'eql)))
 
 (define-test |member test-not=eq key=identity 1|
   (assert-equal '(3 4 5 a)
-		(member 'a '(a a a 3 4 5 a)
-			:test-not #'eq)))
+                (member 'a '(a a a 3 4 5 a)
+                        :test-not #'eq)))
 
 (define-test |member test-not=eq key=identity 2|
   (assert-equal nil
-		(member 'a '(a a a)
-			:test-not #'eq)))
+                (member 'a '(a a a)
+                        :test-not #'eq)))
 
 (define-test |member test-not=eq key=other 1|
   (assert-equal '((3) 4 5 a)
-		(member 'a '((a) (a) (a) (3) 4 5 a)
-			:key #'car
-			:test-not #'eq)))
+                (member 'a '((a) (a) (a) (3) 4 5 a)
+                        :key #'car
+                        :test-not #'eq)))
 
 (define-test |member test-not=eq key=other 2|
   (assert-equal nil
-		(member 'a '((a) (a) (a))
-			:key #'car
-			:test-not #'eq)))
+                (member 'a '((a) (a) (a))
+                        :key #'car
+                        :test-not #'eq)))
 
 (define-test |member test=other key=identity 1|
   (assert-equal '((123) b c)
-		(member '(123) '(a b (123) b c)
-			:test #'equal)))
+                (member '(123) '(a b (123) b c)
+                        :test #'equal)))
 
 (define-test |member test=other key=other 1|
   (assert-equal '(3 4 5)
-		(member 5 '(1 2 3 4 5)
-			:key #'1+
-			:test (lambda (x y) (= x (1+ y))))))
+                (member 5 '(1 2 3 4 5)
+                        :key #'1+
+                        :test (lambda (x y) (= x (1+ y))))))
 
 (define-test |member test=other key=other 2|
   (assert-equal nil
-		(member 10 '(1 2 3 4 5)
-			:key #'1+
-			:test (lambda (x y) (= x (1+ y))))))
+                (member 10 '(1 2 3 4 5)
+                        :key #'1+
+                        :test (lambda (x y) (= x (1+ y))))))
 
 (define-test |member test-not=other key=other 1|
   (assert-equal '(3 4 5)
-		(member 4 '(1 2 3 4 5)
-			:key #'1+
-			:test-not (lambda (x y) (not (zerop (mod y x)))))))
+                (member 4 '(1 2 3 4 5)
+                        :key #'1+
+                        :test-not (lambda (x y) (not (zerop (mod y x)))))))
 
 (define-test |member test-not=other key=other 2|
   (assert-equal nil
-		(member 10 '(1 2 3 4 5)
-			:key #'1+
-			:test-not (lambda (x y) (not (zerop (mod y x)))))))
+                (member 10 '(1 2 3 4 5)
+                        :key #'1+
+                        :test-not (lambda (x y) (not (zerop (mod y x)))))))
 
 (define-test |member error 1|
   (assert-error 'type-error
-		(member 123 '(a b . 123))))
+                (member 123 '(a b . 123))))
 
 (define-test |member error 2|
   (assert-error 'error
-		(member 123 '(1 2 3)
-			:test #'eql
-			:test-not #'eq)))
-			
+                (member 123 '(1 2 3)
+                        :test #'eql
+                        :test-not #'eq)))
+                        
 (define-test |member test=nil key=identity 1|
   (assert-error 'error
-		(member 123 '(a b 123 b c) :test nil)))
+                (member 123 '(a b 123 b c) :test nil)))
 
 (define-test |member test-not=nil key=identity 1|
   (assert-error 'error
-		(member 123 '(a b 123 b c) :test-not nil)))
+                (member 123 '(a b 123 b c) :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5458,29 +5458,29 @@
 
 (define-test |member-if key=identity 1|
   (assert-equal nil
-		(member-if #'oddp '(2 4 6))))
+                (member-if #'oddp '(2 4 6))))
 
 (define-test |member-if key=identity 2|
   (assert-equal '(3 4)
-		(member-if #'oddp '(2 6 3 4))))
+                (member-if #'oddp '(2 6 3 4))))
 
 (define-test |member-if key=other 1|
   (assert-equal '(3 4)
-		(member-if #'evenp '(2 6 3 4)
-			   :key #'1+)))
+                (member-if #'evenp '(2 6 3 4)
+                           :key #'1+)))
 
 (define-test |member-if key=other 2|
   (assert-equal nil
-		(member-if #'evenp '(2 6 4)
-			   :key #'1+)))
+                (member-if #'evenp '(2 6 4)
+                           :key #'1+)))
 
 (define-test |member-if error 1|
   (assert-error 'type-error
-		(member-if #'oddp '(2 4 6 . 7))))
+                (member-if #'oddp '(2 4 6 . 7))))
 
 (define-test |member-if key=other error 1|
   (assert-error 'type-error
-		(member-if #'oddp '(2 4 6 . 7) :key #'identity)))
+                (member-if #'oddp '(2 4 6 . 7) :key #'identity)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5488,29 +5488,29 @@
 
 (define-test |member-if-not key=identity 1|
   (assert-equal nil
-		(member-if-not #'evenp '(2 4 6))))
+                (member-if-not #'evenp '(2 4 6))))
 
 (define-test |member-if-not key=identity 2|
   (assert-equal '(3 4)
-		(member-if-not #'evenp '(2 6 3 4))))
+                (member-if-not #'evenp '(2 6 3 4))))
 
 (define-test |member-if-not key=other 1|
   (assert-equal nil
-		(member-if-not #'oddp '(2 4 6)
-			       :key #'1+)))
+                (member-if-not #'oddp '(2 4 6)
+                               :key #'1+)))
 
 (define-test |member-if-not key=other 2|
   (assert-equal '(3 4)
-		(member-if-not #'oddp '(2 6 3 4)
-			       :key #'1+)))
+                (member-if-not #'oddp '(2 6 3 4)
+                               :key #'1+)))
 
 (define-test |member-if-not error 1|
   (assert-error 'type-error
-		(member-if-not #'evenp '(2 4 6 . 7))))
+                (member-if-not #'evenp '(2 4 6 . 7))))
 
 (define-test |member-if-not key=other error 1|
   (assert-error 'type-error
-		(member-if-not #'evenp '(2 4 6 . 7) :key #'identity)))
+                (member-if-not #'evenp '(2 4 6 . 7) :key #'identity)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5518,283 +5518,283 @@
 
 (define-test |assoc test=eql key=identity 1a|
   (assert-equal '(a . b)
-		(assoc 'a '((b) nil (a . b) (a . c)))))
+                (assoc 'a '((b) nil (a . b) (a . c)))))
 
 (define-test |assoc test=eql key=identity 1b|
   (assert-equal '(a . b)
-		(assoc 'a '((b) nil (a . b) (a . c))
-		       :test #'eql)))
+                (assoc 'a '((b) nil (a . b) (a . c))
+                       :test #'eql)))
 
 (define-test |assoc test=eql key=identity 1c|
   (assert-equal '(a . b)
-		(assoc 'a '((b) nil (a . b) (a . c))
-		       :test 'eql)))
+                (assoc 'a '((b) nil (a . b) (a . c))
+                       :test 'eql)))
 
 (define-test |assoc test=eql key=identity 2a|
   (assert-equal nil
-		(assoc 'c '((b) nil (a . b) (a . c)))))
+                (assoc 'c '((b) nil (a . b) (a . c)))))
 
 (define-test |assoc test=eql key=identity 2b|
   (assert-equal nil
-		(assoc 'c '((b) nil (a . b) (a . c))
-		       :test #'eql)))
+                (assoc 'c '((b) nil (a . b) (a . c))
+                       :test #'eql)))
 
 (define-test |assoc test=eql key=identity 2c|
   (assert-equal nil
-		(assoc 'c '((b) nil (a . b) (a . c))
-		       :test 'eql)))
+                (assoc 'c '((b) nil (a . b) (a . c))
+                       :test 'eql)))
 
 (define-test |assoc test=eql key=identity 3a|
   (assert-equal '(nil . c)
-		(assoc 'nil '((b) nil (a . b) (nil . c)))))
+                (assoc 'nil '((b) nil (a . b) (nil . c)))))
 
 (define-test |assoc test=eql key=identity 3b|
   (assert-equal '(nil . c)
-		(assoc 'nil '((b) nil (a . b) (nil . c))
-		       :test #'eql)))
+                (assoc 'nil '((b) nil (a . b) (nil . c))
+                       :test #'eql)))
 
 (define-test |assoc test=eql key=identity 3c|
   (assert-equal '(nil . c)
-		(assoc 'nil '((b) nil (a . b) (nil . c))
-		       :test 'eql)))
+                (assoc 'nil '((b) nil (a . b) (nil . c))
+                       :test 'eql)))
 
 (define-test |assoc test=eql key=identity 4a|
   (assert-equal '(123 . b)
-		(assoc 123 '((b) nil (123 . b) (nil . c)))))
+                (assoc 123 '((b) nil (123 . b) (nil . c)))))
 
 (define-test |assoc test=eql key=identity 4b|
   (assert-equal '(123 . b)
-		(assoc 123 '((b) nil (123 . b) (nil . c))
-		       :test #'eql)))
+                (assoc 123 '((b) nil (123 . b) (nil . c))
+                       :test #'eql)))
 
 (define-test |assoc test=eql key=identity 4c|
   (assert-equal '(123 . b)
-		(assoc 123 '((b) nil (123 . b) (nil . c))
-		       :test 'eql)))
+                (assoc 123 '((b) nil (123 . b) (nil . c))
+                       :test 'eql)))
 
 (define-test |assoc test=eql key=identity 5a|
   (assert-equal '(#\a . b)
-		(assoc #\a '((b) nil (#\a . b) (nil . c)))))
+                (assoc #\a '((b) nil (#\a . b) (nil . c)))))
 
 (define-test |assoc test=eql key=identity 5b|
   (assert-equal '(#\a . b)
-		(assoc #\a '((b) nil (#\a . b) (nil . c))
-		       :test #'eql)))
+                (assoc #\a '((b) nil (#\a . b) (nil . c))
+                       :test #'eql)))
 
 (define-test |assoc test=eql key=identity 5c|
   (assert-equal '(#\a . b)
-		(assoc #\a '((b) nil (#\a . b) (nil . c))
-		       :test 'eql)))
+                (assoc #\a '((b) nil (#\a . b) (nil . c))
+                       :test 'eql)))
 
 (define-test |assoc test=eql key=nil 1|
   (assert-equal '(nil . c)
-		(assoc 'nil '((b) nil (a . b) (nil . c))
-		       :key nil)))
+                (assoc 'nil '((b) nil (a . b) (nil . c))
+                       :key nil)))
 
 (define-test |assoc test=eq key=identity 1a|
   (assert-equal '(a . b)
-		(assoc 'a '((b) nil (a . b) (a . c))
-		       :test #'eq)))
+                (assoc 'a '((b) nil (a . b) (a . c))
+                       :test #'eq)))
 
 (define-test |assoc test=eq key=identity 1b|
   (assert-equal '(a . b)
-		(assoc 'a '((b) nil (a . b) (a . c))
-		       :test 'eq)))
+                (assoc 'a '((b) nil (a . b) (a . c))
+                       :test 'eq)))
 
 (define-test |assoc test=eq key=identity 2a|
   (assert-equal nil
-		(assoc 'c '((b) nil (a . b) (a . c))
-		       :test #'eq)))
+                (assoc 'c '((b) nil (a . b) (a . c))
+                       :test #'eq)))
 
 (define-test |assoc test=eq key=identity 2b|
   (assert-equal nil
-		(assoc 'c '((b) nil (a . b) (a . c))
-		       :test 'eq)))
+                (assoc 'c '((b) nil (a . b) (a . c))
+                       :test 'eq)))
 
 (define-test |assoc test=eq key=identity 3a|
   (assert-equal '(nil . c)
-		(assoc 'nil '((b) nil (a . b) (nil . c))
-		       :test #'eq)))
+                (assoc 'nil '((b) nil (a . b) (nil . c))
+                       :test #'eq)))
 
 (define-test |assoc test=eq key=identity 3b|
   (assert-equal '(nil . c)
-		(assoc 'nil '((b) nil (a . b) (nil . c))
-		       :test 'eq)))
+                (assoc 'nil '((b) nil (a . b) (nil . c))
+                       :test 'eq)))
 
 (define-test |assoc test=other key=identity 1|
   (assert-equal '((a b) c)
-		(assoc '(a b) '((a . b) nil ((a b) c) (d e))
-		       :test #'equal)))
+                (assoc '(a b) '((a . b) nil ((a b) c) (d e))
+                       :test #'equal)))
 
 (define-test |assoc test-not=other key=identity 1|
   (assert-equal '((a b) c)
-		(assoc '(a b) '((a . b) nil ((a b) c) (d e))
-		       :test-not (complement #'equal))))
+                (assoc '(a b) '((a . b) nil ((a b) c) (d e))
+                       :test-not (complement #'equal))))
 
 (define-test |assoc test=eql key=other 1a|
   (assert-equal '((a b) c)
-		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
-		       :key #'car)))
+                (assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+                       :key #'car)))
 
 (define-test |assoc test=eql key=other 1b|
   (assert-equal '((a b) c)
-		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
-		       :test #'eql
-		       :key #'car)))
+                (assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+                       :test #'eql
+                       :key #'car)))
 
 (define-test |assoc test=eql key=other 1c|
   (assert-equal '((a b) c)
-		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
-		       :test 'eql
-		       :key #'car)))
+                (assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+                       :test 'eql
+                       :key #'car)))
 
 (define-test |assoc test=eq key=other 1|
   (assert-equal '((a b) c)
-		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
-		       :test #'eq
-		       :key #'car)))
+                (assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+                       :test #'eq
+                       :key #'car)))
 
 (define-test |assoc test=other key=other 1|
   (assert-equal '((a b) c)
-		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
-		       :test (lambda (x y) (eq x y))
-		       :key #'car)))
+                (assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+                       :test (lambda (x y) (eq x y))
+                       :key #'car)))
 
 (define-test |assoc test-not=eql key=identity 1a|
   (assert-equal '(345 b)
-		(assoc '234 '((234 a) (345 b) (234 c))
-		       :test-not #'eql)))
-		 
+                (assoc '234 '((234 a) (345 b) (234 c))
+                       :test-not #'eql)))
+                 
 (define-test |assoc test-not=eql key=identity 1b|
   (assert-equal '(345 b)
-		(assoc '234 '((234 a) (345 b) (234 c))
-		       :test-not 'eql)))
-		 
+                (assoc '234 '((234 a) (345 b) (234 c))
+                       :test-not 'eql)))
+                 
 (define-test |assoc test-not=eql key=identity 2|
   (assert-equal nil
-		(assoc '234 '((234 a) (234 b) (234 c))
-		       :test-not #'eql)))
-		 
+                (assoc '234 '((234 a) (234 b) (234 c))
+                       :test-not #'eql)))
+                 
 (define-test |assoc test-not=eql key=identity 3|
   (assert-equal '(345 b)
-		(assoc '234 '((234 a) nil (345 b) (234 c))
-		       :test-not #'eql)))
-		 
+                (assoc '234 '((234 a) nil (345 b) (234 c))
+                       :test-not #'eql)))
+                 
 (define-test |assoc test-not=eq key=identity 1a|
   (assert-equal '(y b)
-		(assoc 'x '((x a) (y b) (x c))
-		       :test-not #'eq)))
-		 
+                (assoc 'x '((x a) (y b) (x c))
+                       :test-not #'eq)))
+                 
 (define-test |assoc test-not=eq key=identity 1b|
   (assert-equal '(y b)
-		(assoc 'x '((x a) (y b) (x c))
-		       :test-not 'eq)))
-		 
+                (assoc 'x '((x a) (y b) (x c))
+                       :test-not 'eq)))
+                 
 (define-test |assoc test-not=eq key=identity 2|
   (assert-equal nil
-		(assoc 'x '((x a) (x b) (x c))
-		       :test-not #'eq)))
-		 
+                (assoc 'x '((x a) (x b) (x c))
+                       :test-not #'eq)))
+                 
 (define-test |assoc test-not=eq key=identity 3|
   (assert-equal '(y b)
-		(assoc 'x '((x a) nil (y b) (x c))
-		       :test-not #'eq)))
-		 
+                (assoc 'x '((x a) nil (y b) (x c))
+                       :test-not #'eq)))
+                 
 (define-test assoc.error.1
   (assert-error 'type-error
-		(assoc 'a '((b . c) nil d (a b)))))
+                (assoc 'a '((b . c) nil d (a b)))))
 
 (define-test |assoc test-not=eql key=other 1a|
   (assert-equal '(345 b)
-		(assoc '235 '((234 a) (345 b) (234 c))
-		       :test-not #'eql
-		       :key #'1+)))
-		 
+                (assoc '235 '((234 a) (345 b) (234 c))
+                       :test-not #'eql
+                       :key #'1+)))
+                 
 (define-test |assoc test-not=eql key=other 1b|
   (assert-equal '(345 b)
-		(assoc '235 '((234 a) (345 b) (234 c))
-		       :test-not 'eql
-		       :key #'1+)))
-		 
+                (assoc '235 '((234 a) (345 b) (234 c))
+                       :test-not 'eql
+                       :key #'1+)))
+                 
 (define-test |assoc test-not=eql key=other 2|
   (assert-equal nil
-		(assoc '235 '((234 a) (234 b) (234 c))
-		       :test-not #'eql
-		       :key #'1+)))
-		 
+                (assoc '235 '((234 a) (234 b) (234 c))
+                       :test-not #'eql
+                       :key #'1+)))
+                 
 (define-test |assoc test-not=eql key=other 3|
   (assert-equal '(345 b)
-		(assoc '235 '((234 a) nil (345 b) (234 c))
-		       :test-not #'eql
-		       :key #'1+)))
-		 
+                (assoc '235 '((234 a) nil (345 b) (234 c))
+                       :test-not #'eql
+                       :key #'1+)))
+                 
 (define-test |assoc test-not=eq key=other 1a|
   (assert-equal '((y) b)
-		(assoc 'x '(((x) a) ((y) b) ((x) c))
-		       :test-not #'eq
-		       :key #'car)))
-		 
+                (assoc 'x '(((x) a) ((y) b) ((x) c))
+                       :test-not #'eq
+                       :key #'car)))
+                 
 (define-test |assoc test-not=eq key=other 1b|
   (assert-equal '((y) b)
-		(assoc 'x '(((x) a) ((y) b) ((x) c))
-		       :test-not 'eq
-		       :key #'car)))
-		 
+                (assoc 'x '(((x) a) ((y) b) ((x) c))
+                       :test-not 'eq
+                       :key #'car)))
+                 
 (define-test |assoc test-not=eq key=other 2|
   (assert-equal nil
-		(assoc 'x '(((x) a) ((x) b) ((x) c))
-		       :test-not #'eq
-		       :key #'car)))
-		 
+                (assoc 'x '(((x) a) ((x) b) ((x) c))
+                       :test-not #'eq
+                       :key #'car)))
+                 
 (define-test |assoc test-not=eq key=other 3|
   (assert-equal '((y) b)
-		(assoc 'x '(((x) a) nil ((y) b) ((x) c))
-		       :test-not #'eq
-		       :key #'car)))
-		 
+                (assoc 'x '(((x) a) nil ((y) b) ((x) c))
+                       :test-not #'eq
+                       :key #'car)))
+                 
 (define-test |assoc test-not=other key=other 1a|
   (assert-equal '(345 b)
-		(assoc '234 '((234 a) (345 b) (234 c))
-		       :test-not (lambda (x y) (eql (1+ x) y))
-		       :key #'1+)))
-		 
+                (assoc '234 '((234 a) (345 b) (234 c))
+                       :test-not (lambda (x y) (eql (1+ x) y))
+                       :key #'1+)))
+                 
 (define-test |assoc test-not=other key=other 1b|
   (assert-equal '(345 b)
-		(assoc '234 '((234 a) (345 b) (234 c))
-		       :test-not (lambda (x y) (eql (1+ x) y))
-		       :key #'1+)))
-		 
+                (assoc '234 '((234 a) (345 b) (234 c))
+                       :test-not (lambda (x y) (eql (1+ x) y))
+                       :key #'1+)))
+                 
 (define-test |assoc test-not=other key=other 2|
   (assert-equal nil
-		(assoc '234 '((234 a) (234 b) (234 c))
-		       :test-not (lambda (x y) (eql (1+ x) y))
-		       :key #'1+)))
-		 
+                (assoc '234 '((234 a) (234 b) (234 c))
+                       :test-not (lambda (x y) (eql (1+ x) y))
+                       :key #'1+)))
+                 
 (define-test |assoc test-not=other key=other 3|
   (assert-equal '(345 b)
-		(assoc '234 '((234 a) nil (345 b) (234 c))
-		       :test-not (lambda (x y) (eql (1+ x) y))
-		       :key #'1+)))
-		 
+                (assoc '234 '((234 a) nil (345 b) (234 c))
+                       :test-not (lambda (x y) (eql (1+ x) y))
+                       :key #'1+)))
+                 
 (define-test |assoc error 1|
   (assert-error 'type-error
-		(assoc 'a '((b . c) nil d (a b)))))
+                (assoc 'a '((b . c) nil d (a b)))))
 
 (define-test |assoc error 2|
   (assert-error 'error
-		(assoc 'a '((b . c) nil d (a b))
-		       :test #'eq
-		       :test-not #'eq)))
+                (assoc 'a '((b . c) nil d (a b))
+                       :test #'eq
+                       :test-not #'eq)))
 
 (define-test |assoc test=nil key=identity 1|
   (assert-error 'error
-		(assoc 'nil '((b) nil (a . b) (nil . c))
-		       :test nil)))
+                (assoc 'nil '((b) nil (a . b) (nil . c))
+                       :test nil)))
 
 (define-test |assoc test-not=nil key=identity 1|
   (assert-error 'error
-		(assoc 'nil '((b) nil (a . b) (nil . c))
-		       :test-not nil)))
+                (assoc 'nil '((b) nil (a . b) (nil . c))
+                       :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5802,39 +5802,39 @@
 
 (define-test |assoc-if key=identity 1|
   (assert-equal '(a . b)
-		(assoc-if (lambda (x) (eq x 'a))
-			  '((b) nil (a . b) (a . c)))))
+                (assoc-if (lambda (x) (eq x 'a))
+                          '((b) nil (a . b) (a . c)))))
 
 (define-test |assoc-if key=identity 2|
   (assert-equal nil
-		(assoc-if (lambda (x) (eq x 'c))
-			  '((b) nil (a . b) (a . c)))))
+                (assoc-if (lambda (x) (eq x 'c))
+                          '((b) nil (a . b) (a . c)))))
 
 (define-test |assoc-if key=identity 3|
   (assert-equal '(nil . c)
-		(assoc-if #'null
-			  '((b) nil (a . b) (nil . c)))))
+                (assoc-if #'null
+                          '((b) nil (a . b) (nil . c)))))
 
 (define-test |assoc-if key=identity 4|
   (assert-equal '(123 . b)
-		(assoc-if (lambda (x) (eql x 123))
-			  '((b) nil (123 . b) (nil . c)))))
+                (assoc-if (lambda (x) (eql x 123))
+                          '((b) nil (123 . b) (nil . c)))))
 
 (define-test |assoc-if key=identity 5|
   (assert-equal '(#\a . b)
-		(assoc-if (lambda (x) (eql x #\a))
-			  '((b) nil (#\a . b) (nil . c)))))
+                (assoc-if (lambda (x) (eql x #\a))
+                          '((b) nil (#\a . b) (nil . c)))))
 
 (define-test |assoc-if key=other 1|
   (assert-equal '((a b) c)
-		(assoc-if (lambda (x) (eq x 'a))
-			  '(((b a) . b) nil ((a b) c) ((d) e))
-			  :key #'car)))
+                (assoc-if (lambda (x) (eq x 'a))
+                          '(((b a) . b) nil ((a b) c) ((d) e))
+                          :key #'car)))
 
 (define-test |assoc-if error 1|
   (assert-error 'type-error
-		(assoc-if (lambda (x) (eq x 'a))
-			  '((b . c) nil d (a b)))))
+                (assoc-if (lambda (x) (eq x 'a))
+                          '((b . c) nil d (a b)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5842,39 +5842,39 @@
 
 (define-test |assoc-if-not key=identity 1|
   (assert-equal '(a . b)
-		(assoc-if-not (complement (lambda (x) (eq x 'a)))
-			      '((b) nil (a . b) (a . c)))))
+                (assoc-if-not (complement (lambda (x) (eq x 'a)))
+                              '((b) nil (a . b) (a . c)))))
 
 (define-test |assoc-if-not key=identity 2|
   (assert-equal nil
-		(assoc-if-not (complement (lambda (x) (eq x 'c)))
-			      '((b) nil (a . b) (a . c)))))
+                (assoc-if-not (complement (lambda (x) (eq x 'c)))
+                              '((b) nil (a . b) (a . c)))))
 
 (define-test |assoc-if-not key=identity 3|
   (assert-equal '(nil . c)
-		(assoc-if-not (complement #'null)
-			      '((b) nil (a . b) (nil . c)))))
+                (assoc-if-not (complement #'null)
+                              '((b) nil (a . b) (nil . c)))))
 
 (define-test |assoc-if-not key=identity 4|
   (assert-equal '(123 . b)
-		(assoc-if-not (complement (lambda (x) (eql x 123)))
-			      '((b) nil (123 . b) (nil . c)))))
+                (assoc-if-not (complement (lambda (x) (eql x 123)))
+                              '((b) nil (123 . b) (nil . c)))))
 
 (define-test |assoc-if-not key=identity 5|
   (assert-equal '(#\a . b)
-		(assoc-if-not (complement (lambda (x) (eql x #\a)))
-			      '((b) nil (#\a . b) (nil . c)))))
+                (assoc-if-not (complement (lambda (x) (eql x #\a)))
+                              '((b) nil (#\a . b) (nil . c)))))
 
 (define-test |assoc-if-not key=other 6|
   (assert-equal '((a b) c)
-		(assoc-if-not (complement (lambda (x) (eq x 'a)))
-			      '(((b a) . b) nil ((a b) c) ((d) e))
-			      :key #'car)))
+                (assoc-if-not (complement (lambda (x) (eq x 'a)))
+                              '(((b a) . b) nil ((a b) c) ((d) e))
+                              :key #'car)))
 
 (define-test |assoc-if-not error 1|
   (assert-error 'type-error
-		(assoc-if-not (complement (lambda (x) (eq x 'a)))
-			      '((b . c) nil d (a b)))))
+                (assoc-if-not (complement (lambda (x) (eq x 'a)))
+                              '((b . c) nil d (a b)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5882,283 +5882,283 @@
 
 (define-test |rassoc test=eql key=identity 1a|
   (assert-equal '(b . a)
-		(rassoc 'a '((b) nil (b . a) (c . a)))))
+                (rassoc 'a '((b) nil (b . a) (c . a)))))
 
 (define-test |rassoc test=eql key=identity 1b|
   (assert-equal '(b . a)
-		(rassoc 'a '((b) nil (b . a) (c . a))
-		       :test #'eql)))
+                (rassoc 'a '((b) nil (b . a) (c . a))
+                       :test #'eql)))
 
 (define-test |rassoc test=eql key=identity 1c|
   (assert-equal '(b . a)
-		(rassoc 'a '((b) nil (b . a) (c . a))
-		       :test 'eql)))
+                (rassoc 'a '((b) nil (b . a) (c . a))
+                       :test 'eql)))
 
 (define-test |rassoc test=eql key=identity 2a|
   (assert-equal nil
-		(rassoc 'c '((b) nil (b . a) (c . a)))))
+                (rassoc 'c '((b) nil (b . a) (c . a)))))
 
 (define-test |rassoc test=eql key=identity 2b|
   (assert-equal nil
-		(rassoc 'c '((b) nil (b . a) (c . a))
-		       :test #'eql)))
+                (rassoc 'c '((b) nil (b . a) (c . a))
+                       :test #'eql)))
 
 (define-test |rassoc test=eql key=identity 2c|
   (assert-equal nil
-		(rassoc 'c '((b) nil (b . a) (c . a))
-		       :test 'eql)))
+                (rassoc 'c '((b) nil (b . a) (c . a))
+                       :test 'eql)))
 
 (define-test |rassoc test=eql key=identity 3a|
   (assert-equal '(c . nil)
-		(rassoc 'nil '((b . x) nil (b . a) (c . nil)))))
+                (rassoc 'nil '((b . x) nil (b . a) (c . nil)))))
 
 (define-test |rassoc test=eql key=identity 3b|
   (assert-equal '(c . nil)
-		(rassoc 'nil '((x . b) nil (b . a) (c . nil))
-		       :test #'eql)))
+                (rassoc 'nil '((x . b) nil (b . a) (c . nil))
+                       :test #'eql)))
 
 (define-test |rassoc test=eql key=identity 3c|
   (assert-equal '(c . nil)
-		(rassoc 'nil '((b . x) nil (b . a) (c . nil))
-		       :test 'eql)))
+                (rassoc 'nil '((b . x) nil (b . a) (c . nil))
+                       :test 'eql)))
 
 (define-test |rassoc test=eql key=identity 4a|
   (assert-equal '(b . 123)
-		(rassoc 123 '((b . x) nil (b . 123) (c . nil)))))
+                (rassoc 123 '((b . x) nil (b . 123) (c . nil)))))
 
 (define-test |rassoc test=eql key=identity 4b|
   (assert-equal '(b . 123)
-		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
-		       :test #'eql)))
+                (rassoc 123 '((b . x) nil (b . 123) (c . nil))
+                       :test #'eql)))
 
 (define-test |rassoc test=eql key=identity 4c|
   (assert-equal '(b . 123)
-		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
-		       :test 'eql)))
+                (rassoc 123 '((b . x) nil (b . 123) (c . nil))
+                       :test 'eql)))
 
 (define-test |rassoc test=eql key=identity 5a|
   (assert-equal '(b . #\a)
-		(rassoc #\a '((b . x) nil (b . #\a) (c . nil)))))
+                (rassoc #\a '((b . x) nil (b . #\a) (c . nil)))))
 
 (define-test |rassoc test=eql key=identity 5b|
   (assert-equal '(b . #\a)
-		(rassoc #\a '((b . x) nil (b . #\a) (c . nil))
-		       :test #'eql)))
+                (rassoc #\a '((b . x) nil (b . #\a) (c . nil))
+                       :test #'eql)))
 
 (define-test |rassoc test=eql key=identity 5c|
   (assert-equal '(b . #\a)
-		(rassoc #\a '((b . x) nil (b . #\a) (c . nil))
-		       :test 'eql)))
+                (rassoc #\a '((b . x) nil (b . #\a) (c . nil))
+                       :test 'eql)))
 
 (define-test |rassoc test=eql key=nil 1|
   (assert-equal '(b . 123)
-		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
-		       :key nil)))
+                (rassoc 123 '((b . x) nil (b . 123) (c . nil))
+                       :key nil)))
 
 (define-test |rassoc test=eq key=identity 1a|
   (assert-equal '(b . a)
-		(rassoc 'a '((b . x) nil (b . a) (c . a))
-		       :test #'eq)))
+                (rassoc 'a '((b . x) nil (b . a) (c . a))
+                       :test #'eq)))
 
 (define-test |rassoc test=eq key=identity 1b|
   (assert-equal '(b . a)
-		(rassoc 'a '((b . x) nil (b . a) (c . a))
-		       :test 'eq)))
+                (rassoc 'a '((b . x) nil (b . a) (c . a))
+                       :test 'eq)))
 
 (define-test |rassoc test=eq key=identity 2a|
   (assert-equal nil
-		(rassoc 'c '((b . x) nil (b . a) (c . a))
-		       :test #'eq)))
+                (rassoc 'c '((b . x) nil (b . a) (c . a))
+                       :test #'eq)))
 
 (define-test |rassoc test=eq key=identity 2b|
   (assert-equal nil
-		(rassoc 'c '((b . x) nil (b . a) (c . a))
-		       :test 'eq)))
+                (rassoc 'c '((b . x) nil (b . a) (c . a))
+                       :test 'eq)))
 
 (define-test |rassoc test=eq key=identity 3a|
   (assert-equal '(c . nil)
-		(rassoc 'nil '((b . x) nil (b . a) (c . nil))
-		       :test #'eq)))
+                (rassoc 'nil '((b . x) nil (b . a) (c . nil))
+                       :test #'eq)))
 
 (define-test |rassoc test=eq key=identity 3b|
   (assert-equal '(c . nil)
-		(rassoc 'nil '((b . x) nil (b . a) (c . nil))
-		       :test 'eq)))
+                (rassoc 'nil '((b . x) nil (b . a) (c . nil))
+                       :test 'eq)))
 
 (define-test |rassoc test=other key=identity 1|
   (assert-equal '(c . (a b))
-		(rassoc '(a b) '((b . a) nil (c . (a b)) (e . d))
-		       :test #'equal)))
+                (rassoc '(a b) '((b . a) nil (c . (a b)) (e . d))
+                       :test #'equal)))
 
 (define-test |rassoc test-not=other key=identity 1|
   (assert-equal '(c . (a b))
-		(rassoc '(a b) '((b . a) nil (c . (a b)) (e . d))
-		       :test-not (complement #'equal))))
+                (rassoc '(a b) '((b . a) nil (c . (a b)) (e . d))
+                       :test-not (complement #'equal))))
 
 (define-test |rassoc test=eql key=other 1a|
   (assert-equal '(c . (a b))
-		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
-		       :key #'car)))
+                (rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+                       :key #'car)))
 
 (define-test |rassoc test=eql key=other 1b|
   (assert-equal '(c . (a b))
-		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
-		       :test #'eql
-		       :key #'car)))
+                (rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+                       :test #'eql
+                       :key #'car)))
 
 (define-test |rassoc test=eql key=other 1c|
   (assert-equal '(c . (a b))
-		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
-		       :test 'eql
-		       :key #'car)))
+                (rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+                       :test 'eql
+                       :key #'car)))
 
 (define-test |rassoc test=eq key=other 1|
   (assert-equal '(c . (a b))
-		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
-		       :test #'eq
-		       :key #'car)))
+                (rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+                       :test #'eq
+                       :key #'car)))
 
 (define-test |rassoc test=other key=other 1|
   (assert-equal '(c . (a b))
-		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
-		       :test (lambda (x y) (eq x y))
-		       :key #'car)))
+                (rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+                       :test (lambda (x y) (eq x y))
+                       :key #'car)))
 
 (define-test |rassoc test-not=eql key=identity 1a|
   (assert-equal '(b . 345)
-		(rassoc '234 '((a . 234) (b . 345) (c . 234))
-		       :test-not #'eql)))
-		 
+                (rassoc '234 '((a . 234) (b . 345) (c . 234))
+                       :test-not #'eql)))
+                 
 (define-test |rassoc test-not=eql key=identity 1b|
   (assert-equal '(b . 345)
-		(rassoc '234 '((a . 234) (b . 345) (c . 234))
-		       :test-not 'eql)))
-		 
+                (rassoc '234 '((a . 234) (b . 345) (c . 234))
+                       :test-not 'eql)))
+                 
 (define-test |rassoc test-not=eql key=identity 2|
   (assert-equal nil
-		(rassoc '234 '((a . 234) (b . 234) (c . 234))
-		       :test-not #'eql)))
-		 
+                (rassoc '234 '((a . 234) (b . 234) (c . 234))
+                       :test-not #'eql)))
+                 
 (define-test |rassoc test-not=eql key=identity 3|
   (assert-equal '(b . 345)
-		(rassoc '234 '((a . 234) nil (b . 345) (c . 234))
-		       :test-not #'eql)))
-		 
+                (rassoc '234 '((a . 234) nil (b . 345) (c . 234))
+                       :test-not #'eql)))
+                 
 (define-test |rassoc test-not=eq key=identity 1a|
   (assert-equal '(b . y)
-		(rassoc 'x '((a . x) (b . y) (c . x))
-		       :test-not #'eq)))
-		 
+                (rassoc 'x '((a . x) (b . y) (c . x))
+                       :test-not #'eq)))
+                 
 (define-test |rassoc test-not=eq key=identity 1b|
   (assert-equal '(b . y)
-		(rassoc 'x '((a . x) (b . y) (c . x))
-		       :test-not 'eq)))
-		 
+                (rassoc 'x '((a . x) (b . y) (c . x))
+                       :test-not 'eq)))
+                 
 (define-test |rassoc test-not=eq key=identity 2|
   (assert-equal nil
-		(rassoc 'x '((a . x) (b . x) (c . x))
-		       :test-not #'eq)))
-		 
+                (rassoc 'x '((a . x) (b . x) (c . x))
+                       :test-not #'eq)))
+                 
 (define-test |rassoc test-not=eq key=identity 3|
   (assert-equal '(b . y)
-		(rassoc 'x '((a . x) nil (b . y) (c . x))
-		       :test-not #'eq)))
-		 
+                (rassoc 'x '((a . x) nil (b . y) (c . x))
+                       :test-not #'eq)))
+                 
 (define-test rassoc.error.1
   (assert-error 'type-error
-		(rassoc 'a '((b . c) nil d (a b)))))
+                (rassoc 'a '((b . c) nil d (a b)))))
 
 (define-test |rassoc test-not=eql key=other 1a|
   (assert-equal '(b . 345)
-		(rassoc '235 '((a . 234) (b . 345) (c . 234))
-		       :test-not #'eql
-		       :key #'1+)))
-		 
+                (rassoc '235 '((a . 234) (b . 345) (c . 234))
+                       :test-not #'eql
+                       :key #'1+)))
+                 
 (define-test |rassoc test-not=eql key=other 1b|
   (assert-equal '(b . 345)
-		(rassoc '235 '((a . 234) (b . 345) (c . 234))
-		       :test-not 'eql
-		       :key #'1+)))
-		 
+                (rassoc '235 '((a . 234) (b . 345) (c . 234))
+                       :test-not 'eql
+                       :key #'1+)))
+                 
 (define-test |rassoc test-not=eql key=other 2|
   (assert-equal nil
-		(rassoc '235 '((a . 234) (b . 234) (c . 234))
-		       :test-not #'eql
-		       :key #'1+)))
-		 
+                (rassoc '235 '((a . 234) (b . 234) (c . 234))
+                       :test-not #'eql
+                       :key #'1+)))
+                 
 (define-test |rassoc test-not=eql key=other 3|
   (assert-equal '(b . 345)
-		(rassoc '235 '((a . 234) nil (b . 345) (c . 234))
-		       :test-not #'eql
-		       :key #'1+)))
-		 
+                (rassoc '235 '((a . 234) nil (b . 345) (c . 234))
+                       :test-not #'eql
+                       :key #'1+)))
+                 
 (define-test |rassoc test-not=eq key=other 1a|
   (assert-equal '(b . (y))
-		(rassoc 'x '((a . (x)) (b . (y)) (c . (x)))
-		       :test-not #'eq
-		       :key #'car)))
-		 
+                (rassoc 'x '((a . (x)) (b . (y)) (c . (x)))
+                       :test-not #'eq
+                       :key #'car)))
+                 
 (define-test |rassoc test-not=eq key=other 1b|
   (assert-equal '(b . (y))
-		(rassoc 'x '((a . (x)) (b . (y)) (c . (x)))
-		       :test-not 'eq
-		       :key #'car)))
-		 
+                (rassoc 'x '((a . (x)) (b . (y)) (c . (x)))
+                       :test-not 'eq
+                       :key #'car)))
+                 
 (define-test |rassoc test-not=eq key=other 2|
   (assert-equal nil
-		(rassoc 'x '((a . (x)) (b . (x)) (c . (x)))
-		       :test-not #'eq
-		       :key #'car)))
-		 
+                (rassoc 'x '((a . (x)) (b . (x)) (c . (x)))
+                       :test-not #'eq
+                       :key #'car)))
+                 
 (define-test |rassoc test-not=eq key=other 3|
   (assert-equal '(b . (y))
-		(rassoc 'x '((a . (x)) nil (b . (y)) (c . (x)))
-		       :test-not #'eq
-		       :key #'car)))
-		 
+                (rassoc 'x '((a . (x)) nil (b . (y)) (c . (x)))
+                       :test-not #'eq
+                       :key #'car)))
+                 
 (define-test |rassoc test-not=other key=other 1a|
   (assert-equal '(b . 345)
-		(rassoc '234 '((a . 234) (b . 345) (c . 234))
-		       :test-not (lambda (x y) (eql (1+ x) y))
-		       :key #'1+)))
-		 
+                (rassoc '234 '((a . 234) (b . 345) (c . 234))
+                       :test-not (lambda (x y) (eql (1+ x) y))
+                       :key #'1+)))
+                 
 (define-test |rassoc test-not=other key=other 1b|
   (assert-equal '(b . 345)
-		(rassoc '234 '((a . 234) (b . 345) (c . 234))
-		       :test-not (lambda (x y) (eql (1+ x) y))
-		       :key #'1+)))
-		 
+                (rassoc '234 '((a . 234) (b . 345) (c . 234))
+                       :test-not (lambda (x y) (eql (1+ x) y))
+                       :key #'1+)))
+                 
 (define-test |rassoc test-not=other key=other 2|
   (assert-equal nil
-		(rassoc '234 '((a . 234) (b . 234) (c . 234))
-		       :test-not (lambda (x y) (eql (1+ x) y))
-		       :key #'1+)))
-		 
+                (rassoc '234 '((a . 234) (b . 234) (c . 234))
+                       :test-not (lambda (x y) (eql (1+ x) y))
+                       :key #'1+)))
+                 
 (define-test |rassoc test-not=other key=other 3|
   (assert-equal '(b . 345)
-		(rassoc '234 '((a . 234) nil (b . 345) (c . 234))
-		       :test-not (lambda (x y) (eql (1+ x) y))
-		       :key #'1+)))
-		 
+                (rassoc '234 '((a . 234) nil (b . 345) (c . 234))
+                       :test-not (lambda (x y) (eql (1+ x) y))
+                       :key #'1+)))
+                 
 (define-test |rassoc error 1|
   (assert-error 'type-error
-		(rassoc 'a '((b . c) nil d (a b)))))
+                (rassoc 'a '((b . c) nil d (a b)))))
 
 (define-test |rassoc error 2|
   (assert-error 'error
-		(rassoc 'a '((b . c) nil d (a b))
-		       :test #'eq
-		       :test-not #'eq)))
+                (rassoc 'a '((b . c) nil d (a b))
+                       :test #'eq
+                       :test-not #'eq)))
 
 (define-test |rassoc test=nil key=identity 1|
   (assert-error 'error
-		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
-		       :test nil)))
+                (rassoc 123 '((b . x) nil (b . 123) (c . nil))
+                       :test nil)))
 
 (define-test |rassoc test-not=nil key=identity 1|
   (assert-error 'error
-		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
-		       :test-not nil)))
+                (rassoc 123 '((b . x) nil (b . 123) (c . nil))
+                       :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -6166,45 +6166,45 @@
 
 (define-test rassoc-if.1
   (assert-equal '(a . b)
-		(rassoc-if (lambda (x) (eq x 'b))
-			  '((b) nil (a . b) (a . c)))))
+                (rassoc-if (lambda (x) (eq x 'b))
+                          '((b) nil (a . b) (a . c)))))
 
 (define-test rassoc-if.2
   (assert-equal nil
-		(rassoc-if (lambda (x) (eq x 'd))
-			  '((b) nil (a . b) (a . c)))))
+                (rassoc-if (lambda (x) (eq x 'd))
+                          '((b) nil (a . b) (a . c)))))
 
 (define-test rassoc-if.3
   (assert-equal '(b)
-		(rassoc-if #'null
-			  '((b) nil (a . b) (nil . c)))))
+                (rassoc-if #'null
+                          '((b) nil (a . b) (nil . c)))))
 
 (define-test rassoc-if.4
   (assert-equal '(b . 123)
-		(rassoc-if (lambda (x) (eql x 123))
-			  '((b) nil (b . 123) (nil . c)))))
+                (rassoc-if (lambda (x) (eql x 123))
+                          '((b) nil (b . 123) (nil . c)))))
 
 (define-test rassoc-if.5
   (assert-equal '(b . #\a)
-		(rassoc-if (lambda (x) (eql x #\a))
-			  '((b) nil (b . #\a) (nil . c)))))
+                (rassoc-if (lambda (x) (eql x #\a))
+                          '((b) nil (b . #\a) (nil . c)))))
 
 (define-test rassoc-if.6
   (assert-equal '((a b) c)
-		(rassoc-if (lambda (x) (eq x 'c))
-			  '(((b a) b) ((a b) . (c)) ((d) . e))
-			  :key #'car)))
+                (rassoc-if (lambda (x) (eq x 'c))
+                          '(((b a) b) ((a b) . (c)) ((d) . e))
+                          :key #'car)))
 
 (define-test rassoc-if.7
   (assert-equal '((a b) c)
-		(rassoc-if (lambda (x) (eq x 'c))
-			  '(((b a) b) nil ((a b) . (c)) ((d) . e))
-			  :key #'car)))
+                (rassoc-if (lambda (x) (eq x 'c))
+                          '(((b a) b) nil ((a b) . (c)) ((d) . e))
+                          :key #'car)))
 
 (define-test rassoc-if.error.1
   (assert-error 'type-error
-		(rassoc-if (lambda (x) (eq x 'a))
-			  '((b . c) nil d (a b)))))
+                (rassoc-if (lambda (x) (eq x 'a))
+                          '((b . c) nil d (a b)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -6212,39 +6212,39 @@
 
 (define-test rassoc-if-not.1
   (assert-equal '(a . b)
-		(rassoc-if-not (complement (lambda (x) (eq x 'b)))
-			      '((b) nil (a . b) (a . c)))))
+                (rassoc-if-not (complement (lambda (x) (eq x 'b)))
+                              '((b) nil (a . b) (a . c)))))
 
 (define-test rassoc-if-not.2
   (assert-equal nil
-		(rassoc-if-not (complement (lambda (x) (eq x 'd)))
-			      '((b) nil (a . b) (a . c)))))
+                (rassoc-if-not (complement (lambda (x) (eq x 'd)))
+                              '((b) nil (a . b) (a . c)))))
 
 (define-test rassoc-if-not.3
   (assert-equal '(b)
-		(rassoc-if-not (complement #'null)
-			      '((b) nil (a . b) (nil . c)))))
+                (rassoc-if-not (complement #'null)
+                              '((b) nil (a . b) (nil . c)))))
 
 (define-test rassoc-if-not.4
   (assert-equal '(b . 123)
-		(rassoc-if-not (complement (lambda (x) (eql x 123)))
-			      '((b) nil (b . 123) (nil . c)))))
+                (rassoc-if-not (complement (lambda (x) (eql x 123)))
+                              '((b) nil (b . 123) (nil . c)))))
 
 (define-test rassoc-if-not.5
   (assert-equal '(b . #\a)
-		(rassoc-if-not (complement (lambda (x) (eql x #\a)))
-			      '((b) nil (b . #\a) (nil . c)))))
+                (rassoc-if-not (complement (lambda (x) (eql x #\a)))
+                              '((b) nil (b . #\a) (nil . c)))))
 
 (define-test rassoc-if-not.6
   (assert-equal '((a b) c)
-		(rassoc-if-not (complement (lambda (x) (eq x 'c)))
-			      '(((b a) b) nil ((a b) c) ((d) e))
-			      :key #'car)))
+                (rassoc-if-not (complement (lambda (x) (eq x 'c)))
+                              '(((b a) b) nil ((a b) c) ((d) e))
+                              :key #'car)))
 
 (define-test rassoc-if-not.error.1
   (assert-error 'type-error
-		(rassoc-if-not (complement (lambda (x) (eq x 'a)))
-			      '((b . c) nil d (a b)))))
+                (rassoc-if-not (complement (lambda (x) (eq x 'a)))
+                              '((b . c) nil d (a b)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -6252,163 +6252,163 @@
 
 (define-test |sublis test=eql key=identity 1a|
   (assert-equal '()
-		(sublis '((10 . xx) (0 . a))
-			'())))
+                (sublis '((10 . xx) (0 . a))
+                        '())))
 
 (define-test |sublis test=eql key=identity 1b|
   (assert-equal '()
-		(sublis '((10 . xx) (0 . a))
-			'()
-			:test #'eql)))
+                (sublis '((10 . xx) (0 . a))
+                        '()
+                        :test #'eql)))
 
 (define-test |sublis test=eql key=identity 1c|
   (assert-equal '()
-		(sublis '((10 . xx) (0 . a))
-			'()
-			:test 'eql)))
+                (sublis '((10 . xx) (0 . a))
+                        '()
+                        :test 'eql)))
 
 (define-test |sublis test=eql key=identity 2a|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
 
 (define-test |sublis test=eql key=identity 2b|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			:test #'eql)))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test #'eql)))
 
 (define-test |sublis test=eql key=identity 2c|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			:test 'eql)))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test 'eql)))
 
 (define-test |sublis test=eql key=nil 1|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			:key nil)))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :key nil)))
 
 (define-test |sublis test=eq key=identity 1|
   (assert-equal '()
-		(sublis '((xx . y) (b . a)) '()
-		       :test #'eq)))
+                (sublis '((xx . y) (b . a)) '()
+                       :test #'eq)))
 
 (define-test |sublis test=eq key=identity 2|
   (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		(sublis '((xx . y) (b . a))
-			'(((b . c) . (f . b)) . ((b . d) . (e . b)))
-			:test #'eq)))
+                (sublis '((xx . y) (b . a))
+                        '(((b . c) . (f . b)) . ((b . d) . (e . b)))
+                        :test #'eq)))
 
 (define-test |sublis test=other key=identity 1|
   (assert-equal '()
-		(sublis '((10 . xx) (0 . a))
-			'()
-			:test (lambda (x y) (and (numberp y) (= x (1- y)))))))
+                (sublis '((10 . xx) (0 . a))
+                        '()
+                        :test (lambda (x y) (and (numberp y) (= x (1- y)))))))
 
 (define-test |sublis test=other key=identity 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		        :test (lambda (x y) (and (numberp y) (= x y))))))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test (lambda (x y) (and (numberp y) (= x y))))))
 
 (define-test |sublis test=eql key=other 1a|
   (assert-equal '()
-		(sublis '((10 . xx) (0 . a))
-			'()
-			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (sublis '((10 . xx) (0 . a))
+                        '()
+                        :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |sublis test=eql key=other 1b|
   (assert-equal '()
-		(sublis '((10 . xx) (0 . a))
-			'()
-			:key (lambda (x) (if (numberp x) (1+ x) x))
-			:test #'eql)))
+                (sublis '((10 . xx) (0 . a))
+                        '()
+                        :key (lambda (x) (if (numberp x) (1+ x) x))
+                        :test #'eql)))
 
 (define-test |sublis test=eql key=other 1c|
   (assert-equal '()
-		(sublis '((10 . xx) (0 . a))
-			'()
-			:key (lambda (x) (if (numberp x) (1+ x) x))
-			:test 'eql)))
+                (sublis '((10 . xx) (0 . a))
+                        '()
+                        :key (lambda (x) (if (numberp x) (1+ x) x))
+                        :test 'eql)))
 
 (define-test |sublis test=eql key=other 2a|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (1 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (sublis '((10 . xx) (1 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |sublis test=eql key=other 2b|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (1 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			:key (lambda (x) (if (numberp x) (1+ x) x))
-			:test #'eql)))
+                (sublis '((10 . xx) (1 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :key (lambda (x) (if (numberp x) (1+ x) x))
+                        :test #'eql)))
 
 (define-test |sublis test=eql key=other 2c|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (1 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			:key (lambda (x) (if (numberp x) (1+ x) x))
-			:test 'eql)))
+                (sublis '((10 . xx) (1 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :key (lambda (x) (if (numberp x) (1+ x) x))
+                        :test 'eql)))
 
 (define-test |sublis test=eq key=other 1|
   (assert-equal '()
-		(sublis '((xx . y) (bb . a))
-			'()
-			:test #'eq
-			:key (lambda (x) (if (eq x 'b) 'bb x)))))
+                (sublis '((xx . y) (bb . a))
+                        '()
+                        :test #'eq
+                        :key (lambda (x) (if (eq x 'b) 'bb x)))))
 
 (define-test |sublis test=eq key=other 2|
   (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		(sublis '((xx . y) (bb . a))
-			'(((b . c) . (f . b)) . ((b . d) . (e . b)))
-			:test #'eq
-			:key (lambda (x) (if (eq x 'b) 'bb x)))))
+                (sublis '((xx . y) (bb . a))
+                        '(((b . c) . (f . b)) . ((b . d) . (e . b)))
+                        :test #'eq
+                        :key (lambda (x) (if (eq x 'b) 'bb x)))))
 
 (define-test |sublis test=other key=other 1|
   (assert-equal '()
-		(sublis '((10 . xx) (0 . a))
-			'()
-			:test (lambda (x y) (and (numberp y) (= x (1- y))))
-			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (sublis '((10 . xx) (0 . a))
+                        '()
+                        :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                        :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |sublis test=other key=other 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		        :test (lambda (x y) (and (numberp y) (= x (1- y))))
-			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                        :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |sublis test-not=any key=identity 2|
   (assert-equal '(((a . 5) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (0 . a))
-			'(((1 . 5) . (2 . 1)) . ((1 . 3) . (4 . 1)))
-		        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
+                (sublis '((10 . xx) (0 . a))
+                        '(((1 . 5) . (2 . 1)) . ((1 . 3) . (4 . 1)))
+                        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
 
 (define-test |sublis test-not=any key=other 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-		        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
-			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+                        :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |sublis test=other test-not=other 1|
   (assert-error 'error
-		(sublis 0 '((1 . 2)) :test #'= :test-not #'=)))
+                (sublis 0 '((1 . 2)) :test #'= :test-not #'=)))
 
 (define-test |sublis test=nil key=identity 1|
   (assert-error 'error
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			:test nil)))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test nil)))
 
 (define-test |sublis test-not=nil key=identity 1|
   (assert-error 'error
-		(sublis '((10 . xx) (0 . a))
-			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
-			:test-not nil)))
+                (sublis '((10 . xx) (0 . a))
+                        '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+                        :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -6417,299 +6417,299 @@
 (define-test |nsublis test=eql key=identity 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((10 . xx) (0 . a))
-			   tree))))
+                  (nsublis '((10 . xx) (0 . a))
+                           tree))))
 
 (define-test |nsublis test=eql key=identity 1b|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((10 . xx) (0 . a))
-			   tree
-			   :test #'eql))))
+                  (nsublis '((10 . xx) (0 . a))
+                           tree
+                           :test #'eql))))
 
 (define-test |nsublis test=eql key=identity 1c|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((10 . xx) (0 . a))
-			   tree
-			   :test 'eql))))
+                  (nsublis '((10 . xx) (0 . a))
+                           tree
+                           :test 'eql))))
 
 (define-test |nsublis test=eql key=identity 2a|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis
-			       '((10 . xx) (0 . a))
-			       tree)))
+                  (setf tree2 (nsublis
+                               '((10 . xx) (0 . a))
+                               tree)))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=eql key=identity 2b|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis
-			       '((10 . xx) (0 . a))
-			       tree
-			       :test #'eql)))
+                  (setf tree2 (nsublis
+                               '((10 . xx) (0 . a))
+                               tree
+                               :test #'eql)))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=eql key=identity 2c|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis '((10 . xx) (0 . a))
-				       tree
-				       :test 'eql)))
+                  (setf tree2 (nsublis '((10 . xx) (0 . a))
+                                       tree
+                                       :test 'eql)))
     (assert-eq tree tree2)))    
 
 (define-test |nsublis test=eql key=identity 3a|
   (assert-equal 'a
-		(nsublis '((10 . xx) (0 . a))
-			 0)))
+                (nsublis '((10 . xx) (0 . a))
+                         0)))
 
 (define-test |nsublis test=eql key=identity 3b|
   (assert-equal 'a
-		(nsublis '((10 . xx) (0 . a))
-			 0
-			 :test #'eql)))
+                (nsublis '((10 . xx) (0 . a))
+                         0
+                         :test #'eql)))
 
 (define-test |nsublis test=eql key=identity 3c|
   (assert-equal 'a
-		(nsublis '((10 . xx) (0 . a))
-			 0
-			 :test 'eql)))
+                (nsublis '((10 . xx) (0 . a))
+                         0
+                         :test 'eql)))
 
 (define-test |nsublis test=eql key=nil 1|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis
-			       '((10 . xx) (0 . a))
-			       tree
-			       :key nil)))
+                  (setf tree2 (nsublis
+                               '((10 . xx) (0 . a))
+                               tree
+                               :key nil)))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=eq key=identity 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis
-		   '((xx . y) (b . a))
-		   tree
-		   :test #'eq))))
+                  (nsublis
+                   '((xx . y) (b . a))
+                   tree
+                   :test #'eq))))
 
 (define-test |nsublis test=eq key=identity 2|
   (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		  (setf tree2 (nsublis
-			       '((xx . y) (b . a))
-			       tree
-			       :test #'eq)))
+                  (setf tree2 (nsublis
+                               '((xx . y) (b . a))
+                               tree
+                               :test #'eq)))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=eq key=identity 3a|
   (assert-equal 'a
-		(nsublis '((10 . xx) (c . a))
-			 'c
-			 :test #'eq)))
+                (nsublis '((10 . xx) (c . a))
+                         'c
+                         :test #'eq)))
 
 (define-test |nsublis test=eq key=identity 3b|
   (assert-equal 'a
-		(nsublis '((10 . xx) (c . a))
-			 'c
-			 :test 'eq)))
+                (nsublis '((10 . xx) (c . a))
+                         'c
+                         :test 'eq)))
 
 (define-test |nsublis test=other key=identity 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((10 . xx) (0 . a))
-			   tree
-			   :test (lambda (x y) (and (numberp y) (= x (1- y))))))))
+                  (nsublis '((10 . xx) (0 . a))
+                           tree
+                           :test (lambda (x y) (and (numberp y) (= x (1- y))))))))
 
 (define-test |nsublis test=other key=identity 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis '((10 . xx) (0 . a))
-				       tree
-				       :test (lambda (x y) (and (numberp y) (= x y))))))
+                  (setf tree2 (nsublis '((10 . xx) (0 . a))
+                                       tree
+                                       :test (lambda (x y) (and (numberp y) (= x y))))))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=other key=identity 3|
   (assert-equal 'a
-		(nsublis '((10 . xx) (0 . a))
-			 1
-			 :test (lambda (x y) (and (numberp y) (= x (1- y)))))))
+                (nsublis '((10 . xx) (0 . a))
+                         1
+                         :test (lambda (x y) (and (numberp y) (= x (1- y)))))))
 
 (define-test |nsublis test=eql key=other 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((10 . xx) (0 . a))
-			   tree
-			   :key (lambda (x) (if (numberp x) (1+ x) x))))))
+                  (nsublis '((10 . xx) (0 . a))
+                           tree
+                           :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsublis test=eql key=other 1b|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((10 . xx) (0 . a))
-			   tree
-			   :key (lambda (x) (if (numberp x) (1+ x) x))
-			   :test #'eql))))
+                  (nsublis '((10 . xx) (0 . a))
+                           tree
+                           :key (lambda (x) (if (numberp x) (1+ x) x))
+                           :test #'eql))))
 
 (define-test |nsublis test=eql key=other 1c|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((10 . xx) (0 . a))
-			   tree
-			   :key (lambda (x) (if (numberp x) (1+ x) x))
-			   :test 'eql))))
+                  (nsublis '((10 . xx) (0 . a))
+                           tree
+                           :key (lambda (x) (if (numberp x) (1+ x) x))
+                           :test 'eql))))
 
 (define-test |nsublis test=eql key=other 2a|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis '((10 . xx) (1 . a))
-				       tree
-				       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                  (setf tree2 (nsublis '((10 . xx) (1 . a))
+                                       tree
+                                       :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=eql key=other 2b|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis '((10 . xx) (1 . a))
-				       tree
-				       :key (lambda (x) (if (numberp x) (1+ x) x))
-				       :test #'eql)))
+                  (setf tree2 (nsublis '((10 . xx) (1 . a))
+                                       tree
+                                       :key (lambda (x) (if (numberp x) (1+ x) x))
+                                       :test #'eql)))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=eql key=other 2c|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis '((10 . xx) (1 . a))
-				       tree
-				       :key (lambda (x) (if (numberp x) (1+ x) x))
-				       :test 'eql)))
+                  (setf tree2 (nsublis '((10 . xx) (1 . a))
+                                       tree
+                                       :key (lambda (x) (if (numberp x) (1+ x) x))
+                                       :test 'eql)))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=eql key=other 3a|
   (assert-equal 'a
-		(nsublis '((10 . xx) (1 . a))
-			 0
-			 :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (nsublis '((10 . xx) (1 . a))
+                         0
+                         :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 
 (define-test |nsublis test=eq key=other 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((xx . y) (bb . a))
-			   tree
-			   :test #'eq
-			   :key (lambda (x) (if (eq x 'b) 'bb x))))))
+                  (nsublis '((xx . y) (bb . a))
+                           tree
+                           :test #'eq
+                           :key (lambda (x) (if (eq x 'b) 'bb x))))))
 
 (define-test |nsublis test=eq key=other 2|
   (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		  (setf tree2 (nsublis '((xx . y) (bb . a))
-				       tree
-				       :test #'eq
-				       :key (lambda (x) (if (eq x 'b) 'bb x)))))
+                  (setf tree2 (nsublis '((xx . y) (bb . a))
+                                       tree
+                                       :test #'eq
+                                       :key (lambda (x) (if (eq x 'b) 'bb x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=eq key=other 3|
   (assert-equal 'a
-		(nsublis '((xx . y) (bb . a))
-			 'b
-			 :test #'eq
-			 :key (lambda (x) (if (eq x 'b) 'bb x)))))
+                (nsublis '((xx . y) (bb . a))
+                         'b
+                         :test #'eq
+                         :key (lambda (x) (if (eq x 'b) 'bb x)))))
 
 (define-test |nsublis test=other key=other 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
-		  (nsublis '((10 . xx) (0 . a))
-			   tree
-			   :test (lambda (x y) (and (numberp y) (= x (1- y))))
-			   :key (lambda (x) (if (numberp x) (1+ x) x))))))
+                  (nsublis '((10 . xx) (0 . a))
+                           tree
+                           :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                           :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsublis test=other key=other 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis '((10 . xx) (0 . a))
-				       tree
-				       :test (lambda (x y) (and (numberp y) (= x (1- y))))
-				       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                  (setf tree2 (nsublis '((10 . xx) (0 . a))
+                                       tree
+                                       :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                                       :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test=other key=other 3|
   (assert-equal 'a
-		(nsublis '((10 . xx) (0 . a))
-			 0
-			 :test (lambda (x y) (and (numberp y) (= x (1- y))))
-			 :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (nsublis '((10 . xx) (0 . a))
+                         0
+                         :test (lambda (x y) (and (numberp y) (= x (1- y))))
+                         :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |nsublis test-not=any key=identity 2|
   (let ((tree (copy-tree '(((1 . 5) . (2 . 1)) . ((1 . 3) . (4 . 1)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 5) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis '((10 . xx) (0 . a))
-				       tree
-				       :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
+                  (setf tree2 (nsublis '((10 . xx) (0 . a))
+                                       tree
+                                       :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test-not=any key=identity 3|
   (assert-equal 'a
-		(nsublis '((10 . xx) (0 . a))
-			 1
-			 :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
+                (nsublis '((10 . xx) (0 . a))
+                         1
+                         :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
 
 (define-test |nsublis test-not=any key=identity 4|
   (assert-equal 123
-		(nsublis '((10 . xx) (0 . a))
-			 123
-			 :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
+                (nsublis '((10 . xx) (0 . a))
+                         123
+                         :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
 
 (define-test |nsublis test-not=any key=other 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
-	(tree2))
+        (tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (setf tree2 (nsublis '((10 . xx) (0 . a))
-				       tree
-				       :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
-				       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                  (setf tree2 (nsublis '((10 . xx) (0 . a))
+                                       tree
+                                       :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+                                       :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
 (define-test |nsublis test-not=any key=other 3|
   (assert-equal 'a
-		(nsublis '((10 . xx) (0 . a))
-			 0
-			 :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
-			 :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (nsublis '((10 . xx) (0 . a))
+                         0
+                         :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+                         :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |nsublis test-not=any key=other 4|
   (assert-equal 123
-		(nsublis '((10 . xx) (0 . a))
-			 123
-			 :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
-			 :key (lambda (x) (if (numberp x) (1+ x) x)))))
+                (nsublis '((10 . xx) (0 . a))
+                         123
+                         :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+                         :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |nsublis test=other test-not=other|
   (assert-error 'error
-		(nsublis 0 '((1 . 2)) :test #'= :test-not #'=)))
+                (nsublis 0 '((1 . 2)) :test #'= :test-not #'=)))
 
 (define-test |nsublis test=nil key=identity 1|
   (assert-error 'error
-		(sublis '((10 . xx) (0 . a))
-			(copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))
-			:test nil)))
+                (sublis '((10 . xx) (0 . a))
+                        (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))
+                        :test nil)))
 
 (define-test |nsublis test-not=nil key=identity 1|
   (assert-error 'error
-		(nsublis '((10 . xx) (0 . a))
-			(copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))
-			:test-not nil)))
+                (nsublis '((10 . xx) (0 . a))
+                        (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))
+                        :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -6717,32 +6717,32 @@
 
 (define-test |pairlis 1|
   (assert-equal '()
-		(pairlis '() '())))
+                (pairlis '() '())))
 
 (define-test |pairlis 2|
   (let ((tail '((a b) (c d))))
     (assert-eq tail
-	       (cddr (pairlis '(1 2) '(2 3) tail)))))
+               (cddr (pairlis '(1 2) '(2 3) tail)))))
 
 (define-test |pairlis 3|
   (assert-equal '((c . d) (a . b) (e f))
-		(pairlis '(a c) '(b d) '((e f)))))
+                (pairlis '(a c) '(b d) '((e f)))))
 
 (define-test |pairlis error 1|
   (assert-error 'type-error
-		(pairlis '(a . b) '(c d) '((e f)))))
+                (pairlis '(a . b) '(c d) '((e f)))))
 
 (define-test |pairlis error 2|
   (assert-error 'type-error
-		(pairlis '(c d) '(a . b) '((e f)))))
+                (pairlis '(c d) '(a . b) '((e f)))))
 
 (define-test |pairlis error 3|
   (assert-error 'error
-		(pairlis '(a b) '(c d e))))
+                (pairlis '(a b) '(c d e))))
 
 (define-test |pairlis error 4|
   (assert-error 'error
-		(pairlis '(c d e) '(a b))))
+                (pairlis '(c d e) '(a b))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -6750,28 +6750,28 @@
 
 (define-test |copy-alist 1|
   (assert-equal '()
-		(copy-alist '())))
+                (copy-alist '())))
 
 (define-test |copy-alist 2|
   (assert-equal '((a) (b))
-		(copy-alist '((a) (b)))))
+                (copy-alist '((a) (b)))))
 
 (define-test |copy-alist 3|
   (assert-false (let ((alist '((a) (b))))
-		  (eq (car alist)
-		      (car (copy-alist alist))))))
+                  (eq (car alist)
+                      (car (copy-alist alist))))))
 
 (define-test |copy-alist 4|
   (assert-equal '((a b) c (d e))
-		(copy-alist '((a b) c (d e)))))
+                (copy-alist '((a b) c (d e)))))
 
 (define-test |copy-alist 5|
   (assert-equal '((a b) nil (d e))
-		(copy-alist '((a b) nil (d e)))))
+                (copy-alist '((a b) nil (d e)))))
 
 (define-test |copy-alist error 2|
   (assert-error 'type-error
-		(copy-alist '((a) . b))))
+                (copy-alist '((a) . b))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -6831,167 +6831,167 @@
 
 (define-test |union test=eql key=identity 1a|
   (assert-equal '()
-		(union '() '())))
+                (union '() '())))
 
 (define-test |union test=eql key=identity 1b|
   (assert-equal '()
-		(union '() '() :test #'eql)))
+                (union '() '() :test #'eql)))
 
 (define-test |union test=eql key=identity 1c|
   (assert-equal '()
-		(union '() '() :test 'eql)))
+                (union '() '() :test 'eql)))
 
 (define-test |union test=eql key=identity 2a|
   (assert-equal '()
-		(set-difference (union '(1 2 3) '(3 4 5))
-				'(1 2 3 4 5))))
+                (set-difference (union '(1 2 3) '(3 4 5))
+                                '(1 2 3 4 5))))
 
 (define-test |union test=eql key=identity 2b|
   (assert-equal '()
-		(set-difference (union '(1 2 3) '(3 4 5) :test #'eql)
-				'(1 2 3 4 5))))
+                (set-difference (union '(1 2 3) '(3 4 5) :test #'eql)
+                                '(1 2 3 4 5))))
 
 (define-test |union test=eql key=identity 2|
   (assert-equal '()
-		(set-difference (union '(1 2 3) '(3 4 5) :test 'eql)
-				'(1 2 3 4 5))))
+                (set-difference (union '(1 2 3) '(3 4 5) :test 'eql)
+                                '(1 2 3 4 5))))
 
 (define-test |union test=eql key=identity 3a|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (union (append l1 l2) (append l2 l3))
-				  (append l1 l2 l3)))))
+                  (set-difference (union (append l1 l2) (append l2 l3))
+                                  (append l1 l2 l3)))))
 
 (define-test |union test=eql key=identity 3b|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (union (append l1 l2)
-					 (append l2 l3)
-					 :test #'eql)
-				  (append l1 l2 l3)
-				  :test #'eql))))
+                  (set-difference (union (append l1 l2)
+                                         (append l2 l3)
+                                         :test #'eql)
+                                  (append l1 l2 l3)
+                                  :test #'eql))))
 
 (define-test |union test=eql key=identity 3c|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (union (append l1 l2)
-					 (append l2 l3)
-					 :test 'eql)
-				  (append l1 l2 l3)
-				  :test 'eql))))
+                  (set-difference (union (append l1 l2)
+                                         (append l2 l3)
+                                         :test 'eql)
+                                  (append l1 l2 l3)
+                                  :test 'eql))))
 
 (define-test |union test=eql key=identity dotted-list 1|
   (assert-error 'type-error
-		(union '(1 2 . 3) '(2 3 4))))
+                (union '(1 2 . 3) '(2 3 4))))
 
 (define-test |union test=eql key=identity dotted-list 2|
   (assert-error 'type-error
-		(union '(1 2 3) '(2 3 . 4))))
+                (union '(1 2 3) '(2 3 . 4))))
 
 (define-test |union test=eql key=nil 2a|
   (assert-equal '()
-		(set-difference (union '(1 2 3) '(3 4 5) :key nil)
-				'(1 2 3 4 5))))
+                (set-difference (union '(1 2 3) '(3 4 5) :key nil)
+                                '(1 2 3 4 5))))
 
 (define-test |union test=eq key=identity 1|
   (assert-equal '()
-		(union '() '() :test #'eq)))
+                (union '() '() :test #'eq)))
 
 (define-test |union test=eq key=identity 2|
   (assert-equal '()
-		(set-difference (union '(abc def) '(abc ghi)
-				       :test #'eq)
-				'(abc def ghi)
-				:test #'eq)))
+                (set-difference (union '(abc def) '(abc ghi)
+                                       :test #'eq)
+                                '(abc def ghi)
+                                :test #'eq)))
 
 (define-test |union test=eq key=identity 3|
   (let ((l1 (loop for code from 30 below 40 collect (string (code-char code))))
-	(l2 (loop for code from 40 below 100 collect (string (code-char code))))
-	(l3 (loop for code from 100 below 110 collect (string (code-char code)))))
+        (l2 (loop for code from 40 below 100 collect (string (code-char code))))
+        (l3 (loop for code from 100 below 110 collect (string (code-char code)))))
     (assert-equal '()
-		  (set-difference (union (append l1 l2)
-					 (append l2 l3)
-					 :test #'eq)
-				  (append l1 l2 l3)
-				  :test #'eq))))
+                  (set-difference (union (append l1 l2)
+                                         (append l2 l3)
+                                         :test #'eq)
+                                  (append l1 l2 l3)
+                                  :test #'eq))))
 
 (define-test |union test=eq key=identity dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :test #'eq)))
+                (union '(a b . c) '(b c d) :test #'eq)))
 
 (define-test |union test=eq key=identity dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :test #'eq)))
+                (union '(a b c) '(b c . d) :test #'eq)))
 
 (define-test |union test=equal key=identity 1|
   (assert-equal '()
-		(union '() '() :test #'equal)))
+                (union '() '() :test #'equal)))
 
 (define-test |union test=equal key=identity 2|
   (assert-equal '()
-		(set-difference (union '("abc" "def") '("abc" "ghi")
-				       :test #'equal)
-				'("abc" "def" "ghi")
-				:test #'equal)))
+                (set-difference (union '("abc" "def") '("abc" "ghi")
+                                       :test #'equal)
+                                '("abc" "def" "ghi")
+                                :test #'equal)))
 
 (define-test |union test=equal key=identity 3|
   (let ((l1 (loop for code from 30 below 100 collect (string (code-char code))))
-	(l2 (loop for code from 40 below 110 collect (string (code-char code))))
-	(l3 (loop for code from 30 below 110 collect (string (code-char code)))))
+        (l2 (loop for code from 40 below 110 collect (string (code-char code))))
+        (l3 (loop for code from 30 below 110 collect (string (code-char code)))))
     (assert-equal '()
-		  (set-difference (union l1 l2 :test #'equal)
-				  l3
-				  :test #'equal))))
+                  (set-difference (union l1 l2 :test #'equal)
+                                  l3
+                                  :test #'equal))))
 
 (define-test |union test=equal key=identity dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :test #'equal)))
+                (union '(a b . c) '(b c d) :test #'equal)))
 
 (define-test |union test=equal key=identity dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :test #'equal)))
+                (union '(a b c) '(b c . d) :test #'equal)))
 
 (define-test |union test=equalp key=identity 1|
   (assert-equal '()
-		(union '() '() :test #'equalp)))
+                (union '() '() :test #'equalp)))
 
 (define-test |union test=equalp key=identity 3|
   (let ((l1 (loop for i from 30 below 100
-		  collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 40 below 110
-		  collect (make-array 1 :initial-element i)))
-	(l3 (loop for i from 30 below 110
-		  collect (make-array 1 :initial-element i))))
+                  collect (make-array 1 :initial-element i)))
+        (l2 (loop for i from 40 below 110
+                  collect (make-array 1 :initial-element i)))
+        (l3 (loop for i from 30 below 110
+                  collect (make-array 1 :initial-element i))))
     (assert-equal '()
-		  (set-difference (union l1 l2 :test #'equalp)
-				  l3
-				  :test #'equalp))))
+                  (set-difference (union l1 l2 :test #'equalp)
+                                  l3
+                                  :test #'equalp))))
 
 (define-test |union test=equalp key=identity dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :test #'equalp)))
+                (union '(a b . c) '(b c d) :test #'equalp)))
 
 (define-test |union test=equalp key=identity dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :test #'equalp)))
+                (union '(a b c) '(b c . d) :test #'equalp)))
 
 (define-test |union test=other key=identity 1|
   (assert-equal '()
-		(union '() '() :test #'<)))
+                (union '() '() :test #'<)))
 
 (define-test |union test=other key=identity dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :test #'(lambda (x y) (eq x y)))))
+                (union '(a b . c) '(b c d) :test #'(lambda (x y) (eq x y)))))
 
 (define-test |union test=other key=identity dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :test #'(lambda (x y) (eq x y)))))
+                (union '(a b c) '(b c . d) :test #'(lambda (x y) (eq x y)))))
 
 (define-test |union test=eql key=other 1a|
   (assert-equal 1
@@ -7019,191 +7019,191 @@
 
 (define-test |union test=eql key=other 3|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (union (append l1 l2)
-					 (append l2 l3)
-					 :key #'car)
-				  (append l1 l2 l3)
-				  :key #'car))))
+                  (set-difference (union (append l1 l2)
+                                         (append l2 l3)
+                                         :key #'car)
+                                  (append l1 l2 l3)
+                                  :key #'car))))
 
 (define-test |union test=eql key=other 4|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (union (append l1 l2)
-					 (append l2 l3)
-					 :test #'eql
-					 :key #'car)
-				  (append l1 l2 l3)
-				  :test #'eql
-				  :key #'car))))
+                  (set-difference (union (append l1 l2)
+                                         (append l2 l3)
+                                         :test #'eql
+                                         :key #'car)
+                                  (append l1 l2 l3)
+                                  :test #'eql
+                                  :key #'car))))
 
 (define-test |union test=eql key=other 5|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (union (append l1 l2)
-					 (append l2 l3)
-					 :test 'eql
-					 :key #'car)
-				  (append l1 l2 l3)
-				  :test 'eql
-				  :key #'car))))
+                  (set-difference (union (append l1 l2)
+                                         (append l2 l3)
+                                         :test 'eql
+                                         :key #'car)
+                                  (append l1 l2 l3)
+                                  :test 'eql
+                                  :key #'car))))
 
 (define-test |union test=eql key=other dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :key #'identity)))
+                (union '(a b . c) '(b c d) :key #'identity)))
 
 (define-test |union test=eql key=other dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :key #'identity)))
+                (union '(a b c) '(b c . d) :key #'identity)))
 
 (define-test |union test=eq key=other 1|
   (assert-equal '()
                 (set-difference
-		 (union '((a) (b) (c))
-			'((b) (c) (d))
-			:key #'car
-			:test #'eq)
-		 '((a) (b) (c) (d))
-		 :key #'car
-		 :test #'eq)))
+                 (union '((a) (b) (c))
+                        '((b) (c) (d))
+                        :key #'car
+                        :test #'eq)
+                 '((a) (b) (c) (d))
+                 :key #'car
+                 :test #'eq)))
 
 (define-test |union test=eq key=other 3|
   (let ((l1 (loop for code from 30 below 40 collect (list (string (code-char code)))))
-	(l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
-	(l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
+        (l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
+        (l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
     (assert-equal '()
-		  (set-difference (union (append l1 l2)
-					 (append l2 l3)
-					 :key #'car
-					 :test #'eq)
-				  (append l1 l2 l3)
-				  :test #'eq
-				  :key #'car))))
+                  (set-difference (union (append l1 l2)
+                                         (append l2 l3)
+                                         :key #'car
+                                         :test #'eq)
+                                  (append l1 l2 l3)
+                                  :test #'eq
+                                  :key #'car))))
 
 (define-test |union test=eq key=other dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :test #'eq :key #'identity)))
+                (union '(a b . c) '(b c d) :test #'eq :key #'identity)))
 
 (define-test |union test=eq key=other dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :test #'eq :key #'identity)))
+                (union '(a b c) '(b c . d) :test #'eq :key #'identity)))
 
 (define-test |union test=equal key=other 1|
   (assert-equal '()
-		(union '() '() :test #'equal :key #'car)))
+                (union '() '() :test #'equal :key #'car)))
 
 (define-test |union test=equal key=other 2|
   (assert-equal '()
-		(set-difference (union '(("abc") ("def")) '(("abc") ("ghi"))
-				       :key #'car
-				       :test #'equal)
-				'(("abc") ("def") ("ghi"))
-				:key #'car
-				:test #'equal)))
+                (set-difference (union '(("abc") ("def")) '(("abc") ("ghi"))
+                                       :key #'car
+                                       :test #'equal)
+                                '(("abc") ("def") ("ghi"))
+                                :key #'car
+                                :test #'equal)))
 
 (define-test |union test=equal key=other 3|
   (let ((l1 (loop for code from 30 below 100 collect (list (string (code-char code)))))
-	(l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
-	(l3 (loop for code from 30 below 110 collect (list (string (code-char code))))))
+        (l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
+        (l3 (loop for code from 30 below 110 collect (list (string (code-char code))))))
     (assert-equal '()
-		  (set-difference (union l1 l2 :test #'equal :key #'car)
-				  l3
-				  :test #'equal :key #'car))))
+                  (set-difference (union l1 l2 :test #'equal :key #'car)
+                                  l3
+                                  :test #'equal :key #'car))))
 
 (define-test |union test=equal key=other dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :test #'equal :key #'identity)))
+                (union '(a b . c) '(b c d) :test #'equal :key #'identity)))
 
 (define-test |union test=equal key=other dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :test #'equal :key #'identity)))
+                (union '(a b c) '(b c . d) :test #'equal :key #'identity)))
 
 (define-test |union test=equalp key=other 1|
   (assert-equal '()
-		(union '() '() :test #'equalp :key #'car)))
+                (union '() '() :test #'equalp :key #'car)))
 
 (define-test |union test=equalp key=other 2|
   (assert-equal '()
-		(set-difference (union '((#(1)) (#(2))) '((#(1)) (#(3)))
-				       :key #'car
-				       :test #'equalp)
-				'((#(1)) (#(2)) (#(3)))
-				:key #'car
-				:test #'equalp)))
+                (set-difference (union '((#(1)) (#(2))) '((#(1)) (#(3)))
+                                       :key #'car
+                                       :test #'equalp)
+                                '((#(1)) (#(2)) (#(3)))
+                                :key #'car
+                                :test #'equalp)))
 
 (define-test |union test=equalp key=other 3|
   (let ((l1 (loop for i from 30 below 100
-		  collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 40 below 110
-		  collect (list (make-array 1 :initial-element i))))
-	(l3 (loop for i from 30 below 110
-		  collect (list (make-array 1 :initial-element i)))))
+                  collect (list (make-array 1 :initial-element i))))
+        (l2 (loop for i from 40 below 110
+                  collect (list (make-array 1 :initial-element i))))
+        (l3 (loop for i from 30 below 110
+                  collect (list (make-array 1 :initial-element i)))))
     (assert-equal '()
-		  (set-difference (union l1 l2 :test #'equalp :key #'car)
-				  l3
-				  :test #'equalp :key #'car))))
+                  (set-difference (union l1 l2 :test #'equalp :key #'car)
+                                  l3
+                                  :test #'equalp :key #'car))))
 
 (define-test |union test=equalp key=other dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :test #'equalp :key #'identity)))
+                (union '(a b . c) '(b c d) :test #'equalp :key #'identity)))
 
 (define-test |union test=equalp key=other dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :test #'equalp :key #'identity)))
+                (union '(a b c) '(b c . d) :test #'equalp :key #'identity)))
 
 (define-test |union test=other key=other 1|
   (assert-equal '()
                 (set-difference
-		 (union '(1 3 5 7)
-			'(2 4 10 3)
-			:key (lambda (x) (mod x 5))
-			:test #'=)
-		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+                 (union '(1 3 5 7)
+                        '(2 4 10 3)
+                        :key (lambda (x) (mod x 5))
+                        :test #'=)
+                 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
 
 (define-test |union test=other key=other dotted-list 1|
   (assert-error 'type-error
-		(union '(a b . c) '(b c d) :test (lambda (x y) (eq x y)) :key #'identity)))
+                (union '(a b . c) '(b c d) :test (lambda (x y) (eq x y)) :key #'identity)))
 
 (define-test |union test=other key=other dotted-list 2|
   (assert-error 'type-error
-		(union '(a b c) '(b c . d) :test (lambda (x y) (eq x y)) :key #'identity)))
+                (union '(a b c) '(b c . d) :test (lambda (x y) (eq x y)) :key #'identity)))
 
 (define-test |union test-not=other key=identity 1|
   (assert-equal '()
-		(set-difference
-		 (union '(1 2 3 4)
-			'(3 4 5 6)
-			:test-not #'/=)
-		 '(1 2 3 4 5 6))))
+                (set-difference
+                 (union '(1 2 3 4)
+                        '(3 4 5 6)
+                        :test-not #'/=)
+                 '(1 2 3 4 5 6))))
 
 (define-test |union test-not=other key=other 1|
   (assert-equal '()
                 (set-difference
-		 (union '(1 3 5 7)
-			'(2 4 10 3)
-			:key (lambda (x) (mod x 5))
-			:test-not #'/=)
-		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+                 (union '(1 3 5 7)
+                        '(2 4 10 3)
+                        :key (lambda (x) (mod x 5))
+                        :test-not #'/=)
+                 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
 
 (define-test |union test=other test-not=other 1|
   (assert-error 'error
-		(union '(1 2 3) '(2 3 4) :test #'eql :test-not #'eql)))
+                (union '(1 2 3) '(2 3 4) :test #'eql :test-not #'eql)))
 
 (define-test |union test=nil key=identity 2a|
   (assert-error 'error
-		(set-difference (union '(1 2 3) '(3 4 5) :test nil)
-				'(1 2 3 4 5))))
+                (set-difference (union '(1 2 3) '(3 4 5) :test nil)
+                                '(1 2 3 4 5))))
 
 (define-test |union test-not=nil key=identity 2a|
   (assert-error 'error
-		(set-difference (union '(1 2 3) '(3 4 5) :test-not nil)
-				'(1 2 3 4 5))))
+                (set-difference (union '(1 2 3) '(3 4 5) :test-not nil)
+                                '(1 2 3 4 5))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -7211,343 +7211,343 @@
 
 (define-test |nunion test=eql key=identity 1a|
   (assert-equal '()
-		(nunion '() '())))
+                (nunion '() '())))
 
 (define-test |nunion test=eql key=identity 1b|
   (assert-equal '()
-		(nunion '() '() :test #'eql)))
+                (nunion '() '() :test #'eql)))
 
 (define-test |nunion test=eql key=identity 1c|
   (assert-equal '()
-		(nunion '() '() :test 'eql)))
+                (nunion '() '() :test 'eql)))
 
 (define-test |nunion test=eql key=identity 2a|
   (assert-equal '()
-		(set-difference (nunion (copy-list '(1 2 3))
-					(copy-list '(3 4 5)))
-				'(1 2 3 4 5))))
+                (set-difference (nunion (copy-list '(1 2 3))
+                                        (copy-list '(3 4 5)))
+                                '(1 2 3 4 5))))
 
 (define-test |nunion test=eql key=identity 2b|
   (assert-equal '()
-		(set-difference (nunion (copy-list '(1 2 3))
-					(copy-list '(3 4 5))
-					:test #'eql)
-				'(1 2 3 4 5))))
+                (set-difference (nunion (copy-list '(1 2 3))
+                                        (copy-list '(3 4 5))
+                                        :test #'eql)
+                                '(1 2 3 4 5))))
 
 (define-test |nunion test=eql key=identity 2|
   (assert-equal '()
-		(set-difference (nunion (copy-list '(1 2 3))
-					(copy-list '(3 4 5))
-					:test 'eql)
-				'(1 2 3 4 5))))
+                (set-difference (nunion (copy-list '(1 2 3))
+                                        (copy-list '(3 4 5))
+                                        :test 'eql)
+                                '(1 2 3 4 5))))
 
 (define-test |nunion test=eql key=identity 3a|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (nunion (copy-list (append l1 l2))
-					  (copy-list (append l2 l3)))
-				  (append l1 l2 l3)))))
+                  (set-difference (nunion (copy-list (append l1 l2))
+                                          (copy-list (append l2 l3)))
+                                  (append l1 l2 l3)))))
 
 (define-test |nunion test=eql key=identity 3b|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (nunion (copy-list (append l1 l2))
-					  (copy-list (append l2 l3))
-					  :test #'eql)
-				  (append l1 l2 l3)
-				  :test #'eql))))
+                  (set-difference (nunion (copy-list (append l1 l2))
+                                          (copy-list (append l2 l3))
+                                          :test #'eql)
+                                  (append l1 l2 l3)
+                                  :test #'eql))))
 
 (define-test |nunion test=eql key=identity 3c|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (nunion (copy-list (append l1 l2))
-					  (copy-list (append l2 l3))
-					  :test 'eql)
-				  (append l1 l2 l3)
-				  :test 'eql))))
+                  (set-difference (nunion (copy-list (append l1 l2))
+                                          (copy-list (append l2 l3))
+                                          :test 'eql)
+                                  (append l1 l2 l3)
+                                  :test 'eql))))
 
 (define-test |nunion test=eql key=nil 1|
   (assert-equal '()
-		(set-difference (nunion (copy-list '(1 2 3))
-					(copy-list '(3 4 5))
-					:key nil)
-				'(1 2 3 4 5))))
+                (set-difference (nunion (copy-list '(1 2 3))
+                                        (copy-list '(3 4 5))
+                                        :key nil)
+                                '(1 2 3 4 5))))
 
 (define-test |nunion test=eq key=identity 1|
   (assert-equal '()
-		(nunion '() '() :test #'eq)))
+                (nunion '() '() :test #'eq)))
 
 (define-test |nunion test=eq key=identity 2|
   (assert-equal '()
-		(set-difference (nunion '(abc def) '(abc ghi)
-				       :test #'eq)
-				'(abc def ghi)
-				:test #'eq)))
+                (set-difference (nunion '(abc def) '(abc ghi)
+                                       :test #'eq)
+                                '(abc def ghi)
+                                :test #'eq)))
 
 (define-test |nunion test=eq key=identity 3|
   (let ((l1 (loop for code from 30 below 40 collect (string (code-char code))))
-	(l2 (loop for code from 40 below 100 collect (string (code-char code))))
-	(l3 (loop for code from 100 below 110 collect (string (code-char code)))))
+        (l2 (loop for code from 40 below 100 collect (string (code-char code))))
+        (l3 (loop for code from 100 below 110 collect (string (code-char code)))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list (append l1 l2))
-					  (copy-list (append l2 l3))
-					  :test #'eq)
-				  (append l1 l2 l3)
-				  :test #'eq))))
+                  (set-difference (nunion (copy-list (append l1 l2))
+                                          (copy-list (append l2 l3))
+                                          :test #'eq)
+                                  (append l1 l2 l3)
+                                  :test #'eq))))
 
 (define-test |nunion test=equal key=identity 1|
   (assert-equal '()
-		(nunion '() '() :test #'equal)))
+                (nunion '() '() :test #'equal)))
 
 (define-test |nunion test=equal key=identity 2|
   (assert-equal '()
-		(set-difference (nunion (copy-list '("abc" "def"))
-					(copy-list '("abc" "ghi"))
-					:test #'equal)
-				'("abc" "def" "ghi")
-				:test #'equal)))
+                (set-difference (nunion (copy-list '("abc" "def"))
+                                        (copy-list '("abc" "ghi"))
+                                        :test #'equal)
+                                '("abc" "def" "ghi")
+                                :test #'equal)))
 
 (define-test |nunion test=equal key=identity 3|
   (let ((l1 (loop for code from 30 below 100 collect (string (code-char code))))
-	(l2 (loop for code from 40 below 110 collect (string (code-char code))))
-	(l3 (loop for code from 30 below 110 collect (string (code-char code)))))
+        (l2 (loop for code from 40 below 110 collect (string (code-char code))))
+        (l3 (loop for code from 30 below 110 collect (string (code-char code)))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list l1)
-					  (copy-list l2)
-					  :test #'equal)
-				  l3
-				  :test #'equal))))
+                  (set-difference (nunion (copy-list l1)
+                                          (copy-list l2)
+                                          :test #'equal)
+                                  l3
+                                  :test #'equal))))
 
 (define-test |nunion test=equalp key=identity 1|
   (assert-equal '()
-		(nunion '() '() :test #'equalp)))
+                (nunion '() '() :test #'equalp)))
 
 (define-test |nunion test=equalp key=identity 3|
   (let ((l1 (loop for i from 30 below 100
-		  collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 40 below 110
-		  collect (make-array 1 :initial-element i)))
-	(l3 (loop for i from 30 below 110
-		  collect (make-array 1 :initial-element i))))
+                  collect (make-array 1 :initial-element i)))
+        (l2 (loop for i from 40 below 110
+                  collect (make-array 1 :initial-element i)))
+        (l3 (loop for i from 30 below 110
+                  collect (make-array 1 :initial-element i))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list l1)
-					  (copy-list l2)
-					  :test #'equalp)
-				  l3
-				  :test #'equalp))))
+                  (set-difference (nunion (copy-list l1)
+                                          (copy-list l2)
+                                          :test #'equalp)
+                                  l3
+                                  :test #'equalp))))
 
 (define-test |nunion test=other key=identity 1|
   (assert-equal '()
-		(nunion '() '() :test #'<)))
+                (nunion '() '() :test #'<)))
 
 (define-test |nunion test=eql key=other 1a|
   (assert-equal 1
                 (length (nunion (copy-list '(1))
-				(copy-list '(3))
-				:key #'oddp))))
+                                (copy-list '(3))
+                                :key #'oddp))))
 
 (define-test |nunion test=eql key=other 1b|
   (assert-equal 1
                 (length (nunion (copy-list '(1))
-				(copy-list '(3))
-				:key #'oddp
-				:test #'eql))))
+                                (copy-list '(3))
+                                :key #'oddp
+                                :test #'eql))))
 
 (define-test |nunion test=eql key=other 1c|
   (assert-equal 1
                 (length (nunion (copy-list '(1))
-				(copy-list '(3))
-				:key #'oddp
-				:test 'eql))))
+                                (copy-list '(3))
+                                :key #'oddp
+                                :test 'eql))))
 
 (define-test |nunion test=eql key=other 2a|
   (assert-equal 2
                 (length (nunion (copy-list '(4 1))
-				(copy-list '(3))
-				:key #'oddp))))
+                                (copy-list '(3))
+                                :key #'oddp))))
 
 (define-test |nunion test=eql key=other 2b|
   (assert-equal 2
                 (length (nunion (copy-list '(4 1))
-				(copy-list '(3))
-				:key #'oddp
-				:test #'eql))))
+                                (copy-list '(3))
+                                :key #'oddp
+                                :test #'eql))))
 
 (define-test |nunion test=eql key=other 2c|
   (assert-equal 2
                 (length (nunion (copy-list '(4 1))
-				(copy-list '(3))
-				:key #'oddp
-				:test 'eql))))
+                                (copy-list '(3))
+                                :key #'oddp
+                                :test 'eql))))
 
 (define-test |nunion test=eql key=other 3|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list (append l1 l2))
-					  (copy-list (append l2 l3))
-					  :key #'car)
-				  (append l1 l2 l3)
-				  :key #'car))))
+                  (set-difference (nunion (copy-list (append l1 l2))
+                                          (copy-list (append l2 l3))
+                                          :key #'car)
+                                  (append l1 l2 l3)
+                                  :key #'car))))
 
 (define-test |nunion test=eql key=other 4|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list (append l1 l2))
-					  (copy-list (append l2 l3))
-					  :test #'eql
-					  :key #'car)
-				  (append l1 l2 l3)
-				  :test #'eql
-				  :key #'car))))
+                  (set-difference (nunion (copy-list (append l1 l2))
+                                          (copy-list (append l2 l3))
+                                          :test #'eql
+                                          :key #'car)
+                                  (append l1 l2 l3)
+                                  :test #'eql
+                                  :key #'car))))
 
 (define-test |nunion test=eql key=other 5|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list (append l1 l2))
-					  (copy-list (append l2 l3))
-					  :test 'eql
-					  :key #'car)
-				  (append l1 l2 l3)
-				  :test 'eql
-				  :key #'car))))
+                  (set-difference (nunion (copy-list (append l1 l2))
+                                          (copy-list (append l2 l3))
+                                          :test 'eql
+                                          :key #'car)
+                                  (append l1 l2 l3)
+                                  :test 'eql
+                                  :key #'car))))
 
 (define-test |nunion test=eq key=other 1|
   (assert-equal '()
                 (set-difference
-		 (nunion (copy-list '((a) (b) (c)))
-			 (copy-list '((b) (c) (d)))
-			 :key #'car
-			 :test #'eq)
-		 '((a) (b) (c) (d))
-		 :key #'car
-		 :test #'eq)))
+                 (nunion (copy-list '((a) (b) (c)))
+                         (copy-list '((b) (c) (d)))
+                         :key #'car
+                         :test #'eq)
+                 '((a) (b) (c) (d))
+                 :key #'car
+                 :test #'eq)))
 
 (define-test |nunion test=eq key=other 3|
   (let ((l1 (loop for code from 30 below 40 collect (list (string (code-char code)))))
-	(l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
-	(l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
+        (l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
+        (l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list (append l1 l2))
-					  (copy-list (append l2 l3))
-					  :key #'car
-					  :test #'eq)
-				  (append l1 l2 l3)
-				  :test #'eq
-				  :key #'car))))
+                  (set-difference (nunion (copy-list (append l1 l2))
+                                          (copy-list (append l2 l3))
+                                          :key #'car
+                                          :test #'eq)
+                                  (append l1 l2 l3)
+                                  :test #'eq
+                                  :key #'car))))
 
 (define-test |nunion test=equal key=other 1|
   (assert-equal '()
-		(nunion '() '() :test #'equal :key #'car)))
+                (nunion '() '() :test #'equal :key #'car)))
 
 (define-test |nunion test=equal key=other 2|
   (assert-equal '()
-		(set-difference (nunion (copy-list '(("abc") ("def")))
-					(copy-list '(("abc") ("ghi")))
-					:key #'car
-					:test #'equal)
-				'(("abc") ("def") ("ghi"))
-				:key #'car
-				:test #'equal)))
+                (set-difference (nunion (copy-list '(("abc") ("def")))
+                                        (copy-list '(("abc") ("ghi")))
+                                        :key #'car
+                                        :test #'equal)
+                                '(("abc") ("def") ("ghi"))
+                                :key #'car
+                                :test #'equal)))
 
 (define-test |nunion test=equal key=other 3|
   (let ((l1 (loop for code from 30 below 100 collect (list (string (code-char code)))))
-	(l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
-	(l3 (loop for code from 30 below 110 collect (list (string (code-char code))))))
+        (l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
+        (l3 (loop for code from 30 below 110 collect (list (string (code-char code))))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list l1)
-					  (copy-list l2)
-					  :test #'equal
-					  :key #'car)
-				  l3
-				  :test #'equal :key #'car))))
+                  (set-difference (nunion (copy-list l1)
+                                          (copy-list l2)
+                                          :test #'equal
+                                          :key #'car)
+                                  l3
+                                  :test #'equal :key #'car))))
 
 (define-test |nunion test=equalp key=other 1|
   (assert-equal '()
-		(nunion '() '() :test #'equalp :key #'car)))
+                (nunion '() '() :test #'equalp :key #'car)))
 
 (define-test |nunion test=equalp key=other 2|
   (assert-equal '()
-		(set-difference (nunion (copy-list '((#(1)) (#(2))))
-					(copy-list '((#(1)) (#(3))))
-					:key #'car
-					:test #'equalp)
-				'((#(1)) (#(2)) (#(3)))
-				:key #'car
-				:test #'equalp)))
+                (set-difference (nunion (copy-list '((#(1)) (#(2))))
+                                        (copy-list '((#(1)) (#(3))))
+                                        :key #'car
+                                        :test #'equalp)
+                                '((#(1)) (#(2)) (#(3)))
+                                :key #'car
+                                :test #'equalp)))
 
 (define-test |nunion test=equalp key=other 3|
   (let ((l1 (loop for i from 30 below 100
-		  collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 40 below 110
-		  collect (list (make-array 1 :initial-element i))))
-	(l3 (loop for i from 30 below 110
-		  collect (list (make-array 1 :initial-element i)))))
+                  collect (list (make-array 1 :initial-element i))))
+        (l2 (loop for i from 40 below 110
+                  collect (list (make-array 1 :initial-element i))))
+        (l3 (loop for i from 30 below 110
+                  collect (list (make-array 1 :initial-element i)))))
     (assert-equal '()
-		  (set-difference (nunion (copy-list l1)
-					  (copy-list l2)
-					  :test #'equalp
-					  :key #'car)
-				  l3
-				  :test #'equalp :key #'car))))
+                  (set-difference (nunion (copy-list l1)
+                                          (copy-list l2)
+                                          :test #'equalp
+                                          :key #'car)
+                                  l3
+                                  :test #'equalp :key #'car))))
 
 (define-test |nunion test=other key=other 1|
   (assert-equal '()
                 (set-difference
-		 (nunion (copy-list '(1 3 5 7))
-			 (copy-list '(2 4 10 3))
-			 :key (lambda (x) (mod x 5))
-			 :test #'=)
-		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+                 (nunion (copy-list '(1 3 5 7))
+                         (copy-list '(2 4 10 3))
+                         :key (lambda (x) (mod x 5))
+                         :test #'=)
+                 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
 
 (define-test |nunion test-not=other key=identity 1|
   (assert-equal '()
-		(set-difference
-		 (nunion (copy-list '(1 2 3 4))
-			 (copy-list '(3 4 5 6))
-			 :test-not #'/=)
-		 '(1 2 3 4 5 6))))
+                (set-difference
+                 (nunion (copy-list '(1 2 3 4))
+                         (copy-list '(3 4 5 6))
+                         :test-not #'/=)
+                 '(1 2 3 4 5 6))))
 
 (define-test |nunion test-not=other key=other 1|
   (assert-equal '()
                 (set-difference
-		 (nunion (copy-list '(1 3 5 7))
-			 (copy-list '(2 4 10 3))
-			 :key (lambda (x) (mod x 5))
-			 :test-not #'/=)
-		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+                 (nunion (copy-list '(1 3 5 7))
+                         (copy-list '(2 4 10 3))
+                         :key (lambda (x) (mod x 5))
+                         :test-not #'/=)
+                 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
 
 (define-test |nunion test=other test-not=other 1|
   (assert-error 'error
-		(nunion (copy-list '(1 2 3))
-			(copy-list '(2 3 4))
-			:test #'eql
-			:test-not #'eql)))
+                (nunion (copy-list '(1 2 3))
+                        (copy-list '(2 3 4))
+                        :test #'eql
+                        :test-not #'eql)))
 
 (define-test |nunion test=nil key=identity 1|
   (assert-error 'error
-		(set-difference (nunion (copy-list '(1 2 3))
-					(copy-list '(3 4 5))
-					:test nil)
-				'(1 2 3 4 5))))
+                (set-difference (nunion (copy-list '(1 2 3))
+                                        (copy-list '(3 4 5))
+                                        :test nil)
+                                '(1 2 3 4 5))))
 
 (define-test |nunion test-not=nil key=identity 1|
   (assert-error 'error
-		(set-difference (nunion (copy-list '(1 2 3))
-					(copy-list '(3 4 5))
-					:test-not nil)
-				'(1 2 3 4 5))))
+                (set-difference (nunion (copy-list '(1 2 3))
+                                        (copy-list '(3 4 5))
+                                        :test-not nil)
+                                '(1 2 3 4 5))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -7555,355 +7555,355 @@
 
 (define-test |intersection test=eql key=identity 1a|
   (assert-equal '()
-		(intersection '() '())))
+                (intersection '() '())))
 
 (define-test |intersection test=eql key=identity 1b|
   (assert-equal '()
-		(intersection '() '() :test #'eql)))
+                (intersection '() '() :test #'eql)))
 
 (define-test |intersection test=eql key=identity 1c|
   (assert-equal '()
-		(intersection '() '() :test 'eql)))
+                (intersection '() '() :test 'eql)))
 
 (define-test |intersection test=eql key=identity 2a|
   (assert-equal '()
-		(set-difference (intersection (copy-list '(1 2 3 4))
-					      (copy-list '(2 3 4 5)))
-				'(2 3 4))))
+                (set-difference (intersection (copy-list '(1 2 3 4))
+                                              (copy-list '(2 3 4 5)))
+                                '(2 3 4))))
 
 (define-test |intersection test=eql key=identity 2b|
   (assert-equal '()
-		(set-difference (intersection (copy-list '(1 2 3 4))
-					      (copy-list '(2 3 4 5))
-					      :test #'eql)
-				'(2 3 4))))
+                (set-difference (intersection (copy-list '(1 2 3 4))
+                                              (copy-list '(2 3 4 5))
+                                              :test #'eql)
+                                '(2 3 4))))
 
 (define-test |intersection test=eql key=identity 2|
   (assert-equal '()
-		(set-difference (intersection (copy-list '(1 2 3 4))
-					      (copy-list '(2 3 4 5))
-					      :test 'eql)
-				'(2 3 4))))
+                (set-difference (intersection (copy-list '(1 2 3 4))
+                                              (copy-list '(2 3 4 5))
+                                              :test 'eql)
+                                '(2 3 4))))
 
 (define-test |intersection test=eql key=identity 3a|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3)))
-				  l2))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3)))
+                                  l2))))
 
 (define-test |intersection test=eql key=identity 3b|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:test #'eql)
-				  l2
-				  :test #'eql))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :test #'eql)
+                                  l2
+                                  :test #'eql))))
 
 (define-test |intersection test=eql key=identity 3c|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:test 'eql)
-				  l2
-				  :test 'eql))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :test 'eql)
+                                  l2
+                                  :test 'eql))))
 
 (define-test |intersection test=eql key=nil 1|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:key nil)
-				  l2))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :key nil)
+                                  l2))))
 
 (define-test |intersection test=eq key=identity 1|
   (assert-equal '()
-		(intersection '() '() :test #'eq)))
+                (intersection '() '() :test #'eq)))
 
 (define-test |intersection test=eq key=identity 2|
   (assert-equal '()
-		(set-difference (intersection '(abc def) '(abc ghi)
-					      :test #'eq)
-				'(abc)
-				:test #'eq)))
+                (set-difference (intersection '(abc def) '(abc ghi)
+                                              :test #'eq)
+                                '(abc)
+                                :test #'eq)))
 
 (define-test |intersection test=eq key=identity 3|
   (let ((l1 (loop for code from 30 below 40 collect (string (code-char code))))
-	(l2 (loop for code from 40 below 100 collect (string (code-char code))))
-	(l3 (loop for code from 100 below 110 collect (string (code-char code)))))
+        (l2 (loop for code from 40 below 100 collect (string (code-char code))))
+        (l3 (loop for code from 100 below 110 collect (string (code-char code)))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:test #'eq)
-				  l2
-				  :test #'eq))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :test #'eq)
+                                  l2
+                                  :test #'eq))))
 
 (define-test |intersection test=equal key=identity 1|
   (assert-equal '()
-		(intersection '() '() :test #'equal)))
+                (intersection '() '() :test #'equal)))
 
 (define-test |intersection test=equal key=identity 2|
   (assert-equal '()
-		(set-difference (intersection (copy-list '("abc" "def"))
-					      (copy-list '("abc" "ghi"))
-					      :test #'equal)
-				'("abc")
-				:test #'equal)))
+                (set-difference (intersection (copy-list '("abc" "def"))
+                                              (copy-list '("abc" "ghi"))
+                                              :test #'equal)
+                                '("abc")
+                                :test #'equal)))
 
 (define-test |intersection test=equal key=identity 3|
   (let ((l1 (loop for code from 30 below 100 collect (string (code-char code))))
-	(l2 (loop for code from 40 below 110 collect (string (code-char code))))
-	(l3 (loop for code from 40 below 100 collect (string (code-char code)))))
+        (l2 (loop for code from 40 below 110 collect (string (code-char code))))
+        (l3 (loop for code from 40 below 100 collect (string (code-char code)))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list l1)
-						(copy-list l2)
-						:test #'equal)
-				  l3
-				  :test #'equal))))
+                  (set-difference (intersection (copy-list l1)
+                                                (copy-list l2)
+                                                :test #'equal)
+                                  l3
+                                  :test #'equal))))
 
 (define-test |intersection test=equalp key=identity 1|
   (assert-equal '()
-		(intersection '() '() :test #'equalp)))
+                (intersection '() '() :test #'equalp)))
 
 (define-test |intersection test=equalp key=identity 3|
   (let ((l1 (loop for i from 30 below 100
-		  collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 40 below 110
-		  collect (make-array 1 :initial-element i)))
-	(l3 (loop for i from 40 below 100
-		  collect (make-array 1 :initial-element i))))
+                  collect (make-array 1 :initial-element i)))
+        (l2 (loop for i from 40 below 110
+                  collect (make-array 1 :initial-element i)))
+        (l3 (loop for i from 40 below 100
+                  collect (make-array 1 :initial-element i))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list l1)
-						(copy-list l2)
-						:test #'equalp)
-				  l3
-				  :test #'equalp))))
+                  (set-difference (intersection (copy-list l1)
+                                                (copy-list l2)
+                                                :test #'equalp)
+                                  l3
+                                  :test #'equalp))))
 
 (define-test |intersection test=other key=identity 1|
   (assert-equal '()
-		(intersection '() '() :test #'<)))
+                (intersection '() '() :test #'<)))
 
 (define-test |intersection test=eql key=other 1a|
   (assert-equal 1
                 (length (intersection (copy-list '(1))
-				      (copy-list '(3))
-				      :key #'oddp))))
+                                      (copy-list '(3))
+                                      :key #'oddp))))
 
 (define-test |intersection test=eql key=other 1b|
   (assert-equal 1
                 (length (intersection (copy-list '(1))
-				      (copy-list '(3))
-				      :key #'oddp
-				      :test #'eql))))
+                                      (copy-list '(3))
+                                      :key #'oddp
+                                      :test #'eql))))
 
 (define-test |intersection test=eql key=other 1c|
   (assert-equal 1
                 (length (intersection (copy-list '(1))
-				      (copy-list '(3))
-				      :key #'oddp
-				      :test 'eql))))
+                                      (copy-list '(3))
+                                      :key #'oddp
+                                      :test 'eql))))
 
 (define-test |intersection test=eql key=other 2a|
   (assert-equal 1
                 (length (intersection (copy-list '(4 1))
-				      (copy-list '(3))
-				      :key #'oddp))))
+                                      (copy-list '(3))
+                                      :key #'oddp))))
 
 (define-test |intersection test=eql key=other 2b|
   (assert-equal 1
                 (length (intersection (copy-list '(4 1))
-				      (copy-list '(3))
-				      :key #'oddp
-				      :test #'eql))))
+                                      (copy-list '(3))
+                                      :key #'oddp
+                                      :test #'eql))))
 
 (define-test |intersection test=eql key=other 2c|
   (assert-equal 1
                 (length (intersection (copy-list '(4 1))
-				      (copy-list '(3))
-				      :key #'oddp
-				      :test 'eql))))
+                                      (copy-list '(3))
+                                      :key #'oddp
+                                      :test 'eql))))
 
 (define-test |intersection test=eql key=other 3|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:key #'car)
-				  l2
-				  :key #'car))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :key #'car)
+                                  l2
+                                  :key #'car))))
 
 (define-test |intersection test=eql key=other 4|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:test #'eql
-						:key #'car)
-				  l2
-				  :test #'eql
-				  :key #'car))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :test #'eql
+                                                :key #'car)
+                                  l2
+                                  :test #'eql
+                                  :key #'car))))
 
 (define-test |intersection test=eql key=other 5|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:test 'eql
-						:key #'car)
-				  l2
-				  :test 'eql
-				  :key #'car))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :test 'eql
+                                                :key #'car)
+                                  l2
+                                  :test 'eql
+                                  :key #'car))))
 
 (define-test |intersection test=eq key=other 1|
   (assert-equal '()
                 (set-difference
-		 (intersection (copy-list '((a) (b) (c)))
-			       (copy-list '((b) (c) (d)))
-			       :key #'car
-			       :test #'eq)
-		 '((b) (c))
-		 :key #'car
-		 :test #'eq)))
+                 (intersection (copy-list '((a) (b) (c)))
+                               (copy-list '((b) (c) (d)))
+                               :key #'car
+                               :test #'eq)
+                 '((b) (c))
+                 :key #'car
+                 :test #'eq)))
 
 (define-test |intersection test=eq key=other 3|
   (let ((l1 (loop for code from 30 below 40 collect (list (string (code-char code)))))
-	(l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
-	(l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
+        (l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
+        (l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:key #'car
-						:test #'eq)
-				  l2
-				  :test #'eq
-				  :key #'car))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :key #'car
+                                                :test #'eq)
+                                  l2
+                                  :test #'eq
+                                  :key #'car))))
 
 (define-test |intersection test=equal key=other 1|
   (assert-equal '()
-		(intersection '()
-			      '()
-			      :test #'equal
-			      :key #'car)))
+                (intersection '()
+                              '()
+                              :test #'equal
+                              :key #'car)))
 
 (define-test |intersection test=equal key=other 2|
   (assert-equal '()
-		(set-difference (intersection (copy-list '(("abc") ("def")))
-					      (copy-list '(("abc") ("ghi")))
-					      :key #'car
-					      :test #'equal)
-				'(("abc"))
-				:key #'car
-				:test #'equal)))
+                (set-difference (intersection (copy-list '(("abc") ("def")))
+                                              (copy-list '(("abc") ("ghi")))
+                                              :key #'car
+                                              :test #'equal)
+                                '(("abc"))
+                                :key #'car
+                                :test #'equal)))
 
 (define-test |intersection test=equal key=other 3|
   (let ((l1 (loop for code from 30 below 100 collect (list (string (code-char code)))))
-	(l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
-	(l3 (loop for code from 40 below 100 collect (list (string (code-char code))))))
+        (l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
+        (l3 (loop for code from 40 below 100 collect (list (string (code-char code))))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list l1)
-						(copy-list l2)
-						:test #'equal
-						:key #'car)
-				  l3
-				  :test #'equal :key #'car))))
+                  (set-difference (intersection (copy-list l1)
+                                                (copy-list l2)
+                                                :test #'equal
+                                                :key #'car)
+                                  l3
+                                  :test #'equal :key #'car))))
 
 (define-test |intersection test=equalp key=other 1|
   (assert-equal '()
-		(intersection '() '() :test #'equalp :key #'car)))
+                (intersection '() '() :test #'equalp :key #'car)))
 
 (define-test |intersection test=equalp key=other 2|
   (assert-equal '()
-		(set-difference (intersection (copy-list '((#(1)) (#(2))))
-					      (copy-list '((#(1)) (#(3))))
-					      :key #'car
-					      :test #'equalp)
-				'((#(1)))
-				:key #'car
-				:test #'equalp)))
+                (set-difference (intersection (copy-list '((#(1)) (#(2))))
+                                              (copy-list '((#(1)) (#(3))))
+                                              :key #'car
+                                              :test #'equalp)
+                                '((#(1)))
+                                :key #'car
+                                :test #'equalp)))
 
 (define-test |intersection test=equalp key=other 3|
   (let ((l1 (loop for i from 30 below 100
-		  collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 40 below 110
-		  collect (list (make-array 1 :initial-element i))))
-	(l3 (loop for i from 40 below 100
-		  collect (list (make-array 1 :initial-element i)))))
+                  collect (list (make-array 1 :initial-element i))))
+        (l2 (loop for i from 40 below 110
+                  collect (list (make-array 1 :initial-element i))))
+        (l3 (loop for i from 40 below 100
+                  collect (list (make-array 1 :initial-element i)))))
     (assert-equal '()
-		  (set-difference (intersection (copy-list l1)
-						(copy-list l2)
-						:test #'equalp
-						:key #'car)
-				  l3
-				  :test #'equalp :key #'car))))
+                  (set-difference (intersection (copy-list l1)
+                                                (copy-list l2)
+                                                :test #'equalp
+                                                :key #'car)
+                                  l3
+                                  :test #'equalp :key #'car))))
 
 (define-test |intersection test=other key=other 1|
   (assert-equal '()
                 (set-difference
-		 (intersection (copy-list '(1 3 5 7))
-			       (copy-list '(2 4 10 3))
-			       :key (lambda (x) (mod x 5))
-			       :test #'=)
-		 '(3 5 7) :key (lambda (x) (mod x 5)))))
+                 (intersection (copy-list '(1 3 5 7))
+                               (copy-list '(2 4 10 3))
+                               :key (lambda (x) (mod x 5))
+                               :test #'=)
+                 '(3 5 7) :key (lambda (x) (mod x 5)))))
 
 (define-test |intersection test-not=other key=identity 1|
   (assert-equal '()
-		(set-difference
-		 (intersection (copy-list '(1 2 3 4))
-			       (copy-list '(3 4 5 6))
-			       :test-not #'/=)
-		 '(3 4))))
+                (set-difference
+                 (intersection (copy-list '(1 2 3 4))
+                               (copy-list '(3 4 5 6))
+                               :test-not #'/=)
+                 '(3 4))))
 
 (define-test |intersection test-not=other key=other 1|
   (assert-equal '()
                 (set-difference
-		 (intersection (copy-list '(1 3 5 7))
-			       (copy-list '(2 4 10 3))
-			       :key (lambda (x) (mod x 5))
-			       :test-not #'/=)
-		 '(3 5 7) :key (lambda (x) (mod x 5)))))
+                 (intersection (copy-list '(1 3 5 7))
+                               (copy-list '(2 4 10 3))
+                               :key (lambda (x) (mod x 5))
+                               :test-not #'/=)
+                 '(3 5 7) :key (lambda (x) (mod x 5)))))
 
 (define-test |intersection test=other test-not=other 1|
   (assert-error 'error
-		(intersection (copy-list '(1 2 3))
-			      (copy-list '(2 3 4))
-			      :test #'eql
-			      :test-not #'eql)))
+                (intersection (copy-list '(1 2 3))
+                              (copy-list '(2 3 4))
+                              :test #'eql
+                              :test-not #'eql)))
 
 (define-test |intersection test=nil key=identity 1|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-error 'error
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:test nil)
-				  l2))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :test nil)
+                                  l2))))
 
 (define-test |intersection test-not=nil key=identity 1|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-error 'error
-		  (set-difference (intersection (copy-list (append l1 l2))
-						(copy-list (append l2 l3))
-						:test-not nil)
-				  l2))))
+                  (set-difference (intersection (copy-list (append l1 l2))
+                                                (copy-list (append l2 l3))
+                                                :test-not nil)
+                                  l2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -7911,355 +7911,355 @@
 
 (define-test |nintersection test=eql key=identity 1a|
   (assert-equal '()
-		(nintersection '() '())))
+                (nintersection '() '())))
 
 (define-test |nintersection test=eql key=identity 1b|
   (assert-equal '()
-		(nintersection '() '() :test #'eql)))
+                (nintersection '() '() :test #'eql)))
 
 (define-test |nintersection test=eql key=identity 1c|
   (assert-equal '()
-		(nintersection '() '() :test 'eql)))
+                (nintersection '() '() :test 'eql)))
 
 (define-test |nintersection test=eql key=identity 2a|
   (assert-equal '()
-		(set-difference (nintersection (copy-list '(1 2 3 4))
-					       (copy-list '(2 3 4 5)))
-				'(2 3 4))))
+                (set-difference (nintersection (copy-list '(1 2 3 4))
+                                               (copy-list '(2 3 4 5)))
+                                '(2 3 4))))
 
 (define-test |nintersection test=eql key=identity 2b|
   (assert-equal '()
-		(set-difference (nintersection (copy-list '(1 2 3 4))
-					       (copy-list '(2 3 4 5))
-					       :test #'eql)
-				'(2 3 4))))
+                (set-difference (nintersection (copy-list '(1 2 3 4))
+                                               (copy-list '(2 3 4 5))
+                                               :test #'eql)
+                                '(2 3 4))))
 
 (define-test |nintersection test=eql key=identity 2|
   (assert-equal '()
-		(set-difference (nintersection (copy-list '(1 2 3 4))
-					       (copy-list '(2 3 4 5))
-					       :test 'eql)
-				'(2 3 4))))
+                (set-difference (nintersection (copy-list '(1 2 3 4))
+                                               (copy-list '(2 3 4 5))
+                                               :test 'eql)
+                                '(2 3 4))))
 
 (define-test |nintersection test=eql key=identity 3a|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3)))
-				  l2))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3)))
+                                  l2))))
 
 (define-test |nintersection test=eql key=identity 3b|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :test #'eql)
-				  l2
-				  :test #'eql))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :test #'eql)
+                                  l2
+                                  :test #'eql))))
 
 (define-test |nintersection test=eql key=identity 3c|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :test 'eql)
-				  l2
-				  :test 'eql))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :test 'eql)
+                                  l2
+                                  :test 'eql))))
 
 (define-test |nintersection test=eql key=nil 1|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :key nil)
-				  l2))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :key nil)
+                                  l2))))
 
 (define-test |nintersection test=eq key=identity 1|
   (assert-equal '()
-		(nintersection '() '() :test #'eq)))
+                (nintersection '() '() :test #'eq)))
 
 (define-test |nintersection test=eq key=identity 2|
   (assert-equal '()
-		(set-difference (nintersection '(abc def) '(abc ghi)
-					       :test #'eq)
-				'(abc)
-				:test #'eq)))
+                (set-difference (nintersection '(abc def) '(abc ghi)
+                                               :test #'eq)
+                                '(abc)
+                                :test #'eq)))
 
 (define-test |nintersection test=eq key=identity 3|
   (let ((l1 (loop for code from 30 below 40 collect (string (code-char code))))
-	(l2 (loop for code from 40 below 100 collect (string (code-char code))))
-	(l3 (loop for code from 100 below 110 collect (string (code-char code)))))
+        (l2 (loop for code from 40 below 100 collect (string (code-char code))))
+        (l3 (loop for code from 100 below 110 collect (string (code-char code)))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :test #'eq)
-				  l2
-				  :test #'eq))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :test #'eq)
+                                  l2
+                                  :test #'eq))))
 
 (define-test |nintersection test=equal key=identity 1|
   (assert-equal '()
-		(nintersection '() '() :test #'equal)))
+                (nintersection '() '() :test #'equal)))
 
 (define-test |nintersection test=equal key=identity 2|
   (assert-equal '()
-		(set-difference (nintersection (copy-list '("abc" "def"))
-					       (copy-list '("abc" "ghi"))
-					       :test #'equal)
-				'("abc")
-				:test #'equal)))
+                (set-difference (nintersection (copy-list '("abc" "def"))
+                                               (copy-list '("abc" "ghi"))
+                                               :test #'equal)
+                                '("abc")
+                                :test #'equal)))
 
 (define-test |nintersection test=equal key=identity 3|
   (let ((l1 (loop for code from 30 below 100 collect (string (code-char code))))
-	(l2 (loop for code from 40 below 110 collect (string (code-char code))))
-	(l3 (loop for code from 40 below 100 collect (string (code-char code)))))
+        (l2 (loop for code from 40 below 110 collect (string (code-char code))))
+        (l3 (loop for code from 40 below 100 collect (string (code-char code)))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list l1)
-						 (copy-list l2)
-						 :test #'equal)
-				  l3
-				  :test #'equal))))
+                  (set-difference (nintersection (copy-list l1)
+                                                 (copy-list l2)
+                                                 :test #'equal)
+                                  l3
+                                  :test #'equal))))
 
 (define-test |nintersection test=equalp key=identity 1|
   (assert-equal '()
-		(nintersection '() '() :test #'equalp)))
+                (nintersection '() '() :test #'equalp)))
 
 (define-test |nintersection test=equalp key=identity 3|
   (let ((l1 (loop for i from 30 below 100
-		  collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 40 below 110
-		  collect (make-array 1 :initial-element i)))
-	(l3 (loop for i from 40 below 100
-		  collect (make-array 1 :initial-element i))))
+                  collect (make-array 1 :initial-element i)))
+        (l2 (loop for i from 40 below 110
+                  collect (make-array 1 :initial-element i)))
+        (l3 (loop for i from 40 below 100
+                  collect (make-array 1 :initial-element i))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list l1)
-						 (copy-list l2)
-						 :test #'equalp)
-				  l3
-				  :test #'equalp))))
+                  (set-difference (nintersection (copy-list l1)
+                                                 (copy-list l2)
+                                                 :test #'equalp)
+                                  l3
+                                  :test #'equalp))))
 
 (define-test |nintersection test=other key=identity 1|
   (assert-equal '()
-		(nintersection '() '() :test #'<)))
+                (nintersection '() '() :test #'<)))
 
 (define-test |nintersection test=eql key=other 1a|
   (assert-equal 1
                 (length (nintersection (copy-list '(1))
-				       (copy-list '(3))
-				       :key #'oddp))))
+                                       (copy-list '(3))
+                                       :key #'oddp))))
 
 (define-test |nintersection test=eql key=other 1b|
   (assert-equal 1
                 (length (nintersection (copy-list '(1))
-				       (copy-list '(3))
-				       :key #'oddp
-				       :test #'eql))))
+                                       (copy-list '(3))
+                                       :key #'oddp
+                                       :test #'eql))))
 
 (define-test |nintersection test=eql key=other 1c|
   (assert-equal 1
                 (length (nintersection (copy-list '(1))
-				       (copy-list '(3))
-				       :key #'oddp
-				       :test 'eql))))
+                                       (copy-list '(3))
+                                       :key #'oddp
+                                       :test 'eql))))
 
 (define-test |nintersection test=eql key=other 2a|
   (assert-equal 1
                 (length (nintersection (copy-list '(4 1))
-				       (copy-list '(3))
-				       :key #'oddp))))
+                                       (copy-list '(3))
+                                       :key #'oddp))))
 
 (define-test |nintersection test=eql key=other 2b|
   (assert-equal 1
                 (length (nintersection (copy-list '(4 1))
-				       (copy-list '(3))
-				       :key #'oddp
-				       :test #'eql))))
+                                       (copy-list '(3))
+                                       :key #'oddp
+                                       :test #'eql))))
 
 (define-test |nintersection test=eql key=other 2c|
   (assert-equal 1
                 (length (nintersection (copy-list '(4 1))
-				       (copy-list '(3))
-				       :key #'oddp
-				       :test 'eql))))
+                                       (copy-list '(3))
+                                       :key #'oddp
+                                       :test 'eql))))
 
 (define-test |nintersection test=eql key=other 3|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :key #'car)
-				  l2
-				  :key #'car))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :key #'car)
+                                  l2
+                                  :key #'car))))
 
 (define-test |nintersection test=eql key=other 4|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :test #'eql
-						 :key #'car)
-				  l2
-				  :test #'eql
-				  :key #'car))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :test #'eql
+                                                 :key #'car)
+                                  l2
+                                  :test #'eql
+                                  :key #'car))))
 
 (define-test |nintersection test=eql key=other 5|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
-	(l2 (loop for i from 40 below 100 collect (list i)))
-	(l3 (loop for i from 100 below 110 collect (list i))))
+        (l2 (loop for i from 40 below 100 collect (list i)))
+        (l3 (loop for i from 100 below 110 collect (list i))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :test 'eql
-						 :key #'car)
-				  l2
-				  :test 'eql
-				  :key #'car))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :test 'eql
+                                                 :key #'car)
+                                  l2
+                                  :test 'eql
+                                  :key #'car))))
 
 (define-test |nintersection test=eq key=other 1|
   (assert-equal '()
                 (set-difference
-		 (nintersection (copy-list '((a) (b) (c)))
-				(copy-list '((b) (c) (d)))
-				:key #'car
-				:test #'eq)
-		 '((b) (c))
-		 :key #'car
-		 :test #'eq)))
+                 (nintersection (copy-list '((a) (b) (c)))
+                                (copy-list '((b) (c) (d)))
+                                :key #'car
+                                :test #'eq)
+                 '((b) (c))
+                 :key #'car
+                 :test #'eq)))
 
 (define-test |nintersection test=eq key=other 3|
   (let ((l1 (loop for code from 30 below 40 collect (list (string (code-char code)))))
-	(l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
-	(l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
+        (l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
+        (l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :key #'car
-						 :test #'eq)
-				  l2
-				  :test #'eq
-				  :key #'car))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :key #'car
+                                                 :test #'eq)
+                                  l2
+                                  :test #'eq
+                                  :key #'car))))
 
 (define-test |nintersection test=equal key=other 1|
   (assert-equal '()
-		(nintersection '()
-			       '()
-			       :test #'equal
-			       :key #'car)))
+                (nintersection '()
+                               '()
+                               :test #'equal
+                               :key #'car)))
 
 (define-test |nintersection test=equal key=other 2|
   (assert-equal '()
-		(set-difference (nintersection (copy-list '(("abc") ("def")))
-					       (copy-list '(("abc") ("ghi")))
-					       :key #'car
-					       :test #'equal)
-				'(("abc"))
-				:key #'car
-				:test #'equal)))
+                (set-difference (nintersection (copy-list '(("abc") ("def")))
+                                               (copy-list '(("abc") ("ghi")))
+                                               :key #'car
+                                               :test #'equal)
+                                '(("abc"))
+                                :key #'car
+                                :test #'equal)))
 
 (define-test |nintersection test=equal key=other 3|
   (let ((l1 (loop for code from 30 below 100 collect (list (string (code-char code)))))
-	(l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
-	(l3 (loop for code from 40 below 100 collect (list (string (code-char code))))))
+        (l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
+        (l3 (loop for code from 40 below 100 collect (list (string (code-char code))))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list l1)
-						 (copy-list l2)
-						 :test #'equal
-						 :key #'car)
-				  l3
-				  :test #'equal :key #'car))))
+                  (set-difference (nintersection (copy-list l1)
+                                                 (copy-list l2)
+                                                 :test #'equal
+                                                 :key #'car)
+                                  l3
+                                  :test #'equal :key #'car))))
 
 (define-test |nintersection test=equalp key=other 1|
   (assert-equal '()
-		(nintersection '() '() :test #'equalp :key #'car)))
+                (nintersection '() '() :test #'equalp :key #'car)))
 
 (define-test |nintersection test=equalp key=other 2|
   (assert-equal '()
-		(set-difference (nintersection (copy-list '((#(1)) (#(2))))
-					       (copy-list '((#(1)) (#(3))))
-					       :key #'car
-					       :test #'equalp)
-				'((#(1)))
-				:key #'car
-				:test #'equalp)))
+                (set-difference (nintersection (copy-list '((#(1)) (#(2))))
+                                               (copy-list '((#(1)) (#(3))))
+                                               :key #'car
+                                               :test #'equalp)
+                                '((#(1)))
+                                :key #'car
+                                :test #'equalp)))
 
 (define-test |nintersection test=equalp key=other 3|
   (let ((l1 (loop for i from 30 below 100
-		  collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 40 below 110
-		  collect (list (make-array 1 :initial-element i))))
-	(l3 (loop for i from 40 below 100
-		  collect (list (make-array 1 :initial-element i)))))
+                  collect (list (make-array 1 :initial-element i))))
+        (l2 (loop for i from 40 below 110
+                  collect (list (make-array 1 :initial-element i))))
+        (l3 (loop for i from 40 below 100
+                  collect (list (make-array 1 :initial-element i)))))
     (assert-equal '()
-		  (set-difference (nintersection (copy-list l1)
-						 (copy-list l2)
-						 :test #'equalp
-						 :key #'car)
-				  l3
-				  :test #'equalp :key #'car))))
+                  (set-difference (nintersection (copy-list l1)
+                                                 (copy-list l2)
+                                                 :test #'equalp
+                                                 :key #'car)
+                                  l3
+                                  :test #'equalp :key #'car))))
 
 (define-test |nintersection test=other key=other 1|
   (assert-equal '()
                 (set-difference
-		 (nintersection (copy-list '(1 3 5 7))
-				(copy-list '(2 4 10 3))
-				:key (lambda (x) (mod x 5))
-				:test #'=)
-		 '(3 5 7) :key (lambda (x) (mod x 5)))))
+                 (nintersection (copy-list '(1 3 5 7))
+                                (copy-list '(2 4 10 3))
+                                :key (lambda (x) (mod x 5))
+                                :test #'=)
+                 '(3 5 7) :key (lambda (x) (mod x 5)))))
 
 (define-test |nintersection test-not=other key=identity 1|
   (assert-equal '()
-		(set-difference
-		 (nintersection (copy-list '(1 2 3 4))
-				(copy-list '(3 4 5 6))
-				:test-not #'/=)
-		 '(3 4))))
+                (set-difference
+                 (nintersection (copy-list '(1 2 3 4))
+                                (copy-list '(3 4 5 6))
+                                :test-not #'/=)
+                 '(3 4))))
 
 (define-test |nintersection test-not=other key=other 1|
   (assert-equal '()
                 (set-difference
-		 (nintersection (copy-list '(1 3 5 7))
-				(copy-list '(2 4 10 3))
-				:key (lambda (x) (mod x 5))
-				:test-not #'/=)
-		 '(3 5 7) :key (lambda (x) (mod x 5)))))
+                 (nintersection (copy-list '(1 3 5 7))
+                                (copy-list '(2 4 10 3))
+                                :key (lambda (x) (mod x 5))
+                                :test-not #'/=)
+                 '(3 5 7) :key (lambda (x) (mod x 5)))))
 
 (define-test |nintersection test=other test-not=other 1|
   (assert-error 'error
-		(nintersection (copy-list '(1 2 3))
-			       (copy-list '(2 3 4))
-			       :test #'eql
-			       :test-not #'eql)))
+                (nintersection (copy-list '(1 2 3))
+                               (copy-list '(2 3 4))
+                               :test #'eql
+                               :test-not #'eql)))
 
 (define-test |nintersection test=nil key=identity 1|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-error 'error
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :test nil)
-				  l2))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :test nil)
+                                  l2))))
 
 (define-test |nintersection test-not=nil key=identity 1|
   (let ((l1 (loop for i from 30 below 40 collect i))
-	(l2 (loop for i from 40 below 100 collect i))
-	(l3 (loop for i from 100 below 110 collect i)))
+        (l2 (loop for i from 40 below 100 collect i))
+        (l3 (loop for i from 100 below 110 collect i)))
     (assert-error 'error
-		  (set-difference (nintersection (copy-list (append l1 l2))
-						 (copy-list (append l2 l3))
-						 :test-not nil)
-				  l2))))
+                  (set-difference (nintersection (copy-list (append l1 l2))
+                                                 (copy-list (append l2 l3))
+                                                 :test-not nil)
+                                  l2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -8267,443 +8267,443 @@
 
 (define-test |set-difference test=eql key=identity 1a|
   (assert-equal '()
-		(set-difference '() '())))
+                (set-difference '() '())))
 
 (define-test |set-difference test=eql key=identity 1b|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:test #'eql)))
+                (set-difference '()
+                                '()
+                                :test #'eql)))
 
 (define-test |set-difference test=eql key=identity 1c|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:test 'eql)))
+                (set-difference '()
+                                '()
+                                :test 'eql)))
 
 (define-test |set-difference test=eql key=identity 2a|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)))))
 
 (define-test |set-difference test=eql key=identity 2b|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :test #'eql))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :test #'eql))))
 
 (define-test |set-difference test=eql key=identity 2c|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :test 'eql))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :test 'eql))))
 
 (define-test |set-difference test=eql key=identity 3a|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 200 collect i)))
+        (l2 (loop for i from 2 below 200 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)))))
 
 (define-test |set-difference test=eql key=identity 3b|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 200 collect i)))
+        (l2 (loop for i from 2 below 200 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :test #'eql))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :test #'eql))))
 
 (define-test |set-difference test=eql key=identity 3c|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 200 collect i)))
+        (l2 (loop for i from 2 below 200 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :test 'eql))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :test 'eql))))
 
 (define-test |set-difference test=eql key=nil 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key nil))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key nil))))
 
 (define-test |set-difference test=eq key=identity 1|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:test #'eq)))
+                (set-difference '()
+                                '()
+                                :test #'eq)))
 
 (define-test |set-difference test=eq key=identity 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal 1
-		  (length (set-difference (copy-list l1)
-					  (copy-list (append (cdr l1) l2))
-					  :test #'eq)))
+                  (length (set-difference (copy-list l1)
+                                          (copy-list (append (cdr l1) l2))
+                                          :test #'eq)))
     (assert-eq (car l1)
-	       (car (set-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :test #'eq)))))
+               (car (set-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :test #'eq)))))
 
 (define-test |set-difference test=eq key=identity 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal 1
-		  (length (set-difference (copy-list l1)
-					  (copy-list (append (cdr l1) l2))
-					  :test 'eq)))
+                  (length (set-difference (copy-list l1)
+                                          (copy-list (append (cdr l1) l2))
+                                          :test 'eq)))
     (assert-eq (car l1)
-	       (car (set-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :test 'eq)))))
+               (car (set-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :test 'eq)))))
 
 (define-test |set-difference test=eq key=identity 3|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal 1
-		  (length (set-difference (copy-list l1)
-					  (copy-list (append (cdr l1) l2))
-					  :test #'eq)))
+                  (length (set-difference (copy-list l1)
+                                          (copy-list (append (cdr l1) l2))
+                                          :test #'eq)))
     (assert-eq (car l1)
-	       (car (set-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :test #'eq)))))
+               (car (set-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :test #'eq)))))
 
 (define-test |set-difference test=equal key=identity 1|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:test #'equal)))
+                (set-difference '()
+                                '()
+                                :test #'equal)))
 
 (define-test |set-difference test=equal key=identity 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list (append (cdr l1) l2))
-				  :test #'equal))))
+                  (set-difference (copy-list l1)
+                                  (copy-list (append (cdr l1) l2))
+                                  :test #'equal))))
 
 (define-test |set-difference test=equal key=identity 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list (append (cdr l1) l2))
-				  :test 'equal))))
+                  (set-difference (copy-list l1)
+                                  (copy-list (append (cdr l1) l2))
+                                  :test 'equal))))
 
 (define-test |set-difference test=equal key=identity 3|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list (append (cdr l1) l2))
-				  :test #'equal))))
+                  (set-difference (copy-list l1)
+                                  (copy-list (append (cdr l1) l2))
+                                  :test #'equal))))
 
 (define-test |set-difference test=equalp key=identity 1|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:test #'equalp)))
+                (set-difference '()
+                                '()
+                                :test #'equalp)))
 
 (define-test |set-difference test=equalp key=identity 2a|
   (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
     (assert-equalp '(#(1))
-		   (set-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :test #'equalp))))
+                   (set-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :test #'equalp))))
 
 (define-test |set-difference test=equalp key=identity 2b|
   (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
     (assert-equalp '(#(1))
-		   (set-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :test 'equalp))))
+                   (set-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :test 'equalp))))
 
 (define-test |set-difference test=equalp key=identity 3a|
   (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 2 below 200 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i from 2 below 200 collect (make-array 1 :initial-element i))))
     (assert-equalp '(#(1))
-		   (set-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :test #'equalp))))
+                   (set-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :test #'equalp))))
 
 (define-test |set-difference test=equalp key=identity 3b|
   (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 2 below 200 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i from 2 below 200 collect (make-array 1 :initial-element i))))
     (assert-equalp '(#(1))
-		   (set-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :test #'equalp))))
+                   (set-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :test #'equalp))))
 
 (define-test |set-difference test=other key=identity 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 1 below 20 collect i)))
+        (l2 (loop for i from 1 below 20 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :test #'>))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :test #'>))))
 
 (define-test |set-difference test-not=other key=identity 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 1 below 20 collect i)))
+        (l2 (loop for i from 1 below 20 collect i)))
     (assert-equal '(1)
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :test-not #'<=))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :test-not #'<=))))
 
 (define-test |set-difference test=eql key=other 1a|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:key #'car)))
+                (set-difference '()
+                                '()
+                                :key #'car)))
 
 (define-test |set-difference test=eql key=other 1b|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:key #'car
-				:test #'eql)))
+                (set-difference '()
+                                '()
+                                :key #'car
+                                :test #'eql)))
 
 (define-test |set-difference test=eql key=other 1c|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:key #'car
-				:test 'eql)))
+                (set-difference '()
+                                '()
+                                :key #'car
+                                :test 'eql)))
 
 (define-test |set-difference test=eql key=other 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key #'car))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key #'car))))
 
 (define-test |set-difference test=eql key=other 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key #'car
-				  :test #'eql))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key #'car
+                                  :test #'eql))))
 
 (define-test |set-difference test=eql key=other 2c|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key #'car
-				  :test 'eql))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key #'car
+                                  :test 'eql))))
 
 (define-test |set-difference test=eql key=other 3a|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key #'car))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key #'car))))
 
 (define-test |set-difference test=eql key=other 3b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key #'car
-				  :test #'eql))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key #'car
+                                  :test #'eql))))
 
 (define-test |set-difference test=eql key=other 3c|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key #'car
-				  :test 'eql))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key #'car
+                                  :test 'eql))))
 
 (define-test |set-difference test=eq key=other 1|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:key #'car
-				:test #'eq)))
+                (set-difference '()
+                                '()
+                                :key #'car
+                                :test #'eq)))
 
 (define-test |set-difference test=eq key=other 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+        (l2 (loop for i from 2 below 20 collect (list (list i)))))
     (assert-equal 1
-		  (length (set-difference (copy-list l1)
-					  (copy-list (append (mapcar #'copy-list (cdr l1))
-							     l2))
-					  :key #'car
-					  :test #'eq)))
+                  (length (set-difference (copy-list l1)
+                                          (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                             l2))
+                                          :key #'car
+                                          :test #'eq)))
     (assert-eq (car l1)
-	       (car (set-difference (copy-list l1)
-				    (copy-list (append (mapcar #'copy-list (cdr l1))
-						       l2))
-				    :key #'car
-				    :test #'eq)))))
+               (car (set-difference (copy-list l1)
+                                    (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                       l2))
+                                    :key #'car
+                                    :test #'eq)))))
 
 (define-test |set-difference test=eq key=other 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+        (l2 (loop for i from 2 below 20 collect (list (list i)))))
     (assert-equal 1
-		  (length (set-difference (copy-list l1)
-					  (copy-list (append (mapcar #'copy-list (cdr l1))
-							     l2))
-					  :key #'car
-					  :test 'eq)))
+                  (length (set-difference (copy-list l1)
+                                          (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                             l2))
+                                          :key #'car
+                                          :test 'eq)))
     (assert-eq (car l1)
-	       (car (set-difference (copy-list l1)
-				    (copy-list (append (mapcar #'copy-list (cdr l1))
-						       l2))
-				    :key #'car
-				    :test 'eq)))))
+               (car (set-difference (copy-list l1)
+                                    (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                       l2))
+                                    :key #'car
+                                    :test 'eq)))))
 
 (define-test |set-difference test=eq key=other 3|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 200 collect (list (list i)))))
+        (l2 (loop for i from 2 below 200 collect (list (list i)))))
     (assert-equal 1
-		  (length (set-difference (copy-list l1)
-					  (copy-list (append (mapcar #'copy-list (cdr l1))
-							     l2))
-					  :key #'car
-					  :test #'eq)))
+                  (length (set-difference (copy-list l1)
+                                          (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                             l2))
+                                          :key #'car
+                                          :test #'eq)))
     (assert-eq (car l1)
-	       (car (set-difference (copy-list l1)
-				    (copy-list (append (mapcar #'copy-list (cdr l1))
-						       l2))
-				    :key #'car
-				    :test #'eq)))))
+               (car (set-difference (copy-list l1)
+                                    (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                       l2))
+                                    :key #'car
+                                    :test #'eq)))))
 
 (define-test |set-difference test=equal key=other 1|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:key #'car
-				:test #'equal)))
+                (set-difference '()
+                                '()
+                                :key #'car
+                                :test #'equal)))
 
 (define-test |set-difference test=equal key=other 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+        (l2 (loop for i from 2 below 20 collect (list (list i)))))
     (assert-equal '(((1)))
-		  (set-difference (copy-list l1)
-				  (copy-list (append (cdr l1) l2))
-				  :key #'car
-				  :test #'equal))))
+                  (set-difference (copy-list l1)
+                                  (copy-list (append (cdr l1) l2))
+                                  :key #'car
+                                  :test #'equal))))
 
 (define-test |set-difference test=equal key=other 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+        (l2 (loop for i from 2 below 20 collect (list (list i)))))
     (assert-equal '(((1)))
-		  (set-difference (copy-list l1)
-				  (copy-list (append (cdr l1) l2))
-				  :key #'car
-				  :test 'equal))))
+                  (set-difference (copy-list l1)
+                                  (copy-list (append (cdr l1) l2))
+                                  :key #'car
+                                  :test 'equal))))
 
 (define-test |set-difference test=equal key=other 3|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 200 collect (list (list i)))))
+        (l2 (loop for i from 2 below 200 collect (list (list i)))))
     (assert-equal '(((1)))
-		  (set-difference (copy-list l1)
-				  (copy-list (append (cdr l1) l2))
-				  :key #'car
-				  :test #'equal))))
+                  (set-difference (copy-list l1)
+                                  (copy-list (append (cdr l1) l2))
+                                  :key #'car
+                                  :test #'equal))))
 
 (define-test |set-difference test=equalp key=other 1|
   (assert-equal '()
-		(set-difference '()
-				'()
-				:key #'car
-				:test #'equalp)))
+                (set-difference '()
+                                '()
+                                :key #'car
+                                :test #'equalp)))
 
 (define-test |set-difference test=equalp key=other 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
     (assert-equalp '((#(1)))
-		   (set-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :key #'car
-				   :test #'equalp))))
+                   (set-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :key #'car
+                                   :test #'equalp))))
 
 (define-test |set-difference test=equalp key=other 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
     (assert-equalp '((#(1)))
-		   (set-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :key #'car
-				   :test 'equalp))))
+                   (set-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :key #'car
+                                   :test 'equalp))))
 
 (define-test |set-difference test=equalp key=other 3a|
   (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 2 below 200 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i from 2 below 200 collect (list (make-array 1 :initial-element i)))))
     (assert-equalp '((#(1)))
-		   (set-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :key #'car
-				   :test #'equalp))))
+                   (set-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :key #'car
+                                   :test #'equalp))))
 
 (define-test |set-difference test=equalp key=other 3b|
   (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 2 below 200 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i from 2 below 200 collect (list (make-array 1 :initial-element i)))))
     (assert-equalp '((#(1)))
-		   (set-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :key #'car
-				   :test 'equalp))))
+                   (set-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :key #'car
+                                   :test 'equalp))))
 
 (define-test |set-difference test=other key=other 1|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 1 below 20 collect (list i))))
+        (l2 (loop for i from 1 below 20 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key #'car
-				  :test #'>))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key #'car
+                                  :test #'>))))
 
 (define-test |set-difference test-not=other key=other 1|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 1 below 20 collect (list i))))
+        (l2 (loop for i from 1 below 20 collect (list i))))
     (assert-equal '((1))
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :key #'car
-				  :test-not #'<=))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :key #'car
+                                  :test-not #'<=))))
 
 (define-test |set-difference test=other test-not=other 1|
   (assert-error 'error
-		(set-difference '(1 2 3) '(2 3 4)
-				:test #'eql
-				:test-not #'eql)))
+                (set-difference '(1 2 3) '(2 3 4)
+                                :test #'eql
+                                :test-not #'eql)))
 
 (define-test |set-difference test=nil key=identity 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-error 'error
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :test nil))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :test nil))))
 
 (define-test |set-difference test-not=nil key=identity 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-error 'error
-		  (set-difference (copy-list l1)
-				  (copy-list l2)
-				  :test-not nil))))
+                  (set-difference (copy-list l1)
+                                  (copy-list l2)
+                                  :test-not nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -8711,443 +8711,443 @@
 
 (define-test |nset-difference test=eql key=identity 1a|
   (assert-equal '()
-		(nset-difference '() '())))
+                (nset-difference '() '())))
 
 (define-test |nset-difference test=eql key=identity 1b|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :test #'eql)))
+                (nset-difference '()
+                                 '()
+                                 :test #'eql)))
 
 (define-test |nset-difference test=eql key=identity 1c|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :test 'eql)))
+                (nset-difference '()
+                                 '()
+                                 :test 'eql)))
 
 (define-test |nset-difference test=eql key=identity 2a|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)))))
 
 (define-test |nset-difference test=eql key=identity 2b|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :test #'eql))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :test #'eql))))
 
 (define-test |nset-difference test=eql key=identity 2c|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :test 'eql))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :test 'eql))))
 
 (define-test |nset-difference test=eql key=identity 3a|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 200 collect i)))
+        (l2 (loop for i from 2 below 200 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)))))
 
 (define-test |nset-difference test=eql key=identity 3b|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 200 collect i)))
+        (l2 (loop for i from 2 below 200 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :test #'eql))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :test #'eql))))
 
 (define-test |nset-difference test=eql key=identity 3c|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 200 collect i)))
+        (l2 (loop for i from 2 below 200 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :test 'eql))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :test 'eql))))
 
 (define-test |nset-difference test=eql key=nil 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key nil))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key nil))))
 
 (define-test |nset-difference test=eq key=identity 1|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :test #'eq)))
+                (nset-difference '()
+                                 '()
+                                 :test #'eq)))
 
 (define-test |nset-difference test=eq key=identity 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal 1
-		  (length (nset-difference (copy-list l1)
-					   (copy-list (append (cdr l1) l2))
-					   :test #'eq)))
+                  (length (nset-difference (copy-list l1)
+                                           (copy-list (append (cdr l1) l2))
+                                           :test #'eq)))
     (assert-eq (car l1)
-	       (car (nset-difference (copy-list l1)
-				     (copy-list (append (cdr l1) l2))
-				     :test #'eq)))))
+               (car (nset-difference (copy-list l1)
+                                     (copy-list (append (cdr l1) l2))
+                                     :test #'eq)))))
 
 (define-test |nset-difference test=eq key=identity 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal 1
-		  (length (nset-difference (copy-list l1)
-					   (copy-list (append (cdr l1) l2))
-					   :test 'eq)))
+                  (length (nset-difference (copy-list l1)
+                                           (copy-list (append (cdr l1) l2))
+                                           :test 'eq)))
     (assert-eq (car l1)
-	       (car (nset-difference (copy-list l1)
-				     (copy-list (append (cdr l1) l2))
-				     :test 'eq)))))
+               (car (nset-difference (copy-list l1)
+                                     (copy-list (append (cdr l1) l2))
+                                     :test 'eq)))))
 
 (define-test |nset-difference test=eq key=identity 3|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal 1
-		  (length (nset-difference (copy-list l1)
-					   (copy-list (append (cdr l1) l2))
-					   :test #'eq)))
+                  (length (nset-difference (copy-list l1)
+                                           (copy-list (append (cdr l1) l2))
+                                           :test #'eq)))
     (assert-eq (car l1)
-	       (car (nset-difference (copy-list l1)
-				     (copy-list (append (cdr l1) l2))
-				     :test #'eq)))))
+               (car (nset-difference (copy-list l1)
+                                     (copy-list (append (cdr l1) l2))
+                                     :test #'eq)))))
 
 (define-test |nset-difference test=equal key=identity 1|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :test #'equal)))
+                (nset-difference '()
+                                 '()
+                                 :test #'equal)))
 
 (define-test |nset-difference test=equal key=identity 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :test #'equal))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :test #'equal))))
 
 (define-test |nset-difference test=equal key=identity 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :test 'equal))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :test 'equal))))
 
 (define-test |nset-difference test=equal key=identity 3|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :test #'equal))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :test #'equal))))
 
 (define-test |nset-difference test=equalp key=identity 1|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :test #'equalp)))
+                (nset-difference '()
+                                 '()
+                                 :test #'equalp)))
 
 (define-test |nset-difference test=equalp key=identity 2a|
   (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
     (assert-equalp '(#(1))
-		   (nset-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :test #'equalp))))
+                   (nset-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :test #'equalp))))
 
 (define-test |nset-difference test=equalp key=identity 2b|
   (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
     (assert-equalp '(#(1))
-		   (nset-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :test 'equalp))))
+                   (nset-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :test 'equalp))))
 
 (define-test |nset-difference test=equalp key=identity 3a|
   (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 2 below 200 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i from 2 below 200 collect (make-array 1 :initial-element i))))
     (assert-equalp '(#(1))
-		   (nset-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :test #'equalp))))
+                   (nset-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :test #'equalp))))
 
 (define-test |nset-difference test=equalp key=identity 3b|
   (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i from 2 below 200 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i from 2 below 200 collect (make-array 1 :initial-element i))))
     (assert-equalp '(#(1))
-		   (nset-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :test #'equalp))))
+                   (nset-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :test #'equalp))))
 
 (define-test |nset-difference test=other key=identity 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 1 below 20 collect i)))
+        (l2 (loop for i from 1 below 20 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :test #'>))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :test #'>))))
 
 (define-test |nset-difference test-not=other key=identity 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 1 below 20 collect i)))
+        (l2 (loop for i from 1 below 20 collect i)))
     (assert-equal '(1)
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :test-not #'<=))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :test-not #'<=))))
 
 (define-test |nset-difference test=eql key=other 1a|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :key #'car)))
+                (nset-difference '()
+                                 '()
+                                 :key #'car)))
 
 (define-test |nset-difference test=eql key=other 1b|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :key #'car
-				 :test #'eql)))
+                (nset-difference '()
+                                 '()
+                                 :key #'car
+                                 :test #'eql)))
 
 (define-test |nset-difference test=eql key=other 1c|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :key #'car
-				 :test 'eql)))
+                (nset-difference '()
+                                 '()
+                                 :key #'car
+                                 :test 'eql)))
 
 (define-test |nset-difference test=eql key=other 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key #'car))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key #'car))))
 
 (define-test |nset-difference test=eql key=other 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key #'car
-				   :test #'eql))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key #'car
+                                   :test #'eql))))
 
 (define-test |nset-difference test=eql key=other 2c|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key #'car
-				   :test 'eql))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key #'car
+                                   :test 'eql))))
 
 (define-test |nset-difference test=eql key=other 3a|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key #'car))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key #'car))))
 
 (define-test |nset-difference test=eql key=other 3b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key #'car
-				   :test #'eql))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key #'car
+                                   :test #'eql))))
 
 (define-test |nset-difference test=eql key=other 3c|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key #'car
-				   :test 'eql))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key #'car
+                                   :test 'eql))))
 
 (define-test |nset-difference test=eq key=other 1|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :key #'car
-				 :test #'eq)))
+                (nset-difference '()
+                                 '()
+                                 :key #'car
+                                 :test #'eq)))
 
 (define-test |nset-difference test=eq key=other 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+        (l2 (loop for i from 2 below 20 collect (list (list i)))))
     (assert-equal 1
-		  (length (nset-difference (copy-list l1)
-					   (copy-list (append (mapcar #'copy-list (cdr l1))
-							      l2))
-					   :key #'car
-					   :test #'eq)))
+                  (length (nset-difference (copy-list l1)
+                                           (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                              l2))
+                                           :key #'car
+                                           :test #'eq)))
     (assert-eq (car l1)
-	       (car (nset-difference (copy-list l1)
-				     (copy-list (append (mapcar #'copy-list (cdr l1))
-							l2))
-				     :key #'car
-				     :test #'eq)))))
+               (car (nset-difference (copy-list l1)
+                                     (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                        l2))
+                                     :key #'car
+                                     :test #'eq)))))
 
 (define-test |nset-difference test=eq key=other 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+        (l2 (loop for i from 2 below 20 collect (list i))))
     (assert-equal 1
-		  (length (nset-difference (copy-list l1)
-					   (copy-list (append (mapcar #'copy-list (cdr l1))
-							      l2))
-					   :key #'car
-					   :test 'eq)))
+                  (length (nset-difference (copy-list l1)
+                                           (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                              l2))
+                                           :key #'car
+                                           :test 'eq)))
     (assert-eq (car l1)
-	       (car (nset-difference (copy-list l1)
-				     (copy-list (append (mapcar #'copy-list (cdr l1))
-							l2))
-				     :key #'car
-				     :test 'eq)))))
+               (car (nset-difference (copy-list l1)
+                                     (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                        l2))
+                                     :key #'car
+                                     :test 'eq)))))
 
 (define-test |nset-difference test=eq key=other 3|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+        (l2 (loop for i from 2 below 200 collect (list i))))
     (assert-equal 1
-		  (length (nset-difference (copy-list l1)
-					   (copy-list (append (mapcar #'copy-list (cdr l1))
-							      l2))
-					   :key #'car
-					   :test #'eq)))
+                  (length (nset-difference (copy-list l1)
+                                           (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                              l2))
+                                           :key #'car
+                                           :test #'eq)))
     (assert-eq (car l1)
-	       (car (nset-difference (copy-list l1)
-				     (copy-list (append (mapcar #'copy-list (cdr l1))
-							l2))
-				     :key #'car
-				     :test #'eq)))))
+               (car (nset-difference (copy-list l1)
+                                     (copy-list (append (mapcar #'copy-list (cdr l1))
+                                                        l2))
+                                     :key #'car
+                                     :test #'eq)))))
 
 (define-test |nset-difference test=equal key=other 1|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :key #'car
-				 :test #'equal)))
+                (nset-difference '()
+                                 '()
+                                 :key #'car
+                                 :test #'equal)))
 
 (define-test |nset-difference test=equal key=other 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+        (l2 (loop for i from 2 below 20 collect (list (list i)))))
     (assert-equal '(((1)))
-		  (nset-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :key #'car
-				   :test #'equal))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :key #'car
+                                   :test #'equal))))
 
 (define-test |nset-difference test=equal key=other 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+        (l2 (loop for i from 2 below 20 collect (list (list i)))))
     (assert-equal '(((1)))
-		  (nset-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :key #'car
-				   :test 'equal))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :key #'car
+                                   :test 'equal))))
 
 (define-test |nset-difference test=equal key=other 3|
   (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
-	(l2 (loop for i from 2 below 200 collect (list (list i)))))
+        (l2 (loop for i from 2 below 200 collect (list (list i)))))
     (assert-equal '(((1)))
-		  (nset-difference (copy-list l1)
-				   (copy-list (append (cdr l1) l2))
-				   :key #'car
-				   :test #'equal))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list (append (cdr l1) l2))
+                                   :key #'car
+                                   :test #'equal))))
 
 (define-test |nset-difference test=equalp key=other 1|
   (assert-equal '()
-		(nset-difference '()
-				 '()
-				 :key #'car
-				 :test #'equalp)))
+                (nset-difference '()
+                                 '()
+                                 :key #'car
+                                 :test #'equalp)))
 
 (define-test |nset-difference test=equalp key=other 2a|
   (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
     (assert-equalp '((#(1)))
-		   (nset-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :key #'car
-				    :test #'equalp))))
+                   (nset-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :key #'car
+                                    :test #'equalp))))
 
 (define-test |nset-difference test=equalp key=other 2b|
   (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
     (assert-equalp '((#(1)))
-		   (nset-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :key #'car
-				    :test 'equalp))))
+                   (nset-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :key #'car
+                                    :test 'equalp))))
 
 (define-test |nset-difference test=equalp key=other 3a|
   (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 2 below 200 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i from 2 below 200 collect (list (make-array 1 :initial-element i)))))
     (assert-equalp '((#(1)))
-		   (nset-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :key #'car
-				    :test #'equalp))))
+                   (nset-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :key #'car
+                                    :test #'equalp))))
 
 (define-test |nset-difference test=equalp key=other 3b|
   (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i from 2 below 200 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i from 2 below 200 collect (list (make-array 1 :initial-element i)))))
     (assert-equalp '((#(1)))
-		   (nset-difference (copy-list l1)
-				    (copy-list (append (cdr l1) l2))
-				    :key #'car
-				    :test 'equalp))))
+                   (nset-difference (copy-list l1)
+                                    (copy-list (append (cdr l1) l2))
+                                    :key #'car
+                                    :test 'equalp))))
 
 (define-test |nset-difference test=other key=other 1|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 1 below 20 collect (list i))))
+        (l2 (loop for i from 1 below 20 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key #'car
-				   :test #'>))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key #'car
+                                   :test #'>))))
 
 (define-test |nset-difference test-not=other key=other 1|
   (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 1 below 20 collect (list i))))
+        (l2 (loop for i from 1 below 20 collect (list i))))
     (assert-equal '((1))
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :key #'car
-				   :test-not #'<=))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :key #'car
+                                   :test-not #'<=))))
 
 (define-test |nset-difference test=other test-not=other 1|
   (assert-error 'error
-		(nset-difference '(1 2 3) '(2 3 4)
-				 :test #'eql
-				 :test-not #'eql)))
+                (nset-difference '(1 2 3) '(2 3 4)
+                                 :test #'eql
+                                 :test-not #'eql)))
 
 (define-test |nset-difference test=nil key=identity 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-error 'error
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :test nil))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :test nil))))
 
 (define-test |nset-difference test-not=nil key=identity 1|
   (let ((l1 (loop for i from 1 below 10 collect i))
-	(l2 (loop for i from 2 below 20 collect i)))
+        (l2 (loop for i from 2 below 20 collect i)))
     (assert-error 'error
-		  (nset-difference (copy-list l1)
-				   (copy-list l2)
-				   :test-not nil))))
+                  (nset-difference (copy-list l1)
+                                   (copy-list l2)
+                                   :test-not nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -9155,170 +9155,170 @@
 
 (define-test |adjoin test=eql key=identity 1a|
   (assert-equal '(1)
-		(adjoin 1 '())))
+                (adjoin 1 '())))
 
 (define-test |adjoin test=eql key=identity 1b|
   (assert-equal '(1)
-		(adjoin 1 '() :test #'eql)))
+                (adjoin 1 '() :test #'eql)))
 
 (define-test |adjoin test=eql key=identity 1c|
   (assert-equal '(1)
-		(adjoin 1 '() :test 'eql)))
+                (adjoin 1 '() :test 'eql)))
 
 (define-test |adjoin test=eql key=identity 2a|
   (assert-equal '(1 2)
-		(adjoin 1 '(2))))
+                (adjoin 1 '(2))))
 
 (define-test |adjoin test=eql key=identity 2b|
   (assert-equal '(1 2)
-		(adjoin 1 '(2) :test #'eql)))
+                (adjoin 1 '(2) :test #'eql)))
 
 (define-test |adjoin test=eql key=identity 2c|
   (assert-equal '(1 2)
-		(adjoin 1 '(2) :test 'eql)))
+                (adjoin 1 '(2) :test 'eql)))
 
 (define-test |adjoin test=eql key=identity 3a|
   (assert-equal '(2 1)
-		(adjoin 1 '(2 1))))
+                (adjoin 1 '(2 1))))
 
 (define-test |adjoin test=eql key=identity 3b|
   (assert-equal '(2 1)
-		(adjoin 1 '(2 1) :test #'eql)))
+                (adjoin 1 '(2 1) :test #'eql)))
 
 (define-test |adjoin test=eql key=identity 3c|
   (assert-equal '(2 1)
-		(adjoin 1 '(2 1) :test 'eql)))
+                (adjoin 1 '(2 1) :test 'eql)))
 
 (define-test |adjoin test=eql key=nil 3b|
   (assert-equal '(2 1)
-		(adjoin 1 '(2 1) :key nil)))
+                (adjoin 1 '(2 1) :key nil)))
 
 (define-test |adjoin test=eq key=identity 1a|
   (assert-equal '(a)
-		(adjoin 'a '() :test #'eq)))
+                (adjoin 'a '() :test #'eq)))
 
 (define-test |adjoin test=eq key=identity 1b|
   (assert-equal '(a)
-		(adjoin 'a '() :test 'eq)))
+                (adjoin 'a '() :test 'eq)))
 
 (define-test |adjoin test=eq key=identity 2a|
   (assert-equal '(a b)
-		(adjoin 'a '(b) :test #'eq)))
+                (adjoin 'a '(b) :test #'eq)))
 
 (define-test |adjoin test=eq key=identity 2b|
   (assert-equal '(a b)
-		(adjoin 'a '(b) :test 'eq)))
+                (adjoin 'a '(b) :test 'eq)))
 
 (define-test |adjoin test=eq key=identity 3a|
   (assert-equal '(b a)
-		(adjoin 'a '(b a) :test #'eq)))
+                (adjoin 'a '(b a) :test #'eq)))
 
 (define-test |adjoin test=eq key=identity 3b|
   (assert-equal '(b a)
-		(adjoin 'a '(b a) :test 'eq)))
+                (adjoin 'a '(b a) :test 'eq)))
 
 (define-test |adjoin test=other key=identity 1|
   (assert-equal '(1 2)
-		(adjoin 1 '(2) :test #'=)))
+                (adjoin 1 '(2) :test #'=)))
 
 (define-test |adjoin test=other key=identity 2|
   (assert-equal '(2 1)
-		(adjoin 1 '(2 1) :test #'=)))
+                (adjoin 1 '(2 1) :test #'=)))
 
 (define-test |adjoin test-not=other key=identity 1|
   (assert-equal '(1 2)
-		(adjoin 1 '(2) :test-not #'/=)))
+                (adjoin 1 '(2) :test-not #'/=)))
 
 (define-test |adjoin test-not=other key=identity 2|
   (assert-equal '(2 1)
-		(adjoin 1 '(2 1) :test-not #'/=)))
+                (adjoin 1 '(2 1) :test-not #'/=)))
 
 (define-test |adjoin test=eql key=other 1a|
   (assert-equal '((1))
-		(adjoin '(1) '() :key #'car)))
+                (adjoin '(1) '() :key #'car)))
 
 (define-test |adjoin test=eql key=other 1b|
   (assert-equal '((1))
-		(adjoin '(1) '() :key #'car :test #'eql)))
+                (adjoin '(1) '() :key #'car :test #'eql)))
 
 (define-test |adjoin test=eql key=other 1c|
   (assert-equal '((1))
-		(adjoin '(1) '() :key #'car :test 'eql)))
+                (adjoin '(1) '() :key #'car :test 'eql)))
 
 (define-test |adjoin test=eql key=other 2a|
   (assert-equal '((1) (2))
-		(adjoin '(1) '((2)) :key #'car)))
+                (adjoin '(1) '((2)) :key #'car)))
 
 (define-test |adjoin test=eql key=other 2b|
   (assert-equal '((1) (2))
-		(adjoin '(1) '((2)) :key #'car :test #'eql)))
+                (adjoin '(1) '((2)) :key #'car :test #'eql)))
 
 (define-test |adjoin test=eql key=other 2c|
   (assert-equal '((1) (2))
-		(adjoin '(1) '((2)) :key #'car :test 'eql)))
+                (adjoin '(1) '((2)) :key #'car :test 'eql)))
 
 (define-test |adjoin test=eql key=other 3a|
   (assert-equal '((2) (1))
-		(adjoin '(1) '((2) (1)) :key #'car)))
+                (adjoin '(1) '((2) (1)) :key #'car)))
 
 (define-test |adjoin test=eql key=other 3b|
   (assert-equal '((2) (1))
-		(adjoin '(1) '((2) (1)) :key #'car :test #'eql)))
+                (adjoin '(1) '((2) (1)) :key #'car :test #'eql)))
 
 (define-test |adjoin test=eql key=other 3c|
   (assert-equal '((2) (1))
-		(adjoin '(1) '((2) (1)) :key #'car :test 'eql)))
+                (adjoin '(1) '((2) (1)) :key #'car :test 'eql)))
 
 (define-test |adjoin test=eq key=other 1a|
   (assert-equal '((a))
-		(adjoin '(a) '() :key #'car :test #'eq)))
+                (adjoin '(a) '() :key #'car :test #'eq)))
 
 (define-test |adjoin test=eq key=other 1b|
   (assert-equal '((a))
-		(adjoin '(a) '() :key #'car :test 'eq)))
+                (adjoin '(a) '() :key #'car :test 'eq)))
 
 (define-test |adjoin test=eq key=other 2a|
   (assert-equal '((a) (b))
-		(adjoin '(a) '((b)) :key #'car :test #'eq)))
+                (adjoin '(a) '((b)) :key #'car :test #'eq)))
 
 (define-test |adjoin test=eq key=other 2b|
   (assert-equal '((a) (b))
-		(adjoin '(a) '((b)) :key #'car :test 'eq)))
+                (adjoin '(a) '((b)) :key #'car :test 'eq)))
 
 (define-test |adjoin test=eq key=other 3a|
   (assert-equal '((b) (a))
-		(adjoin '(a) '((b) (a)) :key #'car :test #'eq)))
+                (adjoin '(a) '((b) (a)) :key #'car :test #'eq)))
 
 (define-test |adjoin test=eq key=other 3b|
   (assert-equal '((b) (a))
-		(adjoin '(a) '((b) (a)) :key #'car :test 'eq)))
+                (adjoin '(a) '((b) (a)) :key #'car :test 'eq)))
 
 (define-test |adjoin test=other key=other 1|
   (assert-equal '((1) (2))
-		(adjoin '(1) '((2)) :key #'car :test #'=)))
+                (adjoin '(1) '((2)) :key #'car :test #'=)))
 
 (define-test |adjoin test=other key=other 2|
   (assert-equal '((2) (1))
-		(adjoin '(1) '((2) (1)) :key #'car :test #'=)))
+                (adjoin '(1) '((2) (1)) :key #'car :test #'=)))
 
 (define-test |adjoin test-not=other key=other 1|
   (assert-equal '((1) (2))
-		(adjoin '(1) '((2)) :key #'car :test-not #'/=)))
+                (adjoin '(1) '((2)) :key #'car :test-not #'/=)))
 
 (define-test |adjoin test-not=other key=other 2|
   (assert-equal '((2) (1))
-		(adjoin '(1) '((2) (1)) :key #'car :test-not #'/=)))
+                (adjoin '(1) '((2) (1)) :key #'car :test-not #'/=)))
 
 (define-test |adjoin test=other test-not=other 1|
   (assert-error 'error (adjoin 1 '() :test #'eql :test-not #'eql)))
 
 (define-test |adjoin test=nil key=identity 3b|
   (assert-error 'error
-		(adjoin 1 '(2 1) :test nil)))
+                (adjoin 1 '(2 1) :test nil)))
 
 (define-test |adjoin test-not=nil key=identity 3b|
   (assert-error 'error
-		(adjoin 1 '(2 1) :test-not nil)))
+                (adjoin 1 '(2 1) :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -9326,514 +9326,514 @@
 
 (define-test |set-exclusive-or test=eql key=identity 1|
   (assert-equal '()
-		(set-exclusive-or '() '())))
+                (set-exclusive-or '() '())))
 
 (define-test |set-exclusive-or test=eql key=identity 2a|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))))
-	   #'<))))
+                                        (append l (list 1))))
+           #'<))))
 
 (define-test |set-exclusive-or test=eql key=identity 2b|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test #'eql))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test #'eql))
+           #'<))))
 
 (define-test |set-exclusive-or test=eql key=identity 2c|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test 'eql))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test 'eql))
+           #'<))))
 
 (define-test |set-exclusive-or test=eql key=identity 3a|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))))
-	   #'<))))
+                                        (append l (list 1))))
+           #'<))))
 
 (define-test |set-exclusive-or test=eql key=identity 3b|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test #'eql))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test #'eql))
+           #'<))))
 
 (define-test |set-exclusive-or test=eql key=identity 3c|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test 'eql))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test 'eql))
+           #'<))))
 
 (define-test |set-exclusive-or test=eql key=nil 1|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:key nil))
-	   #'<))))
+                                        (append l (list 1))
+                                        :key nil))
+           #'<))))
 
 (define-test |set-exclusive-or test=eq key=identity 2a|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:test #'eq))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :test #'eq))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eq key=identity 2b|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:test 'eq))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :test 'eq))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eq key=identity 3a|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:test #'eq))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :test #'eq))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eq key=identity 3b|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:test 'eq))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :test 'eq))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equal key=identity 2a|
   (let ((l1 (loop for i from 2 to 10 collect (list i)))
-	(l2 (loop for i from 2 to 10 collect (list i))))
+        (l2 (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:test #'equal))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :test #'equal))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equal key=identity 2b|
   (let ((l1 (loop for i from 2 to 10 collect (list i)))
-	(l2 (loop for i from 2 to 10 collect (list i))))
+        (l2 (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:test 'equal))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :test 'equal))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equal key=identity 3a|
   (let ((l1 (loop for i from 2 to 50 collect (list i)))
-	(l2 (loop for i from 2 to 50 collect (list i))))
+        (l2 (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:test #'equal))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :test #'equal))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equal key=identity 3b|
   (let ((l1 (loop for i from 2 to 50 collect (list i)))
-	(l2 (loop for i from 2 to 50 collect (list i))))
+        (l2 (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:test 'equal))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :test 'equal))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equalp key=identity 2a|
   (let ((l1 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1)))
-	(l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
+        (l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:test #'equalp))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :test #'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equalp key=identity 2b|
   (let ((l1 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1)))
-	(l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
+        (l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:test 'equalp))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :test 'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equalp key=identity 3a|
   (let ((l1 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1)))
-	(l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
+        (l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:test #'equalp))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :test #'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equalp key=identity 3b|
   (let ((l1 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1)))
-	(l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
+        (l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:test 'equalp))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :test 'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=other key=identity 1|
   (assert-equal '()
-		(set-exclusive-or '() '() :test #'=)))
+                (set-exclusive-or '() '() :test #'=)))
 
 (define-test |set-exclusive-or test=other key=identity 2|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test '=))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test '=))
+           #'<))))
 
 (define-test |set-exclusive-or test=other key=identity 3|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test '=))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test '=))
+           #'<))))
 
 (define-test |set-exclusive-or test-not=other key=identity 2|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test-not '/=))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test-not '/=))
+           #'<))))
 
 (define-test |set-exclusive-or test-not=other key=identity 3|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test-not '/=))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test-not '/=))
+           #'<))))
 
 (define-test |set-exclusive-or test=eql key=other 1|
   (assert-equal '()
-		(set-exclusive-or '() '() :key #'car)))
+                (set-exclusive-or '() '() :key #'car)))
 
 (define-test |set-exclusive-or test=eql key=other 2a|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eql key=other 2b|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car
-					:test #'eql))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car
+                                        :test #'eql))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eql key=other 2c|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car
-					:test 'eql))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car
+                                        :test 'eql))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eql key=other 3a|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eql key=other 3b|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car
-					:test #'eql))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car
+                                        :test #'eql))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eql key=other 3c|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car
-					:test 'eql))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car
+                                        :test 'eql))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=eq key=other 2a|
   (let ((l (loop for i from 2 to 10 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (set-exclusive-or (cons '((0)) l)
-					(append l (list (list (list 1))))
-					:key #'car
-					:test #'eq))
-	   #'<
-	   :key #'caar))))
+                                        (append l (list (list (list 1))))
+                                        :key #'car
+                                        :test #'eq))
+           #'<
+           :key #'caar))))
 
 (define-test |set-exclusive-or test=eq key=other 2b|
   (let ((l (loop for i from 2 to 10 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (set-exclusive-or (cons '((0)) l)
-					(append l (list (list (list 1))))
-					:key #'car
-					:test 'eq))
-	   #'<
-	   :key #'caar))))
+                                        (append l (list (list (list 1))))
+                                        :key #'car
+                                        :test 'eq))
+           #'<
+           :key #'caar))))
 
 (define-test |set-exclusive-or test=eq key=other 3a|
   (let ((l (loop for i from 2 to 50 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (set-exclusive-or (cons '((0)) l)
-					(append l (list (list (list 1))))
-					:key #'car
-					:test #'eq))
-	   #'<
-	   :key #'caar))))
+                                        (append l (list (list (list 1))))
+                                        :key #'car
+                                        :test #'eq))
+           #'<
+           :key #'caar))))
 
 (define-test |set-exclusive-or test=eq key=other 3b|
   (let ((l (loop for i from 2 to 50 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (set-exclusive-or (cons '((0)) l)
-					(append l (list (list (list 1))))
-					:key #'car
-					:test 'eq))
-	   #'<
-	   :key #'caar))))
+                                        (append l (list (list (list 1))))
+                                        :key #'car
+                                        :test 'eq))
+           #'<
+           :key #'caar))))
 
 (define-test |set-exclusive-or test=equal key=other 2a|
   (let ((l1 (loop for i from 2 to 10 collect (list (list i))))
-	(l2 (loop for i from 2 to 10 collect (list (list i)))))
+        (l2 (loop for i from 2 to 10 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (set-exclusive-or (cons '((0)) l1)
-					(append l2 (list (list (list 1))))
-					:key #'car
-					:test #'equal))
-	   #'<
-	   :key #'caar))))
+                                        (append l2 (list (list (list 1))))
+                                        :key #'car
+                                        :test #'equal))
+           #'<
+           :key #'caar))))
 
 (define-test |set-exclusive-or test=equal key=other 2b|
   (let ((l1 (loop for i from 2 to 10 collect (list (list i))))
-	(l2 (loop for i from 2 to 10 collect (list (list i)))))
+        (l2 (loop for i from 2 to 10 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (set-exclusive-or (cons '((0)) l1)
-					(append l2 (list (list (list 1))))
-					:key #'car
-					:test 'equal))
-	   #'<
-	   :key #'caar))))
+                                        (append l2 (list (list (list 1))))
+                                        :key #'car
+                                        :test 'equal))
+           #'<
+           :key #'caar))))
 
 (define-test |set-exclusive-or test=equal key=other 3a|
   (let ((l1 (loop for i from 2 to 50 collect (list (list i))))
-	(l2 (loop for i from 2 to 50 collect (list (list i)))))
+        (l2 (loop for i from 2 to 50 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (set-exclusive-or (cons '((0)) l1)
-					(append l2 (list (list (list 1))))
-					:key #'car
-					:test #'equal))
-	   #'<
-	   :key #'caar))))
+                                        (append l2 (list (list (list 1))))
+                                        :key #'car
+                                        :test #'equal))
+           #'<
+           :key #'caar))))
 
 (define-test |set-exclusive-or test=equal key=other 3b|
   (let ((l1 (loop for i from 2 to 50 collect (list (list i))))
-	(l2 (loop for i from 2 to 50 collect (list (list i)))))
+        (l2 (loop for i from 2 to 50 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (set-exclusive-or (cons '((0)) l1)
-					(append l2 (list (list (list 1))))
-					:key #'car
-					:test 'equal))
-	   #'<
-	   :key #'caar))))
+                                        (append l2 (list (list (list 1))))
+                                        :key #'car
+                                        :test 'equal))
+           #'<
+           :key #'caar))))
 
 (define-test |set-exclusive-or test=equalp key=other 2a|
   (let ((l1 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1))))
-	(l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
+        (l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:key #'car
-					:test #'equalp))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :key #'car
+                                        :test #'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equalp key=other 2b|
   (let ((l1 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1))))
-	(l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
+        (l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:key #'car
-					:test 'equalp))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :key #'car
+                                        :test 'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equalp key=other 3a|
   (let ((l1 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1))))
-	(l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
+        (l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:key #'car
-					:test #'equalp))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :key #'car
+                                        :test #'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=equalp key=other 3b|
   (let ((l1 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1))))
-	(l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
+        (l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l1)
-					(append l2 (list (list 1)))
-					:key #'car
-					:test 'equalp))
-	   #'<
-	   :key #'car))))
+                                        (append l2 (list (list 1)))
+                                        :key #'car
+                                        :test 'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=other key=other 1|
   (assert-equal '()
-		(set-exclusive-or '() '() :test #'= :key #'car)))
+                (set-exclusive-or '() '() :test #'= :key #'car)))
 
 (define-test |set-exclusive-or test=other key=other 2|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car
-					:test '=))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car
+                                        :test '=))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=other key=other 3|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car
-					:test '=))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car
+                                        :test '=))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test-not=other key=other 2|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car
-					:test-not '/=))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car
+                                        :test-not '/=))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test-not=other key=other 3|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (set-exclusive-or (cons '(0) l)
-					(append l (list (list 1)))
-					:key #'car
-					:test-not '/=))
-	   #'<
-	   :key #'car))))
+                                        (append l (list (list 1)))
+                                        :key #'car
+                                        :test-not '/=))
+           #'<
+           :key #'car))))
 
 (define-test |set-exclusive-or test=other test-not=other 1|
   (assert-error 'error
-		(set-exclusive-or '() '() :test #'eql :test-not #'eql)))
+                (set-exclusive-or '() '() :test #'eql :test-not #'eql)))
 
 (define-test |set-exclusive-or test=nil key=identity 1|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-error
      'error
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test nil))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test nil))
+           #'<))))
 
 (define-test |set-exclusive-or test-not=nil key=identity 1|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-error
      'error
      (sort (copy-list (set-exclusive-or (cons 0 l)
-					(append l (list 1))
-					:test-not nil))
-	   #'<))))
+                                        (append l (list 1))
+                                        :test-not nil))
+           #'<))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -9841,514 +9841,514 @@
 
 (define-test |nset-exclusive-or test=eql key=identity 1|
   (assert-equal '()
-		(nset-exclusive-or '() '())))
+                (nset-exclusive-or '() '())))
 
 (define-test |nset-exclusive-or test=eql key=identity 2a|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))))
-	   #'<))))
+                                         (copy-list (append l (list 1)))))
+           #'<))))
 
 (define-test |nset-exclusive-or test=eql key=identity 2b|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test #'eql))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test #'eql))
+           #'<))))
 
 (define-test |nset-exclusive-or test=eql key=identity 2c|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test 'eql))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test 'eql))
+           #'<))))
 
 (define-test |nset-exclusive-or test=eql key=identity 3a|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))))
-	   #'<))))
+                                         (copy-list (append l (list 1)))))
+           #'<))))
 
 (define-test |nset-exclusive-or test=eql key=identity 3b|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test #'eql))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test #'eql))
+           #'<))))
 
 (define-test |nset-exclusive-or test=eql key=identity 3c|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test 'eql))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test 'eql))
+           #'<))))
 
 (define-test |nset-exclusive-or test=eql key=nil 3b|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :key nil))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :key nil))
+           #'<))))
 
 (define-test |nset-exclusive-or test=eq key=identity 2a|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :test #'eq))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :test #'eq))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eq key=identity 2b|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :test 'eq))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :test 'eq))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eq key=identity 3a|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :test #'eq))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :test #'eq))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eq key=identity 3b|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :test 'eq))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :test 'eq))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equal key=identity 2a|
   (let ((l1 (loop for i from 2 to 10 collect (list i)))
-	(l2 (loop for i from 2 to 10 collect (list i))))
+        (l2 (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :test #'equal))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :test #'equal))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equal key=identity 2b|
   (let ((l1 (loop for i from 2 to 10 collect (list i)))
-	(l2 (loop for i from 2 to 10 collect (list i))))
+        (l2 (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :test 'equal))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :test 'equal))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equal key=identity 3a|
   (let ((l1 (loop for i from 2 to 50 collect (list i)))
-	(l2 (loop for i from 2 to 50 collect (list i))))
+        (l2 (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :test #'equal))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :test #'equal))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equal key=identity 3b|
   (let ((l1 (loop for i from 2 to 50 collect (list i)))
-	(l2 (loop for i from 2 to 50 collect (list i))))
+        (l2 (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :test 'equal))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :test 'equal))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equalp key=identity 2a|
   (let ((l1 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1)))
-	(l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
+        (l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :test #'equalp))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :test #'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equalp key=identity 2b|
   (let ((l1 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1)))
-	(l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
+        (l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :test 'equalp))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :test 'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equalp key=identity 3a|
   (let ((l1 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1)))
-	(l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
+        (l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :test #'equalp))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :test #'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equalp key=identity 3b|
   (let ((l1 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1)))
-	(l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
+        (l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :test 'equalp))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :test 'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=other key=identity 1|
   (assert-equal '()
-		(nset-exclusive-or '() '() :test #'=)))
+                (nset-exclusive-or '() '() :test #'=)))
 
 (define-test |nset-exclusive-or test=other key=identity 2|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test '=))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test '=))
+           #'<))))
 
 (define-test |nset-exclusive-or test=other key=identity 3|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test '=))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test '=))
+           #'<))))
 
 (define-test |nset-exclusive-or test-not=other key=identity 2|
   (let ((l (loop for i from 2 to 10 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test-not '/=))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test-not '/=))
+           #'<))))
 
 (define-test |nset-exclusive-or test-not=other key=identity 3|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-equal
      '(0 1)
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test-not '/=))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test-not '/=))
+           #'<))))
 
 (define-test |nset-exclusive-or test=eql key=other 1|
   (assert-equal '()
-		(nset-exclusive-or '() '() :key #'car)))
+                (nset-exclusive-or '() '() :key #'car)))
 
 (define-test |nset-exclusive-or test=eql key=other 2a|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eql key=other 2b|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car
-					 :test #'eql))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car
+                                         :test #'eql))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eql key=other 2c|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car
-					 :test 'eql))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car
+                                         :test 'eql))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eql key=other 3a|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eql key=other 3b|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car
-					 :test #'eql))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car
+                                         :test #'eql))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eql key=other 3c|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car
-					 :test 'eql))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car
+                                         :test 'eql))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=eq key=other 2a|
   (let ((l (loop for i from 2 to 10 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l))
-					 (copy-list (append l (list (list (list 1)))))
-					 :key #'car
-					 :test #'eq))
-	   #'<
-	   :key #'caar))))
+                                         (copy-list (append l (list (list (list 1)))))
+                                         :key #'car
+                                         :test #'eq))
+           #'<
+           :key #'caar))))
 
 (define-test |nset-exclusive-or test=eq key=other 2b|
   (let ((l (loop for i from 2 to 10 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l))
-					 (copy-list (append l (list (list (list 1)))))
-					 :key #'car
-					 :test 'eq))
-	   #'<
-	   :key #'caar))))
+                                         (copy-list (append l (list (list (list 1)))))
+                                         :key #'car
+                                         :test 'eq))
+           #'<
+           :key #'caar))))
 
 (define-test |nset-exclusive-or test=eq key=other 3a|
   (let ((l (loop for i from 2 to 50 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l))
-					 (copy-list (append l (list (list (list 1)))))
-					 :key #'car
-					 :test #'eq))
-	   #'<
-	   :key #'caar))))
+                                         (copy-list (append l (list (list (list 1)))))
+                                         :key #'car
+                                         :test #'eq))
+           #'<
+           :key #'caar))))
 
 (define-test |nset-exclusive-or test=eq key=other 3b|
   (let ((l (loop for i from 2 to 50 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l))
-					 (copy-list (append l (list (list (list 1)))))
-					 :key #'car
-					 :test 'eq))
-	   #'<
-	   :key #'caar))))
+                                         (copy-list (append l (list (list (list 1)))))
+                                         :key #'car
+                                         :test 'eq))
+           #'<
+           :key #'caar))))
 
 (define-test |nset-exclusive-or test=equal key=other 2a|
   (let ((l1 (loop for i from 2 to 10 collect (list (list i))))
-	(l2 (loop for i from 2 to 10 collect (list (list i)))))
+        (l2 (loop for i from 2 to 10 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l1))
-					 (copy-list (append l2 (list (list (list 1)))))
-					 :key #'car
-					 :test #'equal))
-	   #'<
-	   :key #'caar))))
+                                         (copy-list (append l2 (list (list (list 1)))))
+                                         :key #'car
+                                         :test #'equal))
+           #'<
+           :key #'caar))))
 
 (define-test |nset-exclusive-or test=equal key=other 2b|
   (let ((l1 (loop for i from 2 to 10 collect (list (list i))))
-	(l2 (loop for i from 2 to 10 collect (list (list i)))))
+        (l2 (loop for i from 2 to 10 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l1))
-					 (copy-list (append l2 (list (list (list 1)))))
-					 :key #'car
-					 :test 'equal))
-	   #'<
-	   :key #'caar))))
+                                         (copy-list (append l2 (list (list (list 1)))))
+                                         :key #'car
+                                         :test 'equal))
+           #'<
+           :key #'caar))))
 
 (define-test |nset-exclusive-or test=equal key=other 3a|
   (let ((l1 (loop for i from 2 to 50 collect (list (list i))))
-	(l2 (loop for i from 2 to 50 collect (list (list i)))))
+        (l2 (loop for i from 2 to 50 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l1))
-					 (copy-list (append l2 (list (list (list 1)))))
-					 :key #'car
-					 :test #'equal))
-	   #'<
-	   :key #'caar))))
+                                         (copy-list (append l2 (list (list (list 1)))))
+                                         :key #'car
+                                         :test #'equal))
+           #'<
+           :key #'caar))))
 
 (define-test |nset-exclusive-or test=equal key=other 3b|
   (let ((l1 (loop for i from 2 to 50 collect (list (list i))))
-	(l2 (loop for i from 2 to 50 collect (list (list i)))))
+        (l2 (loop for i from 2 to 50 collect (list (list i)))))
     (assert-equal
      '(((0)) ((1)))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l1))
-					 (copy-list (append l2 (list (list (list 1)))))
-					 :key #'car
-					 :test 'equal))
-	   #'<
-	   :key #'caar))))
+                                         (copy-list (append l2 (list (list (list 1)))))
+                                         :key #'car
+                                         :test 'equal))
+           #'<
+           :key #'caar))))
 
 (define-test |nset-exclusive-or test=equalp key=other 2a|
   (let ((l1 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1))))
-	(l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
+        (l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :key #'car
-					 :test #'equalp))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :key #'car
+                                         :test #'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equalp key=other 2b|
   (let ((l1 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1))))
-	(l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
+        (l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :key #'car
-					 :test 'equalp))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :key #'car
+                                         :test 'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equalp key=other 3a|
   (let ((l1 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1))))
-	(l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
+        (l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :key #'car
-					 :test #'equalp))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :key #'car
+                                         :test #'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=equalp key=other 3b|
   (let ((l1 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1))))
-	(l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
+        (l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
-					 (copy-list (append l2 (list (list 1))))
-					 :key #'car
-					 :test 'equalp))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l2 (list (list 1))))
+                                         :key #'car
+                                         :test 'equalp))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=other key=other 1|
   (assert-equal '()
-		(nset-exclusive-or '() '() :test #'= :key #'car)))
+                (nset-exclusive-or '() '() :test #'= :key #'car)))
 
 (define-test |nset-exclusive-or test=other key=other 2|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car
-					 :test '=))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car
+                                         :test '=))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=other key=other 3|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car
-					 :test '=))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car
+                                         :test '=))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test-not=other key=other 2|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car
-					 :test-not '/=))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car
+                                         :test-not '/=))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test-not=other key=other 3|
   (let ((l (loop for i from 2 to 50 collect (list i))))
     (assert-equal
      '((0) (1))
      (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
-					 (copy-list (append l (list (list 1))))
-					 :key #'car
-					 :test-not '/=))
-	   #'<
-	   :key #'car))))
+                                         (copy-list (append l (list (list 1))))
+                                         :key #'car
+                                         :test-not '/=))
+           #'<
+           :key #'car))))
 
 (define-test |nset-exclusive-or test=other test-not=other 1|
   (assert-error 'error
-		(nset-exclusive-or '() '() :test #'eql :test-not #'eql)))
+                (nset-exclusive-or '() '() :test #'eql :test-not #'eql)))
 
 (define-test |nset-exclusive-or test=nil key=identity 3b|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-error
      'error
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test nil))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test nil))
+           #'<))))
 
 (define-test |nset-exclusive-or test-not=nil key=identity 3b|
   (let ((l (loop for i from 2 to 50 collect i)))
     (assert-error
      'error
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
-					 (copy-list (append l (list 1)))
-					 :test-not nil))
-	   #'<))))
+                                         (copy-list (append l (list 1)))
+                                         :test-not nil))
+           #'<))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -10356,697 +10356,697 @@
 
 (define-test |subsetp test=eql key=identity 1a|
   (assert-true (subsetp '()
-			'())))
+                        '())))
 
 (define-test |subsetp test=eql key=identity 1b|
   (assert-true (subsetp '()
-			'()
-			:test #'eql)))
+                        '()
+                        :test #'eql)))
 
 (define-test |subsetp test=eql key=identity 1c|
   (assert-true (subsetp '()
-			'()
-			:test 'eql)))
+                        '()
+                        :test 'eql)))
 
 (define-test |subsetp test=eql key=identity 2a|
   (let ((l1 (loop for i from 1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2))))
+                          l2))))
 
 (define-test |subsetp test=eql key=identity 2b|
   (let ((l1 (loop for i from 1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :test #'eql))))
+                          l2
+                          :test #'eql))))
 
 (define-test |subsetp test=eql key=identity 2c|
   (let ((l1 (loop for i from 1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :test 'eql))))
+                          l2
+                          :test 'eql))))
 
 (define-test |subsetp test=eql key=identity 3a|
   (let ((l1 (loop for i from 1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2))))
+                          l2))))
 
 (define-test |subsetp test=eql key=identity 3b|
   (let ((l1 (loop for i from 1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :test #'eql))))
+                          l2
+                          :test #'eql))))
 
 (define-test |subsetp test=eql key=identity 3c|
   (let ((l1 (loop for i from 1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :test 'eql))))
+                          l2
+                          :test 'eql))))
 
 (define-test |subsetp test=eql key=identity 4a|
   (let ((l1 (loop for i from -1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2))))
+                           l2))))
 
 (define-test |subsetp test=eql key=identity 4b|
   (let ((l1 (loop for i from -1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2
-			   :test #'eql))))
+                           l2
+                           :test #'eql))))
 
 (define-test |subsetp test=eql key=identity 4c|
   (let ((l1 (loop for i from -1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2
-			   :test 'eql))))
+                           l2
+                           :test 'eql))))
 
 (define-test |subsetp test=eql key=identity 5a|
   (let ((l1 (loop for i from -1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2))))
+                           l2))))
 
 (define-test |subsetp test=eql key=identity 5b|
   (let ((l1 (loop for i from -1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2
-			   :test #'eql))))
+                           l2
+                           :test #'eql))))
 
 (define-test |subsetp test=eql key=identity 5c|
   (let ((l1 (loop for i from -1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2
-			   :test 'eql))))
+                           l2
+                           :test 'eql))))
 
 (define-test |subsetp test=eql key=nil 1|
   (let ((l1 (loop for i from 1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :key nil))))
+                          l2
+                          :key nil))))
 
 (define-test |subsetp test=eq key=identity 2a|
   (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
-			  l
-			  :test #'eq))))
+                          l
+                          :test #'eq))))
 
 (define-test |subsetp test=eq key=identity 2b|
   (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
-			  l
-			  :test 'eq))))
+                          l
+                          :test 'eq))))
 
 (define-test |subsetp test=eq key=identity 3a|
   (let ((l (loop repeat 50 collect (make-array 1 :initial-element 1))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
-			  l
-			  :test #'eq))))
+                          l
+                          :test #'eq))))
 
 (define-test |subsetp test=eq key=identity 3b|
   (let ((l (loop repeat 50 collect (make-array 1 :initial-element 1))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
-			  l
-			  :test 'eq))))
+                          l
+                          :test 'eq))))
 
 (define-test |subsetp test=eq key=identity 4a|
   (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
     (assert-false (subsetp l
-			   (reverse (cdr (butlast l)))
-			   :test #'eq))))
+                           (reverse (cdr (butlast l)))
+                           :test #'eq))))
 
 (define-test |subsetp test=eq key=identity 4b|
   (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
     (assert-false (subsetp l
-			   (reverse (cdr (butlast l)))
-			   :test 'eq))))
+                           (reverse (cdr (butlast l)))
+                           :test 'eq))))
 
 (define-test |subsetp test=eq key=identity 5a|
   (let ((l (loop repeat 50 collect (make-array 1 :initial-element 1))))
     (assert-false (subsetp l
-			   (reverse (cdr (butlast l)))
-			   :test #'eq))))
+                           (reverse (cdr (butlast l)))
+                           :test #'eq))))
 
 (define-test |subsetp test=eq key=identity 5b|
   (let ((l (loop repeat 50 collect (make-array 1 :initial-element 1))))
     (assert-false (subsetp l
-			   (reverse (cdr (butlast l)))
-			   :test 'eq))))
+                           (reverse (cdr (butlast l)))
+                           :test 'eq))))
 
 (define-test |subsetp test=equal key=identity 2a|
   (let ((l1 (loop for i from 1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :test #'equal))))
+                          l2
+                          :test #'equal))))
 
 (define-test |subsetp test=equal key=identity 2b|
   (let ((l1 (loop for i from 1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :test 'equal))))
+                          l2
+                          :test 'equal))))
 
 (define-test |subsetp test=equal key=identity 3a|
   (let ((l1 (loop for i from 1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :test #'equal))))
+                          l2
+                          :test #'equal))))
 
 (define-test |subsetp test=equal key=identity 3b|
   (let ((l1 (loop for i from 1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :test 'equal))))
+                          l2
+                          :test 'equal))))
 
 (define-test |subsetp test=equal key=identity 4a|
   (let ((l1 (loop for i from -1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :test #'equal))))
+                           l2
+                           :test #'equal))))
 
 (define-test |subsetp test=equal key=identity 4b|
   (let ((l1 (loop for i from -1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :test 'equal))))
+                           l2
+                           :test 'equal))))
 
 (define-test |subsetp test=equal key=identity 5a|
   (let ((l1 (loop for i from -1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :test #'equal))))
+                           l2
+                           :test #'equal))))
 
 (define-test |subsetp test=equal key=identity 5b|
   (let ((l1 (loop for i from -1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :test 'equal))))
+                           l2
+                           :test 'equal))))
 
 (define-test |subsetp test=equalp key=identity 2a|
   (let ((l1 (loop for i from 1 to 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
     (assert-true (subsetp l1
-			  l2
-			  :test #'equalp))))
+                          l2
+                          :test #'equalp))))
 
 (define-test |subsetp test=equalp key=identity 2b|
   (let ((l1 (loop for i from 1 to 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
     (assert-true (subsetp l1
-			  l2
-			  :test 'equalp))))
+                          l2
+                          :test 'equalp))))
 
 (define-test |subsetp test=equalp key=identity 3a|
   (let ((l1 (loop for i from 1 to 50 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
     (assert-true (subsetp l1
-			  l2
-			  :test #'equalp))))
+                          l2
+                          :test #'equalp))))
 
 (define-test |subsetp test=equalp key=identity 3b|
   (let ((l1 (loop for i from 1 to 50 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
     (assert-true (subsetp l1
-			  l2
-			  :test 'equalp))))
+                          l2
+                          :test 'equalp))))
 
 (define-test |subsetp test=equalp key=identity 4a|
   (let ((l1 (loop for i from -1 to 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
     (assert-false (subsetp l1
-			   l2
-			   :test #'equalp))))
+                           l2
+                           :test #'equalp))))
 
 (define-test |subsetp test=equalp key=identity 4b|
   (let ((l1 (loop for i from -1 to 10 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
     (assert-false (subsetp l1
-			   l2
-			   :test 'equalp))))
+                           l2
+                           :test 'equalp))))
 
 (define-test |subsetp test=equalp key=identity 5a|
   (let ((l1 (loop for i from -1 to 50 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
     (assert-false (subsetp l1
-			   l2
-			   :test #'equalp))))
+                           l2
+                           :test #'equalp))))
 
 (define-test |subsetp test=equalp key=identity 5b|
   (let ((l1 (loop for i from -1 to 50 collect (make-array 1 :initial-element i)))
-	(l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
+        (l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
     (assert-false (subsetp l1
-			   l2
-			   :test 'equalp))))
+                           l2
+                           :test 'equalp))))
 
 (define-test |subsetp test=other key=identity 2b|
   (let ((l1 (loop for i from 1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :test #'=))))
+                          l2
+                          :test #'=))))
 
 (define-test |subsetp test=other key=identity 3b|
   (let ((l1 (loop for i from 1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :test #'=))))
+                          l2
+                          :test #'=))))
 
 (define-test |subsetp test=other key=identity 4b|
   (let ((l1 (loop for i from -1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2
-			   :test #'=))))
+                           l2
+                           :test #'=))))
 
 (define-test |subsetp test=other key=identity 5b|
   (let ((l1 (loop for i from -1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2
-			   :test #'=))))
+                           l2
+                           :test #'=))))
 
 (define-test |subsetp test-not=other key=identity 2b|
   (let ((l1 (loop for i from 1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :test-not #'/=))))
+                          l2
+                          :test-not #'/=))))
 
 (define-test |subsetp test-not=other key=identity 3b|
   (let ((l1 (loop for i from 1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-true (subsetp l1
-			  l2
-			  :test-not #'/=))))
+                          l2
+                          :test-not #'/=))))
 
 (define-test |subsetp test-not=other key=identity 4b|
   (let ((l1 (loop for i from -1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2
-			   :test-not #'/=))))
+                           l2
+                           :test-not #'/=))))
 
 (define-test |subsetp test-not=other key=identity 5b|
   (let ((l1 (loop for i from -1 to 50 collect i))
-	(l2 (loop for i downfrom 50 to 0 collect i)))
+        (l2 (loop for i downfrom 50 to 0 collect i)))
     (assert-false (subsetp l1
-			   l2
-			   :test-not #'/=))))
+                           l2
+                           :test-not #'/=))))
 
 (define-test |subsetp test=eql key=other 1a|
   (assert-true (subsetp '()
-			'()
-			:key #'car)))
+                        '()
+                        :key #'car)))
 
 (define-test |subsetp test=eql key=other 1b|
   (assert-true (subsetp '()
-			'()
-			:key #'car
-			:test #'eql)))
+                        '()
+                        :key #'car
+                        :test #'eql)))
 
 (define-test |subsetp test=eql key=other 1c|
   (assert-true (subsetp '()
-			'()
-			:key #'car
-			:test 'eql)))
+                        '()
+                        :key #'car
+                        :test 'eql)))
 
 (define-test |subsetp test=eql key=other 2a|
   (let ((l1 (loop for i from 1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car))))
+                          l2
+                          :key #'car))))
 
 (define-test |subsetp test=eql key=other 2b|
   (let ((l1 (loop for i from 1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test #'eql))))
+                          l2
+                          :key #'car
+                          :test #'eql))))
 
 (define-test |subsetp test=eql key=other 2c|
   (let ((l1 (loop for i from 1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test 'eql))))
+                          l2
+                          :key #'car
+                          :test 'eql))))
 
 (define-test |subsetp test=eql key=other 3a|
   (let ((l1 (loop for i from 1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car))))
+                          l2
+                          :key #'car))))
 
 (define-test |subsetp test=eql key=other 3b|
   (let ((l1 (loop for i from 1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test #'eql))))
+                          l2
+                          :key #'car
+                          :test #'eql))))
 
 (define-test |subsetp test=eql key=other 3c|
   (let ((l1 (loop for i from 1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test 'eql))))
+                          l2
+                          :key #'car
+                          :test 'eql))))
 
 (define-test |subsetp test=eql key=other 4a|
   (let ((l1 (loop for i from -1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car))))
+                           l2
+                           :key #'car))))
 
 (define-test |subsetp test=eql key=other 4b|
   (let ((l1 (loop for i from -1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test #'eql))))
+                           l2
+                           :key #'car
+                           :test #'eql))))
 
 (define-test |subsetp test=eql key=other 4c|
   (let ((l1 (loop for i from -1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test 'eql))))
+                           l2
+                           :key #'car
+                           :test 'eql))))
 
 (define-test |subsetp test=eql key=other 5a|
   (let ((l1 (loop for i from -1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car))))
+                           l2
+                           :key #'car))))
 
 (define-test |subsetp test=eql key=other 5b|
   (let ((l1 (loop for i from -1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test #'eql))))
+                           l2
+                           :key #'car
+                           :test #'eql))))
 
 (define-test |subsetp test=eql key=other 5c|
   (let ((l1 (loop for i from -1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test 'eql))))
+                           l2
+                           :key #'car
+                           :test 'eql))))
 
 (define-test |subsetp test=eq key=other 2a|
   (let ((l (loop repeat 10 collect (list (make-array 1 :initial-element 1)))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
-			  l
-			  :key #'car
-			  :test #'eq))))
+                          l
+                          :key #'car
+                          :test #'eq))))
 
 (define-test |subsetp test=eq key=other 2b|
   (let ((l (loop repeat 10 collect (list (make-array 1 :initial-element 1)))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
-			  l
-			  :key #'car
-			  :test 'eq))))
+                          l
+                          :key #'car
+                          :test 'eq))))
 
 (define-test |subsetp test=eq key=other 3a|
   (let ((l (loop repeat 50 collect (list (make-array 1 :initial-element 1)))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
-			  l
-			  :key #'car
-			  :test #'eq))))
+                          l
+                          :key #'car
+                          :test #'eq))))
 
 (define-test |subsetp test=eq key=other 3b|
   (let ((l (loop repeat 50 collect (list (make-array 1 :initial-element 1)))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
-			  l
-			  :key #'car
-			  :test 'eq))))
+                          l
+                          :key #'car
+                          :test 'eq))))
 
 (define-test |subsetp test=eq key=other 4a|
   (let ((l (loop repeat 10 collect (list (make-array 1 :initial-element 1)))))
     (assert-false (subsetp l
-			   (reverse (cdr (butlast l)))
-			   :key #'car
-			   :test #'eq))))
+                           (reverse (cdr (butlast l)))
+                           :key #'car
+                           :test #'eq))))
 
 (define-test |subsetp test=eq key=other 4b|
   (let ((l (loop repeat 10 collect (list (make-array 1 :initial-element 1)))))
     (assert-false (subsetp l
-			   (reverse (cdr (butlast l)))
-			   :key #'car
-			   :test 'eq))))
+                           (reverse (cdr (butlast l)))
+                           :key #'car
+                           :test 'eq))))
 
 (define-test |subsetp test=eq key=other 5a|
   (let ((l (loop repeat 50 collect (list (make-array 1 :initial-element 1)))))
     (assert-false (subsetp l
-			   (reverse (cdr (butlast l)))
-			   :key #'car
-			   :test #'eq))))
+                           (reverse (cdr (butlast l)))
+                           :key #'car
+                           :test #'eq))))
 
 (define-test |subsetp test=eq key=other 5b|
   (let ((l (loop repeat 50 collect (list (make-array 1 :initial-element 1)))))
     (assert-false (subsetp l
-			   (reverse (cdr (butlast l)))
-			   :key #'car
-			   :test 'eq))))
+                           (reverse (cdr (butlast l)))
+                           :key #'car
+                           :test 'eq))))
 
 (define-test |subsetp test=equal key=other 2a|
   (let ((l1 (loop for i from 1 to 10 collect (list (list i))))
-	(l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
+        (l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test #'equal))))
+                          l2
+                          :key #'car
+                          :test #'equal))))
 
 (define-test |subsetp test=equal key=other 2b|
   (let ((l1 (loop for i from 1 to 10 collect (list (list i))))
-	(l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
+        (l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test 'equal))))
+                          l2
+                          :key #'car
+                          :test 'equal))))
 
 (define-test |subsetp test=equal key=other 3a|
   (let ((l1 (loop for i from 1 to 50 collect (list (list i))))
-	(l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
+        (l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test #'equal))))
+                          l2
+                          :key #'car
+                          :test #'equal))))
 
 (define-test |subsetp test=equal key=other 3b|
   (let ((l1 (loop for i from 1 to 50 collect (list (list i))))
-	(l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
+        (l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test 'equal))))
+                          l2
+                          :key #'car
+                          :test 'equal))))
 
 (define-test |subsetp test=equal key=other 4a|
   (let ((l1 (loop for i from -1 to 10 collect (list (list i))))
-	(l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
+        (l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test #'equal))))
+                           l2
+                           :key #'car
+                           :test #'equal))))
 
 (define-test |subsetp test=equal key=other 4b|
   (let ((l1 (loop for i from -1 to 10 collect (list (list i))))
-	(l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
+        (l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test 'equal))))
+                           l2
+                           :key #'car
+                           :test 'equal))))
 
 (define-test |subsetp test=equal key=other 5a|
   (let ((l1 (loop for i from -1 to 50 collect (list (list i))))
-	(l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
+        (l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test #'equal))))
+                           l2
+                           :key #'car
+                           :test #'equal))))
 
 (define-test |subsetp test=equal key=other 5b|
   (let ((l1 (loop for i from -1 to 50 collect (list (list i))))
-	(l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
+        (l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test 'equal))))
+                           l2
+                           :key #'car
+                           :test 'equal))))
 
 (define-test |subsetp test=equalp key=other 2a|
   (let ((l1 (loop for i from 1 to 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test #'equalp))))
+                          l2
+                          :key #'car
+                          :test #'equalp))))
 
 (define-test |subsetp test=equalp key=other 2b|
   (let ((l1 (loop for i from 1 to 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test 'equalp))))
+                          l2
+                          :key #'car
+                          :test 'equalp))))
 
 (define-test |subsetp test=equalp key=other 3a|
   (let ((l1 (loop for i from 1 to 50 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test #'equalp))))
+                          l2
+                          :key #'car
+                          :test #'equalp))))
 
 (define-test |subsetp test=equalp key=other 3b|
   (let ((l1 (loop for i from 1 to 50 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test 'equalp))))
+                          l2
+                          :key #'car
+                          :test 'equalp))))
 
 (define-test |subsetp test=equalp key=other 4a|
   (let ((l1 (loop for i from -1 to 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test #'equalp))))
+                           l2
+                           :key #'car
+                           :test #'equalp))))
 
 (define-test |subsetp test=equalp key=other 4b|
   (let ((l1 (loop for i from -1 to 10 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test 'equalp))))
+                           l2
+                           :key #'car
+                           :test 'equalp))))
 
 (define-test |subsetp test=equalp key=other 5a|
   (let ((l1 (loop for i from -1 to 50 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test #'equalp))))
+                           l2
+                           :key #'car
+                           :test #'equalp))))
 
 (define-test |subsetp test=equalp key=other 5b|
   (let ((l1 (loop for i from -1 to 50 collect (list (make-array 1 :initial-element i))))
-	(l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
+        (l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test 'equalp))))
+                           l2
+                           :key #'car
+                           :test 'equalp))))
 
 (define-test |subsetp test=other key=other 2b|
   (let ((l1 (loop for i from 1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test #'=))))
+                          l2
+                          :key #'car
+                          :test #'=))))
 
 (define-test |subsetp test=other key=other 3b|
   (let ((l1 (loop for i from 1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test #'=))))
+                          l2
+                          :key #'car
+                          :test #'=))))
 
 (define-test |subsetp test=other key=other 4b|
   (let ((l1 (loop for i from -1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test #'=))))
+                           l2
+                           :key #'car
+                           :test #'=))))
 
 (define-test |subsetp test=other key=other 5b|
   (let ((l1 (loop for i from -1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test #'=))))
+                           l2
+                           :key #'car
+                           :test #'=))))
 
 (define-test |subsetp test-not=other key=other 2b|
   (let ((l1 (loop for i from 1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test-not #'/=))))
+                          l2
+                          :key #'car
+                          :test-not #'/=))))
 
 (define-test |subsetp test-not=other key=other 3b|
   (let ((l1 (loop for i from 1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-true (subsetp l1
-			  l2
-			  :key #'car
-			  :test-not #'/=))))
+                          l2
+                          :key #'car
+                          :test-not #'/=))))
 
 (define-test |subsetp test-not=other key=other 4b|
   (let ((l1 (loop for i from -1 to 10 collect (list i)))
-	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+        (l2 (loop for i downfrom 10 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test-not #'/=))))
+                           l2
+                           :key #'car
+                           :test-not #'/=))))
 
 (define-test |subsetp test-not=other key=other 5b|
   (let ((l1 (loop for i from -1 to 50 collect (list i)))
-	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+        (l2 (loop for i downfrom 50 to 0 collect (list i))))
     (assert-false (subsetp l1
-			   l2
-			   :key #'car
-			   :test-not #'/=))))
+                           l2
+                           :key #'car
+                           :test-not #'/=))))
 
 (define-test |subsetp test=other test-not=other 1|
   (assert-error 'error
-		(subsetp '() '() :test #'eql :test-not #'eql)))
+                (subsetp '() '() :test #'eql :test-not #'eql)))
 
 (define-test |subsetp test=nil key=identity 1|
   (let ((l1 (loop for i from 1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-error 'error
-		  (subsetp l1
-			   l2
-			  :test nil))))
+                  (subsetp l1
+                           l2
+                          :test nil))))
 
 (define-test |subsetp test-not=nil key=identity 1|
   (let ((l1 (loop for i from 1 to 10 collect i))
-	(l2 (loop for i downfrom 10 to 0 collect i)))
+        (l2 (loop for i downfrom 10 to 0 collect i)))
     (assert-error 'error
-		  (subsetp l1
-			   l2
-			  :test-not nil))))
+                  (subsetp l1
+                           l2
+                          :test-not nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11055,433 +11055,433 @@
 (define-test |pushnew test=eql key=identity 1a|
   (let ((list '()))
     (assert-equal '(1)
-		  (pushnew 1 list))
+                  (pushnew 1 list))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 1b|
   (let ((list '()))
     (assert-equal '(1)
-		  (pushnew 1 list :test #'eql))
+                  (pushnew 1 list :test #'eql))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 1c|
   (let ((list '()))
     (assert-equal '(1)
-		  (pushnew 1 list :test 'eql))
+                  (pushnew 1 list :test 'eql))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 2a|
   (let ((list '(1)))
     (assert-equal '(1)
-		  (pushnew 1 list))
+                  (pushnew 1 list))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 2b|
   (let ((list '(1)))
     (assert-equal '(1)
-		  (pushnew 1 list :test #'eql))
+                  (pushnew 1 list :test #'eql))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 2c|
   (let ((list '(1)))
     (assert-equal '(1)
-		  (pushnew 1 list :test 'eql))
+                  (pushnew 1 list :test 'eql))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 3a|
   (let ((list '(2)))
     (assert-equal '(1 2)
-		  (pushnew 1 list))
+                  (pushnew 1 list))
     (assert-equal '(1 2)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 3b|
   (let ((list '(2)))
     (assert-equal '(1 2)
-		  (pushnew 1 list :test #'eql))
+                  (pushnew 1 list :test #'eql))
     (assert-equal '(1 2)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 3c|
   (let ((list '(2)))
     (assert-equal '(1 2)
-		  (pushnew 1 list :test 'eql))
+                  (pushnew 1 list :test 'eql))
     (assert-equal '(1 2)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 4a|
   (let ((list '(2 1)))
     (assert-equal '(2 1)
-		  (pushnew 1 list))
+                  (pushnew 1 list))
     (assert-equal '(2 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 4b|
   (let ((list '(2 1)))
     (assert-equal '(2 1)
-		  (pushnew 1 list :test #'eql))
+                  (pushnew 1 list :test #'eql))
     (assert-equal '(2 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=identity 4c|
   (let ((list '(2 1)))
     (assert-equal '(2 1)
-		  (pushnew 1 list :test 'eql))
+                  (pushnew 1 list :test 'eql))
     (assert-equal '(2 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=nil 3b|
   (let ((list '(2)))
     (assert-equal '(1 2)
-		  (pushnew 1 list :key nil))
+                  (pushnew 1 list :key nil))
     (assert-equal '(1 2)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=identity 1b|
   (let ((list '()))
     (assert-equal '(a)
-		  (pushnew 'a list :test #'eq))
+                  (pushnew 'a list :test #'eq))
     (assert-equal '(a)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=identity 1c|
   (let ((list '()))
     (assert-equal '(a)
-		  (pushnew 'a list :test 'eq))
+                  (pushnew 'a list :test 'eq))
     (assert-equal '(a)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=identity 2b|
   (let ((list '(a)))
     (assert-equal '(a)
-		  (pushnew 'a list :test #'eq))
+                  (pushnew 'a list :test #'eq))
     (assert-equal '(a)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=identity 2c|
   (let ((list '(a)))
     (assert-equal '(a)
-		  (pushnew 'a list :test 'eq))
+                  (pushnew 'a list :test 'eq))
     (assert-equal '(a)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=identity 3b|
   (let ((list '(b)))
     (assert-equal '(a b)
-		  (pushnew 'a list :test #'eq))
+                  (pushnew 'a list :test #'eq))
     (assert-equal '(a b)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=identity 3c|
   (let ((list '(b)))
     (assert-equal '(a b)
-		  (pushnew 'a list :test 'eq))
+                  (pushnew 'a list :test 'eq))
     (assert-equal '(a b)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=identity 4b|
   (let ((list '(b a)))
     (assert-equal '(b a)
-		  (pushnew 'a list :test #'eq))
+                  (pushnew 'a list :test #'eq))
     (assert-equal '(b a)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=identity 4c|
   (let ((list '(b a)))
     (assert-equal '(b a)
-		  (pushnew 'a list :test 'eq))
+                  (pushnew 'a list :test 'eq))
     (assert-equal '(b a)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=other 1|
   (let ((list '()))
     (assert-equal '((1))
-		  (pushnew '(1) list :key #'car))
+                  (pushnew '(1) list :key #'car))
     (assert-equal '((1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=other 2|
   (let ((list '((1))))
     (assert-equal '((1))
-		  (pushnew '(1) list :key #'car))
+                  (pushnew '(1) list :key #'car))
     (assert-equal '((1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=other 3|
   (let ((list '((2))))
     (assert-equal '((1) (2))
-		  (pushnew '(1) list :key #'car))
+                  (pushnew '(1) list :key #'car))
     (assert-equal '((1) (2))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eql key=other 4|
   (let ((list '((2) (1))))
     (assert-equal '((2) (1))
-		  (pushnew '(1) list :key #'car))
+                  (pushnew '(1) list :key #'car))
     (assert-equal '((2) (1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=other 1|
   (let ((list '()))
     (assert-equal '((a))
-		  (pushnew '(a) list :test #'eq :key #'car))
+                  (pushnew '(a) list :test #'eq :key #'car))
     (assert-equal '((a))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=other 2|
   (let ((list '((a))))
     (assert-equal '((a))
-		  (pushnew '(a) list :test #'eq :key #'car))
+                  (pushnew '(a) list :test #'eq :key #'car))
     (assert-equal '((a))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=other 3|
   (let ((list '((b))))
     (assert-equal '((a) (b))
-		  (pushnew '(a) list :test #'eq :key #'car))
+                  (pushnew '(a) list :test #'eq :key #'car))
     (assert-equal '((a) (b))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=eq key=other 4|
   (let ((list '((b) (a))))
     (assert-equal '((b) (a))
-		  (pushnew '(a) list :test #'eq :key #'car))
+                  (pushnew '(a) list :test #'eq :key #'car))
     (assert-equal '((b) (a))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=identity 1b|
   (let ((list '()))
     (assert-equal '(1)
-		  (pushnew 1 list
-			   :test (lambda (x y) (= (1- x) y))))
+                  (pushnew 1 list
+                           :test (lambda (x y) (= (1- x) y))))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=identity 2b|
   (let ((list '(1)))
     (assert-equal '(1 1)
-		  (pushnew 1 list
-			   :test (lambda (x y) (= (1- x) y))))
+                  (pushnew 1 list
+                           :test (lambda (x y) (= (1- x) y))))
     (assert-equal '(1 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=identity 3b|
   (let ((list '(2)))
     (assert-equal '(1 2)
-		  (pushnew 1 list
-			   :test (lambda (x y) (= (1- x) y))))
+                  (pushnew 1 list
+                           :test (lambda (x y) (= (1- x) y))))
     (assert-equal '(1 2)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=identity 4b|
   (let ((list '(2 1)))
     (assert-equal '(1 2 1)
-		  (pushnew 1 list
-			   :test (lambda (x y) (= (1- x) y))))
+                  (pushnew 1 list
+                           :test (lambda (x y) (= (1- x) y))))
     (assert-equal '(1 2 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=identity 5b|
   (let ((list '(1)))
     (assert-equal '(1)
-		  (pushnew 2 list
-			   :test (lambda (x y) (= (1- x) y))))
+                  (pushnew 2 list
+                           :test (lambda (x y) (= (1- x) y))))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=identity 6b|
   (let ((list '(2)))
     (assert-equal '(2 2)
-		  (pushnew 2 list
-			   :test (lambda (x y) (= (1- x) y))))
+                  (pushnew 2 list
+                           :test (lambda (x y) (= (1- x) y))))
     (assert-equal '(2 2)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=identity 7b|
   (let ((list '(2 1)))
     (assert-equal '(2 1)
-		  (pushnew 2 list
-			   :test (lambda (x y) (= (1- x) y))))
+                  (pushnew 2 list
+                           :test (lambda (x y) (= (1- x) y))))
     (assert-equal '(2 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=other 3b|
   (let ((list '((2))))
     (assert-equal '((1) (2))
-		  (pushnew '(1) list
-			   :test (lambda (x y) (= (1- x) y))
-			   :key #'car))
+                  (pushnew '(1) list
+                           :test (lambda (x y) (= (1- x) y))
+                           :key #'car))
     (assert-equal '((1) (2))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=other 4b|
   (let ((list '((2) (1))))
     (assert-equal '((1) (2) (1))
-		  (pushnew '(1) list
-			   :test (lambda (x y) (= (1- x) y))
-			   :key #'car))
+                  (pushnew '(1) list
+                           :test (lambda (x y) (= (1- x) y))
+                           :key #'car))
     (assert-equal '((1) (2) (1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=other 5b|
   (let ((list '((1))))
     (assert-equal '((1))
-		  (pushnew '(2) list
-			   :test (lambda (x y) (= (1- x) y))
-			   :key #'car))
+                  (pushnew '(2) list
+                           :test (lambda (x y) (= (1- x) y))
+                           :key #'car))
     (assert-equal '((1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=other 6b|
   (let ((list '((2))))
     (assert-equal '((2) (2))
-		  (pushnew '(2) list
-			   :test (lambda (x y) (= (1- x) y))
-			   :key #'car))
+                  (pushnew '(2) list
+                           :test (lambda (x y) (= (1- x) y))
+                           :key #'car))
     (assert-equal '((2) (2))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other key=other 7b|
   (let ((list '((2) (1))))
     (assert-equal '((2) (1))
-		  (pushnew '(2) list
-			   :test (lambda (x y) (= (1- x) y))
-			   :key #'car))
+                  (pushnew '(2) list
+                           :test (lambda (x y) (= (1- x) y))
+                           :key #'car))
     (assert-equal '((2) (1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=identity 1b|
   (let ((list '()))
     (assert-equal '(1)
-		  (pushnew 1 list
-			   :test-not (lambda (x y) (/= (1- x) y))))
+                  (pushnew 1 list
+                           :test-not (lambda (x y) (/= (1- x) y))))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=identity 2b|
   (let ((list '(1)))
     (assert-equal '(1 1)
-		  (pushnew 1 list
-			   :test-not (lambda (x y) (/= (1- x) y))))
+                  (pushnew 1 list
+                           :test-not (lambda (x y) (/= (1- x) y))))
     (assert-equal '(1 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=identity 3b|
   (let ((list '(2)))
     (assert-equal '(1 2)
-		  (pushnew 1 list
-			   :test-not (lambda (x y) (/= (1- x) y))))
+                  (pushnew 1 list
+                           :test-not (lambda (x y) (/= (1- x) y))))
     (assert-equal '(1 2)
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=identity 4b|
   (let ((list '(2 1)))
     (assert-equal '(1 2 1)
-		  (pushnew 1 list
-			   :test-not (lambda (x y) (/= (1- x) y))))
+                  (pushnew 1 list
+                           :test-not (lambda (x y) (/= (1- x) y))))
     (assert-equal '(1 2 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=identity 5b|
   (let ((list '(1)))
     (assert-equal '(1)
-		  (pushnew 2 list
-			   :test-not (lambda (x y) (/= (1- x) y))))
+                  (pushnew 2 list
+                           :test-not (lambda (x y) (/= (1- x) y))))
     (assert-equal '(1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=identity 6b|
   (let ((list '(2)))
     (assert-equal '(2 2)
-		  (pushnew 2 list
-			   :test-not (lambda (x y) (/= (1- x) y))))
+                  (pushnew 2 list
+                           :test-not (lambda (x y) (/= (1- x) y))))
     (assert-equal '(2 2)
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=identity 7b|
   (let ((list '(2 1)))
     (assert-equal '(2 1)
-		  (pushnew 2 list
-			   :test-not (lambda (x y) (/= (1- x) y))))
+                  (pushnew 2 list
+                           :test-not (lambda (x y) (/= (1- x) y))))
     (assert-equal '(2 1)
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=other 3b|
   (let ((list '((2))))
     (assert-equal '((1) (2))
-		  (pushnew '(1) list
-			   :test-not (lambda (x y) (/= (1- x) y))
-			   :key #'car))
+                  (pushnew '(1) list
+                           :test-not (lambda (x y) (/= (1- x) y))
+                           :key #'car))
     (assert-equal '((1) (2))
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=other 4b|
   (let ((list '((2) (1))))
     (assert-equal '((1) (2) (1))
-		  (pushnew '(1) list
-			   :test-not (lambda (x y) (/= (1- x) y))
-			   :key #'car))
+                  (pushnew '(1) list
+                           :test-not (lambda (x y) (/= (1- x) y))
+                           :key #'car))
     (assert-equal '((1) (2) (1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=other 5b|
   (let ((list '((1))))
     (assert-equal '((1))
-		  (pushnew '(2) list
-			   :test-not (lambda (x y) (/= (1- x) y))
-			   :key #'car))
+                  (pushnew '(2) list
+                           :test-not (lambda (x y) (/= (1- x) y))
+                           :key #'car))
     (assert-equal '((1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=other 6b|
   (let ((list '((2))))
     (assert-equal '((2) (2))
-		  (pushnew '(2) list
-			   :test-not (lambda (x y) (/= (1- x) y))
-			   :key #'car))
+                  (pushnew '(2) list
+                           :test-not (lambda (x y) (/= (1- x) y))
+                           :key #'car))
     (assert-equal '((2) (2))
-		  list)))
+                  list)))
 
 (define-test |pushnew test-not=other key=other 7b|
   (let ((list '((2) (1))))
     (assert-equal '((2) (1))
-		  (pushnew '(2) list
-			   :test-not (lambda (x y) (/= (1- x) y))
-			   :key #'car))
+                  (pushnew '(2) list
+                           :test-not (lambda (x y) (/= (1- x) y))
+                           :key #'car))
     (assert-equal '((2) (1))
-		  list)))
+                  list)))
 
 (define-test |pushnew test=other test-not=other 1|
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (declare (special list))
-			   (pushnew '2 list
-			    :test #'eql
-			    :test-not #'eql)))))
+            (compile nil '(lambda ()
+                           (declare (special list))
+                           (pushnew '2 list
+                            :test #'eql
+                            :test-not #'eql)))))
     (assert-true warned)
     (assert-error 'error (funcall fun))))
 
 (define-test |pushnew test=nil key=identity 3b|
   (let ((list '(2)))
     (assert-error 'error
-		  (pushnew 1 list :test nil))))
+                  (pushnew 1 list :test nil))))
     
 
 (define-test |pushnew test-not=nil key=identity 3b|
   (let ((list '(2)))
     (assert-error 'error
-		  (pushnew 1 list :test-not nil))))
+                  (pushnew 1 list :test-not nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11490,37 +11490,37 @@
 (define-test |pop 1|
   (let ((var (list 1)))
     (assert-equal 1
-		  (pop var))
+                  (pop var))
     (assert-equal '()
-		  var)))
+                  var)))
 
 (define-test |pop 2|
   (let ((var (list 1 2)))
     (assert-equal 1
-		  (pop var))
+                  (pop var))
     (assert-equal '(2)
-		  var)))
+                  var)))
 
 (define-test |pop 3|
   (let ((list (list (list 1))))
     (assert-equal 1
-		  (pop (car list)))
+                  (pop (car list)))
     (assert-equal '(())
-		  list)))
+                  list)))
 
 (define-test |pop 4|
   (let ((list (list (list 1 2))))
     (assert-equal 1
-		  (pop (car list)))
+                  (pop (car list)))
     (assert-equal '((2))
-		  list)))
+                  list)))
 
 (define-test |pop error 1|
   (let ((list (copy-tree '(1 . 2))))
     (assert-equal 1
-		  (pop list))
+                  (pop list))
     (assert-error 'type-error
-		  (pop list))))
+                  (pop list))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11528,7 +11528,7 @@
 
 (define-test nsubst.1
   (assert-equal '(a (c))
-		(nsubst 'c '(b) (copy-tree '(a ((b)))) :test-not (complement #'equal))))
+                (nsubst 'c '(b) (copy-tree '(a ((b)))) :test-not (complement #'equal))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11536,31 +11536,31 @@
 
 (define-test |getf 1|
   (assert-equal nil
-		(getf '() 'a)))
+                (getf '() 'a)))
 
 (define-test |getf 2|
   (assert-equal 1
-		(getf '(a 1) 'a)))
+                (getf '(a 1) 'a)))
 
 (define-test |getf 3|
   (assert-equal 1
-		(getf '(b 2 a 1) 'a)))
+                (getf '(b 2 a 1) 'a)))
 
 (define-test |getf 4|
   (assert-equal nil
-		(getf '(b 2 a 1) 'c)))
+                (getf '(b 2 a 1) 'c)))
 
 (define-test |getf error 1|
   (assert-error 'type-error
-		(getf '(b 2 a) 'c)))
+                (getf '(b 2 a) 'c)))
 
 (define-test |getf error 2|
   (assert-error 'type-error
-		(getf 1 'c)))
+                (getf 1 'c)))
 
 (define-test |getf error 3|
   (assert-error 'type-error
-		(getf '(b 2 a 3 . f) 'c)))
+                (getf '(b 2 a 3 . f) 'c)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11603,15 +11603,15 @@
 
 (define-test |get-properties error 1|
   (assert-error 'type-error
-		(get-properties '(b 2 a) '(c d e))))
+                (get-properties '(b 2 a) '(c d e))))
 
 (define-test |get-properties error 2|
   (assert-error 'type-error
-		(get-properties '(b 2 a 3 . f) '(c d e))))
+                (get-properties '(b 2 a 3 . f) '(c d e))))
 
 (define-test |get-properties error 3|
   (assert-error 'type-error
-		(get-properties 1 '(c d e))))
+                (get-properties 1 '(c d e))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11620,17 +11620,17 @@
 (define-test |(setf getf) 1|
   (let ((list (copy-list '(:a 0 :c 1 :e 2 :c 3))))
     (assert-equal 4
-		  (setf (getf list :c) 4))
+                  (setf (getf list :c) 4))
     (assert-equal '(:a 0 :c 4 :e 2 :c 3)
-		  list)))
+                  list)))
 
 (define-test |(setf getf) 2|
   (let ((list (copy-list '(:a 0 :c 1 :e 2 :c 3)))
-	(thing 0))
+        (thing 0))
     (assert-equal 4
-		  (setf (getf list :d (incf thing)) 4))
+                  (setf (getf list :d (incf thing)) 4))
     (assert-equal 4
-		  (getf list :d))
+                  (getf list :d))
     (assert-equal 1 thing)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -11641,4 +11641,4 @@
   (let ((list (copy-tree '(a 1 b 2 c 3))))
     (assert-true (remf list 'c))
     (assert-equal '(a 1 b 2)
-		  list)))
+                  list)))
