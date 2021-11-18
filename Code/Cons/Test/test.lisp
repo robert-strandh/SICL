@@ -67,7 +67,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caaar function
+;;; Tests for the CAAAR function.
 
 (define-test caaar.1
   (assert-equal 'a (caaar '(((a))))))
@@ -83,7 +83,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cdaar function
+;;; Tests for the CDAAR function.
 
 (define-test cdaar.1
   (assert-equal 'b (cdaar '(((a . b))))))
@@ -99,7 +99,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cadar function
+;;; Tests for the CADAR function.
 
 (define-test cadar.1
   (assert-equal 'b (cadar (cons (cons 'a (cons 'b 'c)) 'd))))
@@ -115,7 +115,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cddar function
+;;; Tests for the CDDAR function.
 
 (define-test cddar.1
   (assert-equal 'c (cddar (cons (cons 'a (cons 'b 'c)) 'd))))
@@ -131,7 +131,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caadr function
+;;; Tests for the CAADR function.
 
 (define-test caadr.1
   (assert-equal 'b (caadr (cons 'a (cons (cons 'b 'c) 'd)))))
@@ -147,7 +147,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caddr function
+;;; Tests for the CADDR function.
 
 (define-test caddr.1
   (assert-equal 'c (caddr (cons 'a (cons 'b (cons 'c 'd))))))
@@ -163,7 +163,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cdadr function
+;;; Tests for the CDADR function.
 
 (define-test cdadr.1
   (assert-equal 'c (cdadr (cons 'a (cons (cons 'b 'c) 'd)))))
@@ -179,7 +179,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cdddr function
+;;; Tests for the CDDDR function.
 
 (define-test cdddr.1
   (assert-equal 'd (cdddr (cons 'a (cons 'b (cons 'c 'd))))))
@@ -207,7 +207,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caaaar function
+;;; Tests for the CAAAAR function.
 
 (define-test caaaar.1
   (assert-equal 'a (caaaar *cons-test-4*)))
@@ -226,7 +226,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caaadr function
+;;; Tests for the CAAADR function.
 
 (define-test caaadr.1
   (assert-equal 'i (caaadr *cons-test-4*)))
@@ -245,7 +245,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caadar function
+;;; Tests for the CAADAR function.
 
 (define-test caadar.1
   (assert-equal 'e (caadar *cons-test-4*)))
@@ -264,7 +264,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caaddr function
+;;; Tests for the CAADDR function.
 
 (define-test caaddr.1
   (assert-equal 'm (caaddr *cons-test-4*)))
@@ -283,7 +283,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cadaar function
+;;; Tests for the CADAAR function.
 
 (define-test cadaar.1
   (assert-equal 'c (cadaar *cons-test-4*)))
@@ -302,7 +302,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cadadr function
+;;; Tests for the CADADR function.
 
 (define-test cadadr.1
   (assert-equal 'k (cadadr *cons-test-4*)))
@@ -321,7 +321,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the caddar function
+;;; Tests for the CADDAR function.
 
 (define-test caddar.1
   (assert-equal 'g (caddar *cons-test-4*)))
@@ -340,7 +340,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cadddr function
+;;; Tests for the CADDDR function.
 
 (define-test cadddr.1
   (assert-equal 'o (cadddr *cons-test-4*)))
@@ -359,7 +359,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cdaaar function
+;;; Tests for the CDAAAR function.
 
 (define-test cdaaar.1
   (assert-equal 'b (cdaaar *cons-test-4*)))
@@ -378,7 +378,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cdaadr function
+;;; Tests for the CDAADR function.
 
 (define-test cdaadr.1
   (assert-equal 'j (cdaadr *cons-test-4*)))
@@ -397,7 +397,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cdadar function
+;;; Tests for the CDADAR function.
 
 (define-test cdadar.1
   (assert-equal 'f (cdadar *cons-test-4*)))
@@ -416,7 +416,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cdaddr function
+;;; Tests for the CDADDR function.
 
 (define-test cdaddr.1
   (assert-equal 'n (cdaddr *cons-test-4*)))
@@ -435,7 +435,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cddaar function
+;;; Tests for the CDDAAR function.
 
 (define-test cddaar.1
   (assert-equal 'd (cddaar *cons-test-4*)))
@@ -454,7 +454,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cddadr function
+;;; Tests for the CDDADR function.
 
 (define-test cddadr.1
   (assert-equal 'l (cddadr *cons-test-4*)))
@@ -473,7 +473,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cdddar function
+;;; Tests for the CDDDAR function.
 
 (define-test cdddar.1
   (assert-equal 'h (cdddar *cons-test-4*)))
@@ -492,7 +492,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the cddddr function
+;;; Tests for the CDDDDR function.
 
 (define-test cddddr.1
   (assert-equal 'p (cddddr *cons-test-4*)))
@@ -511,7 +511,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the first function
+;;; Tests for the FIRST function
 
 (define-test first.1
   (assert-equal nil (first nil)))
@@ -527,7 +527,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the second function
+;;; Tests for the SECOND function
 
 (define-test second.1
   (assert-equal nil (second nil)))
@@ -549,7 +549,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the third function
+;;; Tests for the THIRD function.
 
 (define-test third.1
   (assert-equal nil (third nil)))
@@ -577,7 +577,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the fourth function
+;;; Tests for the FOURTH function.
 
 (define-test fourth.1
   (assert-equal nil (fourth nil)))
@@ -611,7 +611,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the fifth function
+;;; Tests for the FIFTH function.
 
 (define-test fifth.1
   (assert-equal nil (fifth nil)))
@@ -651,7 +651,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the sixth function
+;;; Tests for the SIXTH function.
 
 (define-test sixth.1
   (assert-equal nil (sixth nil)))
@@ -697,7 +697,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the seventh function
+;;; Tests for the SEVENTH function.
 
 (define-test seventh.1
   (assert-equal nil (seventh nil)))
@@ -749,7 +749,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the eighth function
+;;; Tests for the EIGHTH function.
 
 (define-test eighth.1
   (assert-equal nil (eighth nil)))
@@ -807,7 +807,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the ninth function
+;;; Tests for the NINTH function.
 
 (define-test ninth.1
   (assert-equal nil (ninth nil)))
@@ -871,7 +871,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the tenth function
+;;; Tests for the TENTH function.
 
 (define-test tenth.1
   (assert-equal nil (tenth nil)))
