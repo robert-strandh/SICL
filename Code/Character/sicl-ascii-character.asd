@@ -33,4 +33,6 @@
    (:file "binary-char-greaterp-2-defun")
    (:file "char-greaterp-2-defun")
    (:file "binary-char-not-lessp-2-defun")
-   (:file "char-not-lessp-2-defun")))
+   (:file "char-not-lessp-2-defun")
+   (:file "char-not-equal-1-defun")
+   (:file "char-not-equal-2-defun")))

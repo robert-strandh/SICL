@@ -1,0 +1,16 @@
+(cl:in-package #:sicl-character)
+
+(define-compiler-macro char/= (&whole form &rest arguments)
+  (cond ((not (and (cleavir-code-utilities:proper-list-p arguments)
+               (>= (length arguments) 1)))
+         form)
+        ((= (length arguments) 1)
+         `(characterp ,(car arguments)))
+        (t (let* ((vars (loop for argument in arguments collect (gensym))))
+             `(let ,(loop for var in vars
+                          for arg in arguments
+                          collect `(,var ,arg))
+                (and ,@(loop for (var1 . rest-vars) on vars
+                             repeat (1- (length vars))
+                             nconc (loop for var2 in rest-vars
+                                         collect `(not (binary-char= ,var1 ,var2))))))))))
