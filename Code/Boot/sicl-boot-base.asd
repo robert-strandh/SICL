@@ -31,7 +31,6 @@
   :components
   ((:file "packages")
    (:file "client")
-   (:file "cleavir-configuration")
    (:file "environment")
    (:file "boot-class")
    (:file "header")
