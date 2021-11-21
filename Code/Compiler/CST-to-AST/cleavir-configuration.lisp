@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-cst-to-ast)
 
 (defmethod cleavir-cst-to-ast:trivial-constant-p
-    ((client sicl-client:sicl) object)
+    ((client sicl-client:sicl-x86-64) object)
   (or (typep object '(integer #.(- (expt 2 62)) #.(1- (expt 2 62))))
       (characterp object)
       (stringp object)
