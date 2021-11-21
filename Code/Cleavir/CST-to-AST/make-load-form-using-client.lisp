@@ -45,7 +45,7 @@
 (defmethod make-load-form-using-client
     (client (cons cons) environment)
   (values
-   `(cons nil nil)
+   `(cons 0 0)
    `(setf (car ',cons) ',(car cons)
           (cdr ',cons) ',(cdr cons))))
 
