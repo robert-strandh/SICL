@@ -1,0 +1,102 @@
+\chapter{Translating CST to AST}
+
+\section{Converting literals}
+
+How a CST corresponding to a literal in source code is converted,
+depends on whether the conversion is using file-compilation semantics
+of \texttt{eval} semantics.  When \texttt{eval} semantics is used, the
+literal is converted to a \texttt{literal-ast} with the literal in a
+slot in the AST.  The remainder of this section discusses how the
+conversion is done when file-compilation semantics is used.
+
+We keep an \texttt{eql} hash table, mapping source literals to
+\emph{literal entries}.  Each literal entry contains the following
+information:
+
+\begin{itemize}
+\item The source literal itself for error reporting.
+\item Two \emph{AST entries}, one corresponding to the creation form
+  (called the ``creation entry'') and the other to the initialization
+  form (called the ``initialization entry'').
+\end{itemize}
+
+An AST entry contains the following information:
+
+\begin{itemize}
+\item The source form to be converted to an AST.
+\item The AST that, when evaluated, creates or initializes the
+  literal.  When the entry is initially created, this information is
+  not available.  It is generated as a result of the conversion of the
+  source form.
+\item A list of AST entries that this entry depends on.  When one AST
+  entry depends on another AST entry, this means that the code of the
+  latter must be executed before the code of the former.  Every AST
+  entry in this list is a creation entry.
+\item When the AST entry is a creation entry, a list of entries that
+  depend on this entry.  An entry in this list may be either a
+  creation entry or an initialization entry.
+\item When the AST entry is a creation entry, a \emph{lexical-ast}
+  that holds the literal, once it has been created from by the
+  \emph{creation AST}.
+\end{itemize}
+
+We also keep a \emph{work list} of AST entries that have not yet had
+their source forms converted to ASTs.
+
+Converting a literal is done as follows:
+
+\begin{itemize}
+\item The hash table is consulted to see whether the literal has
+  already been converted.
+\item If the literal has not already been converted, a literal entry
+  is created and added to the table.  A call is made to
+  \texttt{make-load-form-using-client} in order to obtain the creation
+  form and the initialization form.  These forms are used to create
+  the two AST entries in the literal entry.  A \texttt{lexical-ast} is
+  created and stored in the creation entry.  The initialization entry
+  is added to the list of AST entries depending on the creation entry.
+  The creation entry is added to the list of entries that the
+  initialization entry depends on. The two AST entries are added to
+  the work list.
+\item The special variable \texttt{*current-ast-entry*} is consulted.
+  If its value is \texttt{nil}, no action is taken.  Otherwise, its
+  value indicates the AST entry containing the form that is currently
+  being converted, and call it $A$.  If so, $A$ is added to the list
+  of AST entries depending on the creation entry of the hash table
+  literal entry, and the creation entry of the hash table literal
+  entry is added to the list of AST entries $A$ depends on.  The value
+  of the special variable \texttt{*current-ast-entry*} is \texttt{nil}
+  when the body of the compilation unit is processed, and bound as
+  described below.
+\item The result of the conversion is the \texttt{lexical-ast} stored
+  in the AST entry corresponding to the creation form.
+\end{itemize}
+
+When the conversion of the entire compilation unit is finished, we
+then process the entries in the work list.  Processing an entry
+consists of binding the special variable \texttt{*current-ast-entry*}
+to the entry and then converting the source form to an AST.  This step
+may result in new literal entries and new AST entries to be created
+and entered into the table and work list respectively.  Processing
+continues until the work list is empty.
+
+In the last step, we maintain a work list as a LIFO.
+
+\begin{itemize}
+\item When the work list is empty and there are no more AST entries to
+  process, we are done.
+\item Otherwise, if the work list is empty, but there are more AST
+  entries to process, we find an AST entry that does not depend on any
+  other entry.  If no such entry can be found, there is a circular
+  dependency between creation forms and an error is signaled.  If an
+  entry can be found, it is pushed onto the work list.
+\item Otherwise, there is an entry on the work list, say $A$.  The AST
+  of $A$ is then entered into the prologue of the AST corresponding to
+  the compilation unit, and $A$ is eliminated as a dependency of all
+  other AST entries. If any AST entry $B$ depending on $A$ depends
+  only on $A$, then $B$ is pushed onto the LIFO.  The reason for the
+  use of a LIFO is to respect the rule stated in the standard that an
+  initialization form should be executed ``as soon as possible'' after
+  the corresponding creation form.
+\end{itemize}
+
