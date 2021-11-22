@@ -78,9 +78,16 @@ consists of binding the special variable \texttt{*current-ast-entry*}
 to the entry and then converting the source form to an AST.  This step
 may result in new literal entries and new AST entries to be created
 and entered into the table and work list respectively.  Processing
-continues until the work list is empty.
+continues until the work list is empty.  The result of converting all
+AST entries is a \emph{dependency graph}, which should be a directed
+acyclic graph for the conversion to be possible.
 
-In the last step, we maintain a work list as a LIFO.
+In the last step, we process the graph in an order that is consistent
+with the dependencies, but also with the restriction stated in the
+\commonlisp{} standard, that initialization form should be executed
+``as soon as possible'' after the corresponding creation form.  This
+restriction implies the traversal of the graph in depth-first order.
+For that, we maintain a work list as a LIFO.
 
 \begin{itemize}
 \item When the work list is empty and there are no more AST entries to
@@ -99,4 +106,3 @@ In the last step, we maintain a work list as a LIFO.
   initialization form should be executed ``as soon as possible'' after
   the corresponding creation form.
 \end{itemize}
-
