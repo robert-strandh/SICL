@@ -54,6 +54,10 @@
    ;; The AST resulting from the conversion of the form.
    (ast :initform nil :accessor ast)
    ;; A list of instances of AST-ENTRY that this entry depends on.
+   ;; When an AST-ENTRY A depends on an AST-ENTRY B, this means that
+   ;; the code of B must be executed before that of A when the
+   ;; compilation unit is loaded.  Every entry in this list is an
+   ;; instance of the class CREATION-ENTRY.
    (leaders :initform '() :initarg :leaders :accessor leaders)))
 
 (defclass constant-record ()
