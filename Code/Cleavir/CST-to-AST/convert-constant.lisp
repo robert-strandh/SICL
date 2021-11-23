@@ -43,6 +43,19 @@
 ;;;
 ;;; Constant Records
 
+;;; An AST-ENTRY holds a creation form or an initialization form, and
+;;; when fully computed, also the AST resulting from the conversion of
+;;; the form.  When the AST-ENTRY is created the AST slot contains NIL
+;;; which means that the AST has not yet been computed.
+(defclass ast-entry ()
+  (;; The creation form or initialization form corresponding to this
+   ;; entry.
+   (form :initarg :form :reader form)
+   ;; The AST resulting from the conversion of the form.
+   (ast :initform nil :accessor ast)
+   ;; A list of instances of AST-ENTRY that this entry depends on.
+   (leaders :initform '() :initarg :leaders :accessor leaders)))
+
 (defclass constant-record ()
   (;; The lexical AST that holds the result of calling the creation form.
    (%lexical-ast :initarg :lexical-ast :reader lexical-ast)
