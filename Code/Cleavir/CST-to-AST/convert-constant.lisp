@@ -60,6 +60,16 @@
    ;; instance of the class CREATION-ENTRY.
    (%leaders :initform '() :initarg :leaders :accessor leaders)))
 
+(defclass creation-entry (ast-entry)
+  (;; This slot contains the literal that resulted in this entry.  It
+   ;; is used only for the purpose of error reporting.
+   (%literal :initarg :literal :reader literal)
+    ;; This slot holds a LEXICAL-AST representing a variable that will
+   ;; contain the literal once it has been created at load time.
+   (%lexical-ast :initarg :lexical-ast :reader lexical-ast)
+   ;; A list if instance of AST-ENTRY that depends on this entry.
+   (%followers :initform '() :initarg :followers :accessor followers)))
+
 (defclass constant-record ()
   (;; The lexical AST that holds the result of calling the creation form.
    (%lexical-ast :initarg :lexical-ast :reader lexical-ast)
