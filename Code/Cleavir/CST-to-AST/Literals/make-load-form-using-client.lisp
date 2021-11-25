@@ -5,14 +5,6 @@
   (error 'object-not-externalizable :object object))
 
 (defmethod make-load-form-using-client
-    (client (object standard-object) environment)
-  (make-load-form object environment))
-
-(defmethod make-load-form-using-client
-    (client (object structure-object) environment)
-  (make-load-form object environment))
-
-(defmethod make-load-form-using-client
     (client (object condition) environment)
   (make-load-form object environment))
 
