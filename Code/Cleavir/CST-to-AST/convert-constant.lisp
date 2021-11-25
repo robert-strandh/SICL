@@ -5,10 +5,10 @@
 ;;; Coalescing of Similar Objects
 
 (defclass similarity-table ()
-  ;; The EQL table is used to ensure that each object is only scanned once.
-  ;; This works because if two objects are EQL, they are also similar in
-  ;; the sense of CLHS 3.2.4.2.2.
-  ((%eql-table :initform (make-hash-table :test #'eq) :reader eql-table)
+  (;; The EQL table is used to ensure that each object is only scanned once.
+   ;; This works because if two objects are EQL, they are also similar in
+   ;; the sense of CLHS 3.2.4.2.2.
+   (%eql-table :initform (make-hash-table :test #'eq) :reader eql-table)
    ;; The EQUAL and EQUALP tables are used to coalesce literal objects
    ;; where the rules of similarity are less restrictive, e.g., specialized
    ;; arrays or hash tables.
