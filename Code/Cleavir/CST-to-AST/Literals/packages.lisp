@@ -2,4 +2,5 @@
 
 (defpackage #:cleavir-literals
   (:use #:common-lisp)
-  (:export #:make-load-form-using-client))
+  (:export #:make-load-form-using-client
+           #:with-fresh-similarity-table))
