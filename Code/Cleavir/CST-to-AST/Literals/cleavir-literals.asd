@@ -7,4 +7,5 @@
    (:file "variables")
    (:file "macros")
    (:file "generic-functions")
-   (:file "make-load-form-using-client")))
+   (:file "make-load-form-using-client")
+   (:file "load-time-literal")))
