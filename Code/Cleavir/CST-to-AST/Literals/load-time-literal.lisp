@@ -55,3 +55,21 @@
     (if present-p
         (result (creation-entry literal-record))
         (call-next-method))))
+
+(defmethod load-time-literal (client object environment)
+  (multiple-value-bind (creation-form initialization-form)
+      (make-load-form-using-client client object environment)
+    (let* ((lexical-location
+             (allocate-lexical-location client environment))
+           (literal-record
+            (make-instance 'literal-record
+              :creation-entry
+              (make-instance 'creation-entry
+                :literal object
+                :form creation-form
+                :lexical-location lexical-location)
+              :initialization-entry
+              (make-instance 'entry
+                :form initialization-form))))
+      (setf (literal-record-cache object)
+            literal-record))))
