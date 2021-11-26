@@ -53,7 +53,7 @@
   (multiple-value-bind (literal-record present-p)
       (literal-record-cache object)
     (if present-p
-        (result (creation-entry literal-record))
+        (lexical-location (creation-entry literal-record))
         (call-next-method))))
 
 (defmethod load-time-literal (client object environment)
@@ -61,15 +61,23 @@
       (make-load-form-using-client client object environment)
     (let* ((lexical-location
              (allocate-lexical-location client environment))
+           (creation-entry
+             (make-instance 'creation-entry
+               :literal object
+               :form creation-form
+               :lexical-location lexical-location))
+           (initialization-entry
+             (make-instance 'entry
+               :form initialization-form))
            (literal-record
             (make-instance 'literal-record
-              :creation-entry
-              (make-instance 'creation-entry
-                :literal object
-                :form creation-form
-                :lexical-location lexical-location)
-              :initialization-entry
-              (make-instance 'entry
-                :form initialization-form))))
+              :creation-entry creation-entry
+              :initialization-entry initialization-entry)))
+      (push creation-entry (leaders initialization-entry))
+      (push initialization-entry (followers creation-entry))
+      (unless (null *current-entry*)
+        (push creation-entry (leaders *current-entry*))
+        (push *current-entry* (followers creation-entry)))
       (setf (literal-record-cache object)
-            literal-record))))
+            literal-record)
+      lexical-location)))
