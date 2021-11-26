@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export #:make-load-form-using-client
            #:with-fresh-similarity-table
-           #:load-time-literal))
+           #:load-time-literal
+           #:allocate-lexical-location))
