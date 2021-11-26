@@ -9,7 +9,8 @@
    ;; where the rules of similarity are less restrictive, e.g., specialized
    ;; arrays or hash tables.
    (%equal-table :initform (make-hash-table :test #'equal) :reader equal-table)
-   (%equalp-table :initform (make-hash-table :test #'equalp) :reader equalp-table)))
+   (%equalp-table :initform (make-hash-table :test #'equalp) :reader equalp-table)
+   (%work-list :initform '() :accessor work-list)))
 
 (defmacro literal-record-cache (object)
   `(gethash ,object (eql-table *similarity-table*)))
@@ -75,6 +76,8 @@
               :initialization-entry initialization-entry)))
       (push creation-entry (leaders initialization-entry))
       (push initialization-entry (followers creation-entry))
+      (push creation-entry (work-list *similarity-table*))
+      (push initialization-entry (work-list *similarity-table*))
       (unless (null *current-entry*)
         (push creation-entry (leaders *current-entry*))
         (push *current-entry* (followers creation-entry)))
