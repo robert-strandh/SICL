@@ -10,3 +10,7 @@
 ;;; generic function that returns a fresh lexical location that
 ;;; corresponds to how client code translates code.
 (defgeneric allocate-lexical-location (client environment))
+
+;;; Client code calls this generic function when the entire
+;;; compilation unit has been processed.
+(defgeneric finalize-literals (client environment))
