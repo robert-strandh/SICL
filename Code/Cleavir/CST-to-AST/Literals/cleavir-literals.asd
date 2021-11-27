@@ -8,4 +8,5 @@
    (:file "macros")
    (:file "generic-functions")
    (:file "make-load-form-using-client")
-   (:file "load-time-literal")))
+   (:file "load-time-literal")
+   (:file "finalize-literals")))
