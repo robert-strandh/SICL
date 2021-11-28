@@ -1,5 +1,8 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+(defmethod cleavir-literals:allocate-lexical-location (client environment)
+  (cleavir-ast:make-ast 'cleavir-ast:lexical-ast :name (gensym)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Coalescing of Similar Objects
