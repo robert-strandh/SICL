@@ -6,6 +6,7 @@
                #:cleavir-ast
                #:cleavir-ast-transformations
                #:cleavir-primop
+               #:cleavir-literals
                #:trucler-reference
                #:stealth-mixin
                #:acclimation)
