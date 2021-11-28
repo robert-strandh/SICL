@@ -3,6 +3,9 @@
 (defmethod cleavir-literals:allocate-lexical-location (client environment)
   (cleavir-ast:make-ast 'cleavir-ast:lexical-ast :name (gensym)))
 
+(defmethod cleavir-literals:convert-form (client form environment)
+  (convert client form environment))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Coalescing of Similar Objects
