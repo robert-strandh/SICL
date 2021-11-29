@@ -1,12 +1,22 @@
 (cl:in-package #:cleavir-literals)
 
+(defgeneric convert-entry (client entry environment))
+
+(defmethod convert-entry (client (entry entry) environment)
+  (convert-initialization-form
+   client (form entry) environment))
+
+(defmethod convert-entry (client (entry creation-entry) environment)
+  (convert-creation-form
+   client (form entry) (lexical-location entry) environment))
+
 (defun process-work-list (client environment)
   (let ((table *similarity-table*))
     (loop until (null (work-list table))
           do (let* ((entry (pop (work-list table)))
                     (*current-entry* entry))
                (setf (result entry)
-                     (convert-form client (form entry) environment))))))
+                     (convert-entry client entry environment))))))
 
 (defmethod finalize-literals (client environment)
   (process-work-list client environment)
