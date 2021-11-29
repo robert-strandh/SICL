@@ -6,5 +6,6 @@
            #:with-fresh-similarity-table
            #:load-time-literal
            #:allocate-lexical-location
-           #:convert-form
+           #:convert-initialization-form
+           #:convert-creation-form
            #:finalize-literals))
