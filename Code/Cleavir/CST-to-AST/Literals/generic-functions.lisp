@@ -12,11 +12,18 @@
 (defgeneric allocate-lexical-location (client environment))
 
 ;;; This generic function is called in order for client code to
-;;; convert a form to the notiation that the client uses for this
-;;; purpose.  Client code must define a method on this generic
+;;; convert an initialization form to the notiation that the client
+;;; uses for this purpose.  Client code must define a method on this
+;;; generic function, that returns an object that represents the
+;;; result of the conversion.
+(defgeneric convert-initialization-form (client form environment))
+
+;;; This generic function is called in order for client code to
+;;; convert a creation form to the notiation that the client uses for
+;;; this purpose.  Client code must define a method on this generic
 ;;; function, that returns an object that represents the result of the
-;;; conversion.
-(defgeneric convert-form (client form environment))
+;;; conversion, wrapped in an object that binds the lexical location.
+(defgeneric convert-creation-form (client form lexical-location environment))
 
 ;;; Client code calls this generic function when the entire
 ;;; compilation unit has been processed.
