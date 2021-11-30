@@ -4,19 +4,20 @@
 ;;;; maps from instructions to pools. They're hash tables.
 
 (declaim (inline make-dictionary
-		 instruction-pool (setf instruction-pool)))
+		 instruction-pool
+                 (setf instruction-pool)))
 
 (defun make-dictionary ()
   (make-hash-table :test 'eq))
 
-;;; note that the present-p value is actually needed.
+;;; Note that the PRESENT-P value is actually needed.
 (defun instruction-pool (instruction dictionary)
   (gethash instruction dictionary))
 (defsetf instruction-pool (instruction dictionary) (pool)
   `(setf (gethash ,instruction ,dictionary) ,pool))
 
-;;;; The *dictionary* variable holds the dictionary used throughout
-;;;; an entire Kildall-ing.
+;;;; The *dictionary* variable holds the dictionary used throughout an
+;;;; entire Kildall-ing.
 
 (defvar *dictionary*)
 
@@ -32,8 +33,8 @@
     (call-next-method)
     *dictionary*))
 
-;;; Return the pool for an instruction if it exists. If not make
-;;; one in some specialized way, and put it there.
+;;; Return the pool for an instruction if it exists. If not, make one
+;;; in some specialized way, and put it there.
 (declaim (inline maybe-instruction-pool))
 (defun maybe-instruction-pool (specialization instruction)
   (multiple-value-bind (pool present-p)
@@ -43,8 +44,8 @@
         (setf (dictionary-pool instruction)
               (make-pool specialization instruction)))))
 
-;;; We also sometimes need to know whether an instruction has a
-;;; pool, because not having a pool is Kildall's distinguished _1_.
+;;; We also sometimes need to know whether an instruction has a pool,
+;;; because not having a pool is Kildall's distinguished _1_.
 (declaim (inline pool-present-p))
 (defun pool-present-p (specialization instruction)
   (declare (ignore specialization))
