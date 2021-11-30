@@ -941,7 +941,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caar) function and setf expander
+;;; Tests for the (SETF CAAR) function and SETF expander.
 
 (define-test |setf caar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
@@ -1001,7 +1001,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cadr) function and setf expander
+;;; Tests for the (SETF CADR) function and SETF expander.
 
 (define-test |setf cadr 1|
   (let ((list (copy-tree '(0 0))))
@@ -1055,7 +1055,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdar) function and setf expander
+;;; Tests for the (SETF CDAR) function and SETF expander.
 
 (define-test |setf cdar 1|
   (let ((list (copy-tree '((0) 0))))
@@ -1109,7 +1109,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cddr) function and setf expander
+;;; Tests for the (SETF CDDR) function and SETF expander.
 
 (define-test |setf cddr 1|
   (let ((list (copy-tree '(0 0))))
@@ -1163,7 +1163,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caaar) function and setf expander
+;;; Tests for the (SETF CAAAR) function and SETF expander.
 
 (define-test |setf caaar 1|
   (let ((list (copy-tree '(((0 0) 0) 0))))
@@ -1227,7 +1227,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caadr) function and setf expander
+;;; Tests for the (SETF CAADR) function and SETF expander.
 
 (define-test |setf caadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
@@ -1281,7 +1281,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cadar) function and setf expander
+;;; Tests for the (SETF CADAR) function and SETF expander.
 
 (define-test |setf cadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
@@ -1335,7 +1335,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caddr) function and setf expander
+;;; Tests for the (SETF CADDR) function and SETF expander.
 
 (define-test |setf caddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
@@ -1389,7 +1389,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdaar) function and setf expander
+;;; Tests for the (SETF CDAAR) function and SETF expander.
 
 (define-test |setf cdaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
@@ -1443,7 +1443,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdadr) function and setf expander
+;;; Tests for the (SETF CDADR) function and SETF expander.
 
 (define-test |setf cdadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -1497,7 +1497,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cddar) function and setf expander
+;;; Tests for the (SETF CDDAR) function and SETF expander.
 
 (define-test |setf cddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -1551,7 +1551,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdddr) function and setf expander
+;;; Tests for the (SETF CDDDR) function and SETF expander.
 
 (define-test |setf cdddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -1609,7 +1609,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caaaar) function and setf expander
+;;; Tests for the (SETF CAAAAR) function and SETF expander.
 
 (define-test |setf caaaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -1681,7 +1681,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caaadr) function and setf expander
+;;; Tests for the (SETF CAAADR) function and SETF expander.
 
 (define-test |setf caaadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -1753,7 +1753,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caadar) function and setf expander
+;;; Tests for the (SETF CAADAR) function and SETF expander.
 
 (define-test |setf caadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -1825,7 +1825,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caaddr) function and setf expander
+;;; Tests for the (SETF CAADDR) function and SETF expander.
 
 (define-test |setf caaddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -1897,7 +1897,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cadaar) function and setf expander
+;;; Tests for the (SETF CADAAR) function and SETF expander.
 
 (define-test |setf cadaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -1969,7 +1969,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cadadr) function and setf expander
+;;; Tests for the (SETF CADADR) function and SETF expander.
 
 (define-test |setf cadadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2041,7 +2041,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf caddar) function and setf expander
+;;; Tests for the (SETF CADDAR) function and SETF expander.
 
 (define-test |setf caddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2113,7 +2113,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cadddr) function and setf expander
+;;; Tests for the (SETF CADDDR) function and SETF expander.
 
 (define-test |setf cadddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2185,7 +2185,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdaaar) function and setf expander
+;;; Tests for the (SETF CDAAAR) function and SETF expander.
 
 (define-test |setf cdaaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2257,7 +2257,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdaadr) function and setf expander
+;;; Tests for the (SETF CDAADR) function and SETF expander.
 
 (define-test |setf cdaadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2329,7 +2329,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdadar) function and setf expander
+;;; Tests for the (SETF CDADAR) function and SETF expander.
 
 (define-test |setf cdadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2401,7 +2401,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdaddr) function and setf expander
+;;; Tests for the (SETF CDADDR) function and SETF expander.
 
 (define-test |setf cdaddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2473,7 +2473,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cddaar) function and setf expander
+;;; Tests for the (SETF CDDAAR) function and SETF expander.
 
 (define-test |setf cddaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2545,7 +2545,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cddadr) function and setf expander
+;;; Tests for the (SETF CDDADR) function and SETF expander.
 
 (define-test |setf cddadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2617,7 +2617,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cdddar) function and setf expander
+;;; Tests for the (SETF CDDDAR) function and SETF expander.
 
 (define-test |setf cdddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2689,7 +2689,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf cddddr) function and setf expander
+;;; Tests for the (SETF CDDDDR) function and SETF expander.
 
 (define-test |setf cddddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
@@ -2761,7 +2761,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf first) function and setf expander
+;;; Tests for the (SETF FIRST) function and SETF expander.
 
 (define-test |setf first 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2805,7 +2805,7 @@
                   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf second) function and setf expander
+;;; Tests for the (SETF SECOND) function and SETF expander.
 
 (define-test |setf second 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2853,7 +2853,7 @@
                   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf third) function and setf expander
+;;; Tests for the (SETF THIRD) function and SETF expander.
 
 (define-test |setf third 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2901,7 +2901,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf fourth) function and setf expander
+;;; Tests for the (SETF FOURTH) function and SETF expander.
 
 (define-test |setf fourth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2949,7 +2949,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf fifth) function and setf expander
+;;; Tests for the (SETF FIFTH) function and SETF expander.
 
 (define-test |setf fifth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -2997,7 +2997,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf sixth) function and setf expander
+;;; Tests for the (SETF SIXTH) function and SETF expander.
 
 (define-test |setf sixth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -3045,7 +3045,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf seventh) function and setf expander
+;;; Tests for the (SETF SEVENTH) function and SETF expander.
 
 (define-test |setf seventh 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -3093,7 +3093,7 @@
                   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf eighth) function and setf expander
+;;; Tests for the (SETF EIGHTH) function and SETF expander.
 
 (define-test |setf eighth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -3141,7 +3141,7 @@
                   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf ninth) function and setf expander
+;;; Tests for the (SETF NINTH) function and SETF expander.
 
 (define-test |setf ninth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -3189,7 +3189,7 @@
                   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf tenth) function and setf expander
+;;; Tests for the (SETF TENTH) function and SETF expander.
 
 (define-test |setf tenth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
@@ -3237,7 +3237,7 @@
                   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the rest function
+;;; Tests for the REST function.
 
 (define-test rest.1
   (assert-equal '() (rest '())))
@@ -3257,7 +3257,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the setf expander and setf function for rest
+;;; Tests for the SETF expander and SETF function for REST.
 
 (define-test |setf-rest 1|
   (let ((list (copy-list '(0))))
@@ -3281,7 +3281,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the list function
+;;; Tests for the LIST function.
 
 (define-test list.1
   (assert-equal '() (list)))
@@ -3336,7 +3336,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the list* function
+;;; Tests for the LIST* function.
 
 (define-test list*.1
   (assert-equal '(1 2 3) (list* 1 '(2 3))))
