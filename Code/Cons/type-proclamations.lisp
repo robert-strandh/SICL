@@ -4,144 +4,142 @@
   (if (= (length operations) 1)
       'null
       (ecase (car (last (operations)))
-	(a `(or null (cons (cxrn ,(butlast operations)) *)))
-	(d `(or null (cons * (cxrn ,(butlast operations))))))))
+        (a `(or null (cons (cxrn ,(butlast operations)) *)))
+        (d `(or null (cons * (cxrn ,(butlast operations))))))))
 
 (deftype cxrt (operations)
   (if (= (length operations) 1)
       'cons
       (ecase (car (last (operations)))
-	(a `(cons (cxrt ,(butlast operations)) *))
-	(d `(cons * (cxrt ,(butlast operations)))))))
+        (a `(cons (cxrt ,(butlast operations)) *))
+        (d `(cons * (cxrt ,(butlast operations)))))))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x))) null)
-		   (function ((cxrt (x))) t))
-	    car cdr))
+                   (function ((cxrn (x))) null)
+                   (function ((cxrt (x))) t))
+            car cdr))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d))) null)
-		   (function ((cxrt (x d))) t))
-	    cadr cddr))
+                   (function ((cxrn (x d))) null)
+                   (function ((cxrt (x d))) t))
+            cadr cddr))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x a))) null)
-		   (function ((cxrt (x a))) t))
-	    caar cdar))
+                   (function ((cxrn (x a))) null)
+                   (function ((cxrt (x a))) t))
+            caar cdar))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d))) null)
-		   (function ((cxrt (x d d))) t))
-	    caddr cdddr))
+                   (function ((cxrn (x d d))) null)
+                   (function ((cxrt (x d d))) t))
+            caddr cdddr))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x a d))) null)
-		   (function ((cxrt (x a d))) t))
-	    caadr cdadr))
+                   (function ((cxrn (x a d))) null)
+                   (function ((cxrt (x a d))) t))
+            caadr cdadr))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d a))) null)
-		   (function ((cxrt (x d a))) t))
-	    cadar cddar))
+                   (function ((cxrn (x d a))) null)
+                   (function ((cxrt (x d a))) t))
+            cadar cddar))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x a a))) null)
-		   (function ((cxrt (x a a))) t))
-	    caaar cdaar))
+                   (function ((cxrn (x a a))) null)
+                   (function ((cxrt (x a a))) t))
+            caaar cdaar))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d d))) null)
-		   (function ((cxrt (x d d d))) t))
-	    cadddr cddddr))
+                   (function ((cxrn (x d d d))) null)
+                   (function ((cxrt (x d d d))) t))
+            cadddr cddddr))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x a d d))) null)
-		   (function ((cxrt (x a d d))) t))
-	    caaddr cdaddr))
+                   (function ((cxrn (x a d d))) null)
+                   (function ((cxrt (x a d d))) t))
+            caaddr cdaddr))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d a d))) null)
-		   (function ((cxrt (x d a d))) t))
-	    cadadr cddadr))
+                   (function ((cxrn (x d a d))) null)
+                   (function ((cxrt (x d a d))) t))
+            cadadr cddadr))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x a a d))) null)
-		   (function ((cxrt (x a a d))) t))
-	    caaadr cdaadr))
+                   (function ((cxrn (x a a d))) null)
+                   (function ((cxrt (x a a d))) t))
+            caaadr cdaadr))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d a))) null)
-		   (function ((cxrt (x d d a))) t))
-	    caddar cdddar))
+                   (function ((cxrn (x d d a))) null)
+                   (function ((cxrt (x d d a))) t))
+            caddar cdddar))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x a d a))) null)
-		   (function ((cxrt (x a d a))) t))
-	    caadar cdadar))
+                   (function ((cxrn (x a d a))) null)
+                   (function ((cxrt (x a d a))) t))
+            caadar cdadar))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d a a))) null)
-		   (function ((cxrt (x d a a))) t))
-	    cadaar cddaar))
+                   (function ((cxrn (x d a a))) null)
+                   (function ((cxrt (x d a a))) t))
+            cadaar cddaar))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x a a a))) null)
-		   (function ((cxrt (x a a a))) t))
-	    caaaar cdaaar))
+                   (function ((cxrn (x a a a))) null)
+                   (function ((cxrt (x a a a))) t))
+            caaaar cdaaar))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x))) null)
-		   (function ((cxrt (x))) t))
-	    first))
+                   (function ((cxrn (x))) null)
+                   (function ((cxrt (x))) t))
+            first))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d))) null)
-		   (function ((cxrt (x d))) t))
-	    second))
+                   (function ((cxrn (x d))) null)
+                   (function ((cxrt (x d))) t))
+            second))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d))) null)
-		   (function ((cxrt (x d d))) t))
-	    third))
+                   (function ((cxrn (x d d))) null)
+                   (function ((cxrt (x d d))) t))
+            third))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d d))) null)
-		   (function ((cxrt (x d d d))) t))
-	    fourth))
+                   (function ((cxrn (x d d d))) null)
+                   (function ((cxrt (x d d d))) t))
+            fourth))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d d d))) null)
-		   (function ((cxrt (x d d d d))) t))
-	    fifth))
+                   (function ((cxrn (x d d d d))) null)
+                   (function ((cxrt (x d d d d))) t))
+            fifth))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d d d d))) null)
-		   (function ((cxrt (x d d d d d))) t))
-	    sixth))
+                   (function ((cxrn (x d d d d d))) null)
+                   (function ((cxrt (x d d d d d))) t))
+            sixth))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d d d d d))) null)
-		   (function ((cxrt (x d d d d d d))) t))
-	    seventh))
+                   (function ((cxrn (x d d d d d d))) null)
+                   (function ((cxrt (x d d d d d d))) t))
+            seventh))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d d d d d d))) null)
-		   (function ((cxrt (x d d d d d d d))) t))
-	    eighth))
+                   (function ((cxrn (x d d d d d d d))) null)
+                   (function ((cxrt (x d d d d d d d))) t))
+            eighth))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d d d d d d d))) null)
-		   (function ((cxrt (x d d d d d d d d))) t))
-	    ninth))
+                   (function ((cxrn (x d d d d d d d d))) null)
+                   (function ((cxrt (x d d d d d d d d))) t))
+            ninth))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x d d d d d d d d d))) null)
-		   (function ((cxrt (x d d d d d d d d d))) t))
-	    tenth))
+                   (function ((cxrn (x d d d d d d d d d))) null)
+                   (function ((cxrt (x d d d d d d d d d))) t))
+            tenth))
 
 (proclaim '(ftype (or
-		   (function ((cxrn (x))) null)
-		   (function ((cxrt (x))) t))
-	    rest))
-
-
+                   (function ((cxrn (x))) null)
+                   (function ((cxrt (x))) t))
+            rest))
