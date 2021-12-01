@@ -101,7 +101,7 @@
            (cleavir-ast:make-ast 'cleavir-ast:literal-ast
              :value object))
           (*use-file-compilation-semantics-p*
-           (load-time-literal
+           (cleavir-literals:load-time-literal
             client
             (cst:raw constant-cst)
             (trucler:global-environment client environment))))))
