@@ -26,5 +26,8 @@
 (defgeneric convert-creation-form (client form lexical-location environment))
 
 ;;; Client code calls this generic function when the entire
-;;; compilation unit has been processed.
+;;; compilation unit has been processed.  The function returns a list
+;;; of converted (as implemented by CONVERT-INITIALIZATION-FORM and
+;;; CONVERT-CREATION-FORM) creation and initialization forms in the
+;;; order that they must be executed at load time.
 (defgeneric finalize-literals (client environment))
