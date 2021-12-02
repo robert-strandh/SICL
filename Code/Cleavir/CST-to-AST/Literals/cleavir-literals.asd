@@ -9,4 +9,6 @@
    (:file "generic-functions")
    (:file "make-load-form-using-client")
    (:file "load-time-literal")
-   (:file "finalize-literals")))
+   (:file "finalize-literals")
+   (:file "conditions")
+   (:file "condition-reporters-english")))
