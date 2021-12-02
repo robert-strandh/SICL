@@ -35,6 +35,10 @@
             ',(imagpart complex)))
 
 (defmethod make-load-form-using-client
+    (client (character character) environment)
+  `(code-char ,(char-code character)))
+
+(defmethod make-load-form-using-client
     (client (cons cons) environment)
   (values
    `(cons 0 0)
