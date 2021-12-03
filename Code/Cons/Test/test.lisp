@@ -3379,7 +3379,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the last function 
+;;; Tests for the LAST function.
 
 (define-test |last 1|
   (assert-equal '() (last '())))
@@ -3422,7 +3422,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the copy-list function 
+;;; Tests for the COPY-LIST function.
 
 (define-test copy-list.1
   (assert-equal '() (copy-list '())))
@@ -3442,7 +3442,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the list-length function
+;;; Tests for the LIST-LENGTH function.
 
 (define-test |list-length proper-list 1|
   (assert-equal 0
@@ -3514,7 +3514,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the make-list function
+;;; Tests for the MAKE-LIST function.
 
 (define-test make-list.1
   (assert-equal '() (make-list 0)))
@@ -3530,7 +3530,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the nthcdr function
+;;; Tests for the NTHCDR function.
 
 (define-test |nthcdr 1|
   (assert-equal '()
@@ -3558,7 +3558,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the nth function
+;;; Tests for the NTH function.
 
 (define-test |nth 1|
   (assert-equal '()
@@ -3594,7 +3594,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf nth) function and setf expander
+;;; Tests for the (SETF NTH) function and SETF expander.
 
 (define-test |setf-nth 1|
   (let ((list (copy-list '(0 0 0))))
