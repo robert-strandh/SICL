@@ -2,4 +2,5 @@
 
 (defpackage #:cleavir-ast-function-tree
   (:use #:common-lisp)
-  (:export))
+  (:export #:function-tree
+           #:traverse))
