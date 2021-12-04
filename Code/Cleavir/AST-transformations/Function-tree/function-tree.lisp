@@ -24,3 +24,10 @@
                 :parent root-node)))
     (push node (children root-node))
     (traverse client (cleavir-ast:body-ast ast) node)))
+
+(defun function-tree (client ast)
+  (let ((root-node (make-instance 'node
+                     :function-ast nil
+                     :parent nil)))
+    (traverse client ast root-node)
+    root-node))
