@@ -4,4 +4,5 @@
   :depends-on (#:cleavir-ast)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "function-tree")))
