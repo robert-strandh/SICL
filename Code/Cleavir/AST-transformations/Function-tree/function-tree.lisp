@@ -28,6 +28,7 @@
 (defun function-tree (client ast)
   (let ((root-node (make-instance 'node
                      :function-ast nil
-                     :parent nil)))
+                     :parent nil))
+        (*visited* (make-hash-table :test #'eq)))
     (traverse client ast root-node)
     root-node))
