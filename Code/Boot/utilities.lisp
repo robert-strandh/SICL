@@ -73,7 +73,7 @@
     (sicl-source-tracking:with-source-tracking-stream-from-file
         (input-stream absolute-pathname)
       (loop with client = (env:client environment)
-            with eof-marker = (list nil)
+            with eof-marker = input-stream
             for cst = (eclector.concrete-syntax-tree:read input-stream nil eof-marker)
             until (eq cst eof-marker)
             do (cleavir-cst-to-ast:cst-eval client cst environment)))))
