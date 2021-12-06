@@ -1,5 +1,22 @@
 (cl:in-package #:cleavir-ast-function-tree)
 
+(defclass parent-information ()
+  ((%parent :initarg :parent :reader parent)
+   (%child-number :initarg :child-number :reader child-number)))
+
+(defun compute-parents (ast)
+  (let ((result (make-hash-table :test #'eq)))
+    (cleavir-ast:map-ast-depth-first-preorder
+     (lambda (ast)
+       (loop for child in (cleavir-ast:children ast)
+             for i from 0
+             do (push (make-instance 'parent-information
+                        :parent ast
+                        :child-number i)
+                      (gethash child result))))
+     ast)
+    result))
+
 (defclass node ()
   ((%function-ast :initarg :function-ast :reader function-ast)
    (%parent :initarg :parent :reader parent)
