@@ -11483,7 +11483,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the pop macro
+;;; Tests for the POP macro.
 
 (define-test |pop 1|
   (let ((var (list 1)))
@@ -11522,7 +11522,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the nsubst function
+;;; Tests for the NSUBST function.
 
 (define-test nsubst.1
   (assert-equal '(a (c))
@@ -11530,7 +11530,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the getf function
+;;; Tests for the GETF function.
 
 (define-test |getf 1|
   (assert-equal nil
@@ -11562,7 +11562,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the get-properties function
+;;; Tests for the GET-PROPERTIES function.
 
 (define-test |get-properties 1|
   (multiple-value-bind (indicator value tail)
@@ -11613,7 +11613,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the setf expander for getf
+;;; Tests for the SETF expander for GETF.
 
 (define-test |(setf getf) 1|
   (let ((list (copy-list '(:a 0 :c 1 :e 2 :c 3))))
@@ -11633,7 +11633,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the remf macro
+;;; Tests for the REMF macro.
 
 (define-test remf.1
   (let ((list (copy-tree '(a 1 b 2 c 3))))
