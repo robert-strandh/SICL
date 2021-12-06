@@ -11,7 +11,7 @@
      cleavir-kildall:start-enter-mixin)
   ())
 
-;;; kildall methods
+;;; Kildall methods.
 
 (defun chase (location pool)
   (let ((pair (assoc location pool)))
@@ -87,9 +87,9 @@
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
      (loop with pool = (gethash instruction redundancies)
-	   for input-cons on (cleavir-ir:inputs instruction)
-	   for input = (car input-cons)
-           ;; again, ignore values locations
+           for input-cons on (cleavir-ir:inputs instruction)
+           for input = (car input-cons)
+           ;; Again, ignore values locations.
            when (typep input 'cleavir-ir:lexical-location)
              do (let ((pair (assoc input pool)))
                   (when (and pair (cdr pair))
@@ -105,9 +105,9 @@
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
        (when (and
-	      (typep instruction 'cleavir-ir:assignment-instruction)
-	      (null (cleavir-ir:using-instructions (first (cleavir-ir:outputs instruction)))))
-	 (push instruction death)))
+              (typep instruction 'cleavir-ir:assignment-instruction)
+              (null (cleavir-ir:using-instructions (first (cleavir-ir:outputs instruction)))))
+         (push instruction death)))
      initial-instruction)
     (mapc #'cleavir-ir:delete-instruction death))
   nil)
