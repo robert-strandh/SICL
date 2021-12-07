@@ -12,7 +12,7 @@
     :node node))
 
 (defclass lexical-location-information ()
-  ((%definition :initarg :definition :reader definition)
+  ((%definition :initform nil :accessor definition)
    (%assignments :initform '() :accessor assignments)
    (%uses :initform '() :accessor uses)))
 
@@ -26,19 +26,31 @@
 
 (defvar *lexical-locations*)
 
+(defun ensure-lexical-location-information (lexical-location)
+  (let ((location-information
+          (gethash lexical-location *lexical-locations*)))
+    (if (null location-information)
+        (setf (gethash lexical-location *lexical-locations*)
+              (make-instance 'lexical-location-information))
+        location-information)))
+
 (defun add-definition (lexical-location parent child-number node)
-  (setf (gethash lexical-location *lexical-locations*)
-        (make-instance 'lexical-location-information
-          :definition
+  (let ((location-information
+          (ensure-lexical-location-information lexical-location)))
+    (setf (definition location-information)
           (make-lexical-location-occurrence parent child-number node))))
 
 (defun add-assignment (lexical-location parent child-number node)
-  (push (make-lexical-location-occurrence parent child-number node)
-        (assignments (gethash lexical-location *lexical-locations*))))
+  (let ((location-information
+          (ensure-lexical-location-information lexical-location)))
+    (push (make-lexical-location-occurrence parent child-number node)
+          (assignments location-information))))
 
 (defun add-use (lexical-location parent child-number node)
-  (push (make-lexical-location-occurrence parent child-number node)
-        (uses (gethash lexical-location *lexical-locations*))))
+  (let ((location-information
+          (ensure-lexical-location-information lexical-location)))
+    (push (make-lexical-location-occurrence parent child-number node)
+          (uses location-information))))
 
 (defvar *visited*)
 
@@ -62,82 +74,33 @@
     (client parent (child cleavir-ast:lexical-ast) child-number root-node)
   (add-use child parent child-number root-node))
 
+;;; This method is called when the BODY-AST is not a LEXICAL-AST.
 (defmethod traverse
-    (client (parent cleavir-ast:function-ast) child child-number root-node)
-  (let ((node (make-instance 'node
-                :function-ast parent
-                :parent root-node))
-        (lambda-list (cleavir-ast:lambda-list parent)))
-    (tagbody
-     required
-       ;; It is possible that LAMBDA-LIST is empty, or that it starts
-       ;; with &OPTIONAL, &REST, &KEY, or a LEXICAL-AST representing a
-       ;; required parameter.
-       (if (null lambda-list)
-           (go out)
-           (let ((next (pop lambda-list)))
-             (case next
-               (&optional (pop lambda-list) (go optional))
-               (&rest (pop lambda-list) (go rest))
-               (&key (pop lambda-list) (go key))
-               (t
-                ;; We have a required parameter.  Add it as a definition.
-                (add-definition next parent -1 node)
-                ;; Process remaining required parameters if any.
-                (go required)))))
-     optional
-       ;; We have seen &OPTIONAL which has been popped off
-       ;; LAMBDA-LIST.  At this point, it is possible that LAMBDA-LIST
-       ;; is empty, or that it starts with &REST, with &KEY, or with a
-       ;; list of two LEXICAL-ASTs that represent an optional
-       ;; parameter and its associated SUPPLIED-P parameter.
-       (if (null lambda-list)
-           (go out)
-           (let ((next (pop lambda-list)))
-             (case next
-               (&rest (pop lambda-list) (go rest))
-               (&key (pop lambda-list) (go key))
-               (t
-                ;; We have an optional parameter represented as a list
-                ;; of two LEXICAL-ASTs.  Add them as definitions.
-                (add-definition (first next) parent -1 node)
-                (add-definition (second next) parent -1 node)
-                ;; Process remaining optional parameters if any.
-                (go optional)))))
-     rest
-       ;; We have seen &REST which has been popped off LAMBDA-LIST.
-       ;; At this point, there must be a rest parameter first on
-       ;; LAMBDA-LIST.  So we pop it off and push it onto the list of
-       ;; defined lexicals for this node.
-       (push (pop lambda-list) (defined-lexicals node))
-       (if (null lambda-list)
-           (go out)
-           ;; If LAMBDA-LIST is not empty, then it must start with &KEY.
-           (progn (pop lambda-list)
-                  (go key)))
-     key
-       ;; We have seen &KEY which has been popped off LAMBDA-LIST.  At
-       ;; this point, it is possible that LAMBDA-LIST is empty, or
-       ;; that it starts with &ALLOW-OTHER-KEYS or a keyword parameter
-       ;; in the form of a list of three elements.
-       (if (null lambda-list)
-           (go out)
-           (let ((next (pop lambda-list)))
-             (case next
-               (&allow-other-keys (go out))
-               (t
-                ;; We have a keyword parameter in the form of a list
-                ;; containing a symbol and two LEXICAL-ASTs.  Add the
-                ;; LEXICAL-ASTs as definitions.
-                (add-definition (second next) parent -1 node)
-                (add-definition (third next) parent -1 node)
-                ;; Process remaining keyword parameters if any.
-                (go key)))))
-     out)
-    (push node (children root-node))
-    (if (typep child 'cleavir-ast:lexical-ast)
-        (add-use child parent 0 node)
-        (traverse-children client child node))))
+    (client
+     (parent cleavir-ast:function-ast)
+     child
+     (child-number (eql 0))
+     root-node)
+  (traverse-children client child root-node))
+
+;;; This method is called when the BODY-AST is a LEXICAL-AST.
+(defmethod traverse
+    (client
+     (parent cleavir-ast:function-ast)
+     (child cleavir-ast:lexical-ast)
+     (child-number (eql 0))
+     root-node)
+  (add-use child parent 0 root-node))
+
+;;; This method is called when CHILD-NUMBER is never not 0.  Then
+;;; CHILD is a parameter.
+(defmethod traverse
+    (client
+     (parent cleavir-ast:function-ast)
+     (child cleavir-ast:lexical-ast)
+     child-number
+     root-node)
+  (add-definition child parent child-number root-node))
 
 (defmethod traverse
     (client
