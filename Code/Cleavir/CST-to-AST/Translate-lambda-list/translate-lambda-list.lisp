@@ -125,6 +125,72 @@
                                outer-bindings))))
           finally (return outer-bindings))))
 
+(defun wrap-in-checks (canonicalized-lambda-list body)
+  (let ((required-count
+          (if (or (null canonicalized-lambda-list)
+                  (member (first (first canonicalized-lambda-list))
+                          lambda-list-keywords))
+              0
+              (length (first canonicalized-lambda-list))))
+        (optional-count
+          (let ((group (find '&optional canonicalized-lambda-list
+                             :test #'eq :key #'first)))
+            (if (null group)
+                0
+                (length (rest group)))))
+        (result body))
+    ;; If requred, check that keywords are valid.
+    (when (and (member '&key canonicalized-lambda-list
+                       :test #'eq :key #'first)
+               (not (member '&allow-other-keys canonicalized-lambda-list
+                            :test #'eq :key #'first)))
+      (setf result
+            `(progn
+               (let ((allow-other-keys
+                       (if (< (primop-argcount)
+                              ,(<= (+ required-count optional-count)))
+                           nil
+                           (loop for keyword-index from ,(+ required-count optional-count)
+                                   below (primop-argcount)
+                                 by 2
+                                 for value-index from ,(+ required-count optional-count 1)
+                                 by 2
+                                 when (eq (primop-arg keyword-index) :allow-other-keys)
+                                   return (primop-arg value-index)))))
+                 (unless allow-other-keys
+                   (loop for keyword-index from 3 below (primop-argcount) by 2
+                         unless (member (primop-arg keyword-index)
+                                        '(:e :allow-other-keys))
+                                (error "invalid keyword"))))
+               ,result)))
+    ;; If &KEY is given, check that there is an even number of keyword
+    ;; arguments.
+    (when (member '&key canonicalized-lambda-list
+                  :test #'eq :key #'first)
+      (setf result
+            `(if (,(if (oddp (+ required-count optional-count)) 'evenp 'oddp)
+                  (primop-argcount))
+                 (error "Odd number of keyword arguments")
+                 ,result)))
+    ;; Unless &REST or &KEY is given, check for maximum number of
+    ;; arguments.
+    (unless (or (member '&rest canonicalized-lambda-list
+                        :test #'eq :key #'first)
+                (member '&key canonicalized-lambda-list
+                        :test #'eq :key #'first))
+      (setf result
+            `(if (> (primop-argcount) ,(+ required-count optional-count))
+                 (error "Too many arguments")
+                 ,result)))
+    ;; Unless there are no required parameters, check for the minimum
+    ;; number of arguments.
+    (unless (zerop required-count)
+      (setf result
+            `(if (< (primop-argcount) ,required-count)
+                 (error "Too few arguments")
+                 ,result)))
+    result))
+
 (defun translate-lambda-list (lambda-list body)
   (let* ((canonicalized-lambda-list
            (cleavir-code-utilities:canonicalize-ordinary-lambda-list lambda-list))
@@ -134,6 +200,8 @@
            (create-inner-bindings canonicalized-lambda-list lexical-variables))
          (outer-bindings
            (create-outer-bindings canonicalized-lambda-list lexical-variables)))
-    `(let* ,outer-bindings
-       (let* ,inner-bindings
-         ,body))))
+    (wrap-in-checks
+     canonicalized-lambda-list
+     `(let* ,outer-bindings
+        (let* ,inner-bindings
+          ,body)))))
