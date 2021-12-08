@@ -73,11 +73,12 @@
 (defmethod lambda-list-from-parameter-group
     ((parameter-group cst:aux-parameter-group)
      entries)
-  ;; &aux doesn't contribute to the function-ast's lambda-list.
+  ;; &AUX doesn't contribute to the lambda-list of the FUNCTION-AST.
   (values '() entries))
 
 ;;; Given a list of parameter groups, return a lambda list suitable
-;;; for the FUNCTION-AST, as well as a list of lists of lexical variables.
+;;; for the FUNCTION-AST, as well as a list of lists of lexical
+;;; variables.
 (defun lambda-list-from-parameter-groups (parameter-groups)
   (loop for group in parameter-groups
         for entries = (entries-from-parameter-group group)
