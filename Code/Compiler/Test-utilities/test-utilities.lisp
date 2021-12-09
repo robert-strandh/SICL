@@ -25,7 +25,7 @@
 (defun new-zero-successor-probability
     (zero-successor-probability zero-successor-narrowing-factor)
   (- 1.0 (* zero-successor-narrowing-factor
-	    (- 1.0 zero-successor-probability))))
+            (- 1.0 zero-successor-probability))))
 
 ;;; The probability of a node with at least one successor to have two
 ;;; successors.
@@ -37,30 +37,30 @@
 (defun random-inputs (vars)
   (let ((r (random 1.0)))
     (cond ((< r 0.05)
-	   '())
-	  ((< r 0.20)
-	   (list (elt vars (random (length vars)))))
-	  (t
-	   (let* ((v1 (elt vars (random (length vars))))
-		  (v2 (elt (remove v1 vars) (random (1- (length vars))))))
-	     (list v1 v2))))))
+           '())
+          ((< r 0.20)
+           (list (elt vars (random (length vars)))))
+          (t
+           (let* ((v1 (elt vars (random (length vars))))
+                  (v2 (elt (remove v1 vars) (random (1- (length vars))))))
+             (list v1 v2))))))
 
 (defun random-outputs (vars)
   (let ((r (random 1.0)))
     (cond ((< r 0.90)
-	   (list (elt vars (random (length vars)))))
-	  ((< r 0.95)
-	   '())
-	  (t
-	   (let* ((v1 (elt vars (random (length vars))))
-		  (v2 (elt (remove v1 vars) (random (1- (length vars))))))
-	     (list v1 v2))))))
+           (list (elt vars (random (length vars)))))
+          ((< r 0.95)
+           '())
+          (t
+           (let* ((v1 (elt vars (random (length vars))))
+                  (v2 (elt (remove v1 vars) (random (1- (length vars))))))
+             (list v1 v2))))))
 
 (defun assign-random-inputs/outputs (start-node)
   (let* ((node-count (sicl-compiler-utilities:count-nodes
-		      start-node #'successors))
-	 (variables (loop repeat (+ (round (* node-count 1)) 2)
-			  collect (gensym))))
+                      start-node #'successors))
+         (variables (loop repeat (+ (round (* node-count 1)) 2)
+                          collect (gensym))))
     (sicl-compiler-utilities:map-nodes
      start-node #'successors
      (lambda (node)
@@ -74,114 +74,114 @@
        (tsp *two-successor-probability*)
        (bep *back-edge-probability*))
   (let* ((initial (make-instance 'node))
-	 (layer (list initial))
-	 (next-layer '())
-	 (all-nodes (list initial)))
+         (layer (list initial))
+         (next-layer '())
+         (all-nodes (list initial)))
     (flet ((new-node ()
-	     (let ((node (make-instance 'node)))
-	       (push node all-nodes)
-	       (push node next-layer)
-	       node))
-	   (set-random-back-arc (node)
-	     (let ((all (set-difference all-nodes (successors node)
-					:test #'eq)))
-	       (unless (null all)
-		 (push (elt all (random (length all)))
-		       (successors node))))))
+             (let ((node (make-instance 'node)))
+               (push node all-nodes)
+               (push node next-layer)
+               node))
+           (set-random-back-arc (node)
+             (let ((all (set-difference all-nodes (successors node)
+                                        :test #'eq)))
+               (unless (null all)
+                 (push (elt all (random (length all)))
+                       (successors node))))))
       (flet ((process-node (node zsp)
-	       (let ((r1 (random 1.0))
-		     (r2 (random 1.0))
-		     (r3 (random 1.0))
-		     (r4 (random 1.0)))
-		 (unless (< r1 zsp)
-		   ;; The node has at least one successor.
-		   (if (< r2 bep)
-		       ;; The first successor is a back edge.
-		       (set-random-back-arc node)
-		       ;; Not a back edge.  Create a new node.
-		       (push (new-node) (successors node)))
-		   (when (< r3 tsp)
-		     ;; The node has a second successor
-		     (if (< r4 bep)
-			 ;; The second successor is a back edge.
-			 (set-random-back-arc node)
-			 ;; Not a back edge.  Create a new node.
-			 (push (new-node) (successors node))))))))
-	(loop for layer-number from 0
-	      for zsp = izsp
-		then (new-zero-successor-probability zsp zsnf)
-	      until (null layer)
-	      do (loop for node in layer
-		       do (process-node node zsp))
-		 (setf layer next-layer)
-		 (setf next-layer '()))))
+               (let ((r1 (random 1.0))
+                     (r2 (random 1.0))
+                     (r3 (random 1.0))
+                     (r4 (random 1.0)))
+                 (unless (< r1 zsp)
+                   ;; The node has at least one successor.
+                   (if (< r2 bep)
+                       ;; The first successor is a back edge.
+                       (set-random-back-arc node)
+                       ;; Not a back edge.  Create a new node.
+                       (push (new-node) (successors node)))
+                   (when (< r3 tsp)
+                     ;; The node has a second successor
+                     (if (< r4 bep)
+                         ;; The second successor is a back edge.
+                         (set-random-back-arc node)
+                         ;; Not a back edge.  Create a new node.
+                         (push (new-node) (successors node))))))))
+        (loop for layer-number from 0
+              for zsp = izsp
+                then (new-zero-successor-probability zsp zsnf)
+              until (null layer)
+              do (loop for node in layer
+                       do (process-node node zsp))
+                 (setf layer next-layer)
+                 (setf next-layer '()))))
     (assign-random-inputs/outputs initial)
     (values initial #'successors #'inputs #'outputs)))
-			
+
 (defun draw-flow-chart (initial-node filename)
   (with-open-file (stream filename
-			  :direction :output
-			  :if-exists :supersede)
+                          :direction :output
+                          :if-exists :supersede)
     (format stream "digraph G {~%")
     ;; First draw all the nodes.
     (sicl-compiler-utilities:map-nodes
      initial-node #'successors
      (lambda (node)
        (format stream
-	       "   ~a [shape = box, label = \"~a\"];~%"
-	       (name node) (name node))))
+               "   ~a [shape = box, label = \"~a\"];~%"
+               (name node) (name node))))
     ;; Next draw all the links between nodes.
     (sicl-compiler-utilities:map-nodes
      initial-node #'successors
      (lambda (node)
        (loop for succ in (successors node)
-	     do (format stream
-			"   ~a -> ~a [style = bold];~%"
-			(name node)
-			(name succ)))))
+             do (format stream
+                        "   ~a -> ~a [style = bold];~%"
+                        (name node)
+                        (name succ)))))
      ;; Draw all the variables.
      (let ((table (make-hash-table :test #'eq)))
        (sicl-compiler-utilities:map-nodes
-	initial-node #'successors
-	(lambda (node)
-	  (loop for var in (append (inputs node) (outputs node))
-		do (unless (gethash var table)
-		     (setf (gethash var table) t)
-		     (format stream
-			     "   ~a [shape = ellipse, label = \"~a\"];~%"
-			     var var))))))
+        initial-node #'successors
+        (lambda (node)
+          (loop for var in (append (inputs node) (outputs node))
+                do (unless (gethash var table)
+                     (setf (gethash var table) t)
+                     (format stream
+                             "   ~a [shape = ellipse, label = \"~a\"];~%"
+                             var var))))))
     ;; Draw all the inputs and outputs.
     (sicl-compiler-utilities:map-nodes
      initial-node #'successors
      (lambda (node)
        (loop for var in (inputs node)
-	     do (format stream
-			"   ~a -> ~a [color = red, style = dashed];~%"
-			var (name node)))
+             do (format stream
+                        "   ~a -> ~a [color = red, style = dashed];~%"
+                        var (name node)))
        (loop for var in (outputs node)
-	     do (format stream
-			"   ~a -> ~a [color = blue, style = dashed];~%"
-			(name node) var))))
+             do (format stream
+                        "   ~a -> ~a [color = blue, style = dashed];~%"
+                        (name node) var))))
     (format stream "}~%")))
 
 (defun draw-preorder (preorder filename)
   (with-open-file (stream filename
-			  :direction :output
-			  :if-exists :supersede)
+                          :direction :output
+                          :if-exists :supersede)
     (format stream "digraph G {~% ordering = out;~%")
     ;; Draw all the nodes first.
     (loop for node in preorder
-	  do (format stream
-		     "   ~a [label = \"~a\"];~%"
-		     (name node) (name node)))
+          do (format stream
+                     "   ~a [label = \"~a\"];~%"
+                     (name node) (name node)))
     ;; Now draw the arcs.
     (loop for node in preorder
-	  do (loop for succ in (successors node)
-		   do (format stream
-			      (if (<= (position succ preorder)
-				      (position node preorder))
-				  "   ~a -> ~a [style = dashed];~%"
-				  "   ~a -> ~a;~%")
-			      (name node)
-			      (name succ))))
+          do (loop for succ in (successors node)
+                   do (format stream
+                              (if (<= (position succ preorder)
+                                      (position node preorder))
+                                  "   ~a -> ~a [style = dashed];~%"
+                                  "   ~a -> ~a;~%")
+                              (name node)
+                              (name succ))))
     (format stream "}~%")))
