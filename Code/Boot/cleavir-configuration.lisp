@@ -20,3 +20,7 @@
 (defmethod cleavir-cst-to-ast:trivial-constant-p
     ((client client) (object integer))
   (<= #.(- (expt 2 62)) object #.(1- (expt 2 62))))
+
+(defmethod cleavir-cst-to-ast:trivial-constant-p
+    ((client client) (object symbol))
+  t)
