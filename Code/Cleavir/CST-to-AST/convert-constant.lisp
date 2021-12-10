@@ -49,44 +49,6 @@
    (%creation-form :initarg :creation-form :reader creation-form)
    (%creation-form-finalized-p :initform nil :accessor creation-form-finalized-p)))
 
-(defgeneric load-time-literal (client object environment))
-
-(defmethod load-time-literal :around (client object environment)
-  (multiple-value-bind (constant-record present-p)
-      (constant-record-cache object)
-    (cond ((not present-p)
-           (call-next-method))
-          (present-p
-           (unless (creation-form-finalized-p constant-record)
-             (error 'circular-dependencies-in-creation-form
-                    :object object
-                    :creation-form (creation-form constant-record)))
-           (lexical-ast constant-record)))))
-
-(defmethod load-time-literal (client object environment)
-  (multiple-value-bind (creation-form initialization-form)
-      (make-load-form-using-client client object environment)
-    (let* ((lexical-ast
-             (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
-               :name (gensym "C")))
-           (constant-record
-            (make-instance 'constant-record
-              :lexical-ast lexical-ast
-              :creation-form creation-form)))
-      (setf (constant-record-cache object)
-            constant-record)
-      (push (cleavir-ast:make-ast 'cleavir-ast:lexical-bind-ast
-              :lexical-variable-ast lexical-ast
-              :value-ast (convert client (cst:cst-from-expression creation-form) environment))
-            *prologue*)
-      (setf (creation-form-finalized-p constant-record)
-            t)
-      (push (convert client (cst:cst-from-expression initialization-form) environment)
-            *prologue*)
-      (coalesce client object constant-record)
-      (cleavir-ast:make-ast 'cleavir-ast:load-literal-ast
-        :location-info lexical-ast))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CONVERT-CONSTANT is called when a constant is found, either in the
