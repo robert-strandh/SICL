@@ -18,5 +18,5 @@
       :lexical-variable-ast lexical-ast)))
 
 (defmethod cleavir-cst-to-ast:trivial-constant-p
-    ((client client) object)
-  (typep object '(integer #.(- (expt 2 62)) #.(1- (expt 2 62)))))
+    ((client client) (object integer))
+  (<= #.(- (expt 2 62)) object #.(1- (expt 2 62))))
