@@ -6,4 +6,7 @@
            #:traverse
            #:definition
            #:assignments
-           #:uses))
+           #:uses
+           #:function-ast
+           #:parent
+           #:children))
