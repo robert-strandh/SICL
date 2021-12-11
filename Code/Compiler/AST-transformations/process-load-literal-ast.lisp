@@ -1,18 +1,34 @@
 (cl:in-package #:sicl-ast-transformations)
 
 ;;; When the AST is created by the compiler using file-compilation
-;;; semantics, there may be code at the top level to create literals
-;;; to be used somewhere else, typically deeper down in the code.
-;;; Such creation code has a LEXICAL-BIND-AST that creates a
-;;; LEXICAL-AST from an AST representing the creation code.  This
-;;; LEXICAL-AST is shared by a LOAD-LITERAL-AST at the place where the
-;;; literal is used, in the LOCATION-INFO slot of a LOAD-LITERAL-AST.
+;;; semantics, there may be code at the top level (i.e., code executed
+;;; at load time) to create literals to be used somewhere else,
+;;; typically deeper down in the code.  This code is created by the
+;;; compiler for creating similar literals at load time, or by
+;;; LOAD-TIME-VALUE.  Such creation code has a LEXICAL-BIND-AST that
+;;; creates a LEXICAL-AST from an AST representing the creation code.
+;;; this LEXICAL-AST is then used elsewhere, including in code inside
+;;; nested functions that are typically not executed at load time.
 ;;; But for SICL, we do not want shared variables across function
 ;;; boundaries for literals.  So we introduce an instance of a
 ;;; PATCH-LITERAL-AST to be evaluated after the LEXICAL-AST has been
 ;;; created at the top level.  And we replace the LEXICAL-AST in
-;;; the LOAD-LITERAL-AST by a CONS cell that is shared with the
-;;; introduced PATCH-LITERAL-AST.
+;;; nested code with a LOAD-LITERAL-AST.
+;;;
+;;; The technique we use is to identify instances of LEXICAL-AST
+;;; created at the top level.  The code that creates those
+;;; LEXICAL-ASTs is executed exactly once at load time, so the value
+;;; of the LEXICAL-AST never changes after that.  We take advantage of
+;;; that fact to replace the use of the LEXICAL-AST in nested
+;;; functions by a LOAD-LITERAL-AST, and we insert a PATCH-LITERAL-AST
+;;; after the creation code.  These two new ASTs communicate using a
+;;; shared CONS cell.
+;;;
+;;; By doing it this way, we do not take into account the exact way
+;;; the code for creating and using the LEXICAL-AST was generated.  No
+;;; matter how it was created, we take advantage of this unique
+;;; create/use pattern.
+
 (defun process-load-literal-ast (ast)
   (let ((load-literal-ast-table (make-hash-table :test #'eq)))
     ;; First, we find every instance of a LOAD-LITERAL-AST and we
