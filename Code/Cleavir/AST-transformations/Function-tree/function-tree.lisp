@@ -12,8 +12,18 @@
     :node node))
 
 (defclass lexical-location-information ()
-  ((%definition :initform nil :accessor definition)
+  (;; When processing is done, this slot will contain a single
+   ;; instance of LEXICAL-LOCATION-OCCURRENCE corresponding to the
+   ;; definition of the LEXICAL-AST.
+   (%definition :initform nil :accessor definition)
+   ;; When processing is done, this slot will contain a list of
+   ;; instances of LEXICAL-LOCATION-OCCURRENCE corresponding to the
+   ;; occurrences of the LEXICAL-AST in the left-hand side of a
+   ;; SETQ-AST.
    (%assignments :initform '() :accessor assignments)
+   ;; When processing is done, this slot will contain a list of
+   ;; instances of LEXICAL-LOCATION-OCCURRENCE corresponding to the
+   ;; occurrences of the LEXICAL-AST in any value position.
    (%uses :initform '() :accessor uses)))
 
 (defclass node ()
@@ -24,6 +34,8 @@
    (%used-lexicals :initform '() :accessor used-lexicals)
    (%assigned-lexicals :initform '() :accessor assigned-lexicals)))
 
+;;; This variable contains an EQ hash table with lexical locations as
+;;; keys, and instances of LEXICAL-LOCATION-INFORMATION as values.
 (defvar *lexical-locations*)
 
 (defun ensure-lexical-location-information (lexical-location)
