@@ -29,10 +29,7 @@
 (defclass node ()
   ((%function-ast :initarg :function-ast :reader function-ast)
    (%parent :initarg :parent :reader parent)
-   (%children :initform '() :accessor children)
-   (%defined-lexicals :initform '() :accessor defined-lexicals)
-   (%used-lexicals :initform '() :accessor used-lexicals)
-   (%assigned-lexicals :initform '() :accessor assigned-lexicals)))
+   (%children :initform '() :accessor children)))
 
 ;;; This variable contains an EQ hash table with lexical locations as
 ;;; keys, and instances of LEXICAL-LOCATION-INFORMATION as values.
