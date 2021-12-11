@@ -9,4 +9,6 @@
            #:uses
            #:function-ast
            #:parent
-           #:children))
+           #:children
+           #:child-number
+           #:node))
