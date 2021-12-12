@@ -380,7 +380,8 @@
                  (setf new-env
                        (trucler:add-lexical-variable
                         client new-env variable variable-ast))))
-      (process-progn (convert-sequence client body-cst new-env)))))
+      (process-progn
+       client (convert-sequence client body-cst new-env) environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

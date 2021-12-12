@@ -45,9 +45,10 @@
              (new-environment
                (trucler:add-block client environment name ast)))
         (setf (cleavir-ast:body-ast ast)
-              (process-progn (convert-sequence client
-                                               body-cst
-                                               new-environment)))
+              (process-progn
+               client
+               (convert-sequence client body-cst new-environment)
+               environment))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -124,9 +125,9 @@
             (if (or (member :execute situations)
                     (member 'cl:eval situations))
                 (process-progn
-                 (convert-sequence client
-                                   body-cst
-                                   environment))
+                 client
+                 (convert-sequence client body-cst environment)
+                 environment)
                 (convert client
                          (make-atom-cst nil s)
                          environment))
@@ -148,9 +149,9 @@
                          *compile-time-too*))
                    (let ((*compile-time-too* t))
                      (process-progn
-                      (convert-sequence client
-                                        body-cst
-                                        environment))))
+                      client
+                      (convert-sequence client body-cst environment)
+                      environment)))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; No   Yes  Yes  NCT
@@ -171,9 +172,9 @@
                                   (member 'eval situations)))))
                    (let ((*compile-time-too* nil))
                      (process-progn
-                      (convert-sequence client
-                                        body-cst
-                                        environment))))
+                      client
+                      (convert-sequence client body-cst environment)
+                      environment)))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  No   ---  ---
@@ -302,13 +303,15 @@
                (augment-environment-with-declarations
                 client new-environment canonical-declaration-specifiers)))
         (process-progn
+         client
          (append init-asts
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence client
-                                     forms-cst
-                                     final-environment)))))))))
+                   client
+                   (convert-sequence client forms-cst final-environment)
+                   final-environment)))
+         final-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -342,13 +345,17 @@
                (augment-environment-with-declarations
                 client new-environment canonical-declaration-specifiers)))
         (process-progn
+         client
          (append init-asts
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
+                   client
                    (convert-sequence client
                                      forms-cst
-                                     final-environment)))))))))
+                                     final-environment)
+                   final-environment)))
+         final-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -390,12 +397,14 @@
                                                     item-cst
                                                     new-environment))))))
         (process-progn
+         client
          (list (cleavir-ast:make-ast 'cleavir-ast:tagbody-ast
                  :item-asts item-asts)
                (let ((*origin* origin))
                  (convert-constant client
                                    (make-atom-cst nil origin)
-                                   environment))))))))
+                                   environment)))
+         environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -455,7 +464,9 @@
              (convert client tag-cst environment))
            (body-ast
              (process-progn
-              (convert-sequence client body-csts environment)))
+              client
+              (convert-sequence client body-csts environment)
+              environment))
            (catch-ast
              (cleavir-ast:make-ast 'cleavir-ast:catch-ast
                :tag-ast tag-ast
@@ -553,9 +564,10 @@
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
       (declare (ignore progn-cst))
-      (process-progn (convert-sequence client
-                                       form-csts
-                                       environment)))))
+      (process-progn
+       client
+       (convert-sequence client form-csts environment)
+       environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -852,7 +864,7 @@
                                    variable-cst
                                    form-cst
                                    environment))))
-    (process-progn form-asts)))
+    (process-progn client form-asts environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -892,6 +904,7 @@
                (augment-environment-with-declarations
                 client environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
-          (process-progn (convert-sequence client
-                                           forms-cst
-                                           new-environment)))))))
+          (process-progn
+           client
+           (convert-sequence client forms-cst new-environment)
+           new-environment))))))

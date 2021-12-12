@@ -15,5 +15,7 @@
       (cleavir-cst-to-ast:convert client dynamic-environment-cst environment)
       :body-ast
       (cleavir-cst-to-ast:process-progn
+       client
        (loop for cst in body-csts
-             collect (cleavir-cst-to-ast:convert client cst environment))))))
+             collect (cleavir-cst-to-ast:convert client cst environment))
+       environment))))

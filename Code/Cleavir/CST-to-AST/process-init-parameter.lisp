@@ -55,6 +55,7 @@
      body-function)
   (let ((origin (cst:source var-cst)))
     (process-progn
+     client
      (list (make-initialization-ast
             client var-ast supplied-p-ast init-ast environment origin)
            (set-or-bind-variable
@@ -69,4 +70,5 @@
                    (lambda ()
                      (funcall body-function))
                    environment)))
-            environment)))))
+            environment))
+     environment)))
