@@ -54,6 +54,19 @@
 ;;; CONVERT-CONSTANT is called when a constant is found, either in the
 ;;; form of a literal or in the form of a constant variable.
 
+(defun convert-literal (client literal environment)
+  (cond ((not *use-file-compilation-semantics-p*)
+         (cleavir-ast:make-ast 'cleavir-ast:literal-ast
+           :value literal))
+        ((trivial-constant-p client literal)
+         (cleavir-ast:make-ast 'cleavir-ast:literal-ast
+           :value literal))
+        (*use-file-compilation-semantics-p*
+         (cleavir-literals:load-time-literal
+          client
+          literal
+          (trucler:global-environment client environment)))))
+
 (defun convert-constant (client constant-cst environment)
   (let ((object (cst:raw constant-cst)))
     (cond ((not *use-file-compilation-semantics-p*)
