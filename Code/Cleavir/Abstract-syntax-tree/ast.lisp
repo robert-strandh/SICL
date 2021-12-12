@@ -76,9 +76,6 @@
 
 (defgeneric make-ast (class &rest initargs))
 
-(defmethod make-ast (class &rest initargs)
-  (apply #'make-instance class initargs))
-
 ;;; We want to make sure that MAKE-INSTANCE is not used directly when
 ;;; an instance of an AST class is created.
 
@@ -95,17 +92,18 @@
   (unless *making-ast*
     (error "To create an AST instance, use MAKE-AST.")))
 
-;;; Finally, we define an :AROUND method on MAKE-AST that binds
-;;; *MAKING-AST* to T, i.e., true during the invocation of the primary
-;;; method on MAKE-AST and therefore during the invocation of
-;;; MAKE-INSTANCE and INITIALIZE-INSTANCE.  Furthermore, we make sure
-;;; the primary method and any :BEFORE or :AFTER methods of MAKE-AST
-;;; are called with a class metaobject and not with a symbol.  This
-;;; way, it is more convenient to put auxiliary methods on MAKE-AST,
-;;; specialized to specific AST classes.
-(defmethod make-ast :around (class-or-name &rest initargs)
-  (let ((*making-ast* t)
-        (class (if (symbolp class-or-name)
-                   (find-class class-or-name)
-                   class-or-name)))
-    (apply #'call-next-method class initargs)))
+;;; We make sure that this primary method on MAKE-AST specialized to
+;;; the class CLASS is always called when an AST instance is created.
+;;; That way, we make it easier to define auxiliary methods EQL
+;;; specialized to a particular AST class.
+(defmethod make-ast ((class class) &rest initargs)
+  (let ((*making-ast* t))
+    (apply #'make-instance class initargs)))
+
+;;; To make sure the primary method on MAKE-AST specialized to the
+;;; class CLASS is always called when an AST instance is created, we
+;;; define another primary method, specialized to SYMBOL that
+;;; calls MAKE-AST recursively with the class metaobject.
+(defmethod make-ast ((class-or-name cl:symbol) &rest initargs)
+  (let ((class (find-class class-or-name)))
+    (apply #'make-ast class initargs)))
