@@ -65,5 +65,5 @@
           (*use-file-compilation-semantics-p*
            (cleavir-literals:load-time-literal
             client
-            (cst:raw constant-cst)
+            object
             (trucler:global-environment client environment))))))
