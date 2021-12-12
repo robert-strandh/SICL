@@ -7,9 +7,9 @@
 ;;; singleton element, or into a PROGN-AST with the list of ASTs as it
 ;;; FORM-AST slot otherwise.
 
-(defun process-progn (asts)
+(defun process-progn (client asts environment)
   (cond ((null asts)
-         (cleavir-ast:make-ast 'cleavir-ast:literal-ast :value nil))
+         (convert-literal client nil environment))
         ((null (rest asts))
          (first asts))
         (t
