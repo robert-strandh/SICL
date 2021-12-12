@@ -68,15 +68,4 @@
           (trucler:global-environment client environment)))))
 
 (defun convert-constant (client constant-cst environment)
-  (let ((object (cst:raw constant-cst)))
-    (cond ((not *use-file-compilation-semantics-p*)
-           (cleavir-ast:make-ast 'cleavir-ast:literal-ast
-             :value object))
-          ((trivial-constant-p client object)
-           (cleavir-ast:make-ast 'cleavir-ast:literal-ast
-             :value object))
-          (*use-file-compilation-semantics-p*
-           (cleavir-literals:load-time-literal
-            client
-            object
-            (trucler:global-environment client environment))))))
+  (convert-literal client (cst:raw constant-cst) environment))
