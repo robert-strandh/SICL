@@ -15,3 +15,9 @@
           do (reinitialize-instance parent initarg new)
              (loop-finish)
         finally (no-child-found old parent)))
+
+;;; For the PROGN-AST we need to scan the list of FORM-ASTS.
+(defmethod substitute-ast (new old (parent cleavir-ast:progn-ast))
+  (if (member old (cleavir-ast:form-asts parent))
+      (nsubstitute new old (cleavir-ast:form-asts parent))
+      (no-child-found old parent)))
