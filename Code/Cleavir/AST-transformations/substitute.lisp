@@ -21,3 +21,11 @@
   (if (member old (cleavir-ast:form-asts parent))
       (nsubstitute new old (cleavir-ast:form-asts parent))
       (no-child-found old parent)))
+
+(defmethod substitute-ast (new old (parent cleavir-ast:call-ast))
+  (cond ((eq old (cleavir-ast:callee-ast parent))
+         (reinitialize-instance parent :callee-ast new))
+        ((member old (cleavir-ast:argument-asts parent))
+         (nsubstitute new old (cleavir-ast:argument-asts parent)))
+        (t
+         (no-child-found old parent))))
