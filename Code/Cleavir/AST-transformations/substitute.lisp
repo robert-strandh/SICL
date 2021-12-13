@@ -47,3 +47,11 @@
   (if (member old (cleavir-ast:item-asts parent))
       (nsubstitute new old (cleavir-ast:item-asts parent))
       (no-child-found old parent)))
+
+(defmethod substitute-ast (new old (parent cleavir-ast:multiple-value-call-ast))
+  (cond ((eq old (cleavir-ast:function-form-ast parent))
+         (reinitialize-instance parent :function-form-ast new))
+        ((member old (cleavir-ast:form-asts parent))
+         (nsubstitute new old (cleavir-ast:form-asts parent)))
+        (t
+         (no-child-found old parent))))
