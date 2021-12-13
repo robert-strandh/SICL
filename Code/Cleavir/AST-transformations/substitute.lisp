@@ -55,3 +55,8 @@
          (nsubstitute new old (cleavir-ast:form-asts parent)))
         (t
          (no-child-found old parent))))
+
+(defmethod substitute-ast (new old (parent cleavir-ast:values-ast))
+  (if (member old (cleavir-ast:argument-asts parent))
+      (nsubstitute new old (cleavir-ast:argument-asts parent))
+      (no-child-found old parent)))
