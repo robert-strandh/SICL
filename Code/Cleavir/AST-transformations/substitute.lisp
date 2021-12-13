@@ -9,4 +9,6 @@
 (defmethod substitute-ast (new old (parent cleavir-ast:ast))
   (loop for (initarg slot-reader) in (cleavir-io:save-info parent)
         when (eq old (funcall slot-reader parent))
-          do (reinitialize-instance parent initarg new)))
+          do (reinitialize-instance parent initarg new)
+             (loop-finish)
+        finally (error "No child ~s found in ~s" old parent)))
