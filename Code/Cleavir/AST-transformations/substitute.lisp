@@ -42,3 +42,8 @@
          (nsubstitute new old (cleavir-ast:lhs-asts parent)))
         (t
          (no-child-found old parent))))
+
+(defmethod substitute-ast (new old (parent cleavir-ast:tagbody-ast))
+  (if (member old (cleavir-ast:item-asts parent))
+      (nsubstitute new old (cleavir-ast:item-asts parent))
+      (no-child-found old parent)))
