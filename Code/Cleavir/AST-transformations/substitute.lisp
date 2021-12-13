@@ -1,5 +1,8 @@
 (cl:in-package #:cleavir-ast-transformations)
 
+(defun no-child-found (old parent)
+  (error "No child ~s found in ~s" old parent))
+
 ;;; Substitute NEW for OLD as a child of PARENT.
 (defgeneric substitute-ast (new old parent))
 
@@ -11,4 +14,4 @@
         when (eq old (funcall slot-reader parent))
           do (reinitialize-instance parent initarg new)
              (loop-finish)
-        finally (error "No child ~s found in ~s" old parent)))
+        finally (no-child-found old parent)))
