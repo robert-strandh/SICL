@@ -6,4 +6,5 @@
    #:clone-ast
    #:codegen-clone-ast
    #:map-asts
-   #:remove-unused-block-asts))
+   #:remove-unused-block-asts
+   #:substitute-ast))
