@@ -1,10 +1,10 @@
 (in-package #:cleavir-kildall)
 
 ;;;; Dictionaries are the ultimate result of the algorithm and form
-;;;; maps from instructions to pools. They're hash tables.
+;;;; maps from instructions to pools. They are hash tables.
 
 (declaim (inline make-dictionary
-		 instruction-pool
+                 instruction-pool
                  (setf instruction-pool)))
 
 (defun make-dictionary ()
@@ -16,9 +16,8 @@
 (defsetf instruction-pool (instruction dictionary) (pool)
   `(setf (gethash ,instruction ,dictionary) ,pool))
 
-;;;; The *dictionary* variable holds the dictionary used throughout an
-;;;; entire Kildall-ing.
-
+;;; This variable holds the dictionary used throughout the entire
+;;; execution of the Kildall algorithm.
 (defvar *dictionary*)
 
 (defun dictionary-pool (instruction)
