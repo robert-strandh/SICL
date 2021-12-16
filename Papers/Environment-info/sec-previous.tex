@@ -54,6 +54,23 @@ function \texttt{augment-environment}.
 
 \subsubsection{Native}
 
+\sbcl{} defines a structure class named \texttt{lexenv}.  Instances of
+this class are passed as the \texttt{\&environment} argument to macro
+expanders and other functions that take lexical environment objects as
+arguments.
+
+This structure class contains several slots, and in particular:
+\begin{itemize}
+\item An association list of information about defined functions.
+  The name of the function is used as a key.
+\item A association list of information about defined variables.
+  The name of the variable is used as a key.
+\item An association list of information about blocks,
+  The name of the block is used as a key.
+\item An association list of information about \texttt{tagbody} tags.
+  The name of the tag is used as a key.
+\end{itemize}
+
 \subsubsection{CLtL2}
 
 The distribution of \sbcl{} contain a contribution that supplies some
