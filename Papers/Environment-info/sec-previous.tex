@@ -84,6 +84,24 @@ an implementation of the environment protocol of CLtL2.
 
 \subsection{\ecl{}}
 
+\subsubsection{Native}
+
+The native compilation environment of \ecl{} is represented as a
+single \texttt{cons} cell where the \texttt{car} is a list of
+\emph{variable records} and the \texttt{cdr} is a list of
+\emph{macro records}.  Information about blocks and tags are included
+in the list of \emph{variable records}.  With few exceptions, a record
+is a list with the name of the entity in the \texttt{car}.  Records
+for blocks and tags are distinguished by having a keyword symbol
+\texttt{:block} or \texttt{:tag} in the \texttt{car} of the list
+representing the record.
+
+\subsubsection{CLtL2}
+
+Currently, \ecl{} does not offer a CLtL2-compatible interface to its
+lexical environments.  Some work has been done to create such an
+interface, but it is still work in progress.
+
 \subsection{\allegro{}}
 \label{sec-previous-allegro}
 
