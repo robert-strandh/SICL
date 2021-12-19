@@ -4,3 +4,139 @@ We define a \clos{}-based protocol for accessing and augmenting
 lexical environment.  This protocol is defined and implemented in the
 \trucler{} library.%
 \footnote{https://github.com/s-expressionists/Trucler}
+
+\subsection{Querying the environment}
+
+\subsubsection{Client protocol}
+
+The \emph{client protocol} defines the classes and operations that a
+language processor such as a compiler uses in order to query and
+augment the lexical environment according to the language elements
+being processed.
+
+\vskip -0.05cm
+In order for our definitions to fit in a column, we have abbreviated
+``Generic Function'' as ``GF''.
+\vskip -0.05cm
+
+{\footnotesize
+\Defgeneric {describe-variable} {client environment name}
+}
+
+This function is called by the language processor whenever a symbol in
+a \emph{variable} position is to be compiled.  If successful, it
+returns an instance of one of the classes described in
+\refSec{sec-instantiable-classes-variable-desciption}.
+
+{\footnotesize
+\Defcondition {no-variable-description}
+}
+
+This condition is signaled by \trucler{} when a client-supplied method
+on the generic function \texttt{describe-variable} returns \texttt{nil}.
+
+{\footnotesize
+\Defmethod {name} {(condition {\tt no-variable-description})}
+}
+
+This method returns the name of the variable for which no description was
+available.
+
+\subsubsection{Function information}
+
+{\footnotesize
+\Defgeneric {describe-function} {client environment name}
+}
+
+This function is called by the language processor whenever a symbol in
+a \emph{function} position is to be compiled or whenever a function
+name is found in a context where it is known to refer to a function.
+If successful, it returns an instance of one of the classes described
+in \refSec{sec-instantiable-classes-function-desciption}.
+
+{\footnotesize
+\Defcondition {no-function-description}
+}
+
+This condition is signaled by \trucler{} when a client-supplied method
+on the generic function \texttt{describe-function} returns \texttt{nil}.
+
+{\footnotesize
+\Defmethod {name} {(condition {\tt no-function-description})}
+}
+
+This method returns the name of the function for which no description was
+available.
+
+\subsubsection{Block information}
+
+{\footnotesize
+\Defgeneric {describe-block} {client environment name}
+}
+
+This function is called by the language processor whenever a symbol
+referring to a \emph{block} is found, typically in a
+\texttt{return-from} form.  If successful, it returns an instance of
+the class described in
+\refSec{sec-instantiable-classes-block-desciption}.
+
+{\footnotesize
+\Defcondition {no-block-description}
+}
+
+This condition is signaled by \trucler{} when a client-supplied method
+on the generic function \texttt{describe-block} returns \texttt{nil}.
+
+{\footnotesize
+\Defmethod {name} {(condition {\tt no-block-description})}
+}
+
+This method returns the name of the block for which no description was
+available.
+
+\subsubsection{Tag information}
+
+{\footnotesize
+\Defgeneric {describe-tag} {client environment tag}
+}
+
+This function is called by the language processor whenever a symbol or
+an integer referring to a \emph{tag} is found, typically in a
+\texttt{go} form.  If successful, it returns an instance of the
+class described in \refSec{sec-instantiable-classes-tag-desciption}.
+
+{\footnotesize
+\Defcondition {no-tag-description}
+}
+
+This condition is signaled by \trucler{} when a client-supplied method
+on the generic function \texttt{describe-tag} returns \texttt{nil}.
+
+{\footnotesize
+\Defmethod {name} {(condition {\tt no-tag-description})}
+}
+
+This method returns the name of the tag for which no description was
+available.
+
+\subsubsection{Optimize information}
+
+{\footnotesize
+\Defgeneric {describe-optimize} {client environment}
+}
+
+Client-supplied methods on this function must always return a valid
+instance of the class \texttt{optimize-description}.  It returns an
+instance of the class described in
+\refSec{sec-instantiable-classes-optimize-desciption}.
+
+\subsubsection{Declarations information}
+
+{\footnotesize
+\Defgeneric {describe-declarations} {client environment}
+}
+
+Client-supplied methods on this function must always return a valid
+instance of the class \texttt{declarations-description}.  It returns
+an instance of the class described in
+\refSec{sec-instantiable-classes-declarations-description}.
