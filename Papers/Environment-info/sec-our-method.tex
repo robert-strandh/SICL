@@ -30,8 +30,16 @@ for this purpose.
   language processor when a name is found in a function position.  It
   returns an instance of a class that distinguishes global functions,
   local functions, and macros.
-\item \texttt{describe-block}.
-\item \texttt{describe-tag}.
+\item \texttt{describe-block}.  This function is called by the
+  language processor when a symbol referring to a \emph{block} is
+  found, typically in a \texttt{return-from} form.  It returns an
+  instance of a class that contains information about the block with
+  the given name.
+\item \texttt{describe-tag}.  This function is called by the language
+  processor whenever a symbol or an integer referring to a \emph{tag}
+  is found, typically in a \texttt{go} form.  It returns an instance
+  of a class that contains information about the tag with the given
+  name.
 \item \texttt{describe-optimize}.
 \item \texttt{describe-declarations}.
 \end{itemize}
