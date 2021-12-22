@@ -40,6 +40,11 @@ for this purpose.
   is found, typically in a \texttt{go} form.  It returns an instance
   of a class that contains information about the tag with the given
   name.
-\item \texttt{describe-optimize}.
-\item \texttt{describe-declarations}.
+\item \texttt{describe-optimize}.  This function is called by the
+  language processor in order to determine the values of the
+  \texttt{optimize} qualities in effect in \texttt{environment}.  It
+  returns an instance of a class that contains these quality values.
+\item \texttt{describe-declarations}.  This function is called by the
+  language processor in order to determine the declaration identifiers
+  of \texttt{declaration} proclamations.
 \end{itemize}
