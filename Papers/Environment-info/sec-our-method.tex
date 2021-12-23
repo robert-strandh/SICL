@@ -53,4 +53,46 @@ for this purpose.
 
 A language processor calls one of the augmentation functions in order
 to define a lexical environment within the scope of a declaration or a
-definition encountered in source code.
+definition encountered in source code.  All these functions take at
+least a \texttt{client} parameter and an \texttt{environment}
+parameter just like the query functions, and they all return a new
+lexical environment, augmented according to the function being called.
+
+The following functions are called by the language processor when a
+local definition is encountered and they return a new environment that
+includes the new definition:
+
+\begin{itemize}
+\item \texttt{add-lexical-variable}.
+\item \texttt{add-special-variable}.
+\item \texttt{add-local-symbol-macro}.
+\item \texttt{add-local-function}.
+\item \texttt{add-local-macro}.
+\item \texttt{add-block}.
+\item \texttt{add-tag}.
+\end{itemize}
+
+The following functions are called by the language processor as the
+result of a local declaration that restricts an existing local
+function or variable:
+
+\begin{itemize}
+\item \texttt{add-variable-type}.
+\item \texttt{add-variable-ignore}.
+\item \texttt{add-variable-dynamic-extent}.
+\item \texttt{add-function-type}.
+\item \texttt{add-function-ignore}.
+\item \texttt{add-function-dynamic-extent}.
+\end{itemize}
+
+The following functions are called by the language processor as the
+result of a local \texttt{optimize} declaration.
+
+\begin{itemize}
+\item \texttt{add-inline}.
+\item \texttt{add-speed}.
+\item \texttt{add-compilation-speed}.
+\item \texttt{add-debug}.
+\item \texttt{add-safety}.
+\item \texttt{add-space}.
+\end{itemize}
