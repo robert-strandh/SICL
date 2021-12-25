@@ -7,6 +7,7 @@
   ((:file "packages")
    (:file "environment")
    (:file "import-from-host")
+   (:file "pre-fill-environment")
    (:file "define-defmacro")
    (:file "define-backquote-macro")
    (:file "fill-environment")

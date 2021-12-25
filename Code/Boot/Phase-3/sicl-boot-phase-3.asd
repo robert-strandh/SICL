@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "pre-fill-environment")
    (:file "enable-typep")
    (:file "enable-object-creation")
    (:file "enable-defgeneric")
