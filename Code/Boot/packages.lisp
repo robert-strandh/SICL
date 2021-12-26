@@ -22,5 +22,4 @@
            #:with-intercepted-function-cells
            #:overridden-function-cells
            #:header
-           #:original-function
-           #:defmacro-macro-function))
+           #:original-function))
