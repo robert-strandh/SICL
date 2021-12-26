@@ -34,6 +34,7 @@
     (change-class e2 'environment)
     (change-class (env:client e2) 'client)
     (import-from-host boot)
+    (pre-fill-environment e2)
     (sicl-boot:copy-macro-functions e0 e2)
     (setf (env:fdefinition (env:client e2) e2 'sicl-boot:ast-eval)
           (lambda (ast)

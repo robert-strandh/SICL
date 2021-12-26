@@ -16,6 +16,7 @@
        cleavir-code-utilities:separate-function-body
        sicl-method-combination:define-method-combination-expander)
      e4)
+    (pre-fill-environment e4)
     (prepare-this-phase e2 e3 e4)
     (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e4)
     (sicl-boot:create-accessor-defgenerics e4)

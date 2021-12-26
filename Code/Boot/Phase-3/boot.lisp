@@ -19,6 +19,7 @@
        sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
        (setf env:macro-function))
      e3)
+    (pre-fill-environment e3)
     (prepare-this-phase e1 e2 e3)
     (load-source-file "Structure/packages.lisp" e3)
     (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e3)

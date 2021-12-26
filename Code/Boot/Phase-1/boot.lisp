@@ -16,4 +16,5 @@
               (declare (ignore environment))
               (setf *package* (find-package (second form)))
               nil)))
+    (pre-fill-environments e0 e1)
     (fill-environment e0)))
