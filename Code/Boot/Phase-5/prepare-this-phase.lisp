@@ -24,8 +24,6 @@
 (defun prepare-this-phase (e3 e4 e5)
   (define-ast-eval e5)
   (sicl-boot:copy-macro-functions e4 e5)
-  (setf (env:macro-function (env:client e5) e5 'defmacro)
-        #'sicl-boot:defmacro-macro-function)
   (load-source-file "CLOS/class-of-defun.lisp" e4)
   (enable-typep e3 e4)
   (load-source-file "Types/type-of-defgeneric.lisp" e4)
