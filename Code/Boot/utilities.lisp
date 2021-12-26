@@ -166,25 +166,3 @@
                        for child in children
                        do (aux child (1+ indentation))))))
       (aux system-name 0))))
-
-;;; This function plays the role of the macro function for DEFMACRO in
-;;; environments other than E0.  It defines the macro in environment
-;;; E0 despite the DEFMACRO form being evaluated in some other
-;;; environment.  Furthermore, it returns NIL so that the DEFMACRO
-;;; form has no effect in the environment in which it is evaluated.
-(defun defmacro-macro-function (form environment)
-  (declare (ignore environment))
-  (destructuring-bind (name lambda-list . body)
-      (rest form)
-    (unless (member name
-                    '(alexandria:unwind-protect-case
-                      alexandria:doplist))
-      (format *trace-output* "Defining macro in E0: ~s~%" name)
-      (cleavir-cst-to-ast:eval (env:client *e0*)  form *e0*)
-      (format *trace-output* "Done defining macro in E0~%"))
-    (let ((expansion
-            (cleavir-code-utilities:parse-macro name lambda-list body)))
-      (list 'setf
-            (list 'macro-function
-                  (list 'quote name))
-            expansion))))
