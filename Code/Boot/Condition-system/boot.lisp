@@ -9,7 +9,16 @@
                      :name function-name
                      :lambda-list lambda-list)))))
 
+(defun import-function (e5 e name)
+  (setf (env:fdefinition (env:client e) e name)
+        (env:fdefinition (env:client e5) e5 name)))
+
+(defun pre-fill-environment (e5 e)
+  (import-function e5 e 'make-instance))
+
 (defun boot (boot)
-  (let* ((client (make-instance 'client))
+  (let* ((e5 (sicl-boot:e5 boot))
+         (client (make-instance 'client))
          (environment (make-instance 'environment :client client)))
+    (pre-fill-environment e5 environment)
     (define-ensure-generic-function environment)))
