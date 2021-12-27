@@ -89,3 +89,12 @@ result of a local \texttt{optimize} declaration.
 \item \texttt{add-safety}.
 \item \texttt{add-space}.
 \end{itemize}
+
+\subsection{Supported \commonlisp{} implementations}
+
+\trucler{} currently provides support for \sbcl{} and \ccl{}.
+Contributions for other \commonlisp{} implementations are welcome.
+With these implementations, it is possible to write code walkers that
+are portable across different \commonlisp{} implementations.  In
+particular, a \cleavir{}-based compiler can compile source code for
+any of the supported implementations.
