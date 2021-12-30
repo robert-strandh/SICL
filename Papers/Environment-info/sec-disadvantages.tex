@@ -1,1 +1,23 @@
 \section{Disadvantages of our technique}
+
+Compared to the protocol defined in CLtL2, our protocol probably
+involves more memory allocation, or ``consing''.  Multiple values are
+likely to be handled without memory allocation in most high-end
+\commonlisp{} implementations, whereas our query functions return
+standard objects which obviously need to be allocated.  Initializing
+the slots of these standard objects also comes with an additional
+cost.
+
+Our protocol consists of generic functions, and in implementations
+with a mediocre implementation of generic dispatch, our protocol can
+require more resources for function calls.  Furthermore, the multiple
+values returned by the CLtL2 protocol are likely transmitted to the
+caller in registers or some other relatively direct location, whereas
+the information returned by our query functions is present in slots of
+the standard objects being returned.  Accessing this information
+involves calling a slot reader, which involves another call to a
+generic function.
+
+However, we believe that the work done by the code walker of a
+compiler is small compared to that of other compilation phases such as
+optimization of intermediate code.
