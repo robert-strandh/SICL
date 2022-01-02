@@ -51,12 +51,12 @@ specified.  For the purpose of this paper, an environment is a mapping
 from \emph{names} to \emph{meanings}.
 
 In this paper, we propose a replacement for the environment protocol
-documented in the book Common Lisp the Language, second edition.
-Rather than returning multiple values as the functions in that that
-protocol do, the protocol suggested in this paper is designed so that
-functions return instances of standard classes.  Accessor functions on
-those instances supply the information needed by a compiler or any
-other \emph{code walker} application.
+documented in the book ``Common Lisp the Language, second edition'' by
+Guy Steele.  Rather than returning multiple values as the functions in
+that that protocol do, the protocol suggested in this paper is
+designed so that functions return instances of standard classes.
+Accessor functions on those instances supply the information needed by
+a compiler or any other \emph{code walker} application.
 
 The advantage of our approach is that a protocol based on generic
 functions and standard classes is easier to extend in
