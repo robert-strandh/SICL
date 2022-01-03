@@ -174,7 +174,13 @@ designator for a function that can accept three arguments:
   protocol.  When \textit{kind} is \texttt{:symbol-macro}, then
   \textit{info} is the expansion; otherwise, \textit{info} is
   unspecified.
-  
+\item The function \textit{function} is called for each local function
+  in the environment. \textit{name} is the name of the function,
+  \textit{kind} is one of \texttt{:macro} or \texttt{:function}, with
+  the same meaning as for the function \texttt{function-information}
+  in the CLtL2 protocol.  When \textit{kind} is
+  \texttt{:macro}, then \textit{info} is the macro-expansion function;
+  otherwise, \textit{info} is unspecified.
 \end{itemize}
 
 \subsection{CLtL2 compatibility system}
