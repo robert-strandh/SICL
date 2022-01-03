@@ -135,7 +135,7 @@ The documentation for Allegro \commonlisp{} contains a separate
 document describing their protocol for environments in the spirit of
 CLtL2.%
 \footnote{https://franz.com/support/documentation/current/doc/environments.htm}
-We summarize the differences between the Allegro implementation and
+We summarize the differences between the \allegro{} implementation and
 the CLtL2 protocol here.
 
 \begin{itemize}
@@ -146,6 +146,19 @@ the CLtL2 protocol here.
 \end{itemize}
 
 \subsection{\lispworks{}}
+\label{sec-previous-lispworks}
+
+\subsubsection{Support for CLtL2 protocol}
+
+The documentation for \lispworks{} \commonlisp{} describes the
+operators that implement the CLtL2 protocol.  These operators are
+available in the \texttt{hcl} package.
+
+Likke \allegro{}, \lispworks{} also provides the functionality for
+blocks and tags that is missing from the CLtL2 protocol, but instead
+of adding functions \texttt{block-information} and
+\texttt{tag-information}, \lispworks{} provides a single additional
+function named \texttt{map-environment}.
 
 \subsection{CLtL2 compatibility system}
 
