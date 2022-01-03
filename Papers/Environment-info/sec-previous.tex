@@ -181,6 +181,14 @@ designator for a function that can accept three arguments:
   in the CLtL2 protocol.  When \textit{kind} is
   \texttt{:macro}, then \textit{info} is the macro-expansion function;
   otherwise, \textit{info} is unspecified.
+\item The function \textit{block} is called for each block in the
+  environment.  \textit{name} is the name of the block, \textit{kind}
+  is the keyword symbol \texttt{:block}, and \textit{info} is
+  unspecified.
+\item The function \textit{tag} is called for each tag in the
+  environment.  \textit{name} is the name of the tag, \textit{kind}
+  is the keyword symbol \texttt{:tagg}, and \textit{info} is
+  unspecified.
 \end{itemize}
 
 \subsection{CLtL2 compatibility system}
