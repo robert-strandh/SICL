@@ -158,7 +158,24 @@ Likke \allegro{}, \lispworks{} also provides the functionality for
 blocks and tags that is missing from the CLtL2 protocol, but instead
 of adding functions \texttt{block-information} and
 \texttt{tag-information}, \lispworks{} provides a single additional
-function named \texttt{map-environment}.
+function named \texttt{map-environment}.  This function has a single
+required parameter, namely an environment object.  It has four
+keyword parameters: \textit{variable}, \textit{function},
+\textit{block}, and \textit{tag}.  Each corresponding argument is a
+designator for a function that can accept three arguments:
+\textit{name}, \textit{kind}, and \textit{info} as follows:
+
+\begin{itemize}
+\item The function \textit{variable} is called for each local variable
+  binding in the environment.  \textit{name} is the name of the
+  variable, \textit{kind} is one of \texttt{:special},
+  \texttt{:symbol-macro} or \texttt{:lexical}, with the same meaning
+  as for the function \texttt{variable-information} in the CLtL2
+  protocol.  When \textit{kind} is \texttt{:symbol-macro}, then
+  \textit{info} is the expansion; otherwise, \textit{info} is
+  unspecified.
+  
+\end{itemize}
 
 \subsection{CLtL2 compatibility system}
 
