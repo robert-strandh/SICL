@@ -55,7 +55,13 @@ extensions by Allegro Common Lisp as described in
 
 For augmenting an environment, i.e., creating a new, augmented,
 environment from an existing one, the same section describes the
-function \texttt{augment-environment}.
+function \texttt{augment-environment}.  This function has a keyword
+parameter for each type of object to be added to the current lexical
+environment: \texttt{:variable}, \texttt{:symbol-macro},
+\texttt{function}, \texttt{macro}, \texttt{macro}, and
+\texttt{:declare}.  Furthermore, each argument is a list of lexical
+definitions, thereby allowing an arbitrary number of mappings to be
+added to an environment in order to create an augmented environment. 
 
 \subsection{\sbcl{}}
 
