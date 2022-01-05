@@ -8,6 +8,11 @@ standard objects which obviously need to be allocated.  Initializing
 the slots of these standard objects also comes with an additional
 cost.
 
+To make things worse, our protocol is able to add a single mapping for
+each call to a protocol function, whereas the CLtL2 protocol function
+\texttt{augment-environment} is able to add an arbitrary number of
+mappings with a single call.
+
 Our protocol consists of generic functions, and in implementations
 with a mediocre implementation of generic dispatch, our protocol can
 require more resources for function calls.  Furthermore, the multiple
