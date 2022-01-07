@@ -202,9 +202,9 @@ designator for a function that can accept three arguments:
   in the environment. \textit{name} is the name of the function,
   \textit{kind} is one of \texttt{:macro} or \texttt{:function}, with
   the same meaning as for the function \texttt{function-information}
-  in the CLtL2 protocol.  When \textit{kind} is
-  \texttt{:macro}, then \textit{info} is the macro-expansion function;
-  otherwise, \textit{info} is unspecified.
+  in the CLtL2 protocol.  When \textit{kind} is \texttt{:macro}, then
+  \textit{info} is the macro-expansion function; otherwise,
+  \textit{info} is unspecified.
 \item The function \textit{block} is called for each block in the
   environment.  \textit{name} is the name of the block, \textit{kind}
   is the keyword symbol \texttt{:block}, and \textit{info} is
@@ -214,6 +214,21 @@ designator for a function that can accept three arguments:
   is the keyword symbol \texttt{:tag}, and \textit{info} is
   unspecified.
 \end{itemize}
+
+However, when \texttt{map-environment} calls the function in the
+keyword argument \textit{function} and the name of the function is of
+the form \texttt{(setf} \textit{symbol}\texttt{)}, then the argument
+is not the name of the function, but instead a symbol that is used
+internally in \lispworks{} to name the function.  According to the
+maintainer of \lispworks{}, this restriction will be removed in future
+versions.
+
+Similarly, the keyword argument \texttt{:function} of the function
+\texttt{augment-environment} must be a list of symbols.  To represent
+a function with a name of the form \texttt{(setf}
+\textit{symbol}\texttt{)}, the internal symbol used by \lispworks{}
+must be passed, rather than the true name of the function.  Again,
+this restriction will be removed in future versions.
 
 \subsection{CLtL2 compatibility system}
 
