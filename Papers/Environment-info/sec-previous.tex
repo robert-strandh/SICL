@@ -15,6 +15,9 @@ object, for creating a new such object by augmenting an existing one,
 and some other operators related to environments that are outside the
 scope of this paper.
 
+In this section, we provide an overview of that protocol, and we give
+an assessment of its usefulness in the context of a language processor.
+
 \subsubsection{Environment query}
 
 For environment query, it defines three functions.  We describe them
@@ -64,6 +67,29 @@ environment: \texttt{:variable}, \texttt{:symbol-macro},
 \texttt{:declare}.  Furthermore, each argument is a list of lexical
 definitions, thereby allowing an arbitrary number of mappings to be
 added to an environment in order to create an augmented environment.
+
+\subsubsection{Assessment of the protocol}
+
+In general, the protocol as described in the book is insufficient for
+use in any but the simplest kind of language processor.  Even if
+query functions are added for tags and blocks and additional keyword
+argument are added the function \texttt{augment-environment} for tags
+and blocks, we argue that the protocol would still be insufficient.
+
+Any non-trivial language processor would need for a function such as
+\texttt{function-information} to return information about the
+function, other than related declarations.  At the very least,
+information such as the lambda list of the function, and information
+needed for inlining, would have to be included.
+
+The protocol could obviously be extended to allow for such
+information, but such extensions would involve incompatible additions
+such as more return values.  Furthermore, none of the \commonlisp{}
+implementations we investigated use this protocol internally, which is
+an indication that the compiler needs more information than the
+protocol provides.  And none of the implementations we investigated
+provide extensions that would allow the use of the protocol in
+a non-trivial language processor.
 
 \subsection{\sbcl{}}
 
