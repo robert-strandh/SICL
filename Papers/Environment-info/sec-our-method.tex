@@ -7,6 +7,7 @@ lexical environment.  This protocol is defined and implemented in the
 \footnote{https://github.com/s-expressionists/Trucler}
 
 \subsection{Querying the environment}
+\label{querying-the-environment}
 
 A language processor calls one of the query functions in order to
 determine the nature of a language element, depending on the position
@@ -91,7 +92,29 @@ result of a local \texttt{optimize} declaration.
 \item \texttt{add-space}.
 \end{itemize}
 
+\subsection{The reference implementation}
+
+\trucler{} supports some existing \commonlisp{} implementations as
+described in \refSec{trucler-supported-implementations}, but it also
+comes with a \emph{reference implementation} that can be used by a new
+\commonlisp{} implementation that does not have its own representation
+of lexical environments.  The reference implementation is used by
+\sicl{}%
+\footnote{https://github.com/robert-strandh/SICL} for instance.
+
+In the reference implementation, a lexical environment is represented
+as a standard object containing a slot for each type of description to
+be returned by a query function as described in
+\refSec{querying-the-environment}.  Each slot contains a list of
+descriptions ordered from innermost to outermost.  A query function
+merely return the first item on the list that matches the name that
+was passed as an argument to the query function.  As a direct
+consequence of this representation, there is no performance penalty in
+the query functions, due to the fact that a new environment is created
+for every call to an augmentation function.
+
 \subsection{Supported \commonlisp{} implementations}
+\label{trucler-supported-implementations}
 
 \trucler{} currently provides support for \sbcl{} and \ccl{}.
 Contributions for other \commonlisp{} implementations are welcome.
