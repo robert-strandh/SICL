@@ -113,6 +113,19 @@ consequence of this representation, there is no performance penalty in
 the query functions, due to the fact that a new environment is created
 for every call to an augmentation function.
 
+In order to create new objects such as environments or descriptions,
+we use a technique that we call \emph{quasi cloning}.  A generic
+function named \texttt{cloning-information} is called with the
+original object as an argument.  This function then returns a list of
+pairs.  The first element of the pair is a slot initialization argument
+for the class of the object and the second element of the pair is the
+name of a slot reader for the same slot.  This information is then
+used to access slots in the original object and to pass that
+information as an initialization argument to \texttt{make-instance}.
+We call it quasi cloning, because some new value is prepended to the
+initialization arguments so that the copy is like the original, except
+for one slot.
+
 \subsection{Supported \commonlisp{} implementations}
 \label{trucler-supported-implementations}
 
