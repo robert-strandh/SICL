@@ -126,6 +126,14 @@ We call it quasi cloning, because some new value is prepended to the
 initialization arguments so that the copy is like the original, except
 for one slot.
 
+The advantage of quasi cloning is that \trucler{} does not need to know
+the right class to instantiate.  It creates an instance of the same
+class as the original object, and that class can be defined by client
+code.  Client code must define a method on
+\texttt{cloning-information}, but this generic function uses the
+\texttt{append} method combination, so that only slots defined by
+client code need to be mentioned in that method.
+
 \subsection{Supported \commonlisp{} implementations}
 \label{trucler-supported-implementations}
 
