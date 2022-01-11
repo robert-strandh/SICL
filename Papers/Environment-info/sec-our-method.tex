@@ -134,6 +134,24 @@ code.  Client code must define a method on
 \texttt{append} method combination, so that only slots defined by
 client code need to be mentioned in that method.
 
+Occasionally, an entirely new instance of some class must be created,
+rather than being obtained by quasi cloning an existing instance.
+This situation occurs when information about a new item such as a
+local variable or a local function must be used to augment an existing
+environment.  To allow \trucler{} to create an instance of a class
+that has been determined by client code, \trucler{} first calls what
+we call a \emph{factory} function.  This function takes the
+\texttt{client} object and returns the class metaobject to
+instantiate.  For example, to create an instance of a class that
+describes lexical variables, \trucler calls the function
+\texttt{lexical-variable-description-class}, passing it the
+\texttt{client} object supplied by client code.  The default method on
+this generic function returns the default class used by the reference
+implementation, but client code that needs additional information
+about lexical variables may create a subclass of the default class,
+and a method on \texttt{lexical-variable-description-class} that
+returns this subclass.
+
 \subsection{Supported \commonlisp{} implementations}
 \label{trucler-supported-implementations}
 
