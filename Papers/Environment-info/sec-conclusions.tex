@@ -1,1 +1,15 @@
 \section{Conclusions and future work}
+
+We have defined a \clos{}-based protocol for lexical environments.
+This protocol can be used by any code walker such as a compiler or a
+version of \texttt{macroexpand-all}.  Compared to the protocol defined
+in CLtL2 \cite{Steele:1990:CLL:95411}, ours is complete in that it has
+operators for querying an environment for references to tags and
+blocks, and for augmenting environments with such entities.
+
+Furthermore, our protocol is implemented in the \trucler{} library.
+\trucler{} supplies implementations for some existing \commonlisp{}
+implementations, currently \sbcl{} and \ccl{}.  The library also
+contains a \emph{reference implementation} that can be used in new
+\commonlisp{} implementations that do not have an existing native
+representation of lexical environments, such as \sicl{} and \clasp{}.
