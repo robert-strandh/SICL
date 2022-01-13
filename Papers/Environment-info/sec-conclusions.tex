@@ -13,3 +13,14 @@ implementations, currently \sbcl{} and \ccl{}.  The library also
 contains a \emph{reference implementation} that can be used in new
 \commonlisp{} implementations that do not have an existing native
 representation of lexical environments, such as \sicl{} and \clasp{}.
+
+Future work involves adding more supported existing \commonlisp{}
+implementations.  Individual implementations may require additional
+protocol functions, but such functions will have names in a package
+that is specific to the implementation.
+
+Future work also involves investigating what new functionality might
+be required in the reference implementation in order to support
+specific requirements of new \commonlisp{} implementations that choose
+to use an extended version of the \trucler{} reference
+implementation.
