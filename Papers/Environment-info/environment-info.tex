@@ -1,4 +1,4 @@
-\documentclass{acm_proc_article-sp}
+\documentclass[format=sigconf]{acmart}
 \usepackage[utf8]{inputenc}
 
 \def\inputfig#1{\input #1}
@@ -10,39 +10,30 @@
 \inputtex{refmacros.tex}
 \inputtex{other-macros.tex}
 
+\acmConference[ELS’22]{the 15th European Lisp Symposium}{March 21--22
+  2022}{Porto, Portugal}
+%\acmISBN{978-2-9557474-3-8}
+\acmISBN{}
+\acmDOI{to-be-assigned}
+\startPage{1}
+\setcopyright{rightsretained}
+\copyrightyear{2021}
+
 \begin{document}
 \title{A CLOS protocol for lexical environments}
-\numberofauthors{2}
-\author{
-  \alignauthor
-Robert Strandh\\
-\affaddr{Unaffiliated}\\
+
+\author{Robert Strandh}
 \email{robert.strandh@gmail.com}
-\alignauthor
-Irène Durand\\
-\affaddr{University of Bordeaux}\\
-\affaddr{351, Cours de la Libération}\\
-\affaddr{Talence, France}\\
-\email{irene.durand@u-bordeaux1.fr}}
+\affiliation{Unaffiliated}
 
-\toappear{Permission to make digital or hard copies of all or part of
-  this work for personal or classroom use is granted without fee
-  provided that copies are not made or distributed for profit or
-  commercial advantage and that copies bear this notice and the full
-  citation on the first page. Copyrights for components of this work
-  owned by others than the author(s) must be honored. Abstracting with
-  credit is permitted. To copy otherwise, or republish, to post on
-  servers or to redistribute to lists, requires prior specific
-  permission and/or a fee. Request permissions from
-  Permissions@acm.org.
-
-%  ELS '15, April 20 - 21 2015, London, UK
-%  Copyright is held by the owner/author(s). Publication rights licensed to ACM.
-%  ACM 978-1-4503-2931-6/14/08\$15.00.???
-%  http://dx.doi.org/10.1145/2635648.2635656
+\author{Irène Durand
 }
-
-\maketitle
+\email{irene.durand@u-bordeaux.fr}
+\affiliation{
+  \institution{LaBRI, University of Bordeaux}
+  \streetaddress{351 cours de la libération}
+  \city{Talence}
+  \country{France}}
 
 \begin{abstract}
 The concept of an \emph{environment} is mentioned in many places in
@@ -68,12 +59,21 @@ these objects, making it possible to extend or override functionality
 provided by the protocol, for implementation-specific purposes.
 \end{abstract}
 
-\category{D.3.4}{Programming Languages}{Processors}
-[Code generation, Run-time environments]
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10011006.10011041</concept_id>
+<concept_desc>Software and its engineering~Compilers</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
 
-\terms{Algorithms, Languages}
+\ccsdesc[500]{Software and its engineering~Compilers}
 
-\keywords{\clos{}, \commonlisp{}, Environment}
+\keywords{\clos{}, \commonlisp{}, Environment, Compilation}
+
+\maketitle
 
 \inputtex{spec-macros.tex}
 
