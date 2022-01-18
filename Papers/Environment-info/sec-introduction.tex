@@ -16,8 +16,8 @@ hard to extend.  Furthermore, the protocol is incomplete.  A typical
 compiler needs more information than the protocol provides, making
 implementation-specific extensions obligatory for the protocol to be
 useful.  For that reason, although existing \commonlisp{}
-implementations often provide this functionality, it is not what the
-native compiler of the implementation actually uses.
+implementations often provide such externsions, the CLtL2 protocol is
+not what the native compiler of the implementation actually uses.
 
 In this paper, we propose a modern alternative protocol based on
 \clos{}.  Rather than returning multiple values, our protocol
