@@ -35,19 +35,26 @@ declarations that apply to the binding.
 The function \texttt{function-information} takes a function name and
 an optional environment as arguments.  Again, three values are
 returned.  The first value indicates the type of the binding
-(function, macro, special operator\footnote{The term used in the book
-  is \emph{special form}, but the terminology has been improved since
-  then}) or \texttt{nil} if there is no binding or definition in the
-environment for that function name.  As before, the second value
-indicates whether the definition is local or global, and the third
-value is an association list of declarations that apply.
+(function, macro, special operator%
+\footnote{The term used in the book is \emph{special form}, but the
+  terminology has been improved since then}) or \texttt{nil} if there
+is no binding or definition in the environment for that function name.
+As before, the second value indicates whether the definition is local
+or global, and the third value is an association list of declarations
+that apply.
 
-The function \texttt{declaration-information} takes a
-\emph{declaration name} and an optional environment as arguments.  The
-declaration name can be the symbol \texttt{optimize}, the symbol
-\texttt{declaration}, or some implementation-defined declaration
-names.  It returns a single value that contains information related to
-the corresponding declaration name.
+The function \texttt{declaration-information} is used in order to
+query the environment for declarations that do not apply to any
+particular binding in the environment.  It takes a \emph{declaration
+  identifier}%
+\footnote{The term used in the book is \emph{name} and the parameter
+  is called \textit{decl-name}, but the terminology has changed since
+  then.} 
+and an optional environment as arguments.  The declaration identifier
+can be the symbol \texttt{optimize}, the symbol \texttt{declaration},
+or some implementation-defined declaration identifier.  It returns a
+single value that contains information related to the corresponding
+declaration identifier.
 
 To begin with, it is clear that this set of functions is insufficient
 to process all \commonlisp{} code, because no mechanism is described
