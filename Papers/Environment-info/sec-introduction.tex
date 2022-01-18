@@ -11,9 +11,9 @@ there is a suggested protocol that is supplied by some existing
 \commonlisp{} implementations.
 
 The protocol documented in CLtL2 has several problems.  Functions in
-the protocol return multiple values, which makes it hard to extend.
-Furthermore, the protocol is incomplete.  A typical compiler needs
-more information than the protocol provides, making
+the protocol return multiple values, a fact that makes the protocol
+hard to extend.  Furthermore, the protocol is incomplete.  A typical
+compiler needs more information than the protocol provides, making
 implementation-specific extensions obligatory for the protocol to be
 useful.  For that reason, although existing \commonlisp{}
 implementations often provide this functionality, it is not what the
