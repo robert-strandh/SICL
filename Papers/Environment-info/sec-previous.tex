@@ -148,6 +148,23 @@ functions take a native lexical environment as an optional argument.
 
 \subsubsection{Native}
 
+A lexical environment is an instance of the structure class
+\texttt{lexenv}.  There is a slot for each type of entry, i.e.,
+\texttt{functions}, \texttt{variables}, \texttt{blocks},
+\texttt{tags}, and some other slots for implementation-specific
+details.  Each of the main slots contains an association list in which
+the name is the key and the value contains associated information for
+the name.
+
+Access to the lexical environment is provided by the macro
+\texttt{lexenv-find} and the function \texttt{lexenv-find-function}.
+These operators do not take an environment object as an argument, and
+instead access this object as the value of the special variable
+\texttt{*lexical-environment*}.  The function
+\texttt{lexenv-find-function} is a wrapper for a call to
+\texttt{lexenv-find} with a specific \texttt{:test} function for the
+key of the association list containing functions.
+
 \subsubsection{CLtL2}
 
 \cmucl{} provides definitions of the functions defined in CLtL2.  The
