@@ -1,0 +1,28 @@
+Extracted modules:
+
+- Cleavir (why v1 and v2)
+- Eclector
+- Clostrum
+- Trucler
+- Incless
+- Inravina
+
+Future extractions:
+
+- LOOP
+- Format
+- Sequence functions
+
+Inventions:
+
+- Fast generic dispatch
+- First-class global environments
+- Macros for implementing sequence functions
+- Handling :FROM-END better
+- Call-site optimization
+- Garbage collector
+
+Executing SICL code in the host:
+
+- AST evaluator
+- HIR evaluator
