@@ -156,6 +156,21 @@ Extract more modules into separate repositories:
 }
 
 \frame{
+\frametitle{Future work}
+\vskip 0.25cm
+(Research) Investigate the relationship between
+static-single-assignment form (SSA) and global value numbering (GVN).
+We think the latter might be strictly more general than the former.
+\vskip 0.25cm
+\begin{itemize}
+\item Have the register allocator work on the result of global value
+  numbering rather than on lexical locations.
+\item Allow the register allocator to do re???.
+\item Compare with Cliff Click's ``sea of nodes'' representation.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Collaborators}
 \begin{itemize}
 \item Alex Wood (Cleavir)
