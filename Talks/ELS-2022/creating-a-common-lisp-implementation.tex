@@ -136,7 +136,13 @@ Both use generic functions and standard classes.
 \frame{
 \frametitle{Current state}
 \begin{itemize}
-\item
+\item Bootstrapping mostly working.
+\item \texttt{eval} semantics is used during bootstrapping.  Change to
+  file-compilation semantics.
+\item Different external modules have different conflicting
+  requirements.  Fix by using one first-class global environment per
+  external module during bootstrapping.
+\item Simple call-site manager still not written.
 \end{itemize}
 
 }
