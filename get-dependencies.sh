@@ -12,6 +12,7 @@ https://github.com/s-expressionists/Trucler
 https://github.com/s-expressionists/Clostrum
 https://github.com/s-expressionists/incless
 https://github.com/s-expressionists/ctype
+https://github.com/s-expressionists/Cyclosis
 "
 
 PROJECTS_DIRECTORY=${1:-"$HOME/quicklisp/local-projects/"}

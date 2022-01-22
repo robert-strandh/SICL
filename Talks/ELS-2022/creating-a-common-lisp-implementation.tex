@@ -1,0 +1,202 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\beamertemplateshadingbackground{red!10}{blue!10}
+%\usepackage{fancybox}
+\usepackage{epsfig}
+\usepackage{verbatim}
+\usepackage{url}
+%\usepackage{graphics}
+%\usepackage{xcolor}
+\usepackage{fancybox}
+\usepackage{moreverb}
+%\usepackage[all]{xy}
+\usepackage{listings}
+\usepackage{filecontents}
+\usepackage{graphicx}
+
+\lstset{
+  language=Lisp,
+  basicstyle=\scriptsize\ttfamily,
+  keywordstyle={},
+  commentstyle={},
+  stringstyle={}}
+
+\def\inputfig#1{\input #1}
+\def\inputeps#1{\includegraphics{#1}}
+\def\inputtex#1{\input #1}
+
+\inputtex{logos.tex}
+
+%\definecolor{ORANGE}{named}{Orange}
+
+\definecolor{GREEN}{rgb}{0,0.8,0}
+\definecolor{YELLOW}{rgb}{1,1,0}
+\definecolor{ORANGE}{rgb}{1,0.647,0}
+\definecolor{PURPLE}{rgb}{0.627,0.126,0.941}
+\definecolor{PURPLE}{named}{purple}
+\definecolor{PINK}{rgb}{1,0.412,0.706}
+\definecolor{WHEAT}{rgb}{1,0.8,0.6}
+\definecolor{BLUE}{rgb}{0,0,1}
+\definecolor{GRAY}{named}{gray}
+\definecolor{CYAN}{named}{cyan}
+
+\newcommand{\orchid}[1]{\textcolor{Orchid}{#1}}
+\newcommand{\defun}[1]{\orchid{#1}}
+
+\newcommand{\BROWN}[1]{\textcolor{BROWN}{#1}}
+\newcommand{\RED}[1]{\textcolor{red}{#1}}
+\newcommand{\YELLOW}[1]{\textcolor{YELLOW}{#1}}
+\newcommand{\PINK}[1]{\textcolor{PINK}{#1}}
+\newcommand{\WHEAT}[1]{\textcolor{wheat}{#1}}
+\newcommand{\GREEN}[1]{\textcolor{GREEN}{#1}}
+\newcommand{\PURPLE}[1]{\textcolor{PURPLE}{#1}}
+\newcommand{\BLACK}[1]{\textcolor{black}{#1}}
+\newcommand{\WHITE}[1]{\textcolor{WHITE}{#1}}
+\newcommand{\MAGENTA}[1]{\textcolor{MAGENTA}{#1}}
+\newcommand{\ORANGE}[1]{\textcolor{ORANGE}{#1}}
+\newcommand{\BLUE}[1]{\textcolor{BLUE}{#1}}
+\newcommand{\GRAY}[1]{\textcolor{gray}{#1}}
+\newcommand{\CYAN}[1]{\textcolor{cyan }{#1}}
+
+\newcommand{\reference}[2]{\textcolor{PINK}{[#1~#2]}}
+%\newcommand{\vect}[1]{\stackrel{\rightarrow}{#1}}
+
+% Use some nice templates
+\beamertemplatetransparentcovereddynamic
+
+\newcommand{\A}{{\mathbb A}}
+\newcommand{\degr}{\mathrm{deg}}
+
+\title{Creating a \commonlisp{} implementation}
+
+\author{Robert Strandh}
+\date{January, 2022}
+
+%\inputtex{macros.tex}
+
+
+\begin{document}
+\frame{
+\titlepage
+\vfill
+\small{European Lisp Symposium 2022}
+}
+
+\setbeamertemplate{footline}{
+\vspace{-1em}
+\hspace*{1ex}{~} \GRAY{\insertframenumber/\inserttotalframenumber}
+}
+
+\frame{
+\frametitle{Motivation}
+\vskip 0.25cm
+\begin{itemize}
+\item Dissatisfaction with the way current \commonlisp{}
+  implementations are written.
+\item Duplication of system code between implementations.
+\item Some such instances are justified.  Most are not.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Initial idea}
+\vskip 0.25cm
+Create a set of \emph{modules} that can be used to create a complete
+\commonlisp{} implementation from a minimal \emph{core}.
+\vskip 0.25cm
+Problem: Such modules must be ordered by dependency, and each one
+written in a subset defined by preceding modules, creating a
+maintenance nightmare. 
+}
+
+\frame{
+\frametitle{Initial modules}
+\vskip 0.25cm
+\begin{itemize}
+\item \texttt{format}
+\item \texttt{loop}
+\end{itemize}
+\vskip 0.25cm
+Both use generic functions and standard classes.
+}
+
+\frame{
+  \frametitle{New techniques}
+\vskip 0.25cm
+\begin{itemize}
+\item First-class global environments.
+\item Fast generic dispatch.
+\item Handling \texttt{:from-end} better.
+\item Macros for simplifying sequence functions.
+\item Garbage collector.
+\item Debugging support.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Current state}
+\begin{itemize}
+\item Bootstrapping mostly working.
+\item \texttt{eval} semantics is used during bootstrapping.  Change to
+  file-compilation semantics.
+\item Different external modules have different conflicting
+  requirements.  Fix by using one first-class global environment per
+  external module during bootstrapping.
+\item Simple call-site manager still not written.
+\end{itemize}
+
+}
+
+\frame{
+\frametitle{Future work}
+\vskip 0.25cm
+Extract more modules into separate repositories:
+\vskip 0.25cm
+\begin{itemize}
+\item \texttt{format}
+\item \texttt{loop}
+\item \texttt{sequence functions}
+\item \texttt{high-level list functions}
+\item \texttt{hash tables?}
+\end{itemize}
+}
+
+\frame{
+\frametitle{Future work}
+\vskip 0.25cm
+(Research) Investigate the relationship between
+static-single-assignment form (SSA) and global value numbering (GVN).
+We think the latter might be strictly more general than the former.
+\vskip 0.25cm
+\begin{itemize}
+\item Have the register allocator work on the result of global value
+  numbering rather than on lexical locations.
+\item Allow the register allocator to do rematerialization.
+\item Compare with Cliff Click's ``sea of nodes'' representation.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Collaborators}
+\begin{itemize}
+\item Alex Wood (Cleavir)
+\item Charles Zhang (Cleavir)
+\item Jan Moringen (Eclector)
+\item Marco Heisig (HIR evaluator, sequence functions, Trucler)
+\item Hayley Patton (hash tables)
+\item Daniel Kochmanski (Clostrum)
+\item lonjil (Incless)
+\item Henry Harrington (Cyclosis)
+\item Tarn Burton (Inravina)
+\end{itemize}
+}
+
+\frame{
+\frametitle{Thank you}
+}
+
+%% \frame{\tableofcontents}
+%% \bibliography{references}
+%% \bibliographystyle{alpha}
+
+\end{document}
