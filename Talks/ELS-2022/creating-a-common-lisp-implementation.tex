@@ -121,6 +121,25 @@ Both use generic functions and standard classes.
 }
 
 \frame{
+  \frametitle{Compiler framework (Cleavir)}
+\vskip 0.25cm
+\begin{itemize}
+\item Creation of an Abstract Syntax Tree (AST) from a Concrete Syntax
+  Tree (CST) to
+\item Creation of High-level Intermediate Representation (HIR) from an
+  AST.  HIR is a traditional flow graph, with the restriction that every
+  variable contains a \commonlisp{} object. 
+\item Creation of Medium-level Intermediate Representation (MIR) from
+  HIR.  MIR introduces explicit memory operations, so some objects are
+  raw addresses and raw integers.
+\item Creation of Low-level Intermediate Representation (LIR) from
+  MIR.  LIR introduces registers, so it is backend specific.
+\item Register allocation.
+\item Code generation.
+\end{itemize}
+}
+
+\frame{
   \frametitle{New techniques}
 \vskip 0.25cm
 \begin{itemize}
