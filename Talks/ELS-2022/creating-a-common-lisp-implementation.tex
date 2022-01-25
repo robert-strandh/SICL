@@ -127,6 +127,20 @@ For it to work:
 }
 
 \frame{
+\frametitle{Implementing CLOS}
+\vskip 0.25cm
+Most \commonlisp{} implementation probably use a derivative of PCL.
+\vskip 0.25cm
+But PCL was explicitly written to be bolted onto a pre-ANSI
+\commonlisp{} system.
+\vskip 0.25cm
+Now CLOS is best described as the result of executing CLOS code.
+\vskip 0.25cm
+So we need a way to execute \sicl{}-specific code in the host during
+bootstrapping.
+}
+
+\frame{
 \frametitle{Initial modules}
 \vskip 0.25cm
 \begin{itemize}
