@@ -166,4 +166,47 @@ any of the supported implementations.
 
 In this section, we show some examples of how \trucler{} can be used
 by a code walker.  All examples are from \cleavir{} used in the
-\sicl{} compiler.
+\sicl{} compiler.  We have simplified the examples compared to the
+actual code in order to avoid too much clutter.  For example, we have
+omitted the handling of error situations and restarts.
+
+The part of \cleavir{} that uses \trucler{} is the phase that converts
+a \emph{concrete syntax tree} (CST) to an \emph{abstract syntax tree}
+(AST).  A concrete syntax tree can be thought of as a \commonlisp{}
+expression but where each sub-expression is wrapped in a standard
+object that holds additional information such as source location.  At
+the core of this compilation phase is the generic function
+\texttt{convert-cst}.  For each class of description objects that
+\trucler{} can return, this generic function has a method specialized
+to that class.
+
+The function \texttt{convert-cst} is called by a top-level function
+\texttt{convert} that determines the structure of the expression to
+convert and calls the appropriate \trucler{} query function and then
+invokes \texttt{convert-cst} with the object returned by \trucler{}.
+
+The method specialized to \texttt{local-macro-description} looks like
+this:
+
+{\small
+\begin{verbatim}
+(defmethod convert-cst
+    (client
+     cst
+     (info trucler:local-macro-description)
+      environment)
+  (let* ((expander (trucler:expander info))
+         (expanded-form
+          (expand-macro expander cst environment))
+         (expanded-cst
+          (cst:reconstruct expanded-form cst client)))
+    (setf (cst:source expanded-cst) (cst:source cst))
+    (with-preserved-toplevel-ness
+      (convert client expanded-cst environment))))
+\end{verbatim}
+
+\noindent
+The function \texttt{expand-macro} is responsible for taking into
+account \texttt{*macroexpand-hook*} as the \commonlisp{} standard
+requires.  The call to \texttt{reconstruct} has to do with preserving
+source information in the expanded form.
