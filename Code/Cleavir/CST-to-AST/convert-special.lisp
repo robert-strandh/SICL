@@ -36,8 +36,8 @@
 (defmethod convert-special (client (symbol (eql 'block)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
-  (cst:db origin (block name-cst . body-cst) cst
-    (declare (ignore block))
+  (cst:db origin (block-cst name-cst . body-cst) cst
+    (declare (ignore block-cst))
     (let ((name (cst:raw name-cst)))
       (unless (symbolp name)
         (error 'block-name-must-be-a-symbol :cst name-cst))
