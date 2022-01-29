@@ -204,9 +204,51 @@ this:
     (with-preserved-toplevel-ness
       (convert client expanded-cst environment))))
 \end{verbatim}
+}
 
 \noindent
 The function \texttt{expand-macro} is responsible for taking into
 account \texttt{*macroexpand-hook*} as the \commonlisp{} standard
 requires.  The call to \texttt{reconstruct} has to do with preserving
 source information in the expanded form.
+
+The next example shows how the environment is augmented when a
+\texttt{block} special form is converted:
+
+{\small
+\begin{verbatim}
+(defmethod convert-special
+    (client
+    (symbol (eql 'block))
+    cst
+    environment)
+  (cst:db origin (block-cst name-cst . body-cst) cst
+    (declare (ignore block-cst))
+    (let ((name (cst:raw name-cst)))
+      (let* ((ast (cleavir-ast:make-ast
+                   'cleavir-ast:block-ast))
+             (new-environment
+               (trucler:add-block
+                client environment name ast)))
+        (setf (cleavir-ast:body-ast ast)
+              (process-progn
+               client
+               (convert-sequence
+                client body-cst new-environment)
+               environment))
+        ast))))
+\end{verbatim}
+}
+
+\noindent
+In the example above, \texttt{cst:db} is a version of the standard
+\commonlisp{} operator \texttt{destructuring-bind}, that is used to
+destructure concrete syntax trees as opposed to ordinary \commonlisp{}
+source expressions.  The last argument to \texttt{add-block} is an
+optional argument that \trucler{} calls \texttt{identity} and that
+\trucler{} stores in the environment, associated with the block
+information.  The nature of the object supplied is entirely determined
+by client code.  In our case, we supply an abstract syntax tree that
+represents the \texttt{block} special form so that when an associated
+\texttt{return-from} is found, the two abstract syntax trees can be
+connected.
