@@ -15,4 +15,9 @@ class, rather than multiple values.  Client code can define subclasses
 of the classes used by the query functions.  In particular, for
 objects in the global environment, client code can return instances of
 classes containing arbitrary information that it finds useful for the
-language processor.
+language processor.  For example, if a global function turns out to be
+a generic function, client code can then return a subclass of the
+\trucler{} class \texttt{global-function-description} that contains
+information such as the the generic-function class, the method class,
+and the method combination, as we suggested in our paper about
+\texttt{make-method-lambda} \cite{DBLP:conf/els/DurandS19}.
