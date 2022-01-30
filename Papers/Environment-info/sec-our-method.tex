@@ -194,7 +194,7 @@ this:
     (client
      cst
      (info trucler:local-macro-description)
-      environment)
+     environment)
   (let* ((expander (trucler:expander info))
          (expanded-form
           (expand-macro expander cst environment))
@@ -207,10 +207,18 @@ this:
 }
 
 \noindent
+As we can see, this method is specialized to the \trucler{} class
+\texttt{local-macro-description}, and no other parameter is
+specialized.  The code calls the accessor \texttt{expander} on the
+\texttt{info} parameter, which returns the macro expander associated
+with the local macro.  
+
 The function \texttt{expand-macro} is responsible for taking into
 account \texttt{*macroexpand-hook*} as the \commonlisp{} standard
 requires.  The call to \texttt{reconstruct} has to do with preserving
-source information in the expanded form.
+source information in the expanded form.  The essence of the body is
+the call to \texttt{convert} which converts the expanded form (wrapped
+in a concrete syntax tree).
 
 The next example shows how the environment is augmented when a
 \texttt{block} special form is converted:
@@ -252,3 +260,8 @@ by client code.  In our case, we supply an abstract syntax tree that
 represents the \texttt{block} special form so that when an associated
 \texttt{return-from} is found, the two abstract syntax trees can be
 connected.
+
+The essence of the method body is the call to the function
+named \texttt{convert-sequence} which converts the body of the
+\texttt{block} form in the original environment augmented with
+information about the \texttt{block} form.
