@@ -227,7 +227,24 @@ the CLtL2 protocol here.
 \item Information about blocks and tags have been added in the form of
   two new functions \texttt{block-information} and
   \texttt{tag-information}.
-\item (say more)
+\item The function \texttt{augment-environment} accepts additional
+  keywords arguments such as \texttt{:block}, \texttt{:tag}, etc. in
+  order to make it possible to augment an environment with all
+  relevant information that the language processor may encounter.
+\item The function \texttt{augment-environment} accepts an additional
+  keyword argument \texttt{:locative} that can be used by client code
+  to supply additional information about the entity, for example the
+  value of a constant variable. The query functions return an
+  additional value which is the information supplied to
+  \texttt{augment-environment}.
+\item The order and the number of the return values of the query
+  functions have been modified, so as to allow for the additional
+  \emph{locative} value, and to have frequently used return values
+  before the less frequently used.
+\item Several other features have been added to the protocol in order
+  to make it a complete tool for a language processor, and for the
+  purpose of minimizing memory allocation.  These additional features
+  are outside the scope of this paper.
 \end{itemize}
 
 \subsection{\lispworks{}}
