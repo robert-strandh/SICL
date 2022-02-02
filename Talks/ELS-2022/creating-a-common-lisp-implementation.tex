@@ -268,6 +268,26 @@ Alternative spelling for ``claustrum'' which means ``room''.
 }
 
 \frame{
+  \frametitle{Cluster, the assembler with a difference}
+\vskip 0.25cm
+
+Observation: The main task of an assembler (at least for a CISC) is to
+turn abstract instructions such as ADD into machine code, depending on
+the arguments.  Parsing text and producing object code in a file are
+secondary tasks. 
+\vskip 0.25cm
+What Cluster does:
+\begin{itemize}
+\item It takes a list of standard objects, each representing an
+  instruction or a label.
+\item It returns a vector of bytes that represents the machine code.
+\end{itemize}
+\vskip 0.25cm
+This way, the compiler does not have to generate text that then has to
+be parsed.
+}
+
+\frame{
   \frametitle{New techniques}
 \vskip 0.25cm
 \begin{itemize}
