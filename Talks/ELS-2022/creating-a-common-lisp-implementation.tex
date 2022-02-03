@@ -104,9 +104,15 @@
 Create a set of \emph{modules} that can be used to create a complete
 \commonlisp{} implementation from a minimal \emph{core}.
 \vskip 0.25cm
-Problem: Such modules must be ordered by dependency, and each one
-written in a subset defined by preceding modules, creating a
-maintenance nightmare.
+Problem:
+\begin{itemize}
+\item Modules must be ordered by dependency.
+\item Each module can use only a subset of the language, determined by
+  the modules it depends on.
+\item Using a subset makes the code unidiomatic.
+\item Using a subset also makes modules hard to maintain.
+\end{itemize}
+
 }
 
 \frame{
