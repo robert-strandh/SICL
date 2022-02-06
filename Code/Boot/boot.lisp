@@ -7,8 +7,9 @@
                 :e2 (setf *e2* (make-instance 'environment :name "E2"))
                 :e3 (setf *e3* (make-instance 'environment :name "E3"))
                 :e4 (setf *e4* (make-instance 'environment :name "E4"))
-                :e5 (setf *e5* (make-instance 'environment :name "E5")))))
-    (loop for env in (list *e0* *e1* *e2* *e3* *e4* *e5*)
+                :e5 (setf *e5* (make-instance 'environment :name "E5"))
+                :ecs (setf *ecs* (make-instance 'environment :name "ECS")))))
+    (loop for env in (list *e0* *e1* *e2* *e3* *e4* *e5* *ecs*)
           for client = (env:client env)
           do (reinitialize-instance client
                :environment env
