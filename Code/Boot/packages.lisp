@@ -8,8 +8,8 @@
            #:client
            #:boot
            #:repl
-           #:e0 #:e1 #:e2 #:e3 #:e4 #:e5
-           #:*e0* #:*e1* #:*e2* #:*e3* #:*e4* #:*e5*
+           #:e0 #:e1 #:e2 #:e3 #:e4 #:e5 #:ecs
+           #:*e0* #:*e1* #:*e2* #:*e3* #:*e4* #:*e5* #:*ecs*
            #:import-functions-from-host
            #:define-error-functions
            #:load-source-file
