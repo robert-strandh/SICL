@@ -17,8 +17,10 @@
   (import-function e5 e 'make-instance))
 
 (defun boot (boot)
-  (let* ((e5 (sicl-boot:e5 boot))
-         (client (make-instance 'client))
-         (ecs (make-instance 'environment :client client)))
+  (with-accessors ((e5 sicl-boot:e5)
+                   (ecs sicl-boot:ecs))
+      boot
+    (change-class ecs 'environment)
+    (change-class (env:client ecs) 'client)
     (pre-fill-environment e5 ecs)
     (define-ensure-generic-function ecs)))
