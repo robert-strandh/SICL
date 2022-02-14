@@ -173,3 +173,12 @@
   (loop for component in (asdf/plan:required-components asdf-system-name :other-systems nil)
         when (typep component 'asdf/lisp-action:cl-source-file)
           append (asdf:input-files 'asdf:compile-op component)))
+
+;;; Compile the source files of an ASDF system and return a list of
+;;; ASTs, one for each file.  COMPILATION-ENVIRONMENT is a compilation
+;;; environment with a parent evaluation environment, itself with a
+;;; parent run-time environment.  The same constellation of
+;;; environments is used to compile each source file.
+(defun compile-asdf-system (asdf-system-name compilation-environment)
+  (let ((path-names (source-file-path-names asdf-system-name)))
+    path-names))
