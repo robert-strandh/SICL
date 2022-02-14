@@ -193,5 +193,5 @@
 ;;; parent run-time environment.  The same constellation of
 ;;; environments is used to compile each source file.
 (defun compile-asdf-system (asdf-system-name compilation-environment)
-  (let ((path-names (source-file-path-names asdf-system-name)))
-    path-names))
+  (loop for pathname in (source-file-path-names asdf-system-name)
+        collect (compile-source-file pathname compilation-environment)))
