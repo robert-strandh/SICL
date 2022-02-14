@@ -166,3 +166,10 @@
                        for child in children
                        do (aux child (1+ indentation))))))
       (aux system-name 0))))
+
+;;; Return a list of pathnames of all the Lisp source files
+;;; of the ASDF system with the name given as an argument.
+(defun source-file-path-names (asdf-system-name)
+  (loop for component in (asdf/plan:required-components asdf-system-name :other-systems nil)
+        when (typep component 'asdf/lisp-action:cl-source-file)
+          append (asdf:input-files 'asdf:compile-op component)))
