@@ -4,7 +4,7 @@
   :depends-on (#:sicl-lexical-environment
                #:stealth-mixin
                #:clostrum
-               #:clostrum/virtual)
+               #:clostrum-basic)
   :serial t
   :components
   ((:file "packages")

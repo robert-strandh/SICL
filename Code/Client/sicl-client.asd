@@ -3,7 +3,7 @@
 (defsystem #:sicl-client
   :depends-on (#:trucler-reference
                #:clostrum
-               #:clostrum/virtual)
+               #:clostrum-basic)
   :serial t
   :components
   ((:file "packages")

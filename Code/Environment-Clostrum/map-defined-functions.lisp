@@ -6,8 +6,8 @@
 (defgeneric map-defined-functions (client environment function))
 
 (defmethod map-defined-functions
-    (client (environment clostrum/virtual:virtual-run-time-environment) function)
-  (loop with function-entries = (clostrum/virtual::functions environment)
+    (client (environment clostrum-basic:virtual-run-time-environment) function)
+  (loop with function-entries = (clostrum-basic::functions environment)
         for name being each hash-key of function-entries
         do (when (and (fboundp client environment name)
                       (or (consp name)

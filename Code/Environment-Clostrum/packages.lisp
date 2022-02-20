@@ -18,7 +18,7 @@
                                    ;; with at bootstrapping time.
                                    clostrum:find-package))
              collect (symbol-name symbol)))
-  (:import-from #:clostrum/virtual
+  (:import-from #:clostrum-basic
                 #:function-cell
                 #:variable-cell)
   (:export #:global-environment

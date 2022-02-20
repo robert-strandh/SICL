@@ -5,5 +5,5 @@
 (defgeneric (setf call-sites) (call-sites function-entry))
 
 (stealth-mixin:define-stealth-mixin
-    function-entry () clostrum/virtual::function-entry
+    function-entry () clostrum-basic::function-entry
   ((%call-sites :initform '() :accessor call-sites)))

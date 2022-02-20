@@ -17,7 +17,7 @@
   (setf (env:special-variable
          (env:client e5) e5 'clostrum-implementation::*compilation-operators* t)
         '())
-  (load-asdf-system '#:clostrum/virtual e5))
+  (load-asdf-system '#:clostrum-basic e5))
 
 (defun boot (boot)
   (format *trace-output* "Start phase 6~%")
