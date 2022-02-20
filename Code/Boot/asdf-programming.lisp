@@ -3,6 +3,10 @@
 (defclass load-op (asdf/action:downward-operation asdf/action:selfward-operation)
   ((asdf:selfward-operation :initform '(prepare-op) :allocation :class)))
 
+(defmethod print-object ((object load-op) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    nil))
+
 (defclass prepare-op (asdf/action:upward-operation asdf/action:sideway-operation)
   ((asdf:sideway-operation :initform 'load-op :allocation :class)))
 
