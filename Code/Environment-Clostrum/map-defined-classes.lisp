@@ -6,5 +6,5 @@
 (defgeneric map-defined-classes (client environment function))
 
 (defmethod map-defined-classes
-    (client (environment clostrum-basic:virtual-run-time-environment) function)
+    (client (environment clostrum-basic:run-time-environment) function)
   (maphash function (clostrum-basic::classes environment)))

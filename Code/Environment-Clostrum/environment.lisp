@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-environment)
 
 (defclass base-run-time-environment
-    (clostrum-basic:virtual-run-time-environment)
+    (clostrum-basic:run-time-environment)
   (;; This slot holds an EQ hash table, mapping symbols to
    ;; method-combination templates.
    (%method-combination-templates :initform (make-hash-table :test #'eq)
