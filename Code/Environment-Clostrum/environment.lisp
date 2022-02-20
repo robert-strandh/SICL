@@ -39,7 +39,7 @@
   ())
 
 (defclass compilation-environment
-    (clostrum-basic:virtual-compilation-environment)
+    (clostrum-basic:compilation-environment)
   ())
 
 (defmethod client ((environment compilation-environment))
