@@ -2,7 +2,7 @@
 
 (defpackage #:sicl-environment
   (:use #:common-lisp)
-  (:shadow #:get-setf-expansion type #:find-package)
+  (:shadow #:get-setf-expansion type)
   (:shadowing-import-from
    #:clostrum
    .
@@ -11,12 +11,7 @@
                                    clostrum:compilation-environment
                                    clostrum:function-description
                                    clostrum:class-description
-                                   clostrum:variable-description
-                                   ;; Clostrum refuses to set a
-                                   ;; package that is not a host
-                                   ;; package, which we can't live
-                                   ;; with at bootstrapping time.
-                                   clostrum:find-package))
+                                   clostrum:variable-description))
              collect (symbol-name symbol)))
   (:import-from #:clostrum-basic
                 #:function-cell
