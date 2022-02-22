@@ -5,19 +5,14 @@
          (env:client e3) e3 'sicl-clos::generic-function-class-names)
         (lambda (name environment)
           (declare (ignore environment))
-          (let ((client (env:client e3)))
-            (if (and (env:fboundp client e3 name)
-                     (or (consp name)
-                         (and (null (env:macro-function client e3 name))
-                              (not (env:special-operator client e3 name)))))
-                (let ((function (env:fdefinition (env:client e3) e3 name)))
-                  (if (typep function 'generic-function)
-                      (values
-                       (class-name (class-of function))
-                       (class-name
-                        (sicl-host-mop:generic-function-method-class function)))
-                      (values 'standard-generic-function 'standard-method)))
-                (values 'standard-generic-function 'standard-method))))))
+          (let ((function (env:fdefinition (env:client e3) e3 name)))
+            (if (or (null function)
+                    (not (typep function 'generic-function)))
+                (values 'standard-generic-function 'standard-method)
+                (values
+                 (class-name (class-of function))
+                 (class-name
+                  (sicl-host-mop:generic-function-method-class function))))))))
 
 (defun define-ensure-method (e1 e2 e3)
   (setf (env:special-variable (env:client e3) e3 'lambda-list-keywords t)
