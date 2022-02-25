@@ -104,6 +104,45 @@
 \end{itemize}
 }
 
+\frame[containsverbatim]{
+\frametitle{Example of existing code}
+This is how the slots of the classes \texttt{class} and
+\texttt{standard-class} are defined in ECL:
+\vskip 0.25cm
+\begin{verbatim}
+(defparameter +class-slots+
+  `(,@+specializer-slots+
+    (name :initarg :name :initform nil ...)
+    ...
+    (direct-subclasses :initform nil ...)
+    ...))
+\end{verbatim}
+
+\begin{verbatim}
+(defparameter +standard-class-slots+
+  (append +class-slots+
+          '((optimize-slot-access)
+            (forward))))
+\end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{Example of existing code}
+This are the equivalent definitions in SICL:
+\vskip 0.25cm
+\begin{verbatim}
+(defclass class (specializer)
+  ((%name :initform nil :initarg :name ...)
+   ...
+   (%direct-subclasses :initform '() ...)))
+\end{verbatim}
+
+\begin{verbatim}
+(defclass standard-class (class)
+  (...))
+\end{verbatim}
+}
+
 \frame{
 \frametitle{Why not improve an existing implementation?}
 \vskip 0.25cm
