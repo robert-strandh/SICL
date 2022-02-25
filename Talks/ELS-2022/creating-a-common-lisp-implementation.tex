@@ -143,6 +143,38 @@ This are the equivalent definitions in SICL:
 \end{verbatim}
 }
 
+\frame[containsverbatim]{
+\frametitle{Example of existing code}
+This is how symbols are described in SBCL:
+\vskip 0.25cm
+\begin{verbatim}
+(define-primitive-object
+    (symbol :lowtag other-pointer-lowtag
+            :widetag symbol-header-widetag
+            :alloc-trans %make-symbol
+            :type symbol)
+  ...
+  (name :ref-trans symbol-name :init :arg)
+  (package :ref-trans symbol-package
+           :set-trans %set-symbol-package
+           :init :null)
+  ...)
+\end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{Example of existing code}
+This is how symbols are described in SICL:
+\vskip 0.25cm
+
+\begin{verbatim}
+(defclass symbol (t)
+  ((%name :reader symbol-name)
+   (%package :reader symbol-package :writer ...))
+  (:metaclass built-in-class))
+\end{verbatim}
+}
+
 \frame{
 \frametitle{Why not improve an existing implementation?}
 \vskip 0.25cm
