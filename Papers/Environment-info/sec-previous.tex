@@ -13,7 +13,14 @@ Section 8.5 of CLtL2 describes a set of functions for obtaining
 information from an environment object, for creating a new such object
 by augmenting an existing one, and some other operators related to
 environments that are outside the scope of this paper, i.e.,
-\texttt{parse-macro} and \texttt{enclose}.
+\texttt{parse-macro} and \texttt{enclose}.  These last two functions
+do not contribute any functionality to the protocol being described.
+The function \texttt{enclose} requires an evaluator such as a compiler
+or an interpreter, and the evaluator will certainly \emph{use} the
+functionality in the protocol, but not add to it.  The function 
+\texttt{parse-macro} does not seem to even use this functionality, and
+indeed the optional \textit{env} parameter of this function is
+declared \texttt{ignore} both in \sbcl{} and \ccl{}.
 
 In this section, we provide an overview of that protocol, and we give
 an assessment of its usefulness in the context of a language processor.
