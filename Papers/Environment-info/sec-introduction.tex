@@ -28,6 +28,22 @@ be accomplished.  This protocol is defined and implemented in the
 \trucler{} library.%
 \footnote{https://github.com/s-expressionists/Trucler}
 
+Two of the functions in the section about environments in CLtL2 are
+not discussed in this paper, namely \texttt{parse-macro} and
+\texttt{enclose}.  These functions do not contribute any functionality
+to the protocol being described, and the interface provided by these
+functions does not require any modifications, which is why they are
+not discussed here.  The function \texttt{enclose} requires an
+evaluator such as a compiler or an interpreter, and the evaluator will
+certainly \emph{use} the functionality in the protocol, but not add to
+it.  The function \texttt{parse-macro} does not seem to even use this
+functionality, and indeed the optional \textit{env} parameter of this
+function is declared \texttt{ignore} both in \sbcl{} and \ccl{}.
 
+Although \texttt{parse-macro} and \texttt{enclose} are essential for
+any code-walking application, the purpose of the current work is not
+to provide a complete implementation-independent library for code
+walking, but just to propose an alternative protocol for accessing
+lexical environments.
 
 %%  LocalWords:  startup runtime
