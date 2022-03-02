@@ -91,6 +91,24 @@ result of a local \texttt{optimize} declaration.
 \item \texttt{add-space}.
 \end{itemize}
 
+\subsection{Restricting the environment}
+
+Recall that the description of the function \texttt{enclose} in
+section 8.5 of CLtL2 mentions that the consequences are undefined if
+the \textit{lambda-expression} argument contains references to
+entities in the environment that are not available at compile time,
+such as lexically visible bindings of variable and functions,
+\texttt{go} tags, or block names.
+
+As a service to a robust implementation of the \texttt{enclose}
+function, the \trucler{} library provides a function named
+\texttt{restrict-for-macrolet-expander} that takes an environment as
+an argument and returns an environment that contains only entities
+available at compile time.  Using this function, the implementation of
+\texttt{enclose} can return a function that will signal an error if
+the \textit{lambda-expression} argument contains unavailable
+references.
+
 \subsection{The reference implementation}
 
 \trucler{} supports some existing \commonlisp{} implementations as
