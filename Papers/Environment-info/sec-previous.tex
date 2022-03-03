@@ -387,4 +387,8 @@ information about local functions, blocks, or tags is not required.
 This library provided nondeterministic features for \commonlisp{}, and
 it contains a special-purpose code walker.  But like the one in the
 \texttt{iterate} macro, it can not handle the \texttt{macrolet}
-special operator.
+special operator.  Environment functionality is handled by a
+\texttt{map-function} and a \texttt{reduce-function} that are passed
+to functions that are charged with walking different special forms.
+These functions also have an \textit{environment} parameter, but it
+seems to be used only as an argument to \texttt{macroexpand}.
