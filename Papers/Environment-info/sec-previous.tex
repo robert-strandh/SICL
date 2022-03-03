@@ -372,3 +372,19 @@ environment, it uses the CLtL2 protocol with additional functionality
 inspired by those provided by \allegro{}.
 
 \subsubsection{agnostic-lizard}
+
+\subsubsection{The \texttt{iterate} macro}
+
+This library provides an alternative to the standard \commonlisp{}
+\texttt{loop} macro.  It contains a special-purpose code walker that
+is required for this macro to work, but it simplifies the code-walking
+task by not handling the \texttt{macrolet} special operator.
+Furthermore, the lexical environment contains only variables since
+information about local functions, blocks, or tags is not required.
+
+\subsubsection{Screamer}
+
+This library provided nondeterministic features for \commonlisp{}, and
+it contains a special-purpose code walker.  But like the one in the
+\texttt{iterate} macro, it can not handle the \texttt{macrolet}
+special operator.
