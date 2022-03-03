@@ -323,3 +323,52 @@ This library does not provide additional operators for querying the
 environment for tags or blocks, nor does it provide keyword arguments
 on \texttt{augment-environment} for augmenting an environment with
 such information.
+
+\subsection{Software including a code walker}
+
+Several libraries contain some code-walking capability, and such a
+library must use functionality for accessing and augmenting lexical
+environments.  We give a brief summary of some such libraries with
+respect to this functionality.
+
+\subsubsection{hu.dwim.walker}
+
+This library provides a general-purpose configurable code walker.  It
+uses its own protocol for accessing and augmenting the environment.
+This protocol resembles the one presented in this paper in some ways,
+
+For accessing the environment, it has the following functions:
+
+\begin{itemize}
+\item \texttt{iterate-variables-in-lexenv}
+\item \texttt{iterate-functions-in-lexenv}
+\item \texttt{iterate-blocks-in-lexenv}
+\item \texttt{iterate-tags-in-lexenv}
+\end{itemize}
+
+These functions have \textit{visitor} parameter that contains a
+function that is called with the each available name in the
+environment.
+
+For augmenting the environment, it has the following functions:
+
+\begin{itemize}
+\item \texttt{augment-lexenv-with-variable}
+\item \texttt{augment-lexenv-with-function}
+\item \texttt{augment-lexenv-with-macro}
+\item \texttt{augment-lexenv-with-symbol-macro}
+\item \texttt{augment-lexenv-with-block}
+\item \texttt{augment-lexenv-with-tag}
+\end{itemize}
+
+These function return a new environment that is like the one passed as
+an argument, augmented with the relevant information.
+
+\subsubsection{cl-ast}
+
+This library provides functionality for creating an abstract syntax
+tree from \commonlisp{} code.  For accessing and augmenting the
+environment, it uses the CLtL2 protocol with additional functionality
+inspired by those provided by \allegro{}.
+
+\subsubsection{agnostic-lizard}
