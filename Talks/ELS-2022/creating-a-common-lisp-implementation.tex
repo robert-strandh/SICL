@@ -208,19 +208,34 @@ Problem:
 
 \frame{
 \frametitle{New idea}
+Use the full \commonlisp{} language to implement each module.
 \vskip 0.25cm
-Use the full \commonlisp{} language to implement each module,
-including generic functions and standard classes.
+Including:
 \vskip 0.25cm
-For it to work:
 \begin{itemize}
-\item Some code must be executed in a \emph{host} during
-  bootstrapping.  In particular, this is the case for macro expanders
-  of basic target macros.  But usually, macro expanders can be written
-  as portable \commonlisp{} code.
-\item Some \emph{target-specific} code must be executed in the host
-  during bootstrapping.  More about this later.
+\item Generic functions defined with \texttt{defgeneric} and \texttt{defmethod}.
+\item Standard classes defined with \texttt{defclass}.
+\item The \texttt{loop} macro.
 \end{itemize}
+\vskip 0.25cm
+And one such module is \clos{}.  More about \clos{} later.
+}
+
+\frame{
+\frametitle{Consequences of new idea}
+Some code must be executed in a \emph{host} during
+bootstrapping.
+\vskip 0.25cm
+In particular, macro expanders of basic target macros.
+\vskip 0.25cm
+Fortunately, most macro expanders can be written as portable
+\commonlisp{} code.
+}
+
+\frame{
+\frametitle{Consequences of new idea}
+Worse: some \emph{target-specific} code must be executed in the host
+during bootstrapping.
 }
 
 \frame{
