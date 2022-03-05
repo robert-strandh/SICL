@@ -326,69 +326,14 @@ such information.
 
 \subsection{Software including a code walker}
 
-Several libraries contain some code-walking capability, and such a
-library must use functionality for accessing and augmenting lexical
-environments.  We give a brief summary of some such libraries with
-respect to this functionality.
+In his paper presented at the European Lisp Symposium 2017
+\cite{raskin_mikhail_2017_3254669}, Raskin gives an overview of
+various libraries that require code walking.  In that paper, he also
+argues that it is impossible to write a completely portable code
+walker, although he addresses many of the difficulties in his own,
+mostly portable, code walker named Agnostic Lizard.
 
-\subsubsection{hu.dwim.walker}
-
+In particular, one of the libraries he mentions is hu.dwim.walker.
 This library provides a general-purpose configurable code walker.  It
 uses its own protocol for accessing and augmenting the environment.
-This protocol resembles the one presented in this paper in some ways,
-
-For accessing the environment, it has the following functions:
-
-\begin{itemize}
-\item \texttt{iterate-variables-in-lexenv}
-\item \texttt{iterate-functions-in-lexenv}
-\item \texttt{iterate-blocks-in-lexenv}
-\item \texttt{iterate-tags-in-lexenv}
-\end{itemize}
-
-These functions have \textit{visitor} parameter that contains a
-function that is called with the each available name in the
-environment.
-
-For augmenting the environment, it has the following functions:
-
-\begin{itemize}
-\item \texttt{augment-lexenv-with-variable}
-\item \texttt{augment-lexenv-with-function}
-\item \texttt{augment-lexenv-with-macro}
-\item \texttt{augment-lexenv-with-symbol-macro}
-\item \texttt{augment-lexenv-with-block}
-\item \texttt{augment-lexenv-with-tag}
-\end{itemize}
-
-These function return a new environment that is like the one passed as
-an argument, augmented with the relevant information.
-
-\subsubsection{cl-ast}
-
-This library provides functionality for creating an abstract syntax
-tree from \commonlisp{} code.  For accessing and augmenting the
-environment, it uses the CLtL2 protocol with additional functionality
-inspired by those provided by \allegro{}.
-
-\subsubsection{agnostic-lizard}
-
-\subsubsection{The \texttt{iterate} macro}
-
-This library provides an alternative to the standard \commonlisp{}
-\texttt{loop} macro.  It contains a special-purpose code walker that
-is required for this macro to work, but it simplifies the code-walking
-task by not handling the \texttt{macrolet} special operator.
-Furthermore, the lexical environment contains only variables since
-information about local functions, blocks, or tags is not required.
-
-\subsubsection{Screamer}
-
-This library provided nondeterministic features for \commonlisp{}, and
-it contains a special-purpose code walker.  But like the one in the
-\texttt{iterate} macro, it can not handle the \texttt{macrolet}
-special operator.  Environment functionality is handled by a
-\texttt{map-function} and a \texttt{reduce-function} that are passed
-to functions that are charged with walking different special forms.
-These functions also have an \textit{environment} parameter, but it
-seems to be used only as an argument to \texttt{macroexpand}.
+This protocol resembles the one presented in this paper in some ways.
