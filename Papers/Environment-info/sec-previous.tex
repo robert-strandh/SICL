@@ -296,6 +296,7 @@ designator for a function that can accept three arguments:
   unspecified.
 \end{itemize}
 
+\noindent
 However, when \texttt{map-environment} calls the function in the
 keyword argument \textit{function} and the name of the function is of
 the form \texttt{(setf} \textit{symbol}\texttt{)}, then the argument
@@ -335,7 +336,8 @@ argues that it is impossible to write a completely portable code
 walker, although he addresses many of the difficulties in his own,
 mostly portable, code walker named Agnostic Lizard.
 
-In particular, one of the libraries he mentions is hu.dwim.walker.
-This library provides a general-purpose configurable code walker.  It
-uses its own protocol for accessing and augmenting the environment.
-This protocol resembles the one presented in this paper in some ways.
+In particular, one of the libraries he mentions in his paper is
+hu.dwim.walker.  This library provides a general-purpose configurable
+code walker.  It uses its own protocol for accessing and augmenting
+the environment.  This protocol resembles the one presented in this
+paper in some ways.
