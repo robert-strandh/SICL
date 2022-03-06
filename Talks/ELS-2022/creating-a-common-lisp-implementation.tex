@@ -270,6 +270,21 @@ Our solution is described in our 2019 ELS paper.
 }
 
 \frame{
+\frametitle{Implementing CLOS}
+\vskip 0.25cm
+The AMOP book has a chapter ``Living with Circularity''.
+\vskip 0.25cm
+Two problems: ``bootstrapping'' and ``metastability''.
+\vskip 0.25cm
+They solve the problem with special-purpose code.
+\vskip 0.25cm
+We use our technique called ``satiation'' from our paper at ILC 2014.
+\vskip 0.25cm
+We pre-load the call history with all combinations that have a
+resulting effective method.
+}
+
+\frame{
 \frametitle{Initial modules}
 \vskip 0.25cm
 \begin{itemize}
