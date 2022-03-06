@@ -246,9 +246,9 @@ The next example shows how the environment is augmented when a
 \begin{verbatim}
 (defmethod convert-special
     (client
-    (symbol (eql 'block))
-    cst
-    environment)
+     (symbol (eql 'block))
+     cst
+     environment)
   (cst:db origin (block-cst name-cst . body-cst) cst
     (declare (ignore block-cst))
     (let ((name (cst:raw name-cst)))
