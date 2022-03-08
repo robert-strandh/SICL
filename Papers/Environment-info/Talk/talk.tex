@@ -139,6 +139,20 @@ Several objectives:
 }
 
 \frame{
+\frametitle{Lexical compilation environment}
+
+\begin{itemize}
+\item Is passed as the second argument to every macro function.
+\item When it is \texttt{nil}, the ``null lexical environment'' is
+  designated, which is the same as the global environment. 
+\item The \commonlisp{} standard does not define any operations on
+  environment objects.
+\item But ``Common Lisp the Language (second edition)'' (CLtL2) has a
+  section with such operators.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
