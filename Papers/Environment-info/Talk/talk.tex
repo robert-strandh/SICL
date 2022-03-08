@@ -120,6 +120,25 @@ Several objectives:
 }
 
 \frame{
+\frametitle{Lexical compilation environment}
+
+\begin{itemize}
+\item Reflects the nested structure of code.
+\item Contains information about:
+  \begin{itemize}
+  \item variables (lexical, special, constant),
+  \item functions,
+  \item macros,
+  \item symbol macros,
+  \item blocks,
+  \item \texttt{tagbody} tags,
+  \item declarations that are not associated with functions or
+    variables (in particular \texttt{optimize}).
+  \end{itemize}
+\end{itemize}
+}
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
