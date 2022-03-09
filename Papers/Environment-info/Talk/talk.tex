@@ -153,6 +153,22 @@ Several objectives:
 }
 
 \frame{
+\frametitle{CLtL2 protocol}
+Function \texttt{variable-information}
+\vskip 0.25cm
+\begin{itemize}
+\item Arguments: A symbol and an environment.
+\item Values:
+  \begin{enumerate}
+  \item type of binding (\texttt{:lexical}, \texttt{:special},
+    \texttt{:symbol-macro}, \texttt{:constant}, or \texttt{nil}).
+  \item A Boolean indicating whether the binding is local.
+  \item Association list of declarations that apply to the binding.
+  \end{enumerate}
+\end{itemize}
+}
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
