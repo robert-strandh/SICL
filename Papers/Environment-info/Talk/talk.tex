@@ -156,6 +156,8 @@ Several objectives:
 \frametitle{CLtL2 protocol}
 Function \texttt{variable-information}
 \vskip 0.25cm
+Returns information about a name in a variable position.
+\vskip 0.25cm
 \begin{itemize}
 \item Arguments: A symbol and an optional environment.
 \item Values:
@@ -172,6 +174,8 @@ Function \texttt{variable-information}
 \frametitle{CLtL2 protocol}
 Function \texttt{function-information}
 \vskip 0.25cm
+Returns information about a name in a function position.
+\vskip 0.25cm
 \begin{itemize}
 \item Arguments: A function name and an optional environment.
 \item Values:
@@ -181,6 +185,26 @@ Function \texttt{function-information}
   \item A Boolean indicating whether the binding is local.
   \item Association list of declarations that apply to the binding.
   \end{enumerate}
+\end{itemize}
+}
+
+\frame{
+\frametitle{CLtL2 protocol}
+Function \texttt{declaration-information}
+\vskip 0.25cm
+Returns information about declarations that do not apply to a
+particular binding.  
+\vskip 0.25cm
+\begin{itemize}
+\item Arguments: A declaration identifier and an optional environment.
+\item Value:
+  \begin{itemize}
+  \item If the declaration identifier is \texttt{optimize}, then a
+    list of entries of the form (\textit{quality value}).
+  \item If the declaration identifier is \texttt{declaration}, then a
+    list of declaration identifiers supplied to the
+    \texttt{declaration} proclamation.
+  \end{itemize}
 \end{itemize}
 }
 
