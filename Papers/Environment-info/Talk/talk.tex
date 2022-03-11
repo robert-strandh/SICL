@@ -224,6 +224,23 @@ Arguments:
 }
 
 \frame{
+\frametitle{CLtL2 protocol}
+Function \texttt{parse-macro}
+\vskip 0.25cm
+Given a macro definition, return a macro lambda expression. 
+\vskip 0.25cm
+Arguments:
+\begin{enumerate}
+\item \texttt{name}.  The name of the macro. 
+\item \texttt{lambda-list}.  A macro lambda list.
+\item \texttt{body}.  The macro body as a list of forms, etc.
+\item \texttt{env}.  An optional environment.  Not sure what it is
+  used for.
+\end{enumerate}
+}
+
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
