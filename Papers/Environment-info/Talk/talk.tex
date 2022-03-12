@@ -298,6 +298,26 @@ Query functions:
 \frame{
 \frametitle{Our solution}
 \vskip 0.25cm
+Example: \texttt{describe-function}
+\vskip 0.25cm
+Parameters:
+\begin{itemize}
+\item \texttt{client}.
+\item \texttt{environment}.
+\item \texttt{name}.
+\end{itemize}
+\vskip 0.25cm
+Returns a subclass of one of:
+\begin{itemize}
+\item \texttt{function-description}.
+\item \texttt{macro-description}.
+\item \texttt{special-operator-description}.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Our solution}
+\vskip 0.25cm
 Augmentation functions:
 \begin{itemize}
 \item \texttt{add-lexical-variable}.
