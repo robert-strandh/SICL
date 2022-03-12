@@ -286,12 +286,12 @@ compiler.
 \vskip 0.25cm
 Query functions:
 \begin{itemize}
-\item \texttt{describe-variable}.
-\item \texttt{describe-function}.
-\item \texttt{describe-block}.
-\item \texttt{describe-tag}.
-\item \texttt{describe-optimize}.
-\item \texttt{describe-declarations}.
+\item \texttt{describe-variable}
+\item \texttt{describe-function}
+\item \texttt{describe-block}
+\item \texttt{describe-tag}
+\item \texttt{describe-optimize}
+\item \texttt{describe-declarations}
 \end{itemize}
 }
 
@@ -302,9 +302,9 @@ Example: \texttt{describe-function}
 \vskip 0.25cm
 Parameters:
 \begin{itemize}
-\item \texttt{client}.
-\item \texttt{environment}.
-\item \texttt{name}.
+\item \texttt{client}
+\item \texttt{environment}
+\item \texttt{name}
 \end{itemize}
 }
 
@@ -315,38 +315,55 @@ Example: \texttt{describe-function}
 \vskip 0.25cm
 Returns a subclass of one of:
 \begin{itemize}
-\item \texttt{function-description}.\\
+\item \texttt{function-description}\\
   Subclasses:
   \begin{itemize}
-  \item \texttt{global-function-description}.\\
+  \item \texttt{global-function-description}\\
     Subclass:
     \begin{itemize}
-    \item \texttt{generic-function-description}.
+    \item \texttt{generic-function-description}
     \end{itemize}
-  \item \texttt{local-function-description}.
+  \item \texttt{local-function-description}
   \end{itemize}
-\item \texttt{macro-description}.\\
+\item \texttt{macro-description}\\
   Subclasses:
   \begin{itemize}
-  \item \texttt{global-macro-description}.
-  \item \texttt{local-macro-description}.
+  \item \texttt{global-macro-description}
+  \item \texttt{local-macro-description}
   \end{itemize}
-\item \texttt{special-operator-description}.
+\item \texttt{special-operator-description}
 \end{itemize}
 }
 
 \frame{
 \frametitle{Our solution}
 \vskip 0.25cm
+Example: \texttt{describe-function}
+\vskip 0.25cm
+Accessors for \texttt{global-function-description}:
+\begin{itemize}
+\item \texttt{name}
+\item \texttt{type}
+\item \texttt{inline}
+\item \texttt{inline-data}
+\item \texttt{ignore}
+\item \texttt{dynamic-extent}
+\end{itemize}
+}
+
+
+\frame{
+\frametitle{Our solution}
+\vskip 0.25cm
 Augmentation functions:
 \begin{itemize}
-\item \texttt{add-lexical-variable}.
-\item \texttt{add-special-variable}.
-\item \texttt{add-local-symbol-macro}.
-\item \texttt{add-local-function}.
-\item \texttt{add-local-macro}.
-\item \texttt{add-block}.
-\item \texttt{add-tag}.
+\item \texttt{add-lexical-variable}
+\item \texttt{add-special-variable}
+\item \texttt{add-local-symbol-macro}
+\item \texttt{add-local-function}
+\item \texttt{add-local-macro}
+\item \texttt{add-block}
+\item \texttt{add-tag}
 \end{itemize}
 }
 
@@ -355,12 +372,12 @@ Augmentation functions:
 \vskip 0.25cm
 Annotation functions:
 \begin{itemize}
-\item \texttt{add-variable-type}.
-\item \texttt{add-variable-ignore}.
-\item \texttt{add-variable-dynamic-extent}.
-\item \texttt{add-function-type}.
-\item \texttt{add-function-ignore}.
-\item \texttt{add-function-dynamic-extent}.
+\item \texttt{add-variable-type}
+\item \texttt{add-variable-ignore}
+\item \texttt{add-variable-dynamic-extent}
+\item \texttt{add-function-type}
+\item \texttt{add-function-ignore}
+\item \texttt{add-function-dynamic-extent}
 \end{itemize}
 }
 
