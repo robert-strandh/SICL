@@ -391,6 +391,26 @@ Each function returns a new environment object.
 }
 
 \frame{
+\frametitle{Example of customization}
+\vskip 0.25cm
+Client code can define a subclass of
+\texttt{generic-function-description} with accessors such as:
+\begin{itemize}
+\item \texttt{class-name}
+\item \texttt{method-class-name}
+\end{itemize}
+}
+
+\frame{
+\frametitle{Example of customization}
+\vskip 0.25cm
+Client code can define a subclass of
+\texttt{variable-description} (say)
+\texttt{global-variable-description} if the client supports global
+variables.
+}
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
@@ -398,7 +418,6 @@ Each function returns a new environment object.
 \item More stuff
 \end{itemize}
 }
-
 
 \frame{
 \frametitle{Thank you}
