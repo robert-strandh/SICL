@@ -304,8 +304,11 @@ Example: \texttt{describe-function}
 \vskip 0.25cm
 Parameters:
 \begin{itemize}
-\item \texttt{client}
-\item \texttt{environment}
+\item \texttt{client}.  Trucler does not specialize to this parameter.
+  Callers should supply an instance of a standard class.  Client code
+  can define methods that specialize to their own client class(es).
+\item \texttt{environment}.  Client code must supply an instance of a
+  standard class, even to designate the global environment.
 \item \texttt{name}
 \end{itemize}
 }
