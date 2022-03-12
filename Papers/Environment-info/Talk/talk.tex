@@ -432,6 +432,24 @@ variables.
 }
 
 \frame{
+\frametitle{Our solution}
+\vskip 0.25cm
+Advantages:
+\begin{itemize}
+\item Easier to customize and extend in compatible ways.
+\item Extensions can still allow for simpler code walkers to work.
+\end{itemize}
+\vskip 0.25cm
+Disadvantages:
+\begin{itemize}
+\item More consing (but we don't think consing in a code walker is a
+  problme). 
+\item Our functions are generic, which may cause a performance penalty
+  in some \commonlisp{} implementations.
+\end{itemize}
+}
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
