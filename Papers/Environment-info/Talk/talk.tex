@@ -412,7 +412,8 @@ Each function returns a new environment object.
 }
 
 \frame{
-\frametitle{Example of customization}
+\frametitle{Our solution}
+Example of customization:
 \vskip 0.25cm
 Client code can define a subclass of
 \texttt{generic-function-description} with accessors such as:
@@ -423,7 +424,8 @@ Client code can define a subclass of
 }
 
 \frame{
-\frametitle{Example of customization}
+\frametitle{Our solution}
+Example of customization:
 \vskip 0.25cm
 Client code can define a subclass of
 \texttt{variable-description} (say)
@@ -444,7 +446,7 @@ Advantages:
 Disadvantages:
 \begin{itemize}
 \item More consing (but we don't think consing in a code walker is a
-  problme). 
+  problem). 
 \item Our functions are generic, which may cause a performance penalty
   in some \commonlisp{} implementations.
 \end{itemize}
