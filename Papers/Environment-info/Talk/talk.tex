@@ -353,9 +353,30 @@ Accessors for \texttt{global-function-description}:
 \item \texttt{inline-data}
 \item \texttt{ignore}
 \item \texttt{dynamic-extent}
+\item \texttt{compiler-macro}
 \end{itemize}
 }
 
+\frame[containsverbatim]{
+\frametitle{Our solution}
+\vskip 0.25cm
+Example:
+\begin{verbatim}
+(defmethod convert-cst
+    (client
+     cst
+     (info trucler:local-macro-description)
+     environment)
+  (let* ((expander (trucler:expander info))
+         (expanded-form
+          (expand-macro expander cst environment))
+         (expanded-cst
+          (cst:reconstruct expanded-form cst client)))
+    (setf (cst:source expanded-cst) (cst:source cst))
+    (with-preserved-toplevel-ness
+      (convert client expanded-cst environment))))
+\end{verbatim}
+}
 
 \frame{
 \frametitle{Our solution}
