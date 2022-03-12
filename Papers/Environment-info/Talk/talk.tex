@@ -306,11 +306,31 @@ Parameters:
 \item \texttt{environment}.
 \item \texttt{name}.
 \end{itemize}
+}
+
+\frame{
+\frametitle{Our solution}
+\vskip 0.25cm
+Example: \texttt{describe-function}
 \vskip 0.25cm
 Returns a subclass of one of:
 \begin{itemize}
-\item \texttt{function-description}.
-\item \texttt{macro-description}.
+\item \texttt{function-description}.\\
+  Subclasses:
+  \begin{itemize}
+  \item \texttt{global-function-description}.\\
+    Subclass:
+    \begin{itemize}
+    \item \texttt{generic-function-description}.
+    \end{itemize}
+  \item \texttt{local-function-description}.
+  \end{itemize}
+\item \texttt{macro-description}.\\
+  Subclasses:
+  \begin{itemize}
+  \item \texttt{global-macro-description}.
+  \item \texttt{local-macro-description}.
+  \end{itemize}
 \item \texttt{special-operator-description}.
 \end{itemize}
 }
