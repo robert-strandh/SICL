@@ -438,6 +438,7 @@ Advantages:
 \begin{itemize}
 \item Easier to customize and extend in compatible ways.
 \item Extensions can still allow for simpler code walkers to work.
+\item Code for different clients can co-exist in the same image.
 \end{itemize}
 \vskip 0.25cm
 Disadvantages:
@@ -453,8 +454,10 @@ Disadvantages:
 \frametitle{Future work}
 
 \begin{itemize}
-\item Stuff
-\item More stuff
+\item Support more implementations (currently SBCL, CCL, and ``reference'')
+\item Improve documentation with respect to customization.
+\item Provide implementations of \texttt{parse-macro} and
+  \texttt{enclose} for supported implementations.
 \end{itemize}
 }
 
