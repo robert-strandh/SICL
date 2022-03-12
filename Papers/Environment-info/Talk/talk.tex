@@ -254,6 +254,24 @@ Arguments:
 }
 
 \frame{
+\frametitle{CLtL2 protocol}
+It is incomplete:
+\vskip 0.25cm
+\begin{itemize}
+\item No functionality for information about \texttt{block}s.
+\item No functionality for information about \texttt{tabody}s.
+\item No associated information for functions, variables, etc.
+\end{itemize}
+\vskip 0.25cm
+It is not possible to extend in a compatible way, because
+of multiple return values.
+\vskip 0.25cm
+No free \commonlisp{} implementation we investigated (\sbcl{},
+\cmucl{}, \ecl{}, \ccl{}) uses the CLtL2 protocol for the native
+compiler.
+}
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
