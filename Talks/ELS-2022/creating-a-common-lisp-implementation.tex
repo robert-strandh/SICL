@@ -488,6 +488,33 @@ Extract more modules into separate repositories:
 \frame{
 \frametitle{Future work}
 \vskip 0.25cm
+Use the library ``s-expression-syntax'' by Jan Moringen.  It provides
+parsers for:
+\vskip 0.25cm
+\begin{itemize}
+\item Special forms.
+\item Lambda lists.
+\item Declarations.
+\item Type specifiers
+\item Standard macros, including \texttt{loop}.
+\end{itemize}
+\vskip 0.25cm
+It would eliminate lots of \sicl{}-specific code.  However:
+\vskip 0.25cm
+\begin{itemize}
+\item Jan Moringen does not consider it quite finished.
+\item It depends on two more non-trivial external libraries:
+  \begin{itemize}
+  \item parser.packrat (which depends on yet others)
+  \item architecture.builder-protocol
+  \end{itemize}
+  which complicates bootstrapping.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Future work}
+\vskip 0.25cm
 (Research) Investigate the relationship between
 static-single-assignment form (SSA) and global value numbering (GVN).
 We think the latter might be strictly more general than the former.
