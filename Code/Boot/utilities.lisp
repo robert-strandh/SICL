@@ -195,3 +195,6 @@
 (defun compile-asdf-system (asdf-system-name compilation-environment)
   (loop for pathname in (source-file-path-names asdf-system-name)
         collect (compile-source-file pathname compilation-environment)))
+
+(defun bt ()
+  (sicl-boot-backtrace-inspector:inspect sicl-hir-evaluator:*call-stack*))
