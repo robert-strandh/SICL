@@ -22,4 +22,5 @@
            #:with-intercepted-function-cells
            #:overridden-function-cells
            #:header
-           #:original-function))
+           #:original-function
+           #:bt))
