@@ -16,4 +16,5 @@
    (:file "variable-description")
    (:file "class-description")
    (:file "get-setf-expansion-defun")
-   (:file "map-defined-method-combination-templates")))
+   (:file "map-defined-method-combination-templates")
+   (:file "file-compilation")))
