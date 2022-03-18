@@ -18,7 +18,7 @@
                  until (eq cst eof-marker)
                  collect (cst-to-ast client cst compilation-environment))))
     asts))
-          
+
 (defun ast-from-file (client absolute-pathname run-time-environment)
   (sicl-source-tracking:with-source-tracking-stream-from-file
       (input-stream absolute-pathname)
