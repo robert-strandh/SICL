@@ -12,4 +12,6 @@
            #:ir
            #:hir
            #:compile-ast
-           #:tie-code-object))
+           #:tie-code-object
+           #:ast-from-file
+           #:ast-from-stream))
