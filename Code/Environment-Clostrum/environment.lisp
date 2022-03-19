@@ -34,8 +34,8 @@
                       :reader traced-functions)))
 
 (defclass evaluation-environment
-    (base-run-time-environment
-     clostrum:evaluation-environment-mixin)
+    (clostrum:evaluation-environment-mixin
+     base-run-time-environment)
   ())
 
 (defclass compilation-environment
