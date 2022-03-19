@@ -12,7 +12,7 @@
              (setf (sicl-environment:function-description
                     ,env-var ',name)
                    (make-instance 'sicl-environment:simple-function-description
-                     :lambda list ',lambda-list))))
+                     :lambda-list ',lambda-list))))
          (eval-when (:load-toplevel :execute)
            (setf (fdefinition ',name)
                  (lambda ,lambda-list
