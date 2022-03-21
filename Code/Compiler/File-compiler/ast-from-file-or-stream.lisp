@@ -17,7 +17,9 @@
                  for cst = (read-cst input-stream eof-marker)
                  until (eq cst eof-marker)
                  collect (cst-to-ast client cst compilation-environment))))
-    asts))
+    (cleavir-ast:make-ast 'cleavir-ast:progn-ast
+      :origin nil
+      :form-asts asts)))
 
 (defun ast-from-file (client absolute-pathname run-time-environment)
   (sicl-source-tracking:with-source-tracking-stream-from-file
