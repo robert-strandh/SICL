@@ -264,6 +264,21 @@ during bootstrapping.
 \end{itemize}
 }
 
+\frame[containsverbatim]{
+\frametitle{Example of sequence function}
+\vskip 0.25cm
+\begin{verbatim}
+(defmethod position (item (list list) &key ...)
+  (with-test-function (test test test-not)
+    (with-key-function (key key)
+      (for-each-relevant-cons 
+          (cons index list start end from-end)
+        (let ((element (car cons)))
+          (when (test item (key element))
+            (return-from position index)))))))
+\end{verbatim}
+}
+
 \frame{
 \frametitle{Implementing CLOS}
 \vskip 0.25cm
