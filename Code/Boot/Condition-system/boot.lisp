@@ -14,6 +14,7 @@
         (env:fdefinition (env:client e5) e5 name)))
 
 (defun pre-fill-environment (e5 e)
+  (sicl-boot:copy-macro-functions e5 e)
   (import-functions-from-host
    '((setf env:function-description))
    e)
