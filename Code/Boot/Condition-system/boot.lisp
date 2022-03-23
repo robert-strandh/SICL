@@ -14,6 +14,9 @@
         (env:fdefinition (env:client e5) e5 name)))
 
 (defun pre-fill-environment (e5 e)
+  (import-functions-from-host
+   '((setf env:function-description))
+   e)
   (import-function e5 e 'make-instance))
 
 (defun boot (boot)
