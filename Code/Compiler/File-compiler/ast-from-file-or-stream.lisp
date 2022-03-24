@@ -7,11 +7,8 @@
   (cleavir-cst-to-ast:cst-to-ast
    client cst compilation-environment :file-compilation-semantics t))
 
-(defun ast-from-stream (client input-stream run-time-environment)
-  (let* ((compilation-environment
-           (sicl-environment:make-environment-for-file-compilation
-            run-time-environment))
-         (*package* *package*)
+(defun ast-from-stream (client input-stream compilation-environment)
+  (let* ((*package* *package*)
          (asts
            (loop with eof-marker = input-stream
                  for cst = (read-cst input-stream eof-marker)
@@ -21,7 +18,7 @@
       :origin nil
       :form-asts asts)))
 
-(defun ast-from-file (client absolute-pathname run-time-environment)
+(defun ast-from-file (client absolute-pathname compilation-environment)
   (sicl-source-tracking:with-source-tracking-stream-from-file
       (input-stream absolute-pathname)
-    (ast-from-stream client input-stream run-time-environment)))
+    (ast-from-stream client input-stream compilation-environment)))
