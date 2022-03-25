@@ -15,6 +15,11 @@
   ;; are instances of SIMPLE-FUNCTION.
   (:default-initargs :class-name 'function))
 
+(defun make-simple-function-description (lambda-list class-name)
+  (make-instance 'simple-function-description
+    :lambda-list lambda-list
+    :class-name class-name))
+
 (defclass generic-function-description (function-description)
   ((%method-class-name
     :initarg :method-class-name :reader method-class-name)
@@ -26,6 +31,15 @@
     :initarg :method-combination-info
     :initform '(standard)
     :reader method-combination-info)))
+
+(defun make-generic-function-description
+    (lambda-list class-name method-class-name &optional method-combination-info)
+  (make-instance 'generic-function-description
+    :lambda-list lambda-list
+    :class-name class-name
+    :method-class-name method-class-name
+    :method-combination-info
+    (if (null method-combination-info) '(standard) method-combination-info)))
 
 (defgeneric function-description
     (environment function-name))
