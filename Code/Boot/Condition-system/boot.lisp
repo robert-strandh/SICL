@@ -26,5 +26,9 @@
       boot
     (change-class ecs 'environment)
     (change-class (env:client ecs) 'client)
+    (let ((client (env:client ecs)))
+      (setf (env:fdefinition client ecs 'sicl-boot:ast-eval)
+            (lambda (ast)
+              (sicl-ast-evaluator:eval-ast ast ecs))))
     (pre-fill-environment e5 ecs)
     (define-ensure-generic-function ecs)))
