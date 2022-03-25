@@ -19,9 +19,28 @@
 (defun source-relative-to-absolute-pathname (relative-pathname)
   (asdf:system-relative-pathname '#:sicl relative-pathname))
 
+(defgeneric find-ast-eval (client environment))
+
+(defmethod find-ast-eval :around (client environment)
+  (let ((result (call-next-method)))
+    (assert (not (null result)))
+    result))
+
+(defmethod find-ast-eval (client (environment env:run-time-environment))
+  (env:fdefinition client environment 'ast-eval))
+
+(defmethod find-ast-eval (client (environment env:evaluation-environment))
+  (find-ast-eval client (env:parent environment)))
+
+(defmethod find-ast-eval (client (environment env:compilation-environment))
+  (find-ast-eval client (env:parent environment)))
+
+(defmethod find-ast-eval (client (environment trucler-reference:environment))
+  (find-ast-eval client (trucler:global-environment client environment)))
+
 (defun ast-eval (ast environment)
   (let ((client (env:client environment)))
-    (funcall (env:fdefinition client environment 'ast-eval) ast)))
+    (funcall (find-ast-eval client environment) ast)))
 
 (defun cst-to-ast (cst environment file-compilation-semantics-p)
   (let ((cleavir-cst-to-ast::*origin* nil)
@@ -56,10 +75,8 @@
        :file-compilation-semantics file-compilation-semantics-p))))
 
 (defmethod cleavir-cst-to-ast:cst-eval ((client client) cst environment)
-  (let ((ast (cst-to-ast cst environment nil))
-        (ast-eval (env:fdefinition client environment 'ast-eval)))
-    (assert (not (null ast-eval)))
-    (funcall ast-eval ast)))
+  (let ((ast (cst-to-ast cst environment nil)))
+    (funcall (find-ast-eval client environment) ast)))
 
 (defun load-source-file-common (absolute-pathname environment)
   (if (null (assoc absolute-pathname (loaded-files environment)
