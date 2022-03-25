@@ -25,7 +25,9 @@
            #:compilation-environment
            #:function-description
            #:simple-function-description
+           #:make-simple-function-description
            #:generic-function-description
+           #:make-generic-function-description
            #:lambda-list
            #:class-name
            #:method-class-name
