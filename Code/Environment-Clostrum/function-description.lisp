@@ -15,10 +15,9 @@
   ;; are instances of SIMPLE-FUNCTION.
   (:default-initargs :class-name 'function))
 
-(defun make-simple-function-description (lambda-list class-name)
+(defun make-simple-function-description (lambda-list)
   (make-instance 'simple-function-description
-    :lambda-list lambda-list
-    :class-name class-name))
+    :lambda-list lambda-list))
 
 (defclass generic-function-description (function-description)
   ((%method-class-name
