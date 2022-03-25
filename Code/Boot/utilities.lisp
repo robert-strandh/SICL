@@ -56,8 +56,10 @@
        :file-compilation-semantics file-compilation-semantics-p))))
 
 (defmethod cleavir-cst-to-ast:cst-eval ((client client) cst environment)
-  (let ((ast (cst-to-ast cst environment nil)))
-    (funcall (env:fdefinition client environment 'ast-eval) ast)))
+  (let ((ast (cst-to-ast cst environment nil))
+        (ast-eval (env:fdefinition client environment 'ast-eval)))
+    (assert (not (null ast-eval)))
+    (funcall ast-eval ast)))
 
 (defun load-source-file-common (absolute-pathname environment)
   (if (null (assoc absolute-pathname (loaded-files environment)
