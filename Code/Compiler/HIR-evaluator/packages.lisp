@@ -3,8 +3,7 @@
 (defpackage #:sicl-hir-evaluator
   (:use #:common-lisp)
   (:local-nicknames (#:env #:sicl-environment))
-  (:export #:cst-eval
-           #:top-level-hir-to-host-function
+  (:export #:top-level-hir-to-host-function
            #:call-stack-entry
            #:origin
            #:arguments

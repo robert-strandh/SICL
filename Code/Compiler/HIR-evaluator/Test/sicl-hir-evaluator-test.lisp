@@ -52,17 +52,3 @@
 (setf (sicl-environment:special-variable
         *environment* (sicl-environment:client *environment*) '*x* t)
       *x*)
-
-(defun test (form)
-  (let* ((sicl-boot:*e0* *environment*)
-         (v1 (multiple-value-list
-              (eval `(with-primops ,form))))
-         (v2 (multiple-value-list
-              (sicl-hir-evaluator:cst-eval
-               *client*
-               (cst:cst-from-expression form)
-               *environment*))))
-    (assert (= (length v1) (length v2)))
-    (loop for obj1 in v1
-          for obj2 in v2
-          do (assert (equal obj1 obj2)))))
