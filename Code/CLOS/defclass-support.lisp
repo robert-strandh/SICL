@@ -281,16 +281,14 @@
   (let* ((canonicalized-superclass-names
            (canonicalize-direct-superclass-names superclass-names))
          (options (canonicalize-defclass-options options))
-         (quoted-metaclass-name (getf options :metaclass 'standard-class))
+         (metaclass-name (getf options :metaclass 'standard-class))
          (env-var (gensym)))
     `(progn
        (eval-when (:compile-toplevel)
          (let* ((,env-var (sicl-environment:global-environment ,environment)))
            (setf (sicl-environment:class-description ,env-var ',name)
-                 (make-instance 'sicl-environment:class-description
-                   :name ',name
-                   :superclass-names ,canonicalized-superclass-names
-                   :metaclass-name ,quoted-metaclass-name))))
+                 (sicl-environment:make-class-description
+                  ',name ',canonicalized-superclass-names ',metaclass-name))))
        (eval-when (:load-toplevel :execute)
          (ensure-class ',name
                        :name ',name
