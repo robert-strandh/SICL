@@ -11,8 +11,8 @@
            (let* ((,env-var (sicl-environment:global-environment ,environment)))
              (setf (sicl-environment:function-description
                     ,env-var ',name)
-                   (make-instance 'sicl-environment:simple-function-description
-                     :lambda-list ',lambda-list))))
+                   (sicl-environment:make-simple-function-description
+                    ',lambda-list))))
          (eval-when (:load-toplevel :execute)
            (setf (fdefinition ',name)
                  (lambda ,lambda-list
