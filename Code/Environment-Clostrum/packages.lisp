@@ -37,6 +37,7 @@
            #:constant-variable-description
            #:special-variable-description
            #:class-description
+           #:make-class-description
            #:name
            #:superclass-names
            #:metaclass-name
