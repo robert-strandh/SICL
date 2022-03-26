@@ -30,15 +30,15 @@
     (error 'class-name-must-be-non-nil-symbol
            :name 'defclass
            :datum class-name))
-  `',class-name)
+  class-name)
 
 (defun canonicalize-direct-superclass-names (direct-superclass-names)
   (unless (cleavir-code-utilities:proper-list-p direct-superclass-names)
     (error 'superclass-list-must-be-proper-list
            :name 'defclass
            :datum direct-superclass-names))
-  `(list ,@(loop for name in direct-superclass-names
-                 collect (canonicalize-direct-superclass-name name))))
+  (loop for name in direct-superclass-names
+        collect (canonicalize-direct-superclass-name name)))
 
 (declaim (notinline make-initfunction))
 
@@ -293,7 +293,7 @@
          (ensure-class ',name
                        :name ',name
                        :direct-superclasses
-                       ,canonicalized-superclass-names
+                       ',canonicalized-superclass-names
                        :direct-slots
                        ,(canonicalize-direct-slot-specs slot-specifiers)
                        ,@options)))))
