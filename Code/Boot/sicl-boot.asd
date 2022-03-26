@@ -8,7 +8,8 @@
                #:sicl-boot-phase-4
                #:sicl-boot-phase-5
                #:sicl-boot-phase-6
-               #:sicl-boot-phase-7)
+               #:sicl-boot-phase-7
+               #:sicl-boot-condition-system)
   :serial t
   :components
   ((:file "boot")
