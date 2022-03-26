@@ -26,6 +26,7 @@
                #:eclector-concrete-syntax-tree
                #:cleavir-io
                #:sicl-boot-backtrace-inspector
+               #:sicl-file-compiler
                #:clouseau)
   :serial t
   :components
