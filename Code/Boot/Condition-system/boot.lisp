@@ -16,7 +16,9 @@
 (defun pre-fill-environment (e5 e)
   (sicl-boot:copy-macro-functions e5 e)
   (import-functions-from-host
-   '((setf env:function-description) env:make-simple-function-description)
+   '((setf env:function-description)
+     (setf env:class-description)
+     env:make-simple-function-description)
    e)
   (import-function e5 e 'make-instance))
 
