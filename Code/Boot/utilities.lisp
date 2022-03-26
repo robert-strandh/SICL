@@ -78,6 +78,9 @@
   (let ((ast (cst-to-ast cst environment nil)))
     (funcall (find-ast-eval client environment) ast)))
 
+(defun read-cst (input-stream eof-marker)
+  (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
+
 (defun load-source-file-common (absolute-pathname environment)
   (if (null (assoc absolute-pathname (loaded-files environment)
                    :test #'equal))
@@ -93,7 +96,7 @@
         (input-stream absolute-pathname)
       (loop with client = (env:client environment)
             with eof-marker = input-stream
-            for cst = (eclector.concrete-syntax-tree:read input-stream nil eof-marker)
+            for cst = (read-cst input-stream eof-marker)
             until (eq cst eof-marker)
             do (cleavir-cst-to-ast:cst-eval client cst environment)))))
 
