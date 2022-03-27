@@ -4,8 +4,7 @@
   (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
 
 (defun cst-to-ast (client cst compilation-environment)
-  (cleavir-cst-to-ast:cst-to-ast
-   client cst compilation-environment :file-compilation-semantics t))
+  (sicl-cst-to-ast:cst-to-ast client cst compilation-environment t))
 
 (defun ast-from-stream (client input-stream compilation-environment)
   (let* ((*package* *package*)
