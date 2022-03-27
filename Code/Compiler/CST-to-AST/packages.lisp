@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-cst-to-ast
   (:use #:common-lisp)
-  (:export))
+  (:export #:cst-to-ast))
