@@ -13,4 +13,5 @@
    (:file "declaration-proclamations")
    (:file "dynamic-environment")
    (:file "stack")
-   (:file "convert-standard-object-primops")))
+   (:file "convert-standard-object-primops")
+   (:file "cst-to-ast")))
