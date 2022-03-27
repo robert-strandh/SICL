@@ -53,6 +53,5 @@
    #:values
    #:unreachable
    #:ast
-   #:cst-to-ast
    #:char-code
    #:code-char))
