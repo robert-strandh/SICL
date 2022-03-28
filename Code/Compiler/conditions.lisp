@@ -11,3 +11,6 @@
 
 (define-condition unknown-function (compile-time-warning name-mixin)
   ())
+
+(define-condition unknown-variable (compile-time-warning name-mixin)
+  ())
