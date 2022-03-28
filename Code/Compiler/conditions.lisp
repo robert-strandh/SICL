@@ -10,7 +10,11 @@
   ((%name :initarg :name :reader name)))
 
 (define-condition unknown-function (compile-time-warning name-mixin)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "Undefined function named ~s"
+                     (name condition)))))
 
 (define-condition unknown-variable (compile-time-warning name-mixin)
   ())
