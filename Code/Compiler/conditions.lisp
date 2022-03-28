@@ -12,13 +12,15 @@
 (define-condition unknown-function (compile-time-warning name-mixin)
   ()
   (:report (lambda (condition stream)
-             (format stream
-                     "Undefined function named ~s"
-                     (name condition)))))
+             (let ((*package* (find-package "KEYWORD")))
+               (format stream
+                       "Undefined function named ~s"
+                       (name condition))))))
 
 (define-condition unknown-variable (compile-time-warning name-mixin)
   ()
   (:report (lambda (condition stream)
-             (format stream
-                     "Undefined variable named ~s"
-                     (name condition)))))
+             (let ((*package* (find-package "KEYWORD")))
+               (format stream
+                       "Undefined variable named ~s"
+                       (name condition))))))
