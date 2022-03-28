@@ -24,3 +24,11 @@
                (format stream
                        "Undefined variable named ~s"
                        (name condition))))))
+
+(define-condition unknown-block (compile-time-warning name-mixin)
+  ()
+  (:report (lambda (condition stream)
+             (let ((*package* (find-package "KEYWORD")))
+               (format stream
+                       "Undefined block named ~s"
+                       (name condition))))))
