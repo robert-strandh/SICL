@@ -8,3 +8,6 @@
 
 (define-condition name-mixin ()
   ((%name :initarg :name :reader name)))
+
+(define-condition unknown-function (compile-time-warning name-mixin)
+  ())
