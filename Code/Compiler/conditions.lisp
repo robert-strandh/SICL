@@ -32,3 +32,11 @@
                (format stream
                        "Undefined block named ~s"
                        (name condition))))))
+
+(define-condition unknown-tagbody-tag (compile-time-warning name-mixin)
+  ()
+  (:report (lambda (condition stream)
+             (let ((*package* (find-package "KEYWORD")))
+               (format stream
+                       "Undefined tagbody tag named ~s"
+                       (name condition))))))
