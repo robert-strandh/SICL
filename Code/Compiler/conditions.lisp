@@ -17,4 +17,8 @@
                      (name condition)))))
 
 (define-condition unknown-variable (compile-time-warning name-mixin)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "Undefined variable named ~s"
+                     (name condition)))))
