@@ -6,4 +6,5 @@
                #:sicl-ir)
   :components
   ((:file "packages")
-   (:file "ensure-literal")))
+   (:file "ensure-literal")
+   (:file "conditions")))
