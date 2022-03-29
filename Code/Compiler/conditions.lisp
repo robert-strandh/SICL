@@ -9,7 +9,7 @@
 (define-condition name-mixin ()
   ((%name :initarg :name :reader name)))
 
-(define-condition unknown-function (compile-time-warning name-mixin)
+(define-condition undefined-function (compile-time-warning name-mixin)
   ()
   (:report (lambda (condition stream)
              (let ((*package* (find-package "KEYWORD")))
@@ -17,7 +17,7 @@
                        "Undefined function named ~s"
                        (name condition))))))
 
-(define-condition unknown-variable (compile-time-warning name-mixin)
+(define-condition undefined-variable (compile-time-warning name-mixin)
   ()
   (:report (lambda (condition stream)
              (let ((*package* (find-package "KEYWORD")))
@@ -25,7 +25,7 @@
                        "Undefined variable named ~s"
                        (name condition))))))
 
-(define-condition unknown-block (compile-time-warning name-mixin)
+(define-condition undefined-block (compile-time-warning name-mixin)
   ()
   (:report (lambda (condition stream)
              (let ((*package* (find-package "KEYWORD")))
@@ -33,7 +33,7 @@
                        "Undefined block named ~s"
                        (name condition))))))
 
-(define-condition unknown-tagbody-tag (compile-time-warning name-mixin)
+(define-condition undefined-tagbody-tag (compile-time-warning name-mixin)
   ()
   (:report (lambda (condition stream)
              (let ((*package* (find-package "KEYWORD")))
