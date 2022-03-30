@@ -4,7 +4,15 @@
   (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
 
 (defun cst-to-ast (client cst compilation-environment)
-  (sicl-cst-to-ast:cst-to-ast client cst compilation-environment t))
+  (handler-bind
+      ((trucler:undefined-function-referred-to-by-inline-declaration
+         (lambda (condition)
+           (let ((*package* (find-package "KEYWORD")))
+             (warn 'undefined-function
+                   :source-location nil ; FIXME: do better!
+                   :name (trucler:name condition)))
+           (invoke-restart 'trucler:ignore-declaration))))
+    (sicl-cst-to-ast:cst-to-ast client cst compilation-environment t)))
 
 (defun ast-from-stream (client input-stream compilation-environment)
   (let* ((*package* *package*)
