@@ -12,7 +12,14 @@
              (warn 'undefined-function
                    :source-location nil ; FIXME: do better!
                    :name (trucler:name condition)))
-           (invoke-restart 'trucler:ignore-declaration))))
+           (invoke-restart 'trucler:ignore-declaration)))
+       (trucler:no-variable-description
+         (lambda (condition)
+           (let ((*package* (find-package "KEYWORD")))
+             (warn 'undefined-variable
+                   :source-loation nil ; FIXME: do better!
+                   :name (trucler:name condition)))
+           (invoke-restart 'cleavir-cst-to-ast:consider-special))))
     (sicl-cst-to-ast:cst-to-ast client cst compilation-environment t)))
 
 (defun ast-from-stream (client input-stream compilation-environment)
