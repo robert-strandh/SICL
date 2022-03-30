@@ -5,7 +5,8 @@
 
 (defun cst-to-ast (client cst compilation-environment)
   (handler-bind
-      ((trucler:undefined-function-referred-to-by-inline-declaration
+      (((or trucler:undefined-function-referred-to-by-inline-declaration
+            trucler:no-function-description)
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-function
