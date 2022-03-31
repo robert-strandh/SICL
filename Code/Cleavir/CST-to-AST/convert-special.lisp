@@ -415,9 +415,28 @@
   (check-argument-count cst 1 1)
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
-    (let ((info (describe-tag client environment (cst:raw tag-cst))))
-      (cleavir-ast:make-ast 'cleavir-ast:go-ast
-        :tag-ast (trucler:identity info)))))
+    (let ((tag (cst:raw tag-cst)))
+      (flet ((find-description (tag)
+               (trucler:describe-tag client environment tag)))
+        (let ((info (find-description tag)))
+          (loop while (null info)
+                do (restart-case (error 'trucler:no-tag-description :cst cst)
+                     (substitute (new-tag)
+                       :report (lambda (stream)
+                                 (format stream "Substitute a different tag."))
+                       :interactive (lambda ()
+                                      (format *query-io* "Enter new tag: ")
+                                      (list (read *query-io*)))
+                       (setq info (find-description new-tag)))
+                     (continue ()
+                       ;; In order to recover from the error, we ignore
+                       ;; the GO form and only compile NIL instead.
+                       (return-from convert-special
+                         (convert client
+                                  nil
+                                  environment)))))
+          (cleavir-ast:make-ast 'cleavir-ast:go-ast
+            :tag-ast (trucler:identity info)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
