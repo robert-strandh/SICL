@@ -52,7 +52,6 @@
            #:binding-must-have-length-one-or-two
            #:variable-must-be-a-symbol
            #:read-only-p-must-be-boolean
-           #:block-name-unknown
            #:setq-must-have-even-number-of-arguments
            #:setq-var-must-be-symbol
            #:setq-constant-variable

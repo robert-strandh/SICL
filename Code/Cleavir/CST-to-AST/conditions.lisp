@@ -184,13 +184,6 @@
     (compilation-program-error)
   ())
 
-;;; This condition is signaled when the first argument of RETURN-FROM
-;;; is a symbol, but there is no BLOCK form with that name in the
-;;; current context.
-(define-condition block-name-unknown
-    (compilation-program-error)
-  ())
-
 ;;; This condition is signaled when a SETQ form is encountered, but it
 ;;; does not have an even number of arguments.
 (define-condition setq-must-have-even-number-of-arguments

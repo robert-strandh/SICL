@@ -175,17 +175,6 @@
           (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
-    ((condition block-name-unknown)
-     stream
-     (language acclimation:english))
-  (format stream
-          "In a RETURN or RETURN-FROM special form, the block name given~@
-           must have been established by a BLOCK special form,~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition setq-must-have-even-number-of-arguments)
      stream
      (language acclimation:english))
