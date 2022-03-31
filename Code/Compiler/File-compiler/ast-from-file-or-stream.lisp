@@ -10,28 +10,28 @@
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-function
-                   :source-location nil ; FIXME: do better!
+                   :source-location (trucler:origin condition)
                    :name (trucler:name condition)))
            (invoke-restart 'trucler:ignore-declaration)))
        (trucler:no-variable-description
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-variable
-                   :source-loation nil ; FIXME: do better!
+                   :source-location (trucler:origin condition)
                    :name (trucler:name condition)))
            (invoke-restart 'cleavir-cst-to-ast:consider-special)))
        (trucler:no-block-description
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-block
-                   :source-loation nil ; FIXME: do better!
+                   :source-location (trucler:origin condition)
                    :name (trucler:name condition)))
            (invoke-restart 'continue)))
        (trucler:no-tag-description
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-block
-                   :source-loation nil ; FIXME: do better!
+                   :source-location (trucler:origin condition)
                    :name (trucler:name condition)))
            (invoke-restart 'continue))))
     (sicl-cst-to-ast:cst-to-ast client cst compilation-environment t)))
