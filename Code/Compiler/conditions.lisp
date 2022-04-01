@@ -40,3 +40,13 @@
                (format stream
                        "Undefined tagbody tag named ~s"
                        (name condition))))))
+
+(define-condition unknown-error-during-compilation (compile-time-warning)
+  ((%original-error
+    :initarg :original-error
+    :reader original-error))
+  (:report (lambda (condition stream)
+             (let ((*package* (find-package "KEYWORD")))
+               (format stream
+                       "Unknown error during compilation: ~a"
+                       (original-error condition))))))
