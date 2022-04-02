@@ -665,7 +665,7 @@
 ;;; Converting FUNCTION.
 
 (defun convert-named-function (client name-cst environment)
-  (let ((info (describe-function client environment (cst:raw name-cst))))
+  (let ((info (describe-function client environment name-cst)))
     (convert-function-reference client name-cst info environment)))
 
 (defun convert-lambda-function (client lambda-form-cst environment)
