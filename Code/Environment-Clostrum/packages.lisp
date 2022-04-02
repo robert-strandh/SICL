@@ -35,7 +35,9 @@
            #:get-setf-expansion
            #:variable-description
            #:constant-variable-description
+           #:make-constant-variable-description
            #:special-variable-description
+           #:make-special-variable-description
            #:class-description
            #:make-class-description
            #:name
