@@ -25,6 +25,14 @@
     :accessor overridden-function-cells))
   (:default-initargs :client (make-instance 'client)))
 
+(defmethod overridden-function-cells
+    ((environment env:evaluation-environment))
+  (overridden-function-cells (env:parent environment)))
+
+(defmethod overridden-function-cells
+    ((environment env:compilation-environment))
+  (overridden-function-cells (env:parent environment)))
+
 (defmethod trucler:restrict-for-macrolet-expander
     (client (environment environment))
   environment)
