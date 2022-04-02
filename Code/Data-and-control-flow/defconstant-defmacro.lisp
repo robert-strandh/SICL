@@ -9,7 +9,6 @@
        (eval-when (:compile-toplevel)
          (let* ((,env-var (sicl-environment:global-environment ,environment)))
            (setf (sicl-environment:variable-description ,env-var ',name)
-                 (make-instance 'sicl-environment:constant-variable-description
-                   :value initial-value))))
+                 (sicl-environment:make-constant-variable-description initial-value))))
        (eval-when (:load-toplevel :execute)
          (setf (constant-variable ',name) ,initial-value)))))

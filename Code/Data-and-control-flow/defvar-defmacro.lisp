@@ -9,7 +9,7 @@
        (eval-when (:compile-toplevel)
          (let* ((,env-var (sicl-environment:global-environment ,environment)))
            (setf (sicl-environment:variable-description ,env-var ',name)
-                 (make-instance 'sicl-environment:special-variable-description))))
+                 (sicl-environment:make-special-variable-description))))
        (eval-when (:load-toplevel :execute)
          (setf (special-variable ',name nil) nil)
          (unless (boundp ',name)
