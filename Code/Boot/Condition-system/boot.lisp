@@ -18,6 +18,9 @@
   (import-functions-from-host
    '((setf env:function-description)
      env:make-simple-function-description
+     (setf env:variable-description)
+     env:make-constant-variable-description
+     env:make-special-variable-description
      (setf env:class-description)
      env:make-class-description)
    e)
