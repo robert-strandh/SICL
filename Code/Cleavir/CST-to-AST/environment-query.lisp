@@ -1,9 +1,11 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defun describe-function (client environment function-name)
-  (let ((result (trucler:describe-function client environment function-name)))
+(defun describe-function (client environment function-name-cst)
+  (let* ((function-name (cst:raw function-name-cst))
+         (result (trucler:describe-function client environment function-name)))
     (loop while (null result)
           do (restart-case (error 'trucler:no-function-description
+                                  :origin (cst:source function-name-cst)
                                   :name function-name)
                (consider-global ()
                  :report (lambda (stream)
