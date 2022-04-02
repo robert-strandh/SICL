@@ -9,8 +9,15 @@
 (defclass special-variable-description (variable-description)
   ())
 
+(defun make-special-variable-description ()
+  (make-instance 'special-variable-description))
+
 (defclass constant-variable-description (variable-description)
   ((%value :initarg :value :reader value)))
+
+(defun make-constant-variable-description (value)
+  (make-instance 'constant-variable-description
+    :value value))
 
 (defgeneric variable-description
     (environment variable-name))
