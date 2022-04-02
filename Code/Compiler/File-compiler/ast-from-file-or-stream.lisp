@@ -5,14 +5,20 @@
 
 (defun cst-to-ast (client cst compilation-environment)
   (handler-bind
-      (((or trucler:undefined-function-referred-to-by-inline-declaration
-            trucler:no-function-description)
+      ((trucler:undefined-function-referred-to-by-inline-declaration
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-function
                    :source-location (trucler:origin condition)
                    :name (trucler:name condition)))
            (invoke-restart 'trucler:ignore-declaration)))
+       (trucler:no-function-description
+         (lambda (condition)
+           (let ((*package* (find-package "KEYWORD")))
+             (warn 'undefined-function
+                   :source-location (trucler:origin condition)
+                   :name (trucler:name condition)))
+           (invoke-restart 'cleavir-cst-to-ast:consider-global)))
        (trucler:no-variable-description
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
