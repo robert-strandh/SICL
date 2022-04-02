@@ -19,7 +19,7 @@
            ;; simply because it might be a special form that is handled
            ;; specially.  So we must wait until we have more
            ;; information.
-           (let ((info (describe-function client environment (car form))))
+           (let ((info (describe-function client environment (cst:first cst))))
              (convert-cst client cst info environment)))
           (t
            ;; The form must be a compound form where the CAR is a lambda
