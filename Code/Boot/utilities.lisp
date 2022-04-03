@@ -196,27 +196,5 @@
         when (typep component 'asdf/lisp-action:cl-source-file)
           append (asdf:input-files 'asdf:compile-op component)))
 
-;;; Compile a single source file with a given pathname.
-;;; COMPILATION-ENVIRONMENT is a compilation environment with a parent
-;;; evaluation environment, itself with a parent run-time environment.
-(defun compile-source-file (absolute-pathname compilation-environment)
-  (let ((*package* *package*))
-    (sicl-source-tracking:with-source-tracking-stream-from-file
-        (input-stream absolute-pathname)
-      (loop with client = (env:client compilation-environment)
-            with eof-marker = input-stream
-            for cst = (eclector.concrete-syntax-tree:read input-stream nil eof-marker)
-            until (eq cst eof-marker)
-            collect (cst-to-ast cst compilation-environment t)))))
-
-;;; Compile the source files of an ASDF system and return a list of
-;;; ASTs, one for each file.  COMPILATION-ENVIRONMENT is a compilation
-;;; environment with a parent evaluation environment, itself with a
-;;; parent run-time environment.  The same constellation of
-;;; environments is used to compile each source file.
-(defun compile-asdf-system (asdf-system-name compilation-environment)
-  (loop for pathname in (source-file-path-names asdf-system-name)
-        collect (compile-source-file pathname compilation-environment)))
-
 (defun bt ()
   (sicl-boot-backtrace-inspector:inspect sicl-hir-evaluator:*call-stack*))
