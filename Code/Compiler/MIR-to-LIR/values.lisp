@@ -15,7 +15,9 @@
 ;;; Return values that aren't stored in registers will be stored in
 ;;; some THREAD object that hasn't been designed yet.
 (defun nag-for-thread-object ()
-  (warn "Supposed to do something with the THREAD object for the other return values..."))
+  ;; We comment out this code for now, because it generates lots of
+  ;; warnings during bootstrapping, and the noise is just too much.
+  #+(or)(warn "Supposed to do something with the THREAD object for the other return values..."))
 
 ;;; We assume that the index is always constant if it will be read
 ;;; from a register.  MULTIPLE-VALUE-CALL appears to be the only
