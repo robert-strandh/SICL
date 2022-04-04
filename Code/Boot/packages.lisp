@@ -13,7 +13,6 @@
            #:import-functions-from-host
            #:define-error-functions
            #:load-source-file
-           #:load-asdf-system
            #:ast-eval
            #:copy-macro-functions
            #:define-environment-functions
