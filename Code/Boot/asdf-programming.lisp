@@ -21,16 +21,21 @@
 (defun ensure-asdf-system (asdf-system environment)
   (let ((asdf-system (asdf:find-system asdf-system)))
     (unless (member asdf-system (loaded-asdf-systems environment) :test #'eq)
+      (format *trace-output*
+              "Prepare loading ASDF system ~s into environment ~a~%"
+              (asdf/system:primary-system-name asdf-system)
+              (name environment))
       (loop with dependencies = (asdf/system:system-depends-on asdf-system)
             for dependency in dependencies
             do (ensure-asdf-system dependency environment))
       (format *trace-output*
-              "Loading ASDF system ~s into environment ~s~%"
+              "Loading ASDF system ~s into environment ~a~%"
               (asdf/system:primary-system-name asdf-system)
               (name environment))
       (load-asdf-system-files asdf-system environment)
+      (push asdf-system (loaded-asdf-systems environment))
       (format *trace-output*
-              "Done loading ASDF system ~s into environment ~s~%"
+              "Done loading ASDF system ~s into environment ~a~%"
               (asdf/system:primary-system-name asdf-system)
               (name environment)))))
 
