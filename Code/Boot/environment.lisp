@@ -6,6 +6,9 @@
 
 (defclass environment (env:run-time-environment)
   ((%name :initarg :name :reader name)
+   ;; This slot holds a list of ASDF systems that have been
+   ;; loaded into this environment.
+   (%loaded-asdf-systems :initform '() :accessor loaded-asdf-systems)
    ;; This slot holds an association list.  The key of an element is
    ;; the pathname naming a file that has been loaded into this
    ;; environment.  The value of an element is a universal time when
