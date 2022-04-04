@@ -5,6 +5,6 @@
       boot
     (load-source-file "Arithmetic/realp-defgeneric.lisp" e5)
     (load-source-file "Arithmetic/rationalp-defgeneric.lisp" e5)
-    (load-asdf-system '#:sicl-arithmetic-defuns e5)
+    (ensure-asdf-system '#:sicl-arithmetic-defuns e5)
     (load-source-file "Cons/accessor-defuns.lisp" e5)
-    (load-asdf-system '#:sicl-cons-defuns e5)))
+    (ensure-asdf-system '#:sicl-cons-defuns e5)))

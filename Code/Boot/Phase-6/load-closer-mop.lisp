@@ -16,4 +16,4 @@
           `(flet ((,(caadr form) () '()))
              ,@(cddr form))))
   (let ((*features* '(:sicl)))
-    (load-asdf-system '#:closer-mop e5)))
+    (ensure-asdf-system '#:closer-mop e5)))

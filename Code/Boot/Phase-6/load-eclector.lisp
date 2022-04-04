@@ -28,4 +28,4 @@
               (first (funcall (env:fdefinition (env:client e5) e5 'array-dimensions)
                               sequence)))))
   (let ((*features* '(:sicl :eclector-define-cl-variables)))
-    (load-asdf-system '#:eclector e5)))
+    (ensure-asdf-system '#:eclector e5)))

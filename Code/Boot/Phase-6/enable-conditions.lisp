@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-phase-6)
 
 (defun enable-conditions (e5)
-  (load-asdf-system '#:sicl-conditions e5)
+  (ensure-asdf-system '#:sicl-conditions e5)
   (let ((client (env:client e5)))
     (setf (env:fdefinition client e5 'find-class)
           (lambda (name &optional (errorp t) env)
