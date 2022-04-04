@@ -2,10 +2,37 @@
 
 ;;; Return a list of pathnames of all the Lisp source files
 ;;; of the ASDF system with the name given as an argument.
-(defun source-file-path-names (asdf-system-name)
-  (loop for component in (asdf/plan:required-components asdf-system-name :other-systems nil)
+(defun source-file-path-names (asdf-system)
+  (loop for component in (asdf/plan:required-components asdf-system :other-systems nil)
         when (typep component 'asdf/lisp-action:cl-source-file)
           append (asdf:input-files 'asdf:compile-op component)))
+
+(defun load-asdf-system-files (asdf-system environment)
+  (loop for path in (source-file-path-names asdf-system)
+        do (load-source-file-common path environment)))
+
+;;; Ensure that ASDF-SYSTEM is loaded into ENVIRONMENT.  If
+;;; ASDF-SYSTEM is already loaded into ENVIRONMENT, this function does
+;;; nothing.  If not, the systems that ASDF-SYSTEM depends on are
+;;; first considered recursively.  Then LOAD-ASDF-SYSTEM-FILES is
+;;; called for each Lisp file of ASDF-SYSTEM, in the order determined
+;;; by dependencies.  ASDF-SYSTEM is either an instance of
+;;; ASDF/SYSTEM:SYSTEM or a name of an ASDF system.
+(defun ensure-asdf-system (asdf-system environment)
+  (let ((asdf-system (asdf:find-system asdf-system)))
+    (unless (member asdf-system (loaded-asdf-systems environment) :test #'eq)
+      (loop with dependencies = (asdf/system:system-depends-on asdf-system)
+            for dependency in dependencies
+            do (ensure-asdf-system dependency environment))
+      (format *trace-output*
+              "Loading ASDF system ~s into environment ~s~%"
+              (asdf/system:primary-system-name asdf-system)
+              (name environment))
+      (load-asdf-system-files asdf-system environment)
+      (format *trace-output*
+              "Done loading ASDF system ~s into environment ~s~%"
+              (asdf/system:primary-system-name asdf-system)
+              (name environment)))))
 
 (defclass load-op (asdf/action:downward-operation asdf/action:selfward-operation)
   ((asdf:selfward-operation :initform '(prepare-op) :allocation :class)))
