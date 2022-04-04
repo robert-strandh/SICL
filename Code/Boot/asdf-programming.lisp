@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-boot)
 
+;;; Return a list of pathnames of all the Lisp source files
+;;; of the ASDF system with the name given as an argument.
+(defun source-file-path-names (asdf-system-name)
+  (loop for component in (asdf/plan:required-components asdf-system-name :other-systems nil)
+        when (typep component 'asdf/lisp-action:cl-source-file)
+          append (asdf:input-files 'asdf:compile-op component)))
+
 (defclass load-op (asdf/action:downward-operation asdf/action:selfward-operation)
   ((asdf:selfward-operation :initform '(prepare-op) :allocation :class)))
 
