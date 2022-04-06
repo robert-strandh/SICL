@@ -20,14 +20,17 @@
   (import-function e5 e 'ensure-generic-function)
   (import-function e5 e '(setf symbol-value)))
 
+(defun define-ast-eval (ecs)
+  (setf (env:fdefinition (env:client ecs) ecs 'sicl-boot:ast-eval)
+        (lambda (ast)
+          (let* ((client (env:client ecs))
+                 (code-object (sicl-compiler:compile-ast client ast)))
+            (sicl-compiler:tie-code-object code-object ecs)))))
+
 (defun boot (boot)
   (with-accessors ((e5 sicl-boot:e5)
                    (ecs sicl-boot:ecs))
       boot
     (change-class ecs 'environment)
     (change-class (env:client ecs) 'client)
-    (let ((client (env:client ecs)))
-      (setf (env:fdefinition client ecs 'sicl-boot:ast-eval)
-            (lambda (ast)
-              (sicl-ast-evaluator:eval-ast ast ecs))))
     (pre-fill-environment e5 ecs)))
