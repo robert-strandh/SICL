@@ -25,7 +25,8 @@
      env:make-class-description)
    e)
   (import-function e5 e 'make-instance)
-  (import-function e5 e 'sicl-clos:ensure-class))
+  (import-function e5 e 'sicl-clos:ensure-class)
+  (import-function e5 e '(setf symbol-value)))
 
 (defun boot (boot)
   (with-accessors ((e5 sicl-boot:e5)
