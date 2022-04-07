@@ -21,7 +21,8 @@
   (import-function e5 e '(setf symbol-value))
   (import-function e5 e 'sicl-clos::make-class-specializer)
   (import-function e5 e 'sicl-clos::ensure-method)
-  (import-function e5 e 'boundp))
+  (import-function e5 e 'boundp)
+  (import-function e5 e 'typep))
 
 (defun define-ast-eval (ecs)
   (setf (env:fdefinition (env:client ecs) ecs 'sicl-boot:ast-eval)
