@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-boot-phase-1)
 
-(defun import-function (client environment function-name)
-  (setf (env:fdefinition client environment function-name)
-        (fdefinition function-name)))
-
 (defun import-conditionals-support (environment)
   (import-functions-from-host
    '(sicl-conditionals:or-expander
