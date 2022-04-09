@@ -5,5 +5,6 @@
   (:local-nicknames (#:env #:sicl-environment))
   (:import-from #:sicl-boot
                 #:host-load
-                #:load-source-file)
+                #:load-source-file
+                #:import-functions-from-host)
   (:export #:boot))
