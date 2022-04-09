@@ -4,30 +4,36 @@
   (setf (env:fdefinition client environment function-name)
         (fdefinition function-name)))
 
-(defun import-conditionals-support (client environment)
-  (import-function client environment 'sicl-conditionals:or-expander)
-  (import-function client environment 'sicl-conditionals:and-expander)
-  (import-function client environment 'sicl-conditionals:cond-expander)
-  (import-function client environment 'sicl-conditionals:case-expander)
-  (import-function client environment 'sicl-conditionals:ecase-expander)
-  (import-function client environment 'sicl-conditionals:ccase-expander)
-  (import-function client environment 'sicl-conditionals:typecase-expander)
-  (import-function client environment 'sicl-conditionals:etypecase-expander)
-  (import-function client environment 'sicl-conditionals:ctypecase-expander))
+(defun import-conditionals-support (environment)
+  (import-functions-from-host
+   '(sicl-conditionals:or-expander
+     sicl-conditionals:and-expander
+     sicl-conditionals:cond-expander
+     sicl-conditionals:case-expander
+     sicl-conditionals:ecase-expander
+     sicl-conditionals:ccase-expander
+     sicl-conditionals:typecase-expander
+     sicl-conditionals:etypecase-expander
+     sicl-conditionals:ctypecase-expander)
+   environment))
 
 (defun import-cleavir-primops (client environment)
   (setf (sicl-environment:special-operator
          client environment 'cleavir-primop:multiple-value-call)
         '(:special-operator t)))
 
-(defun import-code-utilities (client environment)
-  (import-function client environment 'cleavir-code-utilities:parse-macro)
-  (import-function client environment 'cleavir-code-utilities:separate-function-body)
-  (import-function client environment 'cleavir-code-utilities:list-structure))
+(defun import-code-utilities (environment)
+  (import-functions-from-host
+   '(cleavir-code-utilities:parse-macro
+     cleavir-code-utilities:separate-function-body
+     cleavir-code-utilities:list-structure)
+   environment))
 
-(defun import-trucler-functions (client environment)
-  (import-function client environment 'trucler:symbol-macro-expansion)
-  (import-function client environment 'trucler:macro-function))
+(defun import-trucler-functions (environment)
+  (import-functions-from-host
+   '(trucler:symbol-macro-expansion
+     trucler:macro-function)
+   environment))
 
 (defun define-defgeneric-expander (client environment)
   (setf (env:fdefinition client environment 'sicl-clos:defgeneric-expander)

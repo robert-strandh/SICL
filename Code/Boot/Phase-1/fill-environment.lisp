@@ -27,11 +27,12 @@
     (define-defmacro client environment)
     (define-backquote-macros client environment)
     (import-cleavir-primops client environment)
-    (import-code-utilities client environment)
-    (import-trucler-functions client environment)
-    (import-conditionals-support client environment)
-    (import-function client environment 'error)
-    (import-function client environment 'typep)
+    (import-code-utilities environment)
+    (import-trucler-functions environment)
+    (import-conditionals-support environment)
+    (import-functions-from-host
+     '(error typep)
+     environment)
     (when (null (find-package '#:sicl-sequence))
       (make-package '#:sicl-sequence :use '(#:common-lisp)))
     (define-defgeneric-expander client environment)
@@ -121,8 +122,9 @@
       ;; designator, as its first argument.
       (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp")
       (ld "Data-and-control-flow/setf-defmacro.lisp")
-      (import-function
-       client environment 'sicl-data-and-control-flow:defun-expander)
+      (import-functions-from-host
+       '(sicl-data-and-control-flow:defun-expander)
+       environment)
       ;; Load a file containing the definition of macro DEFUN.
       (ld "Data-and-control-flow/defun-defmacro.lisp")
       (ld "Data-and-control-flow/defconstant-defmacro.lisp")
@@ -132,13 +134,14 @@
       (ld "Evaluation-and-compilation/macroexpand-hook-defparameter.lisp")
       (ld "Evaluation-and-compilation/macroexpand-1-defun.lisp")
       (host-load "Evaluation-and-compilation/declaim-support.lisp")
-      (import-function
-       client environment 'sicl-evaluation-and-compilation:declaim-expander)
+      (import-functions-from-host
+       '(sicl-evaluation-and-compilation:declaim-expander)
+       environment)
       (ld "Evaluation-and-compilation/declaim-defmacro.lisp")
       ;; Load a file containing the definitions of the macros INCF and
       ;; DECF.
       (ld "Arithmetic/incf-decf-defmacro.lisp")
-      (import-function client environment 'sicl-loop:expand-body)
+      (import-functions-from-host '(sicl-loop:expand-body) environment)
       (ld "Loop/loop-defmacro.lisp")
       ;; Load definitions of the macros PUSH and POP.
       (ld "Cons/push-pop-support.lisp")
@@ -150,15 +153,17 @@
       (ld "Data-and-control-flow/prog1-prog2-defmacro.lisp")
       ;; Load a file containing the definitions of the macros PROG and
       ;; PROG*.
-      (import-function
-       client environment 'cleavir-code-utilities:separate-ordinary-body)
+      (import-functions-from-host
+       '(cleavir-code-utilities:separate-ordinary-body)
+       environment )
       (ld "Data-and-control-flow/prog-progstar-defmacro.lisp")
       (ld "Data-and-control-flow/psetf-support.lisp")
       (ld "Data-and-control-flow/psetf-defmacro.lisp")
       (ld "Data-and-control-flow/rotatef-support.lisp")
       (ld "Data-and-control-flow/rotatef-defmacro.lisp")
-      (import-function
-       client environment 'cleavir-code-utilities:parse-destructuring-bind)
+      (import-functions-from-host
+       '(cleavir-code-utilities:parse-destructuring-bind)
+       environment)
       (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
       (ld "Data-and-control-flow/shiftf-support.lisp")
       (ld "Data-and-control-flow/shiftf-defmacro.lisp")
@@ -167,13 +172,13 @@
       (ld "Cons/pushnew-support.lisp")
       (ld "Cons/pushnew-defmacro.lisp")
       ;; Load a file containing the definition of the macro DOTIMES.
-      (import-function client environment 'sicl-iteration:dotimes-expander)
+      (import-functions-from-host '(sicl-iteration:dotimes-expander) environment)
       (ld "Iteration/dotimes-defmacro.lisp")
       ;; Load a file containing the definition of the macro DOLIST.
-      (import-function client environment 'sicl-iteration:dolist-expander)
+      (import-functions-from-host '(sicl-iteration:dolist-expander) environment)
       (ld "Iteration/dolist-defmacro.lisp")
       ;; Load a file containing the definition of the macros DO and DO*.
-      (import-function client environment 'sicl-iteration:do-dostar-expander)
+      (import-functions-from-host '(sicl-iteration:do-dostar-expander) environment)
       (ld "Iteration/do-dostar-defmacro.lisp")
       ;; Define macro REMF.
       (ld "Cons/remf-support.lisp")
@@ -189,50 +194,46 @@
       ;; Load a file containing the definition of the macro
       ;; WITH-ALIST-ELEMENTS used by functions in the ASSOC family.
       (ld "Cons/with-alist-elements-defmacro.lisp")
-      (import-function
-       client environment 'sicl-conditions:define-condition-expander)
+      (import-functions-from-host
+       '(sicl-conditions:define-condition-expander)
+       environment)
       (ld "Conditions/define-condition-defmacro.lisp")
       (ld "Conditions/assert-defmacro.lisp")
       (ld "Conditions/check-type-defmacro.lisp")
       (ld "Conditions/handler-bind-defmacro.lisp")
-      (import-function
-       client environment 'sicl-conditions:make-handler-case-without-no-error-case)
-      (import-function
-       client environment 'sicl-conditions:make-handler-case-with-no-error-case)
+      (import-functions-from-host
+       '(sicl-conditions:make-handler-case-without-no-error-case
+         sicl-conditions:make-handler-case-with-no-error-case)
+       environment)
       (ld "Conditions/handler-case-defmacro.lisp")
       (ld "Conditions/ignore-errors-defmacro.lisp")
-      (import-function
-       client environment 'sicl-conditions:restart-bind-transform-binding)
+      (import-functions-from-host
+       '(sicl-conditions:restart-bind-transform-binding)
+       environment)
       (ld "Conditions/restart-bind-defmacro.lisp")
-      (import-function
-       client environment 'sicl-conditions:restart-case-make-restart-binding)
-      (import-function
-       client environment 'sicl-conditions:restart-case-make-restart-case)
-      (import-function
-       client environment 'sicl-conditions:restart-case-signaling-form-p)
-      (import-function
-       client environment 'sicl-conditions:restart-case-expand-signaling-form)
-      (import-function
-       client environment 'sicl-conditions:restart-case-parse-case)
-      (import-function
-       client environment 'symbol-name)
-      (import-function
-       client environment 'cleavir-code-utilities:extract-named-group)
-      (import-function
-       client environment 'cleavir-code-utilities:extract-required)
-      (import-function
-       client environment 'cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list)
-      (import-function
-       client environment 'cleavir-code-utilities:parse-deftype)
+      (import-functions-from-host
+       '(sicl-conditions:restart-case-make-restart-binding
+         sicl-conditions:restart-case-make-restart-case
+         sicl-conditions:restart-case-signaling-form-p
+         sicl-conditions:restart-case-expand-signaling-form
+         sicl-conditions:restart-case-parse-case
+         symbol-name
+         cleavir-code-utilities:extract-named-group
+         cleavir-code-utilities:extract-required
+         cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
+         cleavir-code-utilities:parse-deftype)
+       environment)
       (ld "Conditions/restart-case-defmacro.lisp")
       (ld "Conditions/with-simple-restart-defmacro.lisp")
       (ld "Conditions/with-condition-restarts-defmacro.lisp")
-      (import-function client environment 'sicl-clos:with-slots-expander)
+      (import-functions-from-host '(sicl-clos:with-slots-expander) environment)
       (ld "CLOS/with-slots-defmacro.lisp")
-      (import-function client environment 'sicl-clos:defclass-expander)
+      (import-functions-from-host '(sicl-clos:defclass-expander) environment)
       (ld "CLOS/defclass-defmacro.lisp")
       (ld "CLOS/defgeneric-defmacro.lisp")
-      (import-function client environment 'sicl-clos:parse-defmethod)
-      (import-function client environment 'sicl-clos::make-method-lambda-default)
-      (import-function client environment 'sicl-clos:canonicalize-specializers)
+      (import-functions-from-host
+       '(sicl-clos:parse-defmethod
+         sicl-clos::make-method-lambda-default
+         sicl-clos:canonicalize-specializers)
+       environment)
       (ld "Boot/Phase-1/defmethod-defmacro.lisp"))))
