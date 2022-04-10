@@ -36,4 +36,5 @@
       boot
     (change-class ecs 'environment)
     (change-class (env:client ecs) 'client)
+    (define-ast-eval ecs)
     (pre-fill-environment e5 ecs)))
