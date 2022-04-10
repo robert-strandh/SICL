@@ -1,8 +1,7 @@
 (cl:in-package #:sicl-boot-condition-system)
 
 (defun import-function (e5 e name)
-  (setf (env:fdefinition (env:client e) e name)
-        (env:fdefinition (env:client e5) e5 name)))
+  (env:import-function (env:client e5) e5 name e))
 
 (defun pre-fill-environment (e5 e)
   (sicl-boot:copy-macro-functions e5 e)
