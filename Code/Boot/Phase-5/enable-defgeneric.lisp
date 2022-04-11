@@ -33,12 +33,10 @@
        (no-applicable-method (list #'no-applicable-method)))
     (load-source-file "CLOS/compute-discriminating-function-support.lisp" e4))
   (load-source-file "CLOS/discriminating-automaton.lisp" e4)
-  (define-error-functions '(sicl-clos::compute-test-tree) e4)
   (with-intercepted-function-cells
       (e4
        (find-class (env:function-cell (env:client e5) e5 'find-class)))
     (load-source-file "CLOS/discriminating-tagbody.lisp" e4))
-  (define-error-functions '(sicl-clos::make-cdr) e4)
   (load-source-file "CLOS/compute-discriminating-function-support-c.lisp" e4)
   (load-source-file "CLOS/compute-discriminating-function-defmethods.lisp" e4))
 
