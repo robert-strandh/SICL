@@ -42,6 +42,13 @@
   (let ((client (env:client environment)))
     (funcall (find-ast-eval client environment) ast)))
 
+(define-condition unknown-function (warning)
+  ((%name :initarg :name :reader name))
+  (:report
+   (lambda (condition stream)
+     (let ((*package* (find-package "KEYWORD")))
+       (format stream "Unknown function ~s" (name condition))))))
+
 (defun cst-to-ast (cst environment file-compilation-semantics-p)
   (let ((cleavir-cst-to-ast::*origin* nil)
         (client (env:client environment)))
@@ -59,7 +66,7 @@
                               (trucler:global-environment client environment))
                              :key #'car :test #'equal)
                (let ((*package* (find-package "KEYWORD")))
-                 (warn "Unknown function ~s" (trucler:name condition))))
+                 (warn 'unknown-function :name (trucler:name condition))))
              (invoke-restart 'cleavir-cst-to-ast:consider-global)))
          (trucler:no-variable-description
            (lambda (condition)
@@ -73,6 +80,10 @@
       (cleavir-cst-to-ast:cst-to-ast
        client cst environment
        :file-compilation-semantics file-compilation-semantics-p))))
+
+(defun cst-eval (client cst environment)
+  (let ((ast (cst-to-ast cst environment nil)))
+    (funcall (find-ast-eval client environment) ast)))
 
 (defmethod cleavir-cst-to-ast:cst-eval ((client client) cst environment)
   (let ((ast (cst-to-ast cst environment nil)))
@@ -98,15 +109,25 @@
             with eof-marker = input-stream
             for cst = (read-cst input-stream eof-marker)
             until (eq cst eof-marker)
-            do (cleavir-cst-to-ast:cst-eval client cst environment)))))
+            do (cst-eval client cst environment)))))
 
 (defun load-source-file-absolute (absolute-pathname environment)
   (load-source-file-common absolute-pathname environment))
 
 (defun load-source-file (relative-pathname environment)
-  (let ((absolute-pathname
-          (source-relative-to-absolute-pathname relative-pathname)))
-    (load-source-file-common absolute-pathname environment)))
+  (let ((unknown-functions '()))
+    (handler-bind
+        ((unknown-function
+           (lambda (condition)
+             (push condition unknown-functions)
+             (muffle-warning condition))))
+      (let ((absolute-pathname
+              (source-relative-to-absolute-pathname relative-pathname)))
+        (load-source-file-common absolute-pathname environment)))
+    (loop for condition in unknown-functions
+          do (unless (env:fboundp
+                      (env:client environment) environment (name condition))
+               (warn condition)))))
 
 (defun copy-macro-functions (from-environment to-environment)
   (let ((table (make-hash-table :test #'eq))
