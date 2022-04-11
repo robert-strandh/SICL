@@ -3,6 +3,10 @@
 (defun import-function (e5 e name)
   (env:import-function (env:client e5) e5 name e))
 
+(defun import-functions (e5 e names)
+  (loop for name in names
+        do (import-function e5 e name)))
+
 (defun pre-fill-environment (e5 e)
   (sicl-boot:copy-macro-functions e5 e)
   (import-functions-from-host
@@ -14,14 +18,16 @@
      (setf env:class-description)
      env:make-class-description)
    e)
-  (import-function e5 e 'make-instance)
-  (import-function e5 e 'sicl-clos:ensure-class)
-  (import-function e5 e 'ensure-generic-function)
-  (import-function e5 e '(setf symbol-value))
-  (import-function e5 e 'sicl-clos::make-class-specializer)
-  (import-function e5 e 'sicl-clos::ensure-method)
-  (import-function e5 e 'boundp)
-  (import-function e5 e 'typep))
+  (import-functions
+   e5 e
+   '(make-instance
+     sicl-clos:ensure-class
+     ensure-generic-function
+     (setf symbol-value)
+     sicl-clos::make-class-specializer
+     sicl-clos::ensure-method
+     boundp
+     typep)))
 
 (defun define-ast-eval (ecs)
   (setf (env:fdefinition (env:client ecs) ecs 'sicl-boot:ast-eval)
