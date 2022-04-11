@@ -27,7 +27,14 @@
      sicl-clos::make-class-specializer
      sicl-clos::ensure-method
      boundp
-     typep)))
+     typep
+     sicl-clos:method-function
+     simple-condition-format-control
+     simple-condition-format-arguments
+     type-error-datum
+     type-error-expected-type
+     cell-error-name
+     unbound-slot-instance)))
 
 (defun define-ast-eval (ecs)
   (setf (env:fdefinition (env:client ecs) ecs 'sicl-boot:ast-eval)
