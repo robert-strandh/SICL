@@ -36,13 +36,11 @@
         when (and (fboundp setf-name)
                   (not (env:fboundp client e setf-name)))
           do (import-function e5 e setf-name))
+  (loop for symbol being each symbol of (find-package '#:sicl-clos)
+        do (import-function-if-unbound e5 e symbol))
   (import-functions
    e5 e
-   '(sicl-clos:ensure-class
-     sicl-clos::make-class-specializer
-     sicl-clos::ensure-method
-     sicl-clos:method-function
-     sicl-conditions::coerce-to-condition
+   '(sicl-conditions::coerce-to-condition
      sicl-conditions::restart-function
      sicl-conditions::restart-interactive-function
      sicl-conditions::restart-not-found-restart-name
