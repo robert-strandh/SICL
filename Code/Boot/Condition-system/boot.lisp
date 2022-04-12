@@ -7,6 +7,13 @@
   (loop for name in names
         do (import-function e5 e name)))
 
+(defun import-function-if-unbound (from-environment to-environment name)
+  (let ((from-client (env:client from-environment))
+        (to-client (env:client to-environment)))
+    (when (and (env:fboundp from-client from-environment name)
+               (not (env:fboundp to-client to-environment name)))
+      (import-function from-environment to-environment name))))
+
 (defun pre-fill-environment (e5 e)
   (sicl-boot:copy-macro-functions e5 e)
   (import-functions-from-host
