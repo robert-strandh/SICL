@@ -18,23 +18,23 @@
      (setf env:class-description)
      env:make-class-description)
    e)
+  (loop with client = (env:client e5)
+        for symbol being each external-symbol of (find-package "CL")
+        for setf-name = `(setf ,symbol)
+        when (and (fboundp symbol)
+                  (not (env:fboundp client e symbol))
+                  (null (env:macro-function client e symbol))
+                  (null (env:special-operator client e symbol)))
+          do (import-function e5 e symbol)
+        when (and (fboundp setf-name)
+                  (not (env:fboundp client e setf-name)))
+          do (import-function e5 e setf-name))
   (import-functions
    e5 e
-   '(make-instance
-     sicl-clos:ensure-class
-     ensure-generic-function
-     (setf symbol-value)
+   '(sicl-clos:ensure-class
      sicl-clos::make-class-specializer
      sicl-clos::ensure-method
-     boundp
-     typep
-     sicl-clos:method-function
-     simple-condition-format-control
-     simple-condition-format-arguments
-     type-error-datum
-     type-error-expected-type
-     cell-error-name
-     unbound-slot-instance)))
+     sicl-clos:method-function)))
 
 (defun define-ast-eval (ecs)
   (setf (env:fdefinition (env:client ecs) ecs 'sicl-boot:ast-eval)
