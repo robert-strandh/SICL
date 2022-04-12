@@ -34,7 +34,13 @@
    '(sicl-clos:ensure-class
      sicl-clos::make-class-specializer
      sicl-clos::ensure-method
-     sicl-clos:method-function)))
+     sicl-clos:method-function
+     sicl-conditions::coerce-to-condition
+     sicl-conditions::restart-function
+     sicl-conditions::restart-interactive-function
+     sicl-conditions::restart-not-found-restart-name
+     sicl-conditions::restart-report-function
+     sicl-conditions::restart-test-function)))
 
 (defun define-ast-eval (ecs)
   (setf (env:fdefinition (env:client ecs) ecs 'sicl-boot:ast-eval)
