@@ -58,7 +58,7 @@
   (with-accessors ((e5 sicl-boot:e5)
                    (ecs sicl-boot:ecs))
       boot
-    (change-class ecs 'environment)
+    (change-class ecs 'environment :base e5)
     (change-class (env:client ecs) 'client)
     (define-ast-eval ecs)
     (pre-fill-environment e5 ecs)))
