@@ -19,6 +19,15 @@
           (trucler:describe-function base-client base function-name))
         result)))
 
+(defmethod trucler:describe-variable
+    ((client client) (environment environment) name)
+  (let ((result (call-next-method)))
+    (if (null result)
+        (let* ((base (base environment))
+               (base-client (env:client base)))
+          (trucler:describe-variable base-client base name))
+        result)))
+
 (defmethod env:fdefinition
     ((client client) (environment environment) function-name)
   (let ((result (call-next-method)))
