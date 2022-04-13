@@ -24,28 +24,7 @@
      env:make-special-variable-description
      (setf env:class-description)
      env:make-class-description)
-   e)
-  (loop with client = (env:client e5)
-        for symbol being each external-symbol of (find-package "CL")
-        for setf-name = `(setf ,symbol)
-        when (and (fboundp symbol)
-                  (not (env:fboundp client e symbol))
-                  (null (env:macro-function client e symbol))
-                  (null (env:special-operator client e symbol)))
-          do (import-function e5 e symbol)
-        when (and (fboundp setf-name)
-                  (not (env:fboundp client e setf-name)))
-          do (import-function e5 e setf-name))
-  (loop for symbol being each symbol of (find-package '#:sicl-clos)
-        do (import-function-if-unbound e5 e symbol))
-  (import-functions
-   e5 e
-   '(sicl-conditions::coerce-to-condition
-     sicl-conditions::restart-function
-     sicl-conditions::restart-interactive-function
-     sicl-conditions::restart-not-found-restart-name
-     sicl-conditions::restart-report-function
-     sicl-conditions::restart-test-function)))
+   e))
 
 (defun define-ast-eval (ecs)
   (setf (env:fdefinition (env:client ecs) ecs 'sicl-boot:ast-eval)
