@@ -16,6 +16,9 @@
 
 (defun pre-fill-environment (e5 e)
   (sicl-boot:copy-macro-functions e5 e)
+  ;; These functions are not used right now, because we are still not
+  ;; using file-compilation semantics.
+  #+(or)
   (import-functions-from-host
    '((setf env:function-description)
      env:make-simple-function-description
