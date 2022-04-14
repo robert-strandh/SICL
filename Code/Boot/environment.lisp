@@ -282,6 +282,9 @@
   (let ((client (env:client environment)))
     (do-external-symbols (symbol '#:cleavir-primop)
       (setf (env:special-operator client environment symbol)
+            t))
+    (do-external-symbols (symbol '#:sicl-primop)
+      (setf (env:special-operator client environment symbol)
             t))))
 
 (defun import-run-time-functions (environment)
