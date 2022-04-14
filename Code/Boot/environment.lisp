@@ -276,13 +276,13 @@
     (do-external-symbols (symbol '#:common-lisp)
       (when (special-operator-p symbol)
         (setf (env:special-operator client environment symbol)
-              '(special t))))))
+              t)))))
 
 (defun define-primops (environment)
   (let ((client (env:client environment)))
     (do-external-symbols (symbol '#:cleavir-primop)
       (setf (env:special-operator client environment symbol)
-            '(special t)))))
+            t))))
 
 (defun import-run-time-functions (environment)
   (import-functions-from-host
