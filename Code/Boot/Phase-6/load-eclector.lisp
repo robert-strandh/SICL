@@ -3,10 +3,6 @@
 (defun load-eclector (e5)
   (load-source-file "Array/make-array-defun.lisp" e5)
   (load-source-file "Symbol/make-symbol-defun.lisp" e5)
-  (setf (env:special-operator (env:client e5) e5 'sicl-primop:rack)
-        '(:special-operator t))
-  (setf (env:special-operator (env:client e5) e5 'sicl-primop:set-rack)
-        '(:special-operator t))
   ;; Eclector calls ALEXANDRIA:SYMBOLICATE, but we can't use that
   ;; version right now, because it creates a SICL string and then
   ;; tries to call the host REPLACE with that string as the first
