@@ -13,11 +13,6 @@
      sicl-conditionals:ctypecase-expander)
    environment))
 
-(defun import-cleavir-primops (client environment)
-  (setf (sicl-environment:special-operator
-         client environment 'cleavir-primop:multiple-value-call)
-        '(:special-operator t)))
-
 (defun import-code-utilities (environment)
   (import-functions-from-host
    '(cleavir-code-utilities:parse-macro

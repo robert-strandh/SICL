@@ -26,7 +26,6 @@
   (let ((client (env:client environment)))
     (define-defmacro client environment)
     (define-backquote-macros client environment)
-    (import-cleavir-primops client environment)
     (import-code-utilities environment)
     (import-trucler-functions environment)
     (import-conditionals-support environment)
