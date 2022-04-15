@@ -6,7 +6,7 @@
       (handler-case
        (let ((items (structure-items (split-control-string control-string) nil)))
          `(flet ((format-aux (stream)
-                   ;; execute the items in a new environment
+                   ;; Execute the items in a new environment.
                    (let ((*destination* stream)
                          (*arguments* (vector ,@args))
                          ;; We are at the beginning of the argument vector.
