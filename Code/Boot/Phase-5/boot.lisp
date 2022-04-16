@@ -15,6 +15,7 @@
                   :static-environment-function
                   (env:fdefinition
                    (env:client e4) e4 'sicl-clos:environment))
+    (import-from-host e5)
     (prepare-this-phase e3 e4 e5)
     (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e5)
     (sicl-boot:create-accessor-defgenerics e5)

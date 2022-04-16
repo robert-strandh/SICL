@@ -7,6 +7,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "import-from-host")
    (:file "enable-typep")
    (:file "enable-object-creation")
    (:file "enable-method-combinations")
