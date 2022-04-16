@@ -8,14 +8,7 @@
       boot
     (change-class e4 'environment)
     (change-class (env:client e4) 'client)
-    (import-functions-from-host
-     '(cleavir-code-utilities:proper-list-p
-       cleavir-code-utilities:canonicalize-generic-function-lambda-list
-       cleavir-code-utilities:extract-required
-       cleavir-code-utilities:canonicalize-specialized-lambda-list
-       cleavir-code-utilities:separate-function-body
-       sicl-method-combination:define-method-combination-expander)
-     e4)
+    (import-from-host e4)
     (pre-fill-environment e4)
     (prepare-this-phase e2 e3 e4)
     (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e4)
