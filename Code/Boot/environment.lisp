@@ -202,7 +202,6 @@
      logand logior logxor ash integer-length
      zerop oddp evenp max min expt abs ldb dpb byte random
      mod truncate
-     log sqrt
      ;; CONSes
      cons list list* append nconc make-list copy-list subst
      consp atom listp null endp
@@ -217,8 +216,7 @@
      set-difference set-exclusive-or union adjoin
      last butlast list-length
      ;; Data and control flow
-     apply not eq eql equal values constantly identity some
-     every
+     apply not eq eql equal values constantly identity every
      ;; Evaluation and compilation
      constantp
      ;; Symbols
