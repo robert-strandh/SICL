@@ -85,7 +85,6 @@
     (ensure-asdf-system '#:sicl-string e5)
     (ensure-asdf-system '#:sicl-loop-support e5)
     (ensure-asdf-system '#:sicl-loop e5)
-    (ensure-asdf-system '#:cleavir-code-utilities e5)
     (ensure-asdf-system '#:sicl-data-and-control-flow-support e5)
     (ensure-asdf-system '#:sicl-data-and-control-flow e5)
     (sicl-boot:import-functions-from-host '(get-universal-time) e5)
