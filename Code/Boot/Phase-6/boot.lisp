@@ -1,24 +1,5 @@
 (cl:in-package #:sicl-boot-phase-6)
 
-(defun load-alexandria (e5)
-  (load-source-file "Data-and-control-flow/psetq-defmacro.lisp" e5)
-  (ensure-asdf-system '#:alexandria e5))
-
-(defun load-clostrum (e5)
-  (load-source-file "Cons/getf-define-setf-expander.lisp" e5)
-  ;; Since we are not using file-compilation semantics, Clostrum is
-  ;; not definining these variables.
-  (setf (env:special-variable
-         (env:client e5) e5 'clostrum-implementation::*run-time-operators* t)
-        '())
-  (setf (env:special-variable
-         (env:client e5) e5 'clostrum-implementation::*run-time-accessors* t)
-        '())
-  (setf (env:special-variable
-         (env:client e5) e5 'clostrum-implementation::*compilation-operators* t)
-        '())
-  (ensure-asdf-system '#:clostrum-basic e5))
-
 (defun boot (boot)
   (format *trace-output* "Start phase 6~%")
   (with-accessors ((e3 sicl-boot:e3)
