@@ -22,7 +22,6 @@
    (:file "enable-printing")
    (:file "enable-reading")
    (:file "enable-conditions")
-   (:file "load-closer-mop")
    (:file "load-eclector")
    (:file "load-ctype")
    (:file "boot")))
