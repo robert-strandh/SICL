@@ -225,7 +225,7 @@
      characterp char-code code-char char= char-name standard-char-p
      alphanumericp digit-char-p char-upcase
      ;; Strings
-     stringp char schar string string= nstring-upcase nstring-downcase
+     stringp
      ;; Types and classes
      coerce
      ;; Sequence
