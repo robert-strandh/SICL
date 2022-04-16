@@ -82,7 +82,6 @@
     (ensure-asdf-system '#:acclimation e5)
     (load-ctype e5)
     (load-source-file "Types/subtypep-defun.lisp" e5)
-    ;; (load-closer-mop e5)
     (ensure-asdf-system '#:sicl-string e5)
     (ensure-asdf-system '#:sicl-loop-support e5)
     (ensure-asdf-system '#:sicl-loop e5)
