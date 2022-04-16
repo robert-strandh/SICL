@@ -13,25 +13,13 @@
 
 ;;; Ensure that ASDF-SYSTEM is loaded into ENVIRONMENT.  If
 ;;; ASDF-SYSTEM is already loaded into ENVIRONMENT, this function does
-;;; nothing.  If not, the systems that ASDF-SYSTEM depends on are
-;;; first considered recursively.  Then LOAD-ASDF-SYSTEM-FILES is
-;;; called for each Lisp file of ASDF-SYSTEM, in the order determined
-;;; by dependencies.  ASDF-SYSTEM is either an instance of
-;;; ASDF/SYSTEM:SYSTEM or a name of an ASDF system.
+;;; nothing.  If not, then LOAD-ASDF-SYSTEM-FILES is called for each
+;;; Lisp file of ASDF-SYSTEM, in the order determined by dependencies.
+;;; ASDF-SYSTEM is either an instance of ASDF/SYSTEM:SYSTEM or a name
+;;; of an ASDF system.
 (defun ensure-asdf-system (asdf-system environment)
   (let ((asdf-system (asdf:find-system asdf-system)))
     (unless (member asdf-system (loaded-asdf-systems environment) :test #'eq)
-      (format *trace-output*
-              "Loading dependencies of ASDF system ~s into environment ~a~%"
-              (asdf/system:primary-system-name asdf-system)
-              (name environment))
-      (loop with dependencies = (asdf/system:system-depends-on asdf-system)
-            for dependency in dependencies
-            do (ensure-asdf-system dependency environment))
-      (format *trace-output*
-              "Done loading dependencies of ASDF system ~s into environment ~a~%"
-              (asdf/system:primary-system-name asdf-system)
-              (name environment))
       (format *trace-output*
               "Loading ASDF system ~s into environment ~a~%"
               (asdf/system:primary-system-name asdf-system)
