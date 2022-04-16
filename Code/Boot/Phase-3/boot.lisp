@@ -1,4 +1,5 @@
 (cl:in-package #:sicl-boot-phase-3)
+
 (defun boot (boot)
   (format *trace-output* "Start phase 3~%")
   (with-accessors ((e1 sicl-boot:e1)
@@ -7,18 +8,7 @@
       boot
     (change-class e3 'environment)
     (change-class (env:client e3) 'client)
-    (import-functions-from-host
-     '(slot-unbound
-       no-applicable-method
-       cleavir-code-utilities:proper-list-p
-       cleavir-code-utilities:extract-required
-       cleavir-code-utilities:canonicalize-generic-function-lambda-list
-       sicl-method-combination:define-method-combination-expander
-       shared-initialize initialize-instance reinitialize-instance
-       sicl-host-mop:method-function
-       sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
-       (setf env:macro-function))
-     e3)
+    (import-from-host e3)
     (pre-fill-environment e3)
     (prepare-this-phase e1 e2 e3)
     (load-source-file "Structure/packages.lisp" e3)
