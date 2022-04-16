@@ -70,6 +70,8 @@
     (enable-deftype e5)
     (enable-conditions e5)
     (load-source-file "Printer/print-unreadable-object-defmacro.lisp" e5)
+    (ensure-asdf-system '#:sicl-hash-table-base e5)
+    (ensure-asdf-system '#:sicl-list-hash-table e5)
     (ensure-asdf-system '#:sicl-hash-table e5)
     (ensure-asdf-system '#:sicl-ascii-character e5)
     (load-source-file "Cons/member-defun.lisp" e5)
