@@ -231,7 +231,6 @@
      ;; Sequence
      elt length count count-if reverse position subseq sort remove find
      reduce remove-duplicates find-if find-if-not position-if
-     position-if-not nreverse
      ;; For debugging
      format
      ;; Conditions
