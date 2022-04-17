@@ -14,6 +14,9 @@
      position-if
      ;; FIND-IF-NOT is used in COMPUTE-EFFECTIVE-SLOT-DEFINITION to
      ;; determine whether a slot has an :INITFORM
-     find-if-not)
+     find-if-not
+     ;; FIND-IF is used in ADD-METHOD to determine whether an existing
+     ;; method needs to be removed before the new one is added.
+     find-if)
    e4))
 
