@@ -11,7 +11,10 @@
      shared-initialize initialize-instance reinitialize-instance
      sicl-host-mop:method-function
      sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
-     (setf env:macro-function))
+     (setf env:macro-function)
+     ;; FIND-IF-NOT is used in COMPUTE-EFFECTIVE-SLOT-DEFINITION to
+     ;; determine whether a slot has an :INITFORM
+     find-if-not)
    e3))
 
 

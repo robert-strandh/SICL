@@ -13,5 +13,8 @@
      ;; POSITION-IF is used in the parser of DEFMETHOD forms to find
      ;; the position of the lambda list, possibly preceded by a bunch
      ;; of method qualifiers.
-     position-if)
+     position-if
+     ;; FIND-IF-NOT is used in COMPUTE-EFFECTIVE-SLOT-DEFINITION to
+     ;; determine whether a slot has an :INITFORM
+     find-if-not)
    e5))
