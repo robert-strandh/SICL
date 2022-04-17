@@ -33,5 +33,9 @@
      remove
      ;; SORT is used in CLOS at run time to compute the discriminating
      ;; automaton
-     sort)
+     sort
+     ;; SUBSEQ is used at compile time to parse DEFMETHOD forms, and
+     ;; at run time in several places in CLOS, like to compute
+     ;; applicable methods and to compute the discriminating function
+     subseq)
    e5))
