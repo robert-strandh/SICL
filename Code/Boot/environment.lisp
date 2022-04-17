@@ -229,7 +229,7 @@
      ;; Types and classes
      coerce
      ;; Sequence
-     elt length count count-if reverse position subseq sort
+     elt length count count-if reverse position subseq
      ;; For debugging
      format
      ;; Conditions

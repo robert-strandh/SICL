@@ -28,6 +28,9 @@
      find
      ;; REMOVE is used at compile time to parse DEFGENERIC forms, and
      ;; in several places in CLOS at run time.
-     remove)
+     remove
+     ;; SORT is used in CLOS at run time to compute the discriminating
+     ;; automaton
+     sort)
    e4))
 
