@@ -23,7 +23,9 @@
      ;; the class precedence list.  This is done by appending the
      ;; class precedence lists of the superclasses and then removing
      ;; duplicates.
-     remove-duplicates reduce)
+     remove-duplicates reduce
+     ;; FIND is used in the computation of the class precedence list
+     find)
    e3))
 
 
