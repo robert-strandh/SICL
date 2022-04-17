@@ -9,5 +9,9 @@
      ;; NREVERSE and POSITION-IF-NOT are called by FORMAT to parse
      ;; arguments.  And the compiler macro of FORMAT is called at
      ;; compile time, so these functions are needed at compile time.
-     nreverse position-if-not)
+     nreverse position-if-not
+     ;; POSITION-IF is used in the parser of DEFMETHOD forms to find
+     ;; the position of the lambda list, possibly preceded by a bunch
+     ;; of method qualifiers.
+     position-if)
    e5))
