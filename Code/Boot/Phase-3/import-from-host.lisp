@@ -25,7 +25,10 @@
      ;; duplicates.
      remove-duplicates reduce
      ;; FIND is used in the computation of the class precedence list
-     find)
+     find
+     ;; REMOVE is used at compile time to parse DEFGENERIC forms, and
+     ;; in several places in CLOS at run time.
+     remove)
    e3))
 
 
