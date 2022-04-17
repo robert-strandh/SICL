@@ -230,7 +230,7 @@
      coerce
      ;; Sequence
      elt length count count-if reverse position subseq sort remove find
-     reduce remove-duplicates
+     reduce
      ;; For debugging
      format
      ;; Conditions

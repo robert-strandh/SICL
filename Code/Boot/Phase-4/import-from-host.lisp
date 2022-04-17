@@ -17,6 +17,11 @@
      find-if-not
      ;; FIND-IF is used in ADD-METHOD to determine whether an existing
      ;; method needs to be removed before the new one is added.
-     find-if)
+     find-if
+     ;; REMOVE-DUPLICATES is used in order to compute all superclasses
+     ;; of a given class, for the purpose of computing the class
+     ;; precedence list.  This is done by appending the class
+     ;; precedence lists of the superclasses and then removing duplicates.
+     remove-duplicates)
    e4))
 
