@@ -4,12 +4,20 @@
     (clostrum-basic:run-time-environment)
   (;; This slot holds an EQ hash table, mapping symbols to
    ;; method-combination templates.
-   (%method-combination-templates :initform (make-hash-table :test #'eq)
-                                  :accessor method-combination-templates)
+   (%method-combination-templates
+    :initform (make-hash-table :test #'eq)
+    :accessor method-combination-templates)
    ;; The typed structure namespace, which is separate from
    ;; both the class and type namespaces, and only used by defstruct.
-   (%structure-entries :initform (make-hash-table :test #'eq)
-                       :accessor structure-entries)))
+   (%structure-entries
+    :initform (make-hash-table :test #'eq)
+    :accessor structure-entries)
+   ;; This slot contains a hash table that maps function names to
+   ;; source-location pairs, indicating function-call forms that call
+   ;; the function with the given name.
+   (%who-calls-information
+    :initform (make-hash-table :test #'equal)
+    :reader who-calls-information)))
 
 (defmethod find-method-combination-template
     (symbol (env base-run-time-environment))
