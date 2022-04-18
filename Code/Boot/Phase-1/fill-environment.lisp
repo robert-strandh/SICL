@@ -32,6 +32,10 @@
     (import-functions-from-host
      '(error typep)
      environment)
+    (import-functions-from-host
+     '(;; REVERSE is used in macroexpanders such as ROTATEF.
+       reverse)
+     environment)
     (when (null (find-package '#:sicl-sequence))
       (make-package '#:sicl-sequence :use '(#:common-lisp)))
     (define-defgeneric-expander client environment)

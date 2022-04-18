@@ -40,5 +40,8 @@
      subseq
      ;; POSITION is used at run time by CLOS to compute applicable methods
      ;; and to determine which of two specializers is more specific.
-     position)
+     position
+     ;; REVERSE is used in several places at run time, for instance
+     ;; for computing class precedence lists.
+     reverse)
    e5))
