@@ -41,7 +41,9 @@
      position
      ;; REVERSE is used in several places at run time, for instance
      ;; for computing class precedence lists.
-     reverse)
+     reverse
+     ;; COUNT is used in CLOS in order to finalize inheritance.
+     count)
    e3))
 
 

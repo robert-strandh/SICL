@@ -229,7 +229,7 @@
      ;; Types and classes
      coerce
      ;; Sequence
-     elt length count
+     elt length
      ;; For debugging
      format
      ;; Conditions
