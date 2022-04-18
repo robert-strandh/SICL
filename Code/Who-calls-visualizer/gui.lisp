@@ -40,7 +40,15 @@
     (loop for function-name in function-names
           do (clim:with-output-as-presentation
                  (pane (cdr function-name) 'function-name)
-               (format pane "~s~%" (car function-name))))))
+               (let ((name (car function-name)))
+                 (if (symbolp name)
+                     (format pane "~a (~a)~%"
+                             (symbol-name name)
+                             (package-name (symbol-package name)))
+                     (let ((symbol (second name)))
+                       (format pane "(SETF ~a) (~a)~%"
+                             (symbol-name symbol)
+                             (package-name (symbol-package symbol))))))))))
 
 (defun display-source-locations (frame pane)
   (loop for location in (source-locations frame)
