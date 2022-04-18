@@ -16,10 +16,10 @@
           (source :application
                   :scroll-bars nil
                   :display-function 'display-source))
-  (:layouts (default (clim:horizontally (:width 1200 :height 900)
-                       (4/10 (clim:scrolling () function-names))
+  (:layouts (default (clim:horizontally (:width 1600 :height 900)
+                       (3/10 (clim:scrolling () function-names))
                        (2/10 (clim:scrolling () source-locations))
-                       (4/10 (clim:scrolling () source))))))
+                       (5/10 (clim:scrolling () source))))))
 
 (defclass function-name ()
   ((%locations :initarg :locations :reader locations)))
