@@ -42,13 +42,17 @@
                  (pane (cdr function-name) 'function-name)
                (let ((name (car function-name)))
                  (if (symbolp name)
-                     (format pane "~a (~a)~%"
-                             (symbol-name name)
-                             (package-name (symbol-package name)))
+                     (progn (format pane "~a " (symbol-name name))
+                            (clim:with-drawing-options (pane :ink clim:+blue+)
+                              (clim:with-text-size (pane :small)
+                                (format pane "(~a)~%"
+                                        (package-name (symbol-package name))))))
                      (let ((symbol (second name)))
-                       (format pane "(SETF ~a) (~a)~%"
-                             (symbol-name symbol)
-                             (package-name (symbol-package symbol))))))))))
+                       (format pane "~a " (symbol-name symbol))
+                       (clim:with-drawing-options (pane :ink clim:+blue+)
+                         (clim:with-text-size (pane :small)
+                           (format pane "(~a)~%"
+                                   (package-name (symbol-package symbol))))))))))))
 
 (defun display-source-locations (frame pane)
   (loop for location in (source-locations frame)
