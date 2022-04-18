@@ -1,7 +1,5 @@
 (cl:in-package #:sicl-compiler)
 
-(defparameter *ht* (make-hash-table :test #'equal))
-
 (defun source-position-equal (p1 p2)
   (and (eql (sicl-source-tracking:line-index (car p1))
             (sicl-source-tracking:line-index (car p2)))
@@ -19,7 +17,9 @@
          (sicl-run-time:*dynamic-environment* '())
          (function-cell-function
            (sicl-environment:fdefinition
-            client environment 'sicl-data-and-control-flow:function-cell)))
+            client environment 'sicl-data-and-control-flow:function-cell))
+         (who-calls-information
+           (sicl-environment:who-calls-information environment)))
     (loop for call-site in (call-sites code-object)
           for instruction = (instruction call-site)
           when (typep instruction 'sicl-ir:named-call-instruction)
@@ -27,7 +27,7 @@
                      (name (name call-site)))
                  (let ((origin (cleavir-ast-to-hir:origin instruction)))
                    (unless (null origin)
-                     (pushnew origin (gethash name *ht* '())
+                     (pushnew origin (gethash name who-calls-information '())
                               :test #'source-position-equal)))
                  (setf (car cell)
                        (funcall function-cell-function name))))
