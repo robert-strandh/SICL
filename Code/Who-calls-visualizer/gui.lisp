@@ -24,6 +24,10 @@
 (defclass function-name ()
   ((%locations :initarg :locations :reader locations)))
 
+(defun function-name-less (fn1 fn2)
+  (string< (if (symbolp fn1) fn1 (second fn1))
+           (if (symbolp fn2) fn2 (second fn2))))
+
 (defun display-names (frame pane)
   (let ((function-names '()))
     (maphash (lambda (name locations)
@@ -31,6 +35,8 @@
                            (make-instance 'function-name :locations locations))
                      function-names))
              (function-names frame))
+    (setf function-names
+          (sort function-names #'function-name-less :key #'car))
     (loop for function-name in function-names
           do (clim:with-output-as-presentation
                  (pane (cdr function-name) 'function-name)
