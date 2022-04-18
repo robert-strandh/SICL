@@ -25,14 +25,16 @@
   ((%locations :initarg :locations :reader locations)))
 
 (defun display-names (frame pane)
-  (maphash (lambda (name locations)
-             (clim:with-output-as-presentation
-                 (pane
-                  (make-instance 'function-name
-                    :locations locations)
-                  'function-name)
-               (format pane "~s~%" name)))
-           (function-names frame)))
+  (let ((function-names '()))
+    (maphash (lambda (name locations)
+               (push (cons name
+                           (make-instance 'function-name :locations locations))
+                     function-names))
+             (function-names frame))
+    (loop for function-name in function-names
+          do (clim:with-output-as-presentation
+                 (pane (cdr function-name) 'function-name)
+               (format pane "~s~%" (car function-name))))))
 
 (defun display-source-locations (frame pane)
   (loop for location in (source-locations frame)
