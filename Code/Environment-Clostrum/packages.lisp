@@ -46,6 +46,7 @@
            #:type
            #:value
            #:find-method-combination-template
+           #:who-calls-information
            #:structure-description
            #:function-cell
            #:variable-cell
