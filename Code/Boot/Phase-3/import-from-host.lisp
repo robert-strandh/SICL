@@ -1,18 +1,26 @@
 (cl:in-package #:sicl-boot-phase-3)
 
-(defun import-from-host (e3)
+(defun import-code-utilities (e3)
+  (import-functions-from-host
+   '(cleavir-code-utilities:proper-list-p
+     cleavir-code-utilities:extract-required
+     cleavir-code-utilities:canonicalize-generic-function-lambda-list)
+   e3))
+
+(defun import-misc (e3)
   (import-functions-from-host
    '(slot-unbound
      no-applicable-method
-     cleavir-code-utilities:proper-list-p
-     cleavir-code-utilities:extract-required
-     cleavir-code-utilities:canonicalize-generic-function-lambda-list
      sicl-method-combination:define-method-combination-expander
      shared-initialize initialize-instance reinitialize-instance
      sicl-host-mop:method-function
      sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
-     (setf env:macro-function)
-     ;; FIND-IF-NOT is used in COMPUTE-EFFECTIVE-SLOT-DEFINITION to
+     (setf env:macro-function))
+   e3))
+
+(defun import-sequence-functions (e3)
+  (import-functions-from-host
+   '(;; FIND-IF-NOT is used in COMPUTE-EFFECTIVE-SLOT-DEFINITION to
      ;; determine whether a slot has an :INITFORM.
      find-if-not
      ;; FIND-IF is used in ADD-METHOD to determine whether an existing
@@ -49,4 +57,7 @@
      length)
    e3))
 
-
+(defun import-from-host (e3)
+  (import-code-utilities e3)
+  (import-misc e3)
+  (import-sequence-functions e3))
