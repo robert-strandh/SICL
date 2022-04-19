@@ -48,5 +48,7 @@
      count
      ;; LENGTH is used in various places at run time, such as in CLOS for
      ;; SHARED-INITIALIZE.
-     length)
+     length
+     ;; ELT is used for parsing DEFMETHOD forms.
+     elt)
    e5))

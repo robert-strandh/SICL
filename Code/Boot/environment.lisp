@@ -228,8 +228,6 @@
      stringp
      ;; Types and classes
      coerce
-     ;; Sequence
-     elt
      ;; For debugging
      format
      ;; Conditions
