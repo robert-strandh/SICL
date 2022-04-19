@@ -26,18 +26,7 @@
   (let ((client (env:client environment)))
     (define-defmacro client environment)
     (define-backquote-macros client environment)
-    (import-code-utilities environment)
-    (import-trucler-functions environment)
-    (import-conditionals-support environment)
-    (import-functions-from-host
-     '(error typep)
-     environment)
-    (import-functions-from-host
-     '(;; REVERSE is used in macroexpanders such as ROTATEF.
-       reverse
-       ;; LENGTH is used in macroexpanders such as SETF.
-       length)
-     environment)
+    (import-from-host environment)
     (when (null (find-package '#:sicl-sequence))
       (make-package '#:sicl-sequence :use '(#:common-lisp)))
     (define-defgeneric-expander client environment)
