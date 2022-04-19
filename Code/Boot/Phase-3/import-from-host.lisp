@@ -2,7 +2,7 @@
 
 (defun import-number-functions (e3)
   (import-functions-from-host
-   '(= /= floor 1+ 1-)
+   '(< <= = /= floor 1+ 1-)
    e3))
 
 (defun import-code-utilities (e3)
