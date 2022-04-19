@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-boot-phase-4)
 
+(defun import-number-functions (e4)
+  (import-functions-from-host
+   '(1+ 1-)
+   e4))
+
 (defun import-code-utilities (e4)
   (import-functions-from-host
    '(cleavir-code-utilities:proper-list-p
@@ -60,6 +65,7 @@
    e4))
 
 (defun import-from-host (e4)
+  (import-number-functions e4)
   (import-code-utilities e4)
   (import-misc e4)
   (import-sequence-functions e4))

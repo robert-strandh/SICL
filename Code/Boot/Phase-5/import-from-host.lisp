@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-boot-phase-5)
 
+(defun import-number-functions (e5)
+  (import-functions-from-host
+   '(1+ 1-)
+   e5))
+
 (defun import-sequence-functions (e5)
   (import-functions-from-host
    '(;; MISMATCH is used by the string comparison functions.  And
@@ -54,4 +59,5 @@
    e5))
 
 (defun import-from-host (e5)
+  (import-number-functions e5)
   (import-sequence-functions e5))
