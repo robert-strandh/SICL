@@ -43,7 +43,10 @@
      ;; for computing class precedence lists.
      reverse
      ;; COUNT is used in CLOS in order to finalize inheritance.
-     count)
+     count
+     ;; LENGTH is used in various places at run time, such as in CLOS for
+     ;; SHARED-INITIALIZE.
+     length)
    e3))
 
 

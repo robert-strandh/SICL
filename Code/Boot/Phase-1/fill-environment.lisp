@@ -34,7 +34,9 @@
      environment)
     (import-functions-from-host
      '(;; REVERSE is used in macroexpanders such as ROTATEF.
-       reverse)
+       reverse
+       ;; LENGTH is used in macroexpanders such as SETF.
+       length)
      environment)
     (when (null (find-package '#:sicl-sequence))
       (make-package '#:sicl-sequence :use '(#:common-lisp)))
