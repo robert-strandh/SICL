@@ -2,7 +2,14 @@
 
 (defun import-number-functions (e5)
   (import-functions-from-host
-   '(+ - * < <= = > >= /= floor 1+ 1-)
+   '(+ - * < <= = > >= /= floor 1+ 1-
+     ;; MINUSP is used by FLOOR and other arithmetic functions.
+     minusp
+     ;; INTEGERP is used by ARRAY-ROW-MAJOR-INDEX, and by FORMAT at
+     ;; run time.
+     integerp
+     ;; NUMBERP is used by the LOOP run time.
+     numberp)
    e5))
 
 (defun import-sequence-functions (e5)
