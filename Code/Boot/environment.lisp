@@ -197,7 +197,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; Numbers
-     mod truncate
+     mod
      ;; CONSes
      cons list list* append nconc make-list copy-list subst
      consp atom listp null endp
