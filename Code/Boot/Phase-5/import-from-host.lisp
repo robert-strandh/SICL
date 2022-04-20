@@ -3,6 +3,9 @@
 (defun import-number-functions (e5)
   (import-functions-from-host
    '(+ - * < <= = > >= /= floor 1+ 1-
+     ;; EVENP is used in the expander for the short
+     ;; form of DEFINE-METHOD-COMBINATION.
+     evenp
      ;; EXPT is used to define the array-size limit.
      expt
      ;; RANDOM is used to create a hash code for standard
