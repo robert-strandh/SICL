@@ -200,7 +200,7 @@
      cons list list* append nconc make-list copy-list subst
      consp atom listp null endp
      car cdr caar cadr cdar cddr
-     cdddr nthcdr
+     nthcdr
      first second third fourth fifth nth rest
      rplaca rplacd
      member
