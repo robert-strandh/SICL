@@ -3,6 +3,8 @@
 (defun import-number-functions (e3)
   (import-functions-from-host
    '(+ - < <= = /= floor 1+ 1-
+     ;; ZEROP is used in CLOS to compute the discriminating function.
+     zerop
      ;; RANDOM is used to create a hash code for standard
      ;; objects.
      random)

@@ -3,6 +3,8 @@
 (defun import-number-functions (e5)
   (import-functions-from-host
    '(+ - * < <= = > >= /= floor 1+ 1-
+     ;; ZEROP is used in CLOS to compute the discriminating function.
+     zerop
      ;; ODDP is used at compile time in some macro expanders
      oddp
      ;; EVENP is used in the expander for the short form of
