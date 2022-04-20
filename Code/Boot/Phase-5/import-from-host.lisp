@@ -3,8 +3,10 @@
 (defun import-number-functions (e5)
   (import-functions-from-host
    '(+ - * < <= = > >= /= floor 1+ 1-
-     ;; EVENP is used in the expander for the short
-     ;; form of DEFINE-METHOD-COMBINATION.
+     ;; ODDP is used at compile time in some macro expanders
+     oddp
+     ;; EVENP is used in the expander for the short form of
+     ;; DEFINE-METHOD-COMBINATION.
      evenp
      ;; EXPT is used to define the array-size limit.
      expt
