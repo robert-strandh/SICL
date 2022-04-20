@@ -197,7 +197,6 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; Numbers
-     plusp
      logand logior logxor ash integer-length
      zerop oddp evenp max min expt abs ldb dpb byte random
      mod truncate
