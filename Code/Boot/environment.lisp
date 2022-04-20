@@ -197,7 +197,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; Numbers
-     zerop oddp evenp max min expt abs ldb dpb byte random
+     zerop oddp evenp max min expt abs ldb dpb byte
      mod truncate
      ;; CONSes
      cons list list* append nconc make-list copy-list subst

@@ -2,7 +2,10 @@
 
 (defun import-number-functions (e3)
   (import-functions-from-host
-   '(+ - < <= = /= floor 1+ 1-)
+   '(+ - < <= = /= floor 1+ 1-
+     ;; RANDOM is used to create a hash code for standard
+     ;; objects.
+     random)
    e3))
 
 (defun import-code-utilities (e3)

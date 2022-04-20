@@ -3,6 +3,9 @@
 (defun import-number-functions (e5)
   (import-functions-from-host
    '(+ - * < <= = > >= /= floor 1+ 1-
+     ;; RANDOM is used to create a hash code for standard
+     ;; objects.
+     random
      ;; MINUSP is used by FLOOR and other arithmetic functions.
      minusp
      ;; INTEGERP is used by ARRAY-ROW-MAJOR-INDEX, and by FORMAT at
