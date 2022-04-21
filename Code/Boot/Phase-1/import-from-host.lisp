@@ -3,10 +3,16 @@
 (defun import-number-functions (environment)
   (import-functions-from-host
    '(=
-     ;; APPEND is used at compile time in some macro expanders
-     append
      ;; ODDP is used at compile time in some macro expanders
      oddp)
+   environment))
+
+(defun import-cons-functions (environment)
+  (import-functions-from-host
+   '(;; LIST is used in many macro expanders.
+     list
+     ;; APPEND is used at compile time in some macro expanders
+     append)
    environment))
 
 (defun import-conditionals-support (environment)
@@ -50,6 +56,7 @@
 
 (defun import-from-host (environment)
   (import-number-functions environment)
+  (import-cons-functions environment)
   (import-conditionals-support environment)
   (import-code-utilities environment)
   (import-trucler-functions environment)

@@ -26,7 +26,9 @@
 
 (defun import-cons-functions (e5)
   (import-functions-from-host
-   '(;; LIST* is used in CLOS at run time.
+   '(;; LIST is used in many places at run time.
+     list
+     ;; LIST* is used in CLOS at run time.
      list*
      ;; APPEND is used at run time in several places.
      append
