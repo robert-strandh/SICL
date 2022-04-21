@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; LIST is used in many macro expanders.
+   '(;; CONS is used in many macro expanders.
+     cons
+     ;; LIST is used in many macro expanders.
      list
      ;; APPEND is used at compile time in some macro expanders
      append)

@@ -12,7 +12,9 @@
 
 (defun import-cons-functions (e3)
   (import-functions-from-host
-   '(;; LIST is used in many places at run time.
+   '(;; CONS is used in many places at run time.
+     cons
+     ;; LIST is used in many places at run time.
      list
      ;; LIST* is used in CLOS at run time.
      list*
