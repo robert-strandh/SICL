@@ -3,6 +3,8 @@
 (defun import-number-functions (e3)
   (import-functions-from-host
    '(+ - < <= = /= floor 1+ 1-
+     ;; MAKE-LIST is used in CLOS at run time.
+     make-list
      ;; COPY-LIST is used in CLOS at run time, for instance in
      ;; ENSURE-CLASS and ENSURE-GENERIC-FUNCTION.
      copy-list
