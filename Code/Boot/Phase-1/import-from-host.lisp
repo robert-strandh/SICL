@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; CONS is used in many macro expanders.
+   '(;; ENDP is used in the expansion of LOOP.
+     endp
+     ;; CONS is used in many macro expanders.
      cons
      ;; LIST is used in many macro expanders.
      list

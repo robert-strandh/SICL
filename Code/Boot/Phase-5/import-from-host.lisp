@@ -26,7 +26,9 @@
 
 (defun import-cons-functions (e5)
   (import-functions-from-host
-   '(;; CONS is used in many places at run time.
+   '(;; ENDP is used in the expansion of LOOP.
+     endp
+     ;; CONS is used in many places at run time.
      cons
      ;; LIST is used in many places at run time.
      list
