@@ -197,7 +197,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     cons list list* append
+     cons list list*
      consp atom listp null endp
      car cdr caar cadr cdar cddr
      nthcdr

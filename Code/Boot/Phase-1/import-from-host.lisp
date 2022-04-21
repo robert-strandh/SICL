@@ -3,6 +3,8 @@
 (defun import-number-functions (environment)
   (import-functions-from-host
    '(=
+     ;; APPEND is used at compile time in some macro expanders
+     append
      ;; ODDP is used at compile time in some macro expanders
      oddp)
    environment))

@@ -3,6 +3,8 @@
 (defun import-number-functions (e3)
   (import-functions-from-host
    '(+ - < <= = /= floor 1+ 1-
+     ;; APPEND is used at run time in several places.
+     append
      ;; MAKE-LIST is used in CLOS at run time.
      make-list
      ;; COPY-LIST is used in CLOS at run time, for instance in
