@@ -3,6 +3,8 @@
 (defun import-number-functions (e5)
   (import-functions-from-host
    '(+ - * < <= = > >= /= floor 1+ 1-
+     ;; LIST* is used in CLOS at run time.
+     list*
      ;; APPEND is used at run time in several places.
      append
      ;; MAKE-LIST is used in CLOS at run time.
