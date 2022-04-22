@@ -197,7 +197,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     consp atom listp
+     consp atom
      car cdr caar cadr cdar cddr
      nthcdr
      first second third fourth fifth nth rest

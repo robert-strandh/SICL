@@ -26,7 +26,9 @@
 
 (defun import-cons-functions (e5)
   (import-functions-from-host
-   '(;; NULL is used in many places at run time.
+   '(;; LISTP is used at run time in CLOS.
+     listp
+     ;; NULL is used in many places at run time.
      null
      ;; ENDP is used in the expansion of LOOP.
      endp
