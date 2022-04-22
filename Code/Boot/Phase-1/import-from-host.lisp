@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; CDDR is used in many macro expanders.
+   '(;; CAR, CDR, FIRST, and REST are used in many places.
+     car cdr first rest
+     ;; CDDR is used in many macro expanders.
      cddr
      ;; CONSP is used in many macro expanders.
      consp

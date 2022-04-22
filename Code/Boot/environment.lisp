@@ -197,9 +197,8 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     car cdr
      nthcdr
-     first second third fourth fifth nth rest
+     second third fourth fifth nth
      rplaca rplacd
      member
      mapcar mapc

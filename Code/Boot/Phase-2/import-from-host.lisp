@@ -5,7 +5,9 @@
       boot
     (let ((client (env:client e2)))
       (import-functions-from-host
-       '(;; CONSP is used at run time in CLOS.
+       '(;; CAR, CDR, FIRST, and REST are used in many places.
+         car cdr first rest
+         ;; CONSP is used at run time in CLOS.
          consp
          ;; NULL is used in many places at run time.
          null)
