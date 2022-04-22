@@ -26,7 +26,9 @@
 
 (defun import-cons-functions (e5)
   (import-functions-from-host
-   '(;; ENDP is used in the expansion of LOOP.
+   '(;; NULL is used in many places at run time.
+     null
+     ;; ENDP is used in the expansion of LOOP.
      endp
      ;; CONS is used in many places at run time.
      cons
