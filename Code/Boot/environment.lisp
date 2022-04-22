@@ -198,7 +198,7 @@
   (import-functions-from-host
    '(;; CONSes
      nthcdr
-     second third fifth nth
+     second third nth
      rplaca rplacd
      member
      mapcar mapc
