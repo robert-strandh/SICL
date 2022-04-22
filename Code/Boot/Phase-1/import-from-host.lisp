@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; NULL is used in many macro expanders.
+   '(;; ATOM is used in many macro expanders.
+     atom
+     ;; NULL is used in many macro expanders.
      null
      ;; ENDP is used in the expansion of LOOP.
      endp

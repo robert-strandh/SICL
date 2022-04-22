@@ -26,7 +26,9 @@
 
 (defun import-cons-functions (e5)
   (import-functions-from-host
-   '(;; LISTP is used at run time in CLOS.
+   '(;; ATOM is used at run time in CLOS.
+     atom
+     ;; LISTP is used at run time in CLOS.
      listp
      ;; NULL is used in many places at run time.
      null
