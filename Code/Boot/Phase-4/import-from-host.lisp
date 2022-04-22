@@ -12,7 +12,9 @@
 
 (defun import-cons-functions (e4)
   (import-functions-from-host
-   '(;; ATOM is used at run time in CLOS.
+   '(;; CONSP is used at run time in CLOS.
+     consp
+     ;; ATOM is used at run time in CLOS.
      atom
      ;; LISTP is used at run time in CLOS.
      listp

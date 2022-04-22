@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; ATOM is used in many macro expanders.
+   '(;; CONSP is used in many macro expanders.
+     consp
+     ;; ATOM is used in many macro expanders.
      atom
      ;; NULL is used in many macro expanders.
      null

@@ -5,7 +5,9 @@
       boot
     (let ((client (env:client e2)))
       (import-functions-from-host
-       '(;; NULL is used in many places at run time.
+       '(;; CONSP is used at run time in CLOS.
+         consp
+         ;; NULL is used in many places at run time.
          null)
        e2)
       ;; Import class T so that it can be found when we need to create
