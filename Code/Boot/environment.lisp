@@ -199,7 +199,6 @@
    '(;; CONSes
      nthcdr
      second third nth
-     rplaca rplacd
      member
      mapcar mapc
      getf
