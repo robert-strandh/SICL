@@ -197,7 +197,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     car cdr caar cadr cdar cddr
+     car cdr caar cadr cdar
      nthcdr
      first second third fourth fifth nth rest
      rplaca rplacd

@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; CONSP is used in many macro expanders.
+   '(;; CDDR is used in many macro expanders.
+     cddr
+     ;; CONSP is used in many macro expanders.
      consp
      ;; ATOM is used in many macro expanders.
      atom

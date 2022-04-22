@@ -26,7 +26,9 @@
 
 (defun import-cons-functions (e5)
   (import-functions-from-host
-   '(;; CONSP is used at run time in CLOS.
+   '(;; CDDR is used at run time in CLOS.
+     cddr
+     ;; CONSP is used at run time in CLOS.
      consp
      ;; ATOM is used at run time in CLOS.
      atom
