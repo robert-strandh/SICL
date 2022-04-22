@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; CAR, CDR, FIRST, and REST are used in many places.
+   '(;; FOURTH is used in some macro expanders
+     fourth
+     ;; CAR, CDR, FIRST, and REST are used in many places.
      car cdr first rest
      ;; CDDR is used in many macro expanders.
      cddr
