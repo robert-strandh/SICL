@@ -100,6 +100,10 @@
        '(min
          notevery)
        e5)
+      ;; FIXME: Do this better, perhaps by an :AROUND method on
+      ;; TRUCLER:DESCRIBE-FUNCTION.
+      (setf (env:compiler-macro-function (env:client e5) e5 'format)
+            nil)
       (with-modified-e5 (e5 esf)
         (ensure-asdf-system '#:fast-generic-functions e5)
         (ensure-asdf-system '#:sicl-sequence-for-sicl-boot e5))
