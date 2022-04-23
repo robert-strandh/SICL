@@ -26,6 +26,12 @@
       (setf (env:fdefinition (env:client e5) e5 '(setf fdefinition))
             setf-fdefinition))))
 
+(defmacro with-modified-e5 ((e5 esf) &body body)
+  `(invoke-with-modified-e5
+    ,e5 ,esf
+    (lambda ()
+      ,@body)))
+
 (defun boot (boot)
   (with-accessors ((e5 sicl-boot:e5))
       boot
