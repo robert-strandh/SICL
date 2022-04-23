@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-condition-system)
+(cl:in-package #:sicl-boot-sequence-functions)
 
 (defclass environment (sicl-boot:environment)
   ())
