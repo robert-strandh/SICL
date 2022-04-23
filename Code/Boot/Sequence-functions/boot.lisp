@@ -94,5 +94,6 @@
                   :client client
                   :name "ESF")))
       (with-modified-e5 (e5 esf)
-        nil)
+        (ensure-asdf-system '#:fast-generic-functions e5)
+        (ensure-asdf-system '#:sicl-sequence-for-sicl-boot e5))
       esf)))
