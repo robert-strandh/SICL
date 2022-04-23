@@ -197,7 +197,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     second third nth
+     second third
      member
      mapcar mapc
      getf
