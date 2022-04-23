@@ -93,6 +93,13 @@
            (esf (make-instance 'environment
                   :client client
                   :name "ESF")))
+      ;; This is not ideal.  It should be imported into ESF, but it
+      ;; seems Trucler doesn't take our modified functions into
+      ;; account.
+      (import-functions-from-host
+       '(min
+         notevery)
+       e5)
       (with-modified-e5 (e5 esf)
         (ensure-asdf-system '#:fast-generic-functions e5)
         (ensure-asdf-system '#:sicl-sequence-for-sicl-boot e5))
