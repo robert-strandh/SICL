@@ -72,7 +72,13 @@
          (funcall thunk)
       ;; Restore the saved version of (SETF FDEFINITION) in E5.
       (setf (env:fdefinition (env:client e5) e5 '(setf fdefinition))
-            setf-fdefinition))))
+            setf-fdefinition)
+      ;; Restore the saved version of FDEFINITION in E5.
+      (setf (env:fdefinition (env:client e5) e5 'fdefinition)
+            fdefinition)
+      ;; Restore the saved version of FBOUNDP in E5.
+      (setf (env:fdefinition (env:client e5) e5 'fboundp)
+            fboundp))))
 
 (defmacro with-modified-e5 ((e5 esf) &body body)
   `(invoke-with-modified-e5
