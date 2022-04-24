@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; FOURTH is used in some macro expanders
+   '(;; THIRD is used by the expansion of DEFMETHOD
+     third
+     ;; FOURTH is used in some macro expanders
      fourth
      ;; CAR, CDR, FIRST, and REST are used in many places.
      car cdr first rest

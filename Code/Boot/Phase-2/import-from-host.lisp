@@ -5,7 +5,9 @@
       boot
     (let ((client (env:client e2)))
       (import-functions-from-host
-       '(;; CAR, CDR, FIRST, and REST are used in many places.
+       '(;; THIRD is used by the expansion of DEFMETHOD
+         third
+         ;; CAR, CDR, FIRST, and REST are used in many places.
          car cdr first rest
          ;; CONSP is used at run time in CLOS.
          consp

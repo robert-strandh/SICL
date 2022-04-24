@@ -12,7 +12,9 @@
 
 (defun import-cons-functions (e3)
   (import-functions-from-host
-   '(;; NTH is used at run time in CLOS.
+   '(;; THIRD is used by the expansion of DEFMETHOD
+     third
+     ;; NTH is used at run time in CLOS.
      nth
      ;; CAR, CDR, FIRST, and REST are used in many places.
      car cdr first rest
