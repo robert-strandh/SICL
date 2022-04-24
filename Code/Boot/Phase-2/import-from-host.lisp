@@ -5,7 +5,9 @@
       boot
     (let ((client (env:client e2)))
       (import-functions-from-host
-       '(;; THIRD is used by the expansion of DEFMETHOD
+       '(;; SECOND is used in many places
+         second
+         ;; THIRD is used by the expansion of DEFMETHOD
          third
          ;; CAR, CDR, FIRST, and REST are used in many places.
          car cdr first rest

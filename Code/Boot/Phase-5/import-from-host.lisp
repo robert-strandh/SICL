@@ -26,7 +26,9 @@
 
 (defun import-cons-functions (e5)
   (import-functions-from-host
-   '(;; THIRD is used by the expansion of DEFMETHOD
+   '(;; SECOND is used in many places
+     second
+     ;; THIRD is used by the expansion of DEFMETHOD
      third
      ;; NTH is used at run time in CLOS.
      nth

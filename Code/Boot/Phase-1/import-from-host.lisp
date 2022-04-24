@@ -9,7 +9,9 @@
 
 (defun import-cons-functions (environment)
   (import-functions-from-host
-   '(;; THIRD is used by the expansion of DEFMETHOD
+   '(;; SECOND is used in many places
+     second
+     ;; THIRD is used by the expansion of DEFMETHOD
      third
      ;; FOURTH is used in some macro expanders
      fourth
