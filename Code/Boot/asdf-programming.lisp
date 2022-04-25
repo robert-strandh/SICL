@@ -8,8 +8,9 @@
           append (asdf:input-files 'asdf:compile-op component)))
 
 (defun load-asdf-system-files (asdf-system environment)
-  (loop for path in (source-file-path-names asdf-system)
-        do (load-source-file-common path environment)))
+  (loop with client = (env:client environment)
+        for path in (source-file-path-names asdf-system)
+        do (load-source-file-common client environment path)))
 
 ;;; Ensure that ASDF-SYSTEM is loaded into ENVIRONMENT.  If
 ;;; ASDF-SYSTEM is already loaded into ENVIRONMENT, this function does

@@ -92,7 +92,7 @@
 (defun read-cst (input-stream eof-marker)
   (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
 
-(defun load-source-file-common (absolute-pathname environment)
+(defun load-source-file-common (client environment absolute-pathname)
   (if (null (assoc absolute-pathname (loaded-files environment)
                    :test #'equal))
       (progn (push (cons absolute-pathname (get-universal-time))
@@ -105,14 +105,14 @@
   (let ((*package* *package*))
     (sicl-source-tracking:with-source-tracking-stream-from-file
         (input-stream absolute-pathname)
-      (loop with client = (env:client environment)
-            with eof-marker = input-stream
+      (loop with eof-marker = input-stream
             for cst = (read-cst input-stream eof-marker)
             until (eq cst eof-marker)
             do (cst-eval client cst environment)))))
 
 (defun load-source-file-absolute (absolute-pathname environment)
-  (load-source-file-common absolute-pathname environment))
+  (let ((client (env:client environment)))
+    (load-source-file-common client environment absolute-pathname)))
 
 (defun load-source-file (relative-pathname environment)
   (let ((unknown-functions '()))
@@ -121,9 +121,10 @@
            (lambda (condition)
              (push condition unknown-functions)
              (muffle-warning condition))))
-      (let ((absolute-pathname
+      (let ((client (env:client environment))
+            (absolute-pathname
               (source-relative-to-absolute-pathname relative-pathname)))
-        (load-source-file-common absolute-pathname environment)))
+        (load-source-file-common client environment absolute-pathname)))
     (loop for condition in unknown-functions
           do (unless (env:fboundp
                       (env:client environment) environment (name condition))
