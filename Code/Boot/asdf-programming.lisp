@@ -7,9 +7,8 @@
         when (typep component 'asdf/lisp-action:cl-source-file)
           append (asdf:input-files 'asdf:compile-op component)))
 
-(defun load-asdf-system-files (asdf-system environment)
-  (loop with client = (env:client environment)
-        for path in (source-file-path-names asdf-system)
+(defun load-asdf-system-files (client environment asdf-system)
+  (loop for path in (source-file-path-names asdf-system)
         do (load-source-file-common client environment path)))
 
 ;;; Ensure that ASDF-SYSTEM is loaded into ENVIRONMENT.  If
@@ -19,13 +18,14 @@
 ;;; ASDF-SYSTEM is either an instance of ASDF/SYSTEM:SYSTEM or a name
 ;;; of an ASDF system.
 (defun ensure-asdf-system (asdf-system environment)
-  (let ((asdf-system (asdf:find-system asdf-system)))
+  (let ((asdf-system (asdf:find-system asdf-system))
+        (client (env:client environment)))
     (unless (member asdf-system (loaded-asdf-systems environment) :test #'eq)
       (format *trace-output*
               "Loading ASDF system ~s into environment ~a~%"
               (asdf/system:primary-system-name asdf-system)
               (name environment))
-      (load-asdf-system-files asdf-system environment)
+      (load-asdf-system-files client environment asdf-system)
       (push asdf-system (loaded-asdf-systems environment))
       (format *trace-output*
               "Done loading ASDF system ~s into environment ~a~%"
