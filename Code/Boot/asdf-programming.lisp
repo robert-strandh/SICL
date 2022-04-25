@@ -25,7 +25,18 @@
             (asdf/system:primary-system-name asdf-system)
             (name environment))
     (load-asdf-system-files client environment asdf-system)
-    (push asdf-system (loaded-asdf-systems environment))
+    (format *trace-output*
+            "Done loading ASDF system ~s into environment ~a~%"
+            (asdf/system:primary-system-name asdf-system)
+            (name environment))))
+
+(defun ensure-asdf-system-using-client (client environment asdf-system)
+  (let ((asdf-system (asdf:find-system asdf-system)))
+    (format *trace-output*
+            "Loading ASDF system ~s into environment ~a~%"
+            (asdf/system:primary-system-name asdf-system)
+            (name environment))
+    (load-asdf-system-files client environment asdf-system)
     (format *trace-output*
             "Done loading ASDF system ~s into environment ~a~%"
             (asdf/system:primary-system-name asdf-system)
