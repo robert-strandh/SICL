@@ -102,29 +102,29 @@
                      absolute-pathname
                      (name environment)))
       (warn "Loading file ~s a second time." absolute-pathname))
-  (let ((*package* *package*))
-    (sicl-source-tracking:with-source-tracking-stream-from-file
-        (input-stream absolute-pathname)
-      (loop with eof-marker = input-stream
-            for cst = (read-cst input-stream eof-marker)
-            until (eq cst eof-marker)
-            do (cst-eval client cst environment)))))
-
-(defun load-source-file (relative-pathname environment)
   (let ((unknown-functions '()))
     (handler-bind
         ((unknown-function
            (lambda (condition)
              (push condition unknown-functions)
              (muffle-warning condition))))
-      (let ((client (env:client environment))
-            (absolute-pathname
-              (source-relative-to-absolute-pathname relative-pathname)))
-        (load-source-file-common client environment absolute-pathname)))
+      (let ((*package* *package*))
+        (sicl-source-tracking:with-source-tracking-stream-from-file
+            (input-stream absolute-pathname)
+          (loop with eof-marker = input-stream
+                for cst = (read-cst input-stream eof-marker)
+                until (eq cst eof-marker)
+                do (cst-eval client cst environment)))))
     (loop for condition in unknown-functions
           do (unless (env:fboundp
                       (env:client environment) environment (name condition))
                (warn condition)))))
+
+(defun load-source-file (relative-pathname environment)
+  (let ((client (env:client environment))
+        (absolute-pathname
+          (source-relative-to-absolute-pathname relative-pathname)))
+    (load-source-file-common client environment absolute-pathname)))
 
 (defun copy-macro-functions (from-environment to-environment)
   (let ((table (make-hash-table :test #'eq))
