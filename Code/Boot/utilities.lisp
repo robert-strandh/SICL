@@ -110,10 +110,6 @@
             until (eq cst eof-marker)
             do (cst-eval client cst environment)))))
 
-(defun load-source-file-absolute (absolute-pathname environment)
-  (let ((client (env:client environment)))
-    (load-source-file-common client environment absolute-pathname)))
-
 (defun load-source-file (relative-pathname environment)
   (let ((unknown-functions '()))
     (handler-bind
