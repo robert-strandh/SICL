@@ -12,8 +12,7 @@
     (loop for env in (list *e0* *e1* *e2* *e3* *e4* *e5* *ecs*)
           for client = (env:client env)
           do (reinitialize-instance client
-               :environment env
-               :macro-environment *e0*))
+               :environment env))
     (sicl-boot-phase-1:boot boot)
     (sicl-boot-phase-2:boot boot)
     (sicl-boot-phase-3:boot boot)
