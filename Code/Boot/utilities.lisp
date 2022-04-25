@@ -126,10 +126,8 @@
     (load-source-file-common client environment absolute-pathname)))
 
 (defun load-source-file (relative-pathname environment)
-  (let ((client (env:client environment))
-        (absolute-pathname
-          (source-relative-to-absolute-pathname relative-pathname)))
-    (load-source-file-common client environment absolute-pathname)))
+  (let ((client (env:client environment)))
+    (load-source-file-using-client client environment relative-pathname)))
 
 (defun copy-macro-functions (from-environment to-environment)
   (let ((table (make-hash-table :test #'eq))
