@@ -116,8 +116,8 @@
                 until (eq cst eof-marker)
                 do (cst-eval client cst environment)))))
     (loop for condition in unknown-functions
-          do (unless (env:fboundp
-                      (env:client environment) environment (name condition))
+          do (when (null (env:fdefinition
+                          (env:client environment) environment (name condition)))
                (warn condition)))))
 
 (defun load-source-file-using-client (client environment relative-pathname)
