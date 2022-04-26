@@ -6,10 +6,6 @@
 (defclass client (sicl-boot:client)
   ())
 
-(defmethod env:fboundp ((client client) (environment environment) function-name)
-  (or (call-next-method)
-      (env:fboundp client (base environment) function-name)))
-
 (defmethod trucler:describe-function
     ((client client) (environment environment) function-name)
   (let ((result (call-next-method)))
