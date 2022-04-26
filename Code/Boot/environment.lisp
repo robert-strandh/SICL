@@ -66,7 +66,7 @@
 (defun define-environment-functions (client environment)
   (setf (env:fdefinition client environment 'fboundp)
         (lambda (name)
-          (or (env:fboundp client environment name)
+          (or (not (null (env:fdefinition client environment name)))
               (and (symbolp name)
                    (or (not (null (env:special-operator client environment name)))
                        (not (null (env:macro-function client environment name))))))))
