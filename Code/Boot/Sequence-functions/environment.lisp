@@ -4,4 +4,4 @@
   ())
 
 (defclass client (sicl-boot:client)
-  ())
+  ((%environment :initarg :environment :reader environment)))
