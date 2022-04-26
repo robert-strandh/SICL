@@ -44,10 +44,7 @@
     ;; first.
     (setf (env:fdefinition (env:client e5) e5 'fdefinition)
           (lambda (name)
-            (if (env:fboundp (env:client esf) esf name)
-                ;; If the name is FBOUNDP in ESF then return the
-                ;; definition of the name in ESF.
-                (env:fdefinition (env:client esf) esf name)
+            (if (null (env:fdefinition (env:client esf) esf name))
                 (if (member name *sequence-function-names* :test #'equal)
                     ;; If the name is not FBOUNDP in ESF, and the name
                     ;; is that of one of the sequence functions, then
@@ -55,14 +52,17 @@
                     ;; client code should have called FBOUNDP first.
                     (error "Attempt to get the FDEFINITION of ~s" name)
                     ;; Otherwise, return the FDEFINITION of the name in E5.
-                    (funcall fdefinition name)))))
+                    (funcall fdefinition name))
+                ;; If the name is FBOUNDP in ESF then return the
+                ;; definition of the name in ESF.
+                (env:fdefinition (env:client esf) esf name))))
     ;; Modify the function FBOUNDP in E5 so that it looks in ESF first.
     (setf (env:fdefinition (env:client e5) e5 'fboundp)
           (lambda (name)
             (or
              ;; If the name is FBOUNDP in ESF it is considered FBOUNDP
              ;; in E5.
-             (env:fboundp (env:client esf) esf name)
+             (not (null (env:fdefinition (env:client esf) esf name)))
              (and
               ;; If the name is not FBOUNDP in ESF and the name is
               ;; that of one of the sequence functions, then it is not
