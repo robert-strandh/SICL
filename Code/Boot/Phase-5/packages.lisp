@@ -8,4 +8,4 @@
                 #:load-source-file
                 #:import-functions-from-host
                 #:with-intercepted-function-cells)
-  (:export #:boot))
+  (:export #:boot #:environment))
