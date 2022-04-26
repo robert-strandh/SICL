@@ -13,7 +13,7 @@
                          :name
                          name))
               class)))
-    (setf (env:fdefinition client e5 'invoke-debugger)
+    #+(or)(setf (env:fdefinition client e5 'invoke-debugger)
           (lambda (condition)
             (declare (ignore condition))
             (sicl-boot-backtrace-inspector:inspect sicl-hir-evaluator:*call-stack*))))
