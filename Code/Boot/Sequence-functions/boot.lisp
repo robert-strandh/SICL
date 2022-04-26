@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-boot-sequence-functions)
 
+(defvar *esf*)
+
 (defparameter *sequence-function-names*
   '(subseq (setf subseq)
     map
@@ -93,6 +95,7 @@
            (esf (make-instance 'environment
                   :client client
                   :name "ESF")))
+      (setf *esf* esf)
       ;; This is not ideal.  It should be imported into ESF, but it
       ;; seems Trucler doesn't take our modified functions into
       ;; account.
