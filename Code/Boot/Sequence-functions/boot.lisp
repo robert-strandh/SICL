@@ -95,6 +95,7 @@
            (esf (make-instance 'environment
                   :client client
                   :name "ESF")))
+      (reinitialize-instance client :environment esf)
       (setf *esf* esf)
       ;; This is not ideal.  It should be imported into ESF, but it
       ;; seems Trucler doesn't take our modified functions into
