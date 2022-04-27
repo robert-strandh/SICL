@@ -82,12 +82,13 @@
        :file-compilation-semantics file-compilation-semantics-p))))
 
 (defun cst-eval (client cst environment)
+  (declare (ignore client))
   (let ((ast (cst-to-ast cst environment nil)))
-    (funcall (find-ast-eval client environment) ast)))
+    (ast-eval ast environment)))
 
 (defmethod cleavir-cst-to-ast:cst-eval ((client client) cst environment)
   (let ((ast (cst-to-ast cst environment nil)))
-    (funcall (find-ast-eval client environment) ast)))
+    (ast-eval ast environment)))
 
 (defun read-cst (input-stream eof-marker)
   (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
