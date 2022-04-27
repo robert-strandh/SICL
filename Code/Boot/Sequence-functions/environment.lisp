@@ -49,6 +49,17 @@
         ;; environment dedicated to this phase, then we return it.
         result)))
 
+(defmethod env:function-cell
+    ((client client) (environment sicl-boot-phase-5:environment) function-name)
+  ;; See whether FUNCTION-NAME has a definition in the
+  ;; environment dedicated to this phase.
+  (if (null (env:fdefinition client (environment client) function-name))
+      ;; It does not, so then just use the one from ENVIRONMENT.
+      (call-next-method)
+      ;; It does, so take the function cell from the environment
+      ;; dedicated to this phase.
+      (env:function-cell client (environment client) function-name)))
+
 (defmethod (setf env:fdefinition)
     (new-definition (client client) (environment sicl-boot-phase-5:environment) function-name)
   ;; We always want to set the definition in the environment dedicated
