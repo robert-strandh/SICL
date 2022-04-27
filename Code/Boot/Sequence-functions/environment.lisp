@@ -26,3 +26,10 @@
         ;; If there is a definition of FUNCTION-NAME in the
         ;; environment dedicated to this phase, then we return it.
         result)))
+
+(defmethod (setf env:fdefinition)
+    (new-definition (client client) (environment sicl-boot-phase-5:environment) function-name)
+  ;; We always want to set the definition in the environment dedicated
+  ;; to this phase.
+  (setf (env:fdefinition client (environment client) function-name)
+        new-definition))
