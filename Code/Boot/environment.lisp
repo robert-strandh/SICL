@@ -188,7 +188,8 @@
           (env:type-expander client environment name)))
   (setf (env:fdefinition client environment 'fmakunbound)
         (lambda (name)
-          (env:fmakunbound client environment name)))
+          (setf (env:fdefinition client environment name) nil)
+          (setf (env:macro-function client environment name) nil)))
   (define-macroexpand environment))
 
 (defun import-standard-functions (environment)
