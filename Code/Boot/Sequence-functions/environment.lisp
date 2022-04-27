@@ -6,6 +6,28 @@
 (defclass client (sicl-boot:client)
   ((%environment :initarg :environment :reader environment)))
 
+(defparameter *sequence-function-names*
+  '(subseq (setf subseq)
+    map
+    map-into
+    reduce
+    count count-if count-if-not
+    length
+    reverse nreverse
+    sort stable-sort
+    find find-iif find-if-not
+    position position-if position-if-not
+    search
+    mismatch
+    replace
+    substitute substitute-if substitute-if-not
+    nsubstitute nsubstitute-if nsubstitute-if-not
+    concatenate
+    merge
+    remove remove-if remove-if-not
+    delete delete-if delete-if-not
+    remove-duplicates delete-duplicates))
+
 (defmethod env:fdefinition
     ((client client) (environment sicl-boot-phase-5:environment) function-name)
   (let (;; See whether FUNCTION-NAME has a definition in the
