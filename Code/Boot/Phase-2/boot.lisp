@@ -38,4 +38,4 @@
     (sicl-boot:copy-macro-functions e0 e2)
     (setf (env:fdefinition (env:client e2) e2 'sicl-boot:ast-eval)
           (lambda (ast)
-            (sicl-ast-evaluator:eval-ast ast e2)))))
+            (sicl-ast-evaluator:eval-ast (env:client e2) e2 ast)))))

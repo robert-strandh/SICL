@@ -10,7 +10,7 @@
     (let ((client (env:client e0)))
       (setf (env:fdefinition client e0 'sicl-boot:ast-eval)
             (lambda (ast)
-              (sicl-ast-evaluator:eval-ast ast e0)))
+              (sicl-ast-evaluator:eval-ast (env:client e0) e0 ast)))
       (setf (env:macro-function client e0 'in-package)
             (lambda (form environment)
               (declare (ignore environment))
