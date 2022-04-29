@@ -42,11 +42,9 @@
 
 (defmethod trucler:describe-variable
     (client (environment base-run-time-environment) name)
-  (if (boundp client environment name)
-      (or (special-variable-description client environment name)
-          (constant-variable-description client environment name)
-          (symbol-macro-description client environment name))
-      nil))
+  (or (special-variable-description client environment name)
+      (constant-variable-description client environment name)
+      (symbol-macro-description client environment name)))
 
 (defmethod trucler:describe-function
     (client (environment base-run-time-environment) name)
