@@ -27,7 +27,7 @@
         (lambda (ast)
           (let* ((client (env:client ecs))
                  (code-object (sicl-compiler:compile-ast client ast)))
-            (sicl-compiler:tie-code-object code-object ecs)))))
+            (sicl-compiler:tie-code-object client ecs code-object)))))
 
 (defun boot (boot)
   (with-accessors ((e5 sicl-boot:e5)
