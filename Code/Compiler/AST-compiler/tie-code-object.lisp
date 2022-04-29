@@ -12,14 +12,13 @@
        (equalp (sicl-source-tracking:lines (car p1))
                (sicl-source-tracking:lines (car p2)))))
 
-(defun tie-code-object (code-object environment)
-  (let* ((client (sicl-environment:client environment))
-         (sicl-run-time:*dynamic-environment* '())
-         (function-cell-function
-           (sicl-environment:fdefinition
-            client environment 'sicl-data-and-control-flow:function-cell))
-         (who-calls-information
-           (sicl-environment:who-calls-information environment)))
+(defun tie-code-object (client environment code-object)
+  (let ((sicl-run-time:*dynamic-environment* '())
+        (function-cell-function
+          (sicl-environment:fdefinition
+           client environment 'sicl-data-and-control-flow:function-cell))
+        (who-calls-information
+          (sicl-environment:who-calls-information environment)))
     (loop for call-site in (call-sites code-object)
           for instruction = (instruction call-site)
           when (typep instruction 'sicl-ir:named-call-instruction)

@@ -4,7 +4,7 @@
   (setf (env:fdefinition (env:client e5) e5 'sicl-boot:ast-eval)
         (lambda (client ast)
           (let ((code-object (sicl-compiler:compile-ast client ast)))
-            (sicl-compiler:tie-code-object code-object e5)))))
+            (sicl-compiler:tie-code-object client e5 code-object)))))
 
 (defun finalize-classes (e3 e4)
   (format *trace-output* "Finalizing all classes in ~a..." (sicl-boot:name e4))
