@@ -49,7 +49,7 @@
                   (env:function-cell (env:client e3) e3 'make-instance))
                  (sicl-clos:method-function
                   (env:function-cell (env:client e4) e4 'sicl-clos:method-function)))
-              (sicl-boot:ast-eval ast e5)))))
+              (sicl-boot:ast-eval (env:client e5) e5 ast)))))
   (enable-array-access e5)
   (enable-method-combinations e5)
   (enable-compute-discriminating-function e5)

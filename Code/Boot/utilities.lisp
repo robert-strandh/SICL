@@ -38,9 +38,8 @@
 (defmethod find-ast-eval (client (environment trucler-reference:environment))
   (find-ast-eval client (trucler:global-environment client environment)))
 
-(defun ast-eval (ast environment)
-  (let ((client (env:client environment)))
-    (funcall (find-ast-eval client environment) client ast)))
+(defun ast-eval (client environment ast)
+  (funcall (find-ast-eval client environment) client ast))
 
 (define-condition unknown-function (warning)
   ((%name :initarg :name :reader name))
@@ -82,13 +81,12 @@
        :file-compilation-semantics file-compilation-semantics-p))))
 
 (defun cst-eval (client cst environment)
-  (declare (ignore client))
   (let ((ast (cst-to-ast cst environment nil)))
-    (ast-eval ast environment)))
+    (ast-eval client environment ast)))
 
 (defmethod cleavir-cst-to-ast:cst-eval ((client client) cst environment)
   (let ((ast (cst-to-ast cst environment nil)))
-    (ast-eval ast environment)))
+    (ast-eval client environment ast)))
 
 (defun read-cst (input-stream eof-marker)
   (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
