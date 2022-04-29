@@ -60,11 +60,15 @@
       (setf (env:fdefinition (env:client e5) e5 'fboundp)
             fboundp))))
 
+;; (defmacro with-modified-e5 ((e5 esf) &body body)
+;;   `(invoke-with-modified-e5
+;;     ,e5 ,esf
+;;     (lambda ()
+;;       ,@body)))
+
 (defmacro with-modified-e5 ((e5 esf) &body body)
-  `(invoke-with-modified-e5
-    ,e5 ,esf
-    (lambda ()
-      ,@body)))
+  (declare (ignore e5 esf))
+  `(progn ,@body))
 
 (defun boot (boot)
   (with-accessors ((e5 sicl-boot:e5))
@@ -73,20 +77,15 @@
            (esf (make-instance 'environment
                   :client client
                   :name "ESF")))
-      (reinitialize-instance client :environment esf)
+      (reinitialize-instance client :environment esf :base e5)
       (setf *esf* esf)
-      ;; This is not ideal.  It should be imported into ESF, but it
-      ;; seems Trucler doesn't take our modified functions into
-      ;; account.
       (import-functions-from-host
        '(min
          notevery)
-       e5)
-      ;; FIXME: Do this better, perhaps by an :AROUND method on
-      ;; TRUCLER:DESCRIBE-FUNCTION.
-      (setf (env:compiler-macro-function (env:client e5) e5 'format)
-            nil)
+       esf)
+      (setf (env:find-class client esf 'standard-generic-function)
+            (env:find-class client e5 'standard-generic-function))
       (with-modified-e5 (e5 esf)
-        (ensure-asdf-system '#:fast-generic-functions e5)
-        (ensure-asdf-system '#:sicl-sequence-for-sicl-boot e5))
+        (ensure-asdf-system-using-client client e5 '#:fast-generic-functions)
+        (ensure-asdf-system-using-client client e5 '#:sicl-sequence-for-sicl-boot))
       esf)))
