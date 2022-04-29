@@ -4,7 +4,8 @@
   ())
 
 (defclass client (sicl-boot:client)
-  ((%environment :initarg :environment :reader environment)))
+  ((%environment :initarg :environment :reader environment)
+   (%base :initarg :base :reader base)))
 
 (defparameter *sequence-function-names*
   '(subseq (setf subseq)
@@ -29,6 +30,19 @@
     remove-duplicates delete-duplicates))
 
 (defmethod env:fdefinition
+    ((client client) (environment environment) function-name)
+  (let* ((base (base client))
+         (base-client (env:client base))
+         (result (env:fdefinition base-client environment function-name)))
+    (if (null result)
+        ;; Then we query the base environment instead.  And we make
+        ;; sure to use the base client so that we avoid infinite
+        ;; computations.
+        (env:fdefinition base-client base function-name)
+        ;; Otherwise, we return the result.
+        result)))
+
+(defmethod env:fdefinition
     ((client client) (environment sicl-boot-phase-5:environment) function-name)
   (let (;; See whether FUNCTION-NAME has a definition in the
         ;; environment dedicated to this phase.
@@ -48,6 +62,20 @@
         ;; If there is a definition of FUNCTION-NAME in the
         ;; environment dedicated to this phase, then we return it.
         result)))
+
+(defmethod env:function-cell
+    ((client client) (environment environment) function-name)
+  (let* ((base (base client))
+         (base-client (env:client base))
+         (local-definition (env:fdefinition base-client environment function-name)))
+    (if (null local-definition)
+        ;; Then we query the base environment instead.  And we make
+        ;; sure to use the base client so that we avoid infinite
+        ;; computations.
+        (env:function-cell base-client base function-name)
+        ;; Otherwise, we query the local environment, but we make sure
+        ;; to use the base client.
+        (env:function-cell base-client environment function-name))))
 
 (defmethod env:function-cell
     ((client client) (environment sicl-boot-phase-5:environment) function-name)
