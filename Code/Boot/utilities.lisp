@@ -40,7 +40,7 @@
 
 (defun ast-eval (ast environment)
   (let ((client (env:client environment)))
-    (funcall (find-ast-eval client environment) ast)))
+    (funcall (find-ast-eval client environment) client ast)))
 
 (define-condition unknown-function (warning)
   ((%name :initarg :name :reader name))

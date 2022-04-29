@@ -12,8 +12,8 @@
 
 (defun prepare-this-phase (e2 e3 e4)
   (setf (env:fdefinition (env:client e4) e4 'sicl-boot:ast-eval)
-        (lambda (ast)
-          (sicl-ast-evaluator:eval-ast (env:client e4) e4 ast)))
+        (lambda (client ast)
+          (sicl-ast-evaluator:eval-ast client e4 ast)))
   (sicl-boot:copy-macro-functions e3 e4)
   (load-source-file "CLOS/class-of-defun.lisp" e3)
   (enable-typep e2 e3)
