@@ -100,3 +100,9 @@
   (let* ((base (base client))
          (base-client (env:client base)))
     (setf (env:constant-variable base-client base symbol) new-value)))
+
+(defmethod (setf env:find-class)
+    (new-class (client client) (environment environment) symbol)
+  (let* ((base (base client))
+         (base-client (env:client base)))
+    (setf (env:find-class base-client base symbol) new-class)))
