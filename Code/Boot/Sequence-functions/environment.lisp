@@ -94,3 +94,9 @@
   ;; to this phase.
   (setf (env:fdefinition client (environment client) function-name)
         new-definition))
+
+(defmethod (setf env:constant-variable)
+    (new-value (client client) (environment environment) symbol)
+  (let* ((base (base client))
+         (base-client (env:client base)))
+    (setf (env:constant-variable base-client base symbol) new-value)))
