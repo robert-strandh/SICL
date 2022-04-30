@@ -273,12 +273,6 @@
      sicl-run-time:makunbound)
    environment))
 
-(defun define-constants (client environment)
-  (setf (env:constant-variable client environment 'most-positive-fixnum)
-        (1- (expt 2 63)))
-  (setf (env:constant-variable client environment 'most-negative-fixnum)
-        (- (expt 2 63))))
-
 (defmethod initialize-instance :after ((environment environment) &key)
   (let ((client (env:client environment)))
     (setf (env:fdefinition client environment 'env:global-environment)
@@ -315,7 +309,6 @@
     (define-primops environment)
     (define-setf-functions environment)
     (define-environment-functions client environment)
-    (define-constants client environment)
     (setf (env:special-variable client environment '*trace-output* t)
           *trace-output*)
     ;; Make DEFPACKAGE create a package in the host environment
