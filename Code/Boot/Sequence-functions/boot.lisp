@@ -82,7 +82,9 @@
       (import-functions-from-host
        '(min
          notevery)
-       esf)
+       e5)
+      (setf (env:compiler-macro-function client e5 'format)
+            nil)
       (setf (env:find-class client esf 'standard-generic-function)
             (env:find-class client e5 'standard-generic-function))
       (with-modified-e5 (e5 esf)
