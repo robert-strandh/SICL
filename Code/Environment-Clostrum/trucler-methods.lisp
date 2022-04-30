@@ -11,40 +11,26 @@
   (trucler:describe-variable
    client (parent environment) name))
 
-(defun special-variable-description (client environment name)
-  (multiple-value-bind (special-variable-p value)
-      (special-variable client environment name)
-    (declare (ignore value))
-    (if (not special-variable-p)
-        nil
-        (make-instance 'trucler:global-special-variable-description
-          :name name
-          :type (variable-type client environment name)))))
-
-(defun constant-variable-description (client environment name)
-  (multiple-value-bind (constant-variable-p value)
-      (constant-variable client environment name)
-    (if (not constant-variable-p)
-        nil
-        (make-instance 'trucler:constant-variable-description
-          :name name
-          :value value))))
-
-(defun symbol-macro-description (client environment name)
-  (multiple-value-bind (expansion symbol-macro-p)
-      (symbol-macro client environment name)
-    (if (not symbol-macro-p)
-        nil
-        (make-instance 'trucler:symbol-macro-description
-          :name name
-          :type (variable-type client environment name)
-          :expansion expansion))))
-
 (defmethod trucler:describe-variable
     (client (environment base-run-time-environment) name)
-  (or (special-variable-description client environment name)
-      (constant-variable-description client environment name)
-      (symbol-macro-description client environment name)))
+  (if (special-variable client environment name)
+      (make-instance 'trucler:global-special-variable-description
+        :name name
+        :type (variable-type client environment name))
+      (multiple-value-bind (constant-variable-p value)
+          (constant-variable client environment name)
+        (if constant-variable-p
+            (make-instance 'trucler:constant-variable-description
+              :name name
+              :value value)
+            (multiple-value-bind (expansion symbol-macro-p)
+                (symbol-macro client environment name)
+              (if symbol-macro-p
+                  (make-instance 'trucler:symbol-macro-description
+                    :name name
+                    :type (variable-type client environment name)
+                    :expansion expansion)
+                  nil))))))
 
 (defmethod trucler:describe-function
     (client (environment base-run-time-environment) name)
