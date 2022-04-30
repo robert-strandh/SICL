@@ -106,3 +106,7 @@
   (let* ((base (base client))
          (base-client (env:client base)))
     (setf (env:find-class base-client base symbol) new-class)))
+
+(defmethod cleavir-cst-to-ast:declaration-proclamations
+    ((client client) (environment sicl-boot-phase-5:environment))
+  '(fast-generic-functions:method-properties))
