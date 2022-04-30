@@ -34,28 +34,21 @@
 
 (defmethod trucler:describe-function
     (client (environment base-run-time-environment) name)
-  (cond ((symbolp name)
-         (let ((macro-function (macro-function client environment name)))
-           (cond ((not (null macro-function))
-                  (make-instance 'trucler:global-macro-description
-                    :name name
-                    :expander macro-function
-                    :compiler-macro (compiler-macro-function client environment name)))
-                 ((special-operator client environment name)
-                  (make-instance 'trucler:special-operator-description
-                    :name name))
-                 ((null (fdefinition client environment name))
-                  nil)
-                 (t
-                  (make-instance 'trucler:global-function-description
-                    :name name
-                    :compiler-macro (compiler-macro-function client environment name))))))
-        ((null (fdefinition client environment name))
-         nil)
-        (t
-         (make-instance 'trucler:global-function-description
-           :name name
-           :compiler-macro (compiler-macro-function client environment name)))))
+  (let ((macro-function (macro-function client environment name)))
+    (cond ((not (null macro-function))
+           (make-instance 'trucler:global-macro-description
+             :name name
+             :expander macro-function
+             :compiler-macro (compiler-macro-function client environment name)))
+          ((special-operator client environment name)
+           (make-instance 'trucler:special-operator-description
+             :name name))
+          ((null (fdefinition client environment name))
+           nil)
+          (t
+           (make-instance 'trucler:global-function-description
+             :name name
+             :compiler-macro (compiler-macro-function client environment name))))))
 
 (defmethod trucler:describe-function
     (client (environment compilation-environment) name)
