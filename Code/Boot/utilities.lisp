@@ -48,9 +48,8 @@
      (let ((*package* (find-package "KEYWORD")))
        (format stream "Unknown function ~s" (name condition))))))
 
-(defun cst-to-ast (cst environment file-compilation-semantics-p)
-  (let ((cleavir-cst-to-ast::*origin* nil)
-        (client (env:client environment)))
+(defun cst-to-ast (client environment cst file-compilation-semantics-p)
+  (let ((cleavir-cst-to-ast::*origin* nil))
     (handler-bind
         ((trucler:undefined-function-referred-to-by-inline-declaration
            (lambda (condition)
@@ -81,11 +80,11 @@
        :file-compilation-semantics file-compilation-semantics-p))))
 
 (defun cst-eval (client cst environment)
-  (let ((ast (cst-to-ast cst environment nil)))
+  (let ((ast (cst-to-ast client environment cst nil)))
     (ast-eval client environment ast)))
 
 (defmethod cleavir-cst-to-ast:cst-eval ((client client) cst environment)
-  (let ((ast (cst-to-ast cst environment nil)))
+  (let ((ast (cst-to-ast client environment cst nil)))
     (ast-eval client environment ast)))
 
 (defun read-cst (input-stream eof-marker)
