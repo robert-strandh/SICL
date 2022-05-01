@@ -70,7 +70,12 @@
      sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
      (setf env:macro-function)
      coerce)
-   e3))
+   e3)
+  (setf (env:macro-function (env:client e3) e3 'defpackage)
+        (lambda (form env)
+          (declare (ignore env))
+          (eval form)
+          nil)))
 
 (defun import-sequence-functions (e3)
   (import-functions-from-host

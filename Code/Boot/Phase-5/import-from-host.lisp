@@ -123,7 +123,12 @@
 (defun import-misc (e5)
   (import-functions-from-host
    '(coerce)
-   e5))
+   e5)
+  (setf (env:macro-function (env:client e5) e5 'defpackage)
+        (lambda (form env)
+          (declare (ignore env))
+          (eval form)
+          nil)))
 
 (defun import-from-host (e5)
   (import-misc e5)
