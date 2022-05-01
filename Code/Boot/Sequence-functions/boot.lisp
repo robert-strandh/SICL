@@ -28,6 +28,6 @@
             (env:find-class e5-client e5 'standard-generic-function))
       (load-source-file-using-client e5-client e5 "Array/make-array-defun.lisp")
       (ensure-asdf-system-using-client client e5 '#:fast-generic-functions)
-      (ensure-asdf-system-using-client client e5 '#:sicl-utilities)
+      (ensure-asdf-system-using-client e5-client e5 '#:sicl-utilities)
       (ensure-asdf-system-using-client client e5 '#:sicl-sequence-for-sicl-boot)
       esf)))
