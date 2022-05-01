@@ -64,7 +64,8 @@
 
 (defun import-misc (e4)
   (import-functions-from-host
-   '(sicl-method-combination:define-method-combination-expander)
+   '(sicl-method-combination:define-method-combination-expander
+     coerce)
    e4))
 
 (defun import-sequence-functions (e4)

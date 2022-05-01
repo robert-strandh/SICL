@@ -68,7 +68,8 @@
      shared-initialize initialize-instance reinitialize-instance
      sicl-host-mop:method-function
      sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
-     (setf env:macro-function))
+     (setf env:macro-function)
+     coerce)
    e3))
 
 (defun import-sequence-functions (e3)

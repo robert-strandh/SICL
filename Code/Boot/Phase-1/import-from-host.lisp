@@ -63,7 +63,7 @@
 
 (defun import-misc (environment)
   (import-functions-from-host
-   '(error typep)
+   '(error typep coerce)
    environment))
 
 (defun import-sequence-functions (environment)

@@ -120,7 +120,13 @@
      elt)
    e5))
 
+(defun import-misc (e5)
+  (import-functions-from-host
+   '(coerce)
+   e5))
+
 (defun import-from-host (e5)
+  (import-misc e5)
   (import-number-functions e5)
   (import-cons-functions e5)
   (import-sequence-functions e5))

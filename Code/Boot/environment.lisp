@@ -211,8 +211,6 @@
      alphanumericp digit-char-p char-upcase
      ;; Strings
      stringp
-     ;; Types and classes
-     coerce
      ;; For debugging
      format
      ;; Conditions
