@@ -14,7 +14,9 @@
       (setf *esf* esf)
       (import-functions-from-host
        '(min
-         notevery)
+         notevery
+         plusp
+         logand)
        e5)
       (setf (env:compiler-macro-function client e5 'format)
             nil)
