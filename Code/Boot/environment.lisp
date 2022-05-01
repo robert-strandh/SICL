@@ -310,12 +310,7 @@
     (setf (env:special-variable client environment '*trace-output* t)
           *trace-output*)
     ;; Make it possible to inspect from the REPL
-    (import-functions-from-host '(clouseau:inspect) environment)
-    ;; Fake PROGV for now.
-    (setf (env:macro-function (env:client environment) environment 'progv)
-          (lambda (form env)
-            (declare (ignore env))
-            (cons 'progn (rest form))))))
+    (import-functions-from-host '(clouseau:inspect) environment)))
 
 (defmethod print-object ((object environment) stream)
   (print-unreadable-object (object stream)

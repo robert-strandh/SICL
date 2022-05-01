@@ -128,7 +128,12 @@
         (lambda (form env)
           (declare (ignore env))
           (eval form)
-          nil)))
+          nil))
+  ;; Fake PROGV for now.
+  (setf (env:macro-function (env:client e5) e5 'progv)
+        (lambda (form env)
+          (declare (ignore env))
+          (cons 'progn (rest form)))))
 
 (defun import-from-host (e5)
   (import-misc e5)
