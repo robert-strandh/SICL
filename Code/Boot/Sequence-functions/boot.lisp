@@ -16,7 +16,8 @@
        '(min
          notevery
          plusp
-         logand)
+         logand
+         cleavir-code-utilities:parse-destructuring-bind)
        e5)
       (setf (env:compiler-macro-function client e5 'format)
             nil)
