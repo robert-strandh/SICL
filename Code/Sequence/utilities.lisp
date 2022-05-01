@@ -46,6 +46,11 @@
       (push-subclasses class)
       subclasses)))
 
+;;; FIXME: This should not be needed.
+(defun vector-class-element-type (sequence-class)
+  (declare (ignore sequence-class))
+  nil)
+
 (defun vector-class-element-type (sequence-class)
   (let ((prototype (coerce nil sequence-class)))
     (check-type prototype vector)
