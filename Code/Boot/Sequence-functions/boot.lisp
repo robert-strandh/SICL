@@ -23,8 +23,6 @@
        e5)
       (setf (env:compiler-macro-function client e5 'format)
             nil)
-      (setf (env:find-class e5-client esf 'standard-generic-function)
-            (env:find-class e5-client e5 'standard-generic-function))
       (let ((*environment* esf))
         (load-source-file-using-client e5-client e5 "Array/make-array-defun.lisp")
         (ensure-asdf-system-using-client client e5 '#:fast-generic-functions)
