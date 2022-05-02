@@ -80,7 +80,8 @@
    (:file "search")
    (:file "sort")
    (:file "stable-sort")
-   (:file "subseq")
+   ;; Uncomment this line when we have a working DEFSETF.
+   ;; (:file "subseq")
    (:file "substitute")
    (:file "substitute-if")
    (:file "substitute-if-not")))
