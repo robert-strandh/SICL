@@ -20,9 +20,31 @@
   (:shadow
    ;; We define LIST-LENGTH as the type of integers that denote the length
    ;; of a list.
-   #:list-length
-   . #1=
-   (#:copy-seq
+   #:list-length)
+  (:export
+   ;; Conditions.
+   #:must-be-nonnegative-integer
+   #:must-be-cons
+   #:must-be-sequence
+   #:must-be-function-designator
+   #:must-be-list
+   #:must-be-proper-list
+   #:must-be-recognizable-subtype-of-sequence
+   #:must-be-recognizable-subtype-of-vector
+   #:invalid-sequence-index
+   #:invalid-bounding-index
+   #:invalid-start-index
+   #:invalid-end-index
+   #:end-less-than-start
+   #:both-test-and-test-not-given
+   #:warn-both-test-and-test-not-given
+
+   ;; Non-standard symbols.
+   #:make-sequence-like
+   #:adjust-sequence
+
+   ;; Standard symbols.
+   #:copy-seq
     #:elt
     #:fill
     #:make-sequence
@@ -63,27 +85,3 @@
     #:delete-if-not
     #:remove-duplicates
     #:delete-duplicates))
-  (:export
-   ;; Conditions.
-   #:must-be-nonnegative-integer
-   #:must-be-cons
-   #:must-be-sequence
-   #:must-be-function-designator
-   #:must-be-list
-   #:must-be-proper-list
-   #:must-be-recognizable-subtype-of-sequence
-   #:must-be-recognizable-subtype-of-vector
-   #:invalid-sequence-index
-   #:invalid-bounding-index
-   #:invalid-start-index
-   #:invalid-end-index
-   #:end-less-than-start
-   #:both-test-and-test-not-given
-   #:warn-both-test-and-test-not-given
-
-   ;; Non-standard symbols.
-   #:make-sequence-like
-   #:adjust-sequence
-
-   ;; Standard symbols.
-   . #1#))
