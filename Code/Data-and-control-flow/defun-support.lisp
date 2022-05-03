@@ -8,10 +8,10 @@
     (let ((env-var (gensym)))
       `(progn
          (eval-when (:compile-toplevel)
-           (let* ((,env-var (sicl-environment:global-environment ,environment)))
-             (setf (sicl-environment:function-description
+           (let* ((,env-var (env:global-environment ,environment)))
+             (setf (env:function-description
                     ,env-var ',name)
-                   (sicl-environment:make-simple-function-description
+                   (env:make-simple-function-description
                     ',lambda-list))))
          (eval-when (:load-toplevel :execute)
            (setf (fdefinition ',name)

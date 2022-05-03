@@ -1,7 +1,7 @@
 (in-package #:sicl-data-and-control-flow)
 
 (defun get-setf-expansion
-    (place &optional (environment (sicl-environment:global-environment)))
-  (let* ((global-env (sicl-environment:global-environment environment))
-         (client (sicl-environment:client global-env)))
-    (sicl-environment:get-setf-expansion client environment place)))
+    (place &optional (environment (env:global-environment)))
+  (let* ((global-env (env:global-environment environment))
+         (client (env:client global-env)))
+    (env:get-setf-expansion client environment place)))

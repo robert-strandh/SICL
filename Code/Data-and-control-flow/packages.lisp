@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-data-and-control-flow
   (:use #:common-lisp)
+  (:local-nicknames (#:env #:sicl-environment))
   (:export #:shiftf-expander
            #:defun-expander
            #:psetf-expander

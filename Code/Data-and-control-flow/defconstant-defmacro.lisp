@@ -7,8 +7,8 @@
   (let ((env-var (gensym)))
     `(progn
        (eval-when (:compile-toplevel)
-         (let* ((,env-var (sicl-environment:global-environment ,environment)))
-           (setf (sicl-environment:variable-description ,env-var ',name)
-                 (sicl-environment:make-constant-variable-description initial-value))))
+         (let* ((,env-var (env:global-environment ,environment)))
+           (setf (env:variable-description ,env-var ',name)
+                 (env:make-constant-variable-description initial-value))))
        (eval-when (:load-toplevel :execute)
          (setf (constant-variable ',name) ,initial-value)))))

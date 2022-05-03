@@ -8,7 +8,7 @@
        (key nil key-p)
        (test nil test-p)
        (test-not nil test-not-p))
-  (let* ((global-env (sicl-environment:global-environment environment)))
+  (let* ((global-env (env:global-environment environment)))
     (pushnew-expander
      item place environment args
      key key-p

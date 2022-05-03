@@ -11,11 +11,11 @@
 ;;; definition as either a function, a macro, or a special operator in
 ;;; the global environment.
 
-(let* ((environment (sicl-environment:global-environment))
-       (client (sicl-environment:client environment))
-       (fdefinition (fdefinition 'sicl-environment:fdefinition))
-       (special-operator (fdefinition 'sicl-environment:special-operator))
-       (macro-function (fdefinition 'sicl-environment:macro-function)))
+(let* ((environment (env:global-environment))
+       (client (env:client environment))
+       (fdefinition (fdefinition 'env:fdefinition))
+       (special-operator (fdefinition 'env:special-operator))
+       (macro-function (fdefinition 'env:macro-function)))
   (defun fboundp (function-name)
     (or (not (null (funcall fdefinition client environment function-name)))
         (and (symbolp function-name)
