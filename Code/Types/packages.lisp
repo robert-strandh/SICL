@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-type
   (:use #:common-lisp)
+  (:local-nicknames (#:env #:sicl-environment))
   (:export
    #:typep
    ;; The symbol TYPEQ names a special operator.  It is similar to

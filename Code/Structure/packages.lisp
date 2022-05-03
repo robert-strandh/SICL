@@ -2,7 +2,7 @@
 
 (defpackage #:sicl-structure
   (:use #:common-lisp)
-  (:local-nicknames (#:mop #:sicl-clos))
+  (:local-nicknames (#:mop #:sicl-clos) (#:env #:sicl-environment))
   (:export #:defstruct
            #:copy-structure
            #:structure-class

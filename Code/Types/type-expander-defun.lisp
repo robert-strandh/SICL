@@ -11,10 +11,10 @@
 ;;; the environment are closed over at load time so that they can be
 ;;; undefined after this definition has been loaded.
 
-(let* ((environment (sicl-environment:global-environment))
-       (client (sicl-environment:client environment))
+(let* ((environment (env:global-environment))
+       (client (env:client environment))
        (type-expander-function
-         (sicl-environment:fdefinition
-          client environment 'sicl-environment:type-expander)))
+         (env:fdefinition
+          client environment 'env:type-expander)))
   (defun type-expander (type-descriptor)
     (funcall type-expander-function client environment type-descriptor)))

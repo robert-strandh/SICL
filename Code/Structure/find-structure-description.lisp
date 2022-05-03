@@ -1,16 +1,16 @@
 (cl:in-package #:sicl-structure)
 
-(let* ((environment (sicl-environment:global-environment))
-       (client (sicl-environment:client environment))
+(let* ((environment (env:global-environment))
+       (client (env:client environment))
        (global-environment-function
-         (sicl-environment:fdefinition
-          client environment 'sicl-environment:global-environment))
+         (env:fdefinition
+          client environment 'env:global-environment))
        (structure-description-function
-         (sicl-environment:fdefinition
-          client environment 'sicl-environment:structure-description))
+         (env:fdefinition
+          client environment 'env:structure-description))
        (setf-structure-description-function
-         (sicl-environment:fdefinition
-          client environment '(setf sicl-environment:structure-description))))
+         (env:fdefinition
+          client environment '(setf env:structure-description))))
   (defun find-structure-description (name &optional (errorp t) environment)
     (let* ((global-environment
              (funcall global-environment-function environment))

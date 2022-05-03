@@ -1,13 +1,13 @@
 (cl:in-package #:sicl-package)
 
-(let* ((environment (sicl-environment:global-environment))
-       (client (sicl-environment:client environment))
+(let* ((environment (env:global-environment))
+       (client (env:client environment))
        (find-package-function
-         (sicl-environment:fdefinition
-          client environment 'sicl-environment:find-package))
+         (env:fdefinition
+          client environment 'env:find-package))
        (setf-find-package-function
-         (sicl-environment:fdefinition
-          client environment '(setf sicl-environment:find-package))))
+         (env:fdefinition
+          client environment '(setf env:find-package))))
   (defun find-package (name)
     (if (typep name 'package)
         name
