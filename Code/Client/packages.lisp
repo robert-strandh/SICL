@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export #:sicl
            #:x86-64
-           #:sicl-x86-64))
+           #:sicl-x86-64
+           #:*client*))
