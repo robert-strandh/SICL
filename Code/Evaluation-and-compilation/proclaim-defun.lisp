@@ -4,12 +4,12 @@
 ;;;
 ;;; Function PROCLAIM.
 
-(let* ((environment (sicl-environment:global-environment))
-       (client (sicl-environment:client environment))
+(let* ((environment (env:global-environment))
+       (client (env:client environment))
        (proclamation-function
-         (fdefinition 'sicl-environment:proclamation))
+         (fdefinition 'env:proclamation))
        (setf-proclamation-function
-         (fdefinition '(setf sicl-environment:proclamation))))
+         (fdefinition '(setf env:proclamation))))
 
   (defun declaration-proclamations ()
     (funcall proclamation-function client environment 'declaration))

@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-evaluation-and-compilation)
 
-(let* ((global-environment (sicl-environment:global-environment environment))
-       (client (sicl-environment:client global-environment))
-       (constant-variable-function (fdefinition 'sicl-environment:constant-variable)))
+(let* ((global-environment (env:global-environment environment))
+       (client (env:client global-environment))
+       (constant-variable-function (fdefinition 'env:constant-variable)))
   (defun constantp (form &optional environment)
     (or (and (not (symbolp form))
              (not (consp form)))
