@@ -9,8 +9,7 @@
            (sicl-client:*client* client)
            (esf (make-instance 'environment
                   :client client
-                  :name "ESF"))
-           (e5-client (env:client e5)))
+                  :name "ESF")))
       (setf *esf* esf)
       (import-functions-from-host
        '(min
