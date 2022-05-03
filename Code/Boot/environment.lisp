@@ -64,131 +64,108 @@
                            (return (values result e-p)))))))))
 
 (defun define-environment-functions (client environment)
-  (setf (env:fdefinition client environment 'fboundp)
-        (lambda (name)
-          (or (not (null (env:fdefinition client environment name)))
-              (or (not (null (env:special-operator client environment name)))
-                  (not (null (env:macro-function client environment name)))))))
-  (setf (env:fdefinition client environment 'special-operator-p)
-        (lambda (name)
-          (env:special-operator client environment name)))
-  (setf (env:fdefinition client environment '(setf macro-function))
-        (lambda (macro-function name &optional env)
-          (assert (null env))
-          (setf (env:macro-function client environment name)
-                macro-function)))
-  (setf (env:fdefinition client environment 'macro-function)
-        (lambda (name &optional env)
-          (assert (null env))
-          (env:macro-function client environment name)))
-  (setf (env:fdefinition
-         client environment '(setf sicl-data-and-control-flow:setf-expander))
-        (lambda (setf-expander name)
-          (setf (env:setf-expander client environment name)
-                setf-expander)))
-  (setf (env:fdefinition
-         client environment 'sicl-data-and-control-flow:setf-expander)
-        (lambda (name)
-          (env:setf-expander client environment name)))
-  (setf (env:fdefinition client environment '(setf fdefinition))
-        (lambda (function name)
-          (setf (env:fdefinition client environment name)
-                function)))
-  (setf (env:fdefinition client environment 'fdefinition)
-        (lambda (name)
-          (env:fdefinition client environment name)))
-  (setf (env:fdefinition client environment '(setf symbol-function))
-        (lambda (function name)
-          (setf (env:fdefinition client environment name)
-                function)))
-  (setf (env:fdefinition client environment 'symbol-function)
-        (lambda (name)
-          (env:fdefinition client environment name)))
-  (setf (env:fdefinition client environment 'get-setf-expansion)
-        (lambda (place &optional env)
-          (declare (ignore env))
-          (env:get-setf-expansion client environment place)))
-  (setf (env:fdefinition
-         client environment '(setf sicl-data-and-control-flow:special-variable))
-        (lambda (value name set-if-assigned-p)
-          (setf (env:special-variable client environment name set-if-assigned-p)
-                value)))
-  (setf (env:fdefinition
-         client environment '(setf sicl-data-and-control-flow:constant-variable))
-        (lambda (value name)
-          (setf (env:constant-variable client environment name)
-                value)))
-  (setf (env:fdefinition
-         client
-         environment
-         'sicl-method-combination:find-method-combination-template)
-        (lambda (name)
-          (env:find-method-combination-template name environment)))
-  (setf (env:fdefinition
-         client
-         environment
-         '(setf sicl-method-combination:find-method-combination-template))
-        (lambda (template name)
-          (setf (env:find-method-combination-template name environment)
-                template)))
-  (setf (env:fdefinition
-         client
-         environment
-         'find-class)
-        (lambda (symbol &optional (errorp t) env)
-          (declare (ignore env))
-          (let ((class (env:find-class client environment symbol)))
-            (if (and errorp (null class))
-                (error "no class named ~s in ~s" symbol environment)
-                class))))
-  (setf (env:fdefinition
-         client
-         environment
-         '(setf find-class))
-        (lambda (new-class symbol &optional errorp env)
-          (declare (ignore errorp env))
-          (setf (env:find-class client environment symbol)
-                new-class)))
-  (setf (env:fdefinition
-         client
-         environment
-         'find-package)
-        (lambda (name)
-          (env:find-package client environment (string name))))
-  (setf (env:fdefinition
-         client
-         environment
-         'sicl-data-and-control-flow:function-cell)
-        (lambda (name)
-          (let* ((override-entry
-                   (find name (overridden-function-cells environment)
-                         :key #'car :test #'equal))
-                 (result (if (null override-entry)
-                             (env:function-cell client environment name)
-                             (cdr override-entry))))
-            result)))
-  (setf (env:fdefinition client environment 'sicl-symbol:variable-cell)
-        (lambda (name)
-          (env:variable-cell client environment name)))
-  (setf (env:fdefinition
-         client environment 'compiler-macro-function)
-        (lambda (symbol)
-          (env:compiler-macro-function client environment symbol)))
-  (setf (env:fdefinition
-         client environment '(setf compiler-macro-function))
-        (lambda (function symbol)
-          (setf (env:compiler-macro-function client environment symbol)
-                function)))
-  (setf (env:fdefinition
-         client
-         environment
-         'sicl-type:type-expander)
-        (lambda (name)
-          (env:type-expander client environment name)))
-  (setf (env:fdefinition client environment 'fmakunbound)
-        (lambda (name)
-          (setf (env:fdefinition client environment name) nil)
-          (setf (env:macro-function client environment name) nil)))
+  (flet ((def (name function)
+           (setf (env:fdefinition client environment name)
+                 function)))
+    (symbol-macrolet ((c sicl-client:*client*))
+      (def 'fboundp
+            (lambda (name)
+              (or (not (null (env:fdefinition c environment name)))
+                  (or (not (null (env:special-operator c environment name)))
+                      (not (null (env:macro-function c environment name)))))))
+      (def 'special-operator-p
+            (lambda (name)
+              (env:special-operator c environment name)))
+      (def '(setf macro-function)
+            (lambda (macro-function name &optional env)
+              (assert (null env))
+              (setf (env:macro-function c environment name)
+                    macro-function)))
+      (def 'macro-function
+            (lambda (name &optional env)
+              (assert (null env))
+              (env:macro-function c environment name)))
+      (def '(setf sicl-data-and-control-flow:setf-expander)
+            (lambda (setf-expander name)
+              (setf (env:setf-expander c environment name)
+                    setf-expander)))
+      (def 'sicl-data-and-control-flow:setf-expander
+            (lambda (name)
+              (env:setf-expander c environment name)))
+      (def '(setf fdefinition)
+            (lambda (function name)
+              (setf (env:fdefinition c environment name)
+                    function)))
+      (def 'fdefinition
+            (lambda (name)
+              (env:fdefinition c environment name)))
+      (def '(setf symbol-function)
+            (lambda (function name)
+              (setf (env:fdefinition c environment name)
+                    function)))
+      (def 'symbol-function
+            (lambda (name)
+              (env:fdefinition c environment name)))
+      (def 'get-setf-expansion
+            (lambda (place &optional env)
+              (declare (ignore env))
+              (env:get-setf-expansion c environment place)))
+      (def '(setf sicl-data-and-control-flow:special-variable)
+            (lambda (value name set-if-assigned-p)
+              (setf (env:special-variable c environment name set-if-assigned-p)
+                    value)))
+      (def '(setf sicl-data-and-control-flow:constant-variable)
+            (lambda (value name)
+              (setf (env:constant-variable c environment name)
+                    value)))
+      (def 'sicl-method-combination:find-method-combination-template
+            (lambda (name)
+              (env:find-method-combination-template name environment)))
+      (def '(setf sicl-method-combination:find-method-combination-template)
+            (lambda (template name)
+              (setf (env:find-method-combination-template name environment)
+                    template)))
+      (def 'find-class
+            (lambda (symbol &optional (errorp t) env)
+              (declare (ignore env))
+              (let ((class (env:find-class c environment symbol)))
+                (if (and errorp (null class))
+                    (error "no class named ~s in ~s" symbol environment)
+                    class))))
+      (def '(setf find-class)
+            (lambda (new-class symbol &optional errorp env)
+              (declare (ignore errorp env))
+              (setf (env:find-class c environment symbol)
+                    new-class)))
+      (def 'find-package
+            (lambda (name)
+              (env:find-package c environment (string name))))
+      (def 'sicl-data-and-control-flow:function-cell
+            (lambda (name)
+              (let* ((override-entry
+                       (find name (overridden-function-cells environment)
+                             :key #'car :test #'equal))
+                     (result (if (null override-entry)
+                                 (env:function-cell c environment name)
+                                 (cdr override-entry))))
+                result)))
+      (def 'sicl-symbol:variable-cell
+            (lambda (name)
+              (env:variable-cell c environment name)))
+      (def 'compiler-macro-function
+            (lambda (symbol)
+              (env:compiler-macro-function c environment symbol)))
+      (def '(setf compiler-macro-function)
+            (lambda (function symbol)
+              (setf (env:compiler-macro-function c environment symbol)
+                    function)))
+      (def 'sicl-type:type-expander
+            (lambda (name)
+              (env:type-expander c environment name)))
+      (def 'fmakunbound
+            (lambda (name)
+              (setf (env:fdefinition c environment name) nil)
+              (setf (env:macro-function c environment name) nil)))))
   (define-macroexpand environment))
 
 (defun import-standard-functions (environment)
