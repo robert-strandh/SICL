@@ -15,13 +15,18 @@
                   :static-environment-function
                   (env:fdefinition
                    (env:client e4) e4 'sicl-clos:environment))
-    (import-from-host e5)
-    (prepare-this-phase e3 e4 e5)
-    (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e5)
-    (sicl-boot:create-accessor-defgenerics e5)
-    (sicl-boot:create-mop-classes e5)
-    (create-additional-generic-functions e5)
-    (load-source-file "Arithmetic/floor-defun.lisp" e5)
-    (load-source-file "Arithmetic/ceiling-defun.lisp" e5)
-    (load-source-file "Arithmetic/truncate-defun.lisp" e5)
-    (load-source-file "Arithmetic/round-defun.lisp" e5)))
+    (let ((sicl-client:*client*
+            (make-instance 'client
+              :static-environment-function
+              (env:fdefinition
+               (env:client e4) e4 'sicl-clos:environment))))
+      (import-from-host e5)
+      (prepare-this-phase e3 e4 e5)
+      (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e5)
+      (sicl-boot:create-accessor-defgenerics e5)
+      (sicl-boot:create-mop-classes e5)
+      (create-additional-generic-functions e5)
+      (load-source-file "Arithmetic/floor-defun.lisp" e5)
+      (load-source-file "Arithmetic/ceiling-defun.lisp" e5)
+      (load-source-file "Arithmetic/truncate-defun.lisp" e5)
+      (load-source-file "Arithmetic/round-defun.lisp" e5))))

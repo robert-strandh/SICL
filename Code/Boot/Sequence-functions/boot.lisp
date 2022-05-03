@@ -6,6 +6,7 @@
   (with-accessors ((e5 sicl-boot:e5))
       boot
     (let* ((client (make-instance 'client))
+           (sicl-client:*client* client)
            (esf (make-instance 'environment
                   :client client
                   :name "ESF"))

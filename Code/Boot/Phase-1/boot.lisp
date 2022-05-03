@@ -7,7 +7,8 @@
       boot
     (change-class e1 'environment)
     (change-class (env:client e1) 'client)
-    (let ((client (env:client e0)))
+    (let ((client (env:client e0))
+          (sicl-client:*client* (make-instance 'client)))
       (setf (env:fdefinition client e0 'sicl-boot:ast-eval)
             (lambda (client ast)
               (sicl-ast-evaluator:eval-ast client e0 ast)))
