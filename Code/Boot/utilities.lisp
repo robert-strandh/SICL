@@ -159,7 +159,8 @@
                     (terpri *query-io*))))
 
 (defun repl (environment)
-  (let ((client (env:client environment)))
+  (let* ((client (env:client environment))
+         (sicl-client:*client* client))
     (loop with results = nil
           with princ = (env:fdefinition client environment 'princ)
           with prin1 = (env:fdefinition client environment 'prin1)
