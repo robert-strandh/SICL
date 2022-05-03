@@ -11,10 +11,10 @@
 ;;; environment are closed over at load time so that they can be
 ;;; undefined after this definition has been loaded.
 
-(let* ((environment (sicl-environment:global-environment))
-       (client (sicl-environment:client environment))
+(let* ((environment (env:global-environment))
+       (client (env:client environment))
        (find-class
-         (fdefinition 'sicl-environment:find-class)))
+         (fdefinition 'env:find-class)))
   (defun find-class (symbol &optional (errorp t) environment)
     (let ((class (funcall find-class client environment symbol)))
       (if (and (null class) errorp)

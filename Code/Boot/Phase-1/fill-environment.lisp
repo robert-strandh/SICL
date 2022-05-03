@@ -16,7 +16,7 @@
          ;; There has got to be an easier way to define the
          ;; package so that it exists before this system is
          ;; compiled.
-         'sicl-environment:global-environment)
+         'env:global-environment)
         (lambda (&optional env)
           (if (null env)
               environment

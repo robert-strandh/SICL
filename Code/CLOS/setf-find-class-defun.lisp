@@ -2,7 +2,7 @@
 
 (defun (setf find-class) (new-class symbol &optional errorp environment)
   (declare (ignore errorp))
-  (let* ((global-environment (sicl-environment:global-environment environment))
-         (client (sicl-environment:client global-environment)))
-    (setf (sicl-environment:find-class client global-environment symbol)
+  (let* ((global-environment (env:global-environment environment))
+         (client (env:client global-environment)))
+    (setf (env:find-class client global-environment symbol)
           new-class)))

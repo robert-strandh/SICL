@@ -2,4 +2,4 @@
 
 (defmethod cleavir-cst-to-ast:declaration-proclamations
     ((client sicl-client:sicl) environment)
-  (sicl-environment:proclamation client environment 'declaration))
+  (env:proclamation client environment 'declaration))

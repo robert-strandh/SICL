@@ -4,6 +4,7 @@
 
 (defpackage #:sicl-clos
   (:use #:common-lisp)
+  (:local-nicknames (#:env #:sicl-environment))
   (:shadow #:documentation)
   (:export
    ;; Constants

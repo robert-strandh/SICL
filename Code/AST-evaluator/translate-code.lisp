@@ -16,8 +16,8 @@
        (declare (optimize (speed 0) (compilation-speed 3) (debug 0) (safety 3) (space 0)))
        #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
        (let* ((,function-cell-finder-var
-                (sicl-environment:fdefinition
-                 (sicl-environment:client ,*run-time-environment-name*)
+                (env:fdefinition
+                 (env:client ,*run-time-environment-name*)
                  ,*run-time-environment-name*
                  'sicl-data-and-control-flow:function-cell))
               ,@(loop for (function-name . variable-name) in *function-cells*

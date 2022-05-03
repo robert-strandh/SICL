@@ -285,9 +285,9 @@
          (env-var (gensym)))
     `(progn
        (eval-when (:compile-toplevel)
-         (let* ((,env-var (sicl-environment:global-environment ,environment)))
-           (setf (sicl-environment:class-description ,env-var ',name)
-                 (sicl-environment:make-class-description
+         (let* ((,env-var (env:global-environment ,environment)))
+           (setf (env:class-description ,env-var ',name)
+                 (env:make-class-description
                   ',name ',canonicalized-superclass-names ',metaclass-name))))
        (eval-when (:load-toplevel :execute)
          (ensure-class ',name

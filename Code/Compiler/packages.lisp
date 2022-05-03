@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-compiler
   (:use #:common-lisp)
+  (:local-nicknames (#:env #:sicl-environment))
   (:shadow #:undefined-function)
   (:export #:debug-information
            #:code-object

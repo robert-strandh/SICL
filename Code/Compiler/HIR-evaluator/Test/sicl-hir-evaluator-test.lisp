@@ -35,20 +35,20 @@
   (declare (ignore x))
   nil)
 
-(setf (sicl-environment:fdefinition
-       *environment* (sicl-environment:client *environment*) 'foo)
+(setf (env:fdefinition
+       *environment* (env:client *environment*) 'foo)
       #'foo)
 
 (defun bar (x)
   (declare (ignore x))
   42)
 
-(setf (sicl-environment:fdefinition
-        *environment* (sicl-environment:client *environment*) 'bar)
+(setf (env:fdefinition
+        *environment* (env:client *environment*) 'bar)
       #'bar)
 
 (defparameter *x* 5)
 
-(setf (sicl-environment:special-variable
-        *environment* (sicl-environment:client *environment*) '*x* t)
+(setf (env:special-variable
+        *environment* (env:client *environment*) '*x* t)
       *x*)

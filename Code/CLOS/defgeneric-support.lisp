@@ -62,17 +62,17 @@
       `(progn
          (eval-when (:compile-toplevel)
            (let* ((,environment-var
-                    (sicl-environment:global-environment ,environment)))
-             (setf (sicl-environment:function-description
+                    (env:global-environment ,environment)))
+             (setf (env:function-description
                     ,environment-var ',name)
-                   (make-instance 'sicl-environment:generic-function-description
+                   (make-instance 'env:generic-function-description
                      :lambda-list ',lambda-list
                      :class-name ',generic-function-class-name
                      :method-class-name ',method-class-name
                      :method-combination-info
                      '(,method-combination-name ,@method-combination-arguments)))))
          (eval-when (:load-toplevel :execute)
-           (let* ((env (sicl-environment:global-environment)))
+           (let* ((env (env:global-environment)))
              (ensure-generic-function
               ',name
               :lambda-list ',lambda-list
