@@ -25,7 +25,7 @@
       (setf (env:compiler-macro-function client e5 'format)
             nil)
       (let ((*environment* esf))
-        (load-source-file-using-client e5-client e5 "Array/make-array-defun.lisp")
+        (load-source-file-using-client client e5 "Array/make-array-defun.lisp")
         (ensure-asdf-system-using-client client e5 '#:fast-generic-functions)
         (ensure-asdf-system-using-client client e5 '#:sicl-utilities)
         (ensure-asdf-system-using-client client e5 '#:sicl-sequence-for-sicl-boot))
