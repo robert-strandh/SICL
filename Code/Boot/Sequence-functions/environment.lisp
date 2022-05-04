@@ -30,16 +30,21 @@
 
 (defvar *environment*)
 
-(defmethod env:fdefinition :around
-    ((client sicl-boot:client) (environment sicl-boot-phase-5:environment) function-name)
+(defmethod env:fdefinition
+    ((client client)
+     (environment sicl-boot-phase-5:environment)
+      function-name)
   (if (member function-name *sequence-function-names* :test #'equal)
       ;; Then query the environment dedicated to this phase instead.
       (env:fdefinition client *environment* function-name)
       ;; Else do the default thing.
       (call-next-method)))
 
-(defmethod (setf env:fdefinition) :around
-    (new-function (client sicl-boot:client) (environment sicl-boot-phase-5:environment) function-name)
+(defmethod (setf env:fdefinition)
+    (new-function
+     (client client)
+     (environment sicl-boot-phase-5:environment)
+     function-name)
   (if (member function-name *sequence-function-names* :test #'equal)
       ;; Then define it in the environment dedicated to this phase
       ;; instead.
