@@ -23,7 +23,7 @@
               (trucler:global-environment client env)))))
 
 (defun fill-environment (environment)
-  (let ((client (env:client environment)))
+  (symbol-macrolet ((client sicl-client:*client*))
     (define-defmacro client environment)
     (define-backquote-macros client environment)
     (import-from-host environment)
