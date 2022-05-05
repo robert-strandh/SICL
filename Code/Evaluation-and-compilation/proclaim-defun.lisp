@@ -4,21 +4,21 @@
 ;;;
 ;;; Function PROCLAIM.
 
-(let* ((environment (env:global-environment))
-       (client (env:client environment))
-       (proclamation-function
-         (fdefinition 'env:proclamation))
-       (setf-proclamation-function
-         (fdefinition '(setf env:proclamation))))
+(symbol-macrolet ((client sicl-client:*client*))
+  (let* ((environment (env:global-environment))
+         (proclamation-function
+           (fdefinition 'env:proclamation))
+         (setf-proclamation-function
+           (fdefinition '(setf env:proclamation))))
 
-  (defun declaration-proclamations ()
-    (funcall proclamation-function client environment 'declaration))
+    (defun declaration-proclamations ()
+      (funcall proclamation-function client environment 'declaration))
 
-  ;; FIXME: check that NAMES is a proper list.
-  (defun proclaim-declarations (names)
-    (funcall setf-proclamation-function
-             (append names (declaration-proclamations))
-             client environment 'declaration)))
+    ;; FIXME: check that NAMES is a proper list.
+    (defun proclaim-declarations (names)
+      (funcall setf-proclamation-function
+               (append names (declaration-proclamations))
+               client environment 'declaration))))
 
 (defun proclaim (declaration-specifier)
   (case (car declaration-specifier)
