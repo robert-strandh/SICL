@@ -83,6 +83,10 @@
         (setf (env:fdefinition (env:client e5) e5 'schar) nil)
         (load-source-file "String/char-schar.lisp" e5)
         (ensure-asdf-system '#:sicl-format e5)
+        ;; Disable the compiler macro for FORMAT.  It introduced
+        ;; compile-time dependencies that are hard to manage at
+        ;; bootstrapping time.
+        (setf (env:compiler-macro-function client e5 'format) nil)
         (load-source-file "Boot/Phase-6/print-object-methods.lisp" e5)
         (ensure-asdf-system '#:sicl-describe e5)
         (load-source-file "Types/coerce.lisp" e5)))))
