@@ -11,6 +11,13 @@
   (loop for path in (source-file-path-names asdf-system)
         do (load-source-file-common client environment path)))
 
+(defun check-dependencies (asdf-system environment)
+  (loop for dependency in (asdf/system:system-depends-on asdf-system)
+        for system = (asdf:find-system dependency)
+        unless (member system (loaded-asdf-systems environment))
+          do (warn "System ~s depends on system ~s which is not loaded."
+                   asdf-system system)))
+
 ;;; Ensure that ASDF-SYSTEM is loaded into ENVIRONMENT.
 ;;; LOAD-ASDF-SYSTEM-FILES is called for each Lisp file of
 ;;; ASDF-SYSTEM, in the order determined by dependencies.  ASDF-SYSTEM
@@ -19,6 +26,7 @@
 (defun ensure-asdf-system (asdf-system environment)
   (let ((asdf-system (asdf:find-system asdf-system))
         (client (env:client environment)))
+    (check-dependencies asdf-system environment)
     (format *trace-output*
             "Loading ASDF system ~s into environment ~a~%"
             (asdf/system:primary-system-name asdf-system)
@@ -32,6 +40,7 @@
 
 (defun ensure-asdf-system-using-client (client environment asdf-system)
   (let ((asdf-system (asdf:find-system asdf-system)))
+    (check-dependencies asdf-system environment)
     (format *trace-output*
             "Loading ASDF system ~s into environment ~a~%"
             (asdf/system:primary-system-name asdf-system)
