@@ -7,6 +7,8 @@
                #:sicl-boot-phase-3
                #:sicl-boot-phase-4
                #:sicl-boot-phase-5
+               #:sicl-boot-alexandria
+               #:sicl-boot-sequence-functions
                #:sicl-boot-phase-6
                #:sicl-boot-phase-7
                #:sicl-boot-condition-system)
