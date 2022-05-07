@@ -17,7 +17,10 @@
     ;; The function FOURTH could probably be imported more or less
     ;; permanently into E5, but we unload it after bootstrapping
     ;; Alexandria.
-    fourth))
+    fourth
+    ;; The function STRING is used at compile time by some macros like
+    ;; WITH-GENSYMS and ONCE-ONLY.
+    string))
 
 (defun boot (boot)
   (with-accessors ((e5 sicl-boot:e5))
