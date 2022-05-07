@@ -11,12 +11,11 @@
   (loop for path in (source-file-path-names asdf-system)
         do (load-source-file-common client environment path)))
 
-;;; Ensure that ASDF-SYSTEM is loaded into ENVIRONMENT.  If
-;;; ASDF-SYSTEM is already loaded into ENVIRONMENT, this function does
-;;; nothing.  If not, then LOAD-ASDF-SYSTEM-FILES is called for each
-;;; Lisp file of ASDF-SYSTEM, in the order determined by dependencies.
-;;; ASDF-SYSTEM is either an instance of ASDF/SYSTEM:SYSTEM or a name
-;;; of an ASDF system.
+;;; Ensure that ASDF-SYSTEM is loaded into ENVIRONMENT.
+;;; LOAD-ASDF-SYSTEM-FILES is called for each Lisp file of
+;;; ASDF-SYSTEM, in the order determined by dependencies.  ASDF-SYSTEM
+;;; is either an instance of ASDF/SYSTEM:SYSTEM or a name of an ASDF
+;;; system.
 (defun ensure-asdf-system (asdf-system environment)
   (let ((asdf-system (asdf:find-system asdf-system))
         (client (env:client environment)))
