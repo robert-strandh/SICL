@@ -11,6 +11,9 @@
    ;; environment.  The value of an element is a universal time when
    ;; the file was loaded.
    (%loaded-files :initform '() :accessor loaded-files)
+   ;; This slot holds a list of ASDF systems that have been loaded
+   ;; into the environment.
+   (%loaded-asdf-systems :initform '() :accessor loaded-asdf-systems)
    ;; This slot holds a list of override entries.  Such an entry is a
    ;; CONS cell, where the CAR of the CONS cell is a function name,
    ;; and the CDR of the CONS cell is a FUNCTION CELL (which is
