@@ -202,24 +202,12 @@
       (ld "Conditions/handler-case-defmacro.lisp")
       (ld "Conditions/ignore-errors-defmacro.lisp")
       (import-functions-from-host
-       '(sicl-conditions:restart-bind-transform-binding)
-       environment)
-      (ld "Conditions/restart-bind-defmacro.lisp")
-      (import-functions-from-host
-       '(sicl-conditions:restart-case-make-restart-binding
-         sicl-conditions:restart-case-make-restart-case
-         sicl-conditions:restart-case-signaling-form-p
-         sicl-conditions:restart-case-expand-signaling-form
-         sicl-conditions:restart-case-parse-case
-         symbol-name
+       '(symbol-name
          cleavir-code-utilities:extract-named-group
          cleavir-code-utilities:extract-required
          cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
          cleavir-code-utilities:parse-deftype)
        environment)
-      (ld "Conditions/restart-case-defmacro.lisp")
-      (ld "Conditions/with-simple-restart-defmacro.lisp")
-      (ld "Conditions/with-condition-restarts-defmacro.lisp")
       (import-functions-from-host '(sicl-clos:with-slots-expander) environment)
       (ld "CLOS/with-slots-defmacro.lisp")
       (import-functions-from-host '(sicl-clos:defclass-expander) environment)
