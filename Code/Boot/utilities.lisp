@@ -213,6 +213,8 @@
 (defun bt ()
   (sicl-boot-backtrace-inspector:inspect sicl-hir-evaluator:*call-stack*))
 
+(defvar *client*)
+
 (defun set-up-client ()
-  (defparameter *client* (env:client *e5*))
+  (setf *client* (env:client *e5*))
   (setf sicl-client:*client* *client*))
