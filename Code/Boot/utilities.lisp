@@ -88,7 +88,8 @@
     (ast-eval client environment ast)))
 
 (defun read-cst (input-stream eof-marker)
-  (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
+  (let ((eclector.base:*client* sicl-client:*client*))
+    (eclector.concrete-syntax-tree:read input-stream nil eof-marker)))
 
 (defun load-source-file-common (client environment absolute-pathname)
   (if (null (assoc absolute-pathname (loaded-files environment)
