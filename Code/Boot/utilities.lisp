@@ -101,22 +101,23 @@
                      (name environment)))
       (warn "Loading file ~s a second time." absolute-pathname))
   (let ((unknown-functions '()))
-    (handler-bind
-        ((unknown-function
-           (lambda (condition)
-             (push condition unknown-functions)
-             (muffle-warning condition))))
-      (let ((*package* *package*))
-        (sicl-source-tracking:with-source-tracking-stream-from-file
-            (input-stream absolute-pathname)
-          (loop with eof-marker = input-stream
-                for cst = (read-cst input-stream eof-marker)
-                until (eq cst eof-marker)
-                do (cst-eval client cst environment)))))
-    (loop for condition in unknown-functions
-          do (when (null (env:fdefinition
-                          (env:client environment) environment (name condition)))
-               (warn condition)))))
+    (unwind-protect
+         (handler-bind
+             ((unknown-function
+                (lambda (condition)
+                  (push condition unknown-functions)
+                  (muffle-warning condition))))
+           (let ((*package* *package*))
+             (sicl-source-tracking:with-source-tracking-stream-from-file
+                 (input-stream absolute-pathname)
+               (loop with eof-marker = input-stream
+                     for cst = (read-cst input-stream eof-marker)
+                     until (eq cst eof-marker)
+                     do (cst-eval client cst environment)))))
+      (loop for condition in unknown-functions
+            do (when (null (env:fdefinition
+                            (env:client environment) environment (name condition)))
+                 (warn condition))))))
 
 (defun load-source-file-using-client (client environment relative-pathname)
   (let ((absolute-pathname
