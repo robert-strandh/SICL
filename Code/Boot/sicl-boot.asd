@@ -10,6 +10,7 @@
                #:sicl-boot-alexandria
                #:sicl-boot-sequence-functions
                #:sicl-boot-stealth-mixin
+               #:sicl-boot-trucler
                #:sicl-boot-environment
                #:sicl-boot-phase-6
                #:sicl-boot-phase-7
