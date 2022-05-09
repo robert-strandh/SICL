@@ -12,7 +12,7 @@
                 (values
                  (class-name (class-of function))
                  (class-name
-                  (sicl-host-mop:generic-function-method-class function))))))))
+                  (closer-mop:generic-function-method-class function))))))))
 
 (defun define-ensure-method (e1 e2 e3)
   (setf (env:special-variable (env:client e3) e3 'lambda-list-keywords t)
@@ -46,7 +46,7 @@
     (setf (env:find-class client e2 't) (find-class 't))
     (setf (env:find-class client e2 'null) (find-class 'null))
     (setf (env:fdefinition client e2 'sicl-clos:method-function)
-          #'sicl-host-mop:method-function))
+          #'closer-mop:method-function))
   (load-source-file "CLOS/make-method-lambda-support.lisp" e3)
   (setf (env:macro-function (env:client e3) e3 'sicl-clos:make-method-lambda)
         (lambda (form environment)

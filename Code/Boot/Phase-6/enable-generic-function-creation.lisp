@@ -7,7 +7,7 @@
        ;; FIXME: this one should also assign the slots in the
        ;; function object.
        (sicl-clos:set-funcallable-instance-function
-        (list #'sicl-host-mop:set-funcallable-instance-function)))
+        (list #'closer-mop:set-funcallable-instance-function)))
     (load-source-file "CLOS/invalidate-discriminating-function.lisp" e5))
   (load-source-file "CLOS/generic-function-initialization-support.lisp" e5)
   (load-source-file "CLOS/generic-function-initialization-defmethods.lisp" e5)

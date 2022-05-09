@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-host-mop
+(defpackage #:closer-mop
   (:use)
   (:import-from
    #+sbcl #:sb-mop

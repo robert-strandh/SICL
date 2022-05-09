@@ -3,7 +3,7 @@
 (defun wrap-function (function make-instance)
   (let ((wrapper (funcall make-instance 'sicl-clos:simple-function)))
     (setf (sicl-boot:original-function wrapper) function)
-    (sicl-host-mop:set-funcallable-instance-function wrapper function)
+    (closer-mop:set-funcallable-instance-function wrapper function)
     wrapper))
 
 (defun convert-functions (e5)

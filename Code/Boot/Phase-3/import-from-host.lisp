@@ -66,7 +66,7 @@
      no-applicable-method
      sicl-method-combination:define-method-combination-expander
      shared-initialize initialize-instance reinitialize-instance
-     sicl-host-mop:method-function
+     closer-mop:method-function
      sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
      (setf env:macro-function)
      coerce)

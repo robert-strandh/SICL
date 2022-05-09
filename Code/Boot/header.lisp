@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-boot)
 
-(defclass header (sicl-host-mop:funcallable-standard-object)
+(defclass header (closer-mop:funcallable-standard-object)
   ((%class :initarg :class)
    (%rack :initarg :rack)
    ;; When a header instance is used to represent a function that is
@@ -22,7 +22,7 @@
     :initform nil
     :initarg :original-function
     :accessor original-function))
-  (:metaclass sicl-host-mop:funcallable-standard-class))
+  (:metaclass closer-mop:funcallable-standard-class))
 
 (defmethod sicl-ast-evaluator:translate-ast
     (client (ast cleavir-ast:nook-write-ast) lexical-environment)

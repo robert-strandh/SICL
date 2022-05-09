@@ -7,7 +7,7 @@
    (env:client e3) e3
    (lambda (name class)
      (unless (eq name 'symbol)
-       (sicl-host-mop:finalize-inheritance class))))
+       (closer-mop:finalize-inheritance class))))
   (format *trace-output* "done!~%"))
 
 (defun prepare-this-phase (e2 e3 e4)
