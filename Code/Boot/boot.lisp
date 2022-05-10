@@ -19,4 +19,8 @@
     (sicl-boot-phase-4:boot boot)
     (sicl-boot-phase-5:boot boot)
     (sicl-boot-phase-6:boot boot)
+    (sicl-boot-stealth-mixin:boot boot)
+    (sicl-boot-alexandria:boot boot)
+    (sicl-boot-trucler:boot boot)
+    (sicl-boot-environment:boot boot)
     boot))
