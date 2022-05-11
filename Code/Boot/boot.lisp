@@ -23,4 +23,5 @@
     (sicl-boot-alexandria:boot boot)
     (sicl-boot-trucler:boot boot)
     (sicl-boot-environment:boot boot)
+    (sicl-boot-client:boot boot)
     boot))
