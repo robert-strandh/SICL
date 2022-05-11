@@ -12,6 +12,7 @@
                #:sicl-boot-stealth-mixin
                #:sicl-boot-trucler
                #:sicl-boot-environment
+               #:sicl-boot-client
                #:sicl-boot-phase-6
                #:sicl-boot-phase-7
                #:sicl-boot-condition-system)
