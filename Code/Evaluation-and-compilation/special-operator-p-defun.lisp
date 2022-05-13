@@ -1,8 +1,6 @@
 (cl:in-package #:sicl-evaluation-and-compilation)
 
-(let* ((global-environment (env:global-environment environment))
-       (special-operator-p-function
-         (fdefinition 'env:special-operator-p)))
-  (defun special-operator-p (symbol)
-    (funcall special-operator-p-function
-             sicl-client:*client* client global-environment symbol)))
+(symbol-macrolet ((c sicl-client:*client*))
+  (let ((e env:*environment*))
+    (defun special-operator-p (symbol)
+      (env:special-operator-p c e symbol))))
