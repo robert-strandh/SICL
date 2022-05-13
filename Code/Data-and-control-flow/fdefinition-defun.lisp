@@ -1,8 +1,13 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(let* ((environment (env:global-environment))
-       (fdefinition (fdefinition 'env:fdefinition)))
-  (defun fdefinition (function-name)
-    ;; We call IDENTITY because we want only the first value returned
-    ;; by the environment function.
-    (identity (funcall fdefinition sicl-client:*client* environment function-name))))
+(symbol-macrolet ((c sicl-client:*client*))
+  (let ((e env:*environment*))
+    (defun fdefinition (function-name)
+      (cond ((env:special-operator c e name)
+             :special-operator)
+            ((not (null (env:macro-function c e name)))
+             :macro)
+            (t (let ((function (env:fdefinition c e name)))
+                 (if (null function)
+                     (error 'undefined-function :name function-name)
+                     function)))))))
