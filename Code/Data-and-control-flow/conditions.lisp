@@ -15,3 +15,7 @@
 (define-condition too-few-arguments-to-shiftf
     (program-error acclimation:condition)
   ((%form :initarg :form :reader form)))
+
+(define-condition attempt-to-set-the-fdefinition-of-a-special-operator
+    (error acclimation:condition)
+  ((name :initarg :name :reader name)))
