@@ -1,8 +1,11 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(let* ((environment (env:global-environment))
-       (setf-fdefinition (fdefinition '(setf env:fdefinition))))
-  (defun (setf fdefinition) (new-definition function-name)
-    (funcall setf-fdefinition new-definition
-             sicl-client:*client* environment function-name)
-    new-definition))
+(symbol-macrolet ((c sicl-client:*client*))
+  (let ((e env:*environment*))
+    (defun (setf fdefinition) (new-definition function-name)
+      (if (env:special-operator c e function-name)
+          (error 'attempt-to-set-the-fdefinition-of-a-special-operator
+                 :name function-name)
+          (progn (setf (env:macro-function c e function-name) nil)
+                 (setf (env:fdefinition c e function-name) new-definition)
+                 new-definition)))))
