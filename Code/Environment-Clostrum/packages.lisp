@@ -17,6 +17,7 @@
                 #:function-cell
                 #:variable-cell)
   (:export #:global-environment
+           #:*environment*
            #:client
            #:method-combination-template
            #:base-run-time-environment
