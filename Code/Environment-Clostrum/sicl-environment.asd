@@ -8,6 +8,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "environment-variable")
    (:file "function-entry")
    (:file "generic-functions")
    (:file "environment")
