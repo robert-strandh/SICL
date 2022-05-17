@@ -6,7 +6,9 @@
     (let* ((client sicl-client:*client*)
            (make-instance (env:fdefinition client e5 'make-instance))
            (target-environment (funcall make-instance 'env:run-time-environment))
+           (target-fdefinition (env:fdefinition client e5 'env:fdefinition))
            (client (make-instance 'client
-                     :target-environment target-environment))
+                     :target-environment target-environment
+                     :target-fdefinition target-fdefinition))
            (sicl-client:*client* client))
       client)))
