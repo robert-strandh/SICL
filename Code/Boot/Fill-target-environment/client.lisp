@@ -13,3 +13,8 @@
    (%target-fdefinition
     :initarg :target-fdefinition
     :reader target-fdefinition)))
+
+(defmethod env:fdefinition
+    ((client client) (environment sicl-boot:header) function-name)
+  (funcall (target-fdefinition client)
+           client environment function-name))
