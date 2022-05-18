@@ -18,3 +18,11 @@
     ((client client) (environment sicl-boot:header) function-name)
   (funcall (target-fdefinition client)
            client environment function-name))
+
+(defmethod (setf env:fdefinition)
+    (new-definition (client client) (environment sicl-boot:header) function-name)
+  (let ((target-setf-fdefinition
+          (funcall (target-fdefinition client)
+                   client environment '(setf fdefinition))))
+    (funcall target-setf-fdefinition
+             new-definition client environment function-name)))
