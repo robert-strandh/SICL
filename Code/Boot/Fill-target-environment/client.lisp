@@ -26,3 +26,11 @@
                    client environment '(setf fdefinition))))
     (funcall target-setf-fdefinition
              new-definition client environment function-name)))
+
+(defmethod env:find-class
+    ((client client) (environment sicl-boot:header) class-name)
+  (let ((target-find-class
+          (funcall (target-fdefinition client)
+                   client environment 'find-class)))
+    (funcall target-find-class
+             client environment class-name)))
