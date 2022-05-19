@@ -50,3 +50,11 @@
                    client environment 'constant-variable)))
     (funcall target-constant-variable
              client environment symbol)))
+
+(defmethod (setf env:constant-variable)
+    (new-class (client client) (environment sicl-boot:header) symbol)
+  (let ((target-setf-constant-variable
+          (funcall (target-fdefinition client)
+                   client environment '(setf constant-variable))))
+    (funcall target-setf-constant-variable
+             new-class client environment symbol)))
