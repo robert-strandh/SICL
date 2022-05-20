@@ -74,3 +74,11 @@
                    client environment '(setf special-variable))))
     (funcall target-setf-special-variable
              new-class client environment symbol init-p)))
+
+(defmethod (setf env:macro-function)
+    (new-function (client client) (environment sicl-boot:header) symbol)
+  (let ((target-setf-macro-function
+          (funcall (target-fdefinition client)
+                   client environment '(setf macro-function))))
+    (funcall target-setf-macro-function
+             new-function client environment symbol)))
