@@ -71,6 +71,8 @@
            (setf (env:fdefinition client environment name)
                  function)))
     (symbol-macrolet ((c sicl-client:*client*))
+      (setf (env:special-variable client environment 'env:*environment* t)
+            environment)
       (def 'fboundp
             (lambda (name)
               (or (not (null (env:fdefinition c environment name)))
