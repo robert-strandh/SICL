@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-symbol
   (:use #:common-lisp)
+  (:local-nicknames (#:env #:sicl-environment))
   (:export #:symbol
            #:symbolp
            #:keyword
