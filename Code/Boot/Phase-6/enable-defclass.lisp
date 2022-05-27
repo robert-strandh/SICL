@@ -12,7 +12,6 @@
     (load-source-file "CLOS/class-initialization-support.lisp" e5))
   (load-source-file "CLOS/class-initialization-defmethods.lisp" e5)
   (load-source-file "CLOS/reinitialize-instance-defgenerics.lisp" e5)
-  (load-source-file "CLOS/reinitialize-instance-support.lisp" e5)
   (load-source-file "CLOS/reinitialize-instance-defmethods.lisp" e5))
 
 (defun enable-defclass (e5)

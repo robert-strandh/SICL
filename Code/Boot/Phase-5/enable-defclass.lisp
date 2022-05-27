@@ -69,8 +69,7 @@
       (e4
        (sicl-clos:default-superclasses
         (env:function-cell (env:client e3) e3 'sicl-clos:default-superclasses)))
-    (load-source-file "CLOS/reinitialize-instance-support.lisp" e4))
-   (load-source-file "CLOS/reinitialize-instance-defmethods.lisp" e4))
+    (load-source-file "CLOS/reinitialize-instance-defmethods.lisp" e4)))
 
 (defun define-ensure-class-using-class (e3 e4 e5)
   (with-intercepted-function-cells
