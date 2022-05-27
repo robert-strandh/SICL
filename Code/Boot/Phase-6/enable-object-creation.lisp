@@ -5,7 +5,6 @@
   (load-source-file "CLOS/shared-initialize-support.lisp" e5)
   (load-source-file "CLOS/shared-initialize-defgenerics.lisp" e5)
   (load-source-file "CLOS/shared-initialize-defmethods.lisp" e5)
-  (load-source-file "CLOS/initialize-instance-support.lisp" e5)
   (load-source-file "CLOS/initialize-instance-defgenerics.lisp" e5)
   (load-source-file "CLOS/initialize-instance-defmethods.lisp" e5))
 

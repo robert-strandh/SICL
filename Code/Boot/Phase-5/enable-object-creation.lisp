@@ -32,7 +32,6 @@
     (load-source-file "CLOS/shared-initialize-support.lisp" e4))
   (load-source-file "CLOS/shared-initialize-defgenerics.lisp" e4)
   (load-source-file "CLOS/shared-initialize-defmethods.lisp" e4)
-  (load-source-file "CLOS/initialize-instance-support.lisp" e4)
   (load-source-file "CLOS/initialize-instance-defgenerics.lisp" e4)
   (load-source-file "CLOS/initialize-instance-defmethods.lisp" e4))
 
