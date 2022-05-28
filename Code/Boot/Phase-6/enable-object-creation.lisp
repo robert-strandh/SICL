@@ -26,7 +26,6 @@
   (load-source-file "CLOS/class-finalization-defmethods.lisp" e5))
 
 (defun enable-make-instance (e5)
-  (load-source-file "CLOS/make-instance-support.lisp" e5)
   (load-source-file "CLOS/make-instance-defgenerics.lisp" e5)
   (load-source-file "CLOS/make-instance-defmethods.lisp" e5))
 
