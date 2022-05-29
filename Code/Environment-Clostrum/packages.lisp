@@ -13,9 +13,6 @@
                                    clostrum:class-description
                                    clostrum:variable-description))
              collect (symbol-name symbol)))
-  (:import-from #:clostrum-basic
-                #:function-cell
-                #:variable-cell)
   (:export #:global-environment
            #:*environment*
            #:client
