@@ -24,6 +24,15 @@
     :accessor original-function))
   (:metaclass closer-mop:funcallable-standard-class))
 
+;;; We define some subclasses of HEADER, mainly for debugging
+;;; perposes.  We can then program Clouseau with methods specialized
+;;; to these subclasses.  We use CHANGE-CLASS in later phases of
+;;; bootstrapping to turn instances of HEADER into instances of
+;;; subclasses of HEADER once we have a cyclic object graph in
+;;; environment E5.
+
+(defclass generic-function-header (header) ())
+
 (defmethod sicl-ast-evaluator:translate-ast
     (client (ast cleavir-ast:nook-write-ast) lexical-environment)
   `(setf (aref (slot-value
