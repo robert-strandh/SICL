@@ -21,5 +21,6 @@
            #:with-intercepted-function-cells
            #:overridden-function-cells
            #:header
+           #:generic-function-header
            #:original-function
            #:bt))
