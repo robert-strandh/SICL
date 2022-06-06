@@ -31,7 +31,9 @@
 ;;; subclasses of HEADER once we have a cyclic object graph in
 ;;; environment E5.
 
-(defclass generic-function-header (header) ())
+(defclass generic-function-header (header)
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 (defmethod sicl-ast-evaluator:translate-ast
     (client (ast cleavir-ast:nook-write-ast) lexical-environment)
