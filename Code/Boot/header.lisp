@@ -35,7 +35,7 @@
   ()
   (:metaclass closer-mop:funcallable-standard-class))
 
-(defclass generic-function-header (header)
+(defclass generic-function-header (function-header)
   ()
   (:metaclass closer-mop:funcallable-standard-class))
 
