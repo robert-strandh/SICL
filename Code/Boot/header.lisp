@@ -31,6 +31,10 @@
 ;;; subclasses of HEADER once we have a cyclic object graph in
 ;;; environment E5.
 
+(defclass function-header (header)
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
+
 (defclass generic-function-header (header)
   ()
   (:metaclass closer-mop:funcallable-standard-class))
