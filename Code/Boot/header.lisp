@@ -35,13 +35,8 @@
   `(defclass ,name ,superclasses ()
      (:metaclass closer-mop:funcallable-standard-class)))
 
-(defclass function-header (header)
-  ()
-  (:metaclass closer-mop:funcallable-standard-class))
-
-(defclass generic-function-header (function-header)
-  ()
-  (:metaclass closer-mop:funcallable-standard-class))
+(define-header-class function-header (header))
+(define-header-class generic-function-header (function-header))
 
 (defmethod sicl-ast-evaluator:translate-ast
     (client (ast cleavir-ast:nook-write-ast) lexical-environment)
