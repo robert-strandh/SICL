@@ -36,6 +36,7 @@
      (:metaclass closer-mop:funcallable-standard-class)))
 
 (define-header-class function-header (header))
+(define-header-class simple-function-header (function-header))
 (define-header-class generic-function-header (function-header))
 
 (defmethod sicl-ast-evaluator:translate-ast
