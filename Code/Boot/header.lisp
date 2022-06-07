@@ -31,6 +31,10 @@
 ;;; subclasses of HEADER once we have a cyclic object graph in
 ;;; environment E5.
 
+(defmacro define-header-class (name superclasses)
+  `(defclass ,name ,superclasses ()
+     (:metaclass closer-mop:funcallable-standard-class)))
+
 (defclass function-header (header)
   ()
   (:metaclass closer-mop:funcallable-standard-class))
