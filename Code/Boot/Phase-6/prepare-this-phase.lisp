@@ -73,4 +73,4 @@
   (load-source-file "CLOS/satiation.lisp" e5)
   (satiate-generic-functions e5 e5)
   (setf (env:special-variable (env:client e5) e5 'sicl-clos::*class-unique-number* t)
-        (nth-value 1 (env:special-variable (env:client e4) e4 'sicl-clos::*class-unique-number*))))
+        (nth-value 1 (env:variable-value (env:client e4) e4 'sicl-clos::*class-unique-number*))))
