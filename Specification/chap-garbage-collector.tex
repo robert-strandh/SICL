@@ -11,7 +11,7 @@ We use a per-thread nursery combined with a global allocator for older
 objects.
 
 In \refChap{chap-data-representation} we describe the data
-representation where every heap allocated object is either a two-word
+representation where every heap-allocated object is either a two-word
 \texttt{cons} cell or a \emph{standard object} represented as a
 two-word \emph{header} where the first of the two words is a tagged
 pointer to the class object, and the second of the two words is a
@@ -41,7 +41,7 @@ We define a global heap divided into two parts called the \emph{dyad
 consisting of two-word blocks.  This is where dyads are allocated.
 The rack part of the global heap is organized as the space managed by
 an ordinary memory allocator.  Our adaptation of Doug Lea's memory
-allocator that we used for this purpose can be found in
+allocator that we will used for this purpose can be found in
 \refApp{app-memory-allocator}.
 
 Since all dyads consist of two words, we can use a mark-and-sweep
@@ -55,8 +55,8 @@ Since the rack part of the global heap is managed by an ordinary
 memory allocator, the racks also do not move once allocated.  This
 fixed position is advantageous for code on some architectures.  For
 example, the correspondence between source code location and values of
-the program counter does not have to be updated as a result of code
-being moved by the garbage collector.
+the program counter does not have to be updated, which would have to
+be done if code were being moved by the garbage collector.
 
 Another great advantage of racks being in a permanent position is that
 mutator threads can cache a pointer without the necessity of this
