@@ -9,4 +9,5 @@
     (let ((sicl-client:*client* (make-instance 'client)))
       (setf e*
             (funcall (env:fdefinition sicl-client:*client* e5 'make-instance)
-                     'env:run-time-environment)))))
+                     'env:run-time-environment))
+      (change-class e* 'sicl-boot:run-time-environment-header))))
