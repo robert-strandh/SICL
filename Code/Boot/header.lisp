@@ -44,6 +44,7 @@
 (define-header-class vector-header (array-header))
 (define-header-class string-header (vector-header))
 (define-header-class hash-table-header (header))
+(define-header-class run-time-environment-header (header))
 
 (defmethod sicl-ast-evaluator:translate-ast
     (client (ast cleavir-ast:nook-write-ast) lexical-environment)
