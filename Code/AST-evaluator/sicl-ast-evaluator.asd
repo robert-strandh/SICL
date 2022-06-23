@@ -12,7 +12,6 @@
                #:sicl-source-tracking
                #:sicl-data-and-control-flow-support
                #:sicl-evaluation-and-compilation-support
-               #:sicl-arithmetic
                #:sicl-loop-support
                #:sicl-cons-support
                #:sicl-iteration-support
