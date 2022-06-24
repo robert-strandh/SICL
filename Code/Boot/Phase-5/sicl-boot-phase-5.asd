@@ -3,7 +3,7 @@
 (defsystem #:sicl-boot-phase-5
   :depends-on (#:sicl-boot-base
                #:sicl-clos-boot-support
-               #:sicl-arithmetic)
+               #:sicl-arithmetic-base)
   :serial t
   :components
   ((:file "packages")
