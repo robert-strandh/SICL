@@ -26,4 +26,7 @@
    (:file "multiply-defun")
    (:file "binary-divide-defgeneric")
    (:file "binary-divide-defmethods")
-   (:file "divide-by-defun")))
+   (:file "divide-by-defun")
+   (:file "binary-less-defgeneric")
+   (:file "binary-less-defmethods")
+   (:file "less-defun")))
