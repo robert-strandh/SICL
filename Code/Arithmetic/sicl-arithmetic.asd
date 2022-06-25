@@ -17,5 +17,7 @@
    (:file "complex-defclass")
    (:file "binary-add-defgeneric")
    (:file "binary-add-defmethods")
+   (:file "plus-defun")
    (:file "binary-subtract-defgeneric")
-   (:file "binary-subtract-defmethods")))
+   (:file "binary-subtract-defmethods")
+   (:file "minus-defun")))
