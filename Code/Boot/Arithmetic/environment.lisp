@@ -21,7 +21,9 @@
     sicl-arithmetic:binary-subtract -
     sicl-arithmetic:binary-multiply *
     sicl-arithmetic:binary-divide /
-    sicl-arithmetic:binary-less <))
+    sicl-arithmetic:binary-equal =
+    sicl-arithmetic:binary-less <
+    sicl-arithmetic:binary-not-greater <= > >=))
 
 (defvar *environment*)
 
