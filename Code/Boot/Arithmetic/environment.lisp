@@ -20,7 +20,8 @@
     sicl-arithmetic:binary-add +
     sicl-arithmetic:binary-subtract -
     sicl-arithmetic:binary-multiply *
-    sicl-arithmetic:binary-divide /))
+    sicl-arithmetic:binary-divide /
+    sicl-arithmetic:binary-less <))
 
 (defvar *environment*)
 
