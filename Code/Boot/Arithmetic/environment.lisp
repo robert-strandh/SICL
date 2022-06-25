@@ -17,8 +17,8 @@
     numberp
     floatp
     expt
-    sicl-arithmetic:binary-add
-    sicl-arithmetic:binary-subtract))
+    sicl-arithmetic:binary-add +
+    sicl-arithmetic:binary-subtract -))
 
 (defvar *environment*)
 
