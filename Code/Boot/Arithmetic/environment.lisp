@@ -31,7 +31,11 @@
     sicl-arithmetic:binary-logxor logxor
     logandc1 logandc2
     logorc1 logorc2
-    lognand lognor))
+    lognand lognor
+    sicl-arithmetic:generic-ceiling ceiling
+    sicl-arithmetic:generic-floor floor
+    sicl-arithmetic:generic-round round
+    sicl-arithmetic:generic-truncate truncate))
 
 (defvar *environment*)
 
