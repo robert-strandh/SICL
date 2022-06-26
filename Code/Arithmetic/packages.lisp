@@ -14,6 +14,9 @@
    #:binary-equal
    #:binary-gcd
    #:binary-lcm
+   #:binary-logand
+   #:binary-logior
+   #:binary-logxor
    #:sign-and-limb-count
    #:single-float-p
    #:double-float-p
