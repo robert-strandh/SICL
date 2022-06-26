@@ -28,7 +28,10 @@
     sicl-arithmetic:binary-lcm lcm
     sicl-arithmetic:binary-logand logand
     sicl-arithmetic:binary-logior logior
-    sicl-arithmetic:binary-logxor logxor))
+    sicl-arithmetic:binary-logxor logxor
+    logandc1 logandc2
+    logorc1 logorc2
+    lognand lognor))
 
 (defvar *environment*)
 
