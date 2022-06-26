@@ -17,6 +17,10 @@
    #:binary-logand
    #:binary-logior
    #:binary-logxor
+   #:generic-ceiling
+   #:generic-floor
+   #:generic-round
+   #:generic-truncate
    #:sign-and-limb-count
    #:single-float-p
    #:double-float-p
