@@ -23,7 +23,9 @@
     sicl-arithmetic:binary-divide /
     sicl-arithmetic:binary-equal =
     sicl-arithmetic:binary-less <
-    sicl-arithmetic:binary-not-greater <= > >=))
+    sicl-arithmetic:binary-not-greater <= > >=
+    sicl-arithmetic:binary-gcd gcd
+    sicl-arithmetic:binary-lcm lcm))
 
 (defvar *environment*)
 
