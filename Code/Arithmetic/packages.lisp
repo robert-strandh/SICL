@@ -12,6 +12,8 @@
    #:binary-greater
    #:binary-not-less
    #:binary-equal
+   #:binary-gcd
+   #:binary-lcm
    #:sign-and-limb-count
    #:single-float-p
    #:double-float-p
