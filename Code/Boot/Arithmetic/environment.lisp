@@ -25,7 +25,10 @@
     sicl-arithmetic:binary-less <
     sicl-arithmetic:binary-not-greater <= > >=
     sicl-arithmetic:binary-gcd gcd
-    sicl-arithmetic:binary-lcm lcm))
+    sicl-arithmetic:binary-lcm lcm
+    sicl-arithmetic:binary-logand logand
+    sicl-arithmetic:binary-logior logior
+    sicl-arithmetic:binary-logxor logxor))
 
 (defvar *environment*)
 
