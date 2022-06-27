@@ -48,3 +48,15 @@
           do (setf (aref result i)
                    (cos angle)))
     result))
+
+;;; Compute an approximation of (SIN ANGLE) for small values of ANGLE.
+;;; By small, we mean less than (/ *RADIAN-FRACTIONS-COUNT*).  For
+;;; now, we do the straightforward thing of using the first few terms
+;;; in the Taylor series.  Later, figure out a better polynomial,
+;;; perhaps with a lower degree than we use here.
+(defun small-sin (angle)
+  (assert (< angle (/ *radian-fractions-count*)))
+  (let* ((x2 (* angle angle))
+         (t1 (- (/ 6d0) (/ x2 120d0)))
+         (t2 (- 1d0 (* x2 t1))))
+    (* angle t2)))
