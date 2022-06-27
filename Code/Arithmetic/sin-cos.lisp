@@ -38,3 +38,13 @@
           do (setf (aref result i)
                    (sin angle)))
     result))
+
+;;; This table contains values for (COS X) where X is a base angle
+;;; between 0 and pi/4.
+(defparameter *cos-table*
+  (let ((result (make-array *table-length* :element-type 'double-float)))
+    (loop for i from 0 below *table-length*
+          for angle = (float (/ i *radian-fractions-count*) 1d0)
+          do (setf (aref result i)
+                   (cos angle)))
+    result))
