@@ -28,3 +28,13 @@
 (defun base-angle (angle)
   (/ (float (floor (* angle *radian-fractions-count*)) 1d0)
      (float *radian-fractions-count* 1d0)))
+
+;;; This table contains values for (SIN X) where X is a base angle
+;;; between 0 and pi/4.
+(defparameter *sin-table*
+  (let ((result (make-array *table-length* :element-type 'double-float)))
+    (loop for i from 0 below *table-length*
+          for angle = (float (/ i *radian-fractions-count*) 1d0)
+          do (setf (aref result i)
+                   (sin angle)))
+    result))
