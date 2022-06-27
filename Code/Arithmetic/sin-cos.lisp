@@ -28,8 +28,8 @@
 ;;; integer.  Normally, this function would be computed by
 ;;; manipulating the bits of the floating-point representation of
 ;;; ANGLE.  The angle is assumed to be less than or equal to pi/4.
-(defun base-angle (angle)
-  (/ (float (radian-fraction-number))
+(defun base-angle (radian-fraction-number)
+  (/ (float radian-fraction-number)
      (float *radian-fractions-count* 1d0)))
 
 ;;; This table contains values for (SIN X) where X is a base angle
@@ -76,9 +76,9 @@
 ;;; identity (= (SIN (+ X Y) (+ (* (SIN X) (COS Y)) (* (COS X) (SIN Y)))))
 ;;; X will be the base angle and Y a small angle.
 (defun dsin (angle)
-  (let* ((base-angle (base-angle angle))
-         (small-angle (- angle base-angle))
-         (radian-fraction-number (radian-fraction-number angle)))
+  (let* ((radian-fraction-number (radian-fraction-number angle))
+         (base-angle (base-angle radian-fraction-number))
+         (small-angle (- angle base-angle)))
     (+ (* (aref *sin-table* radian-fraction-number)
           (small-cos small-angle))
        (* (aref *cos-table* radian-fraction-number)
