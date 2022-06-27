@@ -12,7 +12,7 @@
 
 ;;; This is the number of fractions that a radian is divided into.
 (defparameter *radian-fractions-count*
-  (ash 2 *significant-bits*))
+  (ash 1 *significant-bits*))
 
 ;;; This is the size of the table that we need in order to represent
 ;;; fractions of radians from 0 below pi/4.
