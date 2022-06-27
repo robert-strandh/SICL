@@ -55,8 +55,16 @@
 ;;; in the Taylor series.  Later, figure out a better polynomial,
 ;;; perhaps with a lower degree than we use here.
 (defun small-sin (angle)
-  (assert (< angle (/ *radian-fractions-count*)))
+  (assert (< angle (float (/ *radian-fractions-count*) 1d0)))
   (let* ((x2 (* angle angle))
          (t1 (- (/ 6d0) (/ x2 120d0)))
          (t2 (- 1d0 (* x2 t1))))
     (* angle t2)))
+
+;;; Compute an approximation of (COS ANGLE) for small values of ANGLE.
+(defun small-cos (angle)
+  (assert (< angle (float (/ *radian-fractions-count*) 1d0)))
+  (let* ((x2 (* angle angle))
+         (t1 (- (/ 24d0) (/ x2 720d0)))
+         (t2 (- (/ 2d0) (* x2 t1))))
+    (- 1d0 (* x2 t2))))
