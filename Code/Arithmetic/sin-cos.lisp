@@ -19,6 +19,9 @@
 (defparameter *table-length*
   (truncate (* *radian-fractions-count* (/ pi 4d0))))
 
+(defun radian-fraction-number (angle)
+  (floor (* angle *radian-fractions-count*)))
+
 ;;; This function computes a base angle from ANGLE.  The base angle is
 ;;; the largest value that is smaller than or equal to ANGLE and that
 ;;; can be expressed as (/ N *RADIAN-FRACTION-COUNT*) where N is an
@@ -26,7 +29,7 @@
 ;;; manipulating the bits of the floating-point representation of
 ;;; ANGLE.  The angle is assumed to be less than or equal to pi/4.
 (defun base-angle (angle)
-  (/ (float (floor (* angle *radian-fractions-count*)) 1d0)
+  (/ (float (radian-fraction-number))
      (float *radian-fractions-count* 1d0)))
 
 ;;; This table contains values for (SIN X) where X is a base angle
@@ -68,3 +71,15 @@
          (t1 (- (/ 24d0) (/ x2 720d0)))
          (t2 (- (/ 2d0) (* x2 t1))))
     (- 1d0 (* x2 t2))))
+
+;;; Compute (SIN X) where X is between 0 and pi/4.  We use the
+;;; identity (= (SIN (+ X Y) (+ (* (SIN X) (COS Y)) (* (COS X) (SIN Y)))))
+;;; X will be the base angle and Y a small angle.
+(defun dsin (angle)
+  (let* ((base-angle (base-angle angle))
+         (small-angle (- angle base-angle))
+         (radian-fraction-number (radian-fraction-number angle)))
+    (+ (* (aref *sin-table* radian-fraction-number)
+          (small-cos small-angle))
+       (* (aref *cos-table* radian-fraction-number)
+          (small-sin small-angle)))))
