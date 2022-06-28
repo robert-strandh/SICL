@@ -13,6 +13,5 @@
     (ld "CLOS/setf-documentation-defgeneric.lisp")
     (ld "CLOS/dependents-defgeneric.lisp")
     (ld "CLOS/setf-dependents-defgeneric.lisp")
-    (ld "Array/array-dimensions-defgeneric.lisp")
     (ld "Array/vector-fill-pointer-defgeneric.lisp")
     (ld "Array/setf-vector-fill-pointer-defgeneric.lisp")))
