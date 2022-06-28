@@ -77,4 +77,5 @@
    (:file "min-defun")
    (:file "plusp-defun")
    (:file "minusp-defun")
-   (:file "zerop-defun")))
+   (:file "zerop-defun")
+   (:file "convert-fixnum-to-bignum-defun")))
