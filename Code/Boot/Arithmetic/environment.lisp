@@ -35,7 +35,8 @@
     sicl-arithmetic:generic-ceiling ceiling
     sicl-arithmetic:generic-floor floor
     sicl-arithmetic:generic-round round
-    sicl-arithmetic:generic-truncate truncate))
+    sicl-arithmetic:generic-truncate truncate
+    max min))
 
 (defvar *environment*)
 
