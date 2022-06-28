@@ -74,4 +74,6 @@
    (:file "generic-truncate-defmethods")
    (:file "truncate-defun")
    (:file "max-defun")
-   (:file "min-defun")))
+   (:file "min-defun")
+   (:file "plusp-defun")
+   (:file "minusp-defun")))
