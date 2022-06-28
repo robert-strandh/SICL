@@ -29,4 +29,5 @@
    #:complex-double-float
    #:bignum
    #:positive-bignum
-   #:negative-bignum))
+   #:negative-bignum
+   #:convert-fixnum-to-bignum))
