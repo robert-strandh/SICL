@@ -37,7 +37,8 @@
     sicl-arithmetic:generic-round round
     sicl-arithmetic:generic-truncate truncate
     max min
-    plusp minusp zerop))
+    plusp minusp zerop
+    sicl-arithmetic:convert-fixnum-to-bignum))
 
 (defvar *environment*)
 
