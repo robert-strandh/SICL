@@ -16,7 +16,6 @@
    (:file "enable-defmethod")
    (:file "enable-defclass")
    (:file "prepare-this-phase")
-   (:file "create-additional-generic-functions")
    (:file "create-additional-classes")
    (:file "hir-evaluator-configuration")
    (:file "boot")))
