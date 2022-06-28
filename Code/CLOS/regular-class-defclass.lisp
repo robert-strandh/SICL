@@ -22,6 +22,14 @@
 ;;; This function sets the class prototype of the class.
 (defgeneric (setf class-prototype) (prototype class))
 
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-slots.html
+(defgeneric class-slots (class))
+
+;;; This function is used by the class finalization protocol to set
+;;; the effective slots of the class.
+(defgeneric (setf class-slots) (effective-slots class))
+
 (defclass regular-class (real-class)
   ((%direct-slots
     :initarg :direct-slots
