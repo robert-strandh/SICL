@@ -11,8 +11,6 @@
            (load-source-file path ea)))
     (ld "CLOS/documentation-defgeneric.lisp")
     (ld "CLOS/setf-documentation-defgeneric.lisp")
-    (ld "CLOS/class-slots-defgeneric.lisp")
-    (ld "CLOS/setf-class-slots-defgeneric.lisp")
     (ld "CLOS/dependents-defgeneric.lisp")
     (ld "CLOS/setf-dependents-defgeneric.lisp")
     (ld "Array/array-dimensions-defgeneric.lisp")
