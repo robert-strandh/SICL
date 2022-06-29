@@ -17,7 +17,7 @@
            #:copy-macro-functions
            #:define-environment-functions
            #:create-accessor-defgenerics
-           #:create-mop-classes
+           #:create-classes
            #:with-intercepted-function-cells
            #:overridden-function-cells
            #:header

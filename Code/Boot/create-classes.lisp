@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-boot)
 
-(defun create-mop-classes (ea)
+(defun create-classes (ea)
   (flet ((ld (pathname)
            (load-source-file pathname ea)))
     (ld "CLOS/t-defclass.lisp")

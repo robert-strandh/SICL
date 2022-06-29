@@ -24,4 +24,4 @@
       (prepare-this-phase e3 e4 e5)
       (load-source-file "Symbol/symbol-value-etc-defuns.lisp" e5)
       (sicl-boot:create-accessor-defgenerics e5)
-      (sicl-boot:create-mop-classes e5))))
+      (sicl-boot:create-classes e5))))
