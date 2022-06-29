@@ -4,7 +4,8 @@
   :depends-on (#:sicl-arithmetic-load-time)
   :serial t
   :components
-  ((:file "binary-add-defgeneric")
+  ((:file "floatp-defgeneric")
+   (:file "binary-add-defgeneric")
    (:file "binary-add-defmethods")
    (:file "plus-defun")
    (:file "binary-subtract-defgeneric")

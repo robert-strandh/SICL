@@ -12,7 +12,6 @@
    (:file "bignum-defclass")
    (:file "ratio-defclass")
    (:file "float-defclass")
-   (:file "floatp-defgeneric")
    (:file "single-float-defclass")
    (:file "double-float-defclass")
    (:file "complex-defclass")))
