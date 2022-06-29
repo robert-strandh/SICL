@@ -4,7 +4,7 @@
   :depends-on (#:sicl-arithmetic-base)
   :serial t
   :components
-  (:file "number-defclass")
+  ((:file "number-defclass")
    (:file "real-defclass")
    (:file "rational-defclass")
    (:file "integer-defclass")
@@ -15,4 +15,4 @@
    (:file "floatp-defgeneric")
    (:file "single-float-defclass")
    (:file "double-float-defclass")
-   (:file "complex-defclass"))
+   (:file "complex-defclass")))
