@@ -39,4 +39,4 @@
    (:file "utilities")
    (:file "asdf-programming")
    (:file "create-accessor-generic-functions")
-   (:file "create-mop-classes")))
+   (:file "create-classes")))
