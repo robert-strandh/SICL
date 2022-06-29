@@ -18,6 +18,6 @@
       (setf (env:compiler-macro-function client e5 'format)
             nil)
       (let ((*environment* *arithmetic-environment*))
-        (ensure-asdf-system '#:sicl-arithmetic e5)
+        (ensure-asdf-system '#:sicl-arithmetic-run-time e5)
         nil)
       environment)))
