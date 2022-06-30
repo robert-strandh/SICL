@@ -17,6 +17,7 @@
    (:file "check-type-defmacro")
    (:file "restart-defclass")
    (:file "restarts-utilities")
+   (:file "restart-clusters-defvar")
    (:file "restarts")
    (:file "handlers-utilities")
    (:file "handlers")

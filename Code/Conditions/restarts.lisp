@@ -45,8 +45,6 @@
 
 ;;; Restart functions
 
-(defvar *restart-clusters* '())
-
 (defgeneric compute-restarts (&optional condition))
 
 (defmethod compute-restarts (&optional condition)
