@@ -2,8 +2,6 @@
 
 ;;; Condition signaling
 
-(defvar *handler-clusters* '())
-
 (defun signal (datum &rest arguments)
   (let ((condition
           (coerce-to-condition datum arguments 'simple-condition 'signal)))

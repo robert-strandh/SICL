@@ -25,5 +25,6 @@
    (:file "make-condition-defmethods")
    (:file "coerce-to-condition")
    (:file "break-defun")
+   (:file "handler-clusters-defvar")
    (:file "signaling")
    (:file "assert-defmacro")))
