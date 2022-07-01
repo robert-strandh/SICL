@@ -8,8 +8,8 @@
 ;;; SICL, since SICL has first-class global environments, and those
 ;;; definitions are directly related to the environment.
 
-(defsystem :sicl-evaluation-and-compilation
-  :depends-on (:acclimation)
+(defsystem #:sicl-evaluation-and-compilation
+  :depends-on (#:acclimation)
   :serial t
   :components
   ((:file "packages")
