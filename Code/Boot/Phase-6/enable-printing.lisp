@@ -27,6 +27,7 @@
   (define-posix-write e5)
   (load-source-file "Printer/variables.lisp" e5)
   (ensure-asdf-system '#:cyclosis-intrinsic e5)
+  (load-source-file "Stream/stream-defvars.lisp" e5)
   (load-source-file "Stream/overrides.lisp" e5)
   (load-source-file "Stream/unix-byte-stream.lisp" e5)
   (load-source-file "Stream/character-to-binary-output-stream.lisp" e5)
