@@ -34,7 +34,8 @@
 
 (defmethod trucler:describe-function
     (client (environment base-run-time-environment) name)
-  (let ((macro-function (macro-function client environment name)))
+  (let ((macro-function (macro-function client environment name))
+        (type (function-type client environment name)))
     (cond ((not (null macro-function))
            (make-instance 'trucler:global-macro-description
              :name name
@@ -43,10 +44,12 @@
           ((special-operator client environment name)
            (make-instance 'trucler:special-operator-description
              :name name))
-          ((null (fdefinition client environment name))
+          ((and (null (fdefinition client environment name))
+                (null type))
            nil)
           (t
            (make-instance 'trucler:global-function-description
+             :type (if (null type) t type)
              :name name
              :compiler-macro (compiler-macro-function client environment name))))))
 
