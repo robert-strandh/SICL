@@ -73,6 +73,13 @@
     (symbol-macrolet ((c sicl-client:*client*))
       (setf (env:special-variable client environment 'env:*environment* t)
             environment)
+      (def 'proclaim
+          (lambda (declaration-specifier)
+            (case (first declaration-specifier)
+              ;; We handle only FTYPE for now.
+              (ftype (loop for name in (rest (rest declaration-specifier))
+                           do (setf (env:function-type c environment name)
+                                    (second declaration-specifier)))))))
       (def 'fboundp
             (lambda (name)
               (or (not (null (env:fdefinition c environment name)))
