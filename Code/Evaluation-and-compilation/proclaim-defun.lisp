@@ -21,8 +21,8 @@
                client environment 'declaration))))
 
 (defun proclaim (declaration-specifier)
-  (case (car declaration-specifier)
+  (case (first declaration-specifier)
     (declaration
-     (proclaim-declarations (cdr declaration-specifier)))
+     (proclaim-declarations (rest declaration-specifier)))
     ;; FIXME: handle more proclamations
     ))
