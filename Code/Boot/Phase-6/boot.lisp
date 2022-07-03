@@ -43,8 +43,6 @@
               (lambda (form environment)
                 (declare (ignore environment))
                 `(progn ,@(rest form))))
-        (setf (env:fdefinition client e5 'proclaim)
-              (constantly nil))
         (setf (env:fdefinition client e5 'documentation)
               (constantly nil))
         (setf (env:fdefinition client e5 '(setf documentation))
