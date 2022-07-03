@@ -181,6 +181,10 @@
       (def 'sicl-type:type-expander
             (lambda (name)
               (env:type-expander c environment name)))
+      (def '(setf sicl-type:type-expander)
+          (lambda (expander name)
+            (setf (env:type-expander c environment name)
+                  expander)))
       (def 'fmakunbound
             (lambda (name)
               (setf (env:fdefinition c environment name) nil)
