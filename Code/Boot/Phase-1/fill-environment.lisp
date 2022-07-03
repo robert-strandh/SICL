@@ -208,6 +208,7 @@
          cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
          cleavir-code-utilities:parse-deftype)
        environment)
+      (ld "Types/deftype-defmacro.lisp")
       (import-functions-from-host '(sicl-clos:with-slots-expander) environment)
       (ld "CLOS/with-slots-defmacro.lisp")
       (import-functions-from-host '(sicl-clos:defclass-expander) environment)
