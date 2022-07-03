@@ -1,0 +1,29 @@
+\chapter{Inlining}
+
+Inlining means replacing a call site in a caller by the code of the
+callee in such a way that the semantics of the program is preserved.
+The purpose of inlining is mainly to expose the code of the callee in
+the context of the caller in order to enable optimizations of the code
+of the callee that depend on this context, and conversely, to enable
+optimizations of the code of the caller, given the exposed code of the
+callee.
+
+For inlining to preserve the semantics of the program, it must be
+possible to allocate the lexical environment of the callee in the
+caller instead.  Then the following restrictions must be respected:
+
+\begin{enumerate}
+\item At most a bounded number of distinct lexical callee environments
+  (usually a single one) must be simultaneously active.  Usually, this
+  restriction implies that for each temporal invocation of the caller,
+  there must be at most a bounded number of simultaneous invocations
+  (usually a single one) of the callee.  If the callee is tail
+  recursive, then inlining is possible because then there is a single
+  active lexical callee environment active at any time.
+\item The lexical environment of the callee must have dynamic extent.
+  If the callee creates a closure that contains references to the
+  lexical environment of the callee, then that closure must have
+  dynamic extent.  If that closure is passed as an argument to a
+  function call, it must be known that the called function does not
+  keep a reference to the closure after it returns.
+\end{enumerate}
