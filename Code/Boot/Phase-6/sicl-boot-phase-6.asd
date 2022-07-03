@@ -17,7 +17,6 @@
    (:file "create-cyclic-graph")
    (:file "prepare-this-phase")
    (:file "convert-functions")
-   (:file "enable-deftype")
    (:file "enable-printing")
    (:file "enable-reading")
    (:file "enable-conditions")
