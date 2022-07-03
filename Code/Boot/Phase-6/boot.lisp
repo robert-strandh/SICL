@@ -49,7 +49,6 @@
               (lambda (new-value x doc-type)
                 (declare (ignore x doc-type))
                 new-value))
-        (enable-deftype e5)
         (load-source-file "Printer/print-unreadable-object-defmacro.lisp" e5)
         (enable-conditions e5)
         (ensure-asdf-system '#:sicl-hash-table-base e5)
