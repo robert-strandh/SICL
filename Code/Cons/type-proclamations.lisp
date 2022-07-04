@@ -148,3 +148,8 @@
                    (function (list) t)
                    (function ((not list)) nil)))
           endp)
+
+(proclaim '(ftype (or
+                   (function () null)
+                   (function (t &rest t) cons)))
+          list)
