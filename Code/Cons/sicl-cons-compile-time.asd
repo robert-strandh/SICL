@@ -12,4 +12,5 @@
    (:file "remf-defmacro")
    (:file "with-proper-list-elements-defmacro")
    (:file "with-proper-list-rests-defmacro")
-   (:file "with-alist-elements-defmacro")))
+   (:file "with-alist-elements-defmacro")
+   (:file "type-proclamations")))
