@@ -153,3 +153,6 @@
                    (function () null)
                    (function (t &rest t) cons)))
           list)
+
+(proclaim '(ftype (function (&rest t) t))
+          append)
