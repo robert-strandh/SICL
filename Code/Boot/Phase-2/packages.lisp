@@ -7,5 +7,6 @@
                 #:load-source-file
                 #:import-functions-from-host
                 #:define-error-functions
+                #:ensure-asdf-system
                 #:with-intercepted-function-cells)
   (:export #:boot))
