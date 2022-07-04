@@ -39,4 +39,5 @@
       (sicl-boot:copy-macro-functions e0 e2)
       (setf (env:fdefinition (env:client e2) e2 'sicl-boot:ast-eval)
             (lambda (client ast)
-              (sicl-ast-evaluator:eval-ast client e2 ast))))))
+              (sicl-ast-evaluator:eval-ast client e2 ast)))
+      (ensure-asdf-system '#:sicl-cons-compile-time e2))))
