@@ -143,3 +143,8 @@
                    (function ((cxrn (x))) null)
                    (function ((cxrt (x))) t))
             rest))
+
+(proclaim '(ftype (or
+                   (function (list) t)
+                   (function ((not list)) nil)))
+          endp)
