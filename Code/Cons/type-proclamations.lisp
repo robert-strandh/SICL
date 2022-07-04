@@ -146,13 +146,13 @@
 
 (proclaim '(ftype (or
                    (function (list) t)
-                   (function ((not list)) nil)))
-          endp)
+                   (function ((not list)) nil))
+            endp))
 
 (proclaim '(ftype (or
                    (function () null)
-                   (function (t &rest t) cons)))
-          list)
+                   (function (t &rest t) cons))
+            list))
 
-(proclaim '(ftype (function (&rest t) t))
-          append)
+(proclaim '(ftype (function (&rest t) t)
+            append))
