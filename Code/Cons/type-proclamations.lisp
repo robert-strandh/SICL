@@ -3,14 +3,14 @@
 (deftype cxrn (operations)
   (if (= (length operations) 1)
       'null
-      (ecase (car (last (operations)))
+      (ecase (car (last operations))
         (a `(or null (cons (cxrn ,(butlast operations)) *)))
         (d `(or null (cons * (cxrn ,(butlast operations))))))))
 
 (deftype cxrt (operations)
   (if (= (length operations) 1)
       'cons
-      (ecase (car (last (operations)))
+      (ecase (car (last operations))
         (a `(cons (cxrt ,(butlast operations)) *))
         (d `(cons * (cxrt ,(butlast operations)))))))
 
