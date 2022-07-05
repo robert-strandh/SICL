@@ -8,7 +8,7 @@
    (:file "constantly-defun")
    (:file "setf-defmacro")
    (:file "multiple-value-list-defmacro")
-   (:file "nth-value")
+   (:file "nth-value-defmacro")
    ;; (:file "get-setf-expansion-defun")
    (:file "return-defmacro")
    (:file "prog1-prog2-defmacro")
