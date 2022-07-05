@@ -88,7 +88,7 @@
       ;; We might as well also define DEFINE-COMPILER-MACRO here.
       (ld "Evaluation-and-compilation/define-compiler-macro-defmacro.lisp")
       ;; We might as well also define DEFINE-SETF-EXPANDER here.
-      (ld "Data-and-control-flow/define-setf-expander.lisp")
+      (ld "Data-and-control-flow/define-setf-expander-defmacro.lisp")
       ;; Up to this point, the macro function of the macro LAMBDA was
       ;; compiled using the host compiler.  Now that we have the final
       ;; version of the macro DEFMACRO, we can reload the file
