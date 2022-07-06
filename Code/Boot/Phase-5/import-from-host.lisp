@@ -70,7 +70,8 @@
      mapc
      getf
      assoc
-     rassoc)
+     rassoc
+     set-difference)
    e5))
 
 (defun import-sequence-functions (e5)
