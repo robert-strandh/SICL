@@ -194,7 +194,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     rassoc acons
+     acons
      set-difference set-exclusive-or union adjoin
      last butlast list-length
      ;; Data and control flow

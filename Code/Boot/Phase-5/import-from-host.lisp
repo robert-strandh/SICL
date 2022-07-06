@@ -69,7 +69,8 @@
      mapcar
      mapc
      getf
-     assoc)
+     assoc
+     rassoc)
    e5))
 
 (defun import-sequence-functions (e5)
