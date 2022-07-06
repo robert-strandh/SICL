@@ -33,7 +33,8 @@
      list
      ;; APPEND is used at compile time in some macro expanders
      append
-     member)
+     member
+     mapcar)
    environment))
 
 (defun import-conditionals-support (environment)
