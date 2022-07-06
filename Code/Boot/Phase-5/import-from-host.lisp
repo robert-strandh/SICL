@@ -67,7 +67,9 @@
      cdddr
      member
      mapcar
-     mapc)
+     mapc
+     getf
+     assoc)
    e5))
 
 (defun import-sequence-functions (e5)

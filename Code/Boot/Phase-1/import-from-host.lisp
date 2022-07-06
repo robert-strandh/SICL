@@ -34,7 +34,9 @@
      ;; APPEND is used at compile time in some macro expanders
      append
      member
-     mapcar)
+     mapcar
+     getf
+     assoc)
    environment))
 
 (defun import-conditionals-support (environment)

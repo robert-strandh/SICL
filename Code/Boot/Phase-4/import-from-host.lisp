@@ -53,7 +53,8 @@
      cdddr
      member
      mapcar
-     mapc)
+     mapc
+     assoc)
    e4))
 
 (defun import-code-utilities (e4)
