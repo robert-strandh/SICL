@@ -194,7 +194,6 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     member
      mapcar mapc
      getf
      assoc rassoc acons

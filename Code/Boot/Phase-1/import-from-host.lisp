@@ -32,7 +32,8 @@
      ;; LIST is used in many macro expanders.
      list
      ;; APPEND is used at compile time in some macro expanders
-     append)
+     append
+     member)
    environment))
 
 (defun import-conditionals-support (environment)
