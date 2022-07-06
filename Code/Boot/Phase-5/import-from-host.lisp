@@ -66,7 +66,8 @@
      ;; in CLOS.
      cdddr
      member
-     mapcar)
+     mapcar
+     mapc)
    e5))
 
 (defun import-sequence-functions (e5)

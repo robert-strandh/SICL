@@ -194,8 +194,6 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     ;; mapcar
-     mapc
      getf
      assoc rassoc acons
      set-difference set-exclusive-or union adjoin

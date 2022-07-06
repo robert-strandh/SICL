@@ -52,7 +52,8 @@
      ;; in CLOS.
      cdddr
      member
-     mapcar)
+     mapcar
+     mapc)
    e4))
 
 (defun import-code-utilities (e4)
