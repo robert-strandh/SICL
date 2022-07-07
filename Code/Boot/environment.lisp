@@ -193,9 +193,7 @@
 
 (defun import-standard-functions (environment)
   (import-functions-from-host
-   '(;; CONSes
-     list-length
-     ;; Data and control flow
+   '(;; Data and control flow
      apply not eq eql equal values constantly identity every
      ;; Evaluation and compilation
      constantp
