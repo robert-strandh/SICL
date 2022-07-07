@@ -36,6 +36,19 @@
     ((environment env:compilation-environment))
   (overridden-function-cells (env:parent environment)))
 
+(defmethod env:function-cell :around (client (environment environment) name)
+  (let ((cell (call-next-method)))
+    (when (eq (car cell) (cdr cell))
+      ;; The function is undefined.
+      (let ((undefined-function
+              (lambda (&rest arguments)
+                (declare (ignore arguments))
+                (error "Attempt to call function ~s in environment ~s"
+                       name environment))))
+        (setf (car cell) undefined-function)
+        (setf (cdr cell) undefined-function)))
+    cell))
+
 (defmethod trucler:restrict-for-macrolet-expander
     (client (environment environment))
   environment)
