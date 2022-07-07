@@ -194,7 +194,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; Data and control flow
-     equal values constantly identity every
+     values constantly identity every
      ;; Evaluation and compilation
      constantp
      ;; Symbols
