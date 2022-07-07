@@ -6,6 +6,11 @@
 
 (defclass environment (env:run-time-environment)
   ((%name :initarg :name :reader name)
+   ;; This slot holds a list of names of functions that are called
+   ;; during bootstrapping, but that were not explicitly defined in
+   ;; the environment, so instead the host version of the function was
+   ;; used.
+   (%host-functions :initform '() :accessor host-functions)
    ;; This slot holds an association list.  The key of an element is
    ;; the pathname naming a file that has been loaded into this
    ;; environment.  The value of an element is a universal time when
