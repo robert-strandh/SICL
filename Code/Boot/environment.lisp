@@ -194,7 +194,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; Data and control flow
-     apply not eq eql equal values constantly identity every
+     not eq eql equal values constantly identity every
      ;; Evaluation and compilation
      constantp
      ;; Symbols
