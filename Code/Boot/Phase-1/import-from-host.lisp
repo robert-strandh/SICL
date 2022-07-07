@@ -82,7 +82,7 @@
 
 (defun import-data-and-control-flow (environment)
   (import-functions-from-host
-   '(not)
+   '(not eq)
    environment))
 
 (defun import-from-host (environment)
