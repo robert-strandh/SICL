@@ -71,7 +71,8 @@
      getf
      assoc
      rassoc
-     set-difference)
+     set-difference
+     set-exclusive-or)
    e5))
 
 (defun import-sequence-functions (e5)

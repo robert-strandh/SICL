@@ -54,7 +54,8 @@
      member
      mapcar
      mapc
-     assoc)
+     assoc
+     set-exclusive-or)
    e4))
 
 (defun import-code-utilities (e4)

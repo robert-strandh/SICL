@@ -55,7 +55,8 @@
      mapcar
      mapc
      getf
-     assoc)
+     assoc
+     set-exclusive-or)
    e3))
 
 (defun import-code-utilities (e3)
