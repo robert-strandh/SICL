@@ -194,7 +194,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; CONSes
-     last butlast list-length
+     butlast list-length
      ;; Data and control flow
      apply not eq eql equal values constantly identity every
      ;; Evaluation and compilation

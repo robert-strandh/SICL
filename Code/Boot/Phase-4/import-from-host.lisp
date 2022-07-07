@@ -57,7 +57,8 @@
      assoc
      set-exclusive-or
      union
-     adjoin)
+     adjoin
+     last)
    e4))
 
 (defun import-code-utilities (e4)

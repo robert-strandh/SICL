@@ -73,7 +73,8 @@
      rassoc
      set-difference
      set-exclusive-or
-     adjoin)
+     adjoin
+     last)
    e5))
 
 (defun import-sequence-functions (e5)
