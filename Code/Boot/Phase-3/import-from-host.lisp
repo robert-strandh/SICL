@@ -126,9 +126,15 @@
      length)
    e3))
 
+(defun import-data-and-control-flow (e3)
+  (import-functions-from-host
+   '(not)
+   e3))
+
 (defun import-from-host (e3)
   (import-number-functions e3)
   (import-cons-functions e3)
   (import-code-utilities e3)
   (import-misc e3)
-  (import-sequence-functions e3))
+  (import-sequence-functions e3)
+  (import-data-and-control-flow e3))

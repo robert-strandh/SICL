@@ -127,9 +127,15 @@
      elt)
    e4))
 
+(defun import-data-and-control-flow (e4)
+  (import-functions-from-host
+   '(not)
+   e4))
+
 (defun import-from-host (e4)
   (import-number-functions e4)
   (import-cons-functions e4)
   (import-code-utilities e4)
   (import-misc e4)
-  (import-sequence-functions e4))
+  (import-sequence-functions e4)
+  (import-data-and-control-flow e4))

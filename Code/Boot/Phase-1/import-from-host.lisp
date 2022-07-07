@@ -80,6 +80,11 @@
      length)
    environment))
 
+(defun import-data-and-control-flow (environment)
+  (import-functions-from-host
+   '(not)
+   environment))
+
 (defun import-from-host (environment)
   (import-number-functions environment)
   (import-cons-functions environment)
@@ -87,7 +92,8 @@
   (import-code-utilities environment)
   (import-trucler-functions environment)
   (import-misc environment)
-  (import-sequence-functions environment))
+  (import-sequence-functions environment)
+  (import-data-and-control-flow environment))
 
 (defun define-defgeneric-expander (client environment)
   (setf (env:fdefinition client environment 'sicl-clos:defgeneric-expander)

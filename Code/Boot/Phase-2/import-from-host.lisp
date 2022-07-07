@@ -15,7 +15,8 @@
          consp
          ;; NULL is used in many places at run time.
          null
-         member)
+         member
+         not)
        e2)
       ;; Import class T so that it can be found when we need to create
       ;; the class T as a specializer for unspecialized method parameters.
