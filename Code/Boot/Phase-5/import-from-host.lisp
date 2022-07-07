@@ -74,7 +74,8 @@
      set-difference
      set-exclusive-or
      adjoin
-     last)
+     last
+     butlast)
    e5))
 
 (defun import-sequence-functions (e5)

@@ -37,7 +37,8 @@
      mapcar
      getf
      assoc
-     last)
+     last
+     butlast)
    environment))
 
 (defun import-conditionals-support (environment)

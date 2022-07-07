@@ -59,7 +59,8 @@
      set-exclusive-or
      union
      adjoin
-     last)
+     last
+     butlast)
    e3))
 
 (defun import-code-utilities (e3)
