@@ -128,7 +128,7 @@
 
 (defun import-data-and-control-flow (e3)
   (import-functions-from-host
-   '(not eq)
+   '(not eq eql)
    e3))
 
 (defun import-from-host (e3)
