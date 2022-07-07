@@ -56,7 +56,8 @@
      mapc
      getf
      assoc
-     set-exclusive-or)
+     set-exclusive-or
+     union)
    e3))
 
 (defun import-code-utilities (e3)
