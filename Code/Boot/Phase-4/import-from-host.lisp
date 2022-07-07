@@ -56,7 +56,8 @@
      mapc
      assoc
      set-exclusive-or
-     union)
+     union
+     adjoin)
    e4))
 
 (defun import-code-utilities (e4)

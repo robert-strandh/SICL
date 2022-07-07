@@ -57,7 +57,8 @@
      getf
      assoc
      set-exclusive-or
-     union)
+     union
+     adjoin)
    e3))
 
 (defun import-code-utilities (e3)
