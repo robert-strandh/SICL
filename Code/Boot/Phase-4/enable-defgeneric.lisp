@@ -50,7 +50,7 @@
                (make-instance
                    (env:function-cell (env:client e2) e2 'make-instance)))
             (let* ((cst (cst:cst-from-expression lambda-expression))
-                   (ast (cleavir-cst-to-ast:cst-to-ast (env:client e3) cst e3)))
+                   (ast (sicl-boot::cst-to-ast (env:client e3) e3 cst nil)))
               (sicl-boot:ast-eval (env:client e3) e3 ast)))))
   (setf (env:fdefinition
          (env:client e3) e3 'sicl-clos:set-funcallable-instance-function)
