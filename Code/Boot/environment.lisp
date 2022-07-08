@@ -56,7 +56,7 @@
     mapcar mapc
     getf
     assoc rassoc
-    set-difference set-exclusive-or adjoin
+    union set-difference set-exclusive-or adjoin
 ))
 
 (defmethod env:function-cell :around (client (environment environment) name)
