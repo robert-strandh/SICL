@@ -60,7 +60,7 @@
                (make-instance
                    (env:function-cell (env:client e3) e3 'make-instance)))
             (let* ((cst (cst:cst-from-expression lambda-expression))
-                   (ast (cleavir-cst-to-ast:cst-to-ast (env:client e4) cst e4)))
+                   (ast (sicl-boot::cst-to-ast (env:client e4) e4 cst nil)))
               (sicl-boot:ast-eval (env:client e4) e4 ast)))))
   (enable-compute-discriminating-function e3 e4 e5)
   (load-source-file "CLOS/defgeneric-support.lisp" e5)

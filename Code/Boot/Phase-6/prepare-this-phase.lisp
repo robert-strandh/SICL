@@ -42,7 +42,7 @@
           (assert (null x))
           (assert (and (consp lambda-expression) (eq (first lambda-expression) 'lambda)))
           (let* ((cst (cst:cst-from-expression lambda-expression))
-                 (ast (cleavir-cst-to-ast:cst-to-ast (env:client e5) cst e5)))
+                 (ast (sicl-boot::cst-to-ast (env:client e5) e5 cst nil)))
             (with-intercepted-function-cells
                 (e5
                  (make-instance
