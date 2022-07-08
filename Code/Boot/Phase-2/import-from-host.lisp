@@ -5,18 +5,7 @@
       boot
     (let ((client (env:client e2)))
       (import-functions-from-host
-       '(;; SECOND is used in many places
-         second
-         ;; THIRD is used by the expansion of DEFMETHOD
-         third
-         ;; CAR, CDR, FIRST, and REST are used in many places.
-         car cdr first rest
-         ;; CONSP is used at run time in CLOS.
-         consp
-         ;; NULL is used in many places at run time.
-         null
-         member
-         not eql)
+       '(not eql)
        e2)
       ;; Import class T so that it can be found when we need to create
       ;; the class T as a specializer for unspecialized method parameters.

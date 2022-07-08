@@ -7,40 +7,6 @@
      oddp)
    environment))
 
-(defun import-cons-functions (environment)
-  (import-functions-from-host
-   '(;; SECOND is used in many places
-     second
-     ;; THIRD is used by the expansion of DEFMETHOD
-     third
-     ;; FOURTH is used in some macro expanders
-     fourth
-     ;; CAR, CDR, FIRST, and REST are used in many places.
-     car cdr first rest
-     ;; CDDR is used in many macro expanders.
-     cddr
-     ;; CONSP is used in many macro expanders.
-     consp
-     ;; ATOM is used in many macro expanders.
-     atom
-     ;; NULL is used in many macro expanders.
-     null
-     ;; ENDP is used in the expansion of LOOP.
-     endp
-     ;; CONS is used in many macro expanders.
-     cons
-     ;; LIST is used in many macro expanders.
-     list
-     ;; APPEND is used at compile time in some macro expanders
-     append
-     member
-     mapcar
-     getf
-     assoc
-     last
-     butlast)
-   environment))
-
 (defun import-conditionals-support (environment)
   (import-functions-from-host
    '(sicl-conditionals:or-expander
@@ -87,7 +53,6 @@
 
 (defun import-from-host (environment)
   (import-number-functions environment)
-  (import-cons-functions environment)
   (import-conditionals-support environment)
   (import-code-utilities environment)
   (import-trucler-functions environment)
