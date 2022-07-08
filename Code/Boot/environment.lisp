@@ -41,15 +41,38 @@
     ((environment env:compilation-environment))
   (overridden-function-cells (env:parent environment)))
 
+;;; This variable holds a list of names of host functions that can be
+;;; called during bootstrapping as a replacement for target functions
+;;; with the same name.
+(defparameter *allowed-host-functions*
+  '(car cdr caar cadr cdar cddr
+    caaar caadr cadar caddr cdaar cdadr cddar cdddr
+    first second third fourth rest
+    nth last butlast
+    cons consp listp atom null endp list list*
+    make-list copy-list
+    append
+    member
+    mapcar mapc
+    getf
+    assoc rassoc
+    set-difference set-exclusive-or adjoin
+))
+
 (defmethod env:function-cell :around (client (environment environment) name)
   (let ((cell (call-next-method)))
     (when (eq (car cell) (cdr cell))
       ;; The function is undefined.
       (let ((undefined-function
-              (lambda (&rest arguments)
-                (declare (ignore arguments))
-                (error "Attempt to call function ~s in environment ~s"
-                       name environment))))
+              (if (member name *allowed-host-functions* :test #'equal)
+                  (lambda (&rest arguments)
+                    (pushnew name (host-functions environment)
+                             :test #'equal)
+                    (apply name arguments))
+                  (lambda (&rest arguments)
+                    (declare (ignore arguments))
+                    (error "Attempt to call function ~s in environment ~s"
+                           name environment)))))
         (setf (car cell) undefined-function)
         (setf (cdr cell) undefined-function)))
     cell))
