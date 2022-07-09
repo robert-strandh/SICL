@@ -68,6 +68,10 @@
     remove remove-duplicates
     sort subseq length
     elt
+    ;; Number
+    + - * < <= = > >= /= floor 1+ 1-
+    zerop oddp evenp plusp minusp numberp integerp
+    expt random
 ))
 
 (defmethod env:function-cell :around (client (environment environment) name)
