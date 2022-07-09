@@ -72,7 +72,10 @@
     + - * < <= = > >= /= floor 1+ 1-
     zerop oddp evenp plusp minusp numberp integerp
     expt random
-))
+    ;; Data and control flow
+    not eq eql equal values
+    constantly ; FIXME: this one should go.
+    ))
 
 (defmethod env:function-cell :around (client (environment environment) name)
   (let ((cell (call-next-method)))
@@ -170,10 +173,7 @@
                      :special-operator)
                     ((not (null (env:macro-function c environment name)))
                      :macro)
-                    (t (let ((function (env:fdefinition c environment name)))
-                         (if (null function)
-                             (error 'undefined-function :name name)
-                             function))))))
+                    (t (car (env:function-cell c environment name))))))
       (def '(setf symbol-function)
             (lambda (function name)
               (setf (env:fdefinition c environment name)
