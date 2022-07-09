@@ -15,6 +15,7 @@
         (lambda (client ast)
           (sicl-ast-evaluator:eval-ast client e4 ast)))
   (sicl-boot:copy-macro-functions e3 e4)
+  (ensure-asdf-system '#:sicl-cons-compile-time e4)
   (load-source-file "CLOS/class-of-defun.lisp" e3)
   (enable-typep e2 e3)
   (load-source-file "Types/type-of-defgeneric.lisp" e3)

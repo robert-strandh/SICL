@@ -23,6 +23,7 @@
 (defun prepare-this-phase (e3 e4 e5)
   (define-ast-eval e5)
   (sicl-boot:copy-macro-functions e4 e5)
+  (ensure-asdf-system '#:sicl-cons-compile-time e5)
   (load-source-file "CLOS/class-of-defun.lisp" e4)
   (enable-typep e3 e4)
   (load-source-file "Types/type-of-defgeneric.lisp" e4)

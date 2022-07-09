@@ -5,6 +5,7 @@
         (lambda (client ast)
           (sicl-ast-evaluator:eval-ast client e3 ast)))
   (sicl-boot:copy-macro-functions e2 e3)
+  (ensure-asdf-system '#:sicl-cons-compile-time e3)
   (enable-typep e2)
   (enable-object-creation e1 e2)
   (enable-defgeneric e1 e2 e3)
