@@ -159,3 +159,14 @@
 
 (proclaim '(ftype (function (t) (member t nil))
             atom consp null listp))
+
+(proclaim '(ftype (function (t t) cons)
+            cons))
+
+(proclaim '(ftype (function (t list
+                             &key
+                             (:key (or symbol function))
+                             (:test (or symbol function))
+                             (:test-no (or symbol function)))
+                   list)
+            member))
