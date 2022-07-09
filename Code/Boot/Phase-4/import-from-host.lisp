@@ -1,15 +1,5 @@
 (cl:in-package #:sicl-boot-phase-4)
 
-(defun import-number-functions (e4)
-  (import-functions-from-host
-   '(+ - < <= = /= floor 1+ 1-
-     ;; ZEROP is used in CLOS to compute the discriminating function.
-     zerop
-     ;; RANDOM is used to create a hash code for standard
-     ;; objects.
-     random)
-   e4))
-
 (defun import-code-utilities (e4)
   (import-functions-from-host
    '(cleavir-code-utilities:proper-list-p
@@ -36,7 +26,6 @@
    e4))
 
 (defun import-from-host (e4)
-  (import-number-functions e4)
   (import-code-utilities e4)
   (import-misc e4)
   (import-data-and-control-flow e4))
