@@ -15,11 +15,5 @@
           (declare (ignore env))
           (cons 'progn (rest form)))))
 
-(defun import-data-and-control-flow (e5)
-  (import-functions-from-host
-   '(not eq eql equal values constantly)
-   e5))
-
 (defun import-from-host (e5)
-  (import-misc e5)
-  (import-data-and-control-flow e5))
+  (import-misc e5))

@@ -4,9 +4,6 @@
   (with-accessors ((e2 sicl-boot:e2))
       boot
     (let ((client (env:client e2)))
-      (import-functions-from-host
-       '(not eql)
-       e2)
       ;; Import class T so that it can be found when we need to create
       ;; the class T as a specializer for unspecialized method parameters.
       (setf (env:find-class client e2 't)

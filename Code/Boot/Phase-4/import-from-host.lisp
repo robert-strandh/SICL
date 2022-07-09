@@ -20,12 +20,6 @@
           (eval form)
           nil)))
 
-(defun import-data-and-control-flow (e4)
-  (import-functions-from-host
-   '(not eq eql equal values)
-   e4))
-
 (defun import-from-host (e4)
   (import-code-utilities e4)
-  (import-misc e4)
-  (import-data-and-control-flow e4))
+  (import-misc e4))
