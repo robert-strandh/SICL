@@ -1,0 +1,27 @@
+(cl:in-package #:asdf-user)
+
+(defsystem :sicl-data-and-control-flow-macros
+  :depends-on (:sicl-data-and-control-flow-support)
+  :serial t
+  :components
+  ((:file "define-setf-expander-defmacro")
+   (:file "multiple-value-bind-defmacro")
+   (:file "multiple-value-list-defmacro")
+   (:file "nth-value-defmacro")
+   (:file "multiple-value-call-defmacro")
+   (:file "setf-defmacro")
+   (:file "defun-defmacro")
+   (:file "defconstant-defmacro")
+   (:file "defvar-defmacro")
+   (:file "defparameter-defmacro")
+   (:file "return-defmacro")
+   (:file "prog1-prog2-defmacro")
+   (:file "prog-progstar-defmacro")
+   (:file "psetq-defmacro")
+   (:file "psetf-support")
+   (:file "psetf-defmacro")
+   (:file "rotatef-defmacro")
+   (:file "destructuring-bind-defmacro")
+   (:file "shiftf-support")
+   (:file "shiftf-defmacro")
+   (:file "throw-defmacro")))
