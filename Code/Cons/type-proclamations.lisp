@@ -156,3 +156,6 @@
 
 (proclaim '(ftype (function (&rest t) t)
             append))
+
+(proclaim '(ftype (function (t) (member t nil))
+            atom consp null listp))
