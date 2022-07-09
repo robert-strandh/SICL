@@ -40,4 +40,5 @@
       (setf (env:fdefinition (env:client e2) e2 'sicl-boot:ast-eval)
             (lambda (client ast)
               (sicl-ast-evaluator:eval-ast client e2 ast)))
-      (ensure-asdf-system '#:sicl-cons-compile-time e2))))
+      (ensure-asdf-system '#:sicl-cons-compile-time e2)
+      (ensure-asdf-system '#:sicl-data-and-control-flow-type-proclamations e2))))
