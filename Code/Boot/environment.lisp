@@ -45,7 +45,8 @@
 ;;; called during bootstrapping as a replacement for target functions
 ;;; with the same name.
 (defparameter *allowed-host-functions*
-  '(car cdr caar cadr cdar cddr
+  '(;; CONS
+    car cdr caar cadr cdar cddr
     caaar caadr cadar caddr cdaar cdadr cddar cdddr
     first second third fourth rest
     nth last butlast
@@ -57,6 +58,16 @@
     getf
     assoc rassoc
     union set-difference set-exclusive-or adjoin
+    ;; Sequence
+    mismatch
+    reduce
+    reverse nreverse
+    position position-if position-if-not
+    find find-if find-if-not
+    count count-if count-if-not
+    remove remove-duplicates
+    sort subseq length
+    elt
 ))
 
 (defmethod env:function-cell :around (client (environment environment) name)
