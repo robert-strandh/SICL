@@ -106,7 +106,8 @@
          (handler-bind
              ((unknown-function
                 (lambda (condition)
-                  (push condition unknown-functions)
+                  (pushnew condition unknown-functions
+                           :key #'name :test #'equal)
                   (muffle-warning condition))))
            (let ((*package* *package*))
              (sicl-source-tracking:with-source-tracking-stream-from-file
