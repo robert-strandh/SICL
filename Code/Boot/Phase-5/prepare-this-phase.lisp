@@ -39,9 +39,6 @@
      ;; can use the host EVAL.
      eval)
    e5)
-  (import-functions-from-host
-   '(logtest)
-   e5)
   (enable-method-combinations e3 e4 e5)
   (setf (env:fdefinition (env:client e4) e4 'compile)
         (lambda (x lambda-expression)
