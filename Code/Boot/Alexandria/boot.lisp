@@ -14,10 +14,6 @@
     ;; preferable to load it only for when it is needed, which is at
     ;; compile time in Alexandria.
     cleavir-code-utilities:parse-destructuring-bind
-    ;; The function FOURTH could probably be imported more or less
-    ;; permanently into E5, but we unload it after bootstrapping
-    ;; Alexandria.
-    fourth
     ;; The function STRING is used at compile time by some macros like
     ;; WITH-GENSYMS and ONCE-ONLY.
     string))
