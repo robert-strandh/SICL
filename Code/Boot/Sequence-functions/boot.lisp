@@ -18,8 +18,7 @@
          logand
          subst
          fourth fifth
-         nthcdr integer-length ash logior  ; temporary
-         cleavir-code-utilities:parse-destructuring-bind)
+         nthcdr integer-length ash logior)  ; temporary
        e5)
       (setf (env:compiler-macro-function client e5 'format)
             nil)

@@ -147,17 +147,11 @@
       (ld "Data-and-control-flow/prog1-prog2-defmacro.lisp")
       ;; Load a file containing the definitions of the macros PROG and
       ;; PROG*.
-      (import-functions-from-host
-       '(cleavir-code-utilities:separate-ordinary-body)
-       environment )
       (ld "Data-and-control-flow/prog-progstar-defmacro.lisp")
       (ld "Data-and-control-flow/psetf-support.lisp")
       (ld "Data-and-control-flow/psetf-defmacro.lisp")
       (ld "Data-and-control-flow/rotatef-support.lisp")
       (ld "Data-and-control-flow/rotatef-defmacro.lisp")
-      (import-functions-from-host
-       '(cleavir-code-utilities:parse-destructuring-bind)
-       environment)
       (ld "Data-and-control-flow/destructuring-bind-defmacro.lisp")
       (ld "Data-and-control-flow/shiftf-support.lisp")
       (ld "Data-and-control-flow/shiftf-defmacro.lisp")
@@ -201,13 +195,6 @@
        environment)
       (ld "Conditions/handler-case-defmacro.lisp")
       (ld "Conditions/ignore-errors-defmacro.lisp")
-      (import-functions-from-host
-       '(symbol-name
-         cleavir-code-utilities:extract-named-group
-         cleavir-code-utilities:extract-required
-         cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
-         cleavir-code-utilities:parse-deftype)
-       environment)
       (ld "Types/deftype-defmacro.lisp")
       (import-functions-from-host '(sicl-clos:with-slots-expander) environment)
       (ld "CLOS/with-slots-defmacro.lisp")

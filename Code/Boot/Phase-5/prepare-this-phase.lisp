@@ -31,18 +31,7 @@
   (load-source-file "Types/type-of-defgeneric.lisp" e4)
   (enable-object-creation e3 e4)
   (import-functions-from-host
-   '(cleavir-code-utilities:proper-list-p
-     cleavir-code-utilities:list-structure
-     cleavir-code-utilities:extract-named-group
-     cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
-     cleavir-code-utilities:canonicalize-generic-function-lambda-list
-     cleavir-code-utilities:canonicalize-specialized-lambda-list
-     cleavir-code-utilities:extract-required
-     cleavir-code-utilities:separate-ordinary-body
-     cleavir-code-utilities:separate-function-body
-     cleavir-code-utilities:lambda-list-variables
-     intern
-     cleavir-code-utilities:parse-deftype
+   '(intern
      ;; For Ctype.
      map substitute functionp lognot logcount subsetp member-if intersection
      ;; Eclector uses EVAL in some compiler macros to evaluate some

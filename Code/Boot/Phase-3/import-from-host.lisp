@@ -1,12 +1,5 @@
 (cl:in-package #:sicl-boot-phase-3)
 
-(defun import-code-utilities (e3)
-  (import-functions-from-host
-   '(cleavir-code-utilities:proper-list-p
-     cleavir-code-utilities:extract-required
-     cleavir-code-utilities:canonicalize-generic-function-lambda-list)
-   e3))
-
 (defun import-misc (e3)
   (import-functions-from-host
    '(slot-unbound
@@ -25,5 +18,4 @@
           nil)))
 
 (defun import-from-host (e3)
-  (import-code-utilities e3)
   (import-misc e3))

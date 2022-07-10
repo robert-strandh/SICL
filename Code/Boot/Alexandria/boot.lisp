@@ -9,11 +9,6 @@
     ;; we want to be a bit more independent of loading order, so we
     ;; make it work even if SICL FORMAT has been loaded previously.
     format
-    ;; It probably would not be a disaster if PARSE-DESTRUCTURING-BIND
-    ;; were to be imported permanently into E5, but, we think it is
-    ;; preferable to load it only for when it is needed, which is at
-    ;; compile time in Alexandria.
-    cleavir-code-utilities:parse-destructuring-bind
     ;; The function STRING is used at compile time by some macros like
     ;; WITH-GENSYMS and ONCE-ONLY.
     string))

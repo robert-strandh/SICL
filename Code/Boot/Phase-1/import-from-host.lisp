@@ -20,13 +20,6 @@
      sicl-conditionals:ctypecase-expander)
    environment))
 
-(defun import-code-utilities (environment)
-  (import-functions-from-host
-   '(cleavir-code-utilities:parse-macro
-     cleavir-code-utilities:separate-function-body
-     cleavir-code-utilities:list-structure)
-   environment))
-
 (defun import-trucler-functions (environment)
   (import-functions-from-host
    '(trucler:symbol-macro-expansion
@@ -54,7 +47,6 @@
 (defun import-from-host (environment)
   (import-number-functions environment)
   (import-conditionals-support environment)
-  (import-code-utilities environment)
   (import-trucler-functions environment)
   (import-misc environment)
   (import-sequence-functions environment)
