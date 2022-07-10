@@ -73,7 +73,7 @@
     + - * < <= = > >= /= floor 1+ 1-
     zerop oddp evenp plusp minusp numberp integerp
     expt random max min
-    logand logior lognot
+    logand logior lognot logtest
     integer-length ash
     ;; Data and control flow
     not eq eql equal values
