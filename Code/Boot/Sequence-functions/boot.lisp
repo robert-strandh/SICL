@@ -11,15 +11,6 @@
                   :client client
                   :name "ESF")))
       (setf *esf* esf)
-      (import-functions-from-host
-       '(min
-         notevery
-         plusp
-         logand
-         subst
-         fourth fifth
-         nthcdr integer-length ash logior)  ; temporary
-       e5)
       (setf (env:compiler-macro-function client e5 'format)
             nil)
       (let ((*environment* esf))
