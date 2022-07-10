@@ -48,8 +48,8 @@
   '(;; CONS
     car cdr caar cadr cdar cddr
     caaar caadr cadar caddr cdaar cdadr cddar cdddr
-    first second third fourth rest
-    nth last butlast
+    first second third fourth fifth rest
+    nth nthcdr last butlast
     cons consp listp atom null endp list list*
     make-list copy-list
     append
@@ -58,6 +58,7 @@
     getf
     assoc rassoc
     union set-difference set-exclusive-or adjoin
+    subst
     ;; Sequence
     mismatch
     reduce
@@ -71,9 +72,12 @@
     ;; Number
     + - * < <= = > >= /= floor 1+ 1-
     zerop oddp evenp plusp minusp numberp integerp
-    expt random
+    expt random max min
+    logand logior lognot
+    integer-length ash
     ;; Data and control flow
     not eq eql equal values
+    every some notevery notany
     constantly ; FIXME: this one should go.
     ;; Environment dictionary
     get-universal-time
