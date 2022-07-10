@@ -12,9 +12,6 @@
                :client client
                :name "Arithmetic")))
       (setf *arithmetic-environment* environment)
-      (import-functions-from-host
-       '()
-       e5)
       (setf (env:compiler-macro-function client e5 'format)
             nil)
       (let ((*environment* *arithmetic-environment*))
