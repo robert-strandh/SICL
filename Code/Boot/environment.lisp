@@ -75,6 +75,8 @@
     ;; Data and control flow
     not eq eql equal values
     constantly ; FIXME: this one should go.
+    ;; Environment dictionary
+    get-universal-time
     ))
 
 (defparameter *host-import-environment*
