@@ -113,15 +113,17 @@
     (when (eq (car cell) (cdr cell))
       ;; The function is undefined.
       (let ((undefined-function
-              (if (member name *allowed-host-functions* :test #'equal)
-                  (lambda (&rest arguments)
-                    (pushnew name (host-functions environment)
-                             :test #'equal)
-                    (apply name arguments))
-                  (lambda (&rest arguments)
-                    (declare (ignore arguments))
-                    (error "Attempt to call function ~s in environment ~s"
-                           name environment)))))
+              (let ((host-function
+                      (env:fdefinition client *host-import-environment* name)))
+                (if (null host-function)
+                    (lambda (&rest arguments)
+                      (declare (ignore arguments))
+                      (error "Attempt to call function ~s in environment ~s"
+                             name environment))
+                    (lambda (&rest arguments)
+                      (pushnew name (host-functions environment)
+                               :test #'equal)
+                      (apply host-function arguments))))))
         (setf (car cell) undefined-function)
         (setf (cdr cell) undefined-function)))
     cell))
