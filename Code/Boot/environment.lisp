@@ -80,6 +80,21 @@
     ;; Characters
     characterp char-code code-char char= char-name standard-char-p
     alphanumericp digit-char-p char-upcase
+    ;; Code utilities
+    cleavir-code-utilities:separate-ordinary-body
+    cleavir-code-utilities:separate-function-body
+    cleavir-code-utilities:parse-macro
+    cleavir-code-utilities:parse-deftype
+    cleavir-code-utilities:parse-destructuring-bind
+    cleavir-code-utilities:proper-list-p
+    cleavir-code-utilities:list-structure
+    cleavir-code-utilities:extract-named-group
+    cleavir-code-utilities:extract-required
+    cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
+    cleavir-code-utilities:canonicalize-generic-function-lambda-list
+    cleavir-code-utilities:canonicalize-define-method-combination-arguments-lambda-list
+    cleavir-code-utilities:canonicalize-specialized-lambda-list
+    cleavir-code-utilities:lambda-list-variables
     ))
 
 (defparameter *host-import-environment*
