@@ -77,6 +77,9 @@
     constantly ; FIXME: this one should go.
     ;; Environment dictionary
     get-universal-time
+    ;; Characters
+    characterp char-code code-char char= char-name standard-char-p
+    alphanumericp digit-char-p char-upcase
     ))
 
 (defparameter *host-import-environment*
@@ -290,9 +293,6 @@
      constantp
      ;; Symbols
      gensym symbolp
-     ;; Characters
-     characterp char-code code-char char= char-name standard-char-p
-     alphanumericp digit-char-p char-upcase
      ;; Strings
      stringp
      ;; For debugging
