@@ -35,11 +35,6 @@
                do (setf (env:fdefinition ,client-var ,environment-var name)
                         function))))))
 
-(defparameter *host-function-names*
-  '(;; Trucler needs the host FORMAT for (SETF DOCUMENTATION) at
-    ;; compile time.
-    format))
-
 (defun boot (boot)
   (with-accessors ((e5 sicl-boot:e5))
       boot
