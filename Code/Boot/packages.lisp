@@ -32,4 +32,5 @@
            #:hash-table-header
            #:run-time-environment-header
            #:original-function
+           #:with-temporary-function-imports
            #:bt))
