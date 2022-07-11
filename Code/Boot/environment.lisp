@@ -53,11 +53,11 @@
     cons consp listp atom null endp list list*
     make-list copy-list
     append
-    member
+    member member-if
     mapcar mapc
     getf
     assoc rassoc
-    union set-difference set-exclusive-or adjoin
+    union set-difference set-exclusive-or adjoin subsetp intersection
     subst
     ;; Sequence
     mismatch
@@ -69,15 +69,17 @@
     remove remove-duplicates
     sort subseq length
     elt
+    map substitute
     ;; Number
     + - * < <= = > >= /= floor 1+ 1-
     zerop oddp evenp plusp minusp numberp integerp realp rationalp
     expt random max min
-    logand logior lognot logtest
+    logand logior lognot logtest logcount
     integer-length ash
     ;; Data and control flow
     not eq eql equal values
     every some notevery notany
+    functionp
     constantly ; FIXME: this one should go.
     ;; Environment dictionary
     get-universal-time
