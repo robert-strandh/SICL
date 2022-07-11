@@ -2,6 +2,39 @@
 
 (defclass client (sicl-boot:client) ())
 
+(defmacro with-temporary-function-imports
+    (client-form environment-form names-form &body body)
+  (let ((client-var (gensym))
+        (environment-var (gensym))
+        (names-var (gensym)))
+    `(let ((,client-var ,client-form)
+           (,names-var ,names-form)
+           (,environment-var ,environment-form)
+           functions)
+       (unwind-protect
+            (progn
+              ;; Access the current definitions of the functions that
+              ;; we need to be imported from the host, and store them
+              ;; in the lexical variable FUNCTIONS in the same order
+              ;; as their names appear in NAMES-FORM.  Note that the
+              ;; current definition of some function could be NIL,
+              ;; which means it is undefined in the environment.  What
+              ;; then happens is that we restore it to be undefined at
+              ;; the end.
+              (setf functions
+                    (loop for name in ,names-var
+                          collect
+                          (env:fdefinition ,client-var ,environment-var  name)))
+              ;; Next, import the functions.
+              (import-functions-from-host ,names-var ,environment-var)
+              ;; Execute the body in the new context.
+              ,@body)
+         ;; Restore the original definitions of the functions.
+         (loop for name in ,names-var
+               for function in functions
+               do (setf (env:fdefinition ,client-var ,environment-var name)
+                        function))))))
+
 (defparameter *host-function-names*
   '(;; Trucler needs the host FORMAT for (SETF DOCUMENTATION) at
     ;; compile time.
@@ -12,29 +45,7 @@
       boot
     (let* ((client (make-instance 'client))
            (sicl-client:*client* client))
-      (let (functions)
-        (unwind-protect
-             (progn
-               ;; Access the current definitions in E5 of the
-               ;; functions that we need to be imported from the host
-               ;; during bootstrapping, and store them in the lexical
-               ;; variable FUNCTIONS in the same order as their names
-               ;; appear in *HOST-FUNCTION-NAMES*.  Note that the
-               ;; current definition of some function could be NIL,
-               ;; which means it is undefined in E5.  What then
-               ;; happens is that we restore it to be undefined after
-               ;; bootstrapping.
-               (setf functions
-                     (loop for name in *host-function-names*
-                           collect (env:fdefinition client e5 name)))
-               ;; Next, import the functions named in
-               ;; *HOST-FUNCTION-NAMES* into E5.
-               (import-functions-from-host *host-function-names* e5)
-               ;; Now, it should be safe to load Trucler
-               (ensure-asdf-system-using-client client e5 '#:trucler-base)
-               (ensure-asdf-system-using-client client e5 '#:trucler-reference))
-          ;; Restore the original definitions in E5 of the functions
-          ;; named in *HOST-FUNCTION-NAMES*.
-          (loop for name in *host-function-names*
-                for function in functions
-                do (setf (env:fdefinition client e5 name) function)))))))
+      (with-temporary-function-imports
+          client e5 '(format)
+        (ensure-asdf-system-using-client client e5 '#:trucler-base)
+        (ensure-asdf-system-using-client client e5 '#:trucler-reference)))))
