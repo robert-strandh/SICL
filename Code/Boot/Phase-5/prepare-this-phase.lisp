@@ -32,8 +32,6 @@
   (enable-object-creation e3 e4)
   (import-functions-from-host
    '(intern
-     ;; For Ctype.
-     map substitute functionp lognot logcount subsetp member-if intersection
      ;; Eclector uses EVAL in some compiler macros to evaluate some
      ;; Boolean arguments, but it is applied only to contstants so we
      ;; can use the host EVAL.
