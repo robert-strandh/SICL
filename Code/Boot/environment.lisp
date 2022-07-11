@@ -71,7 +71,7 @@
     elt
     ;; Number
     + - * < <= = > >= /= floor 1+ 1-
-    zerop oddp evenp plusp minusp numberp integerp
+    zerop oddp evenp plusp minusp numberp integerp realp rationalp
     expt random max min
     logand logior lognot logtest
     integer-length ash
