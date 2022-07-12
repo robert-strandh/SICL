@@ -1,12 +1,5 @@
 (cl:in-package #:sicl-boot-phase-1)
 
-(defun import-number-functions (environment)
-  (import-functions-from-host
-   '(=
-     ;; ODDP is used at compile time in some macro expanders
-     oddp)
-   environment))
-
 (defun import-conditionals-support (environment)
   (import-functions-from-host
    '(sicl-conditionals:or-expander
@@ -45,7 +38,6 @@
    environment))
 
 (defun import-from-host (environment)
-  (import-number-functions environment)
   (import-conditionals-support environment)
   (import-trucler-functions environment)
   (import-misc environment)
