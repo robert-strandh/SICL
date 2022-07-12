@@ -11,18 +11,9 @@
    '(error typep coerce)
    environment))
 
-(defun import-sequence-functions (environment)
-  (import-functions-from-host
-   '(;; REVERSE is used in macroexpanders such as ROTATEF.
-     reverse
-     ;; LENGTH is used in macroexpanders such as SETF.
-     length)
-   environment))
-
 (defun import-from-host (environment)
   (import-trucler-functions environment)
-  (import-misc environment)
-  (import-sequence-functions environment))
+  (import-misc environment))
 
 (defun define-defgeneric-expander (client environment)
   (setf (env:fdefinition client environment 'sicl-clos:defgeneric-expander)
