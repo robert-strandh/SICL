@@ -124,7 +124,9 @@
     sicl-conditionals:ccase-expander
     sicl-conditionals:typecase-expander
     sicl-conditionals:etypecase-expander
-    sicl-conditionals:ctypecase-expander))
+    sicl-conditionals:ctypecase-expander
+    trucler:symbol-macro-expansion
+    trucler:macro-function))
 
 (defparameter *host-import-environment*
   (let ((e (make-instance 'env:run-time-environment)))
