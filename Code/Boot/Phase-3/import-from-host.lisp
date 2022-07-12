@@ -7,9 +7,7 @@
      sicl-method-combination:define-method-combination-expander
      shared-initialize initialize-instance reinitialize-instance
      closer-mop:method-function
-     sicl-clos:parse-defmethod sicl-clos:canonicalize-specializers
-     (setf env:macro-function)
-     coerce)
+     (setf env:macro-function))
    e3)
   (setf (env:macro-function (env:client e3) e3 'defpackage)
         (lambda (form env)
