@@ -116,9 +116,6 @@
       ;; designator, as its first argument.
       (ld "Data-and-control-flow/multiple-value-call-defmacro.lisp")
       (ld "Data-and-control-flow/setf-defmacro.lisp")
-      (import-functions-from-host
-       '(sicl-data-and-control-flow:defun-expander)
-       environment)
       ;; Load a file containing the definition of macro DEFUN.
       (ld "Data-and-control-flow/defun-defmacro.lisp")
       (ld "Data-and-control-flow/defconstant-defmacro.lisp")
@@ -128,14 +125,10 @@
       (ld "Evaluation-and-compilation/macroexpand-hook-defparameter.lisp")
       (ld "Evaluation-and-compilation/macroexpand-1-defun.lisp")
       (host-load "Evaluation-and-compilation/declaim-support.lisp")
-      (import-functions-from-host
-       '(sicl-evaluation-and-compilation:declaim-expander)
-       environment)
       (ld "Evaluation-and-compilation/declaim-defmacro.lisp")
       ;; Load a file containing the definitions of the macros INCF and
       ;; DECF.
       (ld "Arithmetic/incf-decf-defmacro.lisp")
-      (import-functions-from-host '(sicl-loop:expand-body) environment)
       (ld "Loop/loop-defmacro.lisp")
       ;; Load definitions of the macros PUSH and POP.
       (ld "Cons/push-pop-support.lisp")
@@ -160,13 +153,10 @@
       (ld "Cons/pushnew-support.lisp")
       (ld "Cons/pushnew-defmacro.lisp")
       ;; Load a file containing the definition of the macro DOTIMES.
-      (import-functions-from-host '(sicl-iteration:dotimes-expander) environment)
       (ld "Iteration/dotimes-defmacro.lisp")
       ;; Load a file containing the definition of the macro DOLIST.
-      (import-functions-from-host '(sicl-iteration:dolist-expander) environment)
       (ld "Iteration/dolist-defmacro.lisp")
       ;; Load a file containing the definition of the macros DO and DO*.
-      (import-functions-from-host '(sicl-iteration:do-dostar-expander) environment)
       (ld "Iteration/do-dostar-defmacro.lisp")
       ;; Define macro REMF.
       (ld "Cons/remf-support.lisp")
@@ -182,28 +172,14 @@
       ;; Load a file containing the definition of the macro
       ;; WITH-ALIST-ELEMENTS used by functions in the ASSOC family.
       (ld "Cons/with-alist-elements-defmacro.lisp")
-      (import-functions-from-host
-       '(sicl-conditions:define-condition-expander)
-       environment)
       (ld "Conditions/define-condition-defmacro.lisp")
       (ld "Conditions/assert-defmacro.lisp")
       (ld "Conditions/check-type-defmacro.lisp")
       (ld "Conditions/handler-bind-defmacro.lisp")
-      (import-functions-from-host
-       '(sicl-conditions:make-handler-case-without-no-error-case
-         sicl-conditions:make-handler-case-with-no-error-case)
-       environment)
       (ld "Conditions/handler-case-defmacro.lisp")
       (ld "Conditions/ignore-errors-defmacro.lisp")
       (ld "Types/deftype-defmacro.lisp")
-      (import-functions-from-host '(sicl-clos:with-slots-expander) environment)
       (ld "CLOS/with-slots-defmacro.lisp")
-      (import-functions-from-host '(sicl-clos:defclass-expander) environment)
       (ld "CLOS/defclass-defmacro.lisp")
       (ld "CLOS/defgeneric-defmacro.lisp")
-      (import-functions-from-host
-       '(sicl-clos:parse-defmethod
-         sicl-clos::make-method-lambda-default
-         sicl-clos:canonicalize-specializers)
-       environment)
       (ld "Boot/Phase-1/defmethod-defmacro.lisp"))))
