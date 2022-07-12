@@ -101,7 +101,21 @@
     cleavir-code-utilities:canonicalize-define-method-combination-arguments-lambda-list
     cleavir-code-utilities:canonicalize-specialized-lambda-list
     cleavir-code-utilities:lambda-list-variables
-    ))
+    ;; Macro support.
+    sicl-data-and-control-flow:defun-expander
+    sicl-evaluation-and-compilation:declaim-expander
+    sicl-loop:expand-body
+    sicl-iteration:dotimes-expander
+    sicl-iteration:dolist-expander
+    sicl-iteration:do-dostar-expander
+    sicl-conditions:define-condition-expander
+    sicl-conditions:make-handler-case-without-no-error-case
+    sicl-conditions:make-handler-case-with-no-error-case
+    sicl-clos:with-slots-expander
+    sicl-clos:defclass-expander
+    sicl-clos:parse-defmethod
+    sicl-clos::make-method-lambda-default
+    sicl-clos:canonicalize-specializers))
 
 (defparameter *host-import-environment*
   (let ((e (make-instance 'env:run-time-environment)))
