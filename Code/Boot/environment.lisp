@@ -81,6 +81,10 @@
     every some notevery notany
     functionp
     constantly ; FIXME: this one should go.
+    ;; Conditons
+    error
+    ;; Types and classes
+    typep coerce
     ;; Environment dictionary
     get-universal-time
     ;; Characters
