@@ -115,7 +115,16 @@
     sicl-clos:defclass-expander
     sicl-clos:parse-defmethod
     sicl-clos::make-method-lambda-default
-    sicl-clos:canonicalize-specializers))
+    sicl-clos:canonicalize-specializers
+    sicl-conditionals:or-expander
+    sicl-conditionals:and-expander
+    sicl-conditionals:cond-expander
+    sicl-conditionals:case-expander
+    sicl-conditionals:ecase-expander
+    sicl-conditionals:ccase-expander
+    sicl-conditionals:typecase-expander
+    sicl-conditionals:etypecase-expander
+    sicl-conditionals:ctypecase-expander))
 
 (defparameter *host-import-environment*
   (let ((e (make-instance 'env:run-time-environment)))
