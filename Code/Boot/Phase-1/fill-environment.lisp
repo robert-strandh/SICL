@@ -26,7 +26,6 @@
   (symbol-macrolet ((client sicl-client:*client*))
     (define-defmacro client environment)
     (define-backquote-macros client environment)
-    (import-from-host environment)
     (when (null (find-package '#:sicl-sequence))
       (make-package '#:sicl-sequence :use '(#:common-lisp)))
     (define-defgeneric-expander client environment)
