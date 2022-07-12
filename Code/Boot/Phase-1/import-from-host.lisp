@@ -1,18 +1,5 @@
 (cl:in-package #:sicl-boot-phase-1)
 
-(defun import-conditionals-support (environment)
-  (import-functions-from-host
-   '(sicl-conditionals:or-expander
-     sicl-conditionals:and-expander
-     sicl-conditionals:cond-expander
-     sicl-conditionals:case-expander
-     sicl-conditionals:ecase-expander
-     sicl-conditionals:ccase-expander
-     sicl-conditionals:typecase-expander
-     sicl-conditionals:etypecase-expander
-     sicl-conditionals:ctypecase-expander)
-   environment))
-
 (defun import-trucler-functions (environment)
   (import-functions-from-host
    '(trucler:symbol-macro-expansion
@@ -38,7 +25,6 @@
    environment))
 
 (defun import-from-host (environment)
-  (import-conditionals-support environment)
   (import-trucler-functions environment)
   (import-misc environment)
   (import-sequence-functions environment)
