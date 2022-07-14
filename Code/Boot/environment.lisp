@@ -81,8 +81,10 @@
     every some notevery notany
     functionp
     constantly ; FIXME: this one should go.
+    ;; String
+    stringp
     ;; Conditons
-    error
+    error break
     ;; Types and classes
     typep coerce
     ;; Environment dictionary
@@ -344,12 +346,8 @@
      constantp
      ;; Symbols
      gensym symbolp
-     ;; Strings
-     stringp
      ;; For debugging
-     format
-     ;; Conditions
-     error break)
+     format)
    environment))
 
 (defun define-special-operators (environment)
