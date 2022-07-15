@@ -15,47 +15,21 @@
   (let* ((input-indices
            (loop for input in (cleavir-ir:inputs instruction)
                  collect (ensure-lref input lexical-environment))))
-    (macrolet ((fixed-arity-call (arity)
-                 `(make-thunk (client instruction lexical-environment :inputs ,arity)
-                    (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
-                          (call-stack-entry
-                            (make-instance 'call-stack-entry
-                              :origin (cleavir-ast-to-hir:origin instruction)
-                              :arguments
-                              (loop for input-lref in input-indices
-                                    collect (lref input-lref)))))
-                      (setf *global-values-location*
-                            (multiple-value-list
-                             (with-new-call-stack-entry call-stack-entry
-                               (funcall
-                                ,@(loop for lref below arity collect `(input ,lref))))))
-                      (successor 0)))))
-      (case (length (cleavir-ir:inputs instruction))
-        (0 (error "Funcall instruction with zero inputs."))
-        (1 (fixed-arity-call 1))
-        (2 (fixed-arity-call 2))
-        (3 (fixed-arity-call 3))
-        (4 (fixed-arity-call 4))
-        (5 (fixed-arity-call 5))
-        (6 (fixed-arity-call 6))
-        (7 (fixed-arity-call 7))
-        (8 (fixed-arity-call 8))
-        (otherwise
-         (make-thunk (client instruction lexical-environment)
-           (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
-                 (call-stack-entry
-                   (make-instance 'call-stack-entry
-                     :origin (cleavir-ast-to-hir:origin instruction)
-                     :arguments
-                     (loop for input-lref in input-indices
-                           collect (lref input-lref)))))
-             (setf *global-values-location*
-                   (multiple-value-list
-                    (with-new-call-stack-entry call-stack-entry
-                      (apply #'funcall
-                             (loop for input-lref in input-indices
-                                   collect (lref input-lref))))))
-             (successor 0))))))))
+    (make-thunk (client instruction lexical-environment)
+      (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
+            (call-stack-entry
+              (make-instance 'call-stack-entry
+                :origin (cleavir-ast-to-hir:origin instruction)
+                :arguments
+                (loop for input-lref in input-indices
+                      collect (lref input-lref)))))
+        (setf *global-values-location*
+              (multiple-value-list
+               (with-new-call-stack-entry call-stack-entry
+                 (apply #'funcall
+                        (loop for input-lref in input-indices
+                              collect (lref input-lref))))))
+        (successor 0)))))
 
 (defmethod instruction-thunk
     (client
@@ -65,49 +39,22 @@
          (input-indices
            (loop for input in (cleavir-ir:inputs instruction)
                  collect (ensure-lref input lexical-environment))))
-    (macrolet ((fixed-arity-call (arity)
-                 `(make-thunk (client instruction lexical-environment :inputs ,arity)
-                    (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
-                          (call-stack-entry
-                            (make-instance 'call-stack-entry
-                              :origin (cleavir-ast-to-hir:origin instruction)
-                              :arguments
-                              (loop for input-lref in input-indices
-                                    collect (lref input-lref)))))
-                      (setf *global-values-location*
-                            (multiple-value-list
-                             (with-new-call-stack-entry call-stack-entry
-                               (funcall
-                                (caar function-cell-cell)
-                                ,@(loop for lref below arity collect `(input ,lref))))))
-                      (successor 0)))))
-      (case (length (cleavir-ir:inputs instruction))
-        (0 (fixed-arity-call 0))
-        (1 (fixed-arity-call 1))
-        (2 (fixed-arity-call 2))
-        (3 (fixed-arity-call 3))
-        (4 (fixed-arity-call 4))
-        (5 (fixed-arity-call 5))
-        (6 (fixed-arity-call 6))
-        (7 (fixed-arity-call 7))
-        (8 (fixed-arity-call 8))
-        (otherwise
-         (make-thunk (client instruction lexical-environment)
-           (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
-                 (call-stack-entry
-                   (make-instance 'call-stack-entry
-                     :origin (cleavir-ast-to-hir:origin instruction)
-                     :arguments
-                     (loop for input-lref in input-indices
-                           collect (lref input-lref)))))
-             (setf *global-values-location*
-                   (multiple-value-list
-                    (with-new-call-stack-entry call-stack-entry
-                      (apply #'funcall
-                             (caar function-cell-cell)
-                             (loop for input-lref in input-indices
-                                   collect (lref input-lref))))))
-             (successor 0))))))))
+    (make-thunk (client instruction lexical-environment)
+      (let ((sicl-run-time:*dynamic-environment* dynamic-environment)
+            (call-stack-entry
+              (make-instance 'call-stack-entry
+                :origin (cleavir-ast-to-hir:origin instruction)
+                :arguments
+                (loop for input-lref in input-indices
+                      collect (lref input-lref)))))
+        (setf *global-values-location*
+              (multiple-value-list
+               (with-new-call-stack-entry call-stack-entry
+                 (apply #'funcall
+                        (caar function-cell-cell)
+                        (loop for input-lref in input-indices
+                              collect (lref input-lref))))))
+        (successor 0)))))
 
 (defmethod instruction-thunk
     (client
