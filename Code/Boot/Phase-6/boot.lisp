@@ -58,7 +58,6 @@
         (load-source-file "Cons/member-defun.lisp" e5)
         (load-source-file "Cons/union-defun.lisp" e5)
         (load-source-file "Cons/nunion-defun.lisp" e5)
-        (sicl-boot:import-functions-from-host '(alexandria:parse-body) e5)
         (enable-printing e5)
         (ensure-asdf-system '#:acclimation e5)
         (load-ctype e5)
