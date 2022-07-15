@@ -133,7 +133,10 @@
     sicl-conditionals:ctypecase-expander
     trucler:symbol-macro-expansion
     trucler:macro-function
-    sicl-method-combination:define-method-combination-expander))
+    sicl-method-combination:define-method-combination-expander
+    ;; Alexandria
+    alexandria:parse-body
+    alexandria:make-gensym-list))
 
 (defparameter *host-import-environment*
   (let ((e (make-instance 'env:run-time-environment)))
@@ -386,9 +389,6 @@
                 (trucler:global-environment client lexical-environment))))
       (import-standard-functions environment)
       (import-run-time-functions environment)
-      (import-functions-from-host
-       '(alexandria:make-gensym-list)
-       environment)
       (def 'funcall
           (lambda (function-designator &rest arguments)
             (let ((function (if (symbolp function-designator)
