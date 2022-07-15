@@ -136,7 +136,12 @@
     sicl-method-combination:define-method-combination-expander
     ;; Alexandria
     alexandria:parse-body
-    alexandria:make-gensym-list))
+    alexandria:make-gensym-list
+    ;; SICL run time
+    sicl-run-time:symbol-value
+    (setf sicl-run-time:symbol-value)
+    sicl-run-time:boundp
+    sicl-run-time:makunbound))
 
 (defparameter *host-import-environment*
   (let ((e (make-instance 'env:run-time-environment)))
@@ -369,14 +374,6 @@
       (setf (env:special-operator client environment symbol)
             t))))
 
-(defun import-run-time-functions (environment)
-  (import-functions-from-host
-   '(sicl-run-time:symbol-value
-     (setf sicl-run-time:symbol-value)
-     sicl-run-time:boundp
-     sicl-run-time:makunbound)
-   environment))
-
 (defmethod initialize-instance :after ((environment environment) &key)
   (let ((client (env:client environment)))
     (flet ((def (name function)
@@ -388,7 +385,6 @@
                 environment
                 (trucler:global-environment client lexical-environment))))
       (import-standard-functions environment)
-      (import-run-time-functions environment)
       (def 'funcall
           (lambda (function-designator &rest arguments)
             (let ((function (if (symbolp function-designator)
