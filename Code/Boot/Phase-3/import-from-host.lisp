@@ -2,9 +2,7 @@
 
 (defun import-misc (e3)
   (import-functions-from-host
-   '(slot-unbound
-     no-applicable-method
-     sicl-method-combination:define-method-combination-expander
+   '(sicl-method-combination:define-method-combination-expander
      shared-initialize initialize-instance reinitialize-instance
      closer-mop:method-function
      (setf env:macro-function))
