@@ -92,6 +92,8 @@
     ;; Characters
     characterp char-code code-char char= char-name standard-char-p
     alphanumericp digit-char-p char-upcase
+    ;; Symbols
+    gensym symbolp
     ;; Code utilities
     cleavir-code-utilities:separate-ordinary-body
     cleavir-code-utilities:separate-function-body
@@ -350,8 +352,6 @@
   (import-functions-from-host
    '(;; Evaluation and compilation
      constantp
-     ;; Symbols
-     gensym symbolp
      ;; For debugging
      format)
    environment))
