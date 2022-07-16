@@ -8,6 +8,7 @@
   (ensure-asdf-system '#:sicl-cons-compile-time e3)
   (ensure-asdf-system '#:sicl-data-and-control-flow-type-proclamations e3)
   (ensure-asdf-system '#:sicl-arithmetic-type-proclamations e3)
+  (ensure-asdf-system '#:sicl-conditions-type-proclamations e3)
   (enable-typep e2)
   (enable-object-creation e1 e2)
   (enable-defgeneric e1 e2 e3)
