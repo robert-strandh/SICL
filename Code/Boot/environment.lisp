@@ -79,7 +79,7 @@
     ;; Data and control flow
     not eq eql equal values
     every some notevery notany
-    functionp
+    functionp identity
     constantly ; FIXME: this one should go.
     ;; String
     stringp
@@ -348,9 +348,7 @@
 
 (defun import-standard-functions (environment)
   (import-functions-from-host
-   '(;; Data and control flow
-     identity every
-     ;; Evaluation and compilation
+   '(;; Evaluation and compilation
      constantp
      ;; Symbols
      gensym symbolp
