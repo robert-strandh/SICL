@@ -18,7 +18,7 @@
                       &body body)
   (sicl-utilities:once-only (client instruction lexical-environment)
     (let ((thunk-gensym (gensym "THUNK"))
-          (self-gensym (gensym "SELF"))
+          ;; (self-gensym (gensym "SELF"))
           (lexical-locations (gensym "LEXICAL-LOCATIONS"))
           (dynamic-environment-gensym-1 (gensym "DYNAMIC-ENVIRONMENT"))
           (dynamic-environment-gensym-2 (gensym "DYNAMIC-ENVIRONMENT"))
@@ -40,7 +40,7 @@
                    (,dynamic-environment-gensym-2
                      (ensure-lref (cleavir-ir:dynamic-environment-location ,instruction)
                                  ,lexical-environment))
-                   (,self-gensym #'dummy-successor)
+                   ;; (,self-gensym #'dummy-successor)
                    ,@(loop for input-gensym in input-gensyms
                            collect
                            `(,input-gensym (ensure-lref ,input-gensym ,lexical-environment)))
@@ -54,7 +54,7 @@
                (declare (ignorable
                          ,dynamic-environment-gensym-1
                          ,dynamic-environment-gensym-2
-                         ,self-gensym))
+                         )); ,self-gensym))
                (macrolet ((lref (lref)
                             `(%lref ,',lexical-locations ,lref))
                           (input (index)
@@ -90,7 +90,7 @@
                              (declare (simple-vector ,lexical-locations))
                              (declare (ignorable ,lexical-locations))
                              (progn ,@body)))))
-                   (setf ,self-gensym ,thunk-gensym)
+                   ;; (setf ,self-gensym ,thunk-gensym)
                    (setf (gethash ,instruction *instruction-thunks*)
                          ,thunk-gensym)
                    ,client ; Touch the client to avoid warnings when there
