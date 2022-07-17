@@ -89,16 +89,7 @@
                            (lambda (,lexical-locations)
                              (declare (simple-vector ,lexical-locations))
                              (declare (ignorable ,lexical-locations))
-                             #+(or)(prologue
-                              ,lexical-locations
-                              ,dynamic-environment-gensym-1
-                              ,dynamic-environment-gensym-2
-                              ,self-gensym)
-                             (prog1 (progn ,@body)
-                               #+(or)(epilogue
-                                ,lexical-locations
-                                ,dynamic-environment-gensym-1
-                                ,dynamic-environment-gensym-2))))))
+                             (progn ,@body)))))
                    (setf ,self-gensym ,thunk-gensym)
                    (setf (gethash ,instruction *instruction-thunks*)
                          ,thunk-gensym)
@@ -115,30 +106,3 @@
 
 (defun dummy-successor ()
   (error "Invocation of the dummy successor."))
-
-(defun prologue (lexical-locations lref-1 lref-2 thunk)
-  (let ((env1 (%lref lexical-locations lref-1))
-        (env2 (%lref lexical-locations lref-2)))
-    (unless (or (eq env1 env2)
-                (> (length env2) (length env1)))
-      (loop for env = env1 then (rest env)
-            for entry = (first env)
-            until (eq env env2)
-            do (sicl-run-time:invalidate-entry entry))
-      (let ((last-block/tagbody
-              (loop with result = nil
-                    for env = env1 then (rest env)
-                    for entry = (first env)
-                    until (eq env env2)
-                    when (typep entry 'sicl-run-time:unwind-protect-entry)
-                      do (funcall (sicl-run-time:thunk entry))
-                    when (typep entry 'sicl-run-time:block/tagbody-entry)
-                      do (setf result entry)
-                    finally (return result))))
-        (unless (null last-block/tagbody)
-          (throw (sicl-run-time:frame-pointer last-block/tagbody)
-            thunk))))))
-
-(defun epilogue (lexical-locations lref-1 lref-2)
-  (setf (%lref lexical-locations lref-1)
-        (%lref lexical-locations lref-2)))
