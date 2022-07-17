@@ -351,9 +351,7 @@
 (defun import-standard-functions (environment)
   (import-functions-from-host
    '(;; Evaluation and compilation
-     constantp
-     ;; For debugging
-     format)
+     constantp)
    environment))
 
 (defun define-special-operators (environment)
