@@ -81,6 +81,8 @@
     every some notevery notany
     functionp identity
     constantly ; FIXME: this one should go.
+    ;; Evaluation and compilation
+    constantp ; FIXME: this one should go.
     ;; String
     stringp
     ;; Conditons
@@ -348,12 +350,6 @@
               (setf (env:macro-function c environment name) nil)))))
   (define-macroexpand environment))
 
-(defun import-standard-functions (environment)
-  (import-functions-from-host
-   '(;; Evaluation and compilation
-     constantp)
-   environment))
-
 (defun define-special-operators (environment)
   (let ((client (env:client environment)))
     (do-external-symbols (symbol '#:common-lisp)
@@ -380,7 +376,6 @@
             (if (null lexical-environment)
                 environment
                 (trucler:global-environment client lexical-environment))))
-      (import-standard-functions environment)
       (def 'funcall
           (lambda (function-designator &rest arguments)
             (let ((function (if (symbolp function-designator)
