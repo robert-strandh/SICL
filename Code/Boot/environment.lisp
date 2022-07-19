@@ -145,10 +145,19 @@
     sicl-run-time:symbol-value
     (setf sicl-run-time:symbol-value)
     sicl-run-time:boundp
-    sicl-run-time:makunbound))
+    sicl-run-time:makunbound
+    ;; Aliases for host functions
+    host-symbol-name
+    host-symbol-package
+    host-array-dimensions
+    host-package-name))
 
 (defparameter *host-import-environment*
   (let ((e (make-instance 'env:run-time-environment)))
+    (setf (fdefinition 'host-symbol-name) #'symbol-name)
+    (setf (fdefinition 'host-symbol-package) #'symbol-package)
+    (setf (fdefinition 'host-array-dimensions) #'array-dimensions)
+    (setf (fdefinition 'host-package-name) #'package-name)
     (loop for name in *allowed-host-functions*
           do (setf (env:fdefinition nil e name)
                    (fdefinition name)))
@@ -388,10 +397,6 @@
                                 (env:fdefinition client environment function-designator)
                                 function-designator)))
               (apply #'apply function arguments))))
-      (def 'host-symbol-name #'symbol-name)
-      (def 'host-symbol-package #'symbol-package)
-      (def 'host-array-dimensions #'array-dimensions)
-      (def 'host-package-name #'package-name)
       (define-special-operators environment)
       (define-primops environment)
       (define-environment-functions client environment)
