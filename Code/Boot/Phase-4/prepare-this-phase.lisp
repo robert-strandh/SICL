@@ -20,6 +20,7 @@
   (ensure-asdf-system '#:sicl-arithmetic-type-proclamations e4)
   (ensure-asdf-system '#:sicl-conditions-type-proclamations e4)
   (ensure-asdf-system '#:sicl-symbol-type-proclamations e4)
+  (ensure-asdf-system '#:sicl-type-type-proclamations e4)
   (load-source-file "CLOS/class-of-defun.lisp" e3)
   (enable-typep e2 e3)
   (load-source-file "Types/type-of-defgeneric.lisp" e3)
