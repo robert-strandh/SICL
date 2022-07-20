@@ -23,4 +23,4 @@
             position))
 
 (proclaim '(ftype (function (sequence) (integer 0))
-            length)
+            length))
