@@ -21,3 +21,6 @@
                              (:test-not function))
                    (or null (integer 0)))
             position))
+
+(proclaim '(ftype (function (sequence) (integer 0))
+            length)
