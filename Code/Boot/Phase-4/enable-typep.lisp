@@ -1,7 +1,6 @@
 (cl:in-package #:sicl-boot-phase-4)
 
 (defun enable-typep (e2 e3)
-  (define-error-functions '(symbol-package find-package) e3)
   (with-intercepted-function-cells
       (e3
        (sicl-clos:class-precedence-list
