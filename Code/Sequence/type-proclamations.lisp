@@ -7,5 +7,6 @@
                              (:end (or (nil (integer 0))))
                              (:key function)
                              (:test function)
-                             (:test-not function)))
+                             (:test-not function))
+                   (integer 0))
             count))
