@@ -87,3 +87,11 @@
 (declaim (ftype (or (function (number) number)
                     (function (real real) number))
                 atan))
+
+(declaim (ftype (or (function ((integer 0) &optional random-state)
+                              (integer 0))
+                    (function ((single-float 0f0) &optional random-state)
+                              (single-float 0f0))
+                    (function ((double-float 0d0) &optional random-state)
+                              (double-float 0d0)))
+                random))
