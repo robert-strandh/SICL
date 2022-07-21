@@ -7,7 +7,6 @@
                 #:load-source-file-using-client
                 #:ensure-asdf-system
                 #:ensure-asdf-system-using-client
-                #:import-functions-from-host
-                #:define-error-functions)
+                #:import-functions-from-host)
   (:local-nicknames (#:env #:sicl-environment))
   (:export #:boot))

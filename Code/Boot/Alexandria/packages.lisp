@@ -8,7 +8,6 @@
                 #:ensure-asdf-system
                 #:ensure-asdf-system-using-client
                 #:import-functions-from-host
-                #:with-temporary-function-imports
-                #:define-error-functions)
+                #:with-temporary-function-imports)
   (:local-nicknames (#:env #:sicl-environment))
   (:export #:boot))

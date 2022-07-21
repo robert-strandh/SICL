@@ -5,7 +5,6 @@
   (:local-nicknames (#:env #:sicl-environment))
   (:import-from #:sicl-boot
                 #:import-functions-from-host
-                #:define-error-functions
                 #:ensure-asdf-system
                 #:with-intercepted-function-cells
                 #:load-source-file)

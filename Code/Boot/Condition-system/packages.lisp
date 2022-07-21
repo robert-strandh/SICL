@@ -3,7 +3,6 @@
 (defpackage #:sicl-boot-condition-system
   (:use #:common-lisp)
   (:import-from #:sicl-boot
-                #:import-functions-from-host
-                #:define-error-functions)
+                #:import-functions-from-host)
   (:local-nicknames (#:env #:sicl-environment))
   (:export #:boot))
