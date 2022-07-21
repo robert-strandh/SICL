@@ -6,16 +6,6 @@
         do (setf (env:fdefinition client environment name)
                  (fdefinition name))))
 
-(defun define-error-functions (names environment)
-  (loop with client = (env:client environment)
-        for name in names
-        do (setf (env:fdefinition client environment name)
-                 (let ((name name))
-                   (lambda (&rest arguments)
-                     (declare (ignore arguments))
-                     (error "Undefined function ~s in environment ~s"
-                            name environment))))))
-
 (defun source-relative-to-absolute-pathname (relative-pathname)
   (asdf:system-relative-pathname '#:sicl relative-pathname))
 
