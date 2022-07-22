@@ -13,6 +13,7 @@
   (ensure-asdf-system '#:sicl-type-type-proclamations e3)
   (ensure-asdf-system '#:sicl-character-type-proclamations e3)
   (ensure-asdf-system '#:sicl-sequence-type-proclamations e3)
+  (ensure-asdf-system '#:sicl-run-time-type-proclamations e3)
   (enable-typep e2)
   (enable-object-creation e1 e2)
   (enable-defgeneric e1 e2 e3)

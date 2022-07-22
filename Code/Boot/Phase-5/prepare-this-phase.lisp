@@ -31,6 +31,7 @@
   (ensure-asdf-system '#:sicl-type-type-proclamations e5)
   (ensure-asdf-system '#:sicl-character-type-proclamations e5)
   (ensure-asdf-system '#:sicl-sequence-type-proclamations e5)
+  (ensure-asdf-system '#:sicl-run-time-type-proclamations e5)
   (load-source-file "CLOS/class-of-defun.lisp" e4)
   (enable-typep e3 e4)
   (load-source-file "Types/type-of-defgeneric.lisp" e4)
