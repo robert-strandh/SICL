@@ -34,3 +34,14 @@
                    (function (list function) list)
                    (function (vector function) vector))
             sort stable-sort))
+
+(proclaim '(ftype (or
+                   (function (list
+                              (integer 0)
+                              &optional (or null (integer 0)))
+                    list)
+                   (function (vector
+                              (integer 0)
+                              &optional (or null (integer 0)))
+                    vector))
+            subseq))
