@@ -24,3 +24,8 @@
 
 (proclaim '(ftype (function (sequence) (integer 0))
             length))
+
+(proclaim '(ftype (or
+                   (function (list) list)
+                   (function (vector) vector))
+            reverse nreverse))
