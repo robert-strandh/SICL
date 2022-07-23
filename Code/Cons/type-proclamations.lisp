@@ -170,3 +170,9 @@
                              (:test-no (or symbol function)))
                    list)
             member))
+
+(proclaim '(ftype (function (t cons) t)
+            (setf car) (setf cdr)))
+
+(proclaim '(ftype (function (t (cons t (cons t))) t)
+            (setf cadr) (setf (cddr))))
