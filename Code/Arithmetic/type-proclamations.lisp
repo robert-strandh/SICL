@@ -95,3 +95,7 @@
                     (function ((double-float 0d0) &optional random-state)
                               (double-float 0d0)))
                 random))
+
+(declaim (ftype (function (number) number) 1+ 1-))
+
+(declaim (ftype (function (number) t) zerop))
