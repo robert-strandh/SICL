@@ -175,6 +175,6 @@
             (setf car) (setf cdr)))
 
 (proclaim '(ftype (function (t (cons t (cons t))) t)
-            (setf cadr) (setf (cddr))))
+            (setf cadr) (setf cddr)))
 
 (proclaim '(ftype (function ((integer 0) list) t) nth))
