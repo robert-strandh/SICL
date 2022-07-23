@@ -178,3 +178,6 @@
             (setf cadr) (setf cddr)))
 
 (proclaim '(ftype (function ((integer 0) list) t) nth))
+
+(proclaim '(ftype (function (function list &rest list) list)
+            mapc mapcar mapcan mapl maplist mapcon))
