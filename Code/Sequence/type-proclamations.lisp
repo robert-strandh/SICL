@@ -33,6 +33,29 @@
                    t)
             find))
 
+(proclaim '(ftype (or
+                   (function (t list
+                              &key
+                              (:from-end t)
+                              (:start (integer 0))
+                              (:end (or (nil (integer 0))))
+                              (:key function)
+                              (:test function)
+                              (:test-not function)
+                              (:count (or null integer)))
+                    list)
+                   (function (t vector
+                              &key
+                              (:from-end t)
+                              (:start (integer 0))
+                              (:end (or (nil (integer 0))))
+                              (:key function)
+                              (:test function)
+                              (:test-not function)
+                              (:count (or null integer)))
+                       vector))
+            remove))
+
 (proclaim '(ftype (function (sequence) (integer 0))
             length))
 
