@@ -56,3 +56,14 @@
                               &optional (or null (integer 0)))
                     vector))
             subseq))
+
+(proclaim '(ftype (function (function sequence
+                             &key
+                             (:key function)
+                             (:start (integer 0))
+                             (:end (or null (integer 0)))
+                             (:key function)
+                             (:from-end t)
+                             (:initial-value t))
+                   t)
+            reduce))
