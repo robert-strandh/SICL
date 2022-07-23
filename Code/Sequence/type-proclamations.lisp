@@ -29,3 +29,8 @@
                    (function (list) list)
                    (function (vector) vector))
             reverse nreverse))
+
+(proclaim '(ftype (or
+                   (function (list function) list)
+                   (function (vector function) vector))
+            sort stable-sort))
