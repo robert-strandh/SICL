@@ -22,6 +22,17 @@
                    (or null (integer 0)))
             position))
 
+(proclaim '(ftype (function (t sequence
+                             &key
+                             (:from-end t)
+                             (:start (integer 0))
+                             (:end (or (nil (integer 0))))
+                             (:key function)
+                             (:test function)
+                             (:test-not function))
+                   t)
+            find))
+
 (proclaim '(ftype (function (sequence) (integer 0))
             length))
 
