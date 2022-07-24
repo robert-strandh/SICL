@@ -18,6 +18,9 @@
                  (function (cons) t))
                 car cdr first rest))
 
+(declaim (ftype (function (t) (member t nil))
+                atom consp null listp))
+
 (deftype cxrn (operations)
   (loop with result = 'null
         for operation in (cdr operations)
@@ -145,9 +148,6 @@
                  (function (list) t)
                  (function ((not list)) nil))
                 endp))
-
-(declaim (ftype (function (t) (member t nil))
-                atom consp null listp))
 
 (declaim (ftype (function (t t) cons)
                 cons))
