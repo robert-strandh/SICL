@@ -1,5 +1,15 @@
 (cl:in-package #:sicl-cons)
 
+(declaim (ftype (or
+                 (function (null) null)
+                 (function (cons) t))
+                car cdr first rest))
+
+(declaim (ftype (or
+                 (function ((or null (cons t null))) null)
+                 (function ((cons t cons)) t))
+                cadr cddr second))
+
 (deftype cxrn (operations)
   (if (= (length operations) 1)
       'null
@@ -13,16 +23,6 @@
       (ecase (car (last operations))
         (a `(cons (cxrt ,(butlast operations)) *))
         (d `(cons * (cxrt ,(butlast operations)))))))
-
-(declaim (ftype (or
-                 (function ((cxrn (x))) null)
-                 (function ((cxrt (x))) t))
-                car cdr))
-
-(declaim (ftype (or
-                 (function ((cxrn (x d))) null)
-                 (function ((cxrt (x d))) t))
-                cadr cddr))
 
 (declaim (ftype (or
                  (function ((cxrn (x a))) null)
