@@ -53,6 +53,95 @@
                            t))
                 caaar cdaar))
 
+(deftype cxrn (operations)
+  (if (= (length operations) 1)
+      'null
+      (ecase (car (last operations))
+        (a `(or null (cons (cxrn ,(butlast operations)) *)))
+        (d `(or null (cons * (cxrn ,(butlast operations))))))))
+
+(deftype cxrt (operations)
+  (if (= (length operations) 1)
+      'cons
+      (ecase (car (last operations))
+        (a `(cons (cxrt ,(butlast operations)) *))
+        (d `(cons * (cxrt ,(butlast operations)))))))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d d))) null)
+                 (function ((cxrt (x d d d))) t))
+                cadddr cddddr))
+
+(declaim (ftype (or
+                 (function ((cxrn (x a d d))) null)
+                 (function ((cxrt (x a d d))) t))
+                caaddr cdaddr))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d a d))) null)
+                 (function ((cxrt (x d a d))) t))
+                cadadr cddadr))
+
+(declaim (ftype (or
+                 (function ((cxrn (x a a d))) null)
+                 (function ((cxrt (x a a d))) t))
+                caaadr cdaadr))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d a))) null)
+                 (function ((cxrt (x d d a))) t))
+                caddar cdddar))
+
+(declaim (ftype (or
+                 (function ((cxrn (x a d a))) null)
+                 (function ((cxrt (x a d a))) t))
+                caadar cdadar))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d a a))) null)
+                 (function ((cxrt (x d a a))) t))
+                cadaar cddaar))
+
+(declaim (ftype (or
+                 (function ((cxrn (x a a a))) null)
+                 (function ((cxrt (x a a a))) t))
+                caaaar cdaaar))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d d))) null)
+                 (function ((cxrt (x d d d))) t))
+                fourth))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d))) null)
+                 (function ((cxrt (x d d d d))) t))
+                fifth))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d))) null)
+                 (function ((cxrt (x d d d d d))) t))
+                sixth))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d d))) null)
+                 (function ((cxrt (x d d d d d d))) t))
+                seventh))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d d d))) null)
+                 (function ((cxrt (x d d d d d d d))) t))
+                eighth))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d d d d))) null)
+                 (function ((cxrt (x d d d d d d d d))) t))
+                ninth))
+
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d d d d d))) null)
+                 (function ((cxrt (x d d d d d d d d d))) t))
+                tenth))
+
 (declaim (ftype (or
                  (function (list) t)
                  (function ((not list)) nil))
