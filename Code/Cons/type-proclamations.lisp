@@ -54,18 +54,22 @@
                 caaar cdaar))
 
 (deftype cxrn (operations)
-  (if (= (length operations) 1)
-      'null
-      (ecase (car (last operations))
-        (a `(or null (cons (cxrn ,(butlast operations)) *)))
-        (d `(or null (cons * (cxrn ,(butlast operations))))))))
+  (loop with result = 'null
+        for operation in (cdr operations)
+        do (setf result
+                 (if (eq operation 'a)
+                     `(or null (cons ,result))
+                     `(or null (cons t ,result))))
+        finally (return result)))
 
 (deftype cxrt (operations)
-  (if (= (length operations) 1)
-      'cons
-      (ecase (car (last operations))
-        (a `(cons (cxrt ,(butlast operations)) *))
-        (d `(cons * (cxrt ,(butlast operations)))))))
+  (loop with result = 'cons
+        for operation in (cdr operations)
+        do (setf result
+                 (if (eq operation 'a)
+                     `(cons ,result)
+                     `(cons t ,result)))
+        finally (return result)))
 
 (declaim (ftype (or
                  (function ((cxrn (x d d d))) null)
