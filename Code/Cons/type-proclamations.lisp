@@ -18,6 +18,24 @@
                  (function (cons) t))
                 car cdr first rest))
 
+(deftype cxrn (operations)
+  (loop with result = 'null
+        for operation in (cdr operations)
+        do (setf result
+                 (if (eq operation 'a)
+                     `(or null (cons ,result))
+                     `(or null (cons t ,result))))
+        finally (return result)))
+
+(deftype cxrt (operations)
+  (loop with result = 'cons
+        for operation in (cdr operations)
+        do (setf result
+                 (if (eq operation 'a)
+                     `(cons ,result)
+                     `(cons t ,result)))
+        finally (return result)))
+
 (declaim (ftype (or
                  (function ((or null (cons t null))) null)
                  (function ((cons t cons)) t))
@@ -65,24 +83,6 @@
                  (function ((cons (cons cons)))
                            t))
                 caaar cdaar))
-
-(deftype cxrn (operations)
-  (loop with result = 'null
-        for operation in (cdr operations)
-        do (setf result
-                 (if (eq operation 'a)
-                     `(or null (cons ,result))
-                     `(or null (cons t ,result))))
-        finally (return result)))
-
-(deftype cxrt (operations)
-  (loop with result = 'cons
-        for operation in (cdr operations)
-        do (setf result
-                 (if (eq operation 'a)
-                     `(cons ,result)
-                     `(cons t ,result)))
-        finally (return result)))
 
 (declaim (ftype (or
                  (function ((cxrn (x d d d))) null)
