@@ -25,6 +25,34 @@
                            t))
                 caddr cdddr third))
 
+(declaim (ftype (or
+                 (function ((or null
+                                (cons t
+                                      (or null
+                                          (cons null)))))
+                           null)
+                 (function ((cons t (cons cons)))
+                           t))
+                caadr cdadr))
+
+(declaim (ftype (or
+                 (function ((or null
+                                (cons (or null
+                                          (cons t null)))))
+                           null)
+                 (function ((cons (cons t cons)))
+                           t))
+                cadar cddar))
+
+(declaim (ftype (or
+                 (function ((or null
+                                (cons (or null
+                                          (cons null)))))
+                           null)
+                 (function ((cons (cons cons)))
+                           t))
+                caaar cdaar))
+
 (deftype cxrn (operations)
   (if (= (length operations) 1)
       'null
@@ -38,21 +66,6 @@
       (ecase (car (last operations))
         (a `(cons (cxrt ,(butlast operations)) *))
         (d `(cons * (cxrt ,(butlast operations)))))))
-
-(declaim (ftype (or
-                 (function ((cxrn (x a d))) null)
-                 (function ((cxrt (x a d))) t))
-                caadr cdadr))
-
-(declaim (ftype (or
-                 (function ((cxrn (x d a))) null)
-                 (function ((cxrt (x d a))) t))
-                cadar cddar))
-
-(declaim (ftype (or
-                 (function ((cxrn (x a a))) null)
-                 (function ((cxrt (x a a))) t))
-                caaar cdaar))
 
 (declaim (ftype (or
                  (function ((cxrn (x d d d))) null)
