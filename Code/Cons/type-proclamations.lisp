@@ -14,170 +14,170 @@
         (a `(cons (cxrt ,(butlast operations)) *))
         (d `(cons * (cxrt ,(butlast operations)))))))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x))) null)
-                   (function ((cxrt (x))) t))
-            car cdr))
+(declaim (ftype (or
+                 (function ((cxrn (x))) null)
+                 (function ((cxrt (x))) t))
+                car cdr))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d))) null)
-                   (function ((cxrt (x d))) t))
-            cadr cddr))
+(declaim (ftype (or
+                 (function ((cxrn (x d))) null)
+                 (function ((cxrt (x d))) t))
+                cadr cddr))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x a))) null)
-                   (function ((cxrt (x a))) t))
-            caar cdar))
+(declaim (ftype (or
+                 (function ((cxrn (x a))) null)
+                 (function ((cxrt (x a))) t))
+                caar cdar))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d))) null)
-                   (function ((cxrt (x d d))) t))
-            caddr cdddr))
+(declaim (ftype (or
+                 (function ((cxrn (x d d))) null)
+                 (function ((cxrt (x d d))) t))
+                caddr cdddr))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x a d))) null)
-                   (function ((cxrt (x a d))) t))
-            caadr cdadr))
+(declaim (ftype (or
+                 (function ((cxrn (x a d))) null)
+                 (function ((cxrt (x a d))) t))
+                caadr cdadr))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d a))) null)
-                   (function ((cxrt (x d a))) t))
-            cadar cddar))
+(declaim (ftype (or
+                 (function ((cxrn (x d a))) null)
+                 (function ((cxrt (x d a))) t))
+                cadar cddar))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x a a))) null)
-                   (function ((cxrt (x a a))) t))
-            caaar cdaar))
+(declaim (ftype (or
+                 (function ((cxrn (x a a))) null)
+                 (function ((cxrt (x a a))) t))
+                caaar cdaar))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d d))) null)
-                   (function ((cxrt (x d d d))) t))
-            cadddr cddddr))
+(declaim (ftype (or
+                 (function ((cxrn (x d d d))) null)
+                 (function ((cxrt (x d d d))) t))
+                cadddr cddddr))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x a d d))) null)
-                   (function ((cxrt (x a d d))) t))
-            caaddr cdaddr))
+(declaim (ftype (or
+                 (function ((cxrn (x a d d))) null)
+                 (function ((cxrt (x a d d))) t))
+                caaddr cdaddr))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d a d))) null)
-                   (function ((cxrt (x d a d))) t))
-            cadadr cddadr))
+(declaim (ftype (or
+                 (function ((cxrn (x d a d))) null)
+                 (function ((cxrt (x d a d))) t))
+                cadadr cddadr))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x a a d))) null)
-                   (function ((cxrt (x a a d))) t))
-            caaadr cdaadr))
+(declaim (ftype (or
+                 (function ((cxrn (x a a d))) null)
+                 (function ((cxrt (x a a d))) t))
+                caaadr cdaadr))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d a))) null)
-                   (function ((cxrt (x d d a))) t))
-            caddar cdddar))
+(declaim (ftype (or
+                 (function ((cxrn (x d d a))) null)
+                 (function ((cxrt (x d d a))) t))
+                caddar cdddar))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x a d a))) null)
-                   (function ((cxrt (x a d a))) t))
-            caadar cdadar))
+(declaim (ftype (or
+                 (function ((cxrn (x a d a))) null)
+                 (function ((cxrt (x a d a))) t))
+                caadar cdadar))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d a a))) null)
-                   (function ((cxrt (x d a a))) t))
-            cadaar cddaar))
+(declaim (ftype (or
+                 (function ((cxrn (x d a a))) null)
+                 (function ((cxrt (x d a a))) t))
+                cadaar cddaar))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x a a a))) null)
-                   (function ((cxrt (x a a a))) t))
-            caaaar cdaaar))
+(declaim (ftype (or
+                 (function ((cxrn (x a a a))) null)
+                 (function ((cxrt (x a a a))) t))
+                caaaar cdaaar))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x))) null)
-                   (function ((cxrt (x))) t))
-            first))
+(declaim (ftype (or
+                 (function ((cxrn (x))) null)
+                 (function ((cxrt (x))) t))
+                first))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d))) null)
-                   (function ((cxrt (x d))) t))
-            second))
+(declaim (ftype (or
+                 (function ((cxrn (x d))) null)
+                 (function ((cxrt (x d))) t))
+                second))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d))) null)
-                   (function ((cxrt (x d d))) t))
-            third))
+(declaim (ftype (or
+                 (function ((cxrn (x d d))) null)
+                 (function ((cxrt (x d d))) t))
+                third))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d d))) null)
-                   (function ((cxrt (x d d d))) t))
-            fourth))
+(declaim (ftype (or
+                 (function ((cxrn (x d d d))) null)
+                 (function ((cxrt (x d d d))) t))
+                fourth))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d d d))) null)
-                   (function ((cxrt (x d d d d))) t))
-            fifth))
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d))) null)
+                 (function ((cxrt (x d d d d))) t))
+                fifth))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d d d d))) null)
-                   (function ((cxrt (x d d d d d))) t))
-            sixth))
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d))) null)
+                 (function ((cxrt (x d d d d d))) t))
+                sixth))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d d d d d))) null)
-                   (function ((cxrt (x d d d d d d))) t))
-            seventh))
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d d))) null)
+                 (function ((cxrt (x d d d d d d))) t))
+                seventh))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d d d d d d))) null)
-                   (function ((cxrt (x d d d d d d d))) t))
-            eighth))
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d d d))) null)
+                 (function ((cxrt (x d d d d d d d))) t))
+                eighth))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d d d d d d d))) null)
-                   (function ((cxrt (x d d d d d d d d))) t))
-            ninth))
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d d d d))) null)
+                 (function ((cxrt (x d d d d d d d d))) t))
+                ninth))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x d d d d d d d d d))) null)
-                   (function ((cxrt (x d d d d d d d d d))) t))
-            tenth))
+(declaim (ftype (or
+                 (function ((cxrn (x d d d d d d d d d))) null)
+                 (function ((cxrt (x d d d d d d d d d))) t))
+                tenth))
 
-(proclaim '(ftype (or
-                   (function ((cxrn (x))) null)
-                   (function ((cxrt (x))) t))
-            rest))
+(declaim (ftype (or
+                 (function ((cxrn (x))) null)
+                 (function ((cxrt (x))) t))
+                rest))
 
-(proclaim '(ftype (or
-                   (function (list) t)
-                   (function ((not list)) nil))
-            endp))
+(declaim (ftype (or
+                 (function (list) t)
+                 (function ((not list)) nil))
+                endp))
 
-(proclaim '(ftype (or
-                   (function () null)
-                   (function (t &rest t) cons))
-            list))
+(declaim (ftype (or
+                 (function () null)
+                 (function (t &rest t) cons))
+                list))
 
-(proclaim '(ftype (function (&rest t) t)
-            append))
+(declaim (ftype (function (&rest t) t)
+                append))
 
-(proclaim '(ftype (function (t) (member t nil))
-            atom consp null listp))
+(declaim (ftype (function (t) (member t nil))
+                atom consp null listp))
 
-(proclaim '(ftype (function (t t) cons)
-            cons))
+(declaim (ftype (function (t t) cons)
+                cons))
 
-(proclaim '(ftype (function (t list
+(declaim (ftype (function (t list
                              &key
                              (:key (or symbol function))
                              (:test (or symbol function))
                              (:test-no (or symbol function)))
-                   list)
-            member))
+                          list)
+                member))
 
-(proclaim '(ftype (function (t cons) t)
-            (setf car) (setf cdr)))
+(declaim (ftype (function (t cons) t)
+                (setf car) (setf cdr)))
 
-(proclaim '(ftype (function (t (cons t (cons t))) t)
-            (setf cadr) (setf cddr)))
+(declaim (ftype (function (t (cons t (cons t))) t)
+                (setf cadr) (setf cddr)))
 
-(proclaim '(ftype (function ((integer 0) list) t) nth))
+(declaim (ftype (function ((integer 0) list) t) nth))
 
-(proclaim '(ftype (function (function list &rest list) list)
-            mapc mapcar mapcan mapl maplist mapcon))
+(declaim (ftype (function (function list &rest list) list)
+                mapc mapcar mapcan mapl maplist mapcon))
