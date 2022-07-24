@@ -37,8 +37,8 @@
         finally (return result)))
 
 (declaim (ftype (or
-                 (function ((or null (cons t null))) null)
-                 (function ((cons t cons)) t))
+                 (function ((cxrn x d)) null)
+                 (function ((cxrt x d)) t))
                 cadr cddr second))
 
 (declaim (ftype (or
@@ -47,41 +47,23 @@
                 caar cdar))
 
 (declaim (ftype (or
-                 (function ((or null
-                                (cons t
-                                      (or null
-                                          (cons t null)))))
-                           null)
-                 (function ((cons t (cons t cons)))
-                           t))
+                 (function ((cxrn x d d)) null)
+                 (function ((cxrt x d d)) t))
                 caddr cdddr third))
 
 (declaim (ftype (or
-                 (function ((or null
-                                (cons t
-                                      (or null
-                                          (cons null)))))
-                           null)
-                 (function ((cons t (cons cons)))
-                           t))
+                 (function ((cxrn x a d)) null)
+                 (function ((cxrt x a d)) t))
                 caadr cdadr))
 
 (declaim (ftype (or
-                 (function ((or null
-                                (cons (or null
-                                          (cons t null)))))
-                           null)
-                 (function ((cons (cons t cons)))
-                           t))
+                 (function ((cxrn (x d a))) null)
+                 (function ((cxrt (x d a))) t))
                 cadar cddar))
 
 (declaim (ftype (or
-                 (function ((or null
-                                (cons (or null
-                                          (cons null)))))
-                           null)
-                 (function ((cons (cons cons)))
-                           t))
+                 (function ((cxrn (x a a))) null)
+                 (function ((cxrt (x a a))) t))
                 caaar cdaar))
 
 (declaim (ftype (or
