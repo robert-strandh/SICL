@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :sicl-cons-compile-time
-  :depends-on (:sicl-cons-package)
+(defsystem #:sicl-cons-compile-time
+  :depends-on (#:sicl-cons-package)
   :serial t
   :components
   (;; (:file "pushnew-support")
