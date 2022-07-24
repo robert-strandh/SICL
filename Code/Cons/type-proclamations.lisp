@@ -163,7 +163,7 @@
 (declaim (ftype (function (t cons) t)
                 (setf car) (setf cdr)))
 
-(declaim (ftype (function (t (cons t (cons t))) t)
+(declaim (ftype (function (t (cxrt (x d))) t)
                 (setf cadr) (setf cddr)))
 
 (declaim (ftype (function ((integer 0) list) t) nth))
