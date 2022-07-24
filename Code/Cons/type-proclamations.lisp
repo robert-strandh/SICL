@@ -1,6 +1,19 @@
 (cl:in-package #:sicl-cons)
 
 (declaim (ftype (or
+                 (function (list) t)
+                 (function ((not list)) nil))
+                endp))
+
+(declaim (ftype (or
+                 (function () null)
+                 (function (t &rest t) cons))
+                list))
+
+(declaim (ftype (function (&rest t) t)
+                append))
+
+(declaim (ftype (or
                  (function (null) null)
                  (function (cons) t))
                 car cdr first rest))
@@ -150,14 +163,6 @@
                  (function (list) t)
                  (function ((not list)) nil))
                 endp))
-
-(declaim (ftype (or
-                 (function () null)
-                 (function (t &rest t) cons))
-                list))
-
-(declaim (ftype (function (&rest t) t)
-                append))
 
 (declaim (ftype (function (t) (member t nil))
                 atom consp null listp))
