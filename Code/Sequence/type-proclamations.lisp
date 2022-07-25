@@ -27,11 +27,30 @@
                              (:from-end t)
                              (:start (integer 0))
                              (:end (or (nil (integer 0))))
+                             (:key function))
+                          (or null (integer 0)))
+                position-if position-if-not))
+
+(declaim (ftype (function (t sequence
+                             &key
+                             (:from-end t)
+                             (:start (integer 0))
+                             (:end (or (nil (integer 0))))
                              (:key function)
                              (:test function)
                              (:test-not function))
                           t)
                 find))
+
+(declaim (ftype (function (function
+                           sequence
+                           &key
+                           (:from-end t)
+                           (:start (integer 0))
+                           (:end (or (nil (integer 0))))
+                           (:key function))
+                          t)
+                find-if find-if-not))
 
 (declaim (ftype (function (t sequence
                              &key
