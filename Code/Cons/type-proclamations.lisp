@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-cons)
 
+;;; The idea behind most of the type proclamations here was to link
+;;; the types of the arguments to the types of the return values for
+;;; several different cases.  But I am now convinced that this idea
+;;; can not be expressed as valid Common Lisp code.  So I want to keep
+;;; the code here for later, and express it using a formalism that is
+;;; different from that of type proclamations.
+
 (declaim (ftype (or
                  (function (list) t)
                  (function ((not list)) nil))
