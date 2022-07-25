@@ -12,8 +12,8 @@
 (declaim (ftype (function (t) t)
                 endp))
 
-(declaim (ftype (function (rest t) list)
-                list))
+(declaim (ftype (function (&rest t) list)
+                list list*))
 
 (declaim (ftype (function (&rest t) t)
                 append))
@@ -42,3 +42,6 @@
 
 (declaim (ftype (function (function list &rest list) list)
                 mapc mapcar mapcan mapl maplist mapcon))
+
+(declaim (ftype (function (t list) (or cons null))
+                assoc))
