@@ -68,3 +68,6 @@
 (declaim (ftype (function (number) number) 1+ 1-))
 
 (declaim (ftype (function (number) t) zerop))
+
+(declaim (ftype (function (integer) (member t nil))
+                oddp evenp))
