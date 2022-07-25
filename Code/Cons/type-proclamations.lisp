@@ -45,3 +45,9 @@
 
 (declaim (ftype (function (t list) (or cons null))
                 assoc))
+
+(declaim (ftype (function ((integer 0) &key t) list)
+                make-list))
+
+(declaim (ftype (function (list) list)
+                copy-list))
