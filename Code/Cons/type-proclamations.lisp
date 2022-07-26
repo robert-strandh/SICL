@@ -54,3 +54,13 @@
 
 (declaim (ftype (function (list  &optional (integer 0)) list)
                 butlast nbutlast))
+
+(declaim (ftype (function (list
+                           list
+                           &key
+                           (:key function)
+                           (:test function)
+                           (:test-not function))
+                          list)
+                set-difference nset-difference
+                set-exclusive-or nset-exclusive-or))
