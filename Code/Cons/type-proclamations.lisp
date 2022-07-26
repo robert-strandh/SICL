@@ -51,3 +51,6 @@
 
 (declaim (ftype (function (list) list)
                 copy-list))
+
+(declaim (ftype (function (list  &optional (integer 0)) list)
+                butlast nbutlast))
