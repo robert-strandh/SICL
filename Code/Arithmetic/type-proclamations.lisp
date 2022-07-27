@@ -32,7 +32,11 @@
                 float-precision))
 
 (declaim (ftype (function (number &optional (real 0))
-                          (values (real 0) real))
+                          (values integer real))
+                floor ceiling truncate round))
+
+(declaim (ftype (function (number &optional (real 0))
+                          (values float real))
                 ffloor fceiling ftruncate fround))
 
 (declaim (ftype (function (float)
