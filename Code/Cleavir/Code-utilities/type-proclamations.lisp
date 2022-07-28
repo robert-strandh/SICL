@@ -8,3 +8,9 @@
                 canonicalize-specialized-lambda-list
                 canonicalize-define-method-combination-arguments-lambda-list
                 canonicalize-define-modify-macro-lambda-list))
+
+(declaim (ftype (function (list) list)
+                extract-required))
+
+(declaim (ftype (function (t) (member t nil))
+                proper-list-p))
