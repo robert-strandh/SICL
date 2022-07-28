@@ -131,10 +131,6 @@
 
 (defgeneric (setf ir) (ir code-object))
 
-(defgeneric hir-thunks (code-object))
-
-(defgeneric (setf hir-thunks) (hir-thunks code-object))
-
 (defclass code-object ()
   ((%instructions :initform '() :accessor instructions)
    (%constants :initarg :constants :reader constants)
@@ -142,5 +138,4 @@
    (%call-sites :initform '() :accessor call-sites)
    (%function-names :initform '() :accessor function-names)
    (%ast :initarg :ast :accessor ast)
-   (%ir :initarg :ir :accessor ir)
-   (%hir-thunks :initform nil :accessor hir-thunks)))
+   (%ir :initarg :ir :accessor ir)))
