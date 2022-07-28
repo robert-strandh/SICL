@@ -6,9 +6,11 @@
 (defun define-ast-eval (ecs)
   (setf (env:fdefinition (env:client ecs) ecs 'sicl-boot:ast-eval)
         (lambda (ast)
-          (let* ((client (env:client ecs))
-                 (code-object (sicl-compiler:compile-ast client ast)))
-            (sicl-compiler:tie-code-object client ecs code-object)))))
+          (let ((client (env:client ecs)))
+            (multiple-value-bind (code-object hir-thunks)
+                (sicl-compiler:compile-ast client ast)
+              (sicl-compiler:tie-code-object
+               client ecs code-object hir-thunks))))))
 
 (defun boot (boot)
   (with-accessors ((e5 sicl-boot:e5)

@@ -3,8 +3,10 @@
 (defun define-ast-eval (e5)
   (setf (env:fdefinition (env:client e5) e5 'sicl-boot:ast-eval)
         (lambda (client ast)
-          (let ((code-object (sicl-compiler:compile-ast client ast)))
-            (sicl-compiler:tie-code-object client e5 code-object)))))
+          (multiple-value-bind (code-object hir-thunks)
+              (sicl-compiler:compile-ast client ast)
+            (sicl-compiler:tie-code-object
+             client e5 code-object hir-thunks)))))
 
 (defun finalize-classes (e3 e4)
   (format *trace-output* "Finalizing all classes in ~a..." (sicl-boot:name e4))
