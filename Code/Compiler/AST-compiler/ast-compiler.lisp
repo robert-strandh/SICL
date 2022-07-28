@@ -6,7 +6,6 @@
     (let ((code-object
             (make-instance 'code-object
               :constants constants
-              :ast ast
               :ir hir)))
       (establish-call-sites code-object)
       (let ((hir-thunks
