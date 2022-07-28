@@ -12,7 +12,7 @@
        (equalp (sicl-source-tracking:lines (car p1))
                (sicl-source-tracking:lines (car p2)))))
 
-(defun tie-code-object (client environment code-object)
+(defun tie-code-object (client environment code-object hir-thunks)
   (let ((sicl-run-time:*dynamic-environment* '())
         (function-cell-function
           (env:fdefinition
@@ -30,4 +30,4 @@
                               :test #'source-position-equal)))
                  (setf (car cell)
                        (funcall function-cell-function name))))
-    (funcall (hir-thunks code-object))))
+    (funcall hir-thunks)))
