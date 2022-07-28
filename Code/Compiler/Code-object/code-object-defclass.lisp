@@ -123,10 +123,6 @@
 
 (defgeneric (setf function-names) (function-names code-object))
 
-(defgeneric ast (code-object))
-
-(defgeneric (setf ast) (ast code-object))
-
 (defgeneric ir (code-object))
 
 (defgeneric (setf ir) (ir code-object))
@@ -137,5 +133,4 @@
    ;; This slot contains a list of instances of the CALL-SITE class.
    (%call-sites :initform '() :accessor call-sites)
    (%function-names :initform '() :accessor function-names)
-   (%ast :initarg :ast :accessor ast)
    (%ir :initarg :ir :accessor ir)))
