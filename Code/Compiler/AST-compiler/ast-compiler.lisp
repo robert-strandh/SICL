@@ -20,4 +20,4 @@
       (cleavir-ir:set-predecessors hir)
       (sicl-code-generation:generate-code hir)
       (cluster:assemble (sicl-code-generation:generate-code hir))
-      code-object)))
+      (values code-object (hir-thunks code-object)))))
