@@ -67,3 +67,12 @@
                           list)
                 set-difference nset-difference
                 set-exclusive-or nset-exclusive-or))
+
+(declaim (ftype (function (t
+                           list
+                           &key
+                           (:key function)
+                           (:test function)
+                           (:test-not function))
+                          list)
+                adjoin))
