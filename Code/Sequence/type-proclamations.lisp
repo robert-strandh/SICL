@@ -84,8 +84,22 @@
                                     (:key function)
                                     (:start (integer 0))
                                     (:end (or null (integer 0)))
-                                    (:key function)
                                     (:from-end t)
                                     (:initial-value t))
                           t)
                 reduce))
+
+(declaim (ftype (function (sequence (integer 0)) t)
+                elt))
+
+(declaim (ftype (function (sequence
+                           &key
+                           (:key function)
+                           (:start (integer 0))
+                           (:end (or null (integer 0)))
+                           (:from-end t)
+                           (:test function)
+                           (:test-not function))
+                          sequence)
+                remove-duplicates
+                delete-duplicates))
