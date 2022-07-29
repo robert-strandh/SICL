@@ -14,3 +14,6 @@
 
 (declaim (ftype (function (t &rest t) t)
                 no-applicable-method))
+
+(declaim (ftype (function (class) t)
+                finalize-inheritance))
