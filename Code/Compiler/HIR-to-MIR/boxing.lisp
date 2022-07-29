@@ -80,8 +80,7 @@
                       :input double-float-constant-location)))
              (cleavir-ir:insert-instruction-before
               (let ((literal 'double-float))
-                (sicl-compiler:ensure-literal
-                 (sicl-compiler:constants *code-object*) literal)
+                (sicl-compiler:ensure-literal *literals* literal)
                 (make-instance 'cleavir-ir:load-literal-instruction
                   :dynamic-environment-location dynamic-environment
                   :output double-float-constant-location
@@ -109,8 +108,7 @@
                      :name (gensym))))
              (cleavir-ir:insert-instruction-before
               (let ((literal "Can't box ((un)signed-byte 64) yet"))
-                (sicl-compiler:ensure-literal
-                 (sicl-compiler:constants *code-object*) literal)
+                (sicl-compiler:ensure-literal *literals* literal)
                 (make-instance 'cleavir-ir:load-literal-instruction
                   :dynamic-environment-location dynamic-environment
                   :output message-constant-location
