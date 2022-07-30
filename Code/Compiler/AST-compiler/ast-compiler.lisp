@@ -11,7 +11,7 @@
       (let ((hir-thunks
               (sicl-hir-evaluator:top-level-hir-to-host-function client ir)))
         (sicl-hir-transformations:eliminate-append-values-instructions ir)
-        (sicl-hir-to-mir:hir-to-mir client code-object)
+        (sicl-hir-to-mir:hir-to-mir client ir literals)
         (sicl-mir-to-lir:mir-to-lir client ir)
         ;; Not sure why this one is necessary.  Sometime before this
         ;; stage, there is an instruction I1 that has a successor I2,
