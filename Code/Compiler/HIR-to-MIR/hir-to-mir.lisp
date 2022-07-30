@@ -11,7 +11,7 @@
 
 (defun hir-to-mir (client code-object)
   (let ((top-level-enter-instruction (sicl-compiler:ir code-object))
-        (*literals* (sicl-compiler:constants code-object)))
+        (*literals* (sicl-compiler:literals code-object)))
     (expand-funcall-instructions top-level-enter-instruction)
     (let ((enter-instructions
             (gather-enter-instructions top-level-enter-instruction)))

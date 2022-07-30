@@ -1,11 +1,11 @@
 (cl:in-package #:sicl-compiler)
 
 (defun compile-ast (client ast)
-  (multiple-value-bind (ir constants)
+  (multiple-value-bind (ir literals)
       (sicl-ast-to-hir:ast-to-hir client ast)
     (let ((code-object
             (make-instance 'code-object
-              :constants constants
+              :literals literals
               :ir ir)))
       (establish-call-sites code-object)
       (let ((hir-thunks

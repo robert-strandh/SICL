@@ -7,7 +7,7 @@
   (:export #:debug-information
            #:code-object
            #:instructions
-           #:constants
+           #:literals
            #:ensure-literal
            #:establish-call-site
            #:function-names

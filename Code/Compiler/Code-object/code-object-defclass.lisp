@@ -113,7 +113,7 @@
 
 (defgeneric (setf instructions) (instructions code-object))
 
-(defgeneric constants (code-object))
+(defgeneric literals (code-object))
 
 (defgeneric call-sites (code-object))
 
@@ -129,7 +129,7 @@
 
 (defclass code-object ()
   ((%instructions :initform '() :accessor instructions)
-   (%constants :initarg :constants :reader constants)
+   (%literals :initarg :literals :reader literals)
    ;; This slot contains a list of instances of the CALL-SITE class.
    (%call-sites :initform '() :accessor call-sites)
    (%function-names :initform '() :accessor function-names)
