@@ -67,8 +67,8 @@
              :instruction instruction)
            (call-sites code-object)))))
 
-(defun establish-call-sites (code-object)
+(defun establish-call-sites (code-object ir)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
      (establish-call-site instruction code-object))
-   (ir code-object)))
+   ir))

@@ -5,9 +5,8 @@
       (sicl-ast-to-hir:ast-to-hir client ast)
     (let ((code-object
             (make-instance 'code-object
-              :literals literals
-              :ir ir)))
-      (establish-call-sites code-object)
+              :literals literals)))
+      (establish-call-sites code-object ir)
       (let ((hir-thunks
               (sicl-hir-evaluator:top-level-hir-to-host-function client ir)))
         (sicl-hir-to-mir:hir-to-mir client ir literals)
