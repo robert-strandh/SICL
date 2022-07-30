@@ -11,7 +11,6 @@
            #:ensure-literal
            #:establish-call-site
            #:function-names
-           #:ir
            #:hir
            #:compile-ast
            #:tie-code-object
