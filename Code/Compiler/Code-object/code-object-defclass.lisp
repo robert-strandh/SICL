@@ -127,5 +127,5 @@
   ((%instructions :initform '() :accessor instructions)
    (%literals :initarg :literals :reader literals)
    ;; This slot contains a list of instances of the CALL-SITE class.
-   (%call-sites :initform '() :accessor call-sites)
+   (%call-sites :initarg :call-sites :accessor call-sites)
    (%function-names :initform '() :accessor function-names)))
