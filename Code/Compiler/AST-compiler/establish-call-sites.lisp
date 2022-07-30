@@ -1,71 +1,42 @@
 (cl:in-package #:sicl-compiler)
 
-(defun establish-call-site (instruction code-object)
+(defun call-site-name (instruction)
   (typecase instruction
     (cleavir-ir:named-call-instruction
-     (change-class instruction
-                   'sicl-ir:named-call-instruction
-                   :function-cell-cell (list nil))
-     (push (make-instance 'call-site
-             :name (cleavir-ir:callee-name instruction)
-             :instruction instruction)
-           (call-sites code-object)))
+     (cleavir-ir:callee-name instruction))
     (cleavir-ir:enclose-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:enclose
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:enclose)
     (cleavir-ir:catch-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:augment-with-block/tagbody-entry
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:augment-with-block/tagbody-entry)
     (cleavir-ir:dynamic-catch-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:augment-with-catch-entry
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:augment-with-catch-entry)
     (cleavir-ir:bind-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:augment-with-special-variable-entry
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:augment-with-special-variable-entry)
     (cleavir-ir:unwind-protect-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:augment-with-unwind-protect-entry
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:augment-with-unwind-protect-entry)
     (cleavir-ir:unwind-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:unwind
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:unwind)
     (cleavir-ir:initialize-values-instruction
-     (push (make-instance 'call-site
-             ;; FIXME: Call a better function.
-             :name 'error
-             :instruction instruction)
-           (call-sites code-object)))
+     ;; FIXME: Use a better function.
+     'error)
     (cleavir-ir:multiple-value-call-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:call-with-values
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:call-with-values)
     (cleavir-ir:save-values-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:save-values
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:save-values)
     (cleavir-ir:restore-values-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:restore-values
-             :instruction instruction)
-           (call-sites code-object)))
+     'sicl-run-time:restore-values)
     (sicl-ir:patch-literal-instruction
-     (push (make-instance 'call-site
-             :name 'sicl-run-time:resolve-load-time-value
-             :instruction instruction)
-           (call-sites code-object)))))
+     'sicl-run-time:resolve-load-time-value)))
+
+(defun establish-call-site (instruction code-object)
+  (when (typep instruction 'cleavir-ir:named-call-instruction)
+    (change-class instruction
+                  'sicl-ir:named-call-instruction
+                  :function-cell-cell (list nil)))
+  (push (make-instance 'call-site
+          :name (call-site-name instruction)
+          :instruction instruction)
+        (call-sites code-object)))
 
 (defun establish-call-sites (code-object ir)
   (cleavir-ir:map-instructions-arbitrary-order
