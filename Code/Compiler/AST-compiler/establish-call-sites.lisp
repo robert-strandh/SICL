@@ -28,18 +28,20 @@
     (sicl-ir:patch-literal-instruction
      'sicl-run-time:resolve-load-time-value)))
 
-(defun establish-call-site (instruction code-object)
+(defun establish-call-site (instruction)
   (when (typep instruction 'cleavir-ir:named-call-instruction)
     (change-class instruction
                   'sicl-ir:named-call-instruction
                   :function-cell-cell (list nil)))
-  (push (make-instance 'call-site
-          :name (call-site-name instruction)
-          :instruction instruction)
-        (call-sites code-object)))
+  (make-instance 'call-site
+    :name (call-site-name instruction)
+    :instruction instruction))
 
-(defun establish-call-sites (code-object ir)
-  (cleavir-ir:map-instructions-arbitrary-order
-   (lambda (instruction)
-     (establish-call-site instruction code-object))
-   ir))
+(defun establish-call-sites (ir)
+  (let ((call-sites '()))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (push (establish-call-site instruction)
+             call-sites))
+     ir)
+    call-sites))
