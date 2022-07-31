@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "top-level-enter-instruction")
    (:file "breakpoint-instruction")
    (:file "named-call-instruction")
    (:file "dynamic-environment")
