@@ -48,7 +48,7 @@
    #:enter-instruction #:make-enter-instruction
    #:lambda-list #:closure-size
    #:static-environment #:dynamic-environment-output #:parameters
-   #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
+   #:top-level-enter-instruction #:forms
    #:nop-instruction
    #:unreachable-instruction
    #:assignment-instruction
