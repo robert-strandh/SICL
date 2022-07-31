@@ -12,7 +12,7 @@
     (let* ((wrapped-ast (cleavir-ast:make-ast 'cleavir-ast:function-ast
                           :lambda-list '()
                           :body-ast ast))
-           (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast))
+           (hir (cleavir-ast-to-hir:compile-toplevel client wrapped-ast))
            ;; FIXME: we must find a better way to create the constants vector.
            (constants (make-array 0 :adjustable t :fill-pointer t)))
       (cleavir-partial-inlining:do-inlining hir)

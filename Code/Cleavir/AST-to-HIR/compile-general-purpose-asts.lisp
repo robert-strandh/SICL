@@ -756,7 +756,7 @@
 ;;;
 ;;; This is the main entry point.
 
-(defun compile-toplevel-unhoisted (client ast)
+(defun compile-toplevel (client ast)
   (let ((*block-info* (make-hash-table :test #'eq))
         (*go-info* (make-hash-table :test #'eq))
         (*location-info* (make-hash-table :test #'eq))

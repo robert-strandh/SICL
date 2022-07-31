@@ -5,7 +5,6 @@
   (:export
    #:define-compile-functional-ast
    #:compile-toplevel
-   #:compile-toplevel-unhoisted
    #:make-temp
    #:make-temps
    #:compile-ast
