@@ -3,10 +3,7 @@
 (defun compile-ast (client ast)
   (multiple-value-bind (ir literals)
       (sicl-ast-to-hir:ast-to-hir client ast)
-    (let ((code-object
-            (make-instance 'code-object
-              :literals literals
-              :call-sites (establish-call-sites ir))))
+    (let ((call-sites (establish-call-sites ir)))
       (let ((hir-thunks
               (sicl-hir-evaluator:top-level-hir-to-host-function client ir)))
         (sicl-hir-to-mir:hir-to-mir client ir literals)
@@ -17,4 +14,8 @@
         (cleavir-ir:set-predecessors ir)
         (sicl-code-generation:generate-code ir)
         (cluster:assemble (sicl-code-generation:generate-code ir))
-        (values code-object hir-thunks)))))
+        (let ((code-object
+                (make-instance 'code-object
+                  :literals literals
+                  :call-sites call-sites)))
+          (values code-object hir-thunks))))))
