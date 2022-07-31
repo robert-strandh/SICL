@@ -7,24 +7,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TOP-LEVEL-ENTER-INSTRUCTION.
-;;;
-;;; This is a subclass of ENTER-INSTRUCTION used as the initial
-;;; instruction of a flowchart that represents a LOAD FUNCTION.
-;;;
-;;; An initial form F to be evaluated is turned into a load function
-;;; LF.  When LF is called with the values of the LOAD-TIME-VALUE
-;;; forms (including non-immediate constants) of F, then the result is
-;;; the values and the effects of evaluating F.
-;;;
-;;; The TOP-LEVEL-ENTER-INSTRUCTION supplies a slot containing the
-;;; list of the LOAD-TIME-VALUE forms to be evaluated before being
-;;; supplied as arguments.
 
 (defclass top-level-enter-instruction (enter-instruction)
-  ((%forms :initarg :forms :accessor forms)))
+  ())
 
 (defmethod clone-initargs append ((instruction top-level-enter-instruction))
-  (list :forms (forms instruction)))
+  (list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
