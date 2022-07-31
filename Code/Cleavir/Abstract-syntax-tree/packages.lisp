@@ -27,7 +27,6 @@
    #:named-call-ast #:callee-name
    #:block-ast #:body
    #:function-ast #:lambda-list
-   #:top-level-function-ast #:forms
    #:required-only-p #:required #:argparse-ast #:body-ast
    #:go-ast #:tag-ast
    #:if-ast #:test-ast #:then-ast #:else-ast
