@@ -756,32 +756,6 @@
 ;;;
 ;;; This is the main entry point.
 
-(defun compile-toplevel (client ast)
-  (let ((*block-info* (make-hash-table :test #'eq))
-        (*go-info* (make-hash-table :test #'eq))
-        (*location-info* (make-hash-table :test #'eq))
-        (*function-info* (make-hash-table :test #'eq)))
-    (check-type ast cleavir-ast:top-level-function-ast)
-    (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-           (dynenv (cleavir-ir:make-lexical-location (gensym "top")))
-           (forms (cleavir-ast:forms ast))
-           (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
-           (return (make-instance 'cleavir-ir:return-instruction
-                     :dynamic-environment-location dynenv))
-           (body-context (context
-                          :values
-                          (list return)
-                          enter
-                          dynenv))
-           (body (compile-ast client (cleavir-ast:body-ast ast) body-context)))
-      ;; Now we must set the successors of the ENTER-INSTRUCTION to a
-      ;; list of the result of compiling the AST.
-      (reinitialize-instance enter :successors (list body))
-      ;; Make sure the list of predecessors of each instruction is
-      ;; initialized correctly.
-      (cleavir-ir:set-predecessors enter)
-      enter)))
-
 (defun compile-toplevel-unhoisted (client ast)
   (let ((*block-info* (make-hash-table :test #'eq))
         (*go-info* (make-hash-table :test #'eq))
@@ -805,22 +779,6 @@
       ;; initialized correctly.
       (cleavir-ir:set-predecessors enter)
       enter)))
-
-;;; When the FUNCTION-AST is in fact a TOP-LEVEL-FUNCTION-AST it also
-;;; contains a list of LOAD-TIME-VALUE forms to be evaluated and then
-;;; supplied as arguments to the function.  We need to preserve that
-;;; list of forms which we can do by producing an instance of
-;;; TOP-LEVEL-ENTER-INSTRUCTION rather than of a plain
-;;; ENTER-INSTRUCTION.  For that reason, we define an :AROUND method
-;;; on that type of AST that turns the ENTER-INSTRUCTION into a
-;;; TOP-LEVEL-ENTER-INSTRUCTION.
-
-(defmethod compile-ast :around (client (ast cleavir-ast:top-level-function-ast) context)
-  (declare (ignore context))
-  (let* ((enclose (call-next-method))
-         (enter (cleavir-ir:code enclose)))
-    (change-class enter 'cleavir-ir:top-level-enter-instruction
-                  :forms (cleavir-ast:forms ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
