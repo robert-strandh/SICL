@@ -4,6 +4,9 @@
   (multiple-value-bind (ir literals)
       (sicl-ast-to-hir:ast-to-hir client ast)
     (let ((call-sites (establish-call-sites ir)))
+      (change-class ir 'sicl-ir:top-level-enter-instruction
+                    :literals literals
+                    :call-sites call-sites)
       (let ((hir-thunks
               (sicl-hir-evaluator:top-level-hir-to-host-function client ir)))
         (sicl-hir-to-mir:hir-to-mir client ir literals)
