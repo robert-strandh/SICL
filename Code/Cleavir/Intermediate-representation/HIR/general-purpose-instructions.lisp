@@ -6,16 +6,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction TOP-LEVEL-ENTER-INSTRUCTION.
-
-(defclass top-level-enter-instruction (enter-instruction)
-  ())
-
-(defmethod clone-initargs append ((instruction top-level-enter-instruction))
-  (list))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction NOP-INSTRUCTION.
 
 (defclass nop-instruction (instruction one-successor-mixin)
