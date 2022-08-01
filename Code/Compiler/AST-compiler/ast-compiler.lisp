@@ -19,6 +19,6 @@
         (cluster:assemble (sicl-code-generation:generate-code ir))
         (let ((code-object
                 (make-instance 'code-object
-                  :literals literals
-                  :call-sites call-sites)))
+                  :literals (sicl-ir:literals ir)
+                  :call-sites (sicl-ir:call-sites ir))))
           (values code-object hir-thunks))))))
