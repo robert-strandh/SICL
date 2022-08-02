@@ -66,7 +66,9 @@
                            (:test-not function))
                           list)
                 set-difference nset-difference
-                set-exclusive-or nset-exclusive-or))
+                set-exclusive-or nset-exclusive-or
+                union
+                nunion))
 
 (declaim (ftype (function (t
                            list
