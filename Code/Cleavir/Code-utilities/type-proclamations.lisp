@@ -14,3 +14,10 @@
 
 (declaim (ftype (function (t) (member t nil))
                 proper-list-p))
+
+(declaim (ftype (function (list) (values list (or string null) list))
+                separate-function-body))
+
+(declaim (ftype (function (list) (values list list))
+                separate-ordinary-body))
+
