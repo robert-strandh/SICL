@@ -17,3 +17,6 @@
 
 (declaim (ftype (function (class) t)
                 finalize-inheritance))
+
+(declaim (ftype (function (t t &key &allow-other-keys) standard-object)
+                change-class))
