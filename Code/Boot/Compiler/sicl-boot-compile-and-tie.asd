@@ -23,4 +23,5 @@
                #:sicl-code-object)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "establish-call-sites")))
