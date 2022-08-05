@@ -24,4 +24,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "establish-call-sites")))
+   (:file "establish-call-sites")
+   (:file "compile-ast")))
