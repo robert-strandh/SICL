@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-boot)
 
-;;; Return the number words in the prefix of a rack that contains
-;;; words that with Lisp objects in them, as opposed to raw data.
+;;; Given an object, return the number words in the prefix of its rack
+;;; that contains words that with Lisp objects in them, as opposed to
+;;; raw data.
 (defgeneric trace-prefix (object))
 
 ;;; This method is invoked when an object other than a standard object
