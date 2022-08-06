@@ -8,7 +8,7 @@
 ;;; This method is invoked when an object other than a standard object
 ;;; is given.  Such objects do not have racks, so we signal an error.
 (defmethod trace-prefix (object)
-  (error "Not rack in object ~s" object))
+  (error "No rack in object ~s" object))
 
 ;;; This method is invoked for most standard objects.  In such an
 ;;; object every word in the rack contains a Lisp object, so we return
