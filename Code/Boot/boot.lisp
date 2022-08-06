@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-boot)
 
 (defun boot ()
+  (sicl-allocator:initialize)
   (let ((boot (make-instance 'boot
                 :e0 (setf *e0* (make-instance 'environment :name "E0"))
                 :e1 (setf *e1* (make-instance 'environment :name "E1"))
