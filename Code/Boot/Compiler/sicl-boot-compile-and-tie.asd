@@ -25,4 +25,5 @@
   :components
   ((:file "packages")
    (:file "establish-call-sites")
-   (:file "compile-ast")))
+   (:file "compile-ast")
+   (:file "store-code-vector")))
