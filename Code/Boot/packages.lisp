@@ -32,4 +32,5 @@
            #:run-time-environment-header
            #:original-function
            #:with-temporary-function-imports
+           #:pointer
            #:bt))
