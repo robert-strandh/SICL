@@ -22,4 +22,5 @@
            #:undefined-tagbody-tag
            #:call-site
            #:instruction
+           #:name
            #:instructions))
