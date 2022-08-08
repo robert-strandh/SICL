@@ -33,7 +33,7 @@
     (change-class instruction
                   'sicl-ir:named-call-instruction
                   :function-cell-cell (list nil)))
-  (make-instance 'call-site
+  (make-instance 'sicl-compiler:call-site
     :name (call-site-name instruction)
     :instruction instruction))
 
