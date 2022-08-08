@@ -42,7 +42,7 @@
           for instruction = (sicl-compiler:instruction call-site)
           when (typep instruction 'sicl-ir:named-call-instruction)
             do (let ((cell (sicl-ir:function-cell-cell instruction))
-                     (name (name call-site)))
+                     (name (sicl-compiler:name call-site)))
                  (let ((origin (cleavir-ast-to-hir:origin instruction)))
                    (unless (null origin)
                      (pushnew origin (gethash name who-calls-information '())
