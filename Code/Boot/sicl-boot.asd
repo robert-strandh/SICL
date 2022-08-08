@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-boot
   :depends-on (#:sicl-boot-base
+               #:sicl-boot-compile-and-tie
                #:sicl-boot-phase-1
                #:sicl-boot-phase-2
                #:sicl-boot-phase-3
