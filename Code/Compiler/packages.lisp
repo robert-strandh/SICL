@@ -19,4 +19,7 @@
            #:undefined-function
            #:undefined-variable
            #:undefined-block
-           #:undefined-tagbody-tag))
+           #:undefined-tagbody-tag
+           #:call-site
+           #:instruction
+           #:instructions))
