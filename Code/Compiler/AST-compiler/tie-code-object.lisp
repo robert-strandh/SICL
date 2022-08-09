@@ -12,6 +12,8 @@
        (equalp (sicl-source-tracking:lines (car p1))
                (sicl-source-tracking:lines (car p2)))))
 
+;;; FIXME: This code should be the native version of TIE-CODE-OBJECT,
+;;; but it is not.
 (defun tie-code-object (client environment code-object hir-thunks)
   (let ((sicl-run-time:*dynamic-environment* '())
         (function-cell-function
