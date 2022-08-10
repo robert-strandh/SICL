@@ -12,24 +12,14 @@
        (equalp (sicl-source-tracking:lines (car p1))
                (sicl-source-tracking:lines (car p2)))))
 
-;;; FIXME: This code should be the native version of TIE-CODE-OBJECT,
-;;; but it is not.
-(defun tie-code-object (client environment code-object hir-thunks)
-  (let ((sicl-run-time:*dynamic-environment* '())
-        (function-cell-function
-          (env:fdefinition
-           client environment 'sicl-data-and-control-flow:function-cell))
-        (who-calls-information
-          (env:who-calls-information environment)))
+(defun call-entry-point (code-vector)
+  ;; FIXME: define this function.
+  (declare (ignore code-vector))
+  nil)
+
+(defun tie-code-object (client environment code-object)
+  (let ((sicl-run-time:*dynamic-environment* '()))
     (loop for call-site in (call-sites code-object)
-          for instruction = (instruction call-site)
-          when (typep instruction 'sicl-ir:named-call-instruction)
-            do (let ((cell (sicl-ir:function-cell-cell instruction))
-                     (name (name call-site)))
-                 (let ((origin (cleavir-ast-to-hir:origin instruction)))
-                   (unless (null origin)
-                     (pushnew origin (gethash name who-calls-information '())
-                              :test #'source-position-equal)))
-                 (setf (car cell)
-                       (funcall function-cell-function name))))
-    (funcall hir-thunks)))
+          for name = (name call-site)
+          do (env:add-call-site client environment call-site name))
+    (call-entry-point (instructions code-object))))
