@@ -53,6 +53,7 @@
            #:map-defined-classes
            #:map-defined-method-combination-templates
            #:make-environment-for-file-compilation
+           #:add-call-site
            .
            #.(loop for symbol being each external-symbol in '#:clostrum
                    unless (member symbol '(clostrum:run-time-environment
