@@ -2,6 +2,6 @@
 
 (defpackage #:sicl-call-site-manager
   (:use #:common-lisp)
+  (:local-nicknames (#:env #:sicl-environment))
   (:export
-   #:add-call-site
    #:create-trampoline-snippet))
