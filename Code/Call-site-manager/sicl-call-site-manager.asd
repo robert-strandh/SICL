@@ -4,4 +4,5 @@
   :depends-on (#:sicl-environment)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "add-call-site")))
