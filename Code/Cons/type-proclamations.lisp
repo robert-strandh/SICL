@@ -78,3 +78,6 @@
                            (:test-not function))
                           list)
                 adjoin))
+
+(declaim (ftype (function (list t &optional t) t)
+                getf))
