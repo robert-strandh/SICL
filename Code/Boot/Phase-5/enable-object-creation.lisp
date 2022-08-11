@@ -5,6 +5,7 @@
         10000000)
   (load-source-file "CLOS/slot-bound-using-index.lisp" e3)
   (load-source-file "CLOS/standard-instance-access.lisp" e3)
+  (load-source-file "CLOS/slot-value-etc-defgenerics.lisp" e3)
   (load-source-file "CLOS/slot-value-etc-support.lisp" e3)
   (load-source-file "CLOS/instance-slots-offset-defconstant.lisp" e4)
   (with-intercepted-function-cells
@@ -46,7 +47,6 @@
     (load-source-file "CLOS/make-instance-defmethods.lisp" e3)))
 
 (defun enable-slot-value (e3 e4)
-  (load-source-file "CLOS/slot-value-etc-defgenerics.lisp" e3)
   (load-source-file "CLOS/slot-value-etc-defmethods.lisp" e3)
   (with-intercepted-function-cells
       (e4
