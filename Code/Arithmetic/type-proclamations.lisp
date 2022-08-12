@@ -75,3 +75,6 @@
 
 (declaim (ftype (function (integer) (member t nil))
                 oddp evenp))
+
+(declaim (ftype (function (real) (member t nil))
+                plusp minusp))
