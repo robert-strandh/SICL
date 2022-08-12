@@ -78,3 +78,6 @@
 
 (declaim (ftype (function (real) (member t nil))
                 plusp minusp))
+
+(declaim (ftype (function (t) (member t nil))
+                integerp))
