@@ -39,7 +39,7 @@
         (who-calls-information
           (env:who-calls-information environment)))
     (loop for call-site in call-sites
-          for instruction = (sicl-compiler:instruction call-site)
+          for instruction = (instruction call-site)
           when (typep instruction 'sicl-ir:named-call-instruction)
             do (let ((cell (sicl-ir:function-cell-cell instruction))
                      (name (sicl-compiler:name call-site)))
