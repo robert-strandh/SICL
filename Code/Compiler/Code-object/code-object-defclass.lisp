@@ -22,8 +22,6 @@
 ;;;     code object is tied to a particular global environment, and
 ;;;     when the named callee is being redefined.
 
-(defgeneric instruction (call-site))
-
 (defgeneric name (call-site))
 
 (defgeneric trace-map (call-site))
@@ -51,8 +49,7 @@
 (defgeneric (setf offset) (offset call-site))
 
 (defclass call-site ()
-  ((%instruction :initarg :instruction :reader instruction)
-   ;; This slot contains a function name whenever the call is to a
+  (;; This slot contains a function name whenever the call is to a
    ;; named function whether global or a lexical.  When the call is to
    ;; an anonymous function, this slot contains NIL.
    (%name :initarg :name :reader name)
