@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-boot-compile-and-tie)
 
+(defgeneric instruction (call-site))
+
+(defclass call-site (sicl-compiler:call-site)
+  ((%instruction :initarg :instruction :reader instruction)))
+
 (defun call-site-name (instruction)
   (typecase instruction
     (cleavir-ir:named-call-instruction
@@ -33,7 +38,7 @@
     (change-class instruction
                   'sicl-ir:named-call-instruction
                   :function-cell-cell (list nil)))
-  (make-instance 'sicl-compiler:call-site
+  (make-instance 'call-site
     :name (call-site-name instruction)
     :instruction instruction))
 
