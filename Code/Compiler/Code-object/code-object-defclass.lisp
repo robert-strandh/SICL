@@ -78,9 +78,9 @@
    (%origin :initarg :origin :accessor origin)
    ;; When the call site represents a named call to a global function,
    ;; this slot contains an association list with an element for each
-   ;; argument being passed.  An element is of the form (<type>
-   ;; . <value>) where the <type> is a keyword symbol.  An element of
-   ;; the form (:STACK . <offset>) represents a stack location, and
+   ;; argument being passed.  An element is of the form (<location>
+   ;; . <value>) where the <location> is a keyword symbol.  An element
+   ;; of the form (:STACK . <offset>) represents a stack location, and
    ;; <offset> is a non-negative integer indicating the offset from
    ;; the frame pointer of the caller into the stack frame of the
    ;; caller).  An element of the form (:REGISTER . <name>) represents
@@ -92,9 +92,9 @@
    ;; location where the callee expects it.
    (%arguments :initarg :arguments :accessor arguments)
    ;; This slot contains a list with an element for each argument of
-   ;; the call.  An element is either NIL or of the form (<type>
-   ;; . <value>) where the <type> is a keyword symbol.  An element of
-   ;; the form (:STACK . <offset>) represents a stack location, and
+   ;; the call.  An element is either NIL or of the form (<location>
+   ;; . <value>) where the <location> is a keyword symbol.  An element
+   ;; of the form (:STACK . <offset>) represents a stack location, and
    ;; <offset> is a non-negative integer indicating the offset from
    ;; the frame pointer of the caller into the stack frame of the
    ;; caller).  An element of the form (:LITERAL . <value>) represents
