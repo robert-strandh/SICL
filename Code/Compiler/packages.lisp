@@ -23,4 +23,5 @@
            #:call-site
            #:instruction
            #:name
+           #:arguments
            #:instructions))
