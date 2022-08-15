@@ -15,5 +15,3 @@
              (setf (gethash next table)
                    (make-instance 'cluster:label)))
         finally (return table)))
-                                
-                             
