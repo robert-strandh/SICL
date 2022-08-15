@@ -112,23 +112,28 @@
     :operands
     (list (translate-datum (first (cleavir-ir:inputs instruction))))))
 
+;;; When code is generated, this variable contains an EQ hash table
+;;; that maps named call instrucitons to labels so that the label
+;;; associated with such an instruction is the word to be filled in by
+;;; the call site manager to contain the address of the trampoline
+;;; snippet associated with this call site.
+(defvar *call-site-labels*)
+
 ;;; For named call instructions we generate an indirect near jump.
 ;;; The displacement is 0 because the address containing the jump
 ;;; target immediately follows the instruction.  But we set that jump
 ;;; target to all 0s because it is going to be filled in by the
 ;;; call-site manager.
 (defun translate-named-call (instruction)
-  ;; FIXME: The label generated as part of the code for named call
-  ;; instructions needs to be associated with the IR instruction so
-  ;; that it can be referred to later.
-  (declare (ignore instruction))
-  (list (make-instance 'cluster:code-command
-          :mnemonic "JMP"
-          :operands
-          (list (cluster:make-memory-operand 64 :displacement 0)))
-        (make-instance 'cluster:label)
-        (make-instance 'cluster:data-command
-          :data-bytes '(0 0 0 0 0 0 0 0))))
+  (let ((label (make-instance 'cluster:label)))
+    (setf (gethash instruction *call-site-labels*) label)
+    (list (make-instance 'cluster:code-command
+            :mnemonic "JMP"
+            :operands
+            (list (cluster:make-memory-operand 64 :displacement 0)))
+          label
+          (make-instance 'cluster:data-command
+            :data-bytes '(0 0 0 0 0 0 0 0)))))
 
 ;;; FIXME: We shouldn't really have any of these.
 (defmethod translate-simple-instruction
