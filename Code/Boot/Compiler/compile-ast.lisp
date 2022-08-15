@@ -1,5 +1,19 @@
 (cl:in-package #:sicl-boot-compile-and-tie)
 
+(defun encode-input (input)
+  (etypecase input
+    (cleavir-ir:immediate-input
+     `(:literal . ,(cleavir-ir:value input)))
+    (cleavir-ir:register-location
+     `(:register . ,(cleavir-ir:name input)))
+    (cleavir-ir:stack-location
+     `(:stack . ,(cleavir-ir:offset input)))))
+
+(defun compute-argument-locations (call-site)
+  (setf (sicl-compiler:arguments call-site)
+        (loop for input in (cleavir-ir:inputs (instruction call-site))
+              collect (encode-input input))))
+
 (defun compile-ast (client ast)
   (multiple-value-bind (ir literals)
       (sicl-ast-to-hir:ast-to-hir client ast)
@@ -17,6 +31,8 @@
         (cleavir-ir:set-predecessors ir)
         (sicl-code-generation:generate-code ir)
         (cluster:assemble (sicl-code-generation:generate-code ir))
+        (loop for call-site in call-sites
+              do (compute-argument-locations call-site))
         (values call-sites hir-thunks)))))
 
 (defun source-position-equal (p1 p2)
