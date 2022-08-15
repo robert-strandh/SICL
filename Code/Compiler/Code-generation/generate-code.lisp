@@ -25,9 +25,10 @@
   (let* ((instructions (linearize-lir lir))
          (*labels* (create-instruction-labels instructions))
          (*call-site-labels* (make-hash-table :test #'eq)))
-    (loop for (instruction next) on instructions
-          for label = (find-instruction-label instruction)
-          for translation = (translate-instruction instruction next)
-          unless (null label)
-            collect label
-          append translation)))
+    (values (loop for (instruction next) on instructions
+                  for label = (find-instruction-label instruction)
+                  for translation = (translate-instruction instruction next)
+                  unless (null label)
+                    collect label
+                  append translation)
+            *call-site-labels*)))
