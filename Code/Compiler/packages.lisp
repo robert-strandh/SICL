@@ -24,4 +24,5 @@
            #:instruction
            #:name
            #:arguments
+           #:offset
            #:instructions))
