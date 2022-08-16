@@ -29,7 +29,9 @@
         ;; stage, there is an instruction I1 that has a successor I2,
         ;; but I1 is not a predecessor of I2.
         (cleavir-ir:set-predecessors ir)
-        (let ((generated-code (sicl-code-generation:generate-code ir)))
+        (multiple-value-bind (generated-code call-site-labels)
+            (sicl-code-generation:generate-code ir)
+          (declare (ignore call-site-labels))
           (cluster:assemble generated-code))
         (loop for call-site in call-sites
               do (compute-argument-locations call-site))
