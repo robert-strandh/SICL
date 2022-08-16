@@ -31,10 +31,11 @@
         (cleavir-ir:set-predecessors ir)
         (multiple-value-bind (generated-code call-site-labels)
             (sicl-code-generation:generate-code ir)
-          (declare (ignore call-site-labels))
-          (cluster:assemble generated-code))
-        (loop for call-site in call-sites
-              do (compute-argument-locations call-site))
+          (cluster:assemble generated-code)
+          (loop for call-site in call-sites
+                do (compute-argument-locations call-site)
+                   (setf (sicl-compiler:offset call-site)
+                         (gethash (instruction call-site) call-site-labels))))
         (values call-sites hir-thunks)))))
 
 (defun source-position-equal (p1 p2)
