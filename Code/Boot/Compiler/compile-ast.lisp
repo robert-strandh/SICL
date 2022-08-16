@@ -35,7 +35,11 @@
           (loop for call-site in call-sites
                 do (compute-argument-locations call-site)
                    (setf (sicl-compiler:offset call-site)
-                         (gethash (instruction call-site) call-site-labels))))
+                         (let* ((instruction (instruction call-site))
+                                (label (gethash instruction call-site-labels))
+                                (offset (position label generated-code
+                                                  :test #'eq)))
+                           offset))))
         (values call-sites hir-thunks)))))
 
 (defun source-position-equal (p1 p2)
