@@ -81,3 +81,6 @@
 
 (declaim (ftype (function (t) (member t nil))
                 numberp integerp))
+
+(declaim (ftype (function (number number) number)
+                expt))
