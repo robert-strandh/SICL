@@ -20,3 +20,6 @@
 
 (declaim (ftype (function (t t &key &allow-other-keys) standard-object)
                 change-class))
+
+(declaim (ftype (function (t &rest t) t)
+                reinitialize-instance))
