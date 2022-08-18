@@ -23,3 +23,6 @@
 
 (declaim (ftype (function (t &rest t) t)
                 reinitialize-instance))
+
+(declaim (ftype (function (class class) (member t nil))
+                validate-superclass))
