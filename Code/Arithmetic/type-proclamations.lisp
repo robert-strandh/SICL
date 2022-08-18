@@ -84,3 +84,6 @@
 
 (declaim (ftype (function (number number) number)
                 expt))
+
+(declaim (ftype (function (real &rest real) real)
+                max min))
