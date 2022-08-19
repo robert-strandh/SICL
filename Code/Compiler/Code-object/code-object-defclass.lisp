@@ -72,7 +72,7 @@
    ;; offset in to the code vector containing the unconditional jump
    ;; instruction that will be modified to jump to a new trampoline
    ;; snippet whenever the callee changes in some way.
-   (%offset :initarg offset :accessor offset)
+   (%offset :initarg :offset :accessor offset)
    ;; This slot contains source information about the call site.  If
    ;; no source information is available, this slot contains NIL.
    (%origin :initarg :origin :accessor origin)
