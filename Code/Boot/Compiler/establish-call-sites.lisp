@@ -41,7 +41,8 @@
     :name (call-site-name instruction)
     :instruction instruction))
 
-(defun establish-call-sites (ir)
+(defun establish-call-sites (client environment ir)
+  (declare (ignore client environment))
   (let ((call-sites '()))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)

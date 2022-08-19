@@ -14,10 +14,10 @@
         (loop for input in (cleavir-ir:inputs (instruction call-site))
               collect (encode-input input))))
 
-(defun compile-ast (client ast)
+(defun compile-ast (client environment ast)
   (multiple-value-bind (ir literals)
       (sicl-ast-to-hir:ast-to-hir client ast)
-    (let ((call-sites (establish-call-sites ir)))
+    (let ((call-sites (establish-call-sites client environment ir)))
       (change-class ir 'sicl-ir:top-level-enter-instruction
                     :literals literals
                     :call-sites call-sites)
@@ -76,5 +76,5 @@
 
 (defun compile-and-tie (client environment ast)
   (multiple-value-bind (call-sites hir-thunks)
-      (compile-ast client ast)
+      (compile-ast client environment ast)
     (tie client environment call-sites hir-thunks)))
