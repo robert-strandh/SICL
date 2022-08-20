@@ -23,3 +23,6 @@
 
 (declaim (ftype (function (list) list)
                 lambda-list-variables))
+
+(declaim (ftype (function (list) list)
+                extract-named-group))
