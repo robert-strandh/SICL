@@ -21,3 +21,5 @@
 (declaim (ftype (function (list) (values list list))
                 separate-ordinary-body))
 
+(declaim (ftype (function (list) list)
+                lambda-list-variables))
