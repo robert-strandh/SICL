@@ -247,10 +247,13 @@
       (def 'proclaim
           (lambda (declaration-specifier)
             (case (first declaration-specifier)
-              ;; We handle only FTYPE for now.
+              ;; We handle only FTYPE and SPECIAL for now.
               (ftype (loop for name in (rest (rest declaration-specifier))
                            do (setf (env:function-type c environment name)
-                                    (second declaration-specifier)))))))
+                                    (second declaration-specifier))))
+              (special (loop for name in (rest declaration-specifier)
+                             do (setf (env:special-variable c environment name nil)
+                                      t))))))
       (def 'fboundp
             (lambda (name)
               (or (not (null (env:fdefinition c environment name)))
