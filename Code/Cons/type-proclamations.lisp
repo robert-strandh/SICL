@@ -9,6 +9,9 @@
                 sixth seventh eighth ninth tenth
                 rest))
 
+(declaim (ftype (function (t cons) t)
+                (setf first) (setf car)))
+
 (declaim (ftype (function (t) t)
                 endp))
 
