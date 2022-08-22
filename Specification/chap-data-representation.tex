@@ -504,7 +504,12 @@ rack with three slots:
   point is a \emph{raw address} of an aligned word in the vector
   containing the instructions of the function.  Functions are always
   allocated in the global heap, so the code vector never moves.
-  Therefore, this address will never need to be updated.
+  Therefore, this address will never need to be updated.  The word
+  immediately preceding the entry point in the code vector contains a
+  reference to the code object.  The garbage collector uses the entry
+  point of a function to find the code object, thereby keeping the
+  code object alive as long as there is at least one live function in
+  the code object.
 \end{enumerate}
 
 The static environment contains the \emph{code object} as one of its
