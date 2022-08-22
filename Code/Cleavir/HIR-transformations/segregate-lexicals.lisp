@@ -64,12 +64,18 @@
           collect (cons enter-instruction
                         (cleavir-ir:new-temporary name)))))
 
-;;; Given an ENCLOSE-INSTRUCTION and the exclusive lexical location,
-;;; import the exclusive lexical location to the ENCLOSE-INSTRUCTION
-;;; (IMPORT).
+;;; Given an ENCLOSE-INSTRUCTION and an exclusive lexical location,
+;;; import the exclusive lexical location to the
+;;; INITIALIZE-CLOSURE-INSTRUCTION responsible for the initialization
+;;; of the closure created by the ENCLOSE-INSTRUCTION.
 ;;;
 ;;; We add the import to the end of the import list in order to
 ;;; preserve the index of cells in the static environment.
+;;;
+;;; INSTRUCTION-OWNERS is a hash table mapping each instruction to its
+;;; owner.  When we need to create a new
+;;; INITIALIZE-CLOSURE-INSTRUCTION, we update this hash table, so that
+;;; the new instruction has the same owner as the ENCLOSE-INSTRUCTION.
 (defun transmit-exclusive-location (enclose import instruction-owners)
   (let ((initializer (cleavir-ir:initializer enclose)))
     (when (null initializer)
