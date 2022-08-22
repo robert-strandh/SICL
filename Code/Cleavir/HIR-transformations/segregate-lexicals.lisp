@@ -86,10 +86,10 @@
                            :input (first (cleavir-ir:outputs enclose))))
       ;; Defer initialization until all potentially mutually recurisve
       ;; functions are available.
-      (do ((current-enclose enclose (cleavir-ir:first-successor current-enclose)))
-          ((not (typep (cleavir-ir:first-successor current-enclose)
-                       'cleavir-ir:enclose-instruction))
-           (cleavir-ir:insert-instruction-after initializer current-enclose)))
+      (loop for current-enclose = enclose then next
+            for next = (cleavir-ir:first-successor current-enclose)
+            while (typep next 'cleavir-ir:enclose-instruction)
+            finally (cleavir-ir:insert-instruction-after initializer current-enclose))
       (setf (cleavir-ir:initializer enclose) initializer)
       (setf (gethash initializer instruction-owners)
             (gethash enclose instruction-owners)))
