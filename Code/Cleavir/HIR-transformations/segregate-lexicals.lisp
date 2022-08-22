@@ -64,7 +64,7 @@
           collect (cons enter-instruction
                         (cleavir-ir:new-temporary name)))))
 
-;;; Given an ENCLOSE-INSTRUCTION and the exclusive lexical location ,
+;;; Given an ENCLOSE-INSTRUCTION and the exclusive lexical location,
 ;;; import the exclusive lexical location to the ENCLOSE-INSTRUCTION
 ;;; (IMPORT).
 ;;;
