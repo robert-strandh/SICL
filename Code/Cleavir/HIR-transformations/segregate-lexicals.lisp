@@ -72,7 +72,7 @@
 ;;; preserve the index of cells in the static environment.
 (defun transmit-exclusive-location (enclose import instruction-owners)
   (let ((initializer (cleavir-ir:initializer enclose)))
-    (unless initializer
+    (when (null initializer)
       (setf initializer
             ;; The exclusive lexical variable that holds the static
             ;; environment is the first output of the enter instruction.
