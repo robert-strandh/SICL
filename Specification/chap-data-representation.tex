@@ -543,15 +543,8 @@ can occur:
   because the intended function is undefined.
 \item When it can be determined statically that the object being
   called is a function object in the \emph{same compilation unit} as
-  the caller, then we can make an \emph{internal call}.  If both the
-  caller and the callee are \emph{global functions} (so that the
-  static environment contains only a pointer to the code object, then
-  it suffices to issue a \texttt{call} instruction (or equivalent) to
-  a relative address that can be determined statically. The relative
-  address can be chosen so as to avoid type checking of arguments with
-  known types.  However, we may not take advantage of this possibility
-  unless the \texttt{speed} optimize quality is high, because it makes
-  it impossible to redefine a single function in a compilation unit.
+  the caller, then we can make an \emph{internal call}, which can be
+  optimized in various ways.
 \end{itemize}
 
 \section{Structures}
