@@ -308,6 +308,33 @@ information of the call-site descriptor is a location immediately
 preceding a form that is about to be evaluated, or immediately
 following a form that has just been evaluated.
 
+\section{Function descriptor}
+\label{data-representation-function-descriptor}
+
+A \emph{function descriptor} is a standard object that contains
+informormation about all functions that share the same code (but that
+may have different static environments).  It contains the following
+information:
+
+\begin{itemize}
+\item A reference to the \emph{code object}
+  \seesec{data-representation-code-objects} that represents the
+  compilation unit in which the function code is located.
+\item The \emph{source information} of the function, in the form of 
+  a start position and an end position of the source code of the
+  function in the compilation unit.  The text itself is contained in
+  the code object.
+\item The lambda list of the function.
+\item Information about one or more \emph{entry points} of the
+  function, each one specifying an address of the entry point and the
+  types of the arguments, and the location (a register or a stack
+  location) where the function expects each argument.
+\end{itemize}
+
+A reference to the function descriptor is located in the aligned word
+immediately preceding the argument-parsing entry point in the code
+vector.
+
 \section{Code objects}
 \label{data-representation-code-objects}
 
