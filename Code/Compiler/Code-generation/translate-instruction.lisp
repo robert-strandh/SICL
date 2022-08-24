@@ -12,9 +12,16 @@
     ((instruction cleavir-ir:unreachable-instruction))
   '())
 
+;;; For an ENTER-INSTRUCTION, we create a full word that will contain
+;;; a reference to the function descriptor for functions represented
+;;; by this ENTER-INSTRUCTION.
+;;;
+;;; FIXME: Cluster needs an ALIGN pseudo-instruction so that this word
+;;; and the entry point of the function can be word aligned.
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:enter-instruction))
-  '())
+  (make-instance 'cluster:data-command
+            :data-bytes '(0 0 0 0 0 0 0 0)))
 
 (defmethod translate-simple-instruction
     ((instruction sicl-ir:breakpoint-instruction))
