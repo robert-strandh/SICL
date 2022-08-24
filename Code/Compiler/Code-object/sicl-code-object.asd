@@ -3,4 +3,5 @@
 (defsystem #:sicl-code-object
   :serial t
   :components
-  ((:file "code-object-defclass")))
+  ((:file "code-object-defclass")
+   (:file "function-descriptor")))
