@@ -90,3 +90,6 @@
 
 (declaim (ftype (function (number &optional number) number)
                 log))
+
+(declaim (ftype (function (number) number)
+                sqrt))
