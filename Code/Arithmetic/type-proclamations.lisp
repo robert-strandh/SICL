@@ -87,3 +87,6 @@
 
 (declaim (ftype (function (real &rest real) real)
                 max min))
+
+(declaim (ftype (function (number &optional number) number)
+                log))
