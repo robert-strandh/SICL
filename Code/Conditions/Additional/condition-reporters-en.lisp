@@ -273,14 +273,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c multiple-documentation-options-not-permitted)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "A slot can not have multiple :documentation options.~@
-           ~s was found."
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c multiple-type-options-not-permitted)
                              stream
                              (language acclimation:english))
