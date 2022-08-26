@@ -12,7 +12,6 @@
    #:both-test-and-test-not-given
    #:at-least-one-list-required
    #:at-least-one-argument-required
-   #:lists-must-have-the-same-length
    #:warn-both-test-and-test-not-given
    #:list-as-sequence-must-be-proper
    #:invalid-bounding-indexes

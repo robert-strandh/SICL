@@ -40,12 +40,6 @@
 (define-condition at-least-one-argument-required (sicl-error)
   ())
 
-;;; This condition is used by the pairlis function when
-;;; the two lists are not of the same length.
-(define-condition lists-must-have-the-same-length (sicl-error)
-  ((%list1 :initarg :list1 :reader list1)
-   (%list2 :initarg :list2 :reader list2)))
-
 ;;; This condition is used by macros that detect that there
 ;;; is both a :test and a :test-not, and that detection is
 ;;; done at macro-expansion time.
