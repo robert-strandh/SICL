@@ -13,12 +13,10 @@
         finally (unless (and (null remaining-keys) (null remaining-data))
                   (cond ((and (atom remaining-keys) (not (null remaining-keys)))
                          (error 'must-be-proper-list
-                                :datum keys
-                                :name 'pairlis))
+                                :datum keys))
                         ((and (atom remaining-data) (not (null remaining-data)))
                          (error 'must-be-proper-list
-                                :datum data
-                                :name 'pairlis))
+                                :datum data))
                         (t
                          (error 'lists-must-have-the-same-length
                                 :list1 keys

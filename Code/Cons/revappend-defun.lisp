@@ -7,6 +7,5 @@
         do (push (car remaining) result)
         finally (unless (null remaining)
                   (error 'must-be-proper-list
-                         :datum list
-                         :name 'revappend))
+                         :datum list))
                 (return result)))

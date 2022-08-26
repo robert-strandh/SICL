@@ -41,8 +41,7 @@
                                 (t
                                  ;; The list is a dotted list
                                  (error 'must-be-proper-list
-                                        :datum (car lists)
-                                        :name 'append))))
+                                        :datum (car lists)))))
                  ;; We are through with the first list in lists
                  (setf lists (cdr lists)))
         ;; When we get here, there is only one list left in lists.

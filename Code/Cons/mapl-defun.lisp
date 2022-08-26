@@ -11,7 +11,6 @@
                       for list in lists
                       do (when (not (listp rem))
                            (error 'must-be-proper-list
-                                  :datum list
-                                  :name 'mapl))))
+                                  :datum list))))
   ;; The mapl function returns the first list.
   (car lists))

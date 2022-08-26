@@ -10,6 +10,5 @@
                    remaining temp))
         finally (unless (null remaining)
                   (error 'must-be-proper-list
-                         :datum list
-                         :name 'nreconc))
+                         :datum list))
                 (return result)))

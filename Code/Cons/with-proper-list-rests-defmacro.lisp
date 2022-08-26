@@ -8,5 +8,4 @@
            do ,@body
            finally (unless (null ,rest-var)
                      (error 'must-be-proper-list
-                            :datum ,list-var
-                            :name ,function-name)))))
+                            :datum ,list-var)))))

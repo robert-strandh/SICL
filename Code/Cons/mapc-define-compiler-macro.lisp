@@ -26,6 +26,5 @@
                                       for listvar in listvars
                                       collect `(unless (listp ,var)
                                                  (error 'must-be-proper-list
-                                                        :datum ,listvar
-                                                        :name 'mapc)))
+                                                        :datum ,listvar)))
                               (return ,(car listvars)))))))

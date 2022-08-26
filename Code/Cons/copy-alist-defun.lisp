@@ -20,5 +20,4 @@
                     (car remaining))
         finally (unless (null remaining)
                   (error 'must-be-proper-list
-                         :datum alist
-                         :name 'copy-alist))))
+                         :datum alist))))

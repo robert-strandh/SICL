@@ -11,5 +11,4 @@
                       for list in lists
                       do (when (not (listp rem))
                            (error 'must-be-proper-list
-                                  :datum list
-                                  :name 'mapcon)))))
+                                  :datum list)))))
