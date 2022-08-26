@@ -53,11 +53,9 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           A proper list was required,~@
+          "A proper list was required,~@
            but the following was given:~@
            ~s"
-          (name c)
           (name-package (name c))
           (type-error-datum c)))
 
