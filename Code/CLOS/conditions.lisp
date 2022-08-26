@@ -181,7 +181,6 @@
                       ~s was found."
                      (slot-specifier condition)))))
 
-
 (define-condition slot-documentation-option-must-be-string (type-error)
   ()
   (:report (lambda (condition stream)
