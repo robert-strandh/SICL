@@ -133,7 +133,7 @@
     (if flag
         (progn (unless (= (length value) 1)
                  (error 'multiple-allocation-options-not-permitted
-                        :datum direct-slot-spec))
+                        :slot-specifier direct-slot-spec))
                (remhash :allocation table)
                `(:allocation ,(car value)))
         '())))
