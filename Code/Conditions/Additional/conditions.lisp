@@ -192,10 +192,6 @@
   ()
   (:default-initargs :type 'symbol))
 
-(define-condition slot-documentation-option-must-be-string (sicl-type-error)
-  ()
-  (:default-initargs :type 'string))
-
 (define-condition class-option-must-be-non-empty-list (sicl-type-error)
   ()
   (:default-initargs :type 'list))

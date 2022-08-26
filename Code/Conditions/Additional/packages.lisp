@@ -52,7 +52,6 @@
    #:illegal-slot-name
    #:slot-options-must-be-even
    #:slot-option-name-must-be-symbol
-   #:slot-documentation-option-must-be-string
    #:class-option-must-be-non-empty-list
    #:class-option-name-must-be-symbol
    #:duplicate-class-option-not-allowed

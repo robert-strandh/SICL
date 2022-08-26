@@ -265,14 +265,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c slot-documentation-option-must-be-string)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "The :documentation option of a slot must have a string argument, but~@
-           ~s was found."
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c class-option-must-be-non-empty-list)
                              stream
                              (language acclimation:english))
