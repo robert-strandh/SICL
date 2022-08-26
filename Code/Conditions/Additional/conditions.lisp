@@ -192,10 +192,6 @@
   ()
   (:default-initargs :type 'symbol))
 
-(define-condition multiple-initform-options-not-permitted (sicl-type-error)
-  ()
-  (:default-initargs :type 'list))
-
 (define-condition multiple-type-options-not-permitted (sicl-type-error)
   ()
   (:default-initargs :type 'list))

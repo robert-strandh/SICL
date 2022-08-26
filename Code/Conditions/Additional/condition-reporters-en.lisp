@@ -265,14 +265,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c multiple-initform-options-not-permitted)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "A slot can not have multiple :initform options.~@
-           ~s was found."
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c multiple-type-options-not-permitted)
                              stream
                              (language acclimation:english))
