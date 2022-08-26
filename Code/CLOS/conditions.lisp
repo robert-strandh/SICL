@@ -156,3 +156,11 @@
                      "A slot can not have multiple :ALLOCATION options.~@
                       ~s was found."
                      (slot-specifier condition)))))
+
+(define-condition multiple-documentation-options-not-permitted (error)
+  ((%slot-specifier :initarg :slot-specifier :reader slot-specifier))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A slot can not have multiple :DOCUMENTATION options.~@
+                      ~s was found."
+                     (slot-specifier condition)))))
