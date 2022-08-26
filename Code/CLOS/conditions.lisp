@@ -180,3 +180,14 @@
                      "A slot can not have multiple :TYPE options.~@
                       ~s was found."
                      (slot-specifier condition)))))
+
+
+(define-condition slot-documentation-option-must-be-string (type-error)
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The :DOCUMENTATION option of a slot~@
+                      must have a string argument, but~@
+                      ~s was found."
+                     (type-error-datum c))))
+  (:default-initargs :type 'string))
