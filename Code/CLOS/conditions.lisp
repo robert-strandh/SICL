@@ -148,3 +148,11 @@
 (define-condition invalid-function-name
     (error)
   ((%name :initarg :name :reader name)))
+
+(define-condition multiple-allocation-options-not-permitted (error)
+  ((%slot-specifier :initarg :slot-specifier :reader slot-specifier))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A slot can not have multiple :ALLOCATION options.~@
+                      ~s was found."
+                     (slot-specifier condition)))))
