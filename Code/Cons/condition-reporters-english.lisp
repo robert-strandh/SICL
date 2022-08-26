@@ -131,15 +131,12 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           The two lists passed as arguments must~@
+          "The two lists passed as arguments must~@
            have the same length, but the following~@
            was given:~@
            ~s~@
            and~@
            ~s."
-          (name c)
-          (name-package (name c))
           (list1 c)
           (list2 c)))
 

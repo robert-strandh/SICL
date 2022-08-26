@@ -96,7 +96,7 @@
 ;;; This condition is used by the pairlis function when
 ;;; the two lists are not of the same length.
 (define-condition lists-must-have-the-same-length
-    (error name-mixin acclimation:condition)
+    (error acclimation:condition)
   ((%list1 :initarg :list1 :reader list1)
    (%list2 :initarg :list2 :reader list2)))
 

@@ -20,6 +20,5 @@
                         (t
                          (error 'lists-must-have-the-same-length
                                 :list1 keys
-                                :list2 data
-                                :name 'pairlis))))
+                                :list2 data))))
                 (return result)))
