@@ -19,3 +19,13 @@
 (define-condition attempt-to-set-the-fdefinition-of-a-special-operator
     (error acclimation:condition)
   ((name :initarg :name :reader name)))
+
+(define-condition numeric-catch-tag (style-warning)
+  ((%tag :initarg :tag :reader tag))
+  (:report (lambda (condition stream)
+             (format stream
+                     "CATCH tags are compared with EQ so using a~@
+                      number or a character as a CATCH tag may not~@
+                      work as expected:~@
+                      ~s"
+                     (tag condition)))))
