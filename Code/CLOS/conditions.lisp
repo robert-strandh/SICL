@@ -188,5 +188,14 @@
                      "The :DOCUMENTATION option of a slot~@
                       must have a string argument, but~@
                       ~s was found."
-                     (type-error-datum c))))
+                     (type-error-datum condition))))
   (:default-initargs :type 'string))
+
+(define-condition superclass-list-must-be-proper-list (type-error)
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The list of superclasses must be a proper list,~@
+                      but ~s was found."
+                     (type-error-datum condition))))
+  (:default-initargs :type 'list))
