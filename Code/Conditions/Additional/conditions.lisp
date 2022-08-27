@@ -96,9 +96,6 @@
 (define-condition form-must-be-proper-list (sicl-syntax-error)
   ())
 
-(define-condition block-tag-must-be-symbol (sicl-syntax-error)
-  ())
-
 (define-condition body-must-be-proper-list (sicl-syntax-error)
   ())
 

@@ -21,7 +21,6 @@
    #:sicl-program-warning
    #:sicl-program-style-warning
    #:form-must-be-proper-list
-   #:block-tag-must-be-symbol
    #:body-must-be-proper-list
    #:multiple-documentation-strings-in-body
    #:documentation-string-not-allowed-in-body

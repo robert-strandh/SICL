@@ -84,14 +84,6 @@
           (code c)))
 
 (defmethod acclimation:report-condition
-    ((c block-tag-must-be-symbol) stream (language acclimation:english))
-  (format stream
-          "A block tag must be a symbol.~@
-           But the following was found instead:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c go-tag-must-be-symbol-or-integer) stream (language acclimation:english))
   (format stream
           "A GO tag must be a symbol or an integer.~@
