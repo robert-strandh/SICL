@@ -35,7 +35,6 @@
    #:setq-variable-must-be-symbol
    #:tagbody-element-must-be-symbol-integer-or-compound-form
    #:empty-body
-   #:numeric-catch-tag
    #:deprecated-eval-when-situation
    #:too-few-arguments
    #:too-many-arguments
@@ -44,7 +43,6 @@
    #:odd-number-of-keyword-arguments
    #:sicl-unbound-variable
    #:sicl-unbound-function
-   #:superclass-list-must-be-proper-list
    #:class-name-must-be-non-nil-symbol
    #:malformed-slots-list
    #:malformed-slot-spec

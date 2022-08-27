@@ -167,11 +167,6 @@
 ;;;
 ;;; CLOS/MOP-related conditions.
 
-(define-condition superclass-list-must-be-proper-list
-    (sicl-type-error)
-  ()
-  (:default-initargs :type 'list))
-
 (define-condition malformed-slots-list (sicl-type-error)
   ()
   (:default-initargs :type 'list))
@@ -234,9 +229,6 @@
 ;;; Warnings
 
 (define-condition empty-body (sicl-style-warning)
-  ())
-
-(define-condition numeric-catch-tag (sicl-warning)
   ())
 
 (define-condition deprecated-eval-when-situation (sicl-style-warning)

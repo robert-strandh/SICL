@@ -194,25 +194,10 @@
            ~s"
           (code c)))
 
-(defmethod acclimation:report-condition
-    ((c numeric-catch-tag) stream (language acclimation:english))
-  (format stream
-          "CATCH tags are compared with EQ so using a numeric~@
-           CATCH tag may not work as expected:~@
-           ~s"
-          (code c)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CLOS/MOP-related conditions.
-
-(defmethod acclimation:report-condition ((c superclass-list-must-be-proper-list)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "The list of superclasses must be a proper list, but~@
-           ~s was found."
-          (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c malformed-slots-list)
                              stream
