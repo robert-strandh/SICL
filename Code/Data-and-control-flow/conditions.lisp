@@ -29,3 +29,12 @@
                       work as expected:~@
                       ~s"
                      (tag condition)))))
+
+(define-condition block-name-must-be-symol (program-error)
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A block name must be a symbol.~@
+                      But the following was found instead:~@
+                      ~s"
+                     (name condition)))))
