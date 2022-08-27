@@ -241,7 +241,3 @@
 
 (define-condition deprecated-eval-when-situation (sicl-style-warning)
   ())
-
-(define-condition load-time-value-read-only-p-not-evaluated
-    (sicl-style-warning)
-  ())

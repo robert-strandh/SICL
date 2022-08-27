@@ -37,7 +37,6 @@
    #:empty-body
    #:numeric-catch-tag
    #:deprecated-eval-when-situation
-   #:load-time-value-read-only-p-not-evaluated
    #:too-few-arguments
    #:too-many-arguments
    #:unrecognized-keyword-argument

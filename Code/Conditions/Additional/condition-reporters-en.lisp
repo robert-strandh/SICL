@@ -202,17 +202,6 @@
            ~s"
           (code c)))
 
-(defmethod acclimation:report-condition
-    ((c load-time-value-read-only-p-not-evaluated)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The second (optional) argument (read-only-p) is not evaluated,~@
-           so a boolean value (T or NIL) was expected.~@
-           But the following was found instead:~@
-           ~s"
-          (code c)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CLOS/MOP-related conditions.
