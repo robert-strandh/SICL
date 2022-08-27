@@ -155,13 +155,6 @@
           (code c)))
 
 (defmethod acclimation:report-condition
-    ((c deprecated-eval-when-situation) stream (language acclimation:english))
-  (format stream
-          "A deprecated evaluation situation given:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c setq-must-have-even-number-arguments) stream (language acclimation:english))
   (format stream
           "An even number of arguments are required.~@

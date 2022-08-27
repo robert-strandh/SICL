@@ -35,7 +35,6 @@
    #:setq-variable-must-be-symbol
    #:tagbody-element-must-be-symbol-integer-or-compound-form
    #:empty-body
-   #:deprecated-eval-when-situation
    #:too-few-arguments
    #:too-many-arguments
    #:unrecognized-keyword-argument

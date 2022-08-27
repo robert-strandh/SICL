@@ -230,6 +230,3 @@
 
 (define-condition empty-body (sicl-style-warning)
   ())
-
-(define-condition deprecated-eval-when-situation (sicl-style-warning)
-  ())
