@@ -14,3 +14,12 @@
                       was expected. But the following was found instead:~@
                       ~s"
                      (code condition)))))
+
+(define-condition deprecated-eval-when-situation
+    (style-warning)
+  ((%situation :initarg :situation :reader situation))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A deprecated evaluation situation given:~@
+                      ~s"
+                     (situation condition)))))
