@@ -141,12 +141,6 @@
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%arguments :initarg :arguments :reader arguments)))
 
-(define-condition too-few-arguments (argument-mismatch)
-  ())
-
-(define-condition too-many-arguments (argument-mismatch)
-  ())
-
 (define-condition unrecognized-keyword-argument (argument-mismatch)
   ((%keyword-argument
     :initarg :keyword

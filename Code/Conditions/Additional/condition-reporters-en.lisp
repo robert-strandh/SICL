@@ -282,26 +282,6 @@
 ;;; Argument mismatch conditions.
 
 (defmethod acclimation:report-condition
-    ((c too-few-arguments) stream (language acclimation:english))
-  (format stream
-          "Too few arguments were given.  The lambda list is:~@
-           ~s~@
-           and the arguments given were:~@
-           ~s"
-          (lambda-list c)
-          (arguments c)))
-
-(defmethod acclimation:report-condition
-    ((c too-many-arguments) stream (language acclimation:english))
-  (format stream
-          "Too many arguments were given.  The lambda list is:~@
-           ~s~@
-           and the arguments given were:~@
-           ~s"
-          (lambda-list c)
-          (arguments c)))
-
-(defmethod acclimation:report-condition
     ((c unrecognized-keyword-argument) stream (language acclimation:english))
   (format stream
           "The keyword argument:~@

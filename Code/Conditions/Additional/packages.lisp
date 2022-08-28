@@ -34,8 +34,6 @@
    #:setq-variable-must-be-symbol
    #:tagbody-element-must-be-symbol-integer-or-compound-form
    #:empty-body
-   #:too-few-arguments
-   #:too-many-arguments
    #:unrecognized-keyword-argument
    #:invalid-keyword-argument
    #:odd-number-of-keyword-arguments
