@@ -54,6 +54,5 @@
    #:malformed-default-initargs-option
    #:default-initargs-option-once
    #:documentation-option-once
-   #:metaclass-option-once
    #:unknown-class-option)
   (:shadow #:sequence))

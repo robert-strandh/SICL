@@ -276,15 +276,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c metaclass-option-once)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "The metaclass option can appear only once in the~@
-           list of class options, but a second such option:~@
-           ~s was found."
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c unknown-class-option)
                              stream
                              (language acclimation:english))
