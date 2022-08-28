@@ -208,3 +208,12 @@
                       list of class options, but a second such option:~@
                       ~s was found."
                      (option condition)))))
+
+(define-condition slot-options-must-be-even (program-error)
+  ((%options :initarg :option :reader option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "There must be an even number of elements in.~@
+                      the list of slot options.~@
+                      ~s was found."
+                     (options condition)))))
