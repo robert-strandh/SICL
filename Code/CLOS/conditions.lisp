@@ -199,3 +199,12 @@
                       but ~s was found."
                      (type-error-datum condition))))
   (:default-initargs :type 'list))
+
+(define-condition metaclass-option-once (program-error)
+  ((%options :initarg :option :reader option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The metaclass option can appear only once in the~@
+                      list of class options, but a second such option:~@
+                      ~s was found."
+                     (option condition)))))
