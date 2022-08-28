@@ -41,7 +41,8 @@
 (declaim (ftype (function (t (cxrt (x d))) t)
                 (setf cadr) (setf cddr)))
 
-(declaim (ftype (function ((integer 0) list) t) nth))
+(declaim (ftype (function ((integer 0) list) t)
+                nth nthcdr))
 
 (declaim (ftype (function (function list &rest list) list)
                 mapc mapcar mapcan mapl maplist mapcon))
