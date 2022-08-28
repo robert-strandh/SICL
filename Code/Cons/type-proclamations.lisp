@@ -85,3 +85,6 @@
 
 (declaim (ftype (function (list t &optional t) t)
                 getf))
+
+(declaim (ftype (function (&rest t) list)
+                nconc))
