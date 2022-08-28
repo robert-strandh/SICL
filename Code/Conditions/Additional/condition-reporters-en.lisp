@@ -208,14 +208,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c slot-options-must-be-even)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "There must be an even number of slot options.~@
-           ~s was found."
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c slot-option-name-must-be-symbol)
                              stream
                              (language acclimation:english))

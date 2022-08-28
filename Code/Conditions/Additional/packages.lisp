@@ -45,7 +45,6 @@
    #:malformed-slots-list
    #:malformed-slot-spec
    #:illegal-slot-name
-   #:slot-options-must-be-even
    #:slot-option-name-must-be-symbol
    #:class-option-must-be-non-empty-list
    #:class-option-name-must-be-symbol

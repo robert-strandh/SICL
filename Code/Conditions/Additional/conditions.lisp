@@ -176,10 +176,6 @@
   ()
   (:default-initargs :type 'symbol))
 
-(define-condition slot-options-must-be-even (sicl-type-error)
-  ()
-  (:default-initargs :type 'list))
-
 (define-condition slot-option-name-must-be-symbol (sicl-type-error)
   ()
   (:default-initargs :type 'symbol))
