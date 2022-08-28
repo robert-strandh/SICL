@@ -38,3 +38,25 @@
                       But the following was found instead:~@
                       ~s"
                      (name condition)))))
+
+;;; This condition type is the base of run-time errors related to
+;;; argument mismatches.
+(define-condition argument-mismatch (error)
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)))
+
+(define-condition too-few-arguments (argument-mismatch)
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "Too few arguments supplied for the lambda list:~@
+                      ~s"
+                     (lambda-list condition)))))
+
+(define-condition too-many-arguments (argument-mismatch)
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "Too many arguments supplied for the lambda list:~@
+                      ~s"
+                     (lambda-list condition)))))
+
