@@ -49,8 +49,7 @@
   (unless (and (cleavir-code-utilities:proper-list-p direct-slot-spec)
                (consp direct-slot-spec))
     (error 'malformed-slot-spec
-           :name 'defclass
-           :datum direct-slot-spec)))
+           :slot-spec direct-slot-spec)))
 
 (defun check-slot-spec-name-is-symbol (direct-slot-spec)
   (unless (symbolp (car direct-slot-spec))
