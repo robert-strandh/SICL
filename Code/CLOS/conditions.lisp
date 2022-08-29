@@ -225,3 +225,11 @@
                      "Malformed :METACLASS option:~@
                       ~s was found."
                      (options condition)))))
+
+(define-condition malformed-default-initargs-option (program-error)
+  ((%options :initarg :option :reader option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Malformed :DEFAULT-INITARGS option:~@
+                      ~s was found."
+                     (options condition)))))
