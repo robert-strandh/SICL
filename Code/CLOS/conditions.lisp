@@ -210,7 +210,7 @@
                      (option condition)))))
 
 (define-condition slot-options-must-be-even (program-error)
-  ((%options :initarg :option :reader option))
+  ((%options :initarg :options :reader options))
   (:report (lambda (condition stream)
              (format stream
                      "There must be an even number of elements in.~@
@@ -219,20 +219,20 @@
                      (options condition)))))
 
 (define-condition malformed-metaclass-option (program-error)
-  ((%options :initarg :option :reader option))
+  ((%option :initarg :option :reader option))
   (:report (lambda (condition stream)
              (format stream
                      "Malformed :METACLASS option:~@
                       ~s was found."
-                     (options condition)))))
+                     (option condition)))))
 
 (define-condition malformed-default-initargs-option (program-error)
-  ((%options :initarg :option :reader option))
+  ((%option :initarg :option :reader option))
   (:report (lambda (condition stream)
              (format stream
                      "Malformed :DEFAULT-INITARGS option:~@
                       ~s was found."
-                     (options condition)))))
+                     (option condition)))))
 
 (define-condition malformed-slot-spec (program-error)
   ((%slot-spec :initarg :slot-spec :reader slot-spec))
