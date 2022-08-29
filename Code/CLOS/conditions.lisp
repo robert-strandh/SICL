@@ -233,3 +233,11 @@
                      "Malformed :DEFAULT-INITARGS option:~@
                       ~s was found."
                      (options condition)))))
+
+(define-condition malformed-slot-spec (program-error)
+  ((%slot-spec :initarg :slot-spec :reader slot-spec))
+  (:report (lambda (conditoin stream)
+             (format stream
+                     "Malformed slot specification.~@
+                      ~s was found."
+                     (slot-spec condition)))))
