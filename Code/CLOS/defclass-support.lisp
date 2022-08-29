@@ -57,7 +57,7 @@
 (defun check-slot-options-even-length (direct-slot-spec)
   (unless (evenp (length (cdr direct-slot-spec)))
     (error 'slot-options-must-be-even
-           :datum direct-slot-spec)))
+           :options direct-slot-spec)))
 
 (defun populate-table-with-slot-options (table slot-options)
   (loop for (name value) on slot-options by #'cddr
