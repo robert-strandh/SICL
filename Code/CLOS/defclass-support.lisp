@@ -28,14 +28,12 @@
   (unless (and (symbolp class-name)
                (not (null class-name)))
     (error 'class-name-must-be-non-nil-symbol
-           :name 'defclass
            :datum class-name))
   class-name)
 
 (defun canonicalize-direct-superclass-names (direct-superclass-names)
   (unless (cleavir-code-utilities:proper-list-p direct-superclass-names)
     (error 'superclass-list-must-be-proper-list
-           :name 'defclass
            :datum direct-superclass-names))
   (loop for name in direct-superclass-names
         collect (canonicalize-direct-superclass-name name)))
@@ -54,20 +52,17 @@
 (defun check-slot-spec-name-is-symbol (direct-slot-spec)
   (unless (symbolp (car direct-slot-spec))
     (error 'illegal-slot-name
-           :name 'defclass
            :datum (car direct-slot-spec))))
 
 (defun check-slot-options-even-length (direct-slot-spec)
   (unless (evenp (length (cdr direct-slot-spec)))
     (error 'slot-options-must-be-even
-           :name 'defclass
            :datum direct-slot-spec)))
 
 (defun populate-table-with-slot-options (table slot-options)
   (loop for (name value) on slot-options by #'cddr
         do (unless (symbolp name)
              (error 'slot-option-name-must-be-symbol
-                    :name 'defclass
                     :datum name))
            (push value (gethash name table '()))))
 
@@ -186,7 +181,6 @@
 (defun canonicalize-direct-slot-specs (direct-slot-specs)
   (when (not (cleavir-code-utilities:proper-list-p direct-slot-specs))
     (error 'malformed-slots-list
-           :name 'defclass
            :datum direct-slot-specs))
   `(list ,@(loop for spec in direct-slot-specs
                  collect (canonicalize-direct-slot-spec spec))))
@@ -218,7 +212,6 @@
   (let ((potential-malformed-option (member-if-not #'consp options)))
     (unless (null potential-malformed-option)
       (error 'class-option-must-be-non-empty-list
-             :name 'defclass
              :datum (car potential-malformed-option)))))
 
 (defun check-option-names (options)
@@ -226,7 +219,6 @@
   (let ((potential-malformed-option (member-if-not #'symbolp options :key #'car)))
     (unless (null potential-malformed-option)
       (error 'class-option-name-must-be-symbol
-             :name 'defclass
              :datum (car potential-malformed-option)))))
 
 (defun check-no-duplicate-option-names (options)
@@ -237,7 +229,6 @@
             do (when (> (count (car option) options
                                :key #'car :test #'eq) 1)
                  (error 'duplicate-class-option-not-allowed
-                        :name 'defclass
                         :datum (car option)))))))
 
 ;;; Make sure each class options is well formed, and check that a
@@ -259,14 +250,12 @@
                (:documentation
                 (unless (null (cddr option))
                   (error 'malformed-documentation-option
-                         :name 'defclass
                          :datum option))
                 (setf result
                       (append result `(:documentation ,(cadr option)))))
                (:metaclass
                 (unless (null (cddr option))
                   (error 'malformed-metaclass-option
-                         :name 'defclass
                          :datum option))
                 (setf result
                       (append result `(:metaclass ',(cadr option)))))
