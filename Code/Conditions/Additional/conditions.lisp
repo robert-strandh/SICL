@@ -187,10 +187,6 @@
   ()
   (:default-initargs :type 'symbol))
 
-(define-condition malformed-metaclass-option (sicl-type-error)
-  ()
-  (:default-initargs :type 'list))
-
 (define-condition malformed-default-initargs-option (sicl-type-error)
   ()
   (:default-initargs :type 'list))

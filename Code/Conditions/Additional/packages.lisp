@@ -47,7 +47,6 @@
    #:class-option-must-be-non-empty-list
    #:class-option-name-must-be-symbol
    #:duplicate-class-option-not-allowed
-   #:malformed-metaclass-option
    #:malformed-default-initargs-option
    #:default-initargs-option-once
    #:documentation-option-once
