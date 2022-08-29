@@ -205,11 +205,11 @@
 ;;; Canonicalize the :DEFAULT-INITARGS class option.
 (defun canonicalize-default-initargs (initargs)
   (unless (cleavir-code-utilities:proper-list-p initargs)
-    (error 'malformed-default-initargs
-           :datum `(:default-initargs ,@initargs)))
+    (error 'malformed-default-initargs-option
+           :option `(:default-initargs ,@initargs)))
   (unless (evenp (length initargs))
-    (error 'malformed-default-initargs
-           :datum `(:default-initargs ,@initargs)))
+    (error 'malformed-default-initargs-option
+           :option `(:default-initargs ,@initargs)))
   `(list ,@(loop for (name value) on initargs by #'cddr
                  collect (canonicalize-default-initarg name value))))
 
