@@ -217,3 +217,11 @@
                       the list of slot options.~@
                       ~s was found."
                      (options condition)))))
+
+(define-condition malformed-metaclass-option (program-error)
+  ((%options :initarg :option :reader option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Malformed :METACLASS option:~@
+                      ~s was found."
+                     (options condition)))))
