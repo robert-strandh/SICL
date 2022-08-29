@@ -41,7 +41,6 @@
    #:sicl-unbound-function
    #:class-name-must-be-non-nil-symbol
    #:malformed-slots-list
-   #:malformed-slot-spec
    #:illegal-slot-name
    #:slot-option-name-must-be-symbol
    #:class-option-must-be-non-empty-list

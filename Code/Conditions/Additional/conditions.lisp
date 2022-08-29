@@ -162,10 +162,6 @@
   ()
   (:default-initargs :type 'list))
 
-(define-condition malformed-slot-spec (sicl-type-error)
-  ()
-  (:default-initargs :type '(or symbol list)))
-
 (define-condition illegal-slot-name (sicl-type-error)
   ()
   (:default-initargs :type 'symbol))

@@ -192,14 +192,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c malformed-slot-spec)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "Malformed slot specification.~@
-           ~s was found."
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c illegal-slot-name)
                              stream
                              (language acclimation:english))
