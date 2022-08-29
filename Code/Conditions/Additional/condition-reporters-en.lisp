@@ -232,16 +232,6 @@
            ~s was found."
           (type-error-datum c)))
 
-
-(defmethod acclimation:report-condition ((c malformed-default-initargs-option)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "The DEFAULT-INITARG option takes the form~@
-           (:default-initargs <name> <value> <name> <value>...), but~@
-           ~s was found."
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c default-initargs-option-once)
                              stream
                              (language acclimation:english))
