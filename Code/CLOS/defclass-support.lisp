@@ -256,7 +256,7 @@
                (:metaclass
                 (unless (null (cddr option))
                   (error 'malformed-metaclass-option
-                         :datum option))
+                         :option option))
                 (setf result
                       (append result `(:metaclass ',(cadr option)))))
                (t
