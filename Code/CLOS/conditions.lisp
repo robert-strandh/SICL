@@ -241,3 +241,12 @@
                      "Malformed slot specification.~@
                       ~s was found."
                      (slot-spec condition)))))
+
+(define-condition documentation-option-once (program-error)
+  ((%option :initarg :option :reader option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The documentation option can appear only once in the~@
+                      list of class options, but a second such option:~@
+                      ~s was found."
+                     (option condition)))))
