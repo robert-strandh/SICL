@@ -250,3 +250,12 @@
                       list of class options, but a second such option:~@
                       ~s was found."
                      (option condition)))))
+
+(define-condition unknown-class-option (program-error)
+  ((%option :initarg :option :reader option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A class option is either ~@
+                     :DEFAULT-INITARGS, :DOCUMENTATION, or :METACLASS, but~@
+                     ~s was found."
+                     (option condition)))))
