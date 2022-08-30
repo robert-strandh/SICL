@@ -47,6 +47,5 @@
    #:class-option-name-must-be-symbol
    #:duplicate-class-option-not-allowed
    #:default-initargs-option-once
-   #:documentation-option-once
    #:unknown-class-option)
   (:shadow #:sequence))
