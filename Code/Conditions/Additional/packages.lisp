@@ -42,6 +42,5 @@
    #:class-name-must-be-non-nil-symbol
    #:malformed-slots-list
    #:illegal-slot-name
-   #:slot-option-name-must-be-symbol
-   #:class-option-must-be-non-empty-list)
+   #:slot-option-name-must-be-symbol)
   (:shadow #:sequence))

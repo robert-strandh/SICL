@@ -208,14 +208,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c class-option-must-be-non-empty-list)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "A class option must be a a non-empty list, but~@
-           ~s was found."
-          (type-error-datum c)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Argument mismatch conditions.

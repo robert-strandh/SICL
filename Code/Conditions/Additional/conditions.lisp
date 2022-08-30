@@ -170,10 +170,6 @@
   ()
   (:default-initargs :type 'symbol))
 
-(define-condition class-option-must-be-non-empty-list (sicl-type-error)
-  ()
-  (:default-initargs :type 'list))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Warnings
