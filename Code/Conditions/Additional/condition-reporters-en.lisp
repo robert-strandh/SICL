@@ -233,15 +233,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c unknown-class-option)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "A class option is either ~@
-           :default-initargs, :documentation, or :metaclass, but~@
-           ~s was found."
-          (type-error-datum c)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Argument mismatch conditions.

@@ -187,10 +187,6 @@
   ()
   (:default-initargs :type 'list))
 
-(define-condition unknown-class-option (sicl-type-error)
-  ()
-  (:default-initargs :type 'list))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Warnings

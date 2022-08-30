@@ -46,6 +46,5 @@
    #:class-option-must-be-non-empty-list
    #:class-option-name-must-be-symbol
    #:duplicate-class-option-not-allowed
-   #:default-initargs-option-once
-   #:unknown-class-option)
+   #:default-initargs-option-once)
   (:shadow #:sequence))
