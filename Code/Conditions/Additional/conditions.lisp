@@ -174,10 +174,6 @@
   ()
   (:default-initargs :type 'list))
 
-(define-condition class-option-name-must-be-symbol (sicl-type-error)
-  ()
-  (:default-initargs :type 'symbol))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Warnings

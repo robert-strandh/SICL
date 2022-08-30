@@ -216,14 +216,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c class-option-name-must-be-symbol)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "A class option name must be a symbol, but~@
-           ~s was found."
-          (type-error-datum c)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Argument mismatch conditions.
