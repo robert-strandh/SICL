@@ -63,7 +63,7 @@
   (loop for (name value) on slot-options by #'cddr
         do (unless (symbolp name)
              (error 'slot-option-name-must-be-symbol
-                    :datum name))
+                    :option-name name))
            (push value (gethash name table '()))))
 
 (defun process-initform-option (table direct-slot-spec)
