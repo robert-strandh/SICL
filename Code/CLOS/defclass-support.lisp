@@ -219,7 +219,7 @@
   (let ((potential-malformed-option (member-if-not #'symbolp options :key #'car)))
     (unless (null potential-malformed-option)
       (error 'class-option-name-must-be-symbol
-             :datum (car potential-malformed-option)))))
+             :option-name (car potential-malformed-option)))))
 
 (defun check-no-duplicate-option-names (options)
   ;; Check that there are no duplicate option names
@@ -229,7 +229,7 @@
             do (when (> (count (car option) options
                                :key #'car :test #'eq) 1)
                  (error 'duplicate-class-option-not-allowed
-                        :datum (car option)))))))
+                        :option (car option)))))))
 
 ;;; Make sure each class options is well formed, and check that a
 ;;; class option appears at most once.  Return a list of class
