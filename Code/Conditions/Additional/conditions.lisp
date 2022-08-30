@@ -166,10 +166,6 @@
   ()
   (:default-initargs :type 'symbol))
 
-(define-condition slot-option-name-must-be-symbol (sicl-type-error)
-  ()
-  (:default-initargs :type 'symbol))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Warnings
