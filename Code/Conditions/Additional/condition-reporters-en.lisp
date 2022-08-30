@@ -224,15 +224,6 @@
            ~s was found."
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c default-initargs-option-once)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "The default-initargs option can appear only once in the~@
-           list of class options, but a second such option:~@
-           ~s was found."
-          (type-error-datum c)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Argument mismatch conditions.

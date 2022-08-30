@@ -183,10 +183,6 @@
   ()
   (:default-initargs :type 'symbol))
 
-(define-condition default-initargs-option-once (sicl-type-error)
-  ()
-  (:default-initargs :type 'list))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Warnings

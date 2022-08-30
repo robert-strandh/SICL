@@ -45,6 +45,5 @@
    #:slot-option-name-must-be-symbol
    #:class-option-must-be-non-empty-list
    #:class-option-name-must-be-symbol
-   #:duplicate-class-option-not-allowed
-   #:default-initargs-option-once)
+   #:duplicate-class-option-not-allowed)
   (:shadow #:sequence))
