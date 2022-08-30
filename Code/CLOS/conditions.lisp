@@ -285,3 +285,11 @@
                      "A class option name must be a symbol, but~@
                       ~s was found."
                      (option-name condition)))))
+
+(define-condition :class-option-must-be-non-empty-list (program-error)
+  ((%option :initarg :option :reader option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A class option must be a a non-empty list, but~@
+                      ~s was found."
+                     (option condition)))))
