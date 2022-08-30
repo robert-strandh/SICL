@@ -212,7 +212,7 @@
   (let ((potential-malformed-option (member-if-not #'consp options)))
     (unless (null potential-malformed-option)
       (error 'class-option-must-be-non-empty-list
-             :datum (car potential-malformed-option)))))
+             :option (car potential-malformed-option)))))
 
 (defun check-option-names (options)
   ;; Check that the name of each option is a symbol
