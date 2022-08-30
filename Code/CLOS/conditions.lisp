@@ -268,3 +268,12 @@
                       list of class options, but a second such option:~@
                       ~s was found."
                      (option condition)))))
+
+(define-condition duplicate-class-option-not-allowed (program-error)
+  ((%option :initarg :option :reader option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "This class option can occur at most once, in the~@
+                      list of class options, but a second such option:~@
+                      ~s was found."
+                     (option condition)))))
