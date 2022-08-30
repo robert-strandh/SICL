@@ -178,11 +178,6 @@
   ()
   (:default-initargs :type 'symbol))
 
-;;; FIXME: This doesn't feel like a type-error
-(define-condition duplicate-class-option-not-allowed (sicl-type-error)
-  ()
-  (:default-initargs :type 'symbol))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Warnings

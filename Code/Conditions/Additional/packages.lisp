@@ -44,6 +44,5 @@
    #:illegal-slot-name
    #:slot-option-name-must-be-symbol
    #:class-option-must-be-non-empty-list
-   #:class-option-name-must-be-symbol
-   #:duplicate-class-option-not-allowed)
+   #:class-option-name-must-be-symbol)
   (:shadow #:sequence))
