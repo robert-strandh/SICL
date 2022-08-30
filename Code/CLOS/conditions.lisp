@@ -277,3 +277,11 @@
                       list of class options, but a second such option:~@
                       ~s was found."
                      (option condition)))))
+
+(define-condition class-option-name-must-be-symbol (program-error)
+  ((%option-name :initarg :option-name :reader option-name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A class option name must be a symbol, but~@
+                      ~s was found."
+                     (option-name condition)))))
