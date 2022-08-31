@@ -180,8 +180,8 @@
 
 (defun canonicalize-direct-slot-specs (direct-slot-specs)
   (when (not (cleavir-code-utilities:proper-list-p direct-slot-specs))
-    (error 'malformed-slots-list
-           :datum direct-slot-specs))
+    (error 'malformed-slot-list
+           :slot-list direct-slot-specs))
   `(list ,@(loop for spec in direct-slot-specs
                  collect (canonicalize-direct-slot-spec spec))))
 
