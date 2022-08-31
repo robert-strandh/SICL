@@ -39,6 +39,5 @@
    #:odd-number-of-keyword-arguments
    #:sicl-unbound-variable
    #:sicl-unbound-function
-   #:class-name-must-be-non-nil-symbol
-   #:malformed-slots-list)
+   #:class-name-must-be-non-nil-symbol)
   (:shadow #:sequence))

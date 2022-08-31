@@ -182,18 +182,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CLOS/MOP-related conditions.
-
-(defmethod acclimation:report-condition ((c malformed-slots-list)
-                             stream
-                             (language acclimation:english))
-  (format stream
-          "The direct-slots must be a proper list of slot specs, but~@
-           ~s was found."
-          (type-error-datum c)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Argument mismatch conditions.
 
 (defmethod acclimation:report-condition

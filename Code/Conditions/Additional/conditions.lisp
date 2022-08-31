@@ -156,14 +156,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CLOS/MOP-related conditions.
-
-(define-condition malformed-slots-list (sicl-type-error)
-  ()
-  (:default-initargs :type 'list))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Warnings
 
 (define-condition empty-body (sicl-style-warning)
