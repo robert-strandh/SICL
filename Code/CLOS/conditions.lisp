@@ -309,3 +309,12 @@
                      "Illegal slot name:~@
                       ~s was found."
                      (slot-name condition)))))
+
+(define-condition malformed-slot-list (program-error)
+  ((%slot-list :initarg :slot-list :reader slot-list))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The direct-slots must be a proper list of~@
+                      slot specs, but~@
+                      ~s was found."
+                     (slot-list condition)))))
