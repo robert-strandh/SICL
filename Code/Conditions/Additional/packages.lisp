@@ -40,6 +40,5 @@
    #:sicl-unbound-variable
    #:sicl-unbound-function
    #:class-name-must-be-non-nil-symbol
-   #:malformed-slots-list
-   #:illegal-slot-name)
+   #:malformed-slots-list)
   (:shadow #:sequence))
