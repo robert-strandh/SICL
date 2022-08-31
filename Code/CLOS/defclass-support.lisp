@@ -52,7 +52,7 @@
 (defun check-slot-spec-name-is-symbol (direct-slot-spec)
   (unless (symbolp (car direct-slot-spec))
     (error 'illegal-slot-name
-           :datum (car direct-slot-spec))))
+           :slot-name (car direct-slot-spec))))
 
 (defun check-slot-options-even-length (direct-slot-spec)
   (unless (evenp (length (cdr direct-slot-spec)))
