@@ -301,3 +301,11 @@
                      "A slot option name must be a symbol, but~@
                       ~s was found."
                      (option-name condition)))))
+
+(define-condition illegal-slot-name (program-error)
+  ((%slot-name :initarg :slot-name :reader slot-name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Illegal slot name:~@
+                      ~s was found."
+                     (slot-name condition)))))
