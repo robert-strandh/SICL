@@ -27,6 +27,7 @@
   (ensure-asdf-system '#:sicl-clos-type-proclamations e4)
   (ensure-asdf-system '#:sicl-string-type-proclamations e4)
   (ensure-asdf-system '#:cleavir-code-utilities-type-proclamations e4)
+  (ensure-asdf-system '#:sicl-array-proclamations e4)
   (load-source-file "CLOS/class-of-defun.lisp" e3)
   (enable-typep e2 e3)
   (load-source-file "Types/type-of-defgeneric.lisp" e3)
