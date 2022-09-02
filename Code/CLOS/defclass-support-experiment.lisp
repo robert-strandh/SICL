@@ -3,6 +3,8 @@
 ;;; This file contains an experiment that uses the s-expression-syntax
 ;;; library to parse DEFCLASS.
 
+(defclass defclass-builder () ())
+
 (defclass defclass-form ()
   (%name :accessor name)
   (%superclasses :initform '() :accessor superclasses)
