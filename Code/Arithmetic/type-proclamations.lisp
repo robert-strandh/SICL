@@ -93,3 +93,6 @@
 
 (declaim (ftype (function (number) number)
                 sqrt))
+
+(declaim (ftype (function (real real) real)
+                mod rem))
