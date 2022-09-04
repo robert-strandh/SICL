@@ -9,3 +9,5 @@
                 every some notevery notany))
 
 (declaim (ftype (function (&rest t) t) values))
+
+(declaim (ftype (function (t) t) identity))
