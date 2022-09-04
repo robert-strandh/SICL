@@ -127,3 +127,6 @@
                            (:end2 (or null (integer 0))))
                           (or null (integer 0)))
                 mismatch))
+
+(declaim (ftype (function (sequence) sequence)
+                copy-seq))
