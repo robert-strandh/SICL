@@ -113,3 +113,17 @@
                            (:end2 (or null (integer 0))))
                           sequence)
                 replace))
+
+(declaim (ftype (function (sequence
+                           sequence
+                           &key
+                           (:key function)
+                           (:from-end t)
+                           (:test function)
+                           (:test-not function)
+                           (:start1 (integer 0))
+                           (:end1 (or null (integer 0)))
+                           (:start2 (integer 0))
+                           (:end2 (or null (integer 0))))
+                          (or null (integer 0)))
+                mismatch))
