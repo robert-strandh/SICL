@@ -103,3 +103,13 @@
                           sequence)
                 remove-duplicates
                 delete-duplicates))
+
+(declaim (ftype (function (sequence
+                           sequence
+                           &key
+                           (:start1 (integer 0))
+                           (:end1 (or null (integer 0)))
+                           (:start2 (integer 0))
+                           (:end2 (or null (integer 0))))
+                          sequence)
+                replace))
