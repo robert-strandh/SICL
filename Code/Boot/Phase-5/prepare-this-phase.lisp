@@ -24,6 +24,7 @@
   (define-ast-eval e5)
   (sicl-boot:copy-macro-functions e4 e5)
   (ensure-asdf-system '#:sicl-data-and-control-flow-type-proclamations e5)
+  (ensure-asdf-system '#:sicl-evaluation-and-compilation-proclamations e5)
   (ensure-asdf-system '#:sicl-cons-type-proclamations e5)
   (ensure-asdf-system '#:sicl-arithmetic-type-proclamations e5)
   (ensure-asdf-system '#:sicl-conditions-type-proclamations e5)

@@ -6,6 +6,7 @@
           (sicl-ast-evaluator:eval-ast client e3 ast)))
   (sicl-boot:copy-macro-functions e2 e3)
   (ensure-asdf-system '#:sicl-data-and-control-flow-type-proclamations e3)
+  (ensure-asdf-system '#:sicl-evaluation-and-compilation-proclamations e3)
   (ensure-asdf-system '#:sicl-cons-type-proclamations e3)
   (ensure-asdf-system '#:sicl-arithmetic-type-proclamations e3)
   (ensure-asdf-system '#:sicl-conditions-type-proclamations e3)
