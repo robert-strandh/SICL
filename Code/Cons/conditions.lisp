@@ -90,7 +90,7 @@
 ;;; This condition is used by the list* function when no arguments
 ;;; were given, since that function requires at least one argument.
 (define-condition at-least-one-argument-required
-    (error name-mixin acclimation:condition)
+    (error acclimation:condition)
   ())
 
 ;;; This condition is used by the pairlis function when

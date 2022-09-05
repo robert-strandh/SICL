@@ -103,8 +103,7 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           At least one argument is required,~@
+          "At least one argument is required,~@
            but none was given."
           (name c)
           (name-package (name c))))
