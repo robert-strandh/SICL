@@ -59,8 +59,7 @@
                    (test nil testp)
                    (test-not nil test-not-p))
   (when (and testp test-not-p)
-    (error 'both-test-and-test-not-given
-           :name 'tree-equal))
+    (error 'both-test-and-test-not-given))
   (if testp
       (if (eq test #'eq)
           (|tree-equal test=eq| tree1 tree2)

@@ -8,10 +8,7 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           Both keyword arguments :test and :test-not were given."
-          (name c)
-          (name-package (name c))))
+          "Both keyword arguments :test and :test-not were given."))
 
 (defmethod acclimation:report-condition ((c must-be-nonnegative-integer)
                                           stream
@@ -162,10 +159,7 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package),~@
-           both keyword arguments :test and :test-not were given."
-          (name c)
-          (name-package (name c))))
+          "both keyword arguments :test and :test-not were given."))
 
 (defmethod acclimation:report-condition
     ((c expected-list-with-at-least-n-elements)

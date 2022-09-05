@@ -139,7 +139,7 @@
 (defun intersection (list1 list2
                      &key key (test nil test-given) (test-not nil test-not-given))
   (when (and test-given test-not-given)
-    (error 'both-test-and-test-not-given :name 'intersection))
+    (error 'both-test-and-test-not-given))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
         (if test-given

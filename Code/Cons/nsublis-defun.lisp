@@ -171,7 +171,7 @@
 (defun nsublis (alist tree
                 &key key (test nil test-given) (test-not nil test-not-given))
   (when (and test-given test-not-given)
-    (error 'both-test-and-test-not-given :name 'nsublis))
+    (error 'both-test-and-test-not-given))
   (if key
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))

@@ -77,7 +77,7 @@
 ;;; This condition is used by functions that take :test and :test-not
 ;;; keyword arguments, and is signaled when both of those are given.
 (define-condition both-test-and-test-not-given
-    (error name-mixin acclimation:condition)
+    (error acclimation:condition)
   ())
 
 ;;; This condition is used by the map* family functions when no lists
@@ -115,7 +115,7 @@
 ;;; This condition is used by macros that detect that there
 ;;; is both a :test and a :test-not, and that detection is
 ;;; done at macro-expansion time.
-(define-condition warn-both-test-and-test-not-given (warning name-mixin)
+(define-condition warn-both-test-and-test-not-given (warning)
   ())
 
 (define-condition expected-list-with-at-least-n-elements

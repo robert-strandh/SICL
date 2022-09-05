@@ -4,9 +4,8 @@
     (item place env args key key-p test test-p test-not test-not-p)
   (declare (ignorable test test-not))
   (if (and test-p test-not-p)
-      (progn (warn 'warn-both-test-and-test-not-given
-                   :name 'pushnew)
-             `(error 'both-test-and-test-not-given :name 'pushnew))
+      (progn (warn 'warn-both-test-and-test-not-given)
+             `(error 'both-test-and-test-not-given))
       (let ((item-var (gensym)))
         (multiple-value-bind (vars vals store-vars writer-form reader-form)
             (get-setf-expansion place env)
