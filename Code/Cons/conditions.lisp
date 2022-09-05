@@ -48,7 +48,7 @@
 ;;; This condition is used by functions and macros that require
 ;;; some list to be either a proper list or a circular list.
 (define-condition must-be-proper-or-circular-list
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'list))
 

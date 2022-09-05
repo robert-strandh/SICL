@@ -60,8 +60,7 @@
                                   ;; should be either proper or
                                   ;; circular.
                                   (error 'must-be-proper-or-circular-list
-                                         :datum list
-                                         :name 'list-length))))
+                                         :datum list))))
                           ((null fast)
                            ;; We reached the end of the list.
                            (return-from list-length length))
@@ -73,8 +72,7 @@
                            ;; should be either proper or
                            ;; circular.
                            (error 'must-be-proper-or-circular-list
-                                  :datum list
-                                  :name 'list-length))))))
+                                  :datum list))))))
         ((null list)
          ;; The initial list was empty, and such a list has zero length
          0)
@@ -83,5 +81,4 @@
          ;; is a violation of the requirement that the list given
          ;; should be either proper or circular.
          (error 'must-be-proper-or-circular-list
-                :datum list
-                :name 'list-length))))
+                :datum list))))
