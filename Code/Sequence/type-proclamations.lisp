@@ -62,7 +62,7 @@
                              (:test-not function)
                              (:count (or null integer)))
                           sequence)
-                remove))
+                remove delete))
 
 (declaim (ftype (function (sequence) (integer 0))
                 length))
