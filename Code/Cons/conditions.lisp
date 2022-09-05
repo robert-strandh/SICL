@@ -63,7 +63,7 @@
 ;;; This condition is used by functions and macros that require
 ;;; some argument to be a propterty list.
 (define-condition must-be-property-list
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'list))
 
