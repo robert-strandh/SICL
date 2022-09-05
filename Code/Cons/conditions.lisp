@@ -70,7 +70,7 @@
 ;;; This condition is used by functions and macros that require
 ;;; some argument to be a association list.
 (define-condition must-be-association-list
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'list))
 

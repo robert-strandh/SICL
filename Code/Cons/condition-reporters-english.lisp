@@ -90,12 +90,9 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           A association list was required,~@
+          "A association list was required,~@
            but the following was given:~@
            ~s"
-          (name c)
-          (name-package (name c))
           (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c at-least-one-list-required)
