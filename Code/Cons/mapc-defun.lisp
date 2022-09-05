@@ -2,7 +2,7 @@
 
 (defun mapc (function &rest lists)
   (when (null lists)
-    (error 'at-least-one-list-required :name 'mapc))
+    (error 'at-least-one-list-required))
   (loop for remaining = lists
           then (loop for list in remaining collect (cdr list))
         until (loop for list in remaining thereis (atom list))

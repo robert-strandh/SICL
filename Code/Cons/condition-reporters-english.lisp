@@ -96,11 +96,8 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           At least one list argument is required,~@
-           but none was given."
-          (name c)
-          (name-package (name c))))
+          "At least one list argument is required,~@
+           but none was given."))
           
 (defmethod acclimation:report-condition ((c at-least-one-argument-required)
                                           stream

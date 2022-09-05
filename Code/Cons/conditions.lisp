@@ -84,7 +84,7 @@
 ;;; were given, since those functions require at least one list
 ;;; argument.
 (define-condition at-least-one-list-required
-    (error name-mixin acclimation:condition)
+    (error acclimation:condition)
   ())
 
 ;;; This condition is used by the list* function when no arguments
