@@ -30,8 +30,7 @@
               do (when (eq slow c)
                    ;; we have a circular list
                    (error 'must-be-proper-or-dotted-list
-                          :datum list
-                          :name 'nbutlast)))
+                          :datum list)))
         (setf (cdr a) nil)
         list)))
 
@@ -57,8 +56,7 @@
                           do (when (eq slow conses)
                                ;; we have a circular list
                                (error 'must-be-proper-or-dotted-list
-                                      :datum list
-                                      :name 'nbutlast)))))
+                                      :datum list)))))
         (if (<= length n)
             nil
             (progn (setf (cdr (nthcdr (- length (1+ n)) list)) nil)

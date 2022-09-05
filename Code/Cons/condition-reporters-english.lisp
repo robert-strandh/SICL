@@ -72,12 +72,9 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           A proper or dotted list was required,~@
+          "A proper or dotted list was required,~@
            but the following was given:~@
            ~s"
-          (name c)
-          (name-package (name c))
           (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c must-be-property-list)

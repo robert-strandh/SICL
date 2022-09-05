@@ -56,7 +56,7 @@
 ;;; list to be either a proper list or a dotted list (but not a
 ;;; circular list).
 (define-condition must-be-proper-or-dotted-list
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'list))
 

@@ -35,8 +35,7 @@
           do (when (eq slow remaining)
                ;; we have a circular list
                (error 'must-be-proper-or-dotted-list
-                      :datum list
-                      :name 'butlast)))))
+                      :datum list)))))
 
 ;;; There is probably no point in making a special version of butlast
 ;;; for n = 1, because the time is going to be dominated by consing up
