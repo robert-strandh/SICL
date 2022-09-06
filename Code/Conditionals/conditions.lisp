@@ -11,7 +11,7 @@
   ((%name :initarg :name :reader name)))
 
 (define-condition malformed-body
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%body :initarg :body :reader body)))
      
 (define-condition malformed-cond-clauses
