@@ -35,7 +35,7 @@
   ((%clauses :initarg :clauses :reader clauses)))
 
 (define-condition malformed-keys
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%keys :initarg :keys :reader keys)))
      
 (define-condition malformed-typecase-clauses

@@ -134,7 +134,6 @@
              (list keys)
              (if (not (cleavir-code-utilities:proper-list-p keys))
                  (error 'malformed-keys
-                        :name name
                         :keys keys)
                  keys)))
        (collect-e/ccase-keys (cdr clauses) name))))
@@ -171,7 +170,6 @@
                            ,(expand-case-clauses (cdr clauses) variable))
                       (if (not (cleavir-code-utilities:proper-list-p keys))
                           (error 'malformed-keys
-                                 :name 'case
                                  :keys keys)
                           `(if (or ,@(eql-ify keys variable))
                                (progn ,@forms)
