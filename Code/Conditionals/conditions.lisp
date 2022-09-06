@@ -43,7 +43,7 @@
   ((%clauses :initarg :clauses :reader clauses)))
      
 (define-condition malformed-typecase-clause
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%clause :initarg :clause :reader clause)))
      
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

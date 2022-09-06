@@ -272,7 +272,6 @@
             (unless (and (cleavir-code-utilities:proper-list-p clause)
                          (not (null clause)))
               (error 'malformed-typecase-clause
-                     :name 'typecase
                      :clause clause))
             (if (or (eq (car clause) 'otherwise)
                     (eq (car clause) t))
@@ -310,7 +309,6 @@
             (unless (and (cleavir-code-utilities:proper-list-p clause)
                          (not (null clause)))
               (error 'malformed-typecase-clause
-                     :name name
                      :clause clause))
             (let ((type (car clause))
                   (forms (cdr clause)))
