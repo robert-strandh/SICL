@@ -154,7 +154,6 @@
             (unless (and (cleavir-code-utilities:proper-list-p clause)
                          (not (null clause)))
               (error 'malformed-case-clause
-                     :name 'case
                      :clause clause))
             (if (or (eq (car clause) 'otherwise)
                     (eq (car clause) t))
@@ -198,7 +197,6 @@
             (unless (and (cleavir-code-utilities:proper-list-p clause)
                          (not (null clause)))
               (error 'malformed-case-clause
-                     :name name
                      :clause clause))
             (let ((keys (car clause))
                   (forms (cdr clause)))

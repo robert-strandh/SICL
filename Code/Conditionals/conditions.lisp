@@ -27,7 +27,7 @@
   ((%clauses :initarg :clauses :reader clauses)))
      
 (define-condition malformed-case-clause
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%clause :initarg :clause :reader clause)))
      
 (define-condition otherwise-clause-not-last
