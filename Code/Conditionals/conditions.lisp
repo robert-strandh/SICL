@@ -31,7 +31,7 @@
   ((%clause :initarg :clause :reader clause)))
      
 (define-condition otherwise-clause-not-last
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%clauses :initarg :clauses :reader clauses)))
 
 (define-condition malformed-keys

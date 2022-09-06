@@ -160,7 +160,6 @@
                 (if (null (cdr clauses))
                     `(progn ,@(cdr clause))
                     (error 'otherwise-clause-not-last
-                           :name 'case
                            :clauses (cdr clauses)))
                 ;; it is a normal clause
                 (let ((keys (car clause))
@@ -283,7 +282,6 @@
                 (if (null (cdr clauses))
                     `(progn ,@(cdr clause))
                     (error 'otherwise-clause-not-last
-                           :name 'typecase
                            :clauses (cdr clauses)))
                 ;; it is a normal clause
                 (let ((type (car clause))
