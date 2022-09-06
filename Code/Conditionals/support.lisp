@@ -211,7 +211,6 @@
   (let* ((variable (gensym))
          (keys (collect-e/ccase-keys clauses 'ecase))
          (final `(error 'ecase-type-error
-                        :name 'ecase
                         :datum ,variable
                         :expected-type '(member ,@keys))))
     `(let ((,variable ,keyform))
@@ -238,7 +237,6 @@
     (let* ((label (gensym))
            (keys (collect-e/ccase-keys clauses 'ccase))
            (final `(restart-case (error 'ccase-type-error
-                                        :name 'ccase
                                         :datum ,(car store-vars)
                                         :expected-type '(member ,@keys))
                                  (store-value (v)
@@ -326,7 +324,6 @@
   (let* ((variable (gensym))
          (keys (collect-e/ctypecase-keys clauses))
          (final `(error 'etypecase-type-error
-                        :name 'etypecase
                         :datum ,variable
                         :expected-type '(member ,@keys))))
     `(let ((,variable ,keyform))
@@ -341,7 +338,6 @@
     (let* ((label (gensym))
            (keys (collect-e/ctypecase-keys clauses))
            (final `(restart-case (error 'ctypecase-type-error
-                                        :name 'ctypecase
                                         :datum ,(car store-vars)
                                         :expected-type '(member ,@keys))
                                  (store-value (v)

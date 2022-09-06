@@ -51,17 +51,17 @@
 ;;; Conditions used at runtime
 
 (define-condition ecase-type-error
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ())
 
 (define-condition ccase-type-error
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ())
 
 (define-condition etypecase-type-error
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ())
 
 (define-condition ctypecase-type-error
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ())
