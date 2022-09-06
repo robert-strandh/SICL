@@ -4,12 +4,6 @@
 ;;;
 ;;; Conditions used at macro-expansion time
 
-;;; This condition is used to mix into other conditions that
-;;; will report the construct (function, macro, etc) in which 
-;;; the condition was signaled. 
-(define-condition name-mixin ()
-  ((%name :initarg :name :reader name)))
-
 (define-condition malformed-body
     (program-error acclimation:condition)
   ((%body :initarg :body :reader body)))
