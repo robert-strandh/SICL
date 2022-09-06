@@ -149,7 +149,6 @@
       'nil
       (if (not (consp clauses))
           (error 'malformed-case-clauses
-                 :name 'case
                  :clauses clauses)
           (let ((clause (car clauses)))
             (unless (and (cleavir-code-utilities:proper-list-p clause)
@@ -194,7 +193,6 @@
       final
       (if (not (consp clauses))
           (error 'malformed-case-clauses
-                 :name name
                  :clauses clauses)
           (let ((clause (car clauses)))
             (unless (and (cleavir-code-utilities:proper-list-p clause)
