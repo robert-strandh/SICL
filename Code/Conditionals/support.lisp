@@ -83,7 +83,6 @@
                    (if (not (and (cleavir-code-utilities:proper-list-p clause)
                                  (not (null clause))))
                        (error 'malformed-cond-clause
-                              :name 'cond
                               :clause clause)
                        (if (null (cdr clause))
                            `(or ,(car clause)

@@ -15,11 +15,11 @@
   ((%body :initarg :body :reader body)))
      
 (define-condition malformed-cond-clauses
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%clauses :initarg :clauses :reader clauses)))
      
 (define-condition malformed-cond-clause
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%clause :initarg :clause :reader clause)))
      
 (define-condition malformed-case-clauses
