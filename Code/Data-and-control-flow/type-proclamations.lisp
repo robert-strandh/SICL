@@ -11,3 +11,5 @@
 (declaim (ftype (function (&rest t) t) values))
 
 (declaim (ftype (function (t) t) identity))
+
+(declaim (ftype (function (t) (member t nil)) functionp))
