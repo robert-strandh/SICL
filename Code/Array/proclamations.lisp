@@ -11,3 +11,6 @@
                            (:displaced-index-offset (integer 0)))
                           array)
                 make-array))
+
+(declaim (ftype (function (t) (member nil t))
+                arrayp))
