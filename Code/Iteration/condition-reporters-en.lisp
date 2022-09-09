@@ -11,7 +11,7 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-           The binding variable must be a symbol,~@
+          "The binding variable must be a symbol,~@
            but the following was given:~@
            ~s"
           (type-error-datum c)))
