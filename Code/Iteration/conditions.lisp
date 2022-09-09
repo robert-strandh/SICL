@@ -11,7 +11,7 @@
   ((%name :initarg :name :reader name)))
 
 (define-condition malformed-binding-var
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'symbol))
 
