@@ -1,10 +1,9 @@
 (cl:in-package #:sicl-iteration)
 
 ;;; Check that the binding var is a symbol.
-(defun binding-var-must-be-symbol (name binding-var)
+(defun binding-var-must-be-symbol (binding-var)
   (unless (symbolp binding-var)
     (error 'malformed-binding-var
-           :name name
            :datum binding-var)))
 
 ;;; Check that the list-form is a list

@@ -8,7 +8,7 @@
 
 (defun dotimes-expander (var count-form result-form body)
   ;; do some syntax checking
-  (binding-var-must-be-symbol 'dotimes var)
+  (binding-var-must-be-symbol var)
   (count-form-must-be-nonnegative-integer 'dotimes count-form)
   (body-must-be-proper-list 'dotimes body)
   (multiple-value-bind (declarations forms)
