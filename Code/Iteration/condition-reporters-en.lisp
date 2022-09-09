@@ -11,12 +11,9 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
            The binding variable must be a symbol,~@
            but the following was given:~@
            ~s"
-          (name c)
-          (name-package (name c))
           (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c malformed-list-form)
