@@ -38,12 +38,9 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           The body must be a proper list,~@
+          "The body must be a proper list,~@
            but the following was given:~@
            ~s"
-          (name c)
-          (name-package (name c))
           (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c malformed-variable-clauses)

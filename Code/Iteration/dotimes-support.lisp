@@ -10,7 +10,7 @@
   ;; do some syntax checking
   (binding-var-must-be-symbol var)
   (count-form-must-be-nonnegative-integer count-form)
-  (body-must-be-proper-list 'dotimes body)
+  (body-must-be-proper-list body)
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body body)
     (let ((start-tag (gensym))

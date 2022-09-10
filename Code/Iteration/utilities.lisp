@@ -22,10 +22,9 @@
            :datum count-form)))
 
 ;;; Check that iteration body is a proper list.
-(defun body-must-be-proper-list (name body)
+(defun body-must-be-proper-list (body)
   (unless (cleavir-code-utilities:proper-list-p body)
     (error 'malformed-body
-           :name name
            :datum body)))
 
 (defun check-variable-clauses (name variable-clauses)
