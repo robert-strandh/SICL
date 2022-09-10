@@ -19,7 +19,7 @@
 (defun dolist-expander (var list-form result-form body)
   ;; Do some syntax checking.
   (binding-var-must-be-symbol var)
-  (list-form-must-be-list 'dolist list-form)
+  (list-form-must-be-list list-form)
   (body-must-be-proper-list 'dolist body)
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body body)

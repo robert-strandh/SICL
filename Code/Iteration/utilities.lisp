@@ -8,10 +8,9 @@
 
 ;;; Check that the list-form is a list
 ;;; FIXME: signal a warning if list-form is not a proper-list
-(defun list-form-must-be-list (name list-form)
+(defun list-form-must-be-list (list-form)
   (unless (or (listp list-form) (symbolp list-form))
     (error 'malformed-list-form
-           :name name
            :datum list-form)))
 
 ;;; Check that the count form is a positive integer.

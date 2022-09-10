@@ -18,7 +18,7 @@
 ;;; This condition is used by functions and macros that require
 ;;; some argument to be a list (a cons or nil).
 (define-condition malformed-list-form
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'list))
 
