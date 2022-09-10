@@ -27,10 +27,9 @@
     (error 'malformed-body
            :datum body)))
 
-(defun check-variable-clauses (name variable-clauses)
+(defun check-variable-clauses (variable-clauses)
   (unless (cleavir-code-utilities:proper-list-p variable-clauses)
     (error 'malformed-variable-clauses
-           :name
            :datum variable-clauses))
   (mapcar
    (lambda (clause)
@@ -41,7 +40,6 @@
                           (null (cddr clause))
                           (null (cdddr clause)))))
        (error 'malformed-variable-clause
-              :name name
               :found clause)))
    variable-clauses))
 

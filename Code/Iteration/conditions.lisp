@@ -37,12 +37,12 @@
   (:default-initargs :expected-type 'list))
 
 (define-condition malformed-variable-clauses
-    (type-error name-mixin acclimation:condition)
+    (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'list))
 
 (define-condition malformed-variable-clause
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%found :initarg :found :reader found)))
 
 (define-condition malformed-end-test

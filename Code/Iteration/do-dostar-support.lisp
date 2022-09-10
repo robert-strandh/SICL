@@ -13,7 +13,7 @@
 (defun do-dostar-expander
     (name let-type setq-type variable-clauses end-test body)
   ;; Do some syntax checking.
-  (check-variable-clauses name variable-clauses)
+  (check-variable-clauses variable-clauses)
   (body-must-be-proper-list body)
   (unless (and (cleavir-code-utilities:proper-list-p end-test)
                (not (null end-test)))
