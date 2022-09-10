@@ -14,12 +14,11 @@
            :datum list-form)))
 
 ;;; Check that the count form is a positive integer.
-(defun count-form-must-be-nonnegative-integer (name count-form)
+(defun count-form-must-be-nonnegative-integer (count-form)
   (unless (or (and (numberp count-form)
                    (not (minusp count-form)))
               (not (constantp count-form)))
     (error 'malformed-count-form
-           :name name
            :datum count-form)))
 
 ;;; Check that iteration body is a proper list.

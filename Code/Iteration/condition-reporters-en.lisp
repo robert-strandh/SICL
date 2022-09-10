@@ -29,12 +29,9 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           The count form must be a non-negative integer,~@
+          "The count form must be a non-negative integer,~@
            but the following was given:~@
            ~s"
-          (name c)
-          (name-package (name c))
           (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c malformed-body)
