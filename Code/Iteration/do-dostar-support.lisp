@@ -11,14 +11,13 @@
 ;;; here.
 
 (defun do-dostar-expander
-    (name let-type setq-type variable-clauses end-test body)
+    (let-type setq-type variable-clauses end-test body)
   ;; Do some syntax checking.
   (check-variable-clauses variable-clauses)
   (body-must-be-proper-list body)
   (unless (and (cleavir-code-utilities:proper-list-p end-test)
                (not (null end-test)))
     (error 'malformed-end-test
-           :name name
            :found end-test))
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body body)

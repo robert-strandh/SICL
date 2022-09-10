@@ -4,12 +4,6 @@
 ;;;
 ;;; Externally visible conditions
 
-;;; This condition is used to mix into other conditions that
-;;; will report the construct (function, macro, etc) in which
-;;; the condition was signaled.
-(define-condition name-mixin ()
-  ((%name :initarg :name :reader name)))
-
 (define-condition malformed-binding-var
     (type-error acclimation:condition)
   ()
@@ -46,5 +40,5 @@
   ((%found :initarg :found :reader found)))
 
 (define-condition malformed-end-test
-    (program-error name-mixin acclimation:condition)
+    (program-error acclimation:condition)
   ((%found :initarg :found :reader found)))

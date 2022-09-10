@@ -66,11 +66,8 @@
                                           stream
                                           (language acclimation:english))
   (format stream
-          "In ~a (in the ~a package):~@
-           Expected an end test clause of the form~@
+          "Expected an end test clause of the form~@
            (end-test result-form*),
            but the following was given:~@
            ~s"
-          (name c)
-          (name-package (name c))
           (found c)))
