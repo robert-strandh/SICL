@@ -14,3 +14,7 @@
 
 (declaim (ftype (function (t) (member nil t))
                 arrayp))
+
+(declaim (ftype (function ((array bit) &rest (integer 0))
+                          bit)
+                bit sbit))
