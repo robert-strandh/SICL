@@ -47,8 +47,14 @@
 (declaim (ftype (function (function list &rest list) list)
                 mapc mapcar mapcan mapl maplist mapcon))
 
-(declaim (ftype (function (t list) (or cons null))
-                assoc))
+(declaim (ftype (function (t
+                           list
+                           &key
+                           (:key function)
+                           (:test function)
+                           (:test-not function))
+                          (or cons null))
+                assoc rassoc))
 
 (declaim (ftype (function ((integer 0) &key t) list)
                 make-list))
