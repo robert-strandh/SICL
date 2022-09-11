@@ -30,4 +30,6 @@
    #:bignum
    #:positive-bignum
    #:negative-bignum
-   #:convert-fixnum-to-bignum))
+   #:convert-fixnum-to-bignum
+   #:most-positive-single-float #:least-positive-single-float #:least-positive-normalized-single-float #:most-negative-single-float #:least-negative-single-float #:least-negative-normalized-single-float #:most-positive-double-float #:least-positive-double-float #:least-positive-normalized-double-float #:most-negative-double-float #:least-negative-double-float #:least-negative-normalized-double-float #:most-positive-short-float #:least-positive-short-float #:least-positive-normalized-short-float #:most-negative-short-float #:least-negative-short-float #:least-negative-normalized-short-float #:most-positive-long-float #:least-positive-long-float #:least-positive-normalized-long-float #:most-negative-long-float #:least-negative-long-float #:least-negative-normalized-long-float
+   #:decode-float #:scale-float #:float-radix #:float-sign #:float-digits #:float-precision #:integer-decode-float))
