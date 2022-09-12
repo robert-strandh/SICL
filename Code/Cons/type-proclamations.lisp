@@ -94,3 +94,6 @@
 
 (declaim (ftype (function (&rest t) list)
                 nconc))
+
+(declaim (ftype (function (t t list) list)
+                acons))
