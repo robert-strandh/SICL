@@ -96,3 +96,6 @@
 
 (declaim (ftype (function (real real) real)
                 mod rem))
+
+(declaim (ftype (function (real real) number)
+                complex))
