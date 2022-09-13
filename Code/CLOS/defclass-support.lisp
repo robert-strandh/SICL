@@ -188,8 +188,8 @@
 ;;; Canonicalize a single default initarg.  Recall that a
 ;;; canonicalized default initarg is a list of three elements: The
 ;;; symbol naming the initarg, the form to be used for to compute the
-;;; initial value, and a thunk that, when called, returns the value of
-;;; the form.
+;;; initial value, and a lambda expression representing the thunk
+;;; that, when called, returns the value of the form.
 (defun canonicalize-default-initarg (name form)
   (unless (symbolp name)
     (error 'default-initarg-name-must-be-symbol
