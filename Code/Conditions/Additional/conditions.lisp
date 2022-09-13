@@ -29,12 +29,6 @@
 (define-condition both-test-and-test-not-given (sicl-error)
   ())
 
-;;; This condition is used by the map* family functions when no lists
-;;; were given, since those functions require at least one list
-;;; argument.
-(define-condition at-least-one-list-required (sicl-error)
-  ())
-
 ;;; This condition is used by the list* function when no arguments
 ;;; were given, since that function requires at least one argument.
 (define-condition at-least-one-argument-required (sicl-error)

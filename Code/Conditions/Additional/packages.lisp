@@ -10,7 +10,6 @@
    #:sicl-type-error
    #:sicl-cell-error
    #:both-test-and-test-not-given
-   #:at-least-one-list-required
    #:at-least-one-argument-required
    #:warn-both-test-and-test-not-given
    #:list-as-sequence-must-be-proper

@@ -35,12 +35,6 @@
           "Both keyword arguments :test and :test-not were given."))
 
 (defmethod acclimation:report-condition
-    ((c at-least-one-list-required) stream (language acclimation:english))
-  (format stream
-          "At least one list argument is required,~@
-           but none was given."))
-
-(defmethod acclimation:report-condition
     ((c at-least-one-argument-required) stream (language acclimation:english))
   (format stream
           "At least one argument is required,~@
