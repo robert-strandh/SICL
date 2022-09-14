@@ -20,7 +20,6 @@
    #:sicl-program-style-warning
    #:multiple-documentation-strings-in-body
    #:documentation-string-not-allowed-in-body
-   #:declarations-not-allowed-in-body
    #:declaration-follows-form-in-body
    #:form-too-short
    #:form-too-long

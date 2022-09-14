@@ -70,13 +70,6 @@
           (code c)))
 
 (defmethod acclimation:report-condition
-    ((c declarations-not-allowed-in-body) stream (language acclimation:english))
-  (format stream
-          "Declarations found where none is allowed:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c declaration-follows-form-in-body) stream (language acclimation:english))
   (format stream
           "Declarations can not follow the forms in a code body:~@
