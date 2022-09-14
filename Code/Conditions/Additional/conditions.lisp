@@ -84,9 +84,6 @@
 (define-condition multiple-documentation-strings-in-body (sicl-syntax-error)
   ())
 
-(define-condition documentation-string-not-allowed-in-body (sicl-syntax-error)
-  ())
-
 (define-condition declaration-follows-form-in-body  (sicl-syntax-error)
   ())
 

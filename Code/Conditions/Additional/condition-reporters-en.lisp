@@ -63,13 +63,6 @@
           (code c)))
 
 (defmethod acclimation:report-condition
-    ((c documentation-string-not-allowed-in-body) stream (language acclimation:english))
-  (format stream
-          "A documentation string was found where none is allowed:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c declaration-follows-form-in-body) stream (language acclimation:english))
   (format stream
           "Declarations can not follow the forms in a code body:~@
