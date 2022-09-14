@@ -56,22 +56,6 @@
 ;;; Compile time conditions.
 
 (defmethod acclimation:report-condition
-    ((c form-must-be-proper-list) stream (language acclimation:english))
-  (format stream
-          "A form must be a proper list.~@
-           But the following was found instead:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
-    ((c body-must-be-proper-list) stream (language acclimation:english))
-  (format stream
-          "A code body must be a proper list.~@
-           But the following was found instead:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c go-tag-must-be-symbol-or-integer) stream (language acclimation:english))
   (format stream
           "A GO tag must be a symbol or an integer.~@

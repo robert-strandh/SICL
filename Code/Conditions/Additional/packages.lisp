@@ -18,8 +18,6 @@
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning
-   #:form-must-be-proper-list
-   #:body-must-be-proper-list
    #:multiple-documentation-strings-in-body
    #:documentation-string-not-allowed-in-body
    #:declarations-not-allowed-in-body

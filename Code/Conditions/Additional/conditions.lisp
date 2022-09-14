@@ -81,13 +81,6 @@
 (define-condition sicl-program-style-warning (acclimation:condition style-warning)
   ((%code :initarg :code :reader code)))
 
-
-(define-condition form-must-be-proper-list (sicl-syntax-error)
-  ())
-
-(define-condition body-must-be-proper-list (sicl-syntax-error)
-  ())
-
 (define-condition multiple-documentation-strings-in-body (sicl-syntax-error)
   ())
 
