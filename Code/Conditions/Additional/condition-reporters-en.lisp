@@ -56,14 +56,6 @@
 ;;; Compile time conditions.
 
 (defmethod acclimation:report-condition
-    ((c go-tag-must-be-symbol-or-integer) stream (language acclimation:english))
-  (format stream
-          "A GO tag must be a symbol or an integer.~@
-           But the following was found instead:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c multiple-documentation-strings-in-body) stream (language acclimation:english))
   (format stream
           "Multiple documentation strings found in code body:~@

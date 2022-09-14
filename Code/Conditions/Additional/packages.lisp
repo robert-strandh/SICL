@@ -25,7 +25,6 @@
    #:form-too-short
    #:form-too-long
    #:unknown-eval-when-situation
-   #:go-tag-must-be-symbol-or-integer
    #:setq-must-have-even-number-arguments
    #:setq-variable-must-be-symbol
    #:tagbody-element-must-be-symbol-integer-or-compound-form

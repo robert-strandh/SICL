@@ -102,9 +102,6 @@
 (define-condition unknown-eval-when-situation (sicl-syntax-error)
   ())
 
-(define-condition go-tag-must-be-symbol-or-integer (sicl-syntax-error)
-  ())
-
 (define-condition setq-must-have-even-number-arguments (sicl-syntax-error)
   ())
 
