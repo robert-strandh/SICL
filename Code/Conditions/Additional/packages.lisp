@@ -18,8 +18,6 @@
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning
-   #:form-too-short
-   #:form-too-long
    #:unknown-eval-when-situation
    #:setq-must-have-even-number-arguments
    #:setq-variable-must-be-symbol

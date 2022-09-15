@@ -56,26 +56,6 @@
 ;;; Compile time conditions.
 
 (defmethod acclimation:report-condition
-    ((c form-too-short) stream (language acclimation:english))
-  (format stream
-          "The form:~@
-           ~s~@
-           should have at least ~a subforms, but has only ~a."
-          (code c)
-          (min-length c)
-          (length (code c))))
-
-(defmethod acclimation:report-condition
-    ((c form-too-long) stream (language acclimation:english))
-  (format stream
-          "The form:~@
-           ~s~@
-           should have at most ~a subforms, but has ~a."
-          (code c)
-          (max-length c)
-          (length (code c))))
-
-(defmethod acclimation:report-condition
     ((c unknown-eval-when-situation) stream (language acclimation:english))
   (format stream
           "Unknown evaluation situation given:~@
