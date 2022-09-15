@@ -81,12 +81,6 @@
 (define-condition sicl-program-style-warning (acclimation:condition style-warning)
   ((%code :initarg :code :reader code)))
 
-(define-condition unknown-eval-when-situation (sicl-syntax-error)
-  ())
-
-(define-condition setq-must-have-even-number-arguments (sicl-syntax-error)
-  ())
-
 (define-condition setq-variable-must-be-symbol (sicl-syntax-error)
   ())
 

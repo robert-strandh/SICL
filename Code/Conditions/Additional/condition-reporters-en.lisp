@@ -56,21 +56,6 @@
 ;;; Compile time conditions.
 
 (defmethod acclimation:report-condition
-    ((c unknown-eval-when-situation) stream (language acclimation:english))
-  (format stream
-          "Unknown evaluation situation given:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
-    ((c setq-must-have-even-number-arguments) stream (language acclimation:english))
-  (format stream
-          "An even number of arguments are required.~@
-           But the following was found instead:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c setq-variable-must-be-symbol) stream (language acclimation:english))
   (format stream
           "A variable assigned to must be a symbol.~@

@@ -18,8 +18,6 @@
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning
-   #:unknown-eval-when-situation
-   #:setq-must-have-even-number-arguments
    #:setq-variable-must-be-symbol
    #:tagbody-element-must-be-symbol-integer-or-compound-form
    #:empty-body
