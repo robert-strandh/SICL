@@ -81,12 +81,6 @@
 (define-condition sicl-program-style-warning (acclimation:condition style-warning)
   ((%code :initarg :code :reader code)))
 
-(define-condition multiple-documentation-strings-in-body (sicl-syntax-error)
-  ())
-
-(define-condition declaration-follows-form-in-body  (sicl-syntax-error)
-  ())
-
 (define-condition form-too-short (sicl-syntax-error)
   ((%min-length :initarg :min-length :reader min-length)))
 

@@ -18,8 +18,6 @@
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning
-   #:multiple-documentation-strings-in-body
-   #:declaration-follows-form-in-body
    #:form-too-short
    #:form-too-long
    #:unknown-eval-when-situation

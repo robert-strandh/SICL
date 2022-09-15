@@ -56,20 +56,6 @@
 ;;; Compile time conditions.
 
 (defmethod acclimation:report-condition
-    ((c multiple-documentation-strings-in-body) stream (language acclimation:english))
-  (format stream
-          "Multiple documentation strings found in code body:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
-    ((c declaration-follows-form-in-body) stream (language acclimation:english))
-  (format stream
-          "Declarations can not follow the forms in a code body:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c form-too-short) stream (language acclimation:english))
   (format stream
           "The form:~@
