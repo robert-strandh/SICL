@@ -56,24 +56,6 @@
 ;;; Compile time conditions.
 
 (defmethod acclimation:report-condition
-    ((c setq-variable-must-be-symbol) stream (language acclimation:english))
-  (format stream
-          "A variable assigned to must be a symbol.~@
-           But the following was found instead:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
-    ((c tagbody-element-must-be-symbol-integer-or-compound-form)
-     stream
-     (language acclimation:english))
-  (format stream
-          "Element must be a symbol, an integer, or a compound form.~@
-           But the following was found instead:~@
-           ~s"
-          (code c)))
-
-(defmethod acclimation:report-condition
     ((c empty-body) stream (language acclimation:english))
   (format stream
           "The body of this form is empty:~@

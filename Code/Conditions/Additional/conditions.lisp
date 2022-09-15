@@ -81,13 +81,6 @@
 (define-condition sicl-program-style-warning (acclimation:condition style-warning)
   ((%code :initarg :code :reader code)))
 
-(define-condition setq-variable-must-be-symbol (sicl-syntax-error)
-  ())
-
-(define-condition tagbody-element-must-be-symbol-integer-or-compound-form
-    (sicl-syntax-error)
-  ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;  Argument mismatch conditions.
