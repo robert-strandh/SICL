@@ -18,7 +18,6 @@
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning
-   #:odd-number-of-keyword-arguments
    #:sicl-unbound-variable
    #:sicl-unbound-function
    #:class-name-must-be-non-nil-symbol)

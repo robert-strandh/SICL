@@ -88,6 +88,3 @@
 (define-condition argument-mismatch (sicl-program-error)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%arguments :initarg :arguments :reader arguments)))
-
-(define-condition odd-number-of-keyword-arguments (argument-mismatch)
-  ())
