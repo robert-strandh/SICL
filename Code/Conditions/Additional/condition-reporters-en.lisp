@@ -51,18 +51,6 @@
           "The funcation named ~s in undefined."
           (cell-error-name c)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile time conditions.
-
-(defmethod acclimation:report-condition
-    ((c empty-body) stream (language acclimation:english))
-  (format stream
-          "The body of this form is empty:~@
-           ~s"
-          (code c)))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Argument mismatch conditions.

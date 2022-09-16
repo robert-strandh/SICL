@@ -101,10 +101,3 @@
 
 (define-condition odd-number-of-keyword-arguments (argument-mismatch)
   ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Warnings
-
-(define-condition empty-body (sicl-style-warning)
-  ())

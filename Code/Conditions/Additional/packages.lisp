@@ -18,7 +18,6 @@
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning
-   #:empty-body
    #:unrecognized-keyword-argument
    #:invalid-keyword-argument
    #:odd-number-of-keyword-arguments
