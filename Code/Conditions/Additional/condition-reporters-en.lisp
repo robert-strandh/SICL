@@ -40,12 +40,6 @@
           "Both keyword arguments :test and :test-not were given."))
 
 (defmethod acclimation:report-condition
-    ((c sicl-unbound-variable) stream (language acclimation:english))
-  (format stream
-          "The variable named ~s in unbound."
-          (cell-error-name c)))
-
-(defmethod acclimation:report-condition
     ((c sicl-undefined-function) stream (language acclimation:english))
   (format stream
           "The funcation named ~s in undefined."

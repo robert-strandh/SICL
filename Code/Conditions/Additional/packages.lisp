@@ -18,6 +18,5 @@
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning
-   #:sicl-unbound-variable
    #:sicl-unbound-function)
   (:shadow #:sequence))
