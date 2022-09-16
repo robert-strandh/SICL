@@ -17,6 +17,5 @@
    #:invalid-end-index
    #:sicl-program-error
    #:sicl-program-warning
-   #:sicl-program-style-warning
-   #:sicl-unbound-function)
+   #:sicl-program-style-warning)
   (:shadow #:sequence))
