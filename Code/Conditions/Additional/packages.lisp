@@ -19,6 +19,5 @@
    #:sicl-program-warning
    #:sicl-program-style-warning
    #:sicl-unbound-variable
-   #:sicl-unbound-function
-   #:class-name-must-be-non-nil-symbol)
+   #:sicl-unbound-function)
   (:shadow #:sequence))
