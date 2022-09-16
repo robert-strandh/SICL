@@ -50,20 +50,3 @@
   (format stream
           "The funcation named ~s in undefined."
           (cell-error-name c)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Argument mismatch conditions.
-
-(defmethod acclimation:report-condition
-    ((c unrecognized-keyword-argument) stream (language acclimation:english))
-  (format stream
-          "The keyword argument:~@
-           ~s~@
-           Is not recognized by this function.  The lambda list is:~@
-           ~s~@
-           and the arguments given were:~@
-           ~s"
-          (keyword-argument c)
-          (lambda-list c)
-          (arguments c)))

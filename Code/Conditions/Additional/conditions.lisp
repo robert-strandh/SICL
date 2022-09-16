@@ -89,11 +89,6 @@
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%arguments :initarg :arguments :reader arguments)))
 
-(define-condition unrecognized-keyword-argument (argument-mismatch)
-  ((%keyword-argument
-    :initarg :keyword
-    :reader keyword-argument)))
-
 (define-condition invalid-keyword-argument (argument-mismatch)
   ((%keyword-argument
     :initarg :keyword
