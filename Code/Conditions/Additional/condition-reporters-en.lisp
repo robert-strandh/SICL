@@ -38,9 +38,3 @@
     ((c warn-both-test-and-test-not-given) stream (language acclimation:english))
   (format stream
           "Both keyword arguments :test and :test-not were given."))
-
-(defmethod acclimation:report-condition
-    ((c sicl-undefined-function) stream (language acclimation:english))
-  (format stream
-          "The funcation named ~s in undefined."
-          (cell-error-name c)))
