@@ -50,6 +50,10 @@
 (define-condition invalid-start-index (invalid-bounding-index)
   ())
 
+;;; This condition is used by sequence functions when the END bounding
+;;; indexes is invalid.  This can be because it is neither an integer
+;;; nor NIL, or because it is less than 0 or greater than the length
+;;; of the sequence.
 (define-condition invalid-end-index (invalid-bounding-index)
   ())
 
