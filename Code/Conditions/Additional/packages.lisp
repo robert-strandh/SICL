@@ -12,7 +12,6 @@
    #:list-as-sequence-must-be-proper
    #:invalid-bounding-indexes
    #:invalid-start-index
-   #:invalid-end-index
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning)

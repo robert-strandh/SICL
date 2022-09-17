@@ -45,13 +45,6 @@
 (define-condition invalid-start-index (sicl-type-error sequence-error-mixin)
   ())
 
-;;; This condition is used by sequence functions when the END bounding
-;;; indexes is invalid.  This can be because it is neither an integer
-;;; nor NIL, or because it is less than 0 or greater than the length
-;;; of the sequence.
-(define-condition invalid-end-index (sicl-type-error sequence-error-mixin)
-  ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile time conditions.
