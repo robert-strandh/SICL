@@ -9,7 +9,6 @@
    #:sicl-error
    #:sicl-type-error
    #:sicl-cell-error
-   #:both-test-and-test-not-given
    #:warn-both-test-and-test-not-given
    #:list-as-sequence-must-be-proper
    #:invalid-bounding-indexes
