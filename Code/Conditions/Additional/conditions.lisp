@@ -22,12 +22,6 @@
 ;;;
 ;;; Runtime conditions.
 
-;;; This condition is used by macros that detect that there
-;;; is both a :test and a :test-not, and that detection is
-;;; done at macro-expansion time.
-(define-condition warn-both-test-and-test-not-given (sicl-warning)
-  ())
-
 ;;; This condition is used by sequence functions when a list has been
 ;;; given as the sequence, but the list has been found not to be a
 ;;; proper list.
