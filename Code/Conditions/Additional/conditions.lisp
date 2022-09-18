@@ -20,14 +20,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Runtime conditions.
-
-;;; Provide :initarg :SEQUENCE and a :reader SEQUENCE
-(define-condition sequence-error-mixin ()
-  ((%sequence :initarg :sequence :reader sequence)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compile time conditions.
 
 (define-condition sicl-program-error (acclimation:condition program-error)
