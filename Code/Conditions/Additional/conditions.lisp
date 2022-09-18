@@ -38,13 +38,6 @@
 (define-condition invalid-bouding-indexes (sicl-type-error sequence-error-mixin)
   ())
 
-;;; This condition is used by sequence functions when the START
-;;; bounding indexes is invalid.  This can be because it is not an
-;;; integer, or because it is less than 0 or greater than the length
-;;; of the sequence.
-(define-condition invalid-start-index (sicl-type-error sequence-error-mixin)
-  ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile time conditions.

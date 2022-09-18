@@ -11,7 +11,6 @@
    #:sicl-cell-error
    #:list-as-sequence-must-be-proper
    #:invalid-bounding-indexes
-   #:invalid-start-index
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning)
