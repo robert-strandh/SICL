@@ -22,12 +22,6 @@
 ;;;
 ;;; Runtime conditions.
 
-;;; This condition is used by sequence functions when a list has been
-;;; given as the sequence, but the list has been found not to be a
-;;; proper list.
-(define-condition list-as-sequence-must-be-proper (sicl-type-error)
-  ())
-
 ;;; Provide :initarg :SEQUENCE and a :reader SEQUENCE
 (define-condition sequence-error-mixin ()
   ((%sequence :initarg :sequence :reader sequence)))

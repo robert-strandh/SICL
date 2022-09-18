@@ -9,7 +9,6 @@
    #:sicl-error
    #:sicl-type-error
    #:sicl-cell-error
-   #:list-as-sequence-must-be-proper
    #:invalid-bounding-indexes
    #:sicl-program-error
    #:sicl-program-warning
