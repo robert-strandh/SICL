@@ -9,7 +9,6 @@
    #:sicl-error
    #:sicl-type-error
    #:sicl-cell-error
-   #:invalid-bounding-indexes
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning)

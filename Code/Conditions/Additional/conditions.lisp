@@ -26,12 +26,6 @@
 (define-condition sequence-error-mixin ()
   ((%sequence :initarg :sequence :reader sequence)))
 
-;;; This condition is used by sequence functions when the bounding
-;;; indexes are invalid as a pair, but separately valid, typically,
-;;; when START is greater than END.
-(define-condition invalid-bouding-indexes (sicl-type-error sequence-error-mixin)
-  ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile time conditions.
