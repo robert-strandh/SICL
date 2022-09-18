@@ -53,11 +53,3 @@
 
 (define-condition sicl-program-style-warning (acclimation:condition style-warning)
   ((%code :initarg :code :reader code)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;  Argument mismatch conditions.
-
-(define-condition argument-mismatch (sicl-program-error)
-  ((%lambda-list :initarg :lambda-list :reader lambda-list)
-   (%arguments :initarg :arguments :reader arguments)))
