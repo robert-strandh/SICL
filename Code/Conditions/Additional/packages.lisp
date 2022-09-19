@@ -10,6 +10,5 @@
    #:sicl-type-error
    #:sicl-cell-error
    #:sicl-program-error
-   #:sicl-program-warning
-   #:sicl-program-style-warning)
+   #:sicl-program-warning)
   (:shadow #:sequence))

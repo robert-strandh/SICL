@@ -30,6 +30,3 @@
 
 (define-condition sicl-program-warning (acclimation:condition warning)
   ((%code :initarg :code :reader code)))
-
-(define-condition sicl-program-style-warning (acclimation:condition style-warning)
-  ((%code :initarg :code :reader code)))
