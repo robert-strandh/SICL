@@ -17,10 +17,3 @@
 (define-condition sicl-error (acclimation:condition error) ())
 (define-condition sicl-type-error (acclimation:condition type-error) ())
 (define-condition sicl-cell-error (acclimation:condition cell-error) ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile time conditions.
-
-(define-condition sicl-program-error (acclimation:condition program-error)
-  ())
