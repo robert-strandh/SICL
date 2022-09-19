@@ -9,6 +9,5 @@
    #:sicl-error
    #:sicl-type-error
    #:sicl-cell-error
-   #:sicl-program-error
-   #:sicl-program-warning)
+   #:sicl-program-error)
   (:shadow #:sequence))
