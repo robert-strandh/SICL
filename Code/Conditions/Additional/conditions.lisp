@@ -24,6 +24,3 @@
 
 (define-condition sicl-program-error (acclimation:condition program-error)
   ())
-
-(define-condition sicl-syntax-error (sicl-program-error)
-  ((%code :initarg :code :reader code)))
