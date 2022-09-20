@@ -6,6 +6,5 @@
    #:sicl-condition
    #:sicl-warning
    #:sicl-style-warning
-   #:sicl-error
-   #:sicl-type-error)
+   #:sicl-error)
   (:shadow #:sequence))

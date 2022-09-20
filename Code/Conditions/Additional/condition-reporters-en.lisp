@@ -19,12 +19,3 @@
          "a non-negative integer")
         (t
          (format nil "an object of type ~s" type))))
-
-(defmethod acclimation:report-condition
-    ((c sicl-type-error) stream (language acclimation:english))
-  (format stream
-          "Expected ~a.~@
-           But got the following instead:~@
-           ~s"
-          (interpret-type (type-error-expected-type c))
-          (type-error-datum c)))

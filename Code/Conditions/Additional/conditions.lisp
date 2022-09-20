@@ -15,4 +15,3 @@
 (define-condition sicl-warning (acclimation:condition warning) ())
 (define-condition sicl-style-warning (acclimation:condition style-warning) ())
 (define-condition sicl-error (acclimation:condition error) ())
-(define-condition sicl-type-error (acclimation:condition type-error) ())
