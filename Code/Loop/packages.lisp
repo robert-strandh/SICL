@@ -1,8 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:sicl-loop
-  (:use #:common-lisp
-        #:sicl-additional-conditions)
+  (:use #:common-lisp)
   (:shadow
    ;; We use TYPE as an accessor for a TYPE-SPEC so we need to shadow
    ;; this name.
