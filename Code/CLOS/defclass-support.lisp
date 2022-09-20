@@ -28,7 +28,7 @@
   (unless (and (symbolp class-name)
                (not (null class-name)))
     (error 'class-name-must-be-non-nil-symbol
-           :datum class-name))
+           :name class-name))
   class-name)
 
 (defun canonicalize-direct-superclass-names (direct-superclass-names)
