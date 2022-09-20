@@ -8,8 +8,7 @@
    #:type
    ;; We use CONDITION as an accessor for a conditional clause so we
    ;; need to shadow this name
-   #:condition
-   )
+   #:condition)
   (:export #:define-parser
            #:expand-body
            #:clause
