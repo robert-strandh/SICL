@@ -1,8 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-loop-support
-  :depends-on (:sicl-additional-conditions
-               :acclimation)
+  :depends-on (:acclimation)
   :serial t
   :components
   ((:file "packages")
