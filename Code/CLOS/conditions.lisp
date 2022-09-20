@@ -12,7 +12,12 @@
 (define-condition attempt-to-add-existing-subclass
     (error)
   ((%subclass :initarg :subclass :reader subclass)
-   (%superclass :initarg :superclass :reader superclass)))
+   (%superclass :initarg :superclass :reader superclass))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to add existing subclass ~s as a subclass of ~s."
+                     (subclass condition)
+                     (superclass condition)))))
 
 (define-condition readers-must-be-proper-list
     (type-error)
