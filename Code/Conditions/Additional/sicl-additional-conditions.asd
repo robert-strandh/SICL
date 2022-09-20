@@ -5,5 +5,4 @@
 	       :sicl-additional-types)
   :components
   ((:file "packages")
-   (:file "conditions" :depends-on ("packages"))
-   (:file "condition-reporters-en" :depends-on ("packages" "conditions"))))
+   (:file "conditions" :depends-on ("packages"))))
