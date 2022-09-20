@@ -7,6 +7,5 @@
    #:sicl-warning
    #:sicl-style-warning
    #:sicl-error
-   #:sicl-type-error
-   #:sicl-cell-error)
+   #:sicl-type-error)
   (:shadow #:sequence))
