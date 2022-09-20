@@ -1,9 +1,13 @@
 (cl:in-package #:sicl-clos)
 
 (define-condition class-name-must-be-non-nil-symbol
-    (type-error)
-  ()
-  (:default-initargs :type '(and symbol (not null))))
+    (program-error)
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A class name must be a non-nil symbol, but~@
+                      ~s was found."
+                     (name condition)))))
 
 (define-condition attempt-to-add-existing-subclass
     (error)
