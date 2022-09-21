@@ -63,7 +63,12 @@
 
 (define-condition attempt-to-access-default-initargs-of-unfinalized-class
     (error)
-  ((%offending-class :initarg :offending-class :reader offending-class)))
+  ((%offending-class :initarg :offending-class :reader offending-class))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to access default initargs of the class ~s~@
+                      which has not yet been finalized."
+                     (offending-class condition)))))
 
 (define-condition attempt-to-access-effective-slots-of-unfinalized-class
     (error)
