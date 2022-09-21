@@ -45,7 +45,12 @@
 
 (define-condition attempt-to-access-prototype-of-unfinalized-class
     (error)
-  ((%offending-class :initarg :offending-class :reader offending-class)))
+  ((%offending-class :initarg :offending-class :reader offending-class))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to access the prototype list of the class ~s~@
+                      which has not yet been finalized."
+                     (offending-class condition)))))
 
 (define-condition attempt-to-access-precedence-list-of-unfinalized-class
     (error)
