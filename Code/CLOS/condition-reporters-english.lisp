@@ -1,16 +1,6 @@
 (cl:in-package #:sicl-clos)
 
 (defmethod acclimation:report-condition
-    ((c malformed-documentation-option)
-     stream
-     (language acclimation:english))
-  (format stream
-          "A documentation option must have the form~@
-           (:documentation <name>), but~@
-           ~s was found."
-          (documentation-option c)))
-
-(defmethod acclimation:report-condition
     ((c attempt-to-access-precedence-list-of-unfinalized-class)
      stream
      (language acclimation:english))

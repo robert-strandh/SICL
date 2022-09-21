@@ -35,7 +35,13 @@
 (define-condition malformed-documentation-option
     (program-error)
   ((%documentation-option
-    :initarg :documentation-option :reader documentation-option)))
+    :initarg :documentation-option :reader documentation-option))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A documentation option must have the form~@
+                      (:documentation <name>), but~@
+                      ~s was found."
+                     (documentation-option condition)))))
 
 (define-condition attempt-to-access-prototype-of-unfinalized-class
     (error)
