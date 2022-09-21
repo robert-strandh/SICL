@@ -23,6 +23,13 @@
     (type-error)
   ((%slot-definition :initarg :slot-definition :reader slot-definition)
    (%readers :initarg :readers :reader readers))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The keyword argument :READERS when supplied as~@
+                      initialization of a slot definition, must be~@
+                      a proper list, but the following was found instead:~@
+                      ~s."
+                     (readers condition))))
   (:default-initargs :type 'list))
 
 (define-condition malformed-documentation-option

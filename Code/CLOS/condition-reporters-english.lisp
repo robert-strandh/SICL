@@ -1,17 +1,6 @@
 (cl:in-package #:sicl-clos)
 
 (defmethod acclimation:report-condition
-    ((c readers-must-be-proper-list)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The keyword argument :READERS when supplied as~@
-           initialization of a slot definition, must be~@
-           a proper list, but the following was found instead:~@
-           ~s."
-          (readers c)))
-
-(defmethod acclimation:report-condition
     ((c malformed-documentation-option)
      stream
      (language acclimation:english))
