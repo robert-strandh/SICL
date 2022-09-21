@@ -33,9 +33,9 @@
   (:default-initargs :type 'list))
 
 (define-condition malformed-documentation-option
-    (type-error)
-  ()
-  (:default-initargs :type 'list))
+    (program-error)
+  ((%documentation-option
+    :initarg :documentation-option :reader documentation-option)))
 
 (define-condition attempt-to-access-prototype-of-unfinalized-class
     (error)

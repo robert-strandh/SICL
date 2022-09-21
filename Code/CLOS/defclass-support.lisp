@@ -250,7 +250,7 @@
                (:documentation
                 (unless (null (cddr option))
                   (error 'malformed-documentation-option
-                         :datum option))
+                         :documentation-option option))
                 (setf result
                       (append result `(:documentation ,(cadr option)))))
                (:metaclass

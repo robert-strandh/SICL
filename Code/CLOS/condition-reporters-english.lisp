@@ -8,7 +8,7 @@
           "A documentation option must have the form~@
            (:documentation <name>), but~@
            ~s was found."
-          (type-error-datum c)))
+          (documentation-option c)))
 
 (defmethod acclimation:report-condition
     ((c attempt-to-access-precedence-list-of-unfinalized-class)
