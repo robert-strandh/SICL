@@ -20,6 +20,7 @@
               forms))))
 
 (defun canonicalize-specializer (specializer)
+  ;; FIXME: use typecase.
   (cond ((symbolp specializer)
          `(make-class-specializer ',specializer))
         ((and (consp specializer)
