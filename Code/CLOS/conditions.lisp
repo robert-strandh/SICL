@@ -105,7 +105,10 @@
 
 (define-condition slot-definition-argument-must-be-supplied
     (error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (declare (ignore condition))
+             (format stream "The slot-definition argument must be supplied."))))
 
 (define-condition unable-to-compute-class-precedence-list
     (error)

@@ -1,12 +1,6 @@
 (cl:in-package #:sicl-clos)
 
 (defmethod acclimation:report-condition
-    ((c slot-definition-argument-must-be-supplied)
-     stream
-     (language acclimation:english))
-  (format stream "The slot-definition argument must be supplied."))
-
-(defmethod acclimation:report-condition
     ((c unable-to-compute-class-precedence-list)
      stream
      (language acclimation:english))
