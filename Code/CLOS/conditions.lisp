@@ -97,7 +97,11 @@
 
 (define-condition no-such-class-name
     (error)
-  ((%name :initarg :name :reader name)))
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "There is no class with the name ~s."
+                     (name condition)))))
 
 (define-condition slot-definition-argument-must-be-supplied
     (error)
