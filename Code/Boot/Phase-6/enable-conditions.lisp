@@ -10,8 +10,7 @@
               (when (and (null class) errorp)
                 (funcall (env:fdefinition client e5 'error)
                          'sicl-clos::no-such-class-name
-                         :name
-                         name))
+                         :name name))
               class)))
     #+(or)(setf (env:fdefinition client e5 'invoke-debugger)
           (lambda (condition)
