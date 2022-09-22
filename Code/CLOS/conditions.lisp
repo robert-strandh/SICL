@@ -93,7 +93,13 @@
 
 (define-condition malformed-specializer
     (error)
-  ((%specializer :initarg :specializer :reader specializer)))
+  ((%specializer :initarg :specializer :reader specializer))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A specializer must be either a class name~@
+                      or an EQL specializer, but the following was found:~%
+                      ~s"
+                     (specializer condition)))))
 
 (define-condition no-such-class-name
     (error)
