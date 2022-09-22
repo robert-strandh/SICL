@@ -112,7 +112,11 @@
 
 (define-condition unable-to-compute-class-precedence-list
     (error)
-  ((%offending-class :initarg :offending-class :reader offending-class)))
+  ((%offending-class :initarg :offending-class :reader offending-class))
+  (:report (lambda (condition stream)
+              (format stream
+                      "Unable to compute the class precedence list of the class ~s"
+                      (offending-class condition)))))
 
 (define-condition option-or-method-must-be-non-empty-list
     (error)

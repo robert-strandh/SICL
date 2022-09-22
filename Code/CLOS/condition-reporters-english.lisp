@@ -1,14 +1,6 @@
 (cl:in-package #:sicl-clos)
 
 (defmethod acclimation:report-condition
-    ((c unable-to-compute-class-precedence-list)
-     stream
-     (language acclimation:english))
-  (format stream
-          "Unable to compute the class precedence list of the class ~s"
-          (offending-class c)))
-
-(defmethod acclimation:report-condition
     ((c option-or-method-must-be-non-empty-list)
      stream
      (language acclimation:english))
