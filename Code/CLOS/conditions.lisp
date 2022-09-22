@@ -105,7 +105,7 @@
 
 (define-condition slot-definition-argument-must-be-supplied
     (error)
-  ((%offending-class :initarg :offending-class :reader offending-class)))
+  ())
 
 (define-condition unable-to-compute-class-precedence-list
     (error)
