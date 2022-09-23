@@ -126,7 +126,13 @@
 
 (define-condition option-or-method-must-be-non-empty-list
     (error)
-  ((%expression :initarg :expression :reader expressions)))
+  ((%expression :initarg :expression :reader expressions))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Option or method must be a non-empty list,~@
+                      but the following expression was found instead~@
+                      ~s"
+                     (expression condition)))))
 
 (define-condition method-already-associated-with-a-generic-function
     (error)
