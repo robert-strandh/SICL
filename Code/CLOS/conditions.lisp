@@ -161,7 +161,13 @@
 
 (define-condition direct-default-initarg-must-be-a-proper-list
     (error)
-  ((%initarg :initarg :initarg :reader initarg))))
+  ((%initarg :initarg :initarg :reader initarg))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A direct default initarg must be a proper~@
+                      list, but the following was found:~@
+                      ~s"
+                     (initarg condition)))))
 
 (define-condition direct-default-initarg-must-be-a-list-of-three-elements
     (error)
