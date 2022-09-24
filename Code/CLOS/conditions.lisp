@@ -138,7 +138,16 @@
     (error)
   ((%method-to-add :initarg :method-to-add :reader method-to-add)
    (%its-generic-function :initarg :its-generic-function
-                          :reader its-generic-function)))
+                          :reader its-generic-function))
+  (:report (lambda (condition stream)
+             (format stream
+                     "An attempt was made to add the method:~@
+                      ~s~@
+                      to a generic function, but that method is~@
+                      already associated with the generic function:~@
+                      ~s"
+                     (method-to-add conditon)
+                     (its-generic-function condition)))))
 
 (define-condition direct-default-initargs-must-be-a-proper-list
     (error)
