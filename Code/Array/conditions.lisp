@@ -2,7 +2,14 @@
 
 (define-condition object-must-be-an-array
     (type-error acclimation:condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "An object of type ~s was expected,~@
+                      but the following object was found instead~@
+                      ~s"
+                     (type-error-expected-type condition)
+                     (type-error-datum condition)))))
 
 (define-condition number-of-indices-must-equal-array-rank
     (error acclimation:condition)
