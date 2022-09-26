@@ -14,7 +14,19 @@
 (define-condition number-of-indices-must-equal-array-rank
     (error acclimation:condition)
   ((%indices :initarg :indices :reader indices)
-   (%array :initarg :array :reader given-array)))
+   (%array :initarg :array :reader given-array))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The following indices:~@
+                      ~s~@
+                      were given in order to access the array:~@
+                      ~s~.@
+                      However, the number of indices given is ~d~@
+                      whereas the randk of the array is ~d."
+                     (indices condition)
+                     (given-array condition)
+                     (length (indices condition))
+                     (array-rank (given-array condition))))))
 
 (define-condition index-must-be-non-negative-and-less-than-dimension
     (type-error acclimation:condition)

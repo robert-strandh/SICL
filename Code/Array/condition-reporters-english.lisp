@@ -1,22 +1,6 @@
 (cl:in-package #:sicl-array)
 
 (defmethod acclimation:report-condition
-  ((condition number-of-indices-must-equal-array-rank)
-   stream
-     (language acclimation:english))
-  (format stream
-          "The following indices:~@
-           ~s~@
-           were given in order to access the array:~@
-           ~s~.@
-           However, the number of indices given is ~d~@
-           whereas the randk of the array is ~d."
-          (indices condition)
-          (given-array condition)
-          (length (indices condition))
-          (array-rank (given-array condition))))
-
-(defmethod acclimation:report-condition
     ((condition index-must-be-non-negative-and-less-than-dimension)
      stream
      (language acclimation:english))
