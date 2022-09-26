@@ -171,7 +171,13 @@
 
 (define-condition direct-default-initarg-must-be-a-list-of-three-elements
     (error)
-  ((%initarg :initarg :initarg :reader initarg)))
+  ((%initarg :initarg :initarg :reader initarg))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A direct default initarg must be a list of~@
+                      three elements, but the following was found:~@
+                      ~s"
+                     (initarg condition)))))
 
 (define-condition name-of-direct-default-initarg-must-be-a-symbol
     (error)
