@@ -64,4 +64,16 @@
 
 (define-condition incompatible-type-for-new-element
     (type-error acclimation:condition)
-  ((%array :initarg :array :reader given-array)))
+  ((%array :initarg :array :reader given-array))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The new element to be stored in the array is:~@
+                      ~s of type ~s,~@
+                      but the element type of the array to store it in:
+                      ~s~@
+                      is ~s,~@
+                      which is incompatible with the type of the new element."
+                     (type-error-datum condition)
+                     (type-of (type-error-datum condition))
+                     (given-array condition)
+                     (type-error-expected-type condition)))))
