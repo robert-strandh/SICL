@@ -182,7 +182,13 @@
 (define-condition name-of-direct-default-initarg-must-be-a-symbol
     (error)
   ((%initarg :initarg :initarg :reader initarg)
-   (%name :initarg :name :reader name)))
+   (%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The name of a direct default initarg must be a~@
+                      symbol, but the following was found:~@
+                      ~s"
+                     (name condition)))))
 
 (define-condition third-element-of-direct-default-initarg-must-be-a-thunk
     (error)
