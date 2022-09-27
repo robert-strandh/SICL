@@ -1,23 +1,6 @@
 (cl:in-package #:sicl-array)
 
 (defmethod acclimation:report-condition
-    ((condition index-must-be-non-negative-and-less-than-dimension)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The ~:R index given in order to access the array:~@
-           ~s~@
-           has a value of ~s~@
-           but the ~:R dimension of the array is ~d,~@
-           so the index must be a non-negative integer~@
-           that is strictly less than that dimension."
-          (1+ (index-number condition))
-          (given-array condition)
-          (type-error-datum condition)
-          (1+ (index-number condition))
-          (array-dimension (given-array condition) (index-number condition))))
-
-(defmethod acclimation:report-condition
     ((condition row-major-index-must-be-non-negative-and-less-than-total-size)
      stream
      (language acclimation:english))

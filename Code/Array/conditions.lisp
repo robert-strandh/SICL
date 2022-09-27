@@ -31,7 +31,21 @@
 (define-condition index-must-be-non-negative-and-less-than-dimension
     (type-error acclimation:condition)
   ((%array :initarg :array :reader given-array)
-   (%index-number :initarg :index-number :reader index-number)))
+   (%index-number :initarg :index-number :reader index-number))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The ~:R index given in order to access the array:~@
+                      ~s~@
+                      has a value of ~s~@
+                      but the ~:R dimension of the array is ~d,~@
+                      so the index must be a non-negative integer~@
+                      that is strictly less than that dimension."
+                     (1+ (index-number condition))
+                     (given-array condition)
+                     (type-error-datum condition)
+                     (1+ (index-number condition))
+                     (array-dimension (given-array condition)
+                                      (index-number condition))))))
 
 (define-condition row-major-index-must-be-non-negative-and-less-than-total-size
     (type-error acclimation:condition)
