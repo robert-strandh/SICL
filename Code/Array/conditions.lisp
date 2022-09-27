@@ -49,7 +49,18 @@
 
 (define-condition row-major-index-must-be-non-negative-and-less-than-total-size
     (type-error acclimation:condition)
-  ((%array :initarg :array :reader given-array)))
+  ((%array :initarg :array :reader given-array))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The row-major index given in order to access the array:~@
+                      ~s~@
+                      has a value of ~s~@
+                      but the total size of the array is ~d,~@
+                      so the index must be a non-negative integer~@
+                      that is strictly less than that size."
+                     (given-array condition)
+                     (type-error-datum condition)
+                     (array-total-size (given-array condition))))))
 
 (define-condition incompatible-type-for-new-element
     (type-error acclimation:condition)
