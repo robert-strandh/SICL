@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-array)
 
 (define-condition object-must-be-an-array
-    (type-error acclimation:condition)
+    (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
@@ -12,7 +12,7 @@
                      (type-error-datum condition)))))
 
 (define-condition number-of-indices-must-equal-array-rank
-    (error acclimation:condition)
+    (error)
   ((%indices :initarg :indices :reader indices)
    (%array :initarg :array :reader given-array))
   (:report (lambda (condition stream)
@@ -29,7 +29,7 @@
                      (array-rank (given-array condition))))))
 
 (define-condition index-must-be-non-negative-and-less-than-dimension
-    (type-error acclimation:condition)
+    (type-error)
   ((%array :initarg :array :reader given-array)
    (%index-number :initarg :index-number :reader index-number))
   (:report (lambda (condition stream)
@@ -48,7 +48,7 @@
                                       (index-number condition))))))
 
 (define-condition row-major-index-must-be-non-negative-and-less-than-total-size
-    (type-error acclimation:condition)
+    (type-error)
   ((%array :initarg :array :reader given-array))
   (:report (lambda (condition stream)
              (format stream
@@ -63,7 +63,7 @@
                      (array-total-size (given-array condition))))))
 
 (define-condition incompatible-type-for-new-element
-    (type-error acclimation:condition)
+    (type-error)
   ((%array :initarg :array :reader given-array))
   (:report (lambda (condition stream)
              (format stream
