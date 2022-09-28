@@ -2,7 +2,13 @@
 
 (define-condition odd-number-of-arguments-to-setf
     (program-error acclimation:condition)
-  ((%form :initarg :form :reader form)))
+  ((%form :initarg :form :reader form))
+  (:report (lambda (condition stream)
+             (format stream
+                     "An odd number of arguments was given to SETF~@
+                      in the following form:~@
+                      ~s"
+                     (form condition)))))
 
 (define-condition odd-number-of-arguments-to-psetf
     (program-error acclimation:condition)
