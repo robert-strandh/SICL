@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
 (define-condition odd-number-of-arguments-to-setf
-    (program-error acclimation:condition)
+    (program-error)
   ((%form :initarg :form :reader form))
   (:report (lambda (condition stream)
              (format stream
@@ -11,7 +11,7 @@
                      (form condition)))))
 
 (define-condition odd-number-of-arguments-to-psetf
-    (program-error acclimation:condition)
+    (program-error)
   ((%form :initarg :form :reader form))
   (:report (lambda (condition stream)
              (format stream
@@ -21,7 +21,7 @@
                      (form condition)))))
 
 (define-condition odd-number-of-arguments-to-psetq
-    (program-error acclimation:condition)
+    (program-error)
   ((%form :initarg :form :reader form))
   (:report (lambda (condition stream)
              (format stream
@@ -31,7 +31,7 @@
                      (form condition)))))
 
 (define-condition too-few-arguments-to-shiftf
-    (program-error acclimation:condition)
+    (program-error)
   ((%form :initarg :form :reader form))
   (:report (lambda (condition stream)
              (format stream
@@ -41,7 +41,7 @@
                      (form condition)))))
 
 (define-condition attempt-to-set-the-fdefinition-of-a-special-operator
-    (error acclimation:condition)
+    (error)
   ((name :initarg :name :reader name)))
 
 (define-condition numeric-catch-tag (style-warning)
