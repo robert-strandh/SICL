@@ -1,16 +1,6 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
 (defmethod acclimation:report-condition
-    ((condition odd-number-of-arguments-to-psetf)
-     stream
-     (language acclimation:english))
-  (format stream
-          "An odd number of arguments was given to PSETF~@
-           in the following form:~@
-           ~s"
-          (form condition)))
-
-(defmethod acclimation:report-condition
     ((condition odd-number-of-arguments-to-psetq)
      stream
      (language acclimation:english))
