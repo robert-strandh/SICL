@@ -32,7 +32,13 @@
 
 (define-condition too-few-arguments-to-shiftf
     (program-error acclimation:condition)
-  ((%form :initarg :form :reader form)))
+  ((%form :initarg :form :reader form))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Too few arguments were given to SHIFTF~@
+                      in the following form:~@
+                      ~s"
+                     (form condition)))))
 
 (define-condition attempt-to-set-the-fdefinition-of-a-special-operator
     (error acclimation:condition)
