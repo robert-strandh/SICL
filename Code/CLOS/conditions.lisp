@@ -193,7 +193,13 @@
 (define-condition third-element-of-direct-default-initarg-must-be-a-thunk
     (error)
   ((%initarg :initarg :initarg :reader initarg)
-   (%initfunction :initarg :initfunction :reader initfunction)))
+   (%initfunction :initarg :initfunction :reader initfunction))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The third element of a direct default initarg~@
+                      must be a thunk, but the following was found instead~@
+                      ~s"
+                     (initfunction condition)))))
 
 (define-condition direct-superclasses-must-be-proper-list
     (error)
