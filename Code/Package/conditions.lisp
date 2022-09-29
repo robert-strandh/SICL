@@ -1,7 +1,6 @@
 (in-package #:sicl-package)
 
-(define-condition not-a-package-designator
-    (type-error acclimation:condition)
+(define-condition not-a-package-designator (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
@@ -11,26 +10,21 @@
                      (type-error-datum condition))))
   (:default-initargs :expected-type '(or package character string symbol)))
 
-(define-condition nicknames-must-be-proper-list
-    (type-error acclimation:condition)
+(define-condition nicknames-must-be-proper-list (type-error)
   ()
   (:default-initargs :expected-type 'list))
 
-(define-condition use-list-must-be-proper-list
-    (type-error acclimation:condition)
+(define-condition use-list-must-be-proper-list (type-error)
   ()
   (:default-initargs :expected-type 'list))
 
-(define-condition package-error
-    (error acclimation:condition)
+(define-condition package-error (error)
   ((%package :initarg :package :reader package-error-package)))
 
-(define-condition symbol-conflict
-    (package-error acclimation:condition)
+(define-condition symbol-conflict (package-error)
   ((%conflicting-symbols
     :initarg :conflicting-symbols
     :reader conflicting-symbols)))
 
-(define-condition symbol-is-not-accessible
-    (package-error acclimation:condition)
+(define-condition symbol-is-not-accessible (package-error)
   ((%symbol :initarg :symbol :reader inaccessible-symbol)))
