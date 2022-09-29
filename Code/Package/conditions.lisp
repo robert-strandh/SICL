@@ -3,6 +3,12 @@
 (define-condition not-a-package-designator
     (type-error acclimation:condition)
   ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A package designator was required,~@
+                      but the following was given:~@
+                      ~s"
+                     (type-error-datum condition))))
   (:default-initargs :expected-type '(or package character string symbol)))
 
 (define-condition nicknames-must-be-proper-list
