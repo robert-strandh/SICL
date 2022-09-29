@@ -35,7 +35,6 @@
     (:file "make-package-defun")
     (:file "defpackage-defmacro")
     (:file "conditions")
-    (:file "condition-reporters-english")
     (:file "documentation-strings-english")))
 
 
