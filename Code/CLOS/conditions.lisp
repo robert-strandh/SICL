@@ -203,7 +203,13 @@
 
 (define-condition direct-superclasses-must-be-proper-list
     (error)
-  ((%superclasses :initarg :superclasses :reader superclasses)))
+  ((%superclasses :initarg :superclasses :reader superclasses))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The direct superclasses of a class must be a~@
+                      proper list, but the following was found instead~@
+                      ~s"
+                     (superclasses condition)))))
 
 (define-condition superclass-must-be-a-class-metaobject
     (error)
