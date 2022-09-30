@@ -9,6 +9,12 @@
 (define-condition must-be-nonnegative-integer
     (type-error acclimation:condition)
   ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A nonnegative integer was required,~@
+                      but the following was given:~@
+                      ~s"
+                     (type-error-datum condition))))
   (:default-initargs :expected-type '(integer 0)))
 
 ;;; This condition is used by functions and macros that require

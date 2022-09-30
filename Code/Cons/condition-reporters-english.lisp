@@ -10,15 +10,6 @@
   (format stream
           "Both keyword arguments :test and :test-not were given."))
 
-(defmethod acclimation:report-condition ((c must-be-nonnegative-integer)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "A nonnegative integer was required,~@
-           but the following was given:~@
-           ~s"
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c must-be-cons)
                                           stream
                                           (language acclimation:english))
