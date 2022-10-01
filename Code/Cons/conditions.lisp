@@ -78,7 +78,11 @@
 ;;; keyword arguments, and is signaled when both of those are given.
 (define-condition both-test-and-test-not-given
     (error acclimation:condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (declare (ignore condition))
+             (format stream
+                     "Both keyword arguments :test and :test-not were given."))))
 
 ;;; This condition is used by the map* family functions when no lists
 ;;; were given, since those functions require at least one list
