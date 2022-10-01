@@ -213,7 +213,13 @@
 
 (define-condition superclass-must-be-a-class-metaobject
     (error)
-  ((%superclass :initarg :superclass :reader superclass)))
+  ((%superclass :initarg :superclass :reader superclass))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A superclass must be a class metaobject,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (superclass condition)))))
 
 (define-condition direct-superclass-must-be-a-class-metaobject-or-a-symbol
     (error)
