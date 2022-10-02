@@ -3,11 +3,12 @@
 (setf (documentation 'coerce-to-condition 'function)
       (format
        nil
-       "Attempts to coerce the provided arguments into a condition
-object. The DEFAULT-TYPE argument describes the default condition type that
-should be created if no condition type can be inferred from DATUM; the NAME
-argument is the name of the coercing operator and is used during invalid
-coercions to properly report the error."))
+       "Attempts to coerce the provided arguments into a condition~@
+        object. The DEFAULT-TYPE argument describes the default~@
+        condition type that should be created if no condition type~@
+        can be inferred from DATUM; the NAME argument is the name of~@
+        the coercing operator and is used during invalid coercions~@
+        to properly report the error."))
 
 (setf (documentation
        (find-method #'coerce-to-condition '()
