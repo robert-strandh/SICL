@@ -22,6 +22,12 @@
 (define-condition must-be-cons
     (type-error acclimation:condition)
   ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A cons cell was required,~@
+                      but the following was given:~@
+                      ~s"
+                     (type-error-datum condition))))
   (:default-initargs :expected-type 'cons))
 
 ;;; This condition is used by functions and macros that require
@@ -29,6 +35,12 @@
 (define-condition must-be-list
     (type-error acclimation:condition)
   ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A list (a cons or nil) was required,~@
+                      but the following was given:~@
+                      ~s"
+                     (type-error-datum condition))))
   (:default-initargs :expected-type 'list))
 
 ;;; This condition is used by functions and macros that require

@@ -4,24 +4,6 @@
   (let ((real-name (if (symbolp name) name (cadr name))))
     (package-name (symbol-package real-name))))
 
-(defmethod acclimation:report-condition ((c must-be-cons)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "A cons cell was required,~@
-           but the following was given:~@
-           ~s"
-          (type-error-datum c)))
-
-(defmethod acclimation:report-condition ((c must-be-list)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "A list (a cons or nil) was required,~@
-           but the following was given:~@
-           ~s"
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c must-be-plist)
                       stream
                       (language acclimation:english))
