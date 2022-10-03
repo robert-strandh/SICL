@@ -234,7 +234,14 @@
 (define-condition superclass-not-valid-for-class
     (error)
   ((%subclass :initarg :subclass :reader subclass)
-   (%superclass :initarg :superclass :reader superclass)))
+   (%superclass :initarg :superclass :reader superclass))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The class ~s~@
+                      is not a valid superclass for the class~@
+                      ~s"
+                     (superclass condition)
+                     (subclass condition)))))
 
 (define-condition direct-slots-must-be-proper-list
     (error)
