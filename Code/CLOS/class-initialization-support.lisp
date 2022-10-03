@@ -81,6 +81,7 @@
                     :superclass direct-superclass))
            (unless (validate-superclass class direct-superclass)
              (error 'superclass-not-valid-for-class
+                    :subclass class
                     :superclass direct-superclass))))
 
 (defun check-and-instantiate-direct-slots (class direct-slots)
