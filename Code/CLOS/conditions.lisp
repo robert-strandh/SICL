@@ -233,7 +233,8 @@
 
 (define-condition superclass-not-valid-for-class
     (error)
-  ((%superclass :initarg :superclass :reader superclass)))
+  ((%subclass :initarg :subclass :reader subclass)
+   (%superclass :initarg :superclass :reader superclass)))
 
 (define-condition direct-slots-must-be-proper-list
     (error)
