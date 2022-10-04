@@ -245,7 +245,13 @@
 
 (define-condition direct-slots-must-be-proper-list
     (error)
-  ((%direct-slots :initarg :direct-slots :reader direct-slots)))
+  ((%direct-slots :initarg :direct-slots :reader direct-slots))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The direct slots must be a proper list,~@
+                      but the following was found instead~@
+                      ~s"
+                     (direct-slots condition)))))
 
 (define-condition qualifier-must-be-proper-list
     (error)
