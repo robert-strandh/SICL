@@ -245,7 +245,7 @@
 
 (define-condition direct-slots-must-be-proper-list
     (error)
-  ((%direct-lost :initarg :direct-lost :reader direct-lost)))
+  ((%direct-slots :initarg :direct-slots :reader direct-slots)))
 
 (define-condition qualifier-must-be-proper-list
     (error)
