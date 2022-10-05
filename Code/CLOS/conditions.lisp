@@ -263,9 +263,9 @@
                       ~s"
                      (qualifier condition)))))
 
-(define-condition qualifier-must-be-proper-list
+(define-condition qualifiers-must-be-proper-list
     (error)
-  ((%qualifier :initarg :qualifier :reader qualifier)))
+  ((%qualifiers :initarg :qualifiers :reader qualifiers)))
 
 (define-condition argument-precedence-order-must-be-proper-list
     (error)
