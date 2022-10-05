@@ -4,7 +4,8 @@
   ;; The AMOP says it the qualifiers be a proper list, so check that
   ;; first.
   (unless (cleavir-code-utilities:proper-list-p qualifiers)
-    (error "qualifiers must be a proper list"))
+    (error 'qualifiers-must-be-proper-list
+           :qualifiers qualifiers))
   ;; The AMOP says that the elements of the list of qualifiers should
   ;; be "non-null atoms".  In the section "Readers for Method
   ;; Metaobjects", they say that the list is a "list of non-nil
