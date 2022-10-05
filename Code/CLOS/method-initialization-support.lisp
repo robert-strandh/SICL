@@ -10,10 +10,10 @@
   ;; Metaobjects", they say that the list is a "list of non-nil
   ;; atoms".  The CLHS page on DEFMETHOD confirms that a qualifier is
   ;; not restricted to a symbol, but can be any atom.
-  (unless (every (lambda (qualifier)
-                   (and (atom qualifier) (not (null qualifier))))
-                 qualifiers)
-    (error 'qualifier-must-be-proper-list :qualifier qualifier)))
+  (loop for qualifier in qualifiers
+        unless (and (atom qualifier) (not (null qualifier)))
+          do (error 'qualifier-must-be-non-nil-atom
+                    :qualifier qualifier)))
 
 (defun initialize-instance-after-method
     (method
