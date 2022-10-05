@@ -253,6 +253,16 @@
                       ~s"
                      (direct-slots condition)))))
 
+(define-condition qualifier-must-be-non-nil-atom
+    (error)
+  ((%qualifier :initarg :qualifier :reader qualifier))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A qualifier must be a non-nil atom,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (qualifier condition)))))
+
 (define-condition qualifier-must-be-proper-list
     (error)
   ((%qualifier :initarg :qualifier :reader qualifier)))
