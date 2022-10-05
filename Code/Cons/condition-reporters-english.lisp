@@ -4,15 +4,6 @@
   (let ((real-name (if (symbolp name) name (cadr name))))
     (package-name (symbol-package real-name))))
 
-(defmethod acclimation:report-condition ((c must-be-proper-or-circular-list)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "A proper or circular list was required,~@
-           but the following was given:~@
-           ~s"
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c must-be-proper-or-dotted-list)
                                           stream
                                           (language acclimation:english))
