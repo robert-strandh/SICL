@@ -265,7 +265,13 @@
 
 (define-condition qualifiers-must-be-proper-list
     (error)
-  ((%qualifiers :initarg :qualifiers :reader qualifiers)))
+  ((%qualifiers :initarg :qualifiers :reader qualifiers))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The list of qualifiers must be a proper list,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (qualifiers condition)))))
 
 (define-condition argument-precedence-order-must-be-proper-list
     (error)
