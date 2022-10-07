@@ -273,10 +273,6 @@
                       ~s"
                      (qualifiers condition)))))
 
-(define-condition argument-precedence-order-must-be-proper-list
-    (error)
-  ((%order :initarg :order :reader argument-precedence-order)))
-
 (define-condition no-such-generic-function-class
     (error)
   ((%class-name :initarg :class-name :reader generic-function-class-name)))
