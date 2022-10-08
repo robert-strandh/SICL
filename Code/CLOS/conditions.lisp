@@ -290,7 +290,14 @@
 
 (define-condition generic-function-class-must-be-class-or-name
     (error)
-  ((%object :initarg :object :reader object)))
+  ((%object :initarg :object :reader object))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Generic-function class must be a class~@
+                      metaobject, or the name of a class~@
+                      but the following was found instead:~@
+                      ~s"
+                     (object condition)))))
 
 (define-condition name-refers-to-a-special-operator
     (error)
