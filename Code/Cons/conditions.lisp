@@ -137,7 +137,12 @@
 ;;; argument.
 (define-condition at-least-one-list-required
     (error acclimation:condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (declare (ignore condition))
+             (format stream
+                     "At least one argument is required,~@
+                      but none was given."))))
 
 ;;; This condition is used by the list* function when no arguments
 ;;; were given, since that function requires at least one argument.

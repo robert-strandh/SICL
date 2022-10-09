@@ -11,15 +11,6 @@
           "At least one list argument is required,~@
            but none was given."))
           
-(defmethod acclimation:report-condition ((c at-least-one-argument-required)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "At least one argument is required,~@
-           but none was given."
-          (name c)
-          (name-package (name c))))
-
 (defmethod acclimation:report-condition ((c lists-must-have-the-same-length)
                                           stream
                                           (language acclimation:english))
