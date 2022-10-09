@@ -301,7 +301,14 @@
 
 (define-condition name-refers-to-a-special-operator
     (error)
-  ((%name :initarg :name :reader name)))
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The name ~s~@
+                      given as the name of a generic function~@
+                      refers to a special operator and not a~@
+                      generic function."
+                     (name condition)))))
 
 (define-condition name-refers-to-a-macro
     (error)
