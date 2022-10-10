@@ -275,7 +275,14 @@
 
 (define-condition no-such-generic-function-class
     (error)
-  ((%class-name :initarg :class-name :reader generic-function-class-name)))
+  ((%class-name :initarg :class-name :reader method-class-name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The name:~@
+                      ~s~@
+                      was given as a generic-function class, but there~@
+                      is no generic-function class with that name."
+                     (method-class-name condition)))))
 
 (define-condition no-such-method-class
     (error)
