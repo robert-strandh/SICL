@@ -167,8 +167,8 @@
                      (list1 condition)
                      (list2 condition)))))
 
-;;; This condition is used by the setf expander for NTH when an
-;;; object must be a cons cell but something else was found
+;;; This condition is used by the function (SETF NTH)
+;;; When NTHCDR of the original list is not a CONS cell.
 (define-condition setf-nth-must-be-cons (must-be-cons)
   ((%original-tree :initarg :original-tree :reader original-tree)
    (%cons-cell-count :initarg :cons-cell-count :reader cons-cell-count)))
