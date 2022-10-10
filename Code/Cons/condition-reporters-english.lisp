@@ -4,22 +4,6 @@
   (let ((real-name (if (symbolp name) name (cadr name))))
     (package-name (symbol-package real-name))))
 
-(defmethod acclimation:report-condition ((c setf-c*r-must-be-cons)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "In the SETF expander for ~a (in the ~a package),~@
-           the ~aargument ~s~@
-           must be a cons cell, but the following was given instead:~@
-           ~s."
-          (name c)
-          (name-package (name c))
-          (if (zerop (length (access-string c)))
-              ""
-              (format nil "C~aR of the " (access-string c)))
-          (original-tree c)
-          (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c setf-nth-must-be-cons)
                                           stream
                                           (language acclimation:english))
