@@ -167,20 +167,20 @@
                      (list1 condition)
                      (list2 condition)))))
 
-;;; This condition is used by setf expanders for c*r when an
+;;; This condition is used by setf expanders for C*R when an
 ;;; object must be a cons cell but something else was found
 (define-condition setf-c*r-must-be-cons (must-be-cons)
   ((%original-tree :initarg :original-tree :reader original-tree)
    (%access-string :initarg :access-string :reader access-string)))
 
-;;; This condition is used by the setf expander for nth when an
+;;; This condition is used by the setf expander for NTH when an
 ;;; object must be a cons cell but something else was found
 (define-condition setf-nth-must-be-cons (must-be-cons)
   ((%original-tree :initarg :original-tree :reader original-tree)
    (%cons-cell-count :initarg :cons-cell-count :reader cons-cell-count)))
 
 ;;; This condition is used by macros that detect that there
-;;; is both a :test and a :test-not, and that detection is
+;;; is both a :TEST and a :TEST-NOT, and that detection is
 ;;; done at macro-expansion time.
 (define-condition warn-both-test-and-test-not-given (warning)
   ())
