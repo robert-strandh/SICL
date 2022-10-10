@@ -4,13 +4,6 @@
   (let ((real-name (if (symbolp name) name (cadr name))))
     (package-name (symbol-package real-name))))
 
-(defmethod acclimation:report-condition ((c at-least-one-list-required)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "At least one list argument is required,~@
-           but none was given."))
-          
 (defmethod acclimation:report-condition ((c lists-must-have-the-same-length)
                                           stream
                                           (language acclimation:english))
