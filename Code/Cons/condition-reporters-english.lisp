@@ -4,19 +4,6 @@
   (let ((real-name (if (symbolp name) name (cadr name))))
     (package-name (symbol-package real-name))))
 
-(defmethod acclimation:report-condition ((c lists-must-have-the-same-length)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "The two lists passed as arguments must~@
-           have the same length, but the following~@
-           was given:~@
-           ~s~@
-           and~@
-           ~s."
-          (list1 c)
-          (list2 c)))
-
 (defmethod acclimation:report-condition ((c setf-c*r-must-be-cons)
                                           stream
                                           (language acclimation:english))

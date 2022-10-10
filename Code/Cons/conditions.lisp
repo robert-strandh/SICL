@@ -155,7 +155,17 @@
 (define-condition lists-must-have-the-same-length
     (error acclimation:condition)
   ((%list1 :initarg :list1 :reader list1)
-   (%list2 :initarg :list2 :reader list2)))
+   (%list2 :initarg :list2 :reader list2))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The two lists passed as arguments must~@
+                      have the same length, but the following~@
+                      was given:~@
+                      ~s~@
+                      and~@
+                      ~s."
+                     (list1 condition)
+                     (list2 condition)))))
 
 ;;; This condition is used by setf expanders for c*r when an
 ;;; object must be a cons cell but something else was found
