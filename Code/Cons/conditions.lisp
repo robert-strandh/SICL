@@ -171,7 +171,15 @@
 ;;; When NTHCDR of the original list is not a CONS cell.
 (define-condition setf-nth-must-be-cons (must-be-cons)
   ((%original-list :initarg :original-list :reader original-list)
-   (%cons-cell-count :initarg :cons-cell-count :reader cons-cell-count)))
+   (%cons-cell-count :initarg :cons-cell-count :reader cons-cell-count))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The ~:R CDR of the argument ~s~@
+                      must be a CONS cell, but the following was given instead:~@
+                      ~s."
+                     (cons-cell-count condition)
+                     (original-list condition)
+                     (type-error-datum condition)))))
 
 ;;; This condition is used by macros that detect that there
 ;;; is both a :TEST and a :TEST-NOT, and that detection is
