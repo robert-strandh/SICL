@@ -14,7 +14,7 @@
         finally  (when (not (consp remaining))
                    (error 'setf-nth-must-be-cons
                           :datum remaining
-                          :original-tree list
+                          :original-list list
                           :cons-cell-count count))
                  (setf (car remaining) object))
   object)
