@@ -177,7 +177,13 @@
 ;;; is both a :TEST and a :TEST-NOT, and that detection is
 ;;; done at macro-expansion time.
 (define-condition warn-both-test-and-test-not-given (warning)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (declare (ignore condition))
+             (format stream
+                     "both keyword arguments :TEST and :TEST-NOT~@
+                      were given."))))
+
 
 (define-condition expected-list-with-at-least-n-elements
     (error acclimation:condition)

@@ -18,12 +18,6 @@
           (original-tree c)
           (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c warn-both-test-and-test-not-given)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "both keyword arguments :test and :test-not were given."))
-
 (defmethod acclimation:report-condition
     ((c expected-list-with-at-least-n-elements)
      stream
