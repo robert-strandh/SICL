@@ -183,9 +183,3 @@
              (format stream
                      "both keyword arguments :TEST and :TEST-NOT~@
                       were given."))))
-
-
-(define-condition expected-list-with-at-least-n-elements
-    (error acclimation:condition)
-  ((%found :initarg :found :reader found)
-   (%at-least :initarg :at-least :reader at-least)))

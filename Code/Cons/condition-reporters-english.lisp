@@ -17,14 +17,3 @@
           (cons-cell-count c)
           (original-tree c)
           (type-error-datum c)))
-
-(defmethod acclimation:report-condition
-    ((c expected-list-with-at-least-n-elements)
-     stream
-     (language acclimation:english))
-  (format stream
-          "Expected a list with at least ~d elements,~@
-           but the following was given instead:~@
-           ~s."
-          (at-least c)
-          (found c)))
