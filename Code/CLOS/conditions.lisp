@@ -81,7 +81,14 @@
 
 (define-condition attempt-to-access-precedence-list-of-forward-referenced-class
     (error)
-  ((%offending-class :initarg :offending-class :reader offending-class)))
+  ((%offending-class :initarg :offending-class :reader offending-class))
+  (:report (lambda (condition stream)
+             (format stream
+                     "An attempt was made to access the class precedence~@
+                      list of the class:~@
+                      ~s~@
+                      which is a forward-referenced class."
+                     (offending-class condition)))))
 
 (define-condition attempt-to-access-default-initargs-of-forward-referenced-class
     (error)
