@@ -136,7 +136,12 @@
 ;;; This condition is used by the list* function when no arguments
 ;;; were given, since that function requires at least one argument.
 (define-condition at-least-one-argument-required (error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (declare (ignore condition))
+             (format stream
+                     "At least one argument is required~@
+                      but no arguments were given."))))
 
 ;;; This condition is used by the pairlis function when
 ;;; the two lists are not of the same length.
