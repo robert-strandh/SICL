@@ -352,7 +352,14 @@
 
 (define-condition invalid-function-name
     (error)
-  ((%name :initarg :name :reader name)))
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "A function object or the name of a~@
+                      function was expected, but the following~@
+                      was given instead:~@
+                      ~s"
+                     (name condition)))))
 
 (define-condition multiple-allocation-options-not-permitted (error)
   ((%slot-specifier :initarg :slot-specifier :reader slot-specifier))
