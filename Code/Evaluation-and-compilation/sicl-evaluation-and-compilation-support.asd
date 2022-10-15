@@ -14,5 +14,4 @@
   :components
   ((:file "packages")
    (:file "conditions")
-   (:file "condition-reporters-english")
    (:file "declaim-support")))
