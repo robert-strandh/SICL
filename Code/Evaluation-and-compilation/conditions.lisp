@@ -2,7 +2,13 @@
 
 (define-condition environment-must-be-omitted-or-nil
     (error acclimation:condition)
-  ((%environment :initarg :environment :reader environment)))
+  ((%environment :initarg :environment :reader environment))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The optional environment argument must either be~@
+                      omitted or NIL, but the following was found instead:~@
+                      ~s"
+                     (environment condition)))))
 
 (define-condition load-time-value-read-only-p-not-evaluated
     (style-warning)
