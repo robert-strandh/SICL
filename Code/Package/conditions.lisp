@@ -22,7 +22,13 @@
 
 (define-condition use-list-must-be-proper-list (type-error)
   ()
-  (:default-initargs :expected-type 'list))
+  (:default-initargs :expected-type 'list)
+  (:report (lambda (condition stream)
+             (format stream
+                     "The list of used packages must be a proper list,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (type-error-datum condition)))))
 
 (define-condition package-error (error)
   ((%package :initarg :package :reader package-error-package)))
