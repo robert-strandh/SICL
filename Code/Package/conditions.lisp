@@ -12,7 +12,13 @@
 
 (define-condition nicknames-must-be-proper-list (type-error)
   ()
-  (:default-initargs :expected-type 'list))
+  (:default-initargs :expected-type 'list)
+  (:report (lambda (condition stream)
+             (format stream
+                     "The list of nicknames must be a proper list,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (type-error-datum condition)))))
 
 (define-condition use-list-must-be-proper-list (type-error)
   ()
