@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-boot)
 
+;;; The keys in this table are host objects.  Such an object can be an
+;;; instance of HEADER which means that it is an ersatz object, or it
+;;; can be an ordinary host object that represents a target object,
+;;; such as a symbol or a CONS cell.
+(defparameter *host-object-to-pointer-table*
+  (make-hash-table :test #'eq))
+
 (defparameter *ersatz-object-table*
   (make-hash-table :test #'eq))
 
