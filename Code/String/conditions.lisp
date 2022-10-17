@@ -40,7 +40,15 @@
 
 (define-condition bag-contains-non-character
     (type-error acclimation:condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A character bag must be a sequence~@
+                      that contains only characters.~@
+                      But the following element was found~@
+                      which is not a character:~@
+                      ~s."
+                     (type-error-datum condition)))))
 
 (define-condition invalid-bounding-indices
     (error acclimation:condition)

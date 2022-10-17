@@ -1,16 +1,6 @@
 (cl:in-package #:sicl-string)
 
 (defmethod acclimation:report-condition
-    ((c bag-contains-non-character)
-     stream
-     acclimation:english)
-  (format stream
-          "A character bag must be a sequence that contains only characters.~@
-           But the following element was found which is not a character:~@
-           ~s."
-          (type-error-datum c)))
-
-(defmethod acclimation:report-condition
     ((c invalid-bounding-indices)
      stream
      acclimation:english)
