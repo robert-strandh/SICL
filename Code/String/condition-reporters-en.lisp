@@ -1,16 +1,6 @@
 (cl:in-package #:sicl-string)
 
 (defmethod acclimation:report-condition
-    ((c bag-is-circular-list)
-     stream
-     acclimation:english)
-  (format stream
-          "If a character bag is a list, it must be a proper list.~@
-           But the following circular list was found instead:~@
-           ~s."
-          (type-error-datum c)))
-
-(defmethod acclimation:report-condition
     ((c bag-contains-non-character)
      stream
      acclimation:english)
