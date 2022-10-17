@@ -88,18 +88,48 @@
                       rack-pointer)
                 (values result (cons header-item rack-items))))))))))
 
+(defun write-pointer-to-address (address pointer)
+  (setf (sicl-memory:memory-unsigned address 64)
+        pointer))
+
+(defun process-work-list-items (work-list-items)
+  ;; The work list is a list of work-list items.  A work-list item is
+  ;; a CONS cell where the CAR is an address (i.e. a fixnum), and the
+  ;; CDR is a host object (which can be an ersatz object).  The item
+  ;; represents an instruction that the pointer of the object should
+  ;; be written to the address.
+  (let ((work-list work-list-items))
+    (loop until (null work-list)
+          do (destructuring-bind (address . object)
+                 (pop work-list)
+               ;; It is possible that OBJECT already has a pointer
+               ;; associated with it.
+               (let ((pointer (gethash object *host-object-to-pointer-table*)))
+                 (if (null pointer)
+                     ;; No luck, we need to compute the pointer.
+                     (multiple-value-bind (pointer work-list-items)
+                         (compute-pointer object)
+                       ;; Computing the pointer may result in more
+                       ;; work-list items, so we prepend them to the
+                       ;; work-list.
+                       (setf work-list (append work-list-items work-list))
+                       ;; And write the resulting pointer to the
+                       ;; address.
+                       (write-pointer-to-address address pointer))
+                     ;; We are in luck.  A pointer for the object
+                     ;; already exists.  Just write the pointer to the
+                     ;; address.
+                     (write-pointer-to-address address pointer)))))))
+
 (defun pointer (object)
-  (multiple-value-bind (result work-list-items)
+  ;; Check whether we have already allocated OBJECT in the heap.
+  (let ((existing-pointer (gethash object *host-object-to-pointer-table*)))
+    (unless (null existing-pointer)
+      ;; We already have a pointer for OBJECT, so return that pointer,
+      ;; and be done with it.
+      (return-from pointer existing-pointer)))
+  ;; Come here if OBJECT has not been allocated in the heap yet.
+  (multiple-value-bind (pointer work-list-items)
       (compute-pointer object)
-    ;; The work list is an association list where the CAR of each
-    ;; element is an address (i.e. a fixnum) and the CDR is an ersatz
-    ;; object that should be written to that address.
-    (let ((work-list work-list-items))
-      (loop until (null work-list)
-            do (destructuring-bind (address . object)
-                   (pop work-list)
-                 (multiple-value-bind (result work-list-items)
-                     (compute-pointer object)
-                   (setf work-list (append work-list-items work-list))
-                   (setf (sicl-memory:memory-unsigned address 64) result)))))
-    result))
+    (process-work-list-items work-list-items)
+    pointer))
