@@ -3,7 +3,9 @@
 ;;; The keys in this table are host objects.  Such an object can be an
 ;;; instance of HEADER which means that it is an ersatz object, or it
 ;;; can be an ordinary host object that represents a target object,
-;;; such as a symbol or a CONS cell.
+;;; such as a symbol or a CONS cell.  The value associated with a key
+;;; is a non-negative integer representing the pointer value of the
+;;; corresponding object.
 (defparameter *host-object-to-pointer-table*
   (make-hash-table :test #'eq))
 
