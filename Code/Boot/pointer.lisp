@@ -14,7 +14,9 @@
             (+ 32 position)
             #xfffd)))) ; U+FFFD REPLACEMENT CHARACTER
 
-(defun compute-pointer (object)
+(defgeneric compute-pointer (object))
+
+(defun obsolete-compute-pointer (object)
   (typecase object
     ((integer 0 #.(1- (expt 2 62)))
      (values (ash object 1) '()))
@@ -41,7 +43,7 @@
                 (loop for i from 0 below (length object)
                       do (funcall sa (aref object i) i))
                 (multiple-value-bind (result work-list-items)
-                    (compute-pointer ersatz-string)
+                    (obsolete-compute-pointer ersatz-string)
                   (setf (gethash object *ersatz-object-table*) result)
                   (remhash ersatz-string *ersatz-object-table*)
                   (values result work-list-items))))
@@ -53,7 +55,7 @@
                                 ;; FIXME: Pass a package object.
                                 :package nil)))
                 (multiple-value-bind (result work-list-items)
-                    (compute-pointer ersatz-symbol)
+                    (obsolete-compute-pointer ersatz-symbol)
                   (setf (gethash object *ersatz-object-table*) result)
                   (remhash ersatz-symbol *ersatz-object-table*)
                   (values result work-list-items))))
