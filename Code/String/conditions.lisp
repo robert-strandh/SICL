@@ -18,7 +18,14 @@
 
 (define-condition bag-is-dotted-list
     (type-error acclimation:condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "If a character bag is a list,~@
+                      it must be a proper list.~@
+                      But the following dotted list was found instead:~@
+                      ~s."
+                     (type-error-datum condition)))))
 
 (define-condition bag-is-circular-list
     (type-error acclimation:condition)
