@@ -124,12 +124,16 @@
 (defun pointer (object)
   ;; Check whether we have already allocated OBJECT in the heap.
   (let ((existing-pointer (gethash object *host-object-to-pointer-table*)))
-    (unless (null existing-pointer)
-      ;; We already have a pointer for OBJECT, so return that pointer,
-      ;; and be done with it.
-      (return-from pointer existing-pointer)))
-  ;; Come here if OBJECT has not been allocated in the heap yet.
-  (multiple-value-bind (pointer work-list-items)
-      (compute-pointer object)
-    (process-work-list-items work-list-items)
-    pointer))
+    (if (null existing-pointer)
+        ;; We need to allocate the object and compute the pointer.
+        (multiple-value-bind (pointer work-list-items)
+            (compute-pointer object)
+          ;; Computing the pointer may have resulted in a bunch of
+          ;; work-list items that must be processed.
+          (process-work-list-items work-list-items)
+          ;; Once the work-list has been processed, we are done and we
+          ;; can return the computed pointer.
+          pointer)
+        ;; We are in luck.  We already have a pointer for the object,
+        ;; so just return it.
+        existing-pointer)))
