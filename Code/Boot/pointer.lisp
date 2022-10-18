@@ -32,6 +32,10 @@
               (ash object 1))
           '()))
 
+(defmethod compute-pointer ((object character))
+  (values (+ (ash (host-char-to-target-code object) 5) #x00011)
+          '()))
+
 (defun obsolete-compute-pointer (object)
   (typecase object
     ((integer 0 #.(1- (expt 2 62)))
