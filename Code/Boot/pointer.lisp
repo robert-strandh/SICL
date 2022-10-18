@@ -36,6 +36,14 @@
   (values (+ (ash (host-char-to-target-code object) 5) #x00011)
           '()))
 
+(defmethod compute-pointer ((object cons))
+  (let* ((address (sicl-allocator:allocate-dyad))
+         (pointer (1+ address)))
+    (setf (gethash object *host-object-to-pointer-table*) pointer)
+    (values pointer
+            (list (cons address (car object))
+                  (cons (+ address 8) (cdr object))))))
+
 (defun obsolete-compute-pointer (object)
   (typecase object
     ((integer 0 #.(1- (expt 2 62)))
