@@ -25,6 +25,13 @@
 
 (defgeneric compute-pointer (object))
 
+(defmethod compute-pointer ((object integer))
+  (assert (<= #.(- (expt 2 62)) object #.(1- (expt 2 62))))
+  (values (if (minusp object)
+              (ash (logand object #.(1- (expt 2 63))) 1)
+              (ash object 1))
+          '()))
+
 (defun obsolete-compute-pointer (object)
   (typecase object
     ((integer 0 #.(1- (expt 2 62)))
