@@ -49,6 +49,29 @@
            hash-item
            (funcall traverse header rack rack-address))))
 
+;;; Allocate the header and the rack of an ersatz object in the
+;;; simulated heap.  Write the tagged rack pointer into the second
+;;; word of the header.  Return three values: The pointer to the
+;;; header, i.e., to the object itself, the raw address of the rack,
+;;; and a work-list item for writing the class object into the first
+;;; word of the header.
+(defun allocate-ersatz-object (object)
+  (let* ((header-address (sicl-allocator:allocate-dyad))
+         (class (slot-value object '%class))
+         (rack (slot-value object '%rack))
+         (rack-size (length rack))
+         (rack-address (sicl-allocator:allocate-chunk rack-size)))
+    ;; Since the rack is not an object in itself, we need to write the
+    ;; address of the rack in the memory location corresponding to the
+    ;; second word of the header.
+    (setf (sicl-memory:memory-unsigned (+ header-address 8) 64)
+          (+ rack-address 7))
+    (values (+ header-address 5)
+            rack-address
+            ;; An item to write the class object into the first
+            ;; word of the header
+            (cons header-address class))))
+
 (defgeneric compute-pointer (object))
 
 (defmethod compute-pointer ((object integer))
