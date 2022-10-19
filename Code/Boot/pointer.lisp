@@ -93,6 +93,15 @@
             (list (cons address (car object))
                   (cons (+ address 8) (cdr object))))))
 
+(defmethod compute-pointer ((object header))
+  (multiple-value-bind (pointer rack-address class-item)
+      (allocate-ersatz-object object)
+    (setf (gethash object *host-object-to-pointer-table*) pointer)
+    (cons class-item
+          (handle-ersatz-object object
+                                (slot-value object '%rack)
+                                rack-address))))
+
 (defun obsolete-compute-pointer (object)
   (typecase object
     ((integer 0 #.(1- (expt 2 62)))
