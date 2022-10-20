@@ -17,7 +17,7 @@
 (cl:in-package #:sicl-string)
 
 (define-condition bag-is-dotted-list
-    (type-error acclimation:condition)
+    (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
@@ -27,8 +27,7 @@
                       ~s."
                      (type-error-datum condition)))))
 
-(define-condition bag-is-circular-list
-    (type-error acclimation:condition)
+(define-condition bag-is-circular-list (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
@@ -38,8 +37,7 @@
                       ~s."
                      (type-error-datum condition)))))
 
-(define-condition bag-contains-non-character
-    (type-error acclimation:condition)
+(define-condition bag-contains-non-character (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
@@ -50,8 +48,7 @@
                       ~s."
                      (type-error-datum condition)))))
 
-(define-condition invalid-bounding-indices
-    (error acclimation:condition)
+(define-condition invalid-bounding-indices (error)
   ((%target :initarg :target :reader target)
    (%start :initarg start :reader start)
    (%end :initarg end :reader end))
