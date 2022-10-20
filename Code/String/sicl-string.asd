@@ -10,5 +10,4 @@
    (:file "case-conversion")
    (:file "trim")
    (:file "comparison")
-   (:file "conditions")
-   (:file "condition-reporters-en")))
+   (:file "conditions")))
