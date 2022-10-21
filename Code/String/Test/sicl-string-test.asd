@@ -7,7 +7,6 @@
    (:file "string-type")
    (:file "conditions")
    (:file "utilities")
-   (:file "copy")
    (:file "case-conversion")
    (:file "string")
    (:file "trim")
