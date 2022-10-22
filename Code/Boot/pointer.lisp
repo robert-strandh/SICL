@@ -102,6 +102,21 @@
                                 (slot-value object '%rack)
                                 rack-address))))
 
+(defmethod compute-pointer ((object string))
+  (let* ((ma (env:fdefinition (env:client *e5*) *e5* 'make-array))
+         (ersatz-string
+           (funcall ma (length object)
+                    :element-type 'character
+                    :initial-contents
+                    (coerce object 'list))))
+    (multiple-value-bind (pointer rack-address class-item)
+        (allocate-ersatz-object ersatz-string)
+      (setf (gethash object *host-object-to-pointer-table*) pointer)
+      (cons class-item
+            (handle-ersatz-object ersatz-string
+                                  (slot-value ersatz-string '%rack)
+                                  rack-address)))))
+
 (defun obsolete-compute-pointer (object)
   (typecase object
     ((integer 0 #.(1- (expt 2 62)))
