@@ -83,19 +83,3 @@
            but the following was given instead:~@
            ~s"
           (clause condition)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Conditions used at runtime
-
-(defmethod acclimation:report-condition ((condition ctypecase-type-error)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "No key matched in ctypecase expression.~@
-           Offending datum:~@
-           ~s~@
-           Offending type:~@
-           ~s"
-          (type-error-datum condition)
-          (type-error-expected-type condition)))
