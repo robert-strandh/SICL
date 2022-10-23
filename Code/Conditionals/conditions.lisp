@@ -44,8 +44,7 @@
 ;;;
 ;;; Conditions used at runtime
 
-(define-condition ecase-type-error
-    (type-error acclimation:condition)
+(define-condition ecase-type-error (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
@@ -57,8 +56,7 @@
                      (type-error-datum condition)
                      (type-error-expected-type condition)))))
 
-(define-condition ccase-type-error
-    (type-error acclimation:condition)
+(define-condition ccase-type-error (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
@@ -70,8 +68,7 @@
                      (type-error-datum condition)
                      (type-error-expected-type condition)))))
 
-(define-condition etypecase-type-error
-    (type-error acclimation:condition)
+(define-condition etypecase-type-error (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
@@ -83,8 +80,7 @@
                      (type-error-datum condition)
                      (type-error-expected-type condition)))))
 
-(define-condition ctypecase-type-error
-    (type-error acclimation:condition)
+(define-condition ctypecase-type-error (type-error)
   ()
   (:report (lambda (condition stream)
              (format stream
