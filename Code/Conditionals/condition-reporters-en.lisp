@@ -88,18 +88,6 @@
 ;;;
 ;;; Conditions used at runtime
 
-(defmethod acclimation:report-condition ((condition ecase-type-error)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "No key matched in ecase expression.~@
-           Offending datum:~@
-           ~s~@
-           Offending type:~@
-           ~s"
-          (type-error-datum condition)
-          (type-error-expected-type condition)))
-
 (defmethod acclimation:report-condition ((condition ccase-type-error)
                                           stream
                                           (language acclimation:english))

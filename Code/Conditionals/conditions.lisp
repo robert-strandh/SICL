@@ -46,7 +46,16 @@
 
 (define-condition ecase-type-error
     (type-error acclimation:condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "No key matched in ecase expression.~@
+                      Offending datum:~@
+                      ~s~@
+                      Offending type:~@
+                     ~s"
+                     (type-error-datum condition)
+                     (type-error-expected-type condition)))))
 
 (define-condition ccase-type-error
     (type-error acclimation:condition)
