@@ -131,6 +131,22 @@
                                   (slot-value ersatz-symbol '%rack)
                                   rack-address)))))
 
+(defmethod compute-pointer ((object sicl-compiler:code-object))
+  (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
+         (ersatz-code-object
+           (funcall mi 'sicl-compiler:code-object
+                    :instructions (sicl-compiler:instructions object)
+                    :literals (sicl-compiler:literals object)
+                    :call-sites (sicl-compiler:call-sites object)
+                    :function-names (sicl-compiler:function-names object))))
+    (multiple-value-bind (pointer rack-address class-item)
+        (allocate-ersatz-object ersatz-code-object)
+      (setf (gethash object *host-object-to-pointer-table*) pointer)
+      (cons class-item
+            (handle-ersatz-object ersatz-code-object
+                                  (slot-value ersatz-code-object '%rack)
+                                  rack-address)))))
+
 (defun obsolete-compute-pointer (object)
   (typecase object
     ((integer 0 #.(1- (expt 2 62)))
