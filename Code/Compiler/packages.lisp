@@ -8,6 +8,7 @@
            #:code-object
            #:instructions
            #:literals
+           #:call-sites
            #:ensure-literal
            #:establish-call-site
            #:function-names
