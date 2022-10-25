@@ -24,11 +24,8 @@
   (let ((*package* (find-package '#:keyword)))
     (pprint-logical-block (stream nil :prefix "[" :suffix "]")
       (format stream "~s ~2i" (class-name (class-of obj)))
-      (loop for info in (reverse (save-info obj))
-            do (format stream
-                       "~_~s ~_~W "
-                       (car info)
-                       (funcall (cadr info) obj))))))
+      (loop for (initarg reader) in (reverse (save-info obj))
+            do (format stream "~_~s ~_~W " initarg (funcall reader obj))))))
 
 (defmacro define-save-info (type &body save-info)
   `(progn
