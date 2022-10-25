@@ -24,6 +24,16 @@
 
 (defclass cloneable-mixin () ())
 
+(defmethod print-object ((object cloneable-mixin) stream)
+  (if *print-readably*
+      (let ((*package* (find-package '#:keyword)))
+        (pprint-logical-block (stream nil :prefix "[" :suffix "]")
+          (format stream "~s ~2i" (class-name (class-of object)))
+          (loop for (initarg reader) in (reverse (save-info object))
+                do (format stream "~_~s ~_~W "
+                           initarg (funcall reader object)))))
+      (call-next-method)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Printer programming.
