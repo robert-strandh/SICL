@@ -15,6 +15,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class CLONEABLE-MIXIN
+;;;
+;;; This class can be used as a superclass of classes with instances
+;;; that need to be serialized.  We provide a method on PRINT-OBJECT
+;;; specialized to this class that prints an instance in a way that it
+;;; can be read back in to create a similar object.
+
+(defclass cloneable-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Printer programming.
 
 (defgeneric save-info (object)
