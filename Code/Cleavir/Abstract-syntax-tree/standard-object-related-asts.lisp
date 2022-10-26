@@ -11,7 +11,7 @@
 (defclass standard-object-p-ast (ast boolean-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)))
 
-(cleavir-io:define-save-info standard-object-p-ast
+(clonedijk:define-clone-information standard-object-p-ast
   (:object-ast object-ast))
 
 (defmethod children ((ast standard-object-p-ast))
@@ -28,7 +28,7 @@
   ((%standard-object-ast :initarg :standard-object-ast
                          :reader standard-object-ast)))
 
-(cleavir-io:define-save-info standard-object-class-of-ast
+(clonedijk:define-clone-information standard-object-class-of-ast
   (:standard-object-ast standard-object-ast))
 
 (defmethod children ((ast standard-object-class-of-ast))
@@ -48,7 +48,7 @@
   ((%object-ast :initarg :object-ast :reader object-ast)
    (%nook-number-ast :initarg :nook-number-ast :reader nook-number-ast)))
 
-(cleavir-io:define-save-info nook-read-ast
+(clonedijk:define-clone-information nook-read-ast
   (:object-ast object-ast)
   (:nook-number-ast nook-number-ast))
 
@@ -72,7 +72,7 @@
    (%nook-number-ast :initarg :nook-number-ast :reader nook-number-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(cleavir-io:define-save-info nook-write-ast
+(clonedijk:define-clone-information nook-write-ast
   (:object-ast object-ast)
   (:nook-number-ast nook-number-ast)
   (:value-ast value-ast))

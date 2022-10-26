@@ -7,7 +7,7 @@
    (%line-index :initarg :line-index :reader line-index)
    (%character-index :initarg :character-index :reader character-index)))
 
-(cleavir-io:define-save-info source-position
+(clonedijk:define-clone-information source-position
   (:lines lines)
   (:line-index line-index)
   (:character-index character-index))

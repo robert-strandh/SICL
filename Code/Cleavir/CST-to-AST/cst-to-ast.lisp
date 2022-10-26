@@ -3,7 +3,7 @@
 (stealth-mixin:define-stealth-mixin ast-mixin () cleavir-ast:ast
   ((%origin :initform *origin* :initarg :origin :reader origin)))
 
-(cleavir-io:define-save-info ast-mixin
+(clonedijk:define-clone-information ast-mixin
   (:origin origin))
 
 (defun cst-to-ast (client cst environment &key file-compilation-semantics)

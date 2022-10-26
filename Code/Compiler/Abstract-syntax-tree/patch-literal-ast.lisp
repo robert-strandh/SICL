@@ -22,7 +22,7 @@
     :reader literals-vector-index-ast)
    (%literal-cell :initarg :literal-cell :reader literal-cell)))
 
-(cleavir-io:define-save-info patch-literal-ast
+(clonedijk:define-clone-information patch-literal-ast
   (:literal-ast literal-ast)
   (:code-vector-index-ast code-vector-index-ast)
   (:literals-vector-index-ast literals-vector-index-ast)

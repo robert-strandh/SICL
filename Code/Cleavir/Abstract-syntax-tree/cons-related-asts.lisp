@@ -10,7 +10,7 @@
 (defclass consp-ast (ast boolean-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)))
 
-(cleavir-io:define-save-info consp-ast
+(clonedijk:define-clone-information consp-ast
   (:object-ast object-ast))
 
 (defmethod children ((ast consp-ast))
@@ -27,7 +27,7 @@
 (defclass car-ast (ast one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
-(cleavir-io:define-save-info car-ast
+(clonedijk:define-clone-information car-ast
   (:cons-ast cons-ast))
 
 (defmethod children ((ast car-ast))
@@ -44,7 +44,7 @@
 (defclass cdr-ast (ast one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
-(cleavir-io:define-save-info cdr-ast
+(clonedijk:define-clone-information cdr-ast
   (:cons-ast cons-ast))
 
 (defmethod children ((ast cdr-ast))
@@ -64,7 +64,7 @@
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
 
-(cleavir-io:define-save-info rplaca-ast
+(clonedijk:define-clone-information rplaca-ast
   (:cons-ast cons-ast)
   (:object-ast object-ast))
 
@@ -85,7 +85,7 @@
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
 
-(cleavir-io:define-save-info rplacd-ast
+(clonedijk:define-clone-information rplacd-ast
   (:cons-ast cons-ast)
   (:object-ast object-ast))
 

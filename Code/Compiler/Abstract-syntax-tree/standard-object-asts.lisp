@@ -12,7 +12,7 @@
     :initarg :standard-object-ast
     :reader standard-object-ast)))
 
-(cleavir-io:define-save-info rack-ast
+(clonedijk:define-clone-information rack-ast
   (:standard-object-ast standard-object-ast))
 
 (defmethod cleavir-ast:children ((ast rack-ast))
@@ -36,7 +36,7 @@
     :reader standard-object-ast)
    (%rack-ast :initarg :rack-ast :reader rack-ast)))
 
-(cleavir-io:define-save-info set-rack-ast
+(clonedijk:define-clone-information set-rack-ast
   (:standard-object-ast standard-object-ast)
   (:rack-ast rack-ast))
 

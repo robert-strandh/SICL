@@ -8,7 +8,7 @@
     (cleavir-ast:ast cleavir-ast:one-value-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)))
 
-(cleavir-io:define-save-info object-to-fixnum-ast
+(clonedijk:define-clone-information object-to-fixnum-ast
   (:object-ast object-ast))
 
 (defmethod cleavir-ast:children ((ast object-to-fixnum-ast))
@@ -47,7 +47,7 @@
     (cleavir-ast:ast cleavir-ast:one-value-ast-mixin)
   ((%fixnum-ast :initarg :fixnum-ast :reader fixnum-ast)))
 
-(cleavir-io:define-save-info fixnum-to-object-ast
+(clonedijk:define-clone-information fixnum-to-object-ast
   (:fixnum-ast fixnum-ast))
 
 (defmethod cleavir-ast:children ((ast fixnum-to-object-ast))

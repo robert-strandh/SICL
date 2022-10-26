@@ -14,7 +14,7 @@
 (defclass fixnump-ast (ast boolean-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)))
 
-(cleavir-io:define-save-info fixnump-ast
+(clonedijk:define-clone-information fixnump-ast
   (:object-ast object-ast))
 
 (defmethod children ((ast fixnump-ast))
@@ -44,7 +44,7 @@
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
-(cleavir-io:define-save-info fixnum-add-ast
+(clonedijk:define-clone-information fixnum-add-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast)
   (:variable-ast variable-ast))
@@ -72,7 +72,7 @@
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
-(cleavir-io:define-save-info fixnum-sub-ast
+(clonedijk:define-clone-information fixnum-sub-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast)
   (:variable-ast variable-ast))
@@ -98,7 +98,7 @@
   ((%multiplier-ast :initarg :multiplier-ast :reader multiplier-ast)
    (%multiplicand-ast :initarg :multiplicand-ast :reader multiplicand-ast)))
 
-(cleavir-io:define-save-info fixnum-multiply-ast
+(clonedijk:define-clone-information fixnum-multiply-ast
   (:multiplier-ast multiplier-ast)
   (:multiplicand-ast multiplicand-ast))
 
@@ -123,7 +123,7 @@
   ((%dividend-ast :initarg :dividend-ast :reader dividend-ast)
    (%divisor-ast :initarg :divisor-ast :reader divisor-ast)))
 
-(cleavir-io:define-save-info fixnum-divide-ast
+(clonedijk:define-clone-information fixnum-divide-ast
   (:dividend-ast dividend-ast)
   (:divisor-ast divisor-ast))
 
@@ -140,7 +140,7 @@
        ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
         (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-     (cleavir-io:define-save-info ,name
+     (clonedijk:define-clone-information ,name
        (:arg1-ast arg1-ast)
        (:arg2-ast arg2-ast))
 
@@ -215,7 +215,7 @@
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(cleavir-io:define-save-info fixnum-logand-ast
+(clonedijk:define-clone-information fixnum-logand-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
@@ -234,7 +234,7 @@
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(cleavir-io:define-save-info fixnum-logior-ast
+(clonedijk:define-clone-information fixnum-logior-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
@@ -253,7 +253,7 @@
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(cleavir-io:define-save-info fixnum-logxor-ast
+(clonedijk:define-clone-information fixnum-logxor-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
@@ -271,7 +271,7 @@
 (defclass fixnum-lognot-ast (ast one-value-ast-mixin)
   ((%arg-ast :initarg :arg-ast :reader arg-ast)))
 
-(cleavir-io:define-save-info fixnum-lognot-ast
+(clonedijk:define-clone-information fixnum-lognot-ast
   (:arg-ast arg-ast))
 
 (defmethod children ((ast fixnum-lognot-ast))

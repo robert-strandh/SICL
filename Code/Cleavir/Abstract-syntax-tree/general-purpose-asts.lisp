@@ -49,7 +49,7 @@
                         side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
-(cleavir-io:define-save-info literal-ast
+(clonedijk:define-clone-information literal-ast
   (:value value))
 
 (defmethod children ((ast literal-ast))
@@ -67,7 +67,7 @@
     (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%location-info :initarg :location-info :accessor location-info)))
 
-(cleavir-io:define-save-info load-literal-ast
+(clonedijk:define-clone-information load-literal-ast
   (:location-info location-info))
 
 (defmethod children ((ast load-literal-ast))
@@ -87,7 +87,7 @@
                        side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
 
-(cleavir-io:define-save-info lexical-ast
+(clonedijk:define-clone-information lexical-ast
   (:name name))
 
 (defmethod children ((ast lexical-ast))
@@ -104,7 +104,7 @@
     (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name-ast :initarg :name-ast :reader name-ast)))
 
-(cleavir-io:define-save-info symbol-value-ast
+(clonedijk:define-clone-information symbol-value-ast
   (:name-ast name-ast))
 
 (defmethod children ((ast symbol-value-ast))
@@ -118,7 +118,7 @@
   ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(cleavir-io:define-save-info set-symbol-value-ast
+(clonedijk:define-clone-information set-symbol-value-ast
   (:name-ast name-ast)
   (:value-ast value-ast))
 
@@ -136,7 +136,7 @@
   (;; This slot contains an AST that produces the function name.
    (%name-ast :initarg :name-ast :reader name-ast)))
 
-(cleavir-io:define-save-info fdefinition-ast
+(clonedijk:define-clone-information fdefinition-ast
   (:name-ast name-ast))
 
 (defmethod children ((ast fdefinition-ast))
@@ -150,7 +150,7 @@
   ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(cleavir-io:define-save-info set-fdefinition-ast
+(clonedijk:define-clone-information set-fdefinition-ast
   (:name-ast name-ast)
   (:value-ast value-ast))
 
@@ -167,7 +167,7 @@
   ((%callee-ast :initarg :callee-ast :reader callee-ast)
    (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
-(cleavir-io:define-save-info call-ast
+(clonedijk:define-clone-information call-ast
   (:callee-ast callee-ast)
   (:argument-asts argument-asts))
 
@@ -189,7 +189,7 @@
   ((%callee-name :initarg :callee-name :reader callee-name)
    (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
-(cleavir-io:define-save-info named-call-ast
+(clonedijk:define-clone-information named-call-ast
   (:callee-name callee-name)
   (:argument-asts argument-asts))
 
@@ -244,7 +244,7 @@
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(cleavir-io:define-save-info function-ast
+(clonedijk:define-clone-information function-ast
   (:lambda-list lambda-list)
   (:body-ast body-ast))
 
@@ -267,7 +267,7 @@
 (defclass progn-ast (ast)
   ((%form-asts :initarg :form-asts :accessor form-asts)))
 
-(cleavir-io:define-save-info progn-ast
+(clonedijk:define-clone-information progn-ast
   (:form-asts form-asts))
 
 (defmethod children ((ast progn-ast))
@@ -281,7 +281,7 @@
   ;; FIXME: make this read-only and use REINITIALIZE-INSTANCE instead.
   ((%body-ast :initarg :body-ast :accessor body-ast)))
 
-(cleavir-io:define-save-info block-ast
+(clonedijk:define-clone-information block-ast
   (:body-ast body-ast))
 
 (defmethod children ((ast block-ast))
@@ -295,7 +295,7 @@
   ((%block-ast :initarg :block-ast :reader block-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(cleavir-io:define-save-info return-from-ast
+(clonedijk:define-clone-information return-from-ast
   (:block-ast block-ast)
   (:form-ast form-ast))
 
@@ -313,7 +313,7 @@
   ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(cleavir-io:define-save-info setq-ast
+(clonedijk:define-clone-information setq-ast
   (:lhs-ast lhs-ast)
   (:value-ast value-ast))
 
@@ -341,7 +341,7 @@
   ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(cleavir-io:define-save-info multiple-value-setq-ast
+(clonedijk:define-clone-information multiple-value-setq-ast
   (:lhs-asts lhs-asts)
   (:form-ast form-ast))
 
@@ -361,7 +361,7 @@
     :reader lexical-variable-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(cleavir-io:define-save-info lexical-bind-ast
+(clonedijk:define-clone-information lexical-bind-ast
   (:lexical-variable-ast lexical-variable-ast)
   (:value-ast value-ast))
 
@@ -375,7 +375,7 @@
 (defclass tag-ast (ast)
   ((%name :initarg :name :reader name)))
 
-(cleavir-io:define-save-info tag-ast
+(clonedijk:define-clone-information tag-ast
   (:name name))
 
 (defmethod children ((ast tag-ast))
@@ -389,7 +389,7 @@
 (defclass tagbody-ast (ast no-value-ast-mixin)
   ((%item-asts :initarg :item-asts :reader item-asts)))
 
-(cleavir-io:define-save-info tagbody-ast
+(clonedijk:define-clone-information tagbody-ast
   (:item-asts item-asts))
 
 (defmethod children ((ast tagbody-ast))
@@ -402,7 +402,7 @@
 (defclass go-ast (ast)
   ((%tag-ast :initarg :tag-ast :reader tag-ast)))
 
-(cleavir-io:define-save-info go-ast
+(clonedijk:define-clone-information go-ast
   (:tag-ast tag-ast))
 
 (defmethod children ((ast go-ast))
@@ -438,7 +438,7 @@
    (%throw-function-ast :initarg :throw-function-ast :reader throw-function-ast)
    (%body-ast :initarg :body-ast :accessor body-ast)))
 
-(cleavir-io:define-save-info catch-ast
+(clonedijk:define-clone-information catch-ast
   (:tag-ast tag-ast)
   (:throw-function-ast throw-function-ast)
   (:body-ast body-ast))
@@ -465,7 +465,7 @@
    (%optional-types :initarg :optional :reader optional-types)
    (%rest-type :initarg :rest :reader rest-type)))
 
-(cleavir-io:define-save-info the-ast
+(clonedijk:define-clone-information the-ast
   (:form-ast form-ast)
   (:required required-types)
   (:optional optional-types)
@@ -540,7 +540,7 @@
 ;;        :type-specifier-ast value))
 ;;     value))
 
-(cleavir-io:define-save-info typeq-ast
+(clonedijk:define-clone-information typeq-ast
   (:type-specifier type-specifier)
   (:form-ast form-ast))
 
@@ -564,7 +564,7 @@
 
 ;;; Even though READ-ONLY-P is not a child of the AST, it needs to be
 ;;; saved when the AST is saved. 
-(cleavir-io:define-save-info load-time-value-ast
+(clonedijk:define-clone-information load-time-value-ast
   (:form-ast form-ast)
   (:read-only-p read-only-p))
 
@@ -584,7 +584,7 @@
    (%then-ast :initarg :then-ast :reader then-ast)
    (%else-ast :initarg :else-ast :reader else-ast)))
 
-(cleavir-io:define-save-info if-ast
+(clonedijk:define-clone-information if-ast
   (:test-ast test-ast)
   (:then-ast then-ast)
   (:else-ast else-ast))
@@ -600,7 +600,7 @@
   ((%function-form-ast :initarg :function-form-ast :reader function-form-ast)
    (%form-asts :initarg :form-asts :reader form-asts)))
 
-(cleavir-io:define-save-info multiple-value-call-ast
+(clonedijk:define-clone-information multiple-value-call-ast
   (:function-form-ast function-form-ast)
   (:form-asts form-asts))
 
@@ -617,7 +617,7 @@
 (defclass values-ast (ast)
   ((%argument-asts :initarg :argument-asts :reader argument-asts)))
 
-(cleavir-io:define-save-info values-ast
+(clonedijk:define-clone-information values-ast
   (:argument-asts argument-asts))
 
 (defmethod children ((ast values-ast))
@@ -632,7 +632,7 @@
    ;; A list of ASTs
    (%form-asts :initarg :form-asts :reader form-asts)))
 
-(cleavir-io:define-save-info multiple-value-prog1-ast
+(clonedijk:define-clone-information multiple-value-prog1-ast
   (:first-form-ast first-form-ast)
   (:form-asts form-asts))
 
@@ -655,7 +655,7 @@
 (defclass dynamic-allocation-ast (ast one-value-ast-mixin)
   ((%form-ast :initarg :form-ast :reader form-ast)))
 
-(cleavir-io:define-save-info dynamic-allocation-ast
+(clonedijk:define-clone-information dynamic-allocation-ast
   (:form-ast form-ast))
 
 (defmethod children ((ast dynamic-allocation-ast))
@@ -687,7 +687,7 @@
    (%value-ast :initarg :value-ast :reader value-ast)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(cleavir-io:define-save-info bind-ast
+(clonedijk:define-clone-information bind-ast
   (:name-ast name-ast)
   (:value-ast value-ast)
   (:body-ast body-ast))
@@ -708,7 +708,7 @@
   ((%protected-form-ast :initarg :protected-form-ast :reader protected-form-ast)
    (%cleanup-thunk-ast :initarg :cleanup-thunk-ast :reader cleanup-thunk-ast)))
 
-(cleavir-io:define-save-info unwind-protect-ast
+(clonedijk:define-clone-information unwind-protect-ast
   (:protected-form-ast protected-form-ast)
   (:cleanup-thunk-ast cleanup-thunk-ast))
 
@@ -727,7 +727,7 @@
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(cleavir-io:define-save-info eq-ast
+(clonedijk:define-clone-information eq-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 

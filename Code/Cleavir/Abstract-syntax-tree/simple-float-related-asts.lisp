@@ -11,7 +11,7 @@
 (defclass single-float-p-ast (ast boolean-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)))
 
-(cleavir-io:define-save-info single-float-p-ast
+(clonedijk:define-clone-information single-float-p-ast
   (:object-ast object-ast))
 
 (defmethod children ((ast single-float-p-ast))
@@ -23,7 +23,7 @@
        ((%subtype :initarg :subtype :reader subtype)
         (%arg-ast :initarg :arg-ast :reader arg-ast)))
 
-     (cleavir-io:define-save-info ,name
+     (clonedijk:define-clone-information ,name
        (:subtype subtype)
        (:arg-ast arg-ast))
 
@@ -37,7 +37,7 @@
         (%arg1-ast :initarg :arg1-ast :reader arg1-ast)
         (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-     (cleavir-io:define-save-info ,name
+     (clonedijk:define-clone-information ,name
        (:subtype subtype)
        (:arg1-ast arg1-ast)
        (:arg2-ast arg2-ast))
@@ -52,7 +52,7 @@
         (%arg1-ast :initarg :arg1-ast :reader arg1-ast)
         (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-     (cleavir-io:define-save-info ,name
+     (clonedijk:define-clone-information ,name
        (:subtype subtype)
        (:arg1-ast arg1-ast)
        (:arg2-ast arg2-ast))
@@ -228,7 +228,7 @@
    (%to-type :initarg :to :reader to-type)
    (%arg-ast :initarg :arg-ast :reader arg-ast)))
 
-(cleavir-io:define-save-info coerce-ast
+(clonedijk:define-clone-information coerce-ast
   (:from from-type)
   (:to to-type)
   (:arg-ast arg-ast))

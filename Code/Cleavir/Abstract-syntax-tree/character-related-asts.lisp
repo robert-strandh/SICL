@@ -11,7 +11,7 @@
 (defclass characterp-ast (ast boolean-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)))
 
-(cleavir-io:define-save-info characterp-ast
+(clonedijk:define-clone-information characterp-ast
   (:object-ast object-ast))
 
 (defmethod children ((ast characterp-ast))
@@ -26,7 +26,7 @@
 (defclass char-code-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%char-ast :initarg :char-ast :reader char-ast)))
 
-(cleavir-io:define-save-info char-code-ast
+(clonedijk:define-clone-information char-code-ast
   (:char-ast char-ast))
 
 (defmethod children ((ast char-code-ast))
@@ -41,7 +41,7 @@
 (defclass code-char-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%code-ast :initarg :code-ast :reader code-ast)))
 
-(cleavir-io:define-save-info code-char-ast
+(clonedijk:define-clone-information code-char-ast
   (:code-ast code-ast))
 
 (defmethod children ((ast code-char-ast))

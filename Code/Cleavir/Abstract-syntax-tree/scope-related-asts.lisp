@@ -20,6 +20,6 @@
   ((%child-ast :initarg :child-ast :reader child-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
-(cleavir-io:define-save-info scope-ast
+(clonedijk:define-clone-information scope-ast
   (:child-ast child-ast)
   (:variable-ast variable-ast))

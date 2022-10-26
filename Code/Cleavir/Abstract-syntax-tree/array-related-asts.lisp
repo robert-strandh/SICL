@@ -20,7 +20,7 @@
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))
 
-(cleavir-io:define-save-info aref-ast
+(clonedijk:define-clone-information aref-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:element-type element-type)
@@ -53,7 +53,7 @@
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))
 
-(cleavir-io:define-save-info aset-ast
+(clonedijk:define-clone-information aset-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:element-ast element-ast)
