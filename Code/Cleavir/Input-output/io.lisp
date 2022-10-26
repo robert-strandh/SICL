@@ -37,17 +37,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Printer programming.
-
-(defgeneric save-info (object)
-  (:method-combination append :most-specific-last))
-
-(defmacro define-save-info (type &body save-info)
-  `(defmethod save-info append ((obj ,type))
-     ',save-info))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; I/O.
 
 (define-condition model-condition (error) ())
