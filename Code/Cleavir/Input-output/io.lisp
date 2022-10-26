@@ -41,23 +41,9 @@
 (defgeneric save-info (object)
   (:method-combination append :most-specific-last))
 
-(defun print-model-object (obj stream)
-  (let ((*package* (find-package '#:keyword)))
-    (pprint-logical-block (stream nil :prefix "[" :suffix "]")
-      (format stream "~s ~2i" (class-name (class-of obj)))
-      (loop for (initarg reader) in (reverse (save-info obj))
-            do (format stream "~_~s ~_~W " initarg (funcall reader obj))))))
-
 (defmacro define-save-info (type &body save-info)
-  `(progn
-
-     (defmethod print-object ((obj ,type) stream)
-       (if *print-readably*
-           (print-model-object obj stream)
-           (call-next-method)))
-
-     (defmethod save-info append ((obj ,type))
-       ',save-info)))
+  `(defmethod save-info append ((obj ,type))
+     ',save-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
