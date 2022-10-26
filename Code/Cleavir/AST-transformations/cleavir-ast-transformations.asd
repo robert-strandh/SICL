@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir-ast-transformations
-  :depends-on (#:cleavir-ast)
+  :depends-on (#:cleavir-ast
+               #:clonedijk)
   :serial t
   :components
   ((:file "packages")
