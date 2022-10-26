@@ -56,7 +56,8 @@
 (defun finalize (ast model dictionary)
   (apply #'reinitialize-instance
          ast
-         (loop for (keyword reader) in (cleavir-io:save-info model)
+         (loop for (keyword reader)
+                 in (clonedijk:clone-information model)
                for value = (funcall reader model)
                collect keyword
                collect (finalize-substructure value dictionary))))
@@ -103,7 +104,8 @@
 (defun codegen-finalize (model dictionary)
   `(reinitialize-instance
     ,(gethash  model dictionary)
-    ,@(loop for (keyword reader) in (cleavir-io:save-info model)
+     ,@(loop for (keyword reader)
+               in (clonedijk:clone-information model)
             for value = (funcall reader model)
             collect keyword
             collect (codegen-finalize-substructure value dictionary))))

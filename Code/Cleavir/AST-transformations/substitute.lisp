@@ -10,7 +10,8 @@
 ;;; individual child in its own slot.  It does not work for AST
 ;;; classes with a variable number of children stored in a list.
 (defmethod substitute-ast (new old (parent cleavir-ast:ast))
-  (loop for (initarg slot-reader) in (cleavir-io:save-info parent)
+  (loop for (initarg slot-reader)
+          in (clonedijk:clone-information parent)
         when (eq old (funcall slot-reader parent))
           do (reinitialize-instance parent initarg new)
              (loop-finish)

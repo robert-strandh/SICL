@@ -22,7 +22,8 @@
      ast)
     (cleavir-ast:map-ast-depth-first-preorder
      (lambda (node)
-       (loop for (keyword reader) in (cleavir-io:save-info node)
+       (loop for (keyword reader)
+               in (clonedijk:clone-information node)
              for value = (funcall reader node)
              for replacement = (gethash value dictionary)
              unless (null replacement)
