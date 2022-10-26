@@ -21,7 +21,7 @@
 ;;;
 ;;; Class AST.  The base class for all AST classes.
 
-(defclass ast ()
+(defclass ast (cleavir-io:cloneable-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
