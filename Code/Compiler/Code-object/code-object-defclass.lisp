@@ -121,7 +121,7 @@
 (defgeneric (setf function-names) (function-names code-object))
 
 (defclass code-object ()
-  ((%instructions :initform '() :accessor instructions)
+  ((%instructions :initform '() :initarg :instructions :accessor instructions)
    (%literals :initarg :literals :reader literals)
    ;; This slot contains a list of instances of the CALL-SITE class.
    (%call-sites :initarg :call-sites :accessor call-sites)
