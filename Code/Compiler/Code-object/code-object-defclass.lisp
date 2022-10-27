@@ -129,3 +129,9 @@
     :initform '()
     :initarg :function-names
     :accessor function-names)))
+
+(clonedijk:define-clone-information code-object
+  (:instructions instructions)
+  (:literals literals)
+  (:call-sites call-sites)
+  (:function-names function-names))
