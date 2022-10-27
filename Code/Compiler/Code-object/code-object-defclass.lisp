@@ -106,6 +106,14 @@
    ;; accessible.
    (%live-arguments :initarg :live-arguments :accessor live-arguments)))
 
+(clonedijk:define-clone-information call-site
+  (:name name)
+  (:trace-map trace-map)
+  (:code code)
+  (:offset offset)
+  (:origin origin)
+  (:arguments arguments))
+
 (defgeneric instructions (code-object))
 
 (defgeneric (setf instructions) (instructions code-object))
