@@ -15,6 +15,5 @@
     (ld "Package/package-defclass.lisp")
     (ensure-asdf-system '#:sicl-arithmetic-load-time ea)
     (ld "Character/character-defclass.lisp")
-    (ld "Compiler/Code-object/code-object-defclass.lisp")
     (ld "Random/random-state-defclass.lisp")
     (ld "Boot/host-classes.lisp")))
