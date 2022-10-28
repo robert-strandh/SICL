@@ -117,6 +117,22 @@
                                   (slot-value ersatz-string '%rack)
                                   rack-address)))))
 
+(defun compute-pointer-to-clonable-object (clonable-object name)
+  (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
+         (ersatz-object
+           (apply mi name
+                  (loop for (initarg reader)
+                          in (clonedijk:clone-information clonable-object)
+                        collect initarg
+                        collect (funcall reader clonable-object)))))
+    (multiple-value-bind (pointer rack-address class-item)
+        (allocate-ersatz-object ersatz-object)
+      (setf (gethash clonable-object *host-object-to-pointer-table*) pointer)
+      (cons class-item
+            (handle-ersatz-object ersatz-object
+                                  (slot-value ersatz-object '%rack)
+                                  rack-address)))))
+
 (defmethod compute-pointer ((object symbol))
   (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
          (ersatz-symbol
