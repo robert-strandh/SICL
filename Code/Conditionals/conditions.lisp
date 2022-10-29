@@ -16,7 +16,13 @@
      
 (define-condition malformed-cond-clauses
     (program-error acclimation:condition)
-  ((%clauses :initarg :clauses :reader clauses)))
+  ((%clauses :initarg :clauses :reader clauses))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Expected a proper list of cond clauses,~@
+                      but the following was given instead:~@
+                      ~s"
+                     (clauses condition)))))
      
 (define-condition malformed-cond-clause
     (program-error acclimation:condition)

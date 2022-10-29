@@ -1,14 +1,5 @@
 (cl:in-package :sicl-conditionals)
 
-(defmethod acclimation:report-condition ((condition malformed-cond-clauses)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "Expected a proper list of cond clauses,~@
-           but the following was given instead:~@
-           ~s"
-          (clauses condition)))
-
 (defmethod acclimation:report-condition ((condition malformed-cond-clause)
                                           stream
                                           (language acclimation:english))
