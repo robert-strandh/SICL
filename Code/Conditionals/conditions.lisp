@@ -6,7 +6,13 @@
 
 (define-condition malformed-body
     (program-error acclimation:condition)
-  ((%body :initarg :body :reader body)))
+  ((%body :initarg :body :reader body))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Expected a proper list of forms,~@
+                      but the following was given instead:~@
+                      ~s"
+                     (body condition)))))
      
 (define-condition malformed-cond-clauses
     (program-error acclimation:condition)

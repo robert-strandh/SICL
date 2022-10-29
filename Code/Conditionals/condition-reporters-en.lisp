@@ -1,14 +1,5 @@
 (cl:in-package :sicl-conditionals)
 
-(defmethod acclimation:report-condition ((condition malformed-body)
-                                          stream
-                                          (language acclimation:english))
-  (format stream
-          "Expected a proper list of forms,~@
-           but the following was given instead:~@
-           ~s"
-          (body condition)))
-
 (defmethod acclimation:report-condition ((condition malformed-cond-clauses)
                                           stream
                                           (language acclimation:english))
