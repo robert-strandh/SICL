@@ -147,6 +147,34 @@
                                   (slot-value ersatz-symbol '%rack)
                                   rack-address)))))
 
+(defmethod compute-pointer ((object package))
+  (let ((external-symbols '())
+        (internal-symbols '()))
+    (do-symbols (symbol object)
+      (multiple-value-bind (symbol status)
+          (find-symbol (symbol-name symbol) object)
+        (case status
+          (:internal (push symbol internal-symbols))
+          (:external (push symbol external-symbols)))))
+    (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
+           (ersatz-package
+             (funcall mi 'package
+                      :name (package-name object)
+                      :nicknames (package-nicknames object)
+                      :use-list (package-use-list object)
+                      :used-by-list (package-used-by-list object)
+                      :external-symbols external-symbols
+                      :internal-symbols internal-symbols
+                      :shadowing-symbols
+                      (package-shadowing-symbols object))))
+      (multiple-value-bind (pointer rack-address class-item)
+          (allocate-ersatz-object ersatz-package)
+      (setf (gethash object *host-object-to-pointer-table*) pointer)
+      (cons class-item
+            (handle-ersatz-object ersatz-package
+                                  (slot-value ersatz-package '%rack)
+                                  rack-address))))))
+
 (defmethod compute-pointer ((object sicl-compiler:code-object))
   (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
          (ersatz-code-object
