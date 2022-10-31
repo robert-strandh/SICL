@@ -139,9 +139,8 @@
         (allocate-ersatz-object ersatz-object)
       (setf (gethash clonable-object *host-object-to-pointer-table*) pointer)
       (cons class-item
-            (handle-ersatz-object ersatz-object
-                                  (slot-value ersatz-object '%rack)
-                                  rack-address)))))
+            (handle-unspecialized-rack
+             (slot-value ersatz-object '%rack) rack-address)))))
 
 (defmethod compute-pointer ((object symbol))
   (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
