@@ -23,6 +23,17 @@
             (+ 32 position)
             #xfffd)))) ; U+FFFD REPLACEMENT CHARACTER
 
+
+;;; RACK has been allocated in the simulated heap.  RACK-ADDRESS is
+;;; the address in the simulated heap of the rack.  This function
+;;; creates work-list items for every entry in the rack.  This action
+;;; is valid for all ersatz objects except specialized arrays with
+;;; unboxed contents.
+(defun handle-unspecialized-rack (rack rack-address)
+  (loop for address from rack-address by 8
+        for object across rack
+        collect (cons address object)))
+
 ;;; Both HEADER and RACK have been allocated in the simulated heap.
 ;;; RACK-ADDRESS is the address in the simulated heap of the rack.
 ;;; This function creates work-list items for the mandatory prefix of
