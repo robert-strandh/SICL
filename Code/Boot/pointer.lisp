@@ -152,9 +152,8 @@
         (allocate-ersatz-object ersatz-symbol)
       (setf (gethash object *host-object-to-pointer-table*) pointer)
       (cons class-item
-            (handle-ersatz-object ersatz-symbol
-                                  (slot-value ersatz-symbol '%rack)
-                                  rack-address)))))
+            (handle-unspecialized-rack
+             (slot-value ersatz-symbol '%rack) rack-address)))))
 
 (defmethod compute-pointer ((object package))
   (let ((external-symbols '())
@@ -180,9 +179,8 @@
           (allocate-ersatz-object ersatz-package)
       (setf (gethash object *host-object-to-pointer-table*) pointer)
       (cons class-item
-            (handle-ersatz-object ersatz-package
-                                  (slot-value ersatz-package '%rack)
-                                  rack-address))))))
+            (handle-unspecialized-rack
+             (slot-value ersatz-package '%rack) rack-address))))))
 
 (defmethod compute-pointer ((object sicl-compiler:code-object))
   (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
@@ -196,9 +194,8 @@
         (allocate-ersatz-object ersatz-code-object)
       (setf (gethash object *host-object-to-pointer-table*) pointer)
       (cons class-item
-            (handle-ersatz-object ersatz-code-object
-                                  (slot-value ersatz-code-object '%rack)
-                                  rack-address)))))
+            (handle-unspecialized-rack
+             (slot-value ersatz-code-object '%rack) rack-address)))))
 
 (defun write-pointer-to-address (address pointer)
   (setf (sicl-memory:memory-unsigned address 64)
