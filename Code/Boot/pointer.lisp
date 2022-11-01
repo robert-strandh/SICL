@@ -108,10 +108,67 @@
   (multiple-value-bind (pointer rack-address class-item)
       (allocate-ersatz-object object)
     (setf (gethash object *host-object-to-pointer-table*) pointer)
-    (cons class-item
-          (handle-ersatz-object object
-                                (slot-value object '%rack)
-                                rack-address))))
+    (let ((class (slot-value object '%class))
+          (rack (slot-value object '%rack))
+          (find-class (env:fdefinition (env:client *e5*) *e5* 'find-class)))
+      (cond ((eq class (funcall find-class 'sicl-array:vector-unsigned-byte-8))
+             ;; The rack contains octets packed so that there are 8
+             ;; octets per rack element.  We start by transferring
+             ;; those 64-bit words directly to simulated memory.  We
+             ;; skip the 3 first elements which must be processed as
+             ;; objects.
+             (loop for index from 3 below (length rack)
+                   for address from (+ rack-address 24) by 8
+                   do (setf (sicl-memory:memory-unsigned address 64)
+                            (aref rack index)))
+             (list class-item
+                   (cons rack-address (aref rack 0))
+                   (cons (+ rack-address 8) (aref rack 1))
+                   (cons (+ rack-address 16) (aref rack 2))))
+            ((eq class (funcall find-class 'bit-vector))
+             (error "can't handle bit vectors"))
+            ((eq class (funcall find-class 'sicl-array:vector-complex-double-float))
+             (error "can't handle complex double float vectors"))
+            ((eq class (funcall find-class 'sicl-array:vector-complex-single-float))
+             (error "can't handle complex single float vectors"))
+            ((eq class (funcall find-class 'sicl-array:vector-double-float))
+             (error "can't handle double float vectors"))
+            ((eq class (funcall find-class 'sicl-array:vector-single-float))
+             (error "can't handle single float vectors"))
+            ((eq class (funcall find-class 'sicl-array:vector-signed-byte-64))
+             (error "can't handle signed byte 64 vectors"))
+            ((eq class (funcall find-class 'sicl-array:vector-signed-byte-32))
+             (error "can't handle signed byte 32 vectors"))
+            ((eq class (funcall find-class 'sicl-array:vector-unsigned-byte-64))
+             (error "can't handle unsigned byte 64 vectors"))
+            ((eq class (funcall find-class 'sicl-array:vector-unsigned-byte-32))
+             (error "can't handle unsigned byte 32 vectors"))
+            ((eq class (funcall find-class 'sicl-array:array-bit))
+             (error "can't handle bit arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-complex-double-float))
+             (error "can't handle complex double float arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-complex-single-float))
+             (error "can't handle complex single float arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-double-float))
+             (error "can't handle double float arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-single-float))
+             (error "can't handle single float arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-signed-byte-64))
+             (error "can't handle signed byte 64 arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-signed-byte-32))
+             (error "can't handle signed byte 32 arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-unsigned-byte-64))
+             (error "can't handle unsigned byte 64 arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-unsigned-byte-32))
+             (error "can't handle unsigned byte 32 arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-unsigned-byte-32))
+             (error "can't handle unsigned byte 32 arrays"))
+            ((eq class (funcall find-class 'sicl-array:array-unsigned-byte-8))
+             (error "can't handle unsigned byte 8 arrays"))
+            (t
+             (loop for address from rack-address by 8
+                   for element across rack
+                   collect (cons address element)))))))
 
 (defmethod compute-pointer ((object string))
   (let* ((ma (env:fdefinition (env:client *e5*) *e5* 'make-array))
