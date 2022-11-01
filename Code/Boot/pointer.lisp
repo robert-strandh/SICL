@@ -34,32 +34,6 @@
         for object across rack
         collect (cons address object)))
 
-;;; Both HEADER and RACK have been allocated in the simulated heap.
-;;; RACK-ADDRESS is the address in the simulated heap of the rack.
-;;; This function creates work-list items for the mandatory prefix of
-;;; the rack. Then it calls the generic function TRAVERSE in E5 to
-;;; generate more work-list items, and it returns a list of all
-;;; work-list items created.
-(defun handle-ersatz-object (header rack rack-address)
-  (let ((traverse
-          (env:fdefinition *client* *e5* 'traverse))
-        ;; The first element of the prefix is the stamp which is a
-        ;; fixnum represented as a host integer.
-        (stamp-item
-          (cons rack-address (aref rack 0)))
-        ;; The second element of the prefix is the list of effective
-        ;; slot definitions, represented as a host list.
-        (effective-slot-item
-          (cons (+ rack-address 8) (aref rack 1)))
-        ;; The third element of the prefix is the hash code for the
-        ;; standard object.
-        (hash-item
-          (cons (+ rack-address 16) (aref rack 2))))
-    (list* stamp-item
-           effective-slot-item
-           hash-item
-           (funcall traverse header rack rack-address))))
-
 ;;; Allocate the header and the rack of an ersatz object in the
 ;;; simulated heap.  Write the tagged rack pointer into the second
 ;;; word of the header.  Return three values: The pointer to the
