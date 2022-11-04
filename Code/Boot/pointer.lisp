@@ -202,10 +202,28 @@
                       :nicknames (package-nicknames object)
                       :use-list (package-use-list object)
                       :used-by-list (package-used-by-list object)
-                      :external-symbols external-symbols
-                      :internal-symbols internal-symbols
                       :shadowing-symbols
-                      (package-shadowing-symbols object))))
+                      (package-shadowing-symbols object)))
+           (external-table
+             (funcall (env:fdefinition (env:client *e5*) *e5*
+                                       'sicl-package::external-symbols)
+                      ersatz-package))
+           (internal-table
+             (funcall (env:fdefinition (env:client *e5*) *e5*
+                                       'sicl-package::internal-symbols)
+                      ersatz-package)))
+      (loop for symbol in external-symbols
+            do (funcall (env:fdefinition (env:client *e5*) *e5*
+                                         '(setf gethash))
+                        symbol
+                        (symbol-name symbol)
+                        external-table))
+      (loop for symbol in internal-symbols
+            do (funcall (env:fdefinition (env:client *e5*) *e5*
+                                         '(setf gethash))
+                        symbol
+                        (symbol-name symbol)
+                        internal-table))
       (multiple-value-bind (pointer rack-address class-item)
           (allocate-ersatz-object ersatz-package)
       (setf (gethash object *host-object-to-pointer-table*) pointer)
