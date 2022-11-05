@@ -246,6 +246,21 @@
             (handle-unspecialized-rack
              (slot-value ersatz-code-object '%rack) rack-address)))))
 
+(defmethod compute-pointer ((object sicl-hir-evaluator::hir-closure))
+  (let* ((mi (env:fdefinition (env:client *e5*) *e5* 'make-instance))
+         (ersatz-function
+           (funcall mi 'sicl-clos:simple-function
+                    ;; FIXME: We need to store the entry point in the
+                    ;; host object, but that's not currently done.
+                    :entry-point nil ; Wrong!
+                    :environment (sicl-hir-evaluator::environment object))))
+    (multiple-value-bind (pointer rack-address class-item)
+        (allocate-ersatz-object ersatz-function)
+      (setf (gethash object *host-object-to-pointer-table*) pointer)
+      (cons class-item
+            (handle-unspecialized-rack
+             (slot-value ersatz-function '%rack) rack-address)))))
+
 (defun write-pointer-to-address (address pointer)
   (setf (sicl-memory:memory-unsigned address 64)
         pointer))
