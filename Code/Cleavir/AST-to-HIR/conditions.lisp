@@ -2,7 +2,7 @@
 
 ;;; An AST appears in a context inappropriate for it.
 ;;; This is a fatal compiler error.
-(define-condition miscontext (error acclimation:condition)
+(define-condition miscontext (error)
   ((%ast :initarg :ast :reader ast)
    (%context :initarg :context :reader miscontext-context)
    ;; The AST needs this many results and this many successors.
