@@ -18,7 +18,6 @@
   ((:file "packages")
    (:file "context")
    (:file "conditions")
-   (:file "condition-reporters-english")
    (:file "utilities")
    (:file "compile-ast")
    (:file "compile-general-purpose-asts")
