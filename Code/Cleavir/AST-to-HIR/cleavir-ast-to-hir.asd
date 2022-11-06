@@ -7,8 +7,7 @@
 ;;;; compilation of the entire AST.
 
 (defsystem #:cleavir-ast-to-hir
-  :depends-on (#:acclimation
-               #:stealth-mixin
+  :depends-on (#:stealth-mixin
                #:cleavir-ast
                #:cleavir-hir
                #:cleavir-cst-to-ast
