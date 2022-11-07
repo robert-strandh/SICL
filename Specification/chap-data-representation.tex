@@ -13,19 +13,18 @@ as follows:
   an integer in two's complement representation.  On a 64-bit machine,
   a fixnum is thus in the interval $[-2^{-62}, 2^{62} - 1]$.
 \item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
-  pointer to a \texttt{cons} cell is thus a pointer, aligned to a
-  double word to which the machine integer $1$ has been added.  See
+  pointer to a \texttt{cons} cell is thus a pointer (aligned to a
+  double word) to which the machine integer $1$ has been added.  See
   \refSec{sec-data-representation-cons-cells} for more information
   about the representation of \texttt{cons} cells.
 \item \texttt{011}.  This tag is used for various \emph{immediate}
   objects, and in particular for \emph{characters}.
   \seesec{sec-data-representation-immediate-objects}
-\item \texttt{101}.  This tag is used for all heap-allocated
-  \commonlisp{} objects other than \texttt{cons} cells.  A heap
-  allocated object like this is a \emph{standard object}.  It
-  is represented by a two-word header object with one word containing
-  a tagged pointer to the \emph{class object} and the other word
-  containing a tagged pointer to the \emph{rack}.  See
+\item \texttt{101}.  This tag is used for \emph{standard objects},
+  which are all heap-allocated objects other than \texttt{cons} cells.
+  Such an object is represented by a two-word header with one
+  word containing a tagged pointer to the \emph{class object} and the
+  other word containing a tagged pointer to the \emph{rack}.  See
   \refSec{sec-data-representation-standard-object} for more
   information about the representation of standard objects.
 \item \texttt{111}.  This tag is used to tag a pointer to a
