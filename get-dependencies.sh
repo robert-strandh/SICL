@@ -5,9 +5,12 @@ set -euo pipefail
 # Add dependencies URLs here
 #
 DEPENDENCIES="
+https://github.com/robert-strandh/Clonedijk
 https://github.com/robert-strandh/Cluster
+https://github.com/robert-strandh/Stealth-mixin
 https://github.com/s-expressionists/Concrete-Syntax-Tree
 https://github.com/s-expressionists/Eclector
+https://github.com/s-expressionists/Khazern
 https://github.com/s-expressionists/Trucler
 https://github.com/s-expressionists/Clostrum
 https://github.com/s-expressionists/incless

@@ -17,19 +17,25 @@ versions.
 
 1. Make sure you have installed the dependencies:
 
+[the Clonedijk repository]:https://github.com/robert-strandh/Clonedijk
 [the Cluster repository]:https://github.com/robert-strandh/Cluster
+[the Stealth-mixin repository]:https://github.com/robert-strandh/Stealth-mixin
 [the Concrete-Syntax-Tree repository]:https://github.com/s-expressionists/Concrete-Syntax-Tree
 [the ctype repository]:https://github.com/s-expressionists/ctype
 [the Eclector repository]:https://github.com/s-expressionists/Eclector
+[the Khazern repository]:https://github.com/s-expressionists/Khazern
 [the Trucler repository]:https://github.com/s-expressionists/Trucler
 [the Clostrum repository]:https://github.com/s-expressionists/Clostrum
 [the Incless repository]:https://github.com/s-expressionists/incless
 
    * A recent 64-bit version of SBCL
+   * The system "clonedijk", from [the Clonedijk repository]
    * The system "cluster", from [the Cluster repository]
+   * The system "stealth-mixin", from [the Stealth-mixin repository]
    * The system "concrete-syntax-tree", from [the Concrete-Syntax-Tree repository]
    * The system "ctype", from [the ctype repository]
    * The system "eclector", from [the Eclector repository]
+   * The system "khazern/intrinsic", from [the Khazern repository]
    * The system "trucler-reference", from [the Trucler repository]
    * The system "clostrum", from [the Clostrum repository]
    * The system "incless-intrinsic", from [the Incless repository]
