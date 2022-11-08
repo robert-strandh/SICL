@@ -119,17 +119,17 @@ the the new rack in the header.
 The first entry of the rack of every standard object is a small fixnum
 called the \emph{stamp} of the standard object.  The stamp is the
 \emph{unique class number} of the class of the object, as it was when
-the object was created.  The main purpose of this information is to
-be used in \emph{generic function dispatch}.  It is also used to
-determine whether a standard object is an obsolete instance (in this
-case the stamp of the standard object will not be the same as the
-\emph{current} unique class number of the class of the standard
-object).  An instance becomes obsolete as a result of changes to its
-class.  And a class is changed as a result of passing it to
-\texttt{reinitialize-instance}.  Some classes can not be
+the object was created or updated after having been obsolete.  The
+main purpose of this information is to be used in \emph{generic
+  function dispatch}.  It is also used to determine whether a standard
+object is obsolete.  A standard object is obsolete when the stamp of
+the object is not the same as the \emph{current} unique class number
+of the class of the object.  An object becomes obsolete as a result
+of changes to its class.  And a class is changed as a result of
+passing it to \texttt{reinitialize-instance}.  Some classes can not be
 reinitialized, in which case its instances can not become obsolete.
 
-An obsolete instance must be updated before its contents can be
+An obsolete object must be updated before its contents can be
 accessed.  The standard specifically allows for these updates to be
 delayed and not happen as a direct result of the class redefinition.
 They must happen before an attempt is made to access some slot (or
@@ -137,7 +137,7 @@ some other information about the slots) of the instance.  It is
 undesirable to make all instances directly accessible from the class,
 because such a solution would waste space and would have to make sure
 that memory leaks are avoided.  We must thus take into account the
-presence of obsolete instance in the system, and update them if an
+presence of obsolete objects in the system, and update them if an
 when an attempt is made to access their contents.
 
 The solution is to store some kind of \emph{version} information in
