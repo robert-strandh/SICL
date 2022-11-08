@@ -128,7 +128,7 @@
       ;; Load a file containing the definitions of the macros INCF and
       ;; DECF.
       (ld "Arithmetic/incf-decf-defmacro.lisp")
-      (ld "Loop/loop-defmacro.lisp")
+      (ensure-asdf-system '#:khazern/environment environment)
       ;; Load definitions of the macros PUSH and POP.
       (ld "Cons/push-pop-support.lisp")
       (ld "Cons/push-pop-defmacro.lisp")

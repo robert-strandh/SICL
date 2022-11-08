@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:local-nicknames (#:env #:sicl-environment))
   (:import-from #:sicl-boot
+                #:ensure-asdf-system
                 #:host-load
                 #:load-source-file
                 #:import-functions-from-host)
