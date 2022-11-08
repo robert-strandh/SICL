@@ -82,8 +82,8 @@ words aligned on a double-word boundary.
 
 Recall that a \emph{standard object} is a heap allocated object that
 is not a \texttt{cons} cell.  All standard objects are represented in
-(at least) two parts, a \emph{header object} and a \emph{rack}.  The
-header object always consists of two consecutive words aligned on a
+(at least) two parts, a \emph{header} and a \emph{rack}.  The
+header always consists of two consecutive words aligned on a
 double-word boundary (just like \texttt{cons} cells).  The first word
 always contains a tagged pointer to a \emph{class} object (which is
 another standard object).  The second word contains a tagged pointer
@@ -114,7 +114,7 @@ partially updated generic function.  In \sysname{}, to update a
 generic function this way, a new rack would be allocated and the
 modifications would be made there, leaving the original generic
 function intact until the final instruction to store a reference to
-the the new rack in the header object.
+the the new rack in the header.
 
 The first entry of the rack of every standard object is a small fixnum
 called the \emph{stamp} of the standard object.  The stamp is the
@@ -401,7 +401,7 @@ rack.  The size of the rack is rounded up to the nearest multiple of a
 word.
 
 All arrays are \emph{adjustable} thanks to the split representation
-with a header object and a rack.  Adjusting the array
+with a header and a rack.  Adjusting the array
 typically requires allocating a new rack.
 
 Specialized array classes with the following element types are
