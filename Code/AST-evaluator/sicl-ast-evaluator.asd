@@ -12,7 +12,7 @@
                #:sicl-source-tracking
                #:sicl-data-and-control-flow-support
                #:sicl-evaluation-and-compilation-support
-               #:sicl-loop-support
+               #:khazern
                #:sicl-cons-support
                #:sicl-iteration-support
                #:sicl-conditions-support

@@ -114,7 +114,7 @@
     ;; Macro support.
     sicl-data-and-control-flow:defun-expander
     sicl-evaluation-and-compilation:declaim-expander
-    sicl-loop:expand-body
+    khazern:expand-body
     sicl-iteration:dotimes-expander
     sicl-iteration:dolist-expander
     sicl-iteration:do-dostar-expander
