@@ -92,7 +92,12 @@
 ;;; syntax around &rest.
 (define-condition values-&rest-syntax
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The values type ~s is syntactically invalid:~@
+                      it has a &rest variable followed by more elements."
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a variable declared IGNORE is
 ;;; nonetheless used.
