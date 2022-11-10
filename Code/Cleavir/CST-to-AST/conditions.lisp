@@ -103,7 +103,12 @@
 ;;; nonetheless used.
 (define-condition ignored-variable-referenced
     (compilation-style-warning)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream "The variable ~s was referenced,~@
+                             despite being declared ~s."
+                     (cst:raw (cst condition))
+                     'ignore))))
 
 ;;; This condition is signaled when the first argument to BLOCK or
 ;;; RETURN-FROM is not a symbol.
