@@ -111,6 +111,17 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when a QUOTE special form is not a
+;;; proper list of two elements.
+(define-condition malfored-quote-special-form (compilation-program-error)
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A QUOTE special form must be a proper list of two~@
+                      elements, but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
+
 ;;; This condition is signaled when a form that must be a proper list
 ;;; in fact is not.
 (define-condition form-must-be-proper-list
