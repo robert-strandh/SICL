@@ -114,7 +114,13 @@
 ;;; RETURN-FROM is not a symbol.
 (define-condition block-name-must-be-a-symbol
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The name of a block must be a symbol,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a QUOTE special form is not a
 ;;; proper list of two elements.

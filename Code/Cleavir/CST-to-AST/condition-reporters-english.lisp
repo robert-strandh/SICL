@@ -18,16 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition block-name-must-be-a-symbol)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The name of a block must be a symbol,~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition form-must-be-proper-list)
      stream
      (language acclimation:english))
