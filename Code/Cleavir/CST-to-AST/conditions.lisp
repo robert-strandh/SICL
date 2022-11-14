@@ -160,7 +160,14 @@
 ;;; contains an invalid situation.
 (define-condition invalid-eval-when-situation
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "An EVAL-WHEN situation must be one of:~@
+                     :COMPILE-TOPLEVEL, :LOAD-TOPLEVEL, :EXECUTE, COMPILE, LOAD, EVAL,~@
+                     but the following was found instead:~@
+                     ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a local function definition is not
 ;;; a proper list.

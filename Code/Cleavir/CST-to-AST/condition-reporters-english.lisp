@@ -18,17 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition invalid-eval-when-situation)
-     stream
-     (language acclimation:english))
-  (format stream
-          "An EVAL-WHEN situation must be one of:~@
-           :COMPILE-TOPLEVEL, :LOAD-TOPLEVEL, :EXECUTE, COMPILE, LOAD, EVAL,~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition local-function-definition-must-be-proper-list)
      stream
      (language acclimation:english))
