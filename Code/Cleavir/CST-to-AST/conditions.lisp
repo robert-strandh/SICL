@@ -137,7 +137,12 @@
 ;;; in fact is not.
 (define-condition form-must-be-proper-list
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "Forms must be proper lists,~@
+                      but the following was found instead:~%~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when the first argument to EVAL-WHEN is
 ;;; not a proper list.
