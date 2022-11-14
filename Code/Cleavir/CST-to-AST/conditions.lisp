@@ -148,7 +148,13 @@
 ;;; not a proper list.
 (define-condition situations-must-be-proper-list
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "EVAL-WHEN situations must be a proper list,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when the first argument to EVAL-WHEN
 ;;; contains an invalid situation.
