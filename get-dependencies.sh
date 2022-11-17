@@ -13,7 +13,8 @@ https://github.com/s-expressionists/Eclector
 https://github.com/s-expressionists/Khazern
 https://github.com/s-expressionists/Trucler
 https://github.com/s-expressionists/Clostrum
-https://github.com/s-expressionists/incless
+https://github.com/s-expressionists/Incless
+https://github.com/s-expressionists/Invistra
 https://github.com/s-expressionists/ctype
 https://github.com/s-expressionists/Cyclosis
 "

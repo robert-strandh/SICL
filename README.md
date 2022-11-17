@@ -26,7 +26,8 @@ versions.
 [the Khazern repository]:https://github.com/s-expressionists/Khazern
 [the Trucler repository]:https://github.com/s-expressionists/Trucler
 [the Clostrum repository]:https://github.com/s-expressionists/Clostrum
-[the Incless repository]:https://github.com/s-expressionists/incless
+[the Incless repository]:https://github.com/s-expressionists/Incless
+[the Invistra repository]:https://github.com/s-expressionists/Invistra
 
    * A recent 64-bit version of SBCL
    * The system "clonedijk", from [the Clonedijk repository]
@@ -39,6 +40,7 @@ versions.
    * The system "trucler-reference", from [the Trucler repository]
    * The system "clostrum", from [the Clostrum repository]
    * The system "incless-intrinsic", from [the Incless repository]
+   * The system "invistra/intrinsic", from [the Invistra repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 
