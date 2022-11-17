@@ -18,16 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition lambda-must-be-proper-list)
-     stream
-     (language acclimation:english))
-  (format stream
-          "A LAMBDA expression must be a proper list,~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition function-argument-must-be-function-name-or-lambda-expression)
      stream
      (language acclimation:english))

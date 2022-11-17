@@ -184,7 +184,13 @@
 ;;; encountered, but it is not a proper list.
 (define-condition lambda-must-be-proper-list
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A LAMBDA expression must be a proper list,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when the argument of FUNCTION is
 ;;; neither a proper function name (i.e., a symbol, or a list of the
