@@ -18,15 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition local-function-definition-must-be-proper-list)
-     stream
-     (language acclimation:english))
-  (format stream
-          "Definitions of local functions must be proper lists,~@
-           but the following was found instead:~%~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition lambda-must-be-proper-list)
      stream
      (language acclimation:english))

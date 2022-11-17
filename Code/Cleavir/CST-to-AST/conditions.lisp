@@ -173,7 +173,12 @@
 ;;; a proper list.
 (define-condition local-function-definition-must-be-proper-list
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "Definitions of local functions must be proper lists,~@
+                      but the following was found instead:~%~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a LAMBDA expression is
 ;;; encountered, but it is not a proper list.
