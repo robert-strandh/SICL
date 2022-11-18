@@ -18,17 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition function-argument-must-be-function-name-or-lambda-expression)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The argument of the special operator FUNCTION must be~@
-           a function name or a LAMBDA expression,~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition function-name-must-be-proper-function-name)
      stream
      (language acclimation:english))

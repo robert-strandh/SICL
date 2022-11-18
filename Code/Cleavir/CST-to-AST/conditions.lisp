@@ -197,7 +197,14 @@
 ;;; form (SETF symbol)), nor a list starting with LAMBDA.
 (define-condition function-argument-must-be-function-name-or-lambda-expression
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The argument of the special operator FUNCTION must be~@
+                      a function name or a LAMBDA expression,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when the name of a local function
 ;;; definition is not a proper function name (i.e., neither a symbol,
