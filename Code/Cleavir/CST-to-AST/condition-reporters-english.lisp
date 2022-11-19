@@ -18,15 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition function-name-must-be-proper-function-name)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The names bound by FLET must be valid function names,~@
-           but the following was found instead:~%~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition bindings-must-be-proper-list)
      stream
      (language acclimation:english))

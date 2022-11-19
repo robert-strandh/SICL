@@ -211,7 +211,12 @@
 ;;; nor a list of the form (SETF symbol))
 (define-condition function-name-must-be-proper-function-name
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The names bound by FLET must be valid function names,~@
+                      but the following was found instead:~%~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when the first argument of a LET or a
 ;;; LET* form (i.e., the bindings) is not a proper list.
