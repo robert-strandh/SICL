@@ -18,17 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition bindings-must-be-proper-list)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The bindings of a ~s special form must be a proper list,~@
-           but the following was found instead:~@
-           ~s"
-          (operator condition)
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition binding-must-be-symbol-or-list)
      stream
      (language acclimation:english))

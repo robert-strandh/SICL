@@ -222,7 +222,14 @@
 ;;; LET* form (i.e., the bindings) is not a proper list.
 (define-condition bindings-must-be-proper-list
     (compilation-program-error)
-  ((%operator :initarg :operator :reader operator)))
+  ((%operator :initarg :operator :reader operator))
+  (:report (lambda (condition stream)
+             (format stream
+                     "The bindings of a ~s special form must be a proper list,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (operator condition)
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a binding of a LET or a LET* form
 ;;; is neither a symbol nor a list.
