@@ -18,16 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition binding-must-be-symbol-or-list)
-     stream
-     (language acclimation:english))
-  (format stream
-          "A binding of a LET or LET* special form must be symbol or a list,~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition binding-must-have-length-one-or-two)
      stream
      (language acclimation:english))

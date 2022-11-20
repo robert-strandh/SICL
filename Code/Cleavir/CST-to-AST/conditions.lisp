@@ -235,7 +235,13 @@
 ;;; is neither a symbol nor a list.
 (define-condition binding-must-be-symbol-or-list
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A binding of a LET or LET* special form must be symbol or a list,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a binding of a LET or LET* form is
 ;;; a list, but it is not a proper list, or it is a proper list, but
