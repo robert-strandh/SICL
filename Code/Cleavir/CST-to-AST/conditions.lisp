@@ -248,7 +248,14 @@
 ;;; it has a length other than 1 or 2.
 (define-condition binding-must-have-length-one-or-two
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A binding of a LET or LET* special form that is a list,~@
+                      must be a proper list of length 1 or 2,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a binding of a LET or LET* form is
 ;;; a proper list of length 1 or 2, but the first element of that list
