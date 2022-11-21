@@ -262,7 +262,14 @@
 ;;; is not a symbol. 
 (define-condition variable-must-be-a-symbol
     (compilation-program-error)
-  ())    
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "In a binding of a LET or LET* special form that is a list,~@
+                      the first element of that list must be a symbol,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when LOAD-TIME-VALUE is given an
 ;;; optional READ-ONLY-P argument, but that argument is neither T nor
