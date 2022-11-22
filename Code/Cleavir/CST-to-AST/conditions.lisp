@@ -277,7 +277,14 @@
 ;;; Boolean, and not a generalized Boolean.
 (define-condition read-only-p-must-be-boolean
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The second argument of a LOAD-TIME-VALUE special form,~@
+                      must be a Boolean constant (so T or NIL),~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a SETQ form is encountered, but it
 ;;; does not have an even number of arguments.

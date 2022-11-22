@@ -18,17 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition read-only-p-must-be-boolean)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The second argument of a LOAD-TIME-VALUE special form,~@
-           must be a Boolean constant (so T or NIL),~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition setq-must-have-even-number-of-arguments)
      stream
      (language acclimation:english))
