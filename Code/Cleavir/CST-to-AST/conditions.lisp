@@ -302,7 +302,13 @@
 ;;; one of the variables assigned to is not a symbol.
 (define-condition setq-var-must-be-symbol
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The variable assigned to in a SETQ special form must be a symbol,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a SETQ form is encountered, but 
 ;;; one of the variables assigned to is a a constant variable. 

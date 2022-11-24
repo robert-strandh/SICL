@@ -18,16 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition setq-var-must-be-symbol)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The variable assigned to in a SETQ special form must be a symbol,~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition setq-constant-variable)
      stream
      (language acclimation:english))
