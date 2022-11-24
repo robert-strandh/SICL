@@ -290,7 +290,13 @@
 ;;; does not have an even number of arguments.
 (define-condition setq-must-have-even-number-of-arguments
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The SETQ special form must have an even number of arguments,~@
+                      but the following was found instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a SETQ form is encountered, but 
 ;;; one of the variables assigned to is not a symbol.

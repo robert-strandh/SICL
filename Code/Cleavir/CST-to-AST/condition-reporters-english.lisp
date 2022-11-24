@@ -18,16 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition setq-must-have-even-number-of-arguments)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The SETQ special form must have an even number of arguments,~@
-           but the following was found instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition setq-var-must-be-symbol)
      stream
      (language acclimation:english))
