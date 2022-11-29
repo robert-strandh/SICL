@@ -18,16 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition setq-constant-variable)
-     stream
-     (language acclimation:english))
-  (format stream
-          "The variable assigned to in a SETQ must not be a constant variable,~@
-           but the following constant variable was found:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition variable-name-unknown)
      stream
      (language acclimation:english))

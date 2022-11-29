@@ -314,7 +314,13 @@
 ;;; one of the variables assigned to is a a constant variable. 
 (define-condition setq-constant-variable
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "The variable assigned to in a SETQ must not be a constant variable,~@
+                      but the following constant variable was found:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a symbol in a variable position is
 ;;; encountered during compilation, but it does not have a definition
