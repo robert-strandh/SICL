@@ -18,18 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition variable-name-unknown)
-     stream
-     (language acclimation:english))
-  (format stream
-          "A variable referred to must have been previously defined,~@
-           using either some global operator such as DEFVAR or DEFPARAMETER,~@
-           or some form such as LET or LET* for creating a local variable,~@
-           but the following undefined variable was found:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition function-name-unknown)
      stream
      (language acclimation:english))

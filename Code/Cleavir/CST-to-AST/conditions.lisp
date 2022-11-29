@@ -327,7 +327,15 @@
 ;;; in the environment in which the symbol is compiled.
 (define-condition variable-name-unknown
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A variable referred to must have been previously defined,~@
+                      using either some global operator such as DEFVAR or DEFPARAMETER,~@
+                      or some form such as LET or LET* for creating a local variable,~@
+                      but the following undefined variable was found:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a function name is encountered
 ;;; during compilation, but it does not have a definition in the
