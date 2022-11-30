@@ -342,7 +342,15 @@
 ;;; environment in which the function name is compiled.
 (define-condition function-name-unknown
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A function referred to must have been previously defined,~@
+                      using either some global operator such as DEFUN or DEFGENERIC,~@
+                      or some form such as FLET or LABELS for creating a local function,~@
+                      but the following undefined function was found:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a function name is encountered
 ;;; during compilation in a context where the name must be that of a

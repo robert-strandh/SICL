@@ -18,18 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition function-name-unknown)
-     stream
-     (language acclimation:english))
-  (format stream
-          "A function referred to must have been previously defined,~@
-           using either some global operator such as DEFUN or DEFGENERIC,~@
-           or some form such as FLET or LABELS for creating a local function,~@
-           but the following undefined function was found:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition function-name-names-global-macro)
      stream
      (language acclimation:english))
