@@ -375,7 +375,14 @@
 ;;; compiled.
 (define-condition function-name-names-local-macro
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A function name was found in a context where the name~@
+                      must refer to a global or a local function, but the~@
+                      name refers to a local macro instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a function name is encountered
 ;;; during compilation in a context where the name must be that of a
