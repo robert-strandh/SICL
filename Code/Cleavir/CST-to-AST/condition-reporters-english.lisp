@@ -18,17 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition function-name-names-special-operator)
-     stream
-     (language acclimation:english))
-  (format stream
-          "A function name was found in a context where the name~@
-           must refer to a global or a local function, but the~@
-           name refers to a special operator instead:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition no-default-method)
      stream
      (language acclimation:english))

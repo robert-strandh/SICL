@@ -391,7 +391,14 @@
 ;;; name is compiled.
 (define-condition function-name-names-special-operator
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "A function name was found in a context where the name~@
+                      must refer to a global or a local function, but the~@
+                      name refers to a special operator instead:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled by methods on CONVERT-SPECIAL,
 ;;; specialized to operators for which Cleavir does not provide a
