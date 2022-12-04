@@ -18,21 +18,6 @@
             min max)))
 
 (defmethod acclimation:report-condition
-    ((condition no-default-method)
-     stream
-     (language acclimation:english))
-  (format stream
-          "Cleavir does not supply methods for compiling every special operator.~@
-           In particular, no default method is supplied for the following:~@
-           CATCH, THROW, UNWIND-PROTECT, and PROGV.~@
-           Client code must either define these operators as macros,~@
-           or supply a method on CONVERT-SPECIAL, specialized to the~@
-           name of the operator and to the implementation-specific environment.~@
-           The following form was found:~@
-           ~s"
-          (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition lambda-call-first-symbol-not-lambda)
      stream
      (language acclimation:english))

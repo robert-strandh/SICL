@@ -409,7 +409,18 @@
 (define-condition no-default-method
     (error acclimation:condition)
   ((%cst :initarg :cst :reader cst)
-   (%operator :initarg :operator :reader operator)))
+   (%operator :initarg :operator :reader operator))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Cleavir does not supply methods for compiling every special operator.~@
+                      In particular, no default method is supplied for the following:~@
+                      CATCH, THROW, UNWIND-PROTECT, and PROGV.~@
+                      Client code must either define these operators as macros,~@
+                      or supply a method on CONVERT-SPECIAL, specialized to the~@
+                      name of the operator and to the implementation-specific environment.~@
+                      The following form was found:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a LAMBDA-CALL expression is
 ;;; encountered, but the first symbol isn't LAMBDA.
