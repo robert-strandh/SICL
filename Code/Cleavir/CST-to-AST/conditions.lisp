@@ -426,7 +426,14 @@
 ;;; encountered, but the first symbol isn't LAMBDA.
 (define-condition lambda-call-first-symbol-not-lambda
     (compilation-program-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "Lambda call form was used with the malformed lambda block~@
+                      first argument instead of the symbol LAMBDA. The following~@
+                      form was found:~@
+                      ~s"
+                     (cst:raw (cst condition))))))
 
 ;;; This condition is signaled when a lambda list is malformed.
 (define-condition malformed-lambda-list (compilation-program-error)

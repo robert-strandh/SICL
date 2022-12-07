@@ -17,17 +17,6 @@
                   (t "otherwise"))
             min max)))
 
-(defmethod acclimation:report-condition
-    ((condition lambda-call-first-symbol-not-lambda)
-     stream
-     (language acclimation:english))
-  (format stream
-          "Lambda call form was used with the malformed lambda block~@
-          first argument instead of the symbol LAMBDA. The following~@
-          form was found:~@
-          ~s"
-          (cst:raw (cst condition))))
-
 ;; Helper for below.
 (defmethod acclimation:report-condition
   ((condition too-many-arguments)
