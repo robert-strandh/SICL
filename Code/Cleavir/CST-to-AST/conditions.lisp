@@ -537,7 +537,11 @@
 ;;; an error.
 (define-condition macroexpansion-error
     (compilation-program-error encapsulated-condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "ERROR during macroexpansion:~%~@<  ~@;~a~:>"
+                     (original-condition condition)))))
 
 ;;; This condition is signaled when a macroexpander signals
 ;;; a warning.
