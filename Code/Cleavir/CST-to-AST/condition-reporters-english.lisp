@@ -67,14 +67,6 @@
           " as inferred from its inline definition."))
 
 (defmethod acclimation:report-condition
-  ((condition macroexpansion-style-warning)
-   stream
-   (language acclimation:english))
-  (format stream
-          "STYLE-WARNING during macroexpansion:~%~@<  ~@;~a~:>"
-          (original-condition condition)))
-
-(defmethod acclimation:report-condition
   ((condition compiler-macro-expansion-error)
    stream
    (language acclimation:english))

@@ -557,7 +557,11 @@
 ;;; a style-warning.
 (define-condition macroexpansion-style-warning
     (compilation-style-warning encapsulated-condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "STYLE-WARNING during macroexpansion:~%~@<  ~@;~a~:>"
+                     (original-condition condition)))))
 
 ;;; This condition is signaled when a compiler-macroexpander signals
 ;;; an error.
