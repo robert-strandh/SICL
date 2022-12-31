@@ -589,7 +589,11 @@
 ;;; an error.
 (define-condition eval-error
     (compilation-program-error encapsulated-condition)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream
+                     "ERROR while evaluating compile-time side effect:~%~@<  ~@;~a~:>"
+                     (original-condition condition)))))
 
 ;;; This condition is signaled when a compile-time side-effect signals
 ;;; a warning.
