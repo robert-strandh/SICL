@@ -36,7 +36,7 @@ versions.
    * The system "concrete-syntax-tree", from [the Concrete-Syntax-Tree repository]
    * The system "ctype", from [the ctype repository]
    * The system "eclector", from [the Eclector repository]
-   * The system "khazern/intrinsic", from [the Khazern repository]
+   * The system "khazern-intrinsic", from [the Khazern repository]
    * The system "trucler-reference", from [the Trucler repository]
    * The system "clostrum", from [the Clostrum repository]
    * The system "incless-intrinsic", from [the Incless repository]
