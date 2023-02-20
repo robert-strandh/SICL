@@ -28,6 +28,7 @@ versions.
 [the Clostrum repository]:https://github.com/s-expressionists/Clostrum
 [the Incless repository]:https://github.com/s-expressionists/Incless
 [the Invistra repository]:https://github.com/s-expressionists/Invistra
+[the trivial-package-locks repository]:https://github.com/yitzchak/trivial-package-locks
 
    * A recent 64-bit version of SBCL
    * The system "clonedijk", from [the Clonedijk repository]
@@ -36,11 +37,12 @@ versions.
    * The system "concrete-syntax-tree", from [the Concrete-Syntax-Tree repository]
    * The system "ctype", from [the ctype repository]
    * The system "eclector", from [the Eclector repository]
-   * The system "khazern/intrinsic", from [the Khazern repository]
+   * The system "khazern-intrinsic", from [the Khazern repository]
    * The system "trucler-reference", from [the Trucler repository]
    * The system "clostrum", from [the Clostrum repository]
    * The system "incless-intrinsic", from [the Incless repository]
    * The system "invistra/intrinsic", from [the Invistra repository]
+   * The system "trivial-package-locks", from [the trivial-package-locks repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 

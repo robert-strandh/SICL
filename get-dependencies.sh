@@ -17,6 +17,7 @@ https://github.com/s-expressionists/Incless
 https://github.com/s-expressionists/Invistra
 https://github.com/s-expressionists/ctype
 https://github.com/s-expressionists/Cyclosis
+https://github.com/yitzchak/trivial-package-locks
 "
 
 PROJECTS_DIRECTORY=${1:-"$HOME/quicklisp/local-projects/"}
