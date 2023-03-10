@@ -28,7 +28,7 @@
   (let* ((expansion (trucler:expansion info))
          (expander (symbol-macro-expander expansion))
          (expanded-variable (expand-macro expander var-cst environment))
-         (expanded-cst (cst:reconstruct expanded-variable var-cst client))
+         (expanded-cst (cst:reconstruct client expanded-variable var-cst))
          (origin (cst:source var-cst)))
     (setf (cst:source expanded-cst) origin)
     (convert client

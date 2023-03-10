@@ -9,7 +9,7 @@
   (let* ((expansion (trucler:expansion info))
          (expander (symbol-macro-expander expansion))
          (expanded-form (expand-macro expander cst environment))
-         (expanded-cst (cst:reconstruct expanded-form cst client)))
+         (expanded-cst (cst:reconstruct client expanded-form cst)))
     (setf (cst:source expanded-cst) (cst:source cst))
     (with-preserved-toplevel-ness
       (convert client
@@ -53,7 +53,7 @@
     (client cst (info trucler:local-macro-description) environment)
   (let* ((expander (trucler:expander info))
          (expanded-form (expand-macro expander cst environment))
-         (expanded-cst (cst:reconstruct expanded-form cst client)))
+         (expanded-cst (cst:reconstruct client expanded-form cst)))
     (setf (cst:source expanded-cst) (cst:source cst))
     (with-preserved-toplevel-ness
       (convert client expanded-cst environment))))
@@ -72,7 +72,7 @@
           ;; There is no compiler macro, so we just apply the macro
           ;; expander, and then convert the resulting form.
           (let* ((expanded-form (expand-macro expander cst environment))
-                 (expanded-cst (cst:reconstruct expanded-form cst client)))
+                 (expanded-cst (cst:reconstruct client expanded-form cst)))
             (setf (cst:source expanded-cst) (cst:source cst))
             (convert client expanded-cst environment))
           ;; There is a compiler macro, so we must see whether it will
@@ -86,14 +86,14 @@
                 ;; when there was no compiler macro present.
                 (let* ((expanded-form
                          (expand-macro expander cst environment))
-                       (expanded-cst (cst:reconstruct expanded-form cst client)))
+                       (expanded-cst (cst:reconstruct client expanded-form cst)))
                   (setf (cst:source expanded-cst) (cst:source cst))
                   (convert client expanded-cst environment))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
                 ;; taking into account the real macro expander.
-                (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
+                (let ((expanded-cst (cst:reconstruct client expanded-form cst)))
                   (setf (cst:source expanded-cst) (cst:source cst))
                   (convert client expanded-cst environment))))))))
 
@@ -147,7 +147,7 @@
               ;; If the two are not EQ, this means that the compiler
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
-              (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
+              (let ((expanded-cst (cst:reconstruct client expanded-form cst)))
                 (setf (cst:source expanded-cst) (cst:source cst))
                 (convert client expanded-cst environment)))))))
 
