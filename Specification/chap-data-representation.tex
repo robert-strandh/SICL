@@ -19,7 +19,7 @@ as follows:
   about the representation of \texttt{cons} cells.
 \item \texttt{011}.  This tag is used for various \emph{immediate}
   objects, and in particular for \emph{characters}.
-  \seesec{sec-data-representation-immediate-objects}
+  \seesec{sec-data-representation-immediate-objects}.
 \item \texttt{101}.  This tag is used for \emph{standard objects},
   which are all heap-allocated objects other than \texttt{cons} cells.
   Such an object is represented by a two-word header with one
@@ -167,7 +167,7 @@ automatically in most cases, because when an obsolete object is passed
 as an argument to a generic function, the \emph{automaton} of the
 discriminating function of the generic function will fail to find an
 effective method, triggering an update of the object.
-\seesec{sec-generic-function-dispatch-the-discriminating-function}
+\seesec{sec-generic-function-dispatch-the-discriminating-function}.
 
 The third word of a standard instance is a \emph{hash code} that is
 used when the object is part of a key of a hash table.  Contrary to
@@ -183,7 +183,7 @@ of the rack.
 By definition, a \emph{funcallable standard object} is an instance of
 a subclass of the class \texttt{funcallable-standard-object} which is
 itself a subclass of the class \texttt{standard-object} and of the
-class \texttt{function}. \seesec{sec-data-representation-functions}
+class \texttt{function}. \seesec{sec-data-representation-functions}.
 
 To make function invocation fast, we want every subclass of the class
 \texttt{function} to be invoked in the same way, i.e. by loading the
@@ -516,7 +516,7 @@ Representation of functions.}
 
 \refFig{fig-function-representation} shows two functions.  The two
 functions were created from the same compilation unit, because they
-share the same code object. \seesec{data-representation-code-objects}
+share the same code object. \seesec{data-representation-code-objects}.
 
 A function is represented as a two-word header (as usual) and a
 rack with three slots:
