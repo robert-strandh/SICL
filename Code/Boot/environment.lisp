@@ -54,7 +54,7 @@
     make-list copy-list
     append
     member member-if
-    mapcar mapc
+    mapcar mapc mapcan
     getf
     assoc rassoc
     union set-difference set-exclusive-or adjoin subsetp intersection
@@ -115,6 +115,7 @@
     sicl-data-and-control-flow:defun-expander
     sicl-evaluation-and-compilation:declaim-expander
     khazern:expand-body
+    khazern:copy-parser-table
     sicl-iteration:dotimes-expander
     sicl-iteration:dolist-expander
     sicl-iteration:do-dostar-expander
