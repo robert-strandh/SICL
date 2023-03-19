@@ -11,6 +11,7 @@
   ((:file "packages")
    (:file "environment-augmentation")
    (:file "environment-query")
+   (:file "generic-functions")
    (:file "builder")
    (:file "variables")
    (:file "cst-to-ast")))
