@@ -15,4 +15,5 @@
    (:file "builder")
    (:file "progn")
    (:file "variables")
+   (:file "convert")
    (:file "cst-to-ast")))
