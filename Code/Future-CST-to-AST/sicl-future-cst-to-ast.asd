@@ -12,6 +12,7 @@
    (:file "environment-augmentation")
    (:file "environment-query")
    (:file "generic-functions")
+   (:file "eval")
    (:file "builder")
    (:file "progn")
    (:file "variables")
