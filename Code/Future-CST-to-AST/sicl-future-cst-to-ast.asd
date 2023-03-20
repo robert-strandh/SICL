@@ -17,5 +17,6 @@
    (:file "progn")
    (:file "variables")
    (:file "convert-constant")
+   (:file "convert-variable")
    (:file "convert")
    (:file "cst-to-ast")))
