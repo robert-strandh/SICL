@@ -32,6 +32,7 @@
            (convert-lambda-call client cst environment)))))
 
 (defmethod convert :around (client cst environment)
+  #+sbcl(declare (sb-ext:muffle-conditions sb-ext:compiler-note))
   (restart-case
       ;; We bind these only here so that if a restart is invoked,
       ;; the new CONVERT call will get the right values
