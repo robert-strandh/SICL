@@ -14,6 +14,7 @@
    (:file "generic-functions")
    (:file "eval")
    (:file "builder")
+   (:file "let")
    (:file "progn")
    (:file "variables")
    (:file "convert-constant")
