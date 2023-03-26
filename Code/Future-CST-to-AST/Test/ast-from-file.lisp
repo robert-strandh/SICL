@@ -1,8 +1,5 @@
 (cl:in-package #:sicl-future-cst-to-ast)
 
-;;; The code in this file is not part of the final system.  We define
-;;; it here just to be able to test things.
-
 (defun read-cst (input-stream eof-marker)
   (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
 
