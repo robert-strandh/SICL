@@ -6,4 +6,5 @@
                #:sicl-source-tracking)
   :serial t
   :components
-  ((:file "ast-from-file")))
+  ((:file "environment")
+   (:file "ast-from-file")))
