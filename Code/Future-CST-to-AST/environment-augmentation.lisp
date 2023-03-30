@@ -24,7 +24,7 @@
      declaration-identifier-cst
      declaration-data-cst
      environment)
-  (let ((var-or-function (cst:raw (cst:first declaration-data-cst))))
+  (let ((var-or-function (c:raw (c:first declaration-data-cst))))
     (if (consp var-or-function)
         ;; (dynamic-extent (function foo))
         (trucler:add-function-dynamic-extent
@@ -48,8 +48,8 @@
      declaration-identifier-cst
      declaration-data-cst
      environment)
-  (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
-        (ignore (cst:raw declaration-identifier-cst)))
+  (let ((var-or-function (c:raw (c:first declaration-data-cst)))
+        (ignore (c:raw declaration-identifier-cst)))
     (if (consp var-or-function)
         (trucler:add-function-ignore
          client environment (second var-or-function) ignore)
@@ -62,8 +62,8 @@
      declaration-identifier-cst
      declaration-data-cst
      environment)
-  (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
-        (ignore (cst:raw declaration-identifier-cst)))
+  (let ((var-or-function (c:raw (c:first declaration-data-cst)))
+        (ignore (c:raw declaration-identifier-cst)))
     (if (consp var-or-function)
         (trucler:add-function-ignore
          client
@@ -80,8 +80,8 @@
   (trucler:add-inline
    client
    environment
-   (cst:raw (cst:first declaration-data-cst))
-   (cst:raw declaration-identifier-cst)))
+   (c:raw (c:first declaration-data-cst))
+   (c:raw declaration-identifier-cst)))
 
 (defmethod augment-environment-with-declaration
     (client
@@ -92,8 +92,8 @@
   (trucler:add-inline
    client
    environment
-   (cst:raw (cst:first declaration-data-cst))
-   (cst:raw declaration-identifier-cst)))
+   (c:raw (c:first declaration-data-cst))
+   (c:raw declaration-identifier-cst)))
 
 (defmethod augment-environment-with-declaration
     (client
@@ -105,11 +105,11 @@
   ;; variable is globally special, nothing should
   ;; be added to the environment.
   (let ((info (trucler:describe-variable
-               client environment (cst:raw (cst:first declaration-data-cst)))))
+               client environment (c:raw (c:first declaration-data-cst)))))
     (if (typep info 'trucler:global-special-variable-description)
         environment
         (trucler:add-special-variable
-         client environment (cst:raw (cst:first declaration-data-cst))))))
+         client environment (c:raw (c:first declaration-data-cst))))))
 
 (defmethod augment-environment-with-declaration
     (client
@@ -120,8 +120,8 @@
   (cst:db source (type-cst variable-cst) declaration-data-cst
     (trucler:add-variable-type client
                                environment
-                               (cst:raw variable-cst)
-                               (cst:raw type-cst))))
+                               (c:raw variable-cst)
+                               (c:raw type-cst))))
 
 (defmethod augment-environment-with-declaration
     (client
@@ -158,8 +158,8 @@
 ;;; declaration specifiers.
 (defun extract-optimize (canonicalized-dspecs)
   (loop for spec in canonicalized-dspecs
-        when (eq (cst:raw (cst:first spec)) 'optimize)
-          append (mapcar #'cst:raw (cst:listify (cst:rest spec)))))
+        when (eq (c:raw (c:first spec)) 'optimize)
+          append (mapcar #'c:raw (cst:listify (c:rest spec)))))
 
 ;;; Augment the environment with a list of canonical declartion
 ;;; specifiers.
@@ -171,12 +171,12 @@
                 (augment-environment-with-optimize client optimize environment)
                 environment))))
     (loop for spec in canonical-dspecs
-          for declaration-identifier-cst = (cst:first spec)
-          for declaration-identifier = (cst:raw declaration-identifier-cst)
+          for declaration-identifier-cst = (c:first spec)
+          for declaration-identifier = (c:raw declaration-identifier-cst)
           ;; FIXME: this is probably wrong.  The data may be contained
           ;; in more than one element.  We need to wrap it in a CST or
           ;; change the interface to a-e-w-d.
-          for declaration-data-cst = (cst:rest spec)
+          for declaration-data-cst = (c:rest spec)
           do (setf new-env
                    (augment-environment-with-declaration
                     client
@@ -196,8 +196,8 @@
          (special-var-p
            (typep existing-var-description 'trucler:special-variable-description)))
     (cond ((loop for declaration in declarations
-                 thereis (and (eq (cst:raw (cst:first declaration)) 'special)
-                              (eq (cst:raw (cst:second declaration)) variable)))
+                 thereis (and (eq (c:raw (c:first declaration)) 'special)
+                              (eq (c:raw (c:second declaration)) variable)))
            ;; If it is declared special it is.
            (values t
                    (and special-var-p
@@ -218,8 +218,8 @@
 ;;; declarations present in the list.
 (defun declared-type (declarations)
   `(and ,@(loop for declaration in declarations
-                when (eq (cst:raw (cst:first declaration)) 'type)
-                  collect (cst:raw (cst:second declaration)))))
+                when (eq (c:raw (c:first declaration)) 'type)
+                  collect (c:raw (c:second declaration)))))
 
 ;;; Given a single variable bound by some binding form like LET or
 ;;; LET*, and a list of canonical declaration specifiers
@@ -238,7 +238,7 @@
     (client variable-ast declarations environment original-environment)
   (let ((new-env environment)
         (name (ico:name variable-ast))
-        (raw-declarations (mapcar #'cst:raw declarations)))
+        (raw-declarations (mapcar #'c:raw declarations)))
     (multiple-value-bind (special-p globally-p)
         (variable-is-special-p client name declarations original-environment)
       (if special-p
@@ -289,7 +289,7 @@
 ;;; as an argument, except the it has been augmented by the name of
 ;;; the local function.
 (defun augment-environment-from-fdef (client environment definition-cst)
-  (let ((name-cst (cst:first definition-cst)))
+  (let ((name-cst (c:first definition-cst)))
     (augment-environment-with-local-function-name client name-cst environment)))
 
 ;;; Take an environment, a CST representing a list of function
@@ -298,9 +298,9 @@
 ;;; local function names in the list.
 (defun augment-environment-from-fdefs (client environment definitions-cst)
   (loop with result = environment
-        for remaining = definitions-cst then (cst:rest remaining)
-        until (cst:null remaining)
-        do (let ((definition-cst (cst:first remaining)))
+        for remaining = definitions-cst then (c:rest remaining)
+        until (c:null remaining)
+        do (let ((definition-cst (c:first remaining)))
              (setf result
                    (augment-environment-from-fdef client result definition-cst)))
         finally (return result)))

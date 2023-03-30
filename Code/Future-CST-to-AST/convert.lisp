@@ -6,7 +6,7 @@
 ;;; abstract syntax tree.
 
 (defmethod convert (client cst environment)
-  (let ((form (cst:raw cst)))
+  (let ((form (c:raw cst)))
     (cond ((or (and (not (consp form)) (not (symbolp form)))
                (keywordp form)
                (member form '(t nil)))
@@ -19,7 +19,7 @@
            ;; simply because it might be a special form that is handled
            ;; specially.  So we must wait until we have more
            ;; information.
-           (let ((info (describe-function client environment (cst:first cst))))
+           (let ((info (describe-function client environment (c:first cst))))
              (convert-cst client cst info environment)))
           (t
            ;; The form must be a compound form where the CAR is a lambda
@@ -44,9 +44,9 @@
     (continue ()
       :report "Replace with call to ERROR."
       (convert client
-               (cst:cst-from-expression
+               (c:cook
                 `(error 'run-time-program-error
-                        :expr ',(cst:raw cst)
+                        :expr ',(c:raw cst)
                         :origin ',(cst:source cst)))
                environment))
     (substitute-cst (cst)

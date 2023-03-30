@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-future-cst-to-ast)
 
 (defun describe-function (client environment function-name-cst)
-  (let* ((function-name (cst:raw function-name-cst))
+  (let* ((function-name (c:raw function-name-cst))
          (result (trucler:describe-function client environment function-name)))
     (loop while (null result)
           do (restart-case (error "No function description for ~s"

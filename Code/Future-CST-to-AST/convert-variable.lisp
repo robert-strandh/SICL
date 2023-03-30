@@ -2,7 +2,7 @@
 
 (defmethod convert-variable (client cst environment)
   #+sbcl(declare (sb-ext:muffle-conditions sb-ext:compiler-note))
-  (let* ((symbol (cst:raw cst))
+  (let* ((symbol (c:raw cst))
          (info (trucler:describe-variable client environment symbol)))
     (loop while (null info)
           do (restart-case (error "No variable-description for ~s" symbol)

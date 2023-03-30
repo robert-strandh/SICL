@@ -10,4 +10,4 @@
   (make-instance 'ico:literal-ast :literal literal))
 
 (defun convert-constant (client constant-cst environment)
-  (convert-literal client (cst:raw constant-cst) environment))
+  (convert-literal client (c:raw constant-cst) environment))
