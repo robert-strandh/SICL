@@ -5,7 +5,9 @@
                #:concrete-syntax-tree-destructuring
                #:iconoclast
                #:iconoclast-builder
-               #:trucler-reference)
+               #:trucler-reference
+               #:clearcut-implementation-s-expression
+               #:clearcut-implementation-concrete-syntax-tree)
   :serial t
   :components
   ((:file "packages")
