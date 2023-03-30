@@ -5,7 +5,7 @@
          (result (trucler:describe-function client environment function-name)))
     (loop while (null result)
           do (restart-case (error "No function description for ~s"
-                                  function-nam)
+                                  function-name)
                (consider-global ()
                  :report (lambda (stream)
                            (format stream
