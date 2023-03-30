@@ -6,5 +6,6 @@
   (:local-nicknames
    (#:ico #:iconoclast)
    (#:bld #:iconoclast-builder)
-   (#:abp #:architecture.builder-protocol))
+   (#:abp #:architecture.builder-protocol)
+   (#:c #:clearcut))
   (:export #:cst-to-ast))
