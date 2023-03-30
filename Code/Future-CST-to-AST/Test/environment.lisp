@@ -46,7 +46,7 @@
 
 ;;; FIXME: do this better
 (defmethod trucler:describe-optimize
-    (client (environment base-run-time-environment))
+    (client (environment environment))
   (make-instance  'trucler:optimize-description
     :speed 0
     :compilation-speed 0
