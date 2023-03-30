@@ -5,9 +5,7 @@
   (let* ((symbol (cst:raw cst))
          (info (trucler:describe-variable client environment symbol)))
     (loop while (null info)
-          do (restart-case (error 'trucler:no-variable-description
-                                  :name symbol
-                                  :origin (cst:source cst))
+          do (restart-case (error "No variable-description for ~s" symbol)
                (continue ()
                  :report (lambda (stream)
                            (format stream "Consider the variable as special."))
