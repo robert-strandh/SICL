@@ -1,19 +1,19 @@
-(cl:in-package #:sicl-future-cst-to-ast)
+(cl:in-package #:sicl-expression-to-ast)
 
 ;;; Augment the environment with a single canonicalized declaration
 ;;; specifier.
 (defgeneric augment-environment-with-declaration
     (client
      declaration-identifier
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment))
 
 (defmethod augment-environment-with-declaration
     (client
      declaration-identifier
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
   (warn "Unable to handle declarations specifier: ~s" declaration-identifier)
   environment)
@@ -21,10 +21,10 @@
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'dynamic-extent))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
-  (let ((var-or-function (c:raw (c:first declaration-data-cst))))
+  (let ((var-or-function (c:raw (c:first cooked-declaration-data))))
     (if (consp var-or-function)
         ;; (dynamic-extent (function foo))
         (trucler:add-function-dynamic-extent
@@ -36,20 +36,20 @@
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'ftype))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
   (trucler:add-function-type
-   client environment (second declaration-data-cst) (first declaration-data-cst)))
+   client environment (second cooked-declaration-data) (first cooked-declaration-data)))
 
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'ignore))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
-  (let ((var-or-function (c:raw (c:first declaration-data-cst)))
-        (ignore (c:raw declaration-identifier-cst)))
+  (let ((var-or-function (c:raw (c:first cooked-declaration-data)))
+        (ignore (c:raw cooked-declaration-identifier)))
     (if (consp var-or-function)
         (trucler:add-function-ignore
          client environment (second var-or-function) ignore)
@@ -59,11 +59,11 @@
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'ignorable))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
-  (let ((var-or-function (c:raw (c:first declaration-data-cst)))
-        (ignore (c:raw declaration-identifier-cst)))
+  (let ((var-or-function (c:raw (c:first cooked-declaration-data)))
+        (ignore (c:raw cooked-declaration-identifier)))
     (if (consp var-or-function)
         (trucler:add-function-ignore
          client
@@ -74,62 +74,62 @@
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'inline))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
   (trucler:add-inline
    client
    environment
-   (c:raw (c:first declaration-data-cst))
-   (c:raw declaration-identifier-cst)))
+   (c:raw (c:first cooked-declaration-data))
+   (c:raw cooked-declaration-identifier)))
 
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'notinline))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
   (trucler:add-inline
    client
    environment
-   (c:raw (c:first declaration-data-cst))
-   (c:raw declaration-identifier-cst)))
+   (c:raw (c:first cooked-declaration-data))
+   (c:raw cooked-declaration-identifier)))
 
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'special))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
   ;; This case is a bit tricky, because if the
   ;; variable is globally special, nothing should
   ;; be added to the environment.
   (let ((info (trucler:describe-variable
-               client environment (c:raw (c:first declaration-data-cst)))))
+               client environment (c:raw (c:first cooked-declaration-data)))))
     (if (typep info 'trucler:global-special-variable-description)
         environment
         (trucler:add-special-variable
-         client environment (c:raw (c:first declaration-data-cst))))))
+         client environment (c:raw (c:first cooked-declaration-data))))))
 
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'type))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
-  (cst:db source (type-cst variable-cst) declaration-data-cst
+  (cst:db source (cooked-type cooked-variable) cooked-declaration-data
     (trucler:add-variable-type client
                                environment
-                               (c:raw variable-cst)
-                               (c:raw type-cst))))
+                               (c:raw cooked-variable)
+                               (c:raw cooked-type))))
 
 (defmethod augment-environment-with-declaration
     (client
      (declaration-identifier (eql 'optimize))
-     declaration-identifier-cst
-     declaration-data-cst
+     cooked-declaration-identifier
+     cooked-declaration-data
      environment)
-  (declare (ignore declaration-identifier-cst declaration-data-cst))
+  (declare (ignore cooked-declaration-identifier cooked-declaration-data))
   ;; OPTIMIZE is handled specially, so we do nothing here.
   ;; This method is just for ensuring that the default method,
   ;; which signals a warning, isn't called.
@@ -171,18 +171,18 @@
                 (augment-environment-with-optimize client optimize environment)
                 environment))))
     (loop for spec in canonical-dspecs
-          for declaration-identifier-cst = (c:first spec)
-          for declaration-identifier = (c:raw declaration-identifier-cst)
+          for cooked-declaration-identifier = (c:first spec)
+          for declaration-identifier = (c:raw cooked-declaration-identifier)
           ;; FIXME: this is probably wrong.  The data may be contained
           ;; in more than one element.  We need to wrap it in a CST or
           ;; change the interface to a-e-w-d.
-          for declaration-data-cst = (c:rest spec)
+          for cooked-declaration-data = (c:rest spec)
           do (setf new-env
                    (augment-environment-with-declaration
                     client
                     declaration-identifier
-                    declaration-identifier-cst
-                    declaration-data-cst
+                    cooked-declaration-identifier
+                    cooked-declaration-data
                     new-env)))
     new-env))
 
@@ -270,14 +270,14 @@
 ;;; indicating that no supplied-p parameter was given.  This function
 ;;; returns the augmented environment.
 (defun augment-environment-with-parameter
-    (client var-cst supplied-p-cst dspecs environment)
+    (client cooked-var cooked-supplied-p dspecs environment)
   (let ((new-env
           (augment-environment-with-variable
-           client var-cst dspecs environment environment)))
-    (if (null supplied-p-cst)
+           client cooked-var dspecs environment environment)))
+    (if (null cooked-supplied-p)
         new-env
         (augment-environment-with-variable
-         client supplied-p-cst dspecs new-env new-env))))
+         client cooked-supplied-p dspecs new-env new-env))))
 
 (defun augment-environment-with-local-function-name
     (client name-ast environment)
@@ -288,19 +288,19 @@
 ;;; definition.  Return a new environment which is like the one passed
 ;;; as an argument, except the it has been augmented by the name of
 ;;; the local function.
-(defun augment-environment-from-fdef (client environment definition-cst)
-  (let ((name-cst (c:first definition-cst)))
-    (augment-environment-with-local-function-name client name-cst environment)))
+(defun augment-environment-from-fdef (client environment cooked-definition)
+  (let ((cooked-name (c:first cooked-definition)))
+    (augment-environment-with-local-function-name client cooked-name environment)))
 
 ;;; Take an environment, a CST representing a list of function
 ;;; definitions, and return a new environment which is like the one
 ;;; passed as an argument, except that is has been augmented by the
 ;;; local function names in the list.
-(defun augment-environment-from-fdefs (client environment definitions-cst)
+(defun augment-environment-from-fdefs (client environment cooked-definitions)
   (loop with result = environment
-        for remaining = definitions-cst then (c:rest remaining)
+        for remaining = cooked-definitions then (c:rest remaining)
         until (c:null remaining)
-        do (let ((definition-cst (c:first remaining)))
+        do (let ((cooked-definition (c:first remaining)))
              (setf result
-                   (augment-environment-from-fdef client result definition-cst)))
+                   (augment-environment-from-fdef client result cooked-definition)))
         finally (return result)))

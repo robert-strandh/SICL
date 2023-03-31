@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-future-cst-to-ast
+(defsystem #:sicl-expression-to-ast
   :depends-on (#:concrete-syntax-tree
                #:concrete-syntax-tree-destructuring
                #:iconoclast

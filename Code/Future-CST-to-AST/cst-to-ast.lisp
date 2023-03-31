@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-future-cst-to-ast)
+(cl:in-package #:sicl-expression-to-ast)
 
 (defun cst-to-ast (client cst environment &key file-compilation-semantics)
   (let ((*subforms-are-top-level-p* t)

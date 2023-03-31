@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-future-cst-to-ast-test
-  :depends-on (#:sicl-future-cst-to-ast
+(defsystem #:sicl-expression-to-ast-test
+  :depends-on (#:sicl-expression-to-ast
                #:eclector-concrete-syntax-tree/test
                #:sicl-source-tracking)
   :serial t

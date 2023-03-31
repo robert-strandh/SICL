@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-future-cst-to-ast)
+(cl:in-package #:sicl-expression-to-ast)
 
 (defmethod convert-variable (client cst environment)
   #+sbcl(declare (sb-ext:muffle-conditions sb-ext:compiler-note))
@@ -26,4 +26,4 @@
                                 (format *query-io* "Enter new name: ")
                                 (list (read *query-io*)))
                  (setq info (trucler:describe-variable client environment new-symbol)))))
-    (convert-cst client cst info environment)))
+    (convert-with-description client cst info environment)))

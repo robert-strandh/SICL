@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-future-cst-to-ast)
+(cl:in-package #:sicl-expression-to-ast)
 
 (defclass environment ()
   ())

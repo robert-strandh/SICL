@@ -1,5 +1,5 @@
-(cl:in-package #:sicl-future-cst-to-ast)
+(cl:in-package #:sicl-expression-to-ast)
 
 (defgeneric convert (client cst environment))
 
-(defgeneric convert-cst (client cst info environment))
+(defgeneric convert-with-description (client cst info environment))

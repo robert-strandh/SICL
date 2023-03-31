@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-future-cst-to-ast)
+(cl:in-package #:sicl-expression-to-ast)
 
 (defun describe-function (client environment cooked-function-name)
   (let* ((raw-function-name (c:raw cooked-function-name))

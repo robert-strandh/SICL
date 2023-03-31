@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-future-cst-to-ast
+(defpackage #:sicl-expression-to-ast
   (:use #:common-lisp)
   (:shadow #:eval)
   (:local-nicknames

@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-future-cst-to-ast)
+(cl:in-package #:sicl-expression-to-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -20,7 +20,7 @@
            ;; specially.  So we must wait until we have more
            ;; information.
            (let ((info (describe-function client environment (c:first cst))))
-             (convert-cst client cst info environment)))
+             (convert-with-description client cst info environment)))
           (t
            ;; The form must be a compound form where the CAR is a lambda
            ;; expression.  Evaluating such a form might have some

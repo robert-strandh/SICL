@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-future-cst-to-ast)
+(cl:in-package #:sicl-expression-to-ast)
 
 (defun read-cst (input-stream eof-marker)
   (eclector.concrete-syntax-tree:read input-stream nil eof-marker))
