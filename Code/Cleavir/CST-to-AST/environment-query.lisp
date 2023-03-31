@@ -4,7 +4,7 @@
   (let* ((function-name (cst:raw function-name-cst))
          (result (trucler:describe-function client environment function-name)))
     (loop while (null result)
-          do (restart-case (error 'trucler:no-function-description
+          do (restart-case (error 'no-function-description
                                   :origin (cst:source function-name-cst)
                                   :name function-name)
                (consider-global ()
@@ -28,7 +28,7 @@
 (defun describe-tag (client environment tag-name)
   (let ((result (trucler:describe-tag client environment tag-name)))
     (loop while (null result)
-          do (restart-case (error 'trucler:no-tag-description
+          do (restart-case (error 'no-tag-description
                                   :name tag-name)
                (substitute (new-tag-name)
                  :report (lambda (stream)

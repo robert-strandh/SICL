@@ -47,19 +47,19 @@
                (warn "Unknown function referred to by INLINE/NOTINLINE declaration ~s"
                      (trucler:name condition)))
              (invoke-restart 'trucler:ignore-declaration)))
-         (trucler:no-function-description
+         (cleavir-cst-to-ast:no-function-description
            (lambda (condition)
-             (unless (member (trucler:name condition)
+             (unless (member (cleavir-cst-to-ast:name condition)
                              (overridden-function-cells
                               (trucler:global-environment client environment))
                              :key #'car :test #'equal)
                (let ((*package* (find-package "KEYWORD")))
-                 (warn 'unknown-function :name (trucler:name condition))))
+                 (warn 'unknown-function :name (cleavir-cst-to-ast:name condition))))
              (invoke-restart 'cleavir-cst-to-ast:consider-global)))
-         (trucler:no-variable-description
+         (cleavir-cst-to-ast:no-variable-description
            (lambda (condition)
              (let ((*package* (find-package "KEYWORD")))
-               (warn "Unknown variable ~s" (trucler:name condition)))
+               (warn "Unknown variable ~s" (cleavir-cst-to-ast:name condition)))
              (invoke-restart 'cleavir-cst-to-ast:consider-special)))
          (cleavir-cst-to-ast::encapsulated-condition
            (lambda (condition)

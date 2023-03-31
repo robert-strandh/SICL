@@ -9,36 +9,36 @@
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-function
-                   :source-location (trucler:origin condition)
-                   :name (trucler:name condition)))
+                   :source-location (cleavir-cst-to-ast:origin condition)
+                   :name (cleavir-cst-to-ast:name condition)))
            (invoke-restart 'trucler:ignore-declaration)))
-       (trucler:no-function-description
+       (cleavir-cst-to-ast:no-function-description
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-function
-                   :source-location (trucler:origin condition)
-                   :name (trucler:name condition)))
+                   :source-location (cleavir-cst-to-ast:origin condition)
+                   :name (cleavir-cst-to-ast:name condition)))
            (invoke-restart 'cleavir-cst-to-ast:consider-global)))
-       (trucler:no-variable-description
+       (cleavir-cst-to-ast:no-variable-description
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-variable
-                   :source-location (trucler:origin condition)
-                   :name (trucler:name condition)))
+                   :source-location (cleavir-cst-to-ast:origin condition)
+                   :name (cleavir-cst-to-ast:name condition)))
            (invoke-restart 'cleavir-cst-to-ast:consider-special)))
-       (trucler:no-block-description
+       (cleavir-cst-to-ast:no-block-description
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-block
-                   :source-location (trucler:origin condition)
-                   :name (trucler:name condition)))
+                   :source-location (cleavir-cst-to-ast:origin condition)
+                   :name (cleavir-cst-to-ast:name condition)))
            (invoke-restart 'continue)))
-       (trucler:no-tag-description
+       (cleavir-cst-to-ast:no-tag-description
          (lambda (condition)
            (let ((*package* (find-package "KEYWORD")))
              (warn 'undefined-block
-                   :source-location (trucler:origin condition)
-                   :name (trucler:name condition)))
+                   :source-location (cleavir-cst-to-ast:origin condition)
+                   :name (cleavir-cst-to-ast:name condition)))
            (invoke-restart 'continue))))
     (sicl-cst-to-ast:cst-to-ast client cst compilation-environment t)))
 

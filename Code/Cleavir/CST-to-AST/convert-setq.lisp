@@ -66,7 +66,7 @@
   (let* ((symbol (cst:raw var-cst))
          (info (trucler:describe-variable client environment symbol)))
     (loop while (null info)
-          do (restart-case (error 'trucler:no-variable-description
+          do (restart-case (error 'no-variable-description
                                   :name symbol
                                   :origin (cst:source var-cst))
                (continue ()
