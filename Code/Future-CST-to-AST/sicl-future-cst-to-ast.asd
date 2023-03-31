@@ -6,8 +6,7 @@
                #:iconoclast
                #:iconoclast-builder
                #:trucler-reference
-               #:clearcut-implementation-s-expression
-               #:clearcut-implementation-concrete-syntax-tree)
+               #:sicl-extended-clearcut)
   :serial t
   :components
   ((:file "packages")
