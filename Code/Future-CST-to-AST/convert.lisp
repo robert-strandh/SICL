@@ -5,22 +5,22 @@
 ;;; CONVERT is responsible for converting a concrete syntax tree to an
 ;;; abstract syntax tree.
 
-(defmethod convert (client cst environment)
-  (let ((form (c:raw cst)))
+(defmethod convert (client cooked-expression environment)
+  (let ((form (c:raw cooked-expression)))
     (cond ((or (and (not (consp form)) (not (symbolp form)))
                (keywordp form)
                (member form '(t nil)))
-           (convert-constant client cst environment))
+           (convert-constant client cooked-expression environment))
           ((symbolp form)
-           (convert-variable client cst environment))
+           (convert-variable client cooked-expression environment))
           ((symbolp (car form))
            ;; Even if we are in COMPILE-TIME-TOO mode, at this point, we
            ;; do not know whether to evaluate the form at compile time,
            ;; simply because it might be a special form that is handled
            ;; specially.  So we must wait until we have more
            ;; information.
-           (let ((info (describe-function client environment (c:first cst))))
-             (convert-with-description client cst info environment)))
+           (let ((info (describe-function client environment (c:first cooked-expression))))
+             (convert-with-description client cooked-expression info environment)))
           (t
            ;; The form must be a compound form where the CAR is a lambda
            ;; expression.  Evaluating such a form might have some
@@ -28,10 +28,10 @@
            ;; in COMPILE-TIME-TOO mode, in which case we must evaluate
            ;; the form as well.
            (when (and *current-form-is-top-level-p* *compile-time-too*)
-             (cst-eval client cst environment))
-           (convert-lambda-call client cst environment)))))
+             (cst-eval client cooked-expression environment))
+           (convert-lambda-call client cooked-expression environment)))))
 
-(defmethod convert :around (client cst environment)
+(defmethod convert :around (client cooked-expression environment)
   #+sbcl(declare (sb-ext:muffle-conditions sb-ext:compiler-note))
   (restart-case
       ;; We bind these only here so that if a restart is invoked,
@@ -39,16 +39,16 @@
       ;; (i.e., the ones outside our binding)
       (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
             (*subforms-are-top-level-p* nil)
-            (*origin* (cst:source cst)))
+            (*origin* (c:origin cooked-expression)))
         (call-next-method))
     (continue ()
       :report "Replace with call to ERROR."
       (convert client
                (c:cook
                 `(error 'run-time-program-error
-                        :expr ',(c:raw cst)
-                        :origin ',(cst:source cst)))
+                        :expr ',(c:raw cooked-expression)
+                        :origin ',(c:origin cooked-expression)))
                environment))
-    (substitute-cst (cst)
-      :report "Compile the given CST in place of the problematic one."
-      (convert client cst environment))))
+    (substitute-expression (cooked-expression)
+      :report "Compile the given expression in place of the problematic one."
+      (convert client cooked-expression environment))))

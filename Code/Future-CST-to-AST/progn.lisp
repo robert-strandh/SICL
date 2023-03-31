@@ -8,5 +8,5 @@
     (reinitialize-instance ast
       :form-asts
       (loop for body-ast in (ico:form-asts ast)
-            for cst in (ico:origin body-ast)
-            collect (convert client cst environment)))))
+            for cooked-expression in (ico:origin body-ast)
+            collect (convert client cooked-expression environment)))))

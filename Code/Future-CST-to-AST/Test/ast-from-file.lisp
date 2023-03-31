@@ -9,7 +9,7 @@
            (loop with eof-marker = input-stream
                  for cst = (read-cst input-stream eof-marker)
                  until (eq cst eof-marker)
-                 collect (cst-to-ast client cst compilation-environment))))
+                 collect (expression-to-ast client cst compilation-environment))))
     (make-instance 'ico:progn-ast
       :form-asts asts)))
 

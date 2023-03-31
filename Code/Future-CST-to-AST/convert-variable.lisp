@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-expression-to-ast)
 
-(defmethod convert-variable (client cst environment)
+(defmethod convert-variable (client cooked-symbol environment)
   #+sbcl(declare (sb-ext:muffle-conditions sb-ext:compiler-note))
-  (let* ((symbol (c:raw cst))
+  (let* ((symbol (c:raw cooked-symbol))
          (info (trucler:describe-variable client environment symbol)))
     (loop while (null info)
           do (restart-case (error "No variable-description for ~s" symbol)
@@ -26,4 +26,4 @@
                                 (format *query-io* "Enter new name: ")
                                 (list (read *query-io*)))
                  (setq info (trucler:describe-variable client environment new-symbol)))))
-    (convert-with-description client cst info environment)))
+    (convert-with-description client cooked-symbol info environment)))

@@ -7,9 +7,9 @@
      (ast ico:progn-ast))
   (with-builder-components (builder client environment)
     (loop for binding-ast in (ico:variable-binding-asts ast)
-          for cst = (ico:origin (ico:form-ast binding-ast))
+          for cooked-expression = (ico:origin (ico:form-ast binding-ast))
           do (reinitialize-instance binding-ast
-               :form-ast (convert client cst environment)))
+               :form-ast (convert client cooked-expression environment)))
     (let ((body-environment environment))
       (loop for binding-ast in (ico:variable-binding-asts ast)
             for variable-name-ast = (ico:variable-name-ast binding-ast)
@@ -23,5 +23,5 @@
       (reinitialize-instance ast
         :form-asts
         (loop for body-ast in (ico:form-asts ast)
-              for cst in (ico:origin body-ast)
-              collect (convert client cst body-environment))))))
+              for cooked-expression in (ico:origin body-ast)
+              collect (convert client cooked-expression body-environment))))))

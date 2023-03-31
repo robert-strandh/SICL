@@ -9,5 +9,5 @@
   (declare (ignore client environment))
   (make-instance 'ico:literal-ast :literal literal))
 
-(defun convert-constant (client constant-cst environment)
-  (convert-literal client (c:raw constant-cst) environment))
+(defun convert-constant (client cooked-constant environment)
+  (convert-literal client (c:raw cooked-constant) environment))

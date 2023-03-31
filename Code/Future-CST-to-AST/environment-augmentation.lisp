@@ -174,8 +174,7 @@
           for cooked-declaration-identifier = (c:first spec)
           for declaration-identifier = (c:raw cooked-declaration-identifier)
           ;; FIXME: this is probably wrong.  The data may be contained
-          ;; in more than one element.  We need to wrap it in a CST or
-          ;; change the interface to a-e-w-d.
+          ;; in more than one element. 
           for cooked-declaration-data = (c:rest spec)
           do (setf new-env
                    (augment-environment-with-declaration
@@ -284,18 +283,18 @@
   (let* ((name (ico:name name-ast)))
     (trucler:add-local-function client environment name name-ast)))
 
-;;; Take an environment and a CST representing a single local function
-;;; definition.  Return a new environment which is like the one passed
-;;; as an argument, except the it has been augmented by the name of
-;;; the local function.
+;;; Take an environment and a cooked expression representing a single
+;;; local function definition.  Return a new environment which is like
+;;; the one passed as an argument, except the it has been augmented by
+;;; the name of the local function.
 (defun augment-environment-from-fdef (client environment cooked-definition)
   (let ((cooked-name (c:first cooked-definition)))
     (augment-environment-with-local-function-name client cooked-name environment)))
 
-;;; Take an environment, a CST representing a list of function
-;;; definitions, and return a new environment which is like the one
-;;; passed as an argument, except that is has been augmented by the
-;;; local function names in the list.
+;;; Take an environment, a cooked expression representing a list of
+;;; function definitions, and return a new environment which is like
+;;; the one passed as an argument, except that is has been augmented
+;;; by the local function names in the list.
 (defun augment-environment-from-fdefs (client environment cooked-definitions)
   (loop with result = environment
         for remaining = cooked-definitions then (c:rest remaining)

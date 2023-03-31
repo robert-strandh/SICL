@@ -8,4 +8,4 @@
    (#:bld #:iconoclast-builder)
    (#:abp #:architecture.builder-protocol)
    (#:c #:sicl-extended-clearcut))
-  (:export #:cst-to-ast))
+  (:export #:expression-to-ast))
