@@ -7,5 +7,5 @@
    (#:ico #:iconoclast)
    (#:bld #:iconoclast-builder)
    (#:abp #:architecture.builder-protocol)
-   (#:c #:clearcut))
+   (#:c #:sicl-extended-clearcut))
   (:export #:cst-to-ast))
