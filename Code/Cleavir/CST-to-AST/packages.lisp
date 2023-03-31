@@ -78,7 +78,13 @@
            #:eval-error #:eval-warning #:eval-style-warning
            #:process-progn
            #:trivial-constant-p
+           #:no-variable-description
+           #:no-function-description
+           #:no-block-description
+           #:no-tag-description
            ;; Condition readers.
+           #:name
+           #:origin
            #:cst
            #:original-condition
            #:expected-min #:expected-max #:observed
