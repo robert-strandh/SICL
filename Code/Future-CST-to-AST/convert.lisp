@@ -28,7 +28,7 @@
            ;; in COMPILE-TIME-TOO mode, in which case we must evaluate
            ;; the form as well.
            (when (and *current-form-is-top-level-p* *compile-time-too*)
-             (cst-eval client cooked-expression environment))
+             (eval-cooked client cooked-expression environment))
            (convert-lambda-call client cooked-expression environment)))))
 
 (defmethod convert :around (client cooked-expression environment)

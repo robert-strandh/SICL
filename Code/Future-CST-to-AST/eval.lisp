@@ -1,3 +1,3 @@
 (cl:in-package #:sicl-expression-to-ast)
 
-(defgeneric cst-eval (client cooked-expression environment))
+(defgeneric eval-cooked (client cooked-expression environment))
