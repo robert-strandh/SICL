@@ -11,3 +11,11 @@
 
 (defun expand-macro (expander cooked-form environment)
   (expand expander (c:raw cooked-form) environment))
+
+(defun expand-compiler-macro (expander cooked-form environment)
+  (let ((raw-form (c:raw cooked-form)))
+    (restart-case
+        (expand expander raw-form environment)
+      (continue ()
+        :report "Ignore compiler macro."
+        (return-from expand-compiler-macro raw-form)))))
