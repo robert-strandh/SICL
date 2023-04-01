@@ -19,3 +19,8 @@
       (continue ()
         :report "Ignore compiler macro."
         (return-from expand-compiler-macro raw-form)))))
+
+(defun convert-sequence (client cooked-sequence environment)
+  (loop for remaining = cooked-sequence then (c:rest remaining)
+        until (c:null cooked-sequence)
+        collect (convert client (c:first remaining) environment)))
