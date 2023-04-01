@@ -117,7 +117,8 @@
      cooked-declaration-identifier
      cooked-declaration-data
      environment)
-  (cst:db source (cooked-type cooked-variable) cooked-declaration-data
+  (let ((cooked-type (c:first cooked-declaration-data))
+        (cooked-variable (c:second cooked-declaration-data)))
     (trucler:add-variable-type client
                                environment
                                (c:raw cooked-variable)
@@ -159,7 +160,10 @@
 (defun extract-optimize (canonicalized-dspecs)
   (loop for spec in canonicalized-dspecs
         when (eq (c:raw (c:first spec)) 'optimize)
-          append (mapcar #'c:raw (cst:listify (c:rest spec)))))
+          append (loop for remaining = (c:rest spec)
+                         then (c:rest remaining)
+                       until (c:null remaining)
+                       collect (c:raw (c:first remaining)))))
 
 ;;; Augment the environment with a list of canonical declartion
 ;;; specifiers.
