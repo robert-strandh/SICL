@@ -77,9 +77,9 @@
 (defmethod convert-with-description
     (client
      cooked-form
-     (info trucler:global-macro-description) environment)
-  (let ((compiler-macro (trucler:compiler-macro info))
-        (expander (trucler:expander info)))
+     (description trucler:global-macro-description) environment)
+  (let ((compiler-macro (trucler:compiler-macro description))
+        (expander (trucler:expander description)))
     (with-preserved-toplevel-ness
       (if (null compiler-macro)
           ;; There is no compiler macro, so we just apply the macro
