@@ -18,3 +18,15 @@
     (setf (c:origin cooked-expanded-form) (c:origin cooked-form))
     (with-preserved-toplevel-ness
       (convert client cooked-expanded-form environment))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a symbol that has a definition as a constant variable.
+
+(defmethod convert-with-description
+    (client
+     cooked-form
+     (info trucler:constant-variable-description)
+     environment)
+  (let ((new-cooked-form (c:cook (trucler:value info))))
+    (setf (c:origin new-cooked-form) (c:origin cooked-form))
+    (convert-constant client new-cooked-form environment)))
