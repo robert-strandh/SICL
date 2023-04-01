@@ -25,9 +25,9 @@
 (defmethod convert-with-description
     (client
      cooked-form
-     (info trucler:constant-variable-description)
+     (description trucler:constant-variable-description)
      environment)
-  (let ((new-cooked-form (c:cook (trucler:value info))))
+  (let ((new-cooked-form (c:cook (trucler:value description))))
     (setf (c:origin new-cooked-form) (c:origin cooked-form))
     (convert-constant client new-cooked-form environment)))
 
@@ -38,7 +38,7 @@
 (defmethod convert-with-description
     (client
      cooked-form
-     (info trucler:special-operator-description)
+     (description trucler:special-operator-description)
      environment)
   (let ((builder (make-builder client environment)))
     (s-expression-syntax:parse builder t cooked-form)))
@@ -58,9 +58,9 @@
 (defmethod convert-with-description
     (client
      cooked-form
-     (info trucler:local-macro-description)
+     (description trucler:local-macro-description)
      environment)
-  (let* ((expander (trucler:expander info))
+  (let* ((expander (trucler:expander description))
          (raw-expanded-form
            (expand-macro expander cooked-form environment))
          (cooked-expanded-form
