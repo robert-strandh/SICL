@@ -30,3 +30,15 @@
   (let ((new-cooked-form (c:cook (trucler:value info))))
     (setf (c:origin new-cooked-form) (c:origin cooked-form))
     (convert-constant client new-cooked-form environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a cooked special form.
+
+(defmethod convert-with-description
+    (client
+     cooked-form
+     (info trucler:special-operator-description)
+     environment)
+  (let ((builder (make-builder client environment)))
+    (s-expression-syntax:parse builder t cooked-form)))
