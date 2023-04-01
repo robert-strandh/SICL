@@ -6,10 +6,12 @@
    #:common-lisp
    #:defun
    #:defgeneric
-   #:defmethod)
+   #:defmethod
+   #:setf)
   (:export
    . #.(loop with clearcut = (find-package '#:clearcut)
              for symbol being each external-symbol in clearcut
              collect (symbol-name symbol)))
-  (:export #:origin))
-
+  (:export
+   #:origin
+   #:reconstruct))
