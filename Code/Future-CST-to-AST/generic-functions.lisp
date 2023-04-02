@@ -4,3 +4,5 @@
 
 (defgeneric convert-with-description
     (client cooked-expression info environment))
+
+(defgeneric convert-ast (builder ast))
