@@ -23,5 +23,5 @@
 (defmacro with-builder-components
     ((builder-form client-name environment-name) &body body)
   `(multiple-value-bind (,client-name ,environment-name)
-       ,builder-form
+       (builder-components ,builder-form)
      ,@body))
