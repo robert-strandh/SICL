@@ -7,7 +7,11 @@
 
 (defun convert-literal (client literal environment)
   (declare (ignore client environment))
-  (make-instance 'ico:literal-ast :literal literal))
+  (make-instance 'ico:literal-ast
+    :literal literal))
 
 (defun convert-constant (client cooked-constant environment)
-  (convert-literal client (c:raw cooked-constant) environment))
+  (declare (ignore client environment))
+  (make-instance 'ico:literal-ast
+    :origin (c:origin cooked-constant)
+    :literal (c:raw cooked-constant)))
