@@ -23,4 +23,5 @@
    (:file "convert-variable")
    (:file "convert-with-description")
    (:file "convert")
+   (:file "convert-ast")
    (:file "expression-to-ast")))
