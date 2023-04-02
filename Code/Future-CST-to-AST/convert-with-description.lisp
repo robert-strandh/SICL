@@ -116,3 +116,55 @@
                   (setf (c:origin cooked-expanded-form)
                         (c:origin cooked-form))
                   (convert client cooked-expanded-form environment))))))))
+
+(defun convert-arguments (client cooked-arguments environment)
+  (if (c:null cooked-arguments)
+      c:nil
+      (c:cons
+       (convert client (c:first cooked-arguments) environment)
+       (convert-arguments client (c:rest cooked-arguments) environment))))
+
+(defun make-application (client cooked-form environment)
+  (make-instance 'ico:application-ast
+    :origin (c:origin cooked-form)
+    :function-ast
+    (make-instance 'ico:function-name-ast
+      :origin (c:origin (c:first cooked-form))
+      :name (c:first cooked-form))
+    :argument-asts
+    (convert-arguments client (c:rest cooked-form) environment)))
+
+;;; Convert a form representing a call to a named global function.
+(defmethod convert-with-description
+    (client
+     cooked-form
+     (description trucler:global-function-description)
+     environment)
+  ;; When we compile a call to a global function, it is possible that
+  ;; we are in COMPILE-TIME-TOO mode.  In that case, we must first
+  ;; evaluate the form.
+  (when (and *current-form-is-top-level-p* *compile-time-too*)
+    (eval-cooked client cooked-form environment))
+  (let ((compiler-macro (trucler:compiler-macro description))
+        (notinline (eq 'notinline (trucler:inline description))))
+    (if (or notinline (null compiler-macro))
+        ;; There is no compiler macro.  Create the application.
+        (make-application client cooked-form environment)
+        ;; There is a compiler macro.  We must see whether it will
+        ;; accept or decline.
+        (let ((raw-expanded-form
+                (expand-compiler-macro
+                 compiler-macro cooked-form environment)))
+          (if (eq (c:raw cooked-form) raw-expanded-form)
+              ;; If the two are EQ, this means that the compiler macro
+              ;; declined.  We are left with function-call form.
+              ;; Create the application, just as if there were no
+              ;; compiler macro present.
+              (make-application client cooked-form environment)
+              ;; If the two are not EQ, this means that the compiler
+              ;; macro replaced the original form with a new form.
+              ;; This new form must then be converted.
+              (let ((cooked-expanded-form
+                      (c:reconstruct raw-expanded-form cooked-form)))
+                (setf (c:origin cooked-expanded-form) (c:origin cooked-form))
+                (convert client cooked-expanded-form environment)))))))
