@@ -181,3 +181,29 @@
      (description trucler:local-function-description)
      environment)
   (make-application client cooked-form environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a symbol that has a definition as a special variable.
+
+(defmethod convert-with-description
+    (client
+     cooked-form
+     (description trucler:special-variable-description)
+     environment)
+  (make-instance 'ico:variable-name-ast
+    :origin (c:origin cooked-form)
+    :name (trucler:name description)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a symbol that has a definition as a lexical variable.
+
+(defmethod convert-with-description
+    (client
+     cooked-form
+     (description trucler:lexical-variable-description)
+     environment)
+  (make-instance 'ico:variable-name-ast
+    :origin (c:origin cooked-form)
+    :name (trucler:name description)))
