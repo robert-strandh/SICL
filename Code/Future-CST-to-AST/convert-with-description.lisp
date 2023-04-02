@@ -168,3 +168,16 @@
                       (c:reconstruct raw-expanded-form cooked-form)))
                 (setf (c:origin cooked-expanded-form) (c:origin cooked-form))
                 (convert client cooked-expanded-form environment)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a cooked expression representing a compound form that
+;;; calls a local function.  A local function can not have a compiler
+;;; macro associated with it.
+
+(defmethod convert-with-description
+    (client
+     cooked-form
+     (description trucler:local-function-description)
+     environment)
+  (make-application client cooked-form environment))
