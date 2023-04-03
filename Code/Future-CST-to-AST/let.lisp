@@ -4,7 +4,7 @@
 (defmethod abp:finish-node
     ((builder builder)
      (kind t)
-     (ast ico:progn-ast))
+     (ast ico:let-ast))
   (with-builder-components (builder client environment)
     (loop for binding-ast in (ico:variable-binding-asts ast)
           for cooked-expression = (ico:origin (ico:form-ast binding-ast))
