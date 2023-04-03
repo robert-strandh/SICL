@@ -41,5 +41,20 @@
                         client environment new-tag-name)))))
     result))
 
+(defun describe-block (client environment block-name)
+  (let ((result (trucler:describe-block client environment block-name)))
+    (loop while (null result)
+          do (restart-case (error "No block name ~s" block-name)
+               (substitute (new-block-name)
+                 :report (lambda (stream)
+                           (format stream "Substitute a different name."))
+                 :interactive (lambda ()
+                                (format *query-io* "Enter new name: ")
+                                (list (read *query-io*)))
+                 (setq result
+                       (trucler:describe-block
+                        client environment new-block-name)))))
+    result))
+
 (defmethod declaration-proclamations (client environment)
   '())
