@@ -19,6 +19,7 @@
    (:file "declarations")
    (:file "let")
    (:file "progn")
+   (:file "block")
    (:file "variables")
    (:file "convert-constant")
    (:file "convert-variable")
