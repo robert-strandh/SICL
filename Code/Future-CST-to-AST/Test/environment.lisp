@@ -3,6 +3,9 @@
 (defclass environment ()
   ())
 
+(defclass client (trucler-reference:client)
+  ())
+
 (defmethod trucler:describe-variable
     (client (environment environment) name)
   (cond ((sb-eval::specialp name nil)
