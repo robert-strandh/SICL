@@ -1,7 +1,5 @@
 (cl:in-package #:sicl-expression-to-ast)
 
-;;; We may want to introduce a subclass of the BLOCK-NAME-AST that
-;;; contains a list of ASTs that refer to this block name.
 (defmethod abp:finish-node
     ((builder builder)
      (kind t)
@@ -12,6 +10,7 @@
            (new-environment
              (trucler:add-block
               client environment name block-name-ast)))
+      (change-class block-name-ast 'ico:block-name-definition-ast)
       (let ((new-builder (make-builder client new-environment)))
         (reinitialize-instance ast
           :form-asts
