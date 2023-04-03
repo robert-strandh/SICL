@@ -20,6 +20,7 @@
    (:file "let")
    (:file "progn")
    (:file "block")
+   (:file "return-from")
    (:file "variables")
    (:file "convert-constant")
    (:file "convert-variable")
