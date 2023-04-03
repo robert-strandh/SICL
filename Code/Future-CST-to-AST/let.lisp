@@ -6,14 +6,18 @@
      (kind t)
      (ast ico:let-ast))
   (with-builder-components (builder client environment)
+    ;; Start by converting the initialization arguments of
+    ;; each binding, using the original builder.
     (loop for binding-ast in (ico:variable-binding-asts ast)
-          for cooked-expression = (ico:origin (ico:form-ast binding-ast))
+          for form-ast = (ico:form-ast binding-ast)
           do (reinitialize-instance binding-ast
-               :form-ast (convert client cooked-expression environment)))
+               :form-ast (convert-ast builder form-ast)))
     (let ((body-environment environment))
       (loop for binding-ast in (ico:variable-binding-asts ast)
             for variable-name-ast = (ico:variable-name-ast binding-ast)
-            do (setf environment
+            do (change-class variable-name-ast
+                             'ico:variable-definition-ast)
+               (setf body-environment
                      (augment-environment-with-variable
                       client
                       variable-name-ast
