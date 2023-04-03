@@ -16,6 +16,7 @@
    (:file "utilities")
    (:file "eval")
    (:file "builder")
+   (:file "declarations")
    (:file "let")
    (:file "progn")
    (:file "variables")
