@@ -204,6 +204,13 @@
      cooked-form
      (description trucler:lexical-variable-description)
      environment)
-  (make-instance 'ico:variable-name-ast
-    :origin (c:origin cooked-form)
-    :name (trucler:name description)))
+  (let* ((variable-definition-ast (trucler:identity description))
+         (result (make-instance 'ico:variable-reference-ast
+                   :origin (c:origin cooked-form)
+                   :name (trucler:name description)
+                   :variable-definition-ast variable-definition-ast)))
+    (reinitialize-instance variable-definition-ast
+      :variable-reference-asts
+      (append (ico:variable-reference-asts variable-definition-ast)
+              (list result)))
+    result))
