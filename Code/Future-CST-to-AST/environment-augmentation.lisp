@@ -189,25 +189,32 @@
                     new-env)))
     new-env))
 
-;;; Given a single variable bound by some binding form, a list of
-;;; canonicalized declaration specifiers, and an environment in which
-;;; the binding form is compiled, return true if and only if the
-;;; variable to be bound is special.  Return a second value indicating
-;;; whether the variable is globally special.
-(defun variable-is-special-p (client variable declarations environment)
-  (let* ((existing-var-description (trucler:describe-variable client environment variable))
+;;; Given a single VARIABLE-NAME-AST bound by some binding form, a
+;;; list of declaration DECLARATION-SPECIFIER-ASTs,, and an
+;;; environment in which the binding form is compiled, return true if
+;;; and only if the variable to be bound is special.  Return a second
+;;; value indicating whether the variable is globally special.
+(defun variable-is-special-p
+    (client environment
+     variable-name-ast
+     declaration-specifier-asts)
+  (let* ((name (ico:name variable-name-ast))
+         (existing-description
+           (trucler:describe-variable client environment name))
          (special-var-p
-           (typep existing-var-description 'trucler:special-variable-description)))
-    (cond ((loop for declaration in declarations
-                 thereis (and (eq (c:raw (c:first declaration)) 'special)
-                              (eq (c:raw (c:second declaration)) variable)))
+           (typep existing-description 'trucler:special-variable-description)))
+    (cond ((loop for declaration-specifier-ast in declaration-specifier-asts
+                   thereis (and (typep declaration-specifier-ast
+                                       'ico:special-ast)
+                                (member name (ico:name-asts declaration-specifier-ast)
+                                        :test #'eq :key #'ico:name)))
            ;; If it is declared special it is.
            (values t
                    (and special-var-p
-                        (typep existing-var-description
+                        (typep existing-description
                                'trucler:global-special-variable-description))))
           ((and special-var-p
-                (typep existing-var-description
+                (typep existing-description
                        'trucler:global-special-variable-description))
            ;; It is mentioned in the environment as globally special.
            (values t t))
