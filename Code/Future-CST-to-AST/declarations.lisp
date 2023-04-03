@@ -98,5 +98,3 @@
         do (setf result
                  (add-declaration-for-variable
                   client result variable-name-ast declaration-ast))))
-        
-  
