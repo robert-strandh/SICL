@@ -20,8 +20,8 @@
                       '()
                       body-environment
                       environment)))
-      (reinitialize-instance ast
-        :form-asts
-        (loop for body-ast in (ico:form-asts ast)
-              for cooked-expression in (ico:origin body-ast)
-              collect (convert client cooked-expression body-environment))))))
+      (let ((new-builder (make-builder client body-environment)))
+        (reinitialize-instance ast
+          :form-asts
+          (loop for body-ast in (ico:form-asts ast)
+                collect (convert-ast new-builder body-ast)))))))
