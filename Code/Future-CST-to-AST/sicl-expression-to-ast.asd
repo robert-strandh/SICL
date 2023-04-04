@@ -26,6 +26,7 @@
    (:file "eval-when")
    (:file "tagbody")
    (:file "go")
+   (:file "if")
    (:file "variables")
    (:file "convert-constant")
    (:file "convert-variable")
