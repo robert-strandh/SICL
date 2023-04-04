@@ -23,6 +23,7 @@
    (:file "return-from")
    (:file "catch")
    (:file "throw")
+   (:file "eval-when")
    (:file "variables")
    (:file "convert-constant")
    (:file "convert-variable")
