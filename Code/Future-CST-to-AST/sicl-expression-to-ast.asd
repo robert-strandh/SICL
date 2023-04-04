@@ -29,6 +29,7 @@
    (:file "if")
    (:file "load-time-value")
    (:file "multiple-value-call")
+   (:file "multiple-value-prog1")
    (:file "variables")
    (:file "convert-constant")
    (:file "convert-variable")
