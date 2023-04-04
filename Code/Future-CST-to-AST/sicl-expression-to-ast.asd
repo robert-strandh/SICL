@@ -28,6 +28,7 @@
    (:file "go")
    (:file "if")
    (:file "load-time-value")
+   (:file "multiple-value-call")
    (:file "variables")
    (:file "convert-constant")
    (:file "convert-variable")
