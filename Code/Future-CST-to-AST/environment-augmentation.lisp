@@ -201,9 +201,6 @@
   (let* ((name (ico:name variable-name-ast))
          (existing-description
            (trucler:describe-variable client environment name))
-         (already-special-p
-           (typep existing-description
-                  'trucler:special-variable-description))
          (already-globally-special-p
            (typep existing-description
                   'trucler:global-special-variable-description))
@@ -214,7 +211,7 @@
                                 (member name
                                         (ico:name-asts declaration-specifier-ast)
                                         :test #'eq :key #'ico:name)))))
-    (values (or already-special-p declared-special-p)
+    (values (or already-globally-special-p declared-special-p)
             already-globally-special-p)))
 
 ;;; Given a list of canonicalized declaration specifiers for a single
