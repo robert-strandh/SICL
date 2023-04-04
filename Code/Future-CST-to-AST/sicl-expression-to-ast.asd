@@ -25,6 +25,7 @@
    (:file "throw")
    (:file "eval-when")
    (:file "tagbody")
+   (:file "go")
    (:file "variables")
    (:file "convert-constant")
    (:file "convert-variable")
