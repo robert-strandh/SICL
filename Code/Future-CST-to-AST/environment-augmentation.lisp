@@ -190,10 +190,10 @@
     new-env))
 
 ;;; Given a single VARIABLE-NAME-AST bound by some binding form, a
-;;; list of declaration DECLARATION-SPECIFIER-ASTs,, and an
-;;; environment in which the binding form is compiled, return true if
-;;; and only if the variable to be bound is special.  Return a second
-;;; value indicating whether the variable is globally special.
+;;; list of DECLARATION-SPECIFIER-ASTs,, and an environment in which
+;;; the binding form is compiled, return true if and only if the
+;;; variable to be bound is special.  Return a second value indicating
+;;; whether the variable is globally special.
 (defun variable-is-special-p
     (client environment
      variable-name-ast
@@ -201,27 +201,21 @@
   (let* ((name (ico:name variable-name-ast))
          (existing-description
            (trucler:describe-variable client environment name))
-         (special-var-p
-           (typep existing-description 'trucler:special-variable-description)))
-    (cond ((loop for declaration-specifier-ast in declaration-specifier-asts
+         (already-special-p
+           (typep existing-description
+                  'trucler:special-variable-description))
+         (already-globally-special-p
+           (typep existing-description
+                  'trucler:global-special-variable-description))
+         (declared-special-p
+           (loop for declaration-specifier-ast in declaration-specifier-asts
                    thereis (and (typep declaration-specifier-ast
                                        'ico:special-ast)
-                                (member name (ico:name-asts declaration-specifier-ast)
-                                        :test #'eq :key #'ico:name)))
-           ;; If it is declared special it is.
-           (values t
-                   (and special-var-p
-                        (typep existing-description
-                               'trucler:global-special-variable-description))))
-          ((and special-var-p
-                (typep existing-description
-                       'trucler:global-special-variable-description))
-           ;; It is mentioned in the environment as globally special.
-           (values t t))
-          (t
-           ;; If it is special only because of a local declaration,
-           ;; this binding is not special.
-           (values nil nil)))))
+                                (member name
+                                        (ico:name-asts declaration-specifier-ast)
+                                        :test #'eq :key #'ico:name)))))
+    (values (or already-special-p declared-special-p)
+            already-globally-special-p)))
 
 ;;; Given a list of canonicalized declaration specifiers for a single
 ;;; varible.  Return a type specifier resulting from all the type
