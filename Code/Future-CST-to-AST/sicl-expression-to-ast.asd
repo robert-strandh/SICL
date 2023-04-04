@@ -22,6 +22,7 @@
    (:file "block")
    (:file "return-from")
    (:file "catch")
+   (:file "throw")
    (:file "variables")
    (:file "convert-constant")
    (:file "convert-variable")
