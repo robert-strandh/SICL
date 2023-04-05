@@ -30,6 +30,7 @@
    (:file "load-time-value")
    (:file "multiple-value-call")
    (:file "multiple-value-prog1")
+   (:file "the")
    (:file "unwind-protect")
    (:file "variables")
    (:file "convert-constant")
