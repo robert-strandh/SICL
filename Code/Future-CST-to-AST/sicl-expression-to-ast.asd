@@ -18,6 +18,7 @@
    (:file "builder")
    (:file "declarations")
    (:file "let")
+   (:file "letstar")
    (:file "progn")
    (:file "block")
    (:file "return-from")
