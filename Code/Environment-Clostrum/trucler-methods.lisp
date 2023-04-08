@@ -4,6 +4,7 @@
 ;;;
 ;;; Trucler Methods
 
+#+(or)
 (defmethod trucler:describe-variable
     (client (environment compilation-environment) name)
   ;; FIXME: check the compilation environment for information about
@@ -11,62 +12,13 @@
   (trucler:describe-variable
    client (parent environment) name))
 
-(defmethod trucler:describe-variable
-    (client (environment base-run-time-environment) name)
-  (if (special-variable client environment name)
-      (make-instance 'trucler:global-special-variable-description
-        :name name
-        :type (variable-type client environment name))
-      (multiple-value-bind (constant-variable-p value)
-          (constant-variable client environment name)
-        (if constant-variable-p
-            (make-instance 'trucler:constant-variable-description
-              :name name
-              :value value)
-            (multiple-value-bind (expansion symbol-macro-p)
-                (symbol-macro client environment name)
-              (if symbol-macro-p
-                  (make-instance 'trucler:symbol-macro-description
-                    :name name
-                    :type (variable-type client environment name)
-                    :expansion expansion)
-                  nil))))))
-
-(defmethod trucler:describe-function
-    (client (environment base-run-time-environment) name)
-  (let ((macro-function (macro-function client environment name))
-        (type (function-type client environment name)))
-    (cond ((not (null macro-function))
-           (make-instance 'trucler:global-macro-description
-             :name name
-             :expander macro-function
-             :compiler-macro (compiler-macro-function client environment name)))
-          ((special-operator client environment name)
-           (make-instance 'trucler:special-operator-description
-             :name name))
-          ((and (null (fdefinition client environment name))
-                (null type))
-           nil)
-          (t
-           (make-instance 'trucler:global-function-description
-             :type (if (null type) t type)
-             :name name
-             :compiler-macro (compiler-macro-function client environment name))))))
-
+#+(or)
 (defmethod trucler:describe-function
     (client (environment compilation-environment) name)
   ;; FIXME: check the compilation environment for information about
   ;; the function.
   (trucler:describe-function
    client (parent environment) name))
-
-(defmethod trucler:describe-block
-    (client (environment compilation-environment) name)
-  nil)
-
-(defmethod trucler:describe-tag
-    (client (environment compilation-environment) tag)
-  nil)
 
 ;;; FIXME: do this better
 (defmethod trucler:describe-optimize
@@ -127,14 +79,6 @@
   (def trucler:add-space value))
 
 ;;; Miscellaneous Functions
-
-(defmethod trucler:global-environment
-    (client (environment compilation-environment))
-  environment)
-
-(defmethod trucler:global-environment
-    (client (environment base-run-time-environment))
-  environment)
 
 (defmethod trucler:macro-function (name (env compilation-environment))
   (macro-function (client env) env name))
