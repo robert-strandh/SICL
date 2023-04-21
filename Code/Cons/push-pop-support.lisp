@@ -27,5 +27,4 @@
              (setq ,(car store-vars) (cdr ,(car store-vars)))
              ,writer-form)
            (error 'must-be-list
-                  :datum ',(car store-vars)
-                  :name 'pop)))))
+                  :datum ',(car store-vars))))))
