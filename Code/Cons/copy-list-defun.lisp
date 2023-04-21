@@ -3,8 +3,7 @@
 (defun copy-list (list)
   (unless (typep list 'list)
     (error 'must-be-list
-           :datum list
-           :name 'copy-list))
+           :datum list))
   (if (null list)
       nil
       (let* ((result (list (car list)))

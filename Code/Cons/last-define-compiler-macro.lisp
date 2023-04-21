@@ -7,8 +7,7 @@
   (defun last-1 (list)
     (unless (typep list 'list)
       (error 'must-be-list
-             :datum list
-             :name 'last))
+             :datum list))
     ;; We can use for ... on, because it uses atom to test for
     ;; the end of the list. 
     (loop for rest on list

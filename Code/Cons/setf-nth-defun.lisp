@@ -3,8 +3,7 @@
 (defun (setf nth) (object n list)
   (unless (typep n '(integer 0))
     (error 'must-be-nonnegative-integer
-           :datum n
-           :name '(setf nth)))
+           :datum n))
   (loop with remaining = list
         with count = 0
         until (atom remaining)

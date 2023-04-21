@@ -3,12 +3,10 @@
 (defun last (list &optional (n 1))
   (unless (typep list 'list)
     (error 'must-be-list
-           :datum list
-           :name 'last))
+           :datum list))
   (unless (typep n '(integer 0))
     (error 'must-be-nonnegative-integer
-           :datum n
-           :name 'last))
+           :datum n))
   (let ((remaining list))
     (loop repeat n
           until (atom remaining)

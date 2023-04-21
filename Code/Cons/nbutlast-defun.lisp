@@ -7,8 +7,7 @@
 (defun nbutlast-1 (list)
   (unless (typep list 'list)
     (error 'must-be-list
-           :datum list
-           :name 'nbutlast))
+           :datum list))
   (if (atom (cdr list))
       nil
       ;; The compiler probably isn't smart enough to eliminate common
@@ -37,12 +36,10 @@
 (defun nbutlast (list &optional (n 1))
   (unless (typep list 'list)
     (error 'must-be-list
-           :datum list
-           :name 'nbutlast))
+           :datum list))
   (unless (typep n '(integer 0))
     (error 'must-be-nonnegative-integer
-           :datum n
-           :name 'nbutlast))
+           :datum n))
   (if (= n 1)
       (nbutlast-1 list)
       (let ((length (loop for slow on list

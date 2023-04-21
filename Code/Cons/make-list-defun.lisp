@@ -3,7 +3,6 @@
 (defun make-list (length &key (initial-element nil))
   (unless (typep length '(integer 0))
     (error 'must-be-nonnegative-integer
-           :datum length
-           :name 'make-list))
+           :datum length))
   (loop repeat length
         collect initial-element))

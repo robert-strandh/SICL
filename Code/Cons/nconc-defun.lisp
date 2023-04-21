@@ -47,8 +47,7 @@
                           ;; It is neither a cons nor nil, so we
                           ;; signal an error. 
                           (error 'must-be-list
-                                 :datum (car remaining)
-                                 :name 'nconc))))
+                                 :datum (car remaining)))))
               finally (progn
                         ;; Hook up the last list to the end
                         ;; of what we have accumulated

@@ -14,6 +14,5 @@
                        nil)
                       (t
                        (error 'must-be-list
-                              :datum ,element-var
-                              :name ',function-name))))
+                              :datum ,element-var))))
            finally (return nil))))

@@ -15,12 +15,10 @@
 (defun butlast (list &optional (n 1))
   (unless (typep list 'list)
     (error 'must-be-list
-           :datum list
-           :name 'butlast))
+           :datum list))
   (unless (typep n '(integer 0))
     (error 'must-be-nonnegative-integer
-           :datum n
-           :name 'butlast))
+           :datum n))
   (let ((remaining list))
     (loop repeat n
           until (atom remaining)
