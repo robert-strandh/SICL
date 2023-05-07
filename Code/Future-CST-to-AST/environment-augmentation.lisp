@@ -108,7 +108,7 @@
                client environment (c:raw (c:first cooked-declaration-data)))))
     (if (typep info 'trucler:global-special-variable-description)
         environment
-        (trucler:add-special-variable
+        (trucler:add-local-special-variable
          client environment (c:raw (c:first cooked-declaration-data))))))
 
 (defmethod augment-environment-with-declaration
@@ -245,7 +245,7 @@
       (if special-p
           (unless globally-p
             (setf new-env
-                  (trucler:add-special-variable client new-env name)))
+                  (trucler:add-local-special-variable client new-env name)))
           (setf new-env
                 (trucler:add-lexical-variable
                  client new-env name variable-ast))))

@@ -30,7 +30,7 @@
                    (setf new-environment
                          (if special-p
                              (unless globally-special-p
-                               (trucler:add-special-variable
+                               (trucler:add-local-special-variable
                                 client new-environment variable-name))
                              (trucler:add-lexical-variable
                               client new-environment

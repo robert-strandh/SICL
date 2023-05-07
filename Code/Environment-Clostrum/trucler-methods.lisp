@@ -58,7 +58,7 @@
   (def trucler:augment-with-tag-description tag-description)
   (def trucler:augment-with-optimize-description optimize-description)
   (def trucler:add-lexical-variable symbol &optional identity)
-  (def trucler:add-special-variable symbol)
+  (def trucler:add-local-special-variable symbol)
   (def trucler:add-local-symbol-macro symbol expansion)
   (def trucler:add-local-function function-name &optional identity)
   (def trucler:add-local-macro symbol expander)

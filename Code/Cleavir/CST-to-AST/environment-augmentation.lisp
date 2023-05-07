@@ -108,7 +108,7 @@
                client environment (cst:raw (cst:first declaration-data-cst)))))
     (if (typep info 'trucler:global-special-variable-description)
         environment
-        (trucler:add-special-variable
+        (trucler:add-local-special-variable
          client environment (cst:raw (cst:first declaration-data-cst))))))
 
 (defmethod augment-environment-with-declaration
@@ -244,7 +244,7 @@
       (if special-p
           (unless globally-p
             (setf new-env
-                  (trucler:add-special-variable client new-env raw-variable)))
+                  (trucler:add-local-special-variable client new-env raw-variable)))
           (let ((var-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                            :name raw-variable)))
             (setf new-env

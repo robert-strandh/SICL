@@ -79,7 +79,7 @@
         for name-ast in (ico:name-asts declaration-ast)
         when (eq name (ico:name name-ast))
           do (setf result
-                   (trucler:add-special-variable
+                   (trucler:add-local-special-variable
                     client result name))
         finally (return result)))
 
