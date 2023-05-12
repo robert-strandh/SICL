@@ -10,7 +10,7 @@
            unless (member symbol '(clostrum:run-time-environment
                                    clostrum:compilation-environment
                                    clostrum:function-description
-                                   clostrum:class-description
+                                   clostrum:type-description
                                    clostrum:variable-description))
              collect (symbol-name symbol)))
   (:export #:global-environment
