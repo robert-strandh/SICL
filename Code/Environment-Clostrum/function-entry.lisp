@@ -1,15 +1,15 @@
 (cl:in-package #:sicl-environment)
 
-(defgeneric call-sites (function-entry))
+(defgeneric call-sites (operator-entry))
 
-(defgeneric (setf call-sites) (call-sites function-entry))
+(defgeneric (setf call-sites) (call-sites operator-entry))
 
 (stealth-mixin:define-stealth-mixin
-    function-entry () clostrum-basic::function-entry
+    operator-entry () clostrum-basic::operator-entry
   ((%call-sites :initform '() :accessor call-sites)))
 
 (defgeneric add-call-site (client environment call-site name))
 
 (defmethod add-call-site (client environment call-site name)
-  (let ((entry (clostrum-basic::ensure-function-entry name environment)))
+  (let ((entry (clostrum-basic::ensure-operator-entry name environment)))
     (push call-site (call-sites entry))))
