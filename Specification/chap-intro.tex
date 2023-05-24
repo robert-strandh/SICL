@@ -10,7 +10,14 @@ high-performance ``modules'' for developers of Common Lisp systems.
 Such modules include ``standard libraries'' such as high-level
 functions that operate on lists, high-level functions that operate on
 sequences, the \texttt{format} function, the \texttt{loop} macro, the
-\texttt{read} function, the \emph{pretty printer}, etc.
+\texttt{read} function, the \emph{pretty printer}, etc.  We believe
+that the essence that defines the characteristics of a \commonlisp{}
+implementation has to do with aspects such as object representation,
+memory management, and compiler optimizations.  The modules of the
+\sysname{} project neither rely upon nor dictate any of those aspects,
+which is why we think they can be used by any \commonlisp{}
+implementation, thereby removing some of the maintenance burden
+resulting from multiple specific implementation of similar code.
 
 However, the modules are not limited to functionality that is directly
 provided by the \commonlisp{} language specification.  An existing
