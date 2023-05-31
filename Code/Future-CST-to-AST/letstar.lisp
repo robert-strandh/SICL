@@ -5,7 +5,7 @@
     ((builder builder)
      (kind t)
      (ast ico:let*-ast))
-  (with-accessors ((binding-asts ico:variable-binding-asts)
+  (with-accessors ((binding-asts ico:binding-asts)
                    (declaration-asts ico:declaration-asts))
       ast
     (with-builder-components (builder client environment)
