@@ -7,7 +7,8 @@
                #:iconoclast-builder
                #:trucler-reference
                #:sicl-extended-clearcut
-               #:common-boot)
+               #:common-boot
+               #:clostrum-trucler)
   :serial t
   :components
   ((:file "packages")
