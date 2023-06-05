@@ -6,7 +6,8 @@
                #:iconoclast
                #:iconoclast-builder
                #:trucler-reference
-               #:sicl-extended-clearcut)
+               #:sicl-extended-clearcut
+               #:common-boot)
   :serial t
   :components
   ((:file "packages")
