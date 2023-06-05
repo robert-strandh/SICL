@@ -7,5 +7,6 @@
    (#:ico #:iconoclast)
    (#:bld #:iconoclast-builder)
    (#:abp #:architecture.builder-protocol)
+   (#:clo #:clostrum)
    (#:c #:sicl-extended-clearcut))
   (:export #:expression-to-ast))
