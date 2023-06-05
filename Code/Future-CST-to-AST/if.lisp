@@ -7,4 +7,7 @@
   (reinitialize-instance ast
     :test-ast (convert-ast builder (ico:test-ast ast))
     :then-ast (convert-ast builder (ico:then-ast ast))
-    :else-ast (convert-ast builder (ico:else-ast ast))))
+    :else-ast
+    (if (null (ico:else-ast ast))
+        nil
+        (convert-ast builder (ico:else-ast ast)))))
