@@ -30,7 +30,7 @@
   (setf (cst:source expression) new-origin))
 
 (defun (setf origin) (new-origin expression)
-  (setf (origin* expression) new-origin))
+  (setf (origin* clearcut:*client* expression) new-origin))
 
 (defgeneric reconstruct* (client new-form old-cooked-form))
 
