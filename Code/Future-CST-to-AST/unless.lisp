@@ -1,0 +1,10 @@
+(cl:in-package #:iconoclast-builder)
+
+(defmethod expand ((ast ico:unless-ast))
+  (let ((origin (ico:origin ast)))
+    (abp:with-builder ((make-instance 'builder))
+      (abp:node* (:if :source origin)
+        (1 :test (ico:test-ast ast))
+        (1 :then (abp:node* (:unparsed :expression 'nil :source origin)))
+        (1 :else (abp:node* (:progn :source origin)
+                   (* :form (ico:form-asts ast))))))))
