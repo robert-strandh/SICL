@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem "sicl-new-boot"
-  :depends-on ("common-boot")
+  :depends-on ("common-boot"
+               "common-boot-macros")
   :serial t
   :components
   ((:file "packages")
