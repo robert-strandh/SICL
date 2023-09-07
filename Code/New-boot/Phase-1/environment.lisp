@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-new-boot)
 
-(defclass client (trucler-reference:client)
+(defclass client (cb:macro-transforming-client)
   ())
 
 (defun create-environment ()
