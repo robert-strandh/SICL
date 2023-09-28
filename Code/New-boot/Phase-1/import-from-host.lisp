@@ -15,7 +15,9 @@
     find find-if find-if-not
     position position-if position-if-not
     remove remove-if remove-if-not
-    delete delete-if delete-if-not))
+    delete delete-if delete-if-not
+    ;; Data and control flow
+    funcall))
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
