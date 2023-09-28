@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot)
+(cl:in-package #:sicl-new-boot-phase-1)
 
 (defun define-environment-functions (client global-environment)
   (setf (clostrum:fdefinition

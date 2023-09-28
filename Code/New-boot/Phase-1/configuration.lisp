@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot)
+(cl:in-package #:sicl-new-boot-phase-1)
 
 (defmethod cb:convert-with-parser-p ((client client) operator)
   (special-operator-p operator))

@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem "sicl-new-boot"
+(defsystem "sicl-new-boot-phase-1"
   :depends-on ("common-boot"
                "common-boot-macros"
                "common-macro-definitions")
