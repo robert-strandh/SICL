@@ -2,7 +2,8 @@
 
 (defsystem "sicl-new-boot"
   :depends-on ("common-boot"
-               "common-boot-macros")
+               "common-boot-macros"
+               "common-macro-definitions")
   :serial t
   :components
   ((:file "packages")
