@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "configuration")
    (:file "get-setf-expansion")
    (:file "import-from-host")
    (:file "define-environment-functions")))
