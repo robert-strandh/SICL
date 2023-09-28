@@ -4,11 +4,11 @@
   '(;; Arithmetic
     + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
     ;; Conses
-    cons list list*
+    cons list list* null
     car cdr caar cadr cdar cddr
     caaar caadr cadar caddr cdaar cdadr cddar cdddr
     first second third fourth fifth sixth seventh eighth ninth tenth
-    nth nthcdr
+    rest nth nthcdr
     ;; Sequences
     elt subseq reduce length reverse nreverse
     count count-if count-if-not
