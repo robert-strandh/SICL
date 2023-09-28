@@ -5,3 +5,8 @@
 
 (defmethod cb:convert-with-ordinary-macro-p ((client client) operator)
   (cmd:macro-function-exists-p operator))
+
+(defmethod cmd:defun-compile-time-action
+    ((client client) name lambda-list environment)
+  ;; FIXME: do something better
+  234)
