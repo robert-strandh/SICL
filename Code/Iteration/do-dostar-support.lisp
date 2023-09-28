@@ -1,8 +1,5 @@
 (cl:in-package #:sicl-iteration)
 
-;;; A portable implementation of the Common Lisp
-;;; iteration macros.
-;;;
 ;;; This implementation does not use any iteration construct, nor any
 ;;; operations on sequences (other than the ones we define ourself
 ;;; here).  Implementations can therefore load this file very early on
