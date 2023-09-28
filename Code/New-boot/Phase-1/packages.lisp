@@ -3,5 +3,6 @@
 (defpackage #:sicl-new-boot
   (:use #:common-lisp)
   (:local-nicknames
-   (#:cb #:common-boot))
+   (#:cb #:common-boot)
+   (#:cmd #:common-macro-definitions))
   (:export))
