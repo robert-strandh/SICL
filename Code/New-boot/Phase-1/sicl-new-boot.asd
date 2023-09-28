@@ -10,4 +10,5 @@
    (:file "environment")
    (:file "configuration")
    (:file "import-from-host")
-   (:file "define-environment-functions")))
+   (:file "define-environment-functions")
+   (:file "cst-to-ast")))
