@@ -3,7 +3,8 @@
 (defsystem "sicl-new-boot-phase-1"
   :depends-on ("common-boot"
                "common-boot-macros"
-               "common-macro-definitions")
+               "common-macro-definitions"
+               "eclector-concrete-syntax-tree")
   :serial t
   :components
   ((:file "packages")
