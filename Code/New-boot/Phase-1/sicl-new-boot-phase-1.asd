@@ -12,4 +12,5 @@
    (:file "configuration")
    (:file "import-from-host")
    (:file "define-environment-functions")
-   (:file "cst-to-ast")))
+   (:file "cst-to-ast")
+   (:file "load-file")))
