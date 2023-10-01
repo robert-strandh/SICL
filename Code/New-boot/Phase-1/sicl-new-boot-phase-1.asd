@@ -12,6 +12,7 @@
   ((:file "packages")
    (:file "environment")
    (:file "configuration")
+   (:file "package-programming")
    (:file "import-from-host")
    (:file "define-environment-functions")
    (:file "cst-to-ast")
