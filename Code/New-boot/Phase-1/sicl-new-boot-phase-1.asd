@@ -4,7 +4,9 @@
   :depends-on ("common-boot"
                "common-boot-macros"
                "common-macro-definitions"
-               "eclector-concrete-syntax-tree")
+               "eclector-concrete-syntax-tree"
+               "parcl-extrinsic"
+               "parcl-class")
   :serial t
   :components
   ((:file "packages")
