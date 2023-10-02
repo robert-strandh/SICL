@@ -98,6 +98,17 @@
 
 (defun define-package-functions (client global-environment)
   (setf (clostrum:fdefinition
+         client global-environment 'make-package)
+        (lambda (package-name &key nicknames use)
+          (let ((canonicalized-name (string package-name))
+                (canonicalized-nicknames (mapcar #'string nicknames))
+                (canonicalized-packages
+                  (mapcar #'canonicalize-package-designator use)))
+            (let ((result (parcl:make-package client canonicalized-name)))
+              (setf (parcl:nicknames client result) canonicalized-nicknames)
+              (parcl:use-packages client result canonicalized-packages)
+              result))))
+  (setf (clostrum:fdefinition
          client global-environment 'use-package)
         (lambda (packages-to-use &optional package)
           (let ((canonicalized-packages-to-use
