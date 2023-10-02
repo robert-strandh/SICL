@@ -87,6 +87,15 @@
                  (error "Symbol ~a does not exist in package ~a"
                         symbol-name (parcl:name client package)))))))))
 
+(defun canonicalize-package-designator (package-designator)
+  (typecase package-designator
+    ((or string character symbol)
+     (gethash (string package-designator) *packages*))
+    (null
+     *current-package*)
+    (otherwise
+     package-designator)))
+
 (defun define-package-functions (client global-environment)
   (setf (clostrum:fdefinition
          client global-environment 'use-package)
@@ -100,12 +109,21 @@
                           (otherwise
                            package-to-use))))
                 (canonicalized-package
-                  (typecase package
-                    ((or string character symbol)
-                     (gethash (string package) *packages*))
-                    (null
-                     *current-package*)
-                    (otherwise
-                     package))))
+                  (canonicalize-package-designator package)))
             (parcl:use-packages
-             client canonicalized-package canonicalized-packages-to-use)))))
+             client canonicalized-package canonicalized-packages-to-use))))
+  (setf (clostrum:fdefinition
+         client global-environment 'export)
+        (lambda (symbols &optional package)
+          (let ((canonicalized-symbols
+                  (typecase symbols
+                    (cons symbols)
+                    (null '())
+                    (otherwise (list symbols))))
+                (canonicalized-package
+                  (canonicalize-package-designator package)))
+            (loop for symbol in canonicalized-symbols
+                  do (parcl:export client canonicalized-package symbol))))))
+            
+                        
+  
