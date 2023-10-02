@@ -37,17 +37,13 @@
     ((#.(find-package '#:common-lisp) #.(find-package '#:keyword))
      (call-next-method))
     (otherwise
-     (multiple-value-bind (symbol existsp)
-         (parcl:find-external-symbol client *current-package* symbol-name)
-       (when existsp
-         (return-from eclector.reader:interpret-symbol symbol)))
-     (multiple-value-bind (symbol existsp)
-         (parcl:find-internal-symbol client *current-package* symbol-name)
-       (when existsp
+     (multiple-value-bind (symbol status)
+         (parcl:find-symbol client *current-package* symbol-name)
+       (unless (null status)
          (return-from eclector.reader:interpret-symbol symbol)))
      (let ((symbol (make-symbol symbol-name)))
        (setf (gethash symbol *symbol-package*) *current-package*)
-       (parcl:add-internal-symbol client *current-package* symbol)
+       (parcl:import client *current-package* symbol)
        symbol))))
 
 ;;; This method is applicable when Eclector sees a symbol with one or
@@ -72,21 +68,21 @@
           (gethash package-indicator *packages*)
         (unless existsp
           (error "No package named ~s" package-indicator))
-        (multiple-value-bind (symbol existsp)
-            (parcl:find-external-symbol client package symbol-name)
-          (when existsp
-            (return-from eclector.reader:interpret-symbol symbol)))
-        (multiple-value-bind (symbol existsp)
-            (parcl:find-internal-symbol client package symbol-name)
-          (when existsp
-            (if internp
-                (return-from eclector.reader:interpret-symbol symbol)
-                (error "Symbol ~a is not external in package ~a"
-                       symbol-name (parcl:name client package)))))
-        (if internp
-            (let ((symbol (make-symbol symbol-name)))
-              (setf (gethash symbol *symbol-package*) package)
-              (parcl:add-internal-symbol client package symbol)
-              symbol)
-            (error "Symbol ~a does not exist in package ~a"
-                   symbol-name (parcl:name client package))))))
+        (multiple-value-bind (symbol status)
+            (parcl:find-symbol client package symbol-name)
+          (case status
+            ((:internal :inherited)
+             (if internp
+                 (return-from eclector.reader:interpret-symbol symbol)
+                 (error "Symbol ~a is not external in package ~a"
+                        symbol-name (parcl:name client package))))
+            (:external
+             (return-from eclector.reader:interpret-symbol symbol))
+            ((nil)
+             (if internp
+                 (let ((symbol (make-symbol symbol-name)))
+                   (setf (gethash symbol *symbol-package*) package)
+                   (parcl:import client package symbol)
+                   symbol)
+                 (error "Symbol ~a does not exist in package ~a"
+                        symbol-name (parcl:name client package)))))))))
