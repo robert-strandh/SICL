@@ -125,6 +125,7 @@
             (let ((result (parcl:make-package client canonicalized-name)))
               (setf (parcl:nicknames client result) canonicalized-nicknames)
               (parcl:use-packages client result canonicalized-packages)
+              (setf (gethash package-name *packages*) result)
               result))))
   (setf (clostrum:fdefinition
          client global-environment 'use-package)
