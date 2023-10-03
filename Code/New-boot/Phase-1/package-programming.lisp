@@ -33,18 +33,25 @@
      symbol-name
      internp)
   (declare (ignore input-stream))
-  (case *current-package*
-    ((#.(find-package '#:common-lisp) #.(find-package '#:keyword))
-     (call-next-method))
-    (otherwise
-     (multiple-value-bind (symbol status)
-         (parcl:find-symbol client *current-package* symbol-name)
-       (unless (null status)
-         (return-from eclector.reader:interpret-symbol symbol)))
-     (let ((symbol (make-symbol symbol-name)))
-       (setf (gethash symbol *symbol-package*) *current-package*)
-       (parcl:import client *current-package* symbol)
-       symbol))))
+  (let* ((global-environment (environment client))
+         (package-cell
+           (clostrum-sys:variable-cell
+            client global-environment '*package*))
+         (current-package
+           (cbae:symbol-value
+            client '*package* package-cell cbae:*dynamic-environment*)))
+    (case current-package
+      ((#.(find-package '#:common-lisp) #.(find-package '#:keyword))
+       (call-next-method))
+      (otherwise
+       (multiple-value-bind (symbol status)
+           (parcl:find-symbol client current-package symbol-name)
+         (unless (null status)
+           (return-from eclector.reader:interpret-symbol symbol)))
+       (let ((symbol (make-symbol symbol-name)))
+         (setf (gethash symbol *symbol-package*) current-package)
+         (parcl:import client current-package symbol)
+         symbol)))))
 
 ;;; This method is applicable when Eclector sees a symbol with one or
 ;;; two package markers, If it has a single package marker, then
