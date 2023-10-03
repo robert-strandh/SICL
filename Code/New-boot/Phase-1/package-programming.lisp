@@ -87,6 +87,20 @@
                  (error "Symbol ~a does not exist in package ~a"
                         symbol-name (parcl:name client package)))))))))
 
+(defmethod parcl:make-symbol ((client client) name package)
+  (let ((result (make-symbol name)))
+    (unless (null package)
+      (setf (gethash result *symbol-package*) package))))
+
+(defmethod parcl:symbol-name ((client client) symbol)
+  (symbol-name symbol))
+
+(defmethod parcl:symbol-package ((client client) symbol)
+  (gethash symbol *symbol-package*))
+
+(defmethod (setf parcl:symbol-package) (new-package client symbol)
+  (setf (gethash symbol *symbol-package*) new-package))
+
 (defun canonicalize-package-designator (package-designator)
   (typecase package-designator
     ((or string character symbol)
