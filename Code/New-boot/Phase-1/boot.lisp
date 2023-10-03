@@ -6,6 +6,8 @@
          (global-environment (trucler:global-environment client environment))
          (*packages* (make-hash-table :test #'equal))
          (*symbol-package* (make-hash-table :test #'eq)))
+    (reinitialize-instance client
+      :environment global-environment)
     (import-from-host client global-environment)
     (define-environment-functions client global-environment)
     (define-package-functions client global-environment)
