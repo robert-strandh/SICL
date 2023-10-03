@@ -17,6 +17,14 @@
 ;;; Parcl package the target symbol belongs.
 (defvar *symbol-package*)
 
+(defun current-package (client)
+  (let* ((global-environment (environment client))
+         (package-cell
+           (clostrum-sys:variable-cell
+            client global-environment '*package*)))
+    (cbae:symbol-value
+     client '*package* package-cell cbae:*dynamic-environment*)))
+
 ;;; This method is applicable when Eclector sees a symbol without a
 ;;; package marker, so it should always be interned in the current
 ;;; package.  Then, if the current package is either COMMON-LISP or
@@ -33,13 +41,7 @@
      symbol-name
      internp)
   (declare (ignore input-stream))
-  (let* ((global-environment (environment client))
-         (package-cell
-           (clostrum-sys:variable-cell
-            client global-environment '*package*))
-         (current-package
-           (cbae:symbol-value
-            client '*package* package-cell cbae:*dynamic-environment*)))
+  (let ((current-package (current-package client)))
     (case current-package
       ((#.(find-package '#:common-lisp) #.(find-package '#:keyword))
        (call-next-method))
