@@ -10,10 +10,12 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "client")
    (:file "environment")
    (:file "configuration")
    (:file "package-programming")
    (:file "import-from-host")
    (:file "define-environment-functions")
    (:file "cst-to-ast")
-   (:file "load-file")))
+   (:file "load-file")
+   (:file "boot")))
