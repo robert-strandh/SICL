@@ -128,6 +128,10 @@
               (setf (gethash package-name *packages*) result)
               result))))
   (setf (clostrum:fdefinition
+         client global-environment 'find-package)
+        (lambda (package-name)
+          (gethash package-name *packages*)))
+  (setf (clostrum:fdefinition
          client global-environment 'use-package)
         (lambda (packages-to-use &optional package)
           (let ((canonicalized-packages-to-use
