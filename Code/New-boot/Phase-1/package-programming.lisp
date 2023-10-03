@@ -6,11 +6,6 @@
 ;;; environment are contained in this table.
 (defvar *packages*)
 
-;;; This variable contains the current package, which can either be
-;;; one of hte host packages COMMON-LISP or KEYWORD, or it can be an
-;;; extrinsic Parcl package.
-(defparameter *current-package* (find-package '#:common-lisp))
-
 ;;; When a target symbol is created in a package other than
 ;;; COMMON-LISP or KEYWORD, we instead create an uninterned host
 ;;; symbol, and we use this table to determine to which extrinsic
@@ -171,6 +166,3 @@
             (loop for symbol-name in canonicalized-symbol-names
                   do (parcl:shadow
                       client canonicalized-package symbol-name))))))
-            
-                        
-  
