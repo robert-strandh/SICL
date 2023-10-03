@@ -134,7 +134,20 @@
                 (canonicalized-package
                   (canonicalize-package-designator package)))
             (loop for symbol in canonicalized-symbols
-                  do (parcl:export client canonicalized-package symbol))))))
+                  do (parcl:export client canonicalized-package symbol)))))
+  (setf (clostrum:fdefinition
+         client global-environment 'shadow)
+        (lambda (symbol-names &optional package)
+          (let ((canonicalized-symbol-names
+                  (etypecase symbol-names
+                    (null '())
+                    (symbol (list (string symbol-names)))
+                    (cons (mapcar #'string symbol-names))))
+                (canonicalized-package
+                  (canonicalize-package-designator package)))
+            (loop for symbol-name in canonicalized-symbol-names
+                  do (parcl:shadow
+                      client canonicalized-package symbol-name))))))
             
                         
   
