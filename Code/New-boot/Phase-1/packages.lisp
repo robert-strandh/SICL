@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:local-nicknames
    (#:cb #:common-boot)
+   (#:env #:clostrum)
    (#:cbae #:common-boot-ast-evaluator)
    (#:cmd #:common-macro-definitions)
    (#:abp #:architecture.builder-protocol))
