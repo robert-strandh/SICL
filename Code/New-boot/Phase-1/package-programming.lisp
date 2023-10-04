@@ -143,6 +143,11 @@
         (lambda (package-designator)
           (package-designator-to-package client package-designator)))
   (setf (clostrum:fdefinition
+         client global-environment '(setf find-package))
+        (lambda (package package-designator)
+          (setf (gethash (string package-designator) *packages*)
+                package)))
+  (setf (clostrum:fdefinition
          client global-environment 'use-package)
         (lambda (packages-to-use &optional package)
           (let ((canonicalized-packages-to-use
