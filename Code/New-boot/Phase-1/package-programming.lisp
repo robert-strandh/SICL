@@ -105,10 +105,16 @@
 (defmethod (setf parcl:symbol-package) (new-package client symbol)
   (setf (gethash symbol *symbol-package*) new-package))
 
-(defun canonicalize-package-designator (client package-designator)
+(defun package-designator-to-package (client package-designator)
   (typecase package-designator
     ((or string character symbol)
-     (gethash (string package-designator) *packages*))
+     (let ((package-name (string package-designator)))
+       (cond ((equal package-name "COMMON-LISP")
+              (find-package "COMMON-LISP"))
+             ((equal package-name "KEYWORD")
+              (find-package "KEYWORD"))
+             (t
+              (gethash package-name *packages*)))))
     (null
      (current-package client))
     (otherwise
@@ -121,7 +127,7 @@
           (let ((canonicalized-name (string package-name))
                 (canonicalized-nicknames (mapcar #'string nicknames))
                 (canonicalized-packages
-                  (mapcar #'canonicalize-package-designator client use)))
+                  (mapcar #'package-designator-to-package client use)))
             (let ((result (parcl:make-package client canonicalized-name)))
               (setf (parcl:nicknames client result) canonicalized-nicknames)
               (parcl:use-packages client result canonicalized-packages)
@@ -129,8 +135,8 @@
               result))))
   (setf (clostrum:fdefinition
          client global-environment 'find-package)
-        (lambda (package-name)
-          (gethash package-name *packages*)))
+        (lambda (package-designator)
+          (package-designator-to-package client package-designator)))
   (setf (clostrum:fdefinition
          client global-environment 'use-package)
         (lambda (packages-to-use &optional package)
@@ -143,7 +149,7 @@
                           (otherwise
                            package-to-use))))
                 (canonicalized-package
-                  (canonicalize-package-designator client package)))
+                  (package-designator-to-package client package)))
             (parcl:use-packages
              client canonicalized-package canonicalized-packages-to-use))))
   (setf (clostrum:fdefinition
@@ -155,7 +161,7 @@
                     (null '())
                     (otherwise (list symbols))))
                 (canonicalized-package
-                  (canonicalize-package-designator client package)))
+                  (package-designator-to-package client package)))
             (loop for symbol in canonicalized-symbols
                   do (parcl:export client canonicalized-package symbol)))))
   (setf (clostrum:fdefinition
@@ -167,7 +173,7 @@
                     (symbol (list (string symbol-names)))
                     (cons (mapcar #'string symbol-names))))
                 (canonicalized-package
-                  (canonicalize-package-designator client package)))
+                  (package-designator-to-package client package)))
             (loop for symbol-name in canonicalized-symbol-names
                   do (parcl:shadow
                       client canonicalized-package symbol-name))))))
