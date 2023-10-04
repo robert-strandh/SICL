@@ -110,6 +110,9 @@
 (defmethod parcl:find-symbol ((client client) (package package) name)
   (find-symbol name package))
 
+(defmethod parcl:intern ((client client) (package package) name)
+  (intern name package))
+
 (defun package-designator-to-package (client package-designator)
   (typecase package-designator
     ((or string character symbol)
@@ -132,7 +135,9 @@
           (let ((canonicalized-name (string package-name))
                 (canonicalized-nicknames (mapcar #'string nicknames))
                 (canonicalized-packages
-                  (mapcar #'package-designator-to-package client use)))
+                  (loop for package-to-use in use
+                        collect (package-designator-to-package
+                                 client package-to-use))))
             (let ((result (parcl:make-package client canonicalized-name)))
               (setf (parcl:nicknames client result) canonicalized-nicknames)
               (parcl:use-packages client result canonicalized-packages)
@@ -147,6 +152,12 @@
         (lambda (package package-designator)
           (setf (gethash (string package-designator) *packages*)
                 package)))
+  (setf (clostrum:fdefinition
+         client global-environment 'intern)
+        (lambda (string &optional package-designator)
+          (let ((package
+                  (package-designator-to-package client package-designator)))
+            (parcl:intern client package string))))
   (setf (clostrum:fdefinition
          client global-environment 'use-package)
         (lambda (packages-to-use &optional package)
