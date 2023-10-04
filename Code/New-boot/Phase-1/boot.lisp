@@ -1,5 +1,19 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
+(defgeneric my-make-instance (class &rest initargs))
+
+(defun define-make-instance (client environment)
+
+  (defmethod my-make-instance ((name symbol) &rest initargs)
+    (let ((class (clostrum:find-class client environment name)))
+      (apply #'make-instance class initargs)))
+
+  (defmethod my-make-instance ((class class) &rest initargs)
+    (apply #'make-instance class initargs))
+
+  (setf (clostrum:fdefinition client environment 'make-instance)
+        #'my-make-instance))
+
 (defun boot ()
   (let* ((client (make-instance 'client))
          (environment (create-environment))
@@ -15,5 +29,8 @@
      client global-environment '*package* (find-package '#:common-lisp))
     (loop for name in '("COMMON-LISP" "COMMON-LISP-USER" "KEYWORD")
           do (setf (gethash name *packages*) (find-package name)))
+    (define-make-instance client global-environment)
+    (setf (clostrum:find-class client global-environment 'package)
+          (find-class 'parcl-class:package))
     (load-file client "to-delete.lisp" environment)
     (break)))
