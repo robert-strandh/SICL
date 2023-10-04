@@ -113,6 +113,9 @@
 (defmethod parcl:intern ((client client) (package package) name)
   (intern name package))
 
+(defmethod parcl:make-symbol-table ((client client))
+  (make-hash-table :test #'equal))
+
 (defun package-designator-to-package (client package-designator)
   (typecase package-designator
     ((or string character symbol)
