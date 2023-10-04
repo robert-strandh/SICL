@@ -1,9 +1,9 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
-;;; This variable contains a hash table of extrinsic Parcl packages.
-;;; We use the host packages COMMON-LISP and KEYWORD, but all other
-;;; packages created as a result of loading code into a Clostrum
-;;; environment are contained in this table.
+;;; This variable contains a hash table of extrinsic Parcl packages
+;;; plus a few host packages, namely COMMON-LISP, COMMON-LISP-USER,
+;;; and KEYWORD.  Packages created as a result of loading code into a
+;;; Clostrum environment are contained in this table.
 (defvar *packages*)
 
 ;;; When a target symbol is created in a package other than
@@ -22,13 +22,13 @@
 
 ;;; This method is applicable when Eclector sees a symbol without a
 ;;; package marker, so it should always be interned in the current
-;;; package.  Then, if the current package is either COMMON-LISP or
-;;; KEYWORD, then we let Eclector do it's thing.  Otherwise we use
-;;; Parcl to find the symbol with the name SYMBOL-NAME in the current
-;;; Parcl package, first among the external symbols and then among the
-;;; internal ones.  If there is no such symbol, we create a host
-;;; uninterned symbol, and enter it into the current Parcl package.
-;;; We also update the hash table in *SYMBOL-PACKAGE*.
+;;; package.  Then, if the current package is either COMMON-LISP,
+;;; COMMON-LISP-USER, or KEYWORD, then we let Eclector do it's thing.
+;;; Otherwise we use Parcl to find the symbol with the name
+;;; SYMBOL-NAME in the current Parcl package.  If there is no such
+;;; symbol, we create a host uninterned symbol, and enter it into the
+;;; current Parcl package.  We also update the hash table in
+;;; *SYMBOL-PACKAGE*.
 (defmethod eclector.reader:interpret-symbol
     ((client client)
      input-stream
@@ -38,7 +38,9 @@
   (declare (ignore input-stream))
   (let ((current-package (current-package client)))
     (case current-package
-      ((#.(find-package '#:common-lisp) #.(find-package '#:keyword))
+      ((#.(find-package '#:common-lisp)
+        #.(find-package '#:common-lisp)
+        #.(find-package '#:keyword))
        (call-next-method))
       (otherwise
        (multiple-value-bind (symbol status)
