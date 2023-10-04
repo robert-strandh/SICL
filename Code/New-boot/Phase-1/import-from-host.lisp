@@ -17,9 +17,7 @@
     remove remove-if remove-if-not
     delete delete-if delete-if-not
     ;; Data and control flow
-    funcall
-    ;; Objects
-    make-instance))
+    funcall))
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
