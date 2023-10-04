@@ -104,8 +104,11 @@
 (defmethod parcl:symbol-package ((client client) symbol)
   (gethash symbol *symbol-package*))
 
-(defmethod (setf parcl:symbol-package) (new-package client symbol)
+(defmethod (setf parcl:symbol-package) (new-package (client client) symbol)
   (setf (gethash symbol *symbol-package*) new-package))
+
+(defmethod parcl:find-symbol ((client client) (package package) name)
+  (find-symbol name package))
 
 (defun package-designator-to-package (client package-designator)
   (typecase package-designator
