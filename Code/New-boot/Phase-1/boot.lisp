@@ -13,4 +13,7 @@
     (define-package-functions client global-environment)
     (clostrum:make-variable
      client global-environment '*package* (find-package '#:common-lisp))
-    (load-file client "to-delete.lisp" environment)))
+    (loop for name in '("COMMON-LISP" "COMMON-LISP-USER" "KEYWORD")
+          do (setf (gethash name *packages*) (find-package name)))
+    (load-file client "to-delete.lisp" environment)
+    (break)))
