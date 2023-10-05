@@ -96,7 +96,8 @@
 (defmethod parcl:make-symbol ((client client) name package)
   (let ((result (make-symbol name)))
     (unless (null package)
-      (setf (gethash result *symbol-package*) package))))
+      (setf (gethash result *symbol-package*) package))
+    result))
 
 (defmethod parcl:symbol-name ((client client) symbol)
   (symbol-name symbol))
