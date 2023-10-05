@@ -1,15 +1,15 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
 ;;; This variable contains a hash table of extrinsic Parcl packages
-;;; plus a few host packages, namely COMMON-LISP, COMMON-LISP-USER,
-;;; and KEYWORD.  Packages created as a result of loading code into a
-;;; Clostrum environment are contained in this table.
+;;; plus two host packages, namely COMMON-LISP-USER and KEYWORD.
+;;; Packages created as a result of loading code into a Clostrum
+;;; environment are contained in this table.
 (defvar *packages*)
 
-;;; When a target symbol is created in a package other than
-;;; COMMON-LISP or KEYWORD, we instead create an uninterned host
-;;; symbol, and we use this table to determine to which extrinsic
-;;; Parcl package the target symbol belongs.
+;;; When a target symbol is created in a package other than KEYWORD,
+;;; we instead create an uninterned host symbol, and we use this table
+;;; to determine to which extrinsic Parcl package the target symbol
+;;; belongs.
 (defvar *symbol-package*)
 
 (defun current-package (client)
@@ -23,7 +23,7 @@
 ;;; This method is applicable when Eclector sees a symbol without a
 ;;; package marker, so it should always be interned in the current
 ;;; package.  Then, if the current package is either COMMON-LISP,
-;;; COMMON-LISP-USER, or KEYWORD, then we let Eclector do it's thing.
+;;; COMMON-LISP-USER, or KEYWORD, we let Eclector do it's thing.
 ;;; Otherwise we use Parcl to find the symbol with the name
 ;;; SYMBOL-NAME in the current Parcl package.  If there is no such
 ;;; symbol, we create a host uninterned symbol, and enter it into the
@@ -39,7 +39,7 @@
   (let ((current-package (current-package client)))
     (case current-package
       ((#.(find-package '#:common-lisp)
-        #.(find-package '#:common-lisp)
+        #.(find-package '#:common-lisp-user)
         #.(find-package '#:keyword))
        (call-next-method))
       (otherwise
@@ -120,9 +120,7 @@
   (typecase package-designator
     ((or string character symbol)
      (let ((package-name (string package-designator)))
-       (cond ((equal package-name "COMMON-LISP")
-              (find-package "COMMON-LISP"))
-             ((equal package-name "KEYWORD")
+       (cond ((equal package-name "KEYWORD")
               (find-package "KEYWORD"))
              (t
               (gethash package-name *packages*)))))
@@ -130,6 +128,14 @@
      (current-package client))
     (otherwise
      package-designator)))
+
+(defun create-common-lisp-package (client)
+  (let* ((name "COMMON-LISP")
+         (result (parcl:make-package client name)))
+    (setf (gethash name *packages*) result)
+    (loop for symbol being each external-symbol of name
+          do (parcl:add-external-symbol client result symbol)
+             (setf (parcl:symbol-package client symbol) result))))
 
 (defun define-package-functions (client global-environment)
   (setf (clostrum:fdefinition
@@ -155,6 +161,12 @@
         (lambda (package package-designator)
           (setf (gethash (string package-designator) *packages*)
                 package)))
+  (setf (clostrum:fdefinition
+         client global-environment 'find-symbol)
+        (lambda (string &optional package-designator)
+          (let ((package
+                  (package-designator-to-package client package-designator)))
+            (parcl:find-symbol client package string))))
   (setf (clostrum:fdefinition
          client global-environment 'intern)
         (lambda (string &optional package-designator)
