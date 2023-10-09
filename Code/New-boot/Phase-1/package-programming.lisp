@@ -114,8 +114,14 @@
 (defmethod parcl:intern ((client client) (package package) name)
   (intern name package))
 
-(defmethod parcl:make-symbol-table ((client client))
+(defmethod parcl:make-table ((client client))
   (make-hash-table :test #'equal))
+
+(defmethod parcl:name-to-entry ((client client) name table)
+  (gethash name table))
+
+(defmethod (setf parcl:name-to-entry) (entry (client client) name table)
+  (setf (gethash name table) entry))
 
 (defun package-designator-to-package (client package-designator)
   (typecase package-designator
@@ -132,11 +138,12 @@
 
 (defun create-common-lisp-package (client)
   (let* ((name "COMMON-LISP")
-         (result (parcl:make-package client name)))
-    (setf (gethash name *packages*) result)
+         (package (parcl:make-package client name)))
+    (setf (gethash name *packages*) package)
     (loop for symbol being each external-symbol of name
-          do (parcl:add-external-symbol client result symbol)
-             (setf (parcl:symbol-package client symbol) result))))
+          do (setf (parcl:symbol-package client symbol) package)
+             (parcl:import client package symbol)
+             (parcl:export client package symbol))))
 
 (defun define-package-functions (client global-environment)
   (setf (clostrum:fdefinition
