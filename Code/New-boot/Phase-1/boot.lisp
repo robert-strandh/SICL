@@ -34,4 +34,5 @@
     (setf (clostrum:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
     (load-file client "to-delete.lisp" environment)
+    (load-file client "to-delete-2.lisp" environment)
     (break)))
