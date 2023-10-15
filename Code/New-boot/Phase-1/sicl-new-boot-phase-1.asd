@@ -13,6 +13,7 @@
    (:file "client")
    (:file "environment")
    (:file "configuration")
+   (:file "macro-programming")
    (:file "package-programming")
    (:file "import-from-host")
    (:file "define-environment-functions")
