@@ -3,4 +3,8 @@
 (defsystem "sicl-new-boot-shared"
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "cst-to-ast")
+   (:file "load-source-file")
+   (:file "asdf-programming")))
+
