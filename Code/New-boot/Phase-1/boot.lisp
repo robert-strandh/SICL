@@ -33,6 +33,8 @@
     (define-make-instance client global-environment)
     (setf (clostrum:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
-    (load-file client "to-delete.lisp" environment)
-    (load-file client "to-delete-2.lisp" environment)
-    global-environment))
+    (sicl-new-boot:ensure-asdf-system
+     client environment "sicl-to-delete")
+    ;; (load-file client "to-delete.lisp" environment)
+    ;; (load-file client "to-delete-2.lisp" environment)
+    (values global-environment *packages* *symbol-package*)))
