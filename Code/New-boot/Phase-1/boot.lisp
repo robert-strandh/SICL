@@ -35,4 +35,4 @@
           (find-class 'parcl-class:package))
     (load-file client "to-delete.lisp" environment)
     (load-file client "to-delete-2.lisp" environment)
-    (break)))
+    global-environment))
