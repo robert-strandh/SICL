@@ -8,11 +8,7 @@
    superclass-names
    metaclass-name
    environment)
-  (format *trace-output*
-          "compile-time: ~s ~s ~s~%"
-          name
-          superclass-names
-          metaclass-name))
+  nil)
 
 (defun transform-name (name)
   (intern (string-downcase (symbol-name name))
