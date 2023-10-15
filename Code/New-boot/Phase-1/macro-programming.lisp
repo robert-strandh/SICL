@@ -28,7 +28,7 @@
                            `(setf ,(transform-name (second writer))))))
     (remf result :readers)
     (remf result :writers)
-    `(,@result :readers ,new-readers ,new-writers)))
+    `(,@result :readers ,new-readers :writers ,new-writers)))
 
 (defmethod cmd:ensure-class
     ((client client)
@@ -37,14 +37,17 @@
      direct-slot-specs
      options
      environment)
-  (closer-mop:ensure-class
-   (transform-name name)
-   :name name
-   :direct-superclasses (mapcar #'transform-name superclass-names)
-   :direct-slots (mapcar (lambda (slot-spec)
-                           (apply #'transform-slot-spec slot-spec))
-                         direct-slot-specs)
-   :metaclass 'closer-mop:funcallable-standard-class))
+  (let ((result
+          (closer-mop:ensure-class
+           (transform-name name)
+           :name name
+           :direct-superclasses (mapcar #'transform-name superclass-names)
+           :direct-slots (mapcar (lambda (slot-spec)
+                                   (apply #'transform-slot-spec slot-spec))
+                                 direct-slot-specs)
+           :metaclass 'closer-mop:funcallable-standard-class)))
+    (setf (clo:find-class client (environment client) name)
+          result)))
 
 ;;; DEFGENERIC programming.
 
@@ -72,9 +75,12 @@
      method-combination-arguments
      documentation-option
      environment)
-  (ensure-generic-function
-   (transform-name name)
-   :lambda-list lambda-list
-   :argument-precedence-order argument-precedence-order
-   :generic-function-class generic-function-class-name
-   :method-class method-class-name))
+  (let ((result 
+          (ensure-generic-function
+           (transform-name name)
+           :lambda-list lambda-list
+           :argument-precedence-order argument-precedence-order
+           :generic-function-class generic-function-class-name
+           :method-class method-class-name)))
+    (setf (clo:fdefinition client (environment client) name)
+          result)))
