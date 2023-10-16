@@ -11,20 +11,32 @@
   nil)
 
 (defun transform-name (name)
-  (intern (string-downcase (symbol-name name))
-          (find-package "SICL-NEW-BOOT-PHASE-1")))
+  (let ((package (find-package "SICL-NEW-BOOT-PHASE-1")))
+    (etypecase name
+      (symbol
+       (intern (string-downcase (symbol-name name))
+               package))
+      ((cons (eql setf) (cons symbol))
+       `(setf ,(intern (string-downcase (symbol-name (second name)))
+                       package))))))
 
-(defun transform-slot-spec
-    (&rest arguments &key readers writers &allow-other-keys)
-  (let ((result arguments)
-        (new-readers (loop for reader in readers
-                           collect  (transform-name reader)))
-        (new-writers (loop for writer in writers
-                           collect
-                           `(setf ,(transform-name (second writer))))))
-    (remf result :readers)
-    (remf result :writers)
-    `(,@result :readers ,new-readers :writers ,new-writers)))
+(defun transform-slot-spec (slot-spec)
+  (let ((result (copy-list slot-spec)))
+    (let ((readers (member :readers result)))
+      (unless (null readers)
+        (setf (second readers)
+              (loop for reader in (second readers)
+                    collect  (transform-name reader)))))
+    (let ((writers (member :writers result)))
+      (unless (null writers)
+        (setf (second writers)
+              (loop for writer in (second writers)
+                    collect  (transform-name writer)))))
+    (let ((initfunction (member :initfunction result)))
+      (unless (null initfunction)
+        (setf (second initfunction)
+              (eval (second initfunction)))))
+    result))
 
 (defmethod cmd:ensure-class
     ((client client)
@@ -40,7 +52,7 @@
            :name name
            :direct-superclasses (mapcar #'transform-name superclass-names)
            :direct-slots (mapcar (lambda (slot-spec)
-                                   (apply #'transform-slot-spec slot-spec))
+                                   (transform-slot-spec slot-spec))
                                  direct-slot-specs)
            :metaclass 'closer-mop:funcallable-standard-class)))
     (setf (clo:find-class client (environment client) name)
