@@ -10,4 +10,9 @@
          client global-environment '(setf find-class))
         (lambda (class name)
           (setf (clostrum:find-class client global-environment name)
-                class))))
+                class)))
+  (setf (clostrum:fdefinition
+         client global-environment '(setf symbol-value))
+        (lambda (value name)
+          (setf (clostrum:symbol-value client global-environment name)
+                value))))
