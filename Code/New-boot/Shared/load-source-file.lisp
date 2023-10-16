@@ -12,5 +12,6 @@
 (defun load-source-file (client filename environment)
   (format *trace-output* "Loading ~s into ~s~%"
           filename environment)
+  (finish-output *trace-output*)
   (with-open-file (stream filename :direction :input)
     (load-stream client stream environment)))
