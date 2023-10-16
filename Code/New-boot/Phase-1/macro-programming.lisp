@@ -80,3 +80,13 @@
            :method-class method-class-name)))
     (setf (clo:fdefinition client (environment client) name)
           result)))
+
+;;; PROCLAIM programming.
+
+(defmethod cmd:proclaim ((client client) declaration-specifier environment)
+  (when (eq (first declaration-specifier) 'special)
+    (let ((name (second declaration-specifier))
+          (environment (environment client)))
+      (setf (clostrum-sys:variable-status client environment name)
+            :special)))
+  nil)
