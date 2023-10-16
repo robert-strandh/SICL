@@ -33,6 +33,7 @@
      direct-slot-specs
      options
      environment)
+  (setf (find-class (transform-name name)) nil)
   (let ((result
           (closer-mop:ensure-class
            (transform-name name)
@@ -71,6 +72,7 @@
      method-combination-arguments
      documentation-option
      environment)
+  (fmakunbound (transform-name name))
   (let ((result 
           (ensure-generic-function
            (transform-name name)
@@ -120,10 +122,15 @@
      specializers
      documentation
      method-lambda)
-  (closer-mop:ensure-method
-   (fdefinition (transform-name function-name))
-   method-lambda
-   :qualifiers qualifiers
-   :lambda-list lambda-list
-   :specializers specializers)
+  (let ((environment (environment client)))
+    (let ((method
+            (make-instance 'standard-method
+              :function (eval method-lambda)
+              :qualifiers qualifiers
+              :lambda-list lambda-list
+              :specializers
+              (loop for specializer in specializers
+                    collect
+                    (clo:find-class client environment specializer)))))
+      (add-method (fdefinition (transform-name function-name)) method)))
   nil)
