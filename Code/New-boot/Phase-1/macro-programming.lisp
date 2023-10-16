@@ -90,3 +90,24 @@
       (setf (clostrum-sys:variable-status client environment name)
             :special)))
   nil)
+
+;;; DEFMETHOD programming.
+
+(defmethod cmd:wrap-in-make-method-lambda
+    ((client client)
+     lambda-expression
+     generic-function-name
+     environment)
+  (let ((arguments (gensym))
+        (next-methods (gensym)))
+    `(lambda (,arguments ,next-methods)
+       (flet ((next-method-p ()
+                (not (null ,next-methods)))
+              (call-next-method (&rest arguments)
+                (when (null ,next-methods)
+                  (error "no next method"))
+                (funcall (method-function (first ,next-methods))
+                         (or arguments ,arguments)
+                         (rest ,next-methods))))
+         (declare (ignorable #'next-method-p #'call-next-method))
+         (apply ,lambda-expression ,arguments)))))
