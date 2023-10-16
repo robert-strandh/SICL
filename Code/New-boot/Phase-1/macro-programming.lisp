@@ -106,8 +106,24 @@
               (call-next-method (&rest arguments)
                 (when (null ,next-methods)
                   (error "no next method"))
-                (funcall (method-function (first ,next-methods))
+                (funcall (closer-mop:method-function (first ,next-methods))
                          (or arguments ,arguments)
                          (rest ,next-methods))))
          (declare (ignorable #'next-method-p #'call-next-method))
          (apply ,lambda-expression ,arguments)))))
+
+(defmethod cmd:wrap-in-ensure-method
+    ((client client)
+     function-name
+     lambda-list
+     qualifiers
+     specializers
+     documentation
+     method-lambda)
+  (closer-mop:ensure-method
+   (fdefinition (transform-name function-name))
+   method-lambda
+   :qualifiers qualifiers
+   :lambda-list lambda-list
+   :specializers specializers)
+  nil)
