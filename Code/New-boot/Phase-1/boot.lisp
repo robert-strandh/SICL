@@ -34,7 +34,7 @@
     (setf (clostrum:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
     (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-to-delete")
-    ;; (load-file client "to-delete.lisp" environment)
-    ;; (load-file client "to-delete-2.lisp" environment)
+     client environment "sicl-clos-package")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "sicl-clos-load-time")
     (values global-environment *packages* *symbol-package*)))
