@@ -7,6 +7,10 @@
           (setf (clostrum:fdefinition client global-environment name)
                 definition)))
   (setf (clostrum:fdefinition
+         client global-environment 'find-class)
+        (lambda (name)
+          (clostrum:find-class client global-environment name)))
+  (setf (clostrum:fdefinition
          client global-environment '(setf find-class))
         (lambda (class name)
           (setf (clostrum:find-class client global-environment name)
