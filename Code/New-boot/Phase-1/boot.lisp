@@ -33,6 +33,9 @@
     (define-make-instance client global-environment)
     (setf (clostrum:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
+    (setf (clostrum:fdefinition client global-environment 'ensure-class)
+          (lambda (&rest arguments)
+            (print arguments *trace-output*)))
     (sicl-new-boot:ensure-asdf-system
      client environment "sicl-clos-package")
     (sicl-new-boot:ensure-asdf-system
