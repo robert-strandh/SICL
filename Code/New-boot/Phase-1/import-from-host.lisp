@@ -3,6 +3,7 @@
 (defparameter *host-function-names*
   '(;; Arithmetic
     + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
+    random
     ;; Conses
     cons list list* null
     car cdr caar cadr cdar cddr
