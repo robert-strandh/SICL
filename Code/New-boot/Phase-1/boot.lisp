@@ -14,6 +14,21 @@
   (setf (clostrum:fdefinition client environment 'make-instance)
         #'my-make-instance))
 
+(defun define-ensure-class (client global-environment)
+  (setf (clostrum:fdefinition client global-environment 'ensure-class)
+        (lambda (name
+                 &rest initargs
+                 &key
+                 direct-superclasses
+                 &allow-other-keys)
+          (apply #'closer-mop:ensure-class
+                 (transform-name name)
+                 :direct-superclasses (mapcar #'transform-name direct-superclasses)
+                 :metaclass 'closer-mop:funcallable-standard-class
+                 initargs)
+          (setf (clo:find-class client global-environment name)
+                (find-class (transform-name name))))))
+
 (defun boot ()
   (let* ((client (make-instance 'client))
          (environment (create-environment))
@@ -33,9 +48,7 @@
     (define-make-instance client global-environment)
     (setf (clostrum:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
-    (setf (clostrum:fdefinition client global-environment 'ensure-class)
-          (lambda (&rest arguments)
-            (print arguments *trace-output*)))
+    (define-ensure-class client global-environment)
     (sicl-new-boot:ensure-asdf-system
      client environment "sicl-clos-package")
     (sicl-new-boot:ensure-asdf-system
