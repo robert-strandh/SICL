@@ -38,25 +38,8 @@
               (eval (second initfunction)))))
     result))
 
-(defmethod cmd:ensure-class
-    ((client client)
-     name
-     superclass-names
-     direct-slot-specs
-     options
-     environment)
-  (setf (find-class (transform-name name)) nil)
-  (let ((result
-          (closer-mop:ensure-class
-           (transform-name name)
-           :name name
-           :direct-superclasses (mapcar #'transform-name superclass-names)
-           :direct-slots (mapcar (lambda (slot-spec)
-                                   (transform-slot-spec slot-spec))
-                                 direct-slot-specs)
-           :metaclass 'closer-mop:funcallable-standard-class)))
-    (setf (clo:find-class client (environment client) name)
-          result)))
+(defmethod cmd:ensure-class-name ((client client))
+  'ensure-class)
 
 ;;; DEFGENERIC programming.
 
