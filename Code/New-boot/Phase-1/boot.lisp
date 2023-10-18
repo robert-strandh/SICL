@@ -38,6 +38,7 @@
     (reinitialize-instance client
       :environment global-environment)
     (import-from-host client global-environment)
+    (import-khazern client global-environment)
     (define-environment-functions client global-environment)
     (define-package-functions client global-environment)
     (clostrum:make-variable
