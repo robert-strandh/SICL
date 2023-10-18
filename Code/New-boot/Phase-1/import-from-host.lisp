@@ -5,11 +5,12 @@
     + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
     random
     ;; Conses
-    cons list list* null
+    cons list list* null endp
     car cdr caar cadr cdar cddr
     caaar caadr cadar caddr cdaar cdadr cddar cdddr
     first second third fourth fifth sixth seventh eighth ninth tenth
     rest nth nthcdr
+    consp atom
     ;; Sequences
     elt subseq reduce length reverse nreverse
     count count-if count-if-not
@@ -17,6 +18,10 @@
     position position-if position-if-not
     remove remove-if remove-if-not
     delete delete-if delete-if-not
+    ;; Strings
+    string
+    ;; Conditions
+    error
     ;; Data and control flow
     funcall))
 
