@@ -6,7 +6,8 @@
                "common-macro-definitions"
                "eclector-concrete-syntax-tree"
                "parcl-extrinsic"
-               "parcl-class")
+               "parcl-class"
+               "khazern-extrinsic")
   :serial t
   :components
   ((:file "packages")
