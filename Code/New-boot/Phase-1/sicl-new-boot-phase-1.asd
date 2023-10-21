@@ -7,7 +7,8 @@
                "eclector-concrete-syntax-tree"
                "parcl-extrinsic"
                "parcl-class"
-               "khazern-extrinsic")
+               "khazern-extrinsic"
+               "sicl-source-tracking")
   :serial t
   :components
   ((:file "packages")
