@@ -10,5 +10,5 @@
                (cbae:eval-ast client ast environment)))))
 
 (defun load-file (client filename environment)
-  (with-open-file (stream filename :direction :input)
+  (sicl-source-tracking:with-source-tracking-stream-from-file (stream filename)
     (load-stream client stream environment)))
