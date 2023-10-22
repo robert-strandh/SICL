@@ -19,12 +19,14 @@
         (lambda (name
                  &rest initargs
                  &key
-                 direct-superclasses
+                   direct-superclasses
+                   direct-slots
                  &allow-other-keys)
           (apply #'closer-mop:ensure-class
                  (transform-name name)
                  :direct-superclasses (mapcar #'transform-name direct-superclasses)
                  :metaclass 'closer-mop:funcallable-standard-class
+                 :direct-slots (mapcar #'transform-slot-spec direct-slots)
                  initargs)
           (setf (clo:find-class client global-environment name)
                 (find-class (transform-name name))))))
