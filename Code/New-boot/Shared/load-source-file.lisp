@@ -13,5 +13,5 @@
   (format *trace-output* "Loading ~s into ~s~%"
           filename environment)
   (finish-output *trace-output*)
-  (with-open-file (stream filename :direction :input)
+  (sicl-source-tracking:with-source-tracking-stream-from-file (stream filename)
     (load-stream client stream environment)))
