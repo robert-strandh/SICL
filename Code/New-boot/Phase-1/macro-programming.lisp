@@ -126,6 +126,9 @@
               :specializers
               (loop for specializer in specializers
                     collect
-                    (clo:find-class client environment specializer)))))
+                    (if (symbolp specializer)
+                        (clo:find-class client environment specializer)
+                        (make-instance 'closer-mop:eql-specializer
+                          :object (second specializer)))))))
       (add-method (fdefinition (transform-name function-name)) method)))
   nil)
