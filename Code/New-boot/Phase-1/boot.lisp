@@ -56,4 +56,6 @@
      client environment "sicl-clos-package")
     (sicl-new-boot:ensure-asdf-system
      client environment "sicl-clos-load-time")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "acclimation")
     (values global-environment *packages* *symbol-package*)))
