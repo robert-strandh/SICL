@@ -3,14 +3,17 @@
 (defparameter *host-function-names*
   '(;; Arithmetic
     + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
-    numberp random
+    zerop plusp minusp
+    numberp integerp random
     ;; Conses
     cons list list* null endp
     car cdr caar cadr cdar cddr
     caaar caadr cadar caddr cdaar cdadr cddar cdddr
+    cddadr
     first second third fourth fifth sixth seventh eighth ninth tenth
-    rest nth nthcdr append
-    consp atom
+    rest last butlast nth nthcdr append
+    consp listp atom member mapcar set-difference set-exclusive-or
+    assoc
     ;; Sequences
     elt subseq reduce length reverse nreverse
     count count-if count-if-not
@@ -19,13 +22,21 @@
     remove remove-if remove-if-not
     delete delete-if delete-if-not
     ;; Symbols
-    gensym
+    gensym symbolp symbol-name
     ;; Strings
-    string
+    string stringp
+    ;; Characters
+    char
     ;; Conditions
-    error
+    error warn
+    ;; Evaluation and compilation
+    constantp
     ;; Data and control flow
-    values not funcall
+    values not funcall apply eq eql identity
+    ;; Iteration
+    format
+    ;; Environment
+    documentation
     ;; Hash tables
     make-hash-table gethash hash-table-count))
 
@@ -43,10 +54,13 @@
         (setf (cdr cons) object)))
     ((setf first)
      ,(lambda (object cons)
-        (setf (first cons) object))
-     (setf gethash)
+        (setf (first cons) object)))
+    ((setf gethash)
      ,(lambda (object key table)
-        (setf (gethash key table) object)))))
+        (setf (gethash key table) object)))
+    ((setf documentation)
+     ,(lambda (documentation object documentation-type)
+        (setf (documentation object documentation-type) documentation)))))
 
 (defun define-setf-functions (client global-environment)
   (loop for (name definition) in *host-setf-functions*
