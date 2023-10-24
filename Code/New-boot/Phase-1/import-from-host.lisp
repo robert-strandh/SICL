@@ -25,7 +25,7 @@
     ;; Conditions
     error
     ;; Data and control flow
-    funcall))
+    values not funcall))
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
