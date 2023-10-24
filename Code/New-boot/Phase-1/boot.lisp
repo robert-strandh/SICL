@@ -41,6 +41,10 @@
       :environment global-environment)
     (sicl-new-boot:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
+    (setf (clostrum:fdefinition client global-environment 'ensure-method)
+          #'ensure-method)
+    (setf (clostrum:fdefinition client global-environment 'closer-mop:method-function)
+          #'closer-mop:method-function)
     (import-khazern client global-environment)
     (define-environment-functions client global-environment)
     (define-package-functions client global-environment)
@@ -59,4 +63,13 @@
      client environment "sicl-clos-load-time")
     (sicl-new-boot:ensure-asdf-system
      client environment "acclimation")
+    ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
+    (setf (clostrum:macro-function client global-environment 'handler-bind)
+          (lambda (form environment)
+            (declare (ignore form environment))
+            nil))
+    (clostrum:make-variable
+     client global-environment 'lambda-list-keywords lambda-list-keywords)
+    (sicl-new-boot:ensure-asdf-system
+     client environment "ecclesia")
     (values global-environment *packages* *symbol-package*)))
