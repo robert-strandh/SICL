@@ -47,5 +47,4 @@
    ;; here.
    (%documentation 
     :initform nil
-    :initarg :documentation
-    :accessor documentation)))
+    :initarg :documentation)))

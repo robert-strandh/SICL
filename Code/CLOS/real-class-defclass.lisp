@@ -40,8 +40,7 @@
     :initform '()
     :reader class-direct-default-initargs)
    (%documentation
-    :initform nil
-    :accessor documentation)
+    :initform nil)
    (%direct-superclasses
     :initarg :direct-superclasses
     :reader class-direct-superclasses)

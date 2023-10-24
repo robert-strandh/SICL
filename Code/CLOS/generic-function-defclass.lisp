@@ -25,8 +25,7 @@
     :reader generic-function-lambda-list)
    (%documentation 
     :initarg :documentation
-    :initform nil
-    :accessor documentation)
+    :initform nil)
    (%dependents
     :initform '()
     :accessor dependents))
