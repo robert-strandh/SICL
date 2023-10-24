@@ -9,7 +9,7 @@
     car cdr caar cadr cdar cddr
     caaar caadr cadar caddr cdaar cdadr cddar cdddr
     first second third fourth fifth sixth seventh eighth ninth tenth
-    rest nth nthcdr
+    rest nth nthcdr append
     consp atom
     ;; Sequences
     elt subseq reduce length reverse nreverse
