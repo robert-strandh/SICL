@@ -11,6 +11,11 @@
         (lambda (name)
           (clostrum:find-class client global-environment name)))
   (setf (clostrum:fdefinition
+         client global-environment '(setf macro-function))
+        (lambda (definition name)
+          (setf (clostrum:macro-function client global-environment name)
+                definition)))
+  (setf (clostrum:fdefinition
          client global-environment '(setf find-class))
         (lambda (class name)
           (setf (clostrum:find-class client global-environment name)
