@@ -112,6 +112,16 @@
          (declare (ignorable #'next-method-p #'call-next-method))
          (apply ,lambda-expression ,arguments)))))
 
+(defun ensure-method
+    (generic-function method-function lambda-list qualifiers specializers)
+  (let ((method
+          (make-instance 'standard-method
+            :function method-function
+            :lambda-list lambda-list
+            :specializers specializers
+            :qualifiers qualifiers)))
+    (add-method generic-function method)))
+
 (defmethod cmd:wrap-in-ensure-method
     ((client client)
      function-name
@@ -120,18 +130,18 @@
      specializers
      documentation
      method-lambda)
-  (let ((environment (environment client)))
-    (let ((method
-            (make-instance 'standard-method
-              :function (eval method-lambda)
-              :qualifiers qualifiers
-              :lambda-list lambda-list
-              :specializers
-              (loop for specializer in specializers
-                    collect
-                    (if (symbolp specializer)
-                        (clo:find-class client environment specializer)
-                        (make-instance 'closer-mop:eql-specializer
-                          :object (second specializer)))))))
-      (add-method (fdefinition (transform-name function-name)) method)))
-  nil)
+  (let* ((environment (environment client))
+         (new-name (transform-name function-name))
+         (gf (ensure-generic-function new-name :lambda-list lambda-list)))
+    (setf (clostrum:fdefinition client environment function-name) gf)
+    `(ensure-method
+      ,gf
+      ,method-lambda
+      ',lambda-list
+      ',qualifiers
+      ',(loop for specializer in specializers
+              collect 
+              (if (symbolp specializer)
+                  (clo:find-class client environment specializer)
+                  (make-instance 'closer-mop:eql-specializer
+                    :object (second specializer)))))))
