@@ -10,15 +10,18 @@
    environment)
   nil)
 
+(defun transform-symbol (symbol)
+  (let ((name 
+          (let* ((*package* (find-package '#:keyword)))
+            (format nil "~s" symbol)))
+        (package (find-package "SICL-NEW-BOOT-PHASE-1")))
+    (intern (string-downcase name) package)))
+
 (defun transform-name (name)
-  (let ((package (find-package "SICL-NEW-BOOT-PHASE-1")))
-    (etypecase name
-      (symbol
-       (intern (string-downcase (symbol-name name))
-               package))
-      ((cons (eql setf) (cons symbol))
-       `(setf ,(intern (string-downcase (symbol-name (second name)))
-                       package))))))
+  (etypecase name
+    (symbol (transform-symbol name))
+    ((cons (eql setf) (cons symbol))
+     `(setf ,(transform-symbol (second name))))))
 
 (defun transform-slot-spec (slot-spec)
   (let ((result (copy-list slot-spec)))
