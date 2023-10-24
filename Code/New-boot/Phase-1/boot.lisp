@@ -39,6 +39,7 @@
          (*symbol-package* (make-hash-table :test #'eq)))
     (reinitialize-instance client
       :environment global-environment)
+    (sicl-new-boot:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
     (import-khazern client global-environment)
     (define-environment-functions client global-environment)
