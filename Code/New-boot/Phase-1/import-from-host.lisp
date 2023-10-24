@@ -25,7 +25,9 @@
     ;; Conditions
     error
     ;; Data and control flow
-    values not funcall))
+    values not funcall
+    ;; Hash tables
+    make-hash-table gethash hash-table-count))
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
@@ -41,7 +43,10 @@
         (setf (cdr cons) object)))
     ((setf first)
      ,(lambda (object cons)
-        (setf (first cons) object)))))
+        (setf (first cons) object))
+     (setf gethash)
+     ,(lambda (object key table)
+        (setf (gethash key table) object)))))
 
 (defun define-setf-functions (client global-environment)
   (loop for (name definition) in *host-setf-functions*
