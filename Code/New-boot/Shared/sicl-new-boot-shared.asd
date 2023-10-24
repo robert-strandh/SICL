@@ -6,5 +6,6 @@
   ((:file "packages")
    (:file "cst-to-ast")
    (:file "load-source-file")
-   (:file "asdf-programming")))
+   (:file "asdf-programming")
+   (:file "define-backquote-macros")))
 
