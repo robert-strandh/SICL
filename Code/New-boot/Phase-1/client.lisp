@@ -4,4 +4,3 @@
                   eclector.concrete-syntax-tree:cst-client
                   parcl-class:client)
   ((%environment :initarg :environment :reader environment)))
-
