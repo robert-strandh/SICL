@@ -18,7 +18,7 @@
            (clostrum-sys:variable-cell
             client global-environment '*package*)))
     (cbae:symbol-value
-     client '*package* package-cell cbae:*dynamic-environment*)))
+     '*package* package-cell cbae:*dynamic-environment*)))
 
 ;;; This method is applicable when Eclector sees a symbol without a
 ;;; package marker, so it should always be interned in the current
