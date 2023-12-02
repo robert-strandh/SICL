@@ -6,8 +6,10 @@
     (loop with eof = (list nil)
           for cst = (eclector.concrete-syntax-tree:read stream nil eof)
           until (eq cst eof)
-          do (let ((ast (cst-to-ast client cst environment)))
-               (cbae:eval-ast client ast environment)))))
+          do (let* ((ast (cst-to-ast client cst environment))
+                    (top-level-function 
+                      (cbae:compile-ast client ast environment)))
+               (funcall top-level-function)))))
 
 (defun load-source-file (client filename environment)
   (format *trace-output* "Loading ~s into ~s~%"
