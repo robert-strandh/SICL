@@ -21,7 +21,7 @@
               ;; member of the class precedence list of the class of
               ;; the object.
               (if (member (find-class 'class)
-                          (sicl-clos:class-precedence-list object-class))
+                          (clostrophilia:class-precedence-list object-class))
                   t nil)))
            (otherwise
             (let ((expander (type-expander type-specifier))
@@ -40,7 +40,7 @@
                        ;; the class of the object is a class, and it simplifies
                        ;; bootstrapping.
                        (if (member type-class
-                                   (sicl-clos:class-precedence-list object-class))
+                                   (clostrophilia:class-precedence-list object-class))
                            t nil)))
                     (t
                      ;; TYPE-SPECIFIER has no expander associated with it and it
@@ -53,7 +53,7 @@
          (let ((object-class (class-of object)))
            ;; RETURN true if and only if TYPE-SPECIFIER is a member of the
            ;; class precedence list of the class of the object.
-           (if (member type-specifier (sicl-clos:class-precedence-list object-class))
+           (if (member type-specifier (clostrophilia:class-precedence-list object-class))
                t nil)))
         (t
          (error "Invalid type specifier ~s" type-specifier))))
