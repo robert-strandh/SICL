@@ -72,4 +72,8 @@
      client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sicl-new-boot:ensure-asdf-system
      client environment "ecclesia")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "clostrophilia-package")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "clostrophilia-class-initialization")
     (values global-environment *packages* *symbol-package*)))
