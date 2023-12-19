@@ -62,6 +62,10 @@
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
     (sicl-new-boot:ensure-asdf-system
+     client environment "sicl-type-support")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "sicl-typep")
+    (sicl-new-boot:ensure-asdf-system
      client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
     (setf (clostrum:macro-function client global-environment 'handler-bind)
