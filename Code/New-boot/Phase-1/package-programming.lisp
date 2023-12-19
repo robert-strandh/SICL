@@ -105,6 +105,9 @@
 (defmethod parcl:symbol-package ((client client) symbol)
   (gethash symbol *symbol-package*))
 
+(defmethod parcl:symbol-names-equal ((client client) symbol1 symbol2)
+  (string= symbol1 symbol2))
+
 (defmethod (setf parcl:symbol-package) (new-package (client client) symbol)
   (setf (gethash symbol *symbol-package*) new-package))
 
