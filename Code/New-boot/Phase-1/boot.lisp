@@ -58,9 +58,9 @@
           (find-class 'parcl-class:package))
     (define-ensure-class client global-environment)
     (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-clos-package")
+     client environment "clostrophilia-package")
     (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-clos-load-time")
+     client environment "clostrophilia-class-hierarchy")
     (sicl-new-boot:ensure-asdf-system
      client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
