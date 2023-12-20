@@ -3,7 +3,7 @@
 ;;; FIXME: The list of exported symbols is not complete.
 
 (defpackage #:sicl-clos
-  (:use #:common-lisp)
+  (:use #:common-lisp #:clostrophilia)
   (:local-nicknames (#:env #:sicl-environment))
   (:shadow #:documentation)
   (:export
