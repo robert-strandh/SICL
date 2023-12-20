@@ -60,6 +60,8 @@
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-package")
     (sicl-new-boot:ensure-asdf-system
+     client environment "sicl-clos-package")
+    (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
     (sicl-new-boot:ensure-asdf-system
      client environment "sicl-type-support")
