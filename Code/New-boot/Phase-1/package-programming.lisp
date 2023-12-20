@@ -140,10 +140,12 @@
      package-designator)))
 
 (defun create-common-lisp-package (client)
-  (let* ((name "COMMON-LISP")
-         (package (parcl:make-package client name)))
-    (setf (gethash name *packages*) package)
-    (loop for symbol being each external-symbol of name
+  (let* ((name1 "COMMON-LISP")
+         (name2 "CL")
+         (package (parcl:make-package client name1)))
+    (setf (gethash name1 *packages*) package)
+    (setf (gethash name2 *packages*) package)
+    (loop for symbol being each external-symbol of name1
           do (setf (parcl:symbol-package client symbol) package)
              (parcl:import client package symbol)
              (parcl:export client package symbol))))
