@@ -11,7 +11,7 @@
     caaar caadr cadar caddr cdaar cdadr cddar cdddr
     cddadr
     first second third fourth fifth sixth seventh eighth ninth tenth
-    rest last butlast nth nthcdr append
+    rest last butlast nth nthcdr append getf
     consp listp atom member mapcar set-difference set-exclusive-or
     assoc ldiff tailp
     ;; Sequences
@@ -32,7 +32,7 @@
     ;; Evaluation and compilation
     constantp
     ;; Data and control flow
-    values not funcall apply eq eql identity
+    values not funcall apply eq eql equal identity
     ;; Iteration
     format
     ;; Environment
