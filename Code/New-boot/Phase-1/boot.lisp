@@ -63,10 +63,9 @@
      client environment "sicl-clos-package")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
-    (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-type-support")
-    (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-typep")
+    ;; (let ((*features* '(:sicl)))
+    ;;   (sicl-new-boot:ensure-asdf-system
+    ;;    client environment "ctype"))
     (sicl-new-boot:ensure-asdf-system
      client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
@@ -79,7 +78,13 @@
     (sicl-new-boot:ensure-asdf-system
      client environment "ecclesia")
     (sicl-new-boot:ensure-asdf-system
+     client environment "sicl-type-support")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "sicl-typep")
+    (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-package")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "clostrophilia-method-combination")
     (values global-environment *packages* *symbol-package*)))
