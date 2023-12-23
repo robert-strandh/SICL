@@ -63,16 +63,15 @@
      client environment "sicl-clos-package")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
-    ;; (let ((*features* '(:sicl)))
-    ;;   (sicl-new-boot:ensure-asdf-system
-    ;;    client environment "ctype"))
     (sicl-new-boot:ensure-asdf-system
      client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
+    ;; The way we define it is that it just expands to a PROGN of the
+    ;; forms in the body, with the bindings having no effect.
     (setf (clostrum:macro-function client global-environment 'handler-bind)
           (lambda (form environment)
-            (declare (ignore form environment))
-            nil))
+            (declare (ignore environment))
+            (cons 'progn (rest (rest form)))))
     (clostrum:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sicl-new-boot:ensure-asdf-system
@@ -87,4 +86,7 @@
      client environment "clostrophilia-class-initialization")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-method-combination")
+    (let ((*features* '(:sicl)))
+      (sicl-new-boot:ensure-asdf-system
+       client environment "ctype"))
     (values global-environment *packages* *symbol-package*)))
