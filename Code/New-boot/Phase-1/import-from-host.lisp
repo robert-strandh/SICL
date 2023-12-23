@@ -13,7 +13,7 @@
     first second third fourth fifth sixth seventh eighth ninth tenth
     rest last butlast nth nthcdr append getf
     consp listp atom member mapcar set-difference set-exclusive-or
-    assoc ldiff tailp
+    assoc ldiff tailp list-length
     ;; Sequences
     elt subseq reduce length reverse nreverse
     count count-if count-if-not
