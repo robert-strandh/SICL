@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
-(defun create-environment ()
+(defclass environment (common-boot::environment)
+  ())
+
+(defun create-environment (client )
   (let ((environment (cb:create-environment)))
+    (change-class (trucler:global-environment client environment)
+                  'environment)
     environment))
