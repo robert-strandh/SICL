@@ -8,10 +8,7 @@
    .
    #.(loop for symbol being each external-symbol in '#:clostrum
            unless (member symbol '(clostrum:run-time-environment
-                                   clostrum:compilation-environment
-                                   clostrum:function-description
-                                   clostrum:type-description
-                                   clostrum:variable-description))
+                                   clostrum:compilation-environment))
              collect (symbol-name symbol)))
   (:export #:global-environment
            #:*environment*
