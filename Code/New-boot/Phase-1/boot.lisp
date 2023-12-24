@@ -33,7 +33,7 @@
 
 (defun boot ()
   (let* ((client (make-instance 'client))
-         (environment (create-environment))
+         (environment (create-environment client))
          (global-environment (trucler:global-environment client environment))
          (*packages* (make-hash-table :test #'equal))
          (*symbol-package* (make-hash-table :test #'eq)))
