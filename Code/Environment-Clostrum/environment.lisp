@@ -41,17 +41,12 @@
    (%traced-functions :initform (make-hash-table :test #'equal)
                       :reader traced-functions)))
 
-(defclass evaluation-environment
-    (clostrum:evaluation-environment-mixin
-     base-run-time-environment)
+(defclass evaluation-environment (base-run-time-environment)
   ())
 
 (defclass compilation-environment
     (clostrum-basic:compilation-environment)
   ())
-
-(defmethod client ((environment compilation-environment))
-  (client (clostrum:parent environment)))
 
 (defmethod client ((environment evaluation-environment))
   (client (clostrum:parent environment)))
