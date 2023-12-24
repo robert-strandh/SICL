@@ -43,16 +43,5 @@
 (defgeneric function-description
     (environment function-name))
 
-(defmethod function-description
-    (environment function-name)
-  (let ((client (client environment)))
-    (clostrum:function-description client environment function-name)))
-
 (defgeneric (setf function-description)
     (description environment function-name))
-
-(defmethod (setf function-description)
-    (description environment function-name)
-  (let ((client (client environment)))
-    (setf (clostrum:function-description client environment function-name)
-          description)))
