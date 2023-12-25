@@ -1,7 +1,6 @@
 (cl:in-package #:sicl-environment)
 
-(defclass base-run-time-environment
-    (clostrum-basic:run-time-environment)
+(defclass base-run-time-environment (common-boot:environment)
   (;; This slot holds an EQ hash table, mapping symbols to
    ;; method-combination templates.
    (%method-combination-templates
