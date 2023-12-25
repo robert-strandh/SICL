@@ -7,3 +7,5 @@
 ;;; function can refer to it at run time.
 
 (defvar *environment*)
+
+(defvar *client*)
