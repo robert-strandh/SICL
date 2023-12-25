@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
-(defclass environment (common-boot::environment)
+(defclass environment (common-boot:environment)
   ())
 
 (defun create-environment (client )
