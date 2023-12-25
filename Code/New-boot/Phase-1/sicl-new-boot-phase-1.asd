@@ -8,6 +8,7 @@
                "parcl-extrinsic"
                "parcl-class"
                "khazern-extrinsic"
+               "sicl-environment"
                "sicl-source-tracking")
   :serial t
   :components
