@@ -3,7 +3,7 @@
 (defclass environment (common-boot:environment)
   ())
 
-(defun create-environment (client )
+(defun create-environment (client)
   (let ((environment (cb:create-environment)))
     (change-class (trucler:global-environment client environment)
                   'environment)
