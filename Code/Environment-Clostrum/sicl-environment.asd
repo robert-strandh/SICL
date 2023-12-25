@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-environment
   :depends-on (#:sicl-lexical-environment
+               #:common-boot
                #:stealth-mixin
                #:clostrum
                #:clostrum-basic
