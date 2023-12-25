@@ -37,6 +37,12 @@
          (global-environment (trucler:global-environment client environment))
          (*packages* (make-hash-table :test #'equal))
          (*symbol-package* (make-hash-table :test #'eq)))
+    (setf (clostrum:symbol-value client global-environment
+                                 'sicl-environment:*environment*)
+          global-environment)
+    (setf (clostrum:symbol-value client global-environment
+                                 'sicl-environment:*client*)
+          client)
     (reinitialize-instance client
       :environment global-environment)
     (sicl-new-boot:define-backquote-macros client global-environment)
