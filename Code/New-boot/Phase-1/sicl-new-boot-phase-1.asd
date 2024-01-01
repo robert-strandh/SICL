@@ -22,5 +22,4 @@
    (:file "import-khazern")
    (:file "define-environment-functions")
    (:file "cst-to-ast")
-   (:file "load-file")
    (:file "boot")))
