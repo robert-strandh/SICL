@@ -12,7 +12,7 @@
     cddadr
     first second third fourth fifth sixth seventh eighth ninth tenth
     rest last butlast nth nthcdr append getf
-    consp listp atom member mapcar set-difference set-exclusive-or
+    consp listp atom member mapcar mapc set-difference set-exclusive-or
     assoc ldiff tailp list-length
     ;; Sequences
     elt subseq reduce length reverse nreverse
@@ -32,7 +32,7 @@
     ;; Evaluation and compilation
     constantp
     ;; Data and control flow
-    values not funcall apply eq eql equal identity
+    values not funcall apply eq eql equal identity functionp
     ;; Iteration
     format
     ;; Environment
