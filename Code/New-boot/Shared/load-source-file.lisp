@@ -7,7 +7,13 @@
     (handler-bind
         ((common-boot:no-function-description
            (lambda (condition)
-             (push condition undefined-functions))))
+             (let ((restart (find-restart 'muffle-warning condition)))
+               (unless (null restart)
+                 (pushnew condition undefined-functions
+                          :key #'common-boot:name
+                          :test (lambda (condition-name name)
+                                  (eq condition-name name)))
+                 (invoke-restart restart))))))
       (loop with eof = (list nil)
             for cst = (eclector.concrete-syntax-tree:read stream nil eof)
             until (eq cst eof)
@@ -15,8 +21,12 @@
                       (top-level-function 
                         (cbae:compile-ast client ast environment)))
                  (funcall top-level-function))))
-    (loop for undefined-function in undefined-functions
-          do (warn undefined-function))))
+    (loop with global-environment
+            = (trucler:global-environment client environment)
+          for condition in undefined-functions
+          do (unless (clostrum:fboundp
+                      client global-environment (common-boot:name condition))
+               (warn condition)))))
 
 (defun load-source-file (client filename environment)
   (format *trace-output* "Loading ~s into ~s~%"
