@@ -83,15 +83,18 @@
     (sicl-new-boot:ensure-asdf-system
      client environment "ecclesia")
     (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-type-support")
-    (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-typep")
-    (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-package")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
+    (setf (clostrum:macro-function
+           client global-environment 'define-method-combination)
+          (lambda (form environment)
+            (declare (ignore environment))
+            (eval form)
+            nil))
     (sicl-new-boot:ensure-asdf-system
-     client environment "clostrophilia-method-combination")
+     client environment "sicl-arithmetic-base")
+    (break)
     (let ((*features* '(:sicl)))
       (sicl-new-boot:ensure-asdf-system
        client environment "ctype"))
