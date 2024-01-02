@@ -36,6 +36,10 @@
      symbol-name
      internp)
   (declare (ignore input-stream))
+  (when (eq (eclector.reader:state-value client '*package*)
+            (find-package "KEYWORD"))
+    (return-from eclector.reader:interpret-symbol
+      (intern symbol-name (find-package "KEYWORD"))))
   (let ((current-package (current-package client)))
     (case current-package
       ((#.(find-package '#:common-lisp)
