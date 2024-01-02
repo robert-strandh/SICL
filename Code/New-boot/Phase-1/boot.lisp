@@ -94,7 +94,9 @@
             nil))
     (sicl-new-boot:ensure-asdf-system
      client environment "sicl-arithmetic-base")
-    (break)
+    (setf (clostrum:fdefinition
+           client global-environment 'ecclesia:list-structure)
+          #'ecclesia:list-structure)
     (let ((*features* '(:sicl)))
       (sicl-new-boot:ensure-asdf-system
        client environment "ctype"))
