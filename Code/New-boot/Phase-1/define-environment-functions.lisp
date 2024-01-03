@@ -38,8 +38,10 @@
   (setf (clostrum:fdefinition
          client global-environment '(setf symbol-value))
         (lambda (value name)
-          (setf (clostrum:symbol-value client global-environment name)
-                value)))
+          (let ((cell (clo:ensure-variable-cell
+                       client global-environment name)))
+            (setf (cbae:symbol-value name cell cbae:*dynamic-environment*)
+                  value))))
   (setf (clostrum:fdefinition
          client global-environment 'define-constant)
         (lambda (name value)
