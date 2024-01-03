@@ -45,6 +45,10 @@
         do (setf (clostrum:fdefinition client global-environment name)
                  (fdefinition name))))
 
+(defun import-host-classes (client global-environment)
+  (setf (clostrum:find-class client global-environment 'symbol)
+        (find-class 'symbol)))
+
 (defparameter *host-setf-functions*
   `(((setf car)
      ,(lambda (object cons)
@@ -69,4 +73,5 @@
 
 (defun import-from-host (client global-environment)
   (import-host-functions client global-environment)
+  (import-host-classes client global-environment)
   (define-setf-functions client global-environment))
