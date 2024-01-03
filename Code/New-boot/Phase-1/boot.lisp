@@ -96,6 +96,8 @@
      client environment "sicl-arithmetic-base")
     (sicl-new-boot:ensure-asdf-system
      client environment "sicl-array-support")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "sicl-type-support")
     (setf (clostrum:fdefinition
            client global-environment 'ecclesia:list-structure)
           #'ecclesia:list-structure)
