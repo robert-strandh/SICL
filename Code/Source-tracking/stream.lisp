@@ -8,7 +8,8 @@
                      collect line)))
     (make-array (length lines) :initial-contents lines)))
 
-(defclass source-tracking-stream (stream)
+(defclass source-tracking-stream
+    (trivial-gray-streams:fundamental-character-input-stream)
   (;; This slot contains a vector of lines where each line is a
    ;; string.
    (%lines :initarg :lines :reader lines)
