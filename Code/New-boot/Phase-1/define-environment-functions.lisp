@@ -25,6 +25,11 @@
         (lambda (class name)
           (setf (clostrum:find-class client global-environment name)
                 class)))
+  (setf (clostrum:fdefinition client global-environment 'boundp)
+        (lambda (name)
+          (let ((cell (clo:ensure-variable-cell
+                       client global-environment name)))
+            (cbae:boundp name cell cbae:*dynamic-environment*))))
   (setf (clostrum:fdefinition
          client global-environment '(setf symbol-value))
         (lambda (value name)
