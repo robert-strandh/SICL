@@ -11,17 +11,20 @@
   nil)
 
 (defun transform-symbol (symbol)
-  (let ((name 
-          (let* ((*package* (find-package '#:keyword)))
-            (format nil "~s" symbol)))
-        (package (find-package "SICL-NEW-BOOT-PHASE-1")))
-    (intern (string-downcase name) package)))
+  (make-symbol (symbol-name symbol)))
+
+(defvar *transformed-names*)
 
 (defun transform-name (name)
-  (etypecase name
-    (symbol (transform-symbol name))
-    ((cons (eql setf) (cons symbol))
-     `(setf ,(transform-symbol (second name))))))
+  (let ((existing (gethash name *transformed-names*)))
+    (when (null existing)
+      (setf existing
+            (etypecase name
+              (symbol (transform-symbol name))
+              ((cons (eql setf) (cons symbol))
+               `(setf ,(transform-symbol (second name))))))
+      (setf (gethash name *transformed-names*) existing))
+    existing))
 
 (defun transform-slot-spec (slot-spec)
   (let ((result (copy-list slot-spec)))
