@@ -100,6 +100,8 @@
      client environment "clostrophilia-package")
     (define-typep client global-environment)
     (sicl-new-boot:ensure-asdf-system
+     client environment "clostrophilia-generic-function-initialization")
+    (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
     (setf (clostrum:macro-function
            client global-environment 'define-method-combination)
