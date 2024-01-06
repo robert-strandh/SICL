@@ -46,8 +46,9 @@
                  (fdefinition name))))
 
 (defun import-host-classes (client global-environment)
-  (setf (clostrum:find-class client global-environment 'symbol)
-        (find-class 'symbol)))
+  (loop for name in '(symbol
+        do (setf (clostrum:find-class client global-environment name)
+                 (find-class 't))))
 
 (defparameter *host-setf-functions*
   `(((setf car)
