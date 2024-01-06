@@ -46,7 +46,7 @@
                  (fdefinition name))))
 
 (defun import-host-classes (client global-environment)
-  (loop for name in '(symbol
+  (loop for name in '(symbol)
         do (setf (clostrum:find-class client global-environment name)
                  (find-class 't))))
 
