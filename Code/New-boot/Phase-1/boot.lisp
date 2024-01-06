@@ -31,6 +31,19 @@
           (setf (clo:find-class client global-environment name)
                 (find-class (transform-name name))))))
 
+(defun define-typep (client global-environment)
+  (setf (clostrum:fdefinition client global-environment 'typep)
+        (lambda (object type-specifier)
+          (cond ((eq type-specifier 'class)
+                 (format *trace-output*
+                         "Assuming ~s is a class~%" object)
+                 t)
+                (t
+                 (format *trace-output*
+                         "Don't know whether ~s is of type ~s~%"
+                         object type-specifier)
+                 (break))))))
+
 (defun boot ()
   (let* ((client (make-instance 'client))
          (environment (create-environment client))
@@ -84,6 +97,7 @@
      client environment "ecclesia")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-package")
+    (define-typep client global-environment)
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
     (setf (clostrum:macro-function
@@ -92,16 +106,4 @@
             (declare (ignore environment))
             (eval form)
             nil))
-    (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-arithmetic-base")
-    (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-array-support")
-    (sicl-new-boot:ensure-asdf-system
-     client environment "sicl-type-support")
-    (setf (clostrum:fdefinition
-           client global-environment 'ecclesia:list-structure)
-          #'ecclesia:list-structure)
-    (let ((*features* '(:sicl)))
-      (sicl-new-boot:ensure-asdf-system
-       client environment "ctype"))
     (values global-environment *packages* *symbol-package*)))
