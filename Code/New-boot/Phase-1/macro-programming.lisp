@@ -10,24 +10,6 @@
    environment)
   nil)
 
-(defun transform-symbol (symbol)
-  (if (eq (symbol-package symbol) (find-package "COMMON-LISP"))
-      symbol
-      (make-symbol (symbol-name symbol))))
-
-(defvar *transformed-names*)
-
-(defun transform-name (name)
-  (let ((existing (gethash name *transformed-names*)))
-    (when (null existing)
-      (setf existing
-            (etypecase name
-              (symbol (transform-symbol name))
-              ((cons (eql setf) (cons symbol))
-               `(setf ,(transform-symbol (second name))))))
-      (setf (gethash name *transformed-names*) existing))
-    existing))
-
 (defmethod cmd:ensure-class-name ((client client))
   'ensure-class)
 
