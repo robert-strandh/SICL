@@ -17,19 +17,34 @@
 (defun define-ensure-class (client global-environment)
   (setf (clostrum:fdefinition client global-environment 'ensure-class)
         (lambda (name
-                 &rest initargs
                  &key
+                   direct-default-initargs
                    direct-superclasses
                    direct-slots
                  &allow-other-keys)
-          (apply #'closer-mop:ensure-class
-                 (transform-name name)
-                 :direct-superclasses (mapcar #'transform-name direct-superclasses)
-                 :metaclass 'closer-mop:funcallable-standard-class
-                 :direct-slots (mapcar #'transform-slot-spec direct-slots)
-                 initargs)
+          (let* ((new-slots
+                   ;; We must remove the :READERS and :WRITERS
+                   ;; properties, because otherwise, they would be
+                   ;; created as host methods on host generic
+                   ;; functions.
+                   (loop for direct-slot in direct-slots
+                         for copy = (copy-list direct-slot)
+                         collect (progn (remf copy :readers)
+                                        (remf copy :writers)
+                                        copy)))
+                 (new-superclasses
+                   (loop for direct-superclass in direct-superclasses
+                         collect
+                         (clo:find-class
+                          client global-environment direct-superclass)))
+                 (result
+                   (make-instance 'standard-class
+                     :name name
+                     :direct-default-initargs direct-default-initargs
+                     :direct-slots new-slots
+                     :direct-superclasses new-superclasses)))
           (setf (clo:find-class client global-environment name)
-                (find-class (transform-name name))))))
+                result)))))
 
 (defun define-typep (client global-environment)
   (setf (clostrum:fdefinition client global-environment 'typep)
