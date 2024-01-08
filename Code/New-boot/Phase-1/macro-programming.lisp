@@ -11,7 +11,9 @@
   nil)
 
 (defun transform-symbol (symbol)
-  (make-symbol (symbol-name symbol)))
+  (if (eq (symbol-package symbol) (find-package "COMMON-LISP"))
+      symbol
+      (make-symbol (symbol-name symbol))))
 
 (defvar *transformed-names*)
 
