@@ -38,7 +38,9 @@
     ;; Environment
     documentation
     ;; Hash tables
-    make-hash-table gethash hash-table-count))
+    make-hash-table gethash hash-table-count
+    ;; Objects
+    initialize-instance reinitialize-instance shared-initialize))
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
