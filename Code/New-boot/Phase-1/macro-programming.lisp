@@ -122,9 +122,19 @@
      documentation
      method-lambda)
   (let* ((environment (environment client))
-         (new-name (transform-name function-name))
-         (gf (ensure-generic-function new-name :lambda-list lambda-list)))
-    (setf (clostrum:fdefinition client environment function-name) gf)
+         (gf (clo:fdefinition client environment function-name)))
+    (when (null gf)
+      (warn "Creating generic function ~s" function-name)
+      (let ((method-combination
+              (closer-mop:find-method-combination
+               #'print-object 'standard '())))
+        (setf gf
+              (make-instance 'standard-generic-function
+                :name function-name
+                :lambda-list lambda-list
+                :method-combination method-combination))
+        (setf (clo:fdefinition client (environment client) function-name)
+              gf)))
     `(ensure-method
       ,gf
       ,method-lambda
