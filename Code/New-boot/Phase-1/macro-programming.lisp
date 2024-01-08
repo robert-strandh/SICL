@@ -75,20 +75,18 @@
      method-combination-arguments
      documentation-option
      environment)
-  (fmakunbound (transform-name name))
+  (declare (ignore documentation-option method-class-name))
   (let* ((method-combination
            (closer-mop:find-method-combination
             #'print-object
             method-combination-name
             method-combination-arguments))
          (result 
-           (ensure-generic-function
-            (transform-name name)
-            :lambda-list lambda-list
-            :argument-precedence-order argument-precedence-order
-            :generic-function-class generic-function-class-name
-            :method-class method-class-name
-            :method-combination method-combination)))
+           (make-instance 'standard-generic-function
+             :name name
+             :lambda-list lambda-list
+             :argument-precedence-order argument-precedence-order
+             :method-combination method-combination)))
     (setf (clo:fdefinition client (environment client) name)
           result)))
 
