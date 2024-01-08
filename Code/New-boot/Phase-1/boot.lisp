@@ -64,8 +64,7 @@
          (environment (create-environment client))
          (global-environment (trucler:global-environment client environment))
          (*packages* (make-hash-table :test #'equal))
-         (*symbol-package* (make-hash-table :test #'eq))
-         (*transformed-names* (make-hash-table :test #'equal)))
+         (*symbol-package* (make-hash-table :test #'eq)))
     (setf (clostrum:symbol-value client global-environment
                                  'sicl-environment:*environment*)
           global-environment)
