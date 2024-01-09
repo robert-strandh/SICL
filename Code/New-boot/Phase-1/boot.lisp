@@ -57,6 +57,10 @@
                  (format *trace-output*
                          "Assuming ~s is a method~%" object)
                  t)
+                ((eq type-specifier 'method-combination)
+                 (format *trace-output*
+                         "Assuming ~s is a method combination~%" object)
+                 t)
                 (t
                  (format *trace-output*
                          "Don't know whether ~s is of type ~s~%"
@@ -101,6 +105,11 @@
      client environment "sicl-clos-package")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
+    ;; Now, the class T is defined as a host standard class, but when
+    ;; methods specialize to T, we must find the host class named T,
+    ;; so we just replace the one we just loaded.
+    (setf (clo:find-class client global-environment 't)
+          (find-class 't))
     ;; It would be better to load the condition system here.
     (setf (clo:macro-function client global-environment 'define-condition)
           (lambda (form environment)
