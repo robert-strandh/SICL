@@ -28,12 +28,12 @@
     ;; Characters
     char
     ;; Conditions
-    error warn
+    error warn break
     ;; Evaluation and compilation
     constantp
     ;; Data and control flow
     values not funcall apply eq eql equal identity functionp
-    ;; Iteration
+    ;; Printer
     format
     ;; Environment
     documentation
