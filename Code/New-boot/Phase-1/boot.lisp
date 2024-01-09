@@ -53,6 +53,10 @@
                  (format *trace-output*
                          "Assuming ~s is a class~%" object)
                  t)
+                ((eq type-specifier 'method)
+                 (format *trace-output*
+                         "Assuming ~s is a method~%" object)
+                 t)
                 (t
                  (format *trace-output*
                          "Don't know whether ~s is of type ~s~%"
