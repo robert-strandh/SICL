@@ -97,6 +97,11 @@
      client environment "sicl-clos-package")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
+    ;; It would be better to load the condition system here.
+    (setf (clo:macro-function client global-environment 'define-condition)
+          (lambda (form environment)
+            (declare (ignore environment))
+            (list 'defclass (second form) '() '())))
     (sicl-new-boot:ensure-asdf-system
      client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
