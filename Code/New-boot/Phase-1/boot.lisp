@@ -128,8 +128,6 @@
      client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sicl-new-boot:ensure-asdf-system
      client environment "ecclesia")
-    (sicl-new-boot:ensure-asdf-system
-     client environment "clostrophilia-package")
     (define-typep client global-environment)
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
