@@ -137,6 +137,8 @@
      client environment "clostrophilia-method-initialization")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-slot-definition-initialization")
+    (sicl-new-boot:ensure-asdf-system
+     client environment "clostrophilia-class-finalization")
     (setf (clostrum:macro-function
            client global-environment 'define-method-combination)
           (lambda (form environment)
