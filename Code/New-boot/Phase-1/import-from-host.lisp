@@ -21,6 +21,7 @@
     position position-if position-if-not
     remove remove-if remove-if-not
     delete delete-if delete-if-not
+    remove-duplicates
     ;; Symbols
     gensym symbolp symbol-name
     ;; Strings
