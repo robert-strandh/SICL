@@ -131,6 +131,18 @@
     (define-typep client global-environment)
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
+    ;; ENSURE-GENERIC-FUNCTION is called by the class initialization
+    ;; protocol in order to put reader and writer methods on the
+    ;; resulting function.  However, we remove the READER and WRITER
+    ;; properties of the canonicalized slot specifiers, because we do
+    ;; not want a host generic function to be created.  So then, the
+    ;; class initialization protocol will have no readers or writers
+    ;; to create, which means that ENSURE-GENERIC-FUNCTION will not be
+    ;; called.  So we define it here to signal an error.
+    (setf (clo:fdefinition
+           client global-environment 'ensure-generic-function)
+          (lambda (name &key &allow-other-keys)
+            (error "Attempts to create generic function named ~s" name)))
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
     (sicl-new-boot:ensure-asdf-system
