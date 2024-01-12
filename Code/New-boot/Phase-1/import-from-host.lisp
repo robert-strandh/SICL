@@ -33,7 +33,7 @@
     ;; Evaluation and compilation
     constantp
     ;; Data and control flow
-    values not funcall apply eq eql equal identity functionp
+    values not funcall apply eq eql equal identity functionp every
     ;; Printer
     format
     ;; Environment
