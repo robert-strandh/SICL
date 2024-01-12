@@ -42,7 +42,7 @@
     make-hash-table gethash hash-table-count
     ;; Objects
     initialize-instance reinitialize-instance shared-initialize
-    add-method))
+    add-method slot-value))
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
