@@ -152,5 +152,7 @@
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-class-finalization")
     (sicl-new-boot:ensure-asdf-system
+     client environment "clostrophilia-method-combination")
+    (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
     (values global-environment *packages* *symbol-package*)))
