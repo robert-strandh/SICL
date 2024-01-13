@@ -153,10 +153,4 @@
      client environment "clostrophilia-class-finalization")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
-    (setf (clostrum:macro-function
-           client global-environment 'define-method-combination)
-          (lambda (form environment)
-            (declare (ignore environment))
-            (eval form)
-            nil))
     (values global-environment *packages* *symbol-package*)))
