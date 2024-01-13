@@ -29,7 +29,7 @@
     ;; Characters
     char
     ;; Conditions
-    error warn break
+    error warn break assert
     ;; Evaluation and compilation
     constantp
     ;; Data and control flow
