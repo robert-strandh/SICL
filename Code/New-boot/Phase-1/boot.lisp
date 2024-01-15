@@ -130,6 +130,8 @@
      client environment "ecclesia")
     (define-typep client global-environment)
     (sicl-new-boot:ensure-asdf-system
+     client environment "clostrophilia-dependent-maintenance")
+    (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
     ;; ENSURE-GENERIC-FUNCTION is called by the class initialization
     ;; protocol in order to put reader and writer methods on the
