@@ -13,7 +13,7 @@
     first second third fourth fifth sixth seventh eighth ninth tenth
     rest last butlast nth nthcdr append getf
     consp listp atom member mapcar mapc set-difference set-exclusive-or
-    assoc ldiff tailp list-length
+    assoc ldiff tailp list-length make-list
     ;; Sequences
     elt subseq reduce length reverse nreverse
     count count-if count-if-not
@@ -42,7 +42,7 @@
     make-hash-table gethash hash-table-count
     ;; Objects
     initialize-instance reinitialize-instance shared-initialize
-    add-method slot-value allocate-instance class-of))
+    slot-value allocate-instance class-of))
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
