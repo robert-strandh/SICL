@@ -14,6 +14,7 @@
     rest last butlast nth nthcdr append getf
     consp listp atom member mapcar mapc set-difference set-exclusive-or
     assoc ldiff tailp list-length make-list
+    adjoin
     ;; Sequences
     elt subseq reduce length reverse nreverse
     count count-if count-if-not
