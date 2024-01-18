@@ -13,7 +13,7 @@
     first second third fourth fifth sixth seventh eighth ninth tenth
     rest last butlast nth nthcdr append getf
     consp listp atom member mapcar mapc set-difference set-exclusive-or
-    assoc ldiff tailp list-length make-list
+    assoc ldiff tailp list-length make-list union
     adjoin
     ;; Sequences
     elt subseq reduce length reverse nreverse
@@ -62,6 +62,12 @@
     ((setf cdr)
      ,(lambda (object cons)
         (setf (cdr cons) object)))
+    ((setf cadr)
+     ,(lambda (object cons)
+        (setf (cadr cons) object)))
+    ((setf cddr)
+     ,(lambda (object cons)
+        (setf (cddr cons) object)))
     ((setf first)
      ,(lambda (object cons)
         (setf (first cons) object)))
