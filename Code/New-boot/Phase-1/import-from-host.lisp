@@ -43,7 +43,7 @@
     make-hash-table gethash hash-table-count
     ;; Objects
     initialize-instance reinitialize-instance shared-initialize
-    slot-value allocate-instance class-of))
+    slot-boundp slot-value allocate-instance class-of))
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
