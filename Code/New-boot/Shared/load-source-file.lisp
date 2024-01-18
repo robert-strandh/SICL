@@ -12,7 +12,7 @@
                  (pushnew condition undefined-functions
                           :key #'common-boot:name
                           :test (lambda (condition-name name)
-                                  (eq condition-name name)))
+                                  (equal condition-name name)))
                  (invoke-restart restart))))))
       (loop with eof = (list nil)
             for cst = (eclector.concrete-syntax-tree:read stream nil eof)
