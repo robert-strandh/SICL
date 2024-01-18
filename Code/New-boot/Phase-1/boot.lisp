@@ -155,6 +155,11 @@
      client environment "clostrophilia-class-finalization")
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-method-combination")
+    (let* ((package (gethash "CLOSTROPHILIA" *packages*))
+           (symbol-name "SET-FUNCALLABLE-INSTANCE-FUNCTION")
+           (symbol (parcl:intern client package symbol-name)))
+      (setf (clo:fdefinition client global-environment symbol)
+            (fdefinition 'closer-mop:set-funcallable-instance-function)))
     (sicl-new-boot:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
     (values global-environment *packages* *symbol-package*)))
