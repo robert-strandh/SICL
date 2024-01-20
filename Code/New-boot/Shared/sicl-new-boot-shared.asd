@@ -14,6 +14,7 @@
   :components
   ((:file "packages")
    (:file "boot-class")
+   (:file "client")
    (:file "cst-to-ast")
    (:file "load-source-file")
    (:file "asdf-programming")
