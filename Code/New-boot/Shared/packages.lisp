@@ -8,5 +8,6 @@
    (#:cb #:common-boot)
    (#:cbae #:common-boot-ast-evaluator))
   (:export
+   #:boot #:e1 #:e2 #:e3
    #:define-backquote-macros
    #:ensure-asdf-system))
