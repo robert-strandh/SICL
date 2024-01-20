@@ -9,4 +9,5 @@
    (#:cbae #:common-boot-ast-evaluator)
    (#:cmd #:common-macro-definitions)
    (#:abp #:architecture.builder-protocol))
-  (:export))
+  (:export
+   #:boot))
