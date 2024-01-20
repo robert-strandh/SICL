@@ -46,6 +46,7 @@
     slot-boundp slot-value allocate-instance class-of))
 
 (defun import-host-functions (client global-environment)
+  (sb:import-host-functions client global-environment)
   (loop for name in *host-function-names*
         do (setf (clostrum:fdefinition client global-environment name)
                  (fdefinition name))))
