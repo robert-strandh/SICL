@@ -81,7 +81,7 @@
           client)
     (reinitialize-instance client
       :environment global-environment)
-    (sicl-new-boot:define-backquote-macros client global-environment)
+    (sb:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
     (setf (clostrum:fdefinition client global-environment 'ensure-method)
           #'ensure-method)
@@ -99,11 +99,11 @@
     (setf (clostrum:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
     (define-ensure-class client global-environment)
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-package")
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "sicl-clos-package")
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
     ;; Now, the class T is defined as a host standard class, but when
     ;; methods specialize to T, we must find the host class named T,
@@ -115,7 +115,7 @@
           (lambda (form environment)
             (declare (ignore environment))
             (list 'defclass (second form) '() '())))
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
     ;; The way we define it is that it just expands to a PROGN of the
@@ -126,12 +126,12 @@
             (cons 'progn (rest (rest form)))))
     (clostrum:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "ecclesia")
     (define-typep client global-environment)
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
     ;; ENSURE-GENERIC-FUNCTION is called by the class initialization
     ;; protocol in order to put reader and writer methods on the
@@ -145,21 +145,21 @@
            client global-environment 'ensure-generic-function)
           (lambda (name &key &allow-other-keys)
             (error "Attempts to create generic function named ~s" name)))
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-method-initialization")
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-slot-definition-initialization")
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-class-finalization")
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination")
     (let* ((package (gethash "CLOSTROPHILIA" *packages*))
            (symbol-name "SET-FUNCALLABLE-INSTANCE-FUNCTION")
            (symbol (parcl:intern client package symbol-name)))
       (setf (clo:fdefinition client global-environment symbol)
             (fdefinition 'closer-mop:set-funcallable-instance-function)))
-    (sicl-new-boot:ensure-asdf-system
+    (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
     (values global-environment *packages* *symbol-package*)))
