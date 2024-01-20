@@ -51,7 +51,7 @@
              :lambda-list lambda-list
              :argument-precedence-order argument-precedence-order
              :method-combination method-combination)))
-    (setf (clo:fdefinition client (environment client) name)
+    (setf (clo:fdefinition client (sb:environment client) name)
           result)))
 
 ;;; PROCLAIM programming.
@@ -59,7 +59,7 @@
 (defmethod cmd:proclaim ((client client) declaration-specifier environment)
   (when (eq (first declaration-specifier) 'special)
     (let ((name (second declaration-specifier))
-          (environment (environment client)))
+          (environment (sb:environment client)))
       (setf (clostrum-sys:variable-status client environment name)
             :special)))
   nil)
@@ -103,7 +103,7 @@
      specializers
      documentation
      method-lambda)
-  (let* ((environment (environment client))
+  (let* ((environment (sb:environment client))
          (gf (clo:fdefinition client environment function-name)))
     (when (null gf)
       (warn "Creating generic function ~s" function-name)
@@ -115,7 +115,7 @@
                 :name function-name
                 :lambda-list lambda-list
                 :method-combination method-combination))
-        (setf (clo:fdefinition client (environment client) function-name)
+        (setf (clo:fdefinition client (sb:environment client) function-name)
               gf)))
     `(ensure-method
       ,gf

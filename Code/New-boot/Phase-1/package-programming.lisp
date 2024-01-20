@@ -13,7 +13,7 @@
 (defvar *symbol-package*)
 
 (defun current-package (client)
-  (let* ((global-environment (environment client))
+  (let* ((global-environment (sb:environment client))
          (package-cell
            (clostrum-sys:variable-cell
             client global-environment '*package*)))
