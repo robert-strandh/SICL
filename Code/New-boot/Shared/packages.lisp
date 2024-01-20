@@ -10,4 +10,5 @@
   (:export
    #:boot #:e1 #:e2 #:e3
    #:define-backquote-macros
-   #:ensure-asdf-system))
+   #:ensure-asdf-system
+   #:import-host-functions))
