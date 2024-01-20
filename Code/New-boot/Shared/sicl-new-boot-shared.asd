@@ -13,6 +13,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "boot-class")
    (:file "cst-to-ast")
    (:file "load-source-file")
    (:file "asdf-programming")
