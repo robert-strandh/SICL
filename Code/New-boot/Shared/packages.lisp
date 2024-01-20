@@ -9,6 +9,7 @@
    (#:cbae #:common-boot-ast-evaluator))
   (:export
    #:boot #:e1 #:e2 #:e3
+   #:client
    #:define-backquote-macros
    #:ensure-asdf-system
    #:import-host-functions))
