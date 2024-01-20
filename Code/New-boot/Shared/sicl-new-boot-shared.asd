@@ -17,4 +17,5 @@
    (:file "cst-to-ast")
    (:file "load-source-file")
    (:file "asdf-programming")
-   (:file "define-backquote-macros")))
+   (:file "define-backquote-macros")
+   (:file "import-from-host")))
