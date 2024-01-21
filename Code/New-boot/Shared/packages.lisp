@@ -12,4 +12,6 @@
    #:client #:environment
    #:define-backquote-macros
    #:ensure-asdf-system
-   #:import-host-functions))
+   #:import-host-functions
+   #:intern-parcl-symbol
+   #:define-package-functions))
