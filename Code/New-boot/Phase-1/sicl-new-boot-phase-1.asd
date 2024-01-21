@@ -9,7 +9,6 @@
    (:file "environment")
    (:file "configuration")
    (:file "macro-programming")
-   (:file "package-programming")
    (:file "import-from-host")
    (:file "import-khazern")
    (:file "define-environment-functions")
