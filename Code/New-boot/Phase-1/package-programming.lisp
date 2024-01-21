@@ -230,3 +230,7 @@
             (loop for symbol-name in canonicalized-symbol-names
                   do (parcl:shadow
                       client canonicalized-package symbol-name))))))
+
+(defun intern-parcl-symbol (client package-name symbol-name)
+  (let* ((package (gethash package-name *packages*)))
+    (parcl:intern client package symbol-name)))
