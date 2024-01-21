@@ -15,6 +15,7 @@
   ((:file "packages")
    (:file "boot-class")
    (:file "client")
+   (:file "package-programming")
    (:file "cst-to-ast")
    (:file "load-source-file")
    (:file "asdf-programming")
