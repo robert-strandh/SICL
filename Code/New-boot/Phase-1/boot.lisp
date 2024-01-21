@@ -73,6 +73,10 @@
          (global-environment (trucler:global-environment client environment))
          (*packages* (make-hash-table :test #'equal))
          (*symbol-package* (make-hash-table :test #'eq)))
+    (define-package-functions client global-environment)
+    (create-common-lisp-package client)
+    (loop for name in '("COMMON-LISP-USER" "KEYWORD")
+          do (setf (gethash name *packages*) (find-package name)))
     (setf (sb:e1 boot) global-environment)
     (setf (clostrum:symbol-value client global-environment
                                  'sicl-environment:*environment*)
@@ -90,12 +94,8 @@
           #'closer-mop:method-function)
     (import-khazern client global-environment)
     (define-environment-functions client global-environment)
-    (define-package-functions client global-environment)
     (clostrum:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
-    (create-common-lisp-package client)
-    (loop for name in '("COMMON-LISP-USER" "KEYWORD")
-          do (setf (gethash name *packages*) (find-package name)))
     (define-make-instance client global-environment)
     (setf (clostrum:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
