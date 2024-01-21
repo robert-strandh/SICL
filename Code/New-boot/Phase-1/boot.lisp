@@ -70,13 +70,9 @@
 (defun boot (boot)
   (let* ((client (make-instance 'client))
          (environment (create-environment client))
-         (global-environment (trucler:global-environment client environment))
-         (*packages* (make-hash-table :test #'equal))
-         (*symbol-package* (make-hash-table :test #'eq)))
-    (define-package-functions client global-environment)
-    (create-common-lisp-package client)
-    (loop for name in '("COMMON-LISP-USER" "KEYWORD")
-          do (setf (gethash name *packages*) (find-package name)))
+         (global-environment
+           (trucler:global-environment client environment)))
+    (sb:define-package-functions client global-environment)
     (setf (sb:e1 boot) global-environment)
     (setf (clostrum:symbol-value client global-environment
                                  'sicl-environment:*environment*)
@@ -157,10 +153,10 @@
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination")
     (let ((symbol
-            (intern-parcl-symbol
+            (sb:intern-parcl-symbol
              client "CLOSTROPHILIA" "SET-FUNCALLABLE-INSTANCE-FUNCTION")))
       (setf (clo:fdefinition client global-environment symbol)
             (fdefinition 'closer-mop:set-funcallable-instance-function)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
-    (values global-environment *packages* *symbol-package*)))
+    global-environment))
