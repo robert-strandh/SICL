@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-1)
+(cl:in-package #:sicl-new-boot)
 
 ;;; This variable contains a hash table of extrinsic Parcl packages
 ;;; plus two host packages, namely COMMON-LISP-USER and KEYWORD.
@@ -13,7 +13,7 @@
 (defvar *symbol-package*)
 
 (defun current-package (client)
-  (let* ((global-environment (sb:environment client))
+  (let* ((global-environment (environment client))
          (package-cell
            (clostrum-sys:variable-cell
             client global-environment '*package*)))
