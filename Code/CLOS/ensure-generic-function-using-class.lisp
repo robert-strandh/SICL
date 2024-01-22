@@ -52,7 +52,7 @@
      &rest
        all-keyword-arguments
      &key
-       environment
+       (environment sicl-environment:*environment*)
        (generic-function-class
         (find-class 'standard-generic-function t environment))
        (method-class nil method-class-p)
@@ -95,7 +95,7 @@
      &rest
        all-keyword-arguments
      &key
-       environment
+       (environment sicl-environment:*environment*)
        (generic-function-class
         (find-class 'standard-generic-function t environment))
        (method-class nil method-class-p)
