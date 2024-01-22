@@ -51,19 +51,21 @@
     (let ((proto (class-prototype generic-function-class)))
       (setf method-combination
             (find-method-combination proto 'standard '()))))
-  (let ((remaining-keys
-          (canonicalize-keyword-arguments all-keyword-arguments)))
-    (if method-class-p
-        (apply #'make-instance generic-function-class
-               ;; The AMOP does
-               :name function-name
-               :method-class method-class
-               :method-combination method-combination
-               remaining-keys)
-        (apply #'make-instance generic-function-class
-               :name function-name
-               :method-combination method-combination
-               remaining-keys))))
+  (let* ((remaining-keys
+           (canonicalize-keyword-arguments all-keyword-arguments))
+         (result
+           (if method-class-p
+               (apply #'make-instance generic-function-class
+                      ;; The AMOP does
+                      :name function-name
+                      :method-class method-class
+                      :method-combination method-combination
+                      remaining-keys)
+               (apply #'make-instance generic-function-class
+                      :name function-name
+                      :method-combination method-combination
+                      remaining-keys))))
+    (setf (fdefinition function-name) result)))
 
 (defun ensure-generic-function-using-class-generic-function
     (generic-function
