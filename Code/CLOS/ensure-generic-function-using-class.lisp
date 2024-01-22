@@ -87,7 +87,9 @@
                       :name function-name
                       :method-combination method-combination
                       remaining-keys))))
-    (setf (fdefinition function-name) result)))
+    (setf (sicl-environment:fdefinition
+           sicl-environment:*client* environment function-name)
+          result)))
 
 (defmethod ensure-generic-function-using-class
     ((generic-function generic-function)
