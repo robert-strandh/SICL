@@ -52,9 +52,10 @@
      &rest
        all-keyword-arguments
      &key
-       (environment sicl-environment:*environment*)
+       (class-environment sicl-environment:*environment*)
+       (function-environment sicl-environment:*environment*)
        (generic-function-class
-        (find-class 'standard-generic-function t environment))
+        (find-class 'standard-generic-function t class-environment))
        (method-class nil method-class-p)
        (method-combination nil method-combination-p)
      &allow-other-keys)
@@ -88,7 +89,7 @@
                       :method-combination method-combination
                       remaining-keys))))
     (setf (sicl-environment:fdefinition
-           sicl-environment:*client* environment function-name)
+           sicl-environment:*client* function-environment function-name)
           result)))
 
 (defmethod ensure-generic-function-using-class
@@ -97,12 +98,13 @@
      &rest
        all-keyword-arguments
      &key
-       (environment sicl-environment:*environment*)
+       (class-environment sicl-environment:*environment*)
+       function-environment
        (generic-function-class
-        (find-class 'standard-generic-function t environment))
+        (find-class 'standard-generic-function t class-environment))
        (method-class nil method-class-p)
      &allow-other-keys)
-  (declare (ignore function-name))
+  (declare (ignore function-name function-environment))
   (setf generic-function-class
         (canonicalize-generic-function-class generic-function-class))
   (unless (eq generic-function-class (class-of generic-function))
