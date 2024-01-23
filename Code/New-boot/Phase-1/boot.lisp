@@ -74,12 +74,6 @@
            (trucler:global-environment client environment)))
     (sb:define-package-functions client global-environment)
     (setf (sb:e1 boot) global-environment)
-    (setf (clostrum:symbol-value client global-environment
-                                 'sicl-environment:*environment*)
-          global-environment)
-    (setf (clostrum:symbol-value client global-environment
-                                 'sicl-environment:*client*)
-          client)
     (reinitialize-instance client
       :environment global-environment)
     (sb:define-backquote-macros client global-environment)
@@ -98,6 +92,18 @@
     (define-ensure-class client global-environment)
     (sb:ensure-asdf-system
      client environment "sicl-environment-package")
+    (let ((environment-symbol
+            (sb:intern-parcl-symbol
+             client "SICL-ENVIRONMENT" "*ENVIRONMENT*"))
+          (client-symbol
+            (sb:intern-parcl-symbol
+             client "SICL-ENVIRONMENT" "*CLIENT*")))
+      (setf (clostrum:symbol-value client global-environment
+                                   environment-symbol)
+            global-environment)
+      (setf (clostrum:symbol-value client global-environment
+                                   client-symbol)
+            client))
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
     (sb:ensure-asdf-system
