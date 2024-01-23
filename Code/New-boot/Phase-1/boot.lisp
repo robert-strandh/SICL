@@ -97,6 +97,8 @@
           (find-class 'parcl-class:package))
     (define-ensure-class client global-environment)
     (sb:ensure-asdf-system
+     client environment "sicl-environment-package")
+    (sb:ensure-asdf-system
      client environment "clostrophilia-package")
     (sb:ensure-asdf-system
      client environment "sicl-clos-package")
