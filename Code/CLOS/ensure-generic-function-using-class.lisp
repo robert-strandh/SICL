@@ -19,7 +19,8 @@
        method-class
        method-combination
        name
-       environment
+       class-environment
+       function-environment
      &allow-other-keys))
 
 (defun canonicalize-generic-function-class (generic-function-class)
