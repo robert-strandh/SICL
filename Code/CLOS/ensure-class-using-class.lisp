@@ -51,12 +51,12 @@
          (error 'direct-superclass-must-be-a-class-metaobject-or-a-symbol
                 :superclass superclass-or-name))))
 
-(defun process-direct-superclasses (direct-superclasses)
+(defun process-direct-superclasses (direct-superclasses environment)
   (unless (ecclesia:proper-list-p direct-superclasses)
     (error 'direct-superclasses-must-be-proper-list
            :superclasses direct-superclasses))
   (loop for class-or-name in direct-superclasses
-        collect (process-direct-superclass class-or-name)))
+        collect (process-direct-superclass class-or-name environment)))
 
 ;;; When the class is created, it is safe to use a default value of
 ;;; the empty list for the :DIRECT-SUPERCLASSES initialization
