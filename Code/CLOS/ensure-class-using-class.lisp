@@ -78,7 +78,7 @@
   (unless metaclass-p
     (setf metaclass 'standard-class))
   (setf direct-superclasses
-        (process-direct-superclasses direct-superclasses))
+        (process-direct-superclasses direct-superclasses class-environment))
   (let ((remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
@@ -120,7 +120,7 @@
       (error "can't change metaclass during reinitialization of class")))
   (when direct-superclasses-p
     (setf direct-superclasses
-          (process-direct-superclasses direct-superclasses)))
+          (process-direct-superclasses direct-superclasses class-environment)))
   (let ((remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
@@ -157,7 +157,7 @@
   (change-class class metaclass)
   (when direct-superclasses-p
     (setf direct-superclasses
-          (process-direct-superclasses direct-superclasses)))
+          (process-direct-superclasses direct-superclasses class-environment)))
   (let ((remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
