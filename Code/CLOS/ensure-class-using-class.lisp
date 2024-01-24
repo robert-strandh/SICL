@@ -37,19 +37,19 @@
 ;;; ENSURE-CLASS defaults them to the same values that DEFCLASS
 ;;; requires.
 
-(defun process-direct-superclass (direct-superclass-or-name)
-  (cond ((typep direct-superclass-or-name 'class)
-         direct-superclass-or-name)
-        ((symbolp direct-superclass-or-name)
-         (let ((class (find-class direct-superclass-or-name nil)))
+(defun process-direct-superclass (superclass-or-name environment)
+  (cond ((typep superclass-or-name 'class)
+         superclass-or-name)
+        ((symbolp superclass-or-name)
+         (let ((class (find-class superclass-or-name nil environment)))
            (if (null class)
-               (setf (find-class direct-superclass-or-name)
+               (setf (find-class superclass-or-name nil environment)
                      (make-instance 'forward-referenced-class
-                       :name direct-superclass-or-name))
+                       :name superclass-or-name))
                class)))
         (t
          (error 'direct-superclass-must-be-a-class-metaobject-or-a-symbol
-                :superclass direct-superclass-or-name))))
+                :superclass superclass-or-name))))
 
 (defun process-direct-superclasses (direct-superclasses)
   (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
