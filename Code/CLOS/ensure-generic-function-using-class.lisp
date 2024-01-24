@@ -23,7 +23,8 @@
        function-environment
      &allow-other-keys))
 
-(defun canonicalize-generic-function-class (generic-function-class)
+(defun canonicalize-generic-function-class
+    (generic-function-class environment)
   (cond ((symbolp generic-function-class)
          (find-class generic-function-class t environment))
         ((member (find-class 'generic-function)
@@ -33,7 +34,7 @@
          (error 'generic-function-class-must-be-class-or-name
                 :object generic-function-class))))
 
-(defun canonicalize-method-class (method-class)
+(defun canonicalize-method-class (method-class environment)
   (cond ((symbolp method-class)
          (find-class method-class t environment))
         ((member (find-class 'method) (class-precedence-list method-class))
@@ -62,9 +63,11 @@
      &allow-other-keys)
   (declare (ignore generic-function))
   (setf generic-function-class
-        (canonicalize-generic-function-class generic-function-class))
+        (canonicalize-generic-function-class
+         generic-function-class class-environment))
   (when method-class-p
-    (setf method-class (canonicalize-method-class method-class)))
+    (setf method-class
+          (canonicalize-method-class method-class class-environment)))
   (unless method-combination-p
     ;; Neither the Common Lisp standard nor the AMOP indicates where
     ;; this keyword argument is defaulted, but it has to be here,
@@ -107,12 +110,14 @@
      &allow-other-keys)
   (declare (ignore function-name function-environment))
   (setf generic-function-class
-        (canonicalize-generic-function-class generic-function-class))
+        (canonicalize-generic-function-class
+         generic-function-class class-environment))
   (unless (eq generic-function-class (class-of generic-function))
     (error "classes don't agree ~s and ~s of ~s"
            generic-function-class (class-of generic-function) generic-function))
   (when method-class-p
-    (setf method-class (canonicalize-method-class method-class)))
+    (setf method-class
+          (canonicalize-method-class method-class class-environment)))
   (let ((remaining-keys
           (canonicalize-keyword-arguments all-keyword-arguments)))
     (if method-class-p
