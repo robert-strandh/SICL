@@ -111,7 +111,7 @@
      &allow-other-keys)
   (when metaclass-p
     (cond ((symbolp metaclass)
-           (setf metaclass (find-class metaclass)))
+           (setf metaclass (find-class metaclass t metaclass-environment)))
           ((typep metaclass 'class)
            nil)
           (t
@@ -149,7 +149,7 @@
   (unless metaclass-p
     (setf metaclass 'standard-class))
   (cond ((symbolp metaclass)
-         (setf metaclass (find-class metaclass)))
+         (setf metaclass (find-class metaclass t metaclass-environment)))
         ((typep metaclass 'class)
          nil)
         (t
