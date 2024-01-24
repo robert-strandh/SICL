@@ -169,4 +169,6 @@
      client environment "clostrophilia-generic-function-invocation")
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-1-additional-classes")
+    (sb:ensure-asdf-system
+     client environment "sicl-clos-ensure-metaobject-using-class")
     global-environment))
