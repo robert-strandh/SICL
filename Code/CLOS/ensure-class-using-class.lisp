@@ -52,7 +52,7 @@
                 :superclass superclass-or-name))))
 
 (defun process-direct-superclasses (direct-superclasses)
-  (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
+  (unless (ecclesia:proper-list-p direct-superclasses)
     (error 'direct-superclasses-must-be-proper-list
            :superclasses direct-superclasses))
   (loop for class-or-name in direct-superclasses
