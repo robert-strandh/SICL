@@ -68,6 +68,8 @@
      name
      &rest keys
      &key
+       (class-environment sicl-environment:*environment*)
+       (metaclass-environment sicl-environment:*environment*)
        direct-default-initargs
        direct-slots
        direct-superclasses
@@ -102,6 +104,8 @@
      name
      &rest keys
      &key
+       (class-environment sicl-environment:*environment*)
+       (metaclass-environment sicl-environment:*environment*)
        (direct-superclasses nil direct-superclasses-p)
        (metaclass nil metaclass-p)
      &allow-other-keys)
@@ -135,6 +139,8 @@
      name
      &rest keys
      &key
+       (class-environment sicl-environment:*environment*)
+       (metaclass-environment sicl-environment:*environment*)
        direct-default-initargs
        direct-slots
        (direct-superclasses nil direct-superclasses-p)
