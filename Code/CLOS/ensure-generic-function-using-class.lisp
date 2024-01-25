@@ -44,8 +44,8 @@
 
 (defun canonicalize-keyword-arguments (keyword-arguments)
   (let ((result (copy-list keyword-arguments)))
-    (loop while (remf remaining-keys :generic-function-class))
-    (loop while (remf remaining-keys :environment))
+    (loop while (remf result :generic-function-class))
+    (loop while (remf result :environment))
     result))
 
 (defmethod ensure-generic-function-using-class
