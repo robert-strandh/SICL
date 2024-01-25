@@ -169,6 +169,20 @@
      client environment "clostrophilia-generic-function-invocation")
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-1-additional-classes")
+    (let ((symbol
+            (sb:intern-parcl-symbol
+             client "SICL-ENVIRONMENT" "FDEFINITION")))
+      (setf (clo:fdefinition client global-environment symbol)
+            (fdefinition 'clostrum:fdefinition))
+      (setf (clo:fdefinition client global-environment `(setf ,symbol))
+            (fdefinition '(setf clostrum:fdefinition))))
+    (let ((symbol
+            (sb:intern-parcl-symbol
+             client "SICL-ENVIRONMENT" "FIND-CLASS")))
+      (setf (clo:find-class client global-environment symbol)
+            (fdefinition 'clostrum:find-class))
+      (setf (clo:find-class client global-environment `(setf ,symbol))
+            (fdefinition '(setf clostrum:find-class))))
     (sb:ensure-asdf-system
      client environment "sicl-clos-ensure-metaobject-using-class")
     global-environment))
