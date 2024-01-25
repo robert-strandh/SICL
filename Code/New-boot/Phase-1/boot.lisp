@@ -98,12 +98,10 @@
           (client-symbol
             (sb:intern-parcl-symbol
              client "SICL-ENVIRONMENT" "*CLIENT*")))
-      (setf (clostrum:symbol-value client global-environment
-                                   environment-symbol)
-            global-environment)
-      (setf (clostrum:symbol-value client global-environment
-                                   client-symbol)
-            client))
+      (clostrum:make-variable
+       client global-environment environment-symbol global-environment)
+      (clostrum:make-variable
+       client global-environment client-symbol client))
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
     (sb:ensure-asdf-system
