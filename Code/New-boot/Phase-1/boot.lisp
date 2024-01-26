@@ -181,6 +181,18 @@
             (fdefinition 'clostrum:find-class))
       (setf (clo:find-class client global-environment `(setf ,symbol))
             (fdefinition '(setf clostrum:find-class))))
+    ;; The method on ENSURE-GENERIC-FUNCTION-USING-CLASS specialized
+    ;; to NULL calls CLASS-FINAILIZED-P to determine whether it can
+    ;; instantiate the class, but the GENERIC-FUNCTION class has an
+    ;; initform that sets the corresponding slot to NIL, which is
+    ;; normal.  However, in this phase, all classes are host classes,
+    ;; so they are finalized.  For that reason, we make
+    ;; finalize-inheritance return T always.
+    (let ((symbol
+            (sb:intern-parcl-symbol
+             client "CLOSTROPHILIA" "FINALIZE-INHERITANCE")))
+      (setf (clo:fdefinition client global-environment symbol)
+            (constantly t)))
     (sb:ensure-asdf-system
      client environment "sicl-clos-ensure-metaobject-using-class")
     global-environment))
