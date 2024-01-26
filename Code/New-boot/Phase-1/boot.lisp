@@ -193,6 +193,15 @@
              client "CLOSTROPHILIA" "FINALIZE-INHERITANCE")))
       (setf (clo:fdefinition client global-environment symbol)
             (constantly t)))
+    ;; The method on ENSURE-CLASS-USING-CLASS specialized to
+    ;; FORWARD-REFERENCED-CLASS calls CHANGE-CLASS to turn the class
+    ;; into something other than a FORWARD-REFERENCED-CLASS.  But in
+    ;; this phase, we do not have any instances of
+    ;; FORWARD-REFERENCED-CLASS, so we define CHANGE-CLASS to signal
+    ;; an error.
+    (setf (clo:fdefinition client global-environment 'change-class)
+          (lambda (&rest arguments)
+            (error "CHANGE-CLASS called with arguments ~s" arguments)))
     (sb:ensure-asdf-system
      client environment "sicl-clos-ensure-metaobject-using-class")
     global-environment))
