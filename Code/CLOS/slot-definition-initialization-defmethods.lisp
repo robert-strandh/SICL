@@ -50,7 +50,7 @@
     (error 'allocation-must-be-symbol
            :slot-definition slot-definition
            :allocation allocation))
-  (unless (cleavir-code-utilities:proper-list-p initargs)
+  (unless (ecclesia:proper-list-p initargs)
     (error 'initargs-must-be-proper-list
            :slot-definition slot-definition
            :initargs initargs))
@@ -58,7 +58,7 @@
     (error 'initarg-must-be-symbol
            :slot-definition slot-definition
            :initarg (find-if-not #'symbolp initargs)))
-  (unless (cleavir-code-utilities:proper-list-p readers)
+  (unless (ecclesia:proper-list-p readers)
     (error 'readers-must-be-proper-list
            :slot-definition slot-definition
            :readers readers))
@@ -69,7 +69,7 @@
     (error 'initarg-must-be-symbol
            :slot-definition slot-definition
            :reader (find-if-not #'symbolp readers)))
-  (unless (cleavir-code-utilities:proper-list-p writers)
+  (unless (ecclesia:proper-list-p writers)
     (error 'writers-must-be-proper-list
            :slot-definition slot-definition
            :writers writers))
