@@ -6,7 +6,7 @@
          (global-environment
            (trucler:global-environment client environment)))
     (sb:define-package-functions client global-environment)
-    (setf (sb:e1 boot) global-environment)
+    (setf (sb:e2 boot) global-environment)
     (reinitialize-instance client
       :environment global-environment)
     (sb:define-backquote-macros client global-environment)
