@@ -21,4 +21,5 @@
    (:file "asdf-programming")
    (:file "define-backquote-macros")
    (:file "import-from-host")
-   (:file "define-environment-functions")))
+   (:file "define-environment-functions")
+   (:file "import-khazern")))
