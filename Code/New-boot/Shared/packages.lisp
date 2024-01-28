@@ -5,6 +5,7 @@
   (:local-nicknames
    (#:abp #:architecture.builder-protocol)
    (#:cmd #:common-macro-definitions)
+   (#:clo #:clostrum)
    (#:cb #:common-boot)
    (#:cbae #:common-boot-ast-evaluator))
   (:export
