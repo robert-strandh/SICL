@@ -14,4 +14,5 @@
    #:ensure-asdf-system
    #:import-host-functions
    #:intern-parcl-symbol
-   #:define-package-functions))
+   #:define-package-functions
+   #:define-environment-functions))
