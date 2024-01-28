@@ -83,7 +83,7 @@
     (setf (clostrum:fdefinition client global-environment 'closer-mop:method-function)
           #'closer-mop:method-function)
     (import-khazern client global-environment)
-    (define-environment-functions client global-environment)
+    (sb:define-environment-functions client global-environment)
     (clostrum:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
     (define-make-instance client global-environment)
