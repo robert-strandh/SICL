@@ -11,6 +11,5 @@
    (:file "macro-programming")
    (:file "import-from-host")
    (:file "import-khazern")
-   (:file "define-environment-functions")
    (:file "cst-to-ast")
    (:file "boot")))
