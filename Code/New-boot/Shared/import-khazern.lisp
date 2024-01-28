@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-1)
+(cl:in-package #:sicl-new-boot)
 
 (defun import-khazern (client global-environment)
   (setf (clo:macro-function client global-environment 'loop)
