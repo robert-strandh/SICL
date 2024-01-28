@@ -16,4 +16,5 @@
    #:import-host-functions
    #:intern-parcl-symbol
    #:define-package-functions
-   #:define-environment-functions))
+   #:define-environment-functions
+   #:import-khazern))
