@@ -82,7 +82,7 @@
           #'ensure-method)
     (setf (clo:fdefinition client global-environment 'closer-mop:method-function)
           #'closer-mop:method-function)
-    (import-khazern client global-environment)
+    (sb:import-khazern client global-environment)
     (sb:define-environment-functions client global-environment)
     (clo:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
