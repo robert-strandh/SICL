@@ -5,17 +5,17 @@
 (defun define-make-instance (client environment)
 
   (defmethod my-make-instance ((name symbol) &rest initargs)
-    (let ((class (clostrum:find-class client environment name)))
+    (let ((class (clo:find-class client environment name)))
       (apply #'make-instance class initargs)))
 
   (defmethod my-make-instance ((class class) &rest initargs)
     (apply #'make-instance class initargs))
 
-  (setf (clostrum:fdefinition client environment 'make-instance)
+  (setf (clo:fdefinition client environment 'make-instance)
         #'my-make-instance))
 
 (defun define-ensure-class (client global-environment)
-  (setf (clostrum:fdefinition client global-environment 'ensure-class)
+  (setf (clo:fdefinition client global-environment 'ensure-class)
         (lambda (name
                  &key
                    direct-default-initargs
@@ -47,7 +47,7 @@
                 result)))))
 
 (defun define-typep (client global-environment)
-  (setf (clostrum:fdefinition client global-environment 'typep)
+  (setf (clo:fdefinition client global-environment 'typep)
         (lambda (object type-specifier)
           (cond ((eq type-specifier 'class)
                  (format *trace-output*
@@ -78,16 +78,16 @@
       :environment global-environment)
     (sb:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
-    (setf (clostrum:fdefinition client global-environment 'ensure-method)
+    (setf (clo:fdefinition client global-environment 'ensure-method)
           #'ensure-method)
-    (setf (clostrum:fdefinition client global-environment 'closer-mop:method-function)
+    (setf (clo:fdefinition client global-environment 'closer-mop:method-function)
           #'closer-mop:method-function)
     (import-khazern client global-environment)
     (sb:define-environment-functions client global-environment)
-    (clostrum:make-variable
+    (clo:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
     (define-make-instance client global-environment)
-    (setf (clostrum:find-class client global-environment 'package)
+    (setf (clo:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
     (define-ensure-class client global-environment)
     (sb:ensure-asdf-system
@@ -98,9 +98,9 @@
           (client-symbol
             (sb:intern-parcl-symbol
              client "SICL-ENVIRONMENT" "*CLIENT*")))
-      (clostrum:make-variable
+      (clo:make-variable
        client global-environment environment-symbol global-environment)
-      (clostrum:make-variable
+      (clo:make-variable
        client global-environment client-symbol client))
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
@@ -123,11 +123,11 @@
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
     ;; The way we define it is that it just expands to a PROGN of the
     ;; forms in the body, with the bindings having no effect.
-    (setf (clostrum:macro-function client global-environment 'handler-bind)
+    (setf (clo:macro-function client global-environment 'handler-bind)
           (lambda (form environment)
             (declare (ignore environment))
             (cons 'progn (rest (rest form)))))
-    (clostrum:make-variable
+    (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sb:ensure-asdf-system
      client environment "ecclesia")
@@ -171,16 +171,16 @@
             (sb:intern-parcl-symbol
              client "SICL-ENVIRONMENT" "FDEFINITION")))
       (setf (clo:fdefinition client global-environment symbol)
-            (fdefinition 'clostrum:fdefinition))
+            (fdefinition 'clo:fdefinition))
       (setf (clo:fdefinition client global-environment `(setf ,symbol))
-            (fdefinition '(setf clostrum:fdefinition))))
+            (fdefinition '(setf clo:fdefinition))))
     (let ((symbol
             (sb:intern-parcl-symbol
              client "SICL-ENVIRONMENT" "FIND-CLASS")))
       (setf (clo:find-class client global-environment symbol)
-            (fdefinition 'clostrum:find-class))
+            (fdefinition 'clo:find-class))
       (setf (clo:find-class client global-environment `(setf ,symbol))
-            (fdefinition '(setf clostrum:find-class))))
+            (fdefinition '(setf clo:find-class))))
     ;; The method on ENSURE-GENERIC-FUNCTION-USING-CLASS specialized
     ;; to NULL calls CLASS-FINAILIZED-P to determine whether it can
     ;; instantiate the class, but the GENERIC-FUNCTION class has an

@@ -8,12 +8,12 @@
 (defun import-host-functions (client global-environment)
   (sb:import-host-functions client global-environment)
   (loop for name in *host-function-names*
-        do (setf (clostrum:fdefinition client global-environment name)
+        do (setf (clo:fdefinition client global-environment name)
                  (fdefinition name))))
 
 (defun import-host-classes (client global-environment)
   (loop for name in '(symbol)
-        do (setf (clostrum:find-class client global-environment name)
+        do (setf (clo:find-class client global-environment name)
                  (find-class 't))))
 
 (defparameter *host-setf-functions*
@@ -44,7 +44,7 @@
 
 (defun define-setf-functions (client global-environment)
   (loop for (name definition) in *host-setf-functions*
-        do (setf (clostrum:fdefinition client global-environment name)
+        do (setf (clo:fdefinition client global-environment name)
                  definition)))
 
 (defun import-from-host (client global-environment)
