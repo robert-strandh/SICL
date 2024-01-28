@@ -20,4 +20,5 @@
    (:file "load-source-file")
    (:file "asdf-programming")
    (:file "define-backquote-macros")
-   (:file "import-from-host")))
+   (:file "import-from-host")
+   (:file "define-environment-functions")))
