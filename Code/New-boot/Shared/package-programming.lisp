@@ -155,8 +155,7 @@
              (parcl:export client package symbol))))
 
 (defun define-package-functions (client global-environment)
-  (setf (clostrum:fdefinition
-         client global-environment 'make-package)
+  (setf (clo:fdefinition client global-environment 'make-package)
         (lambda (package-name &key nicknames use)
           (let ((canonicalized-name (string package-name))
                 (canonicalized-nicknames (mapcar #'string nicknames))
@@ -169,29 +168,24 @@
               (parcl:use-packages client result canonicalized-packages)
               (setf (gethash package-name *packages*) result)
               result))))
-  (setf (clostrum:fdefinition
-         client global-environment 'find-package)
+  (setf (clo:fdefinition client global-environment 'find-package)
         (lambda (package-designator)
           (package-designator-to-package client package-designator)))
-  (setf (clostrum:fdefinition
-         client global-environment '(setf find-package))
+  (setf (clo:fdefinition client global-environment '(setf find-package))
         (lambda (package package-designator)
           (setf (gethash (string package-designator) *packages*)
                 package)))
-  (setf (clostrum:fdefinition
-         client global-environment 'find-symbol)
+  (setf (clo:fdefinition client global-environment 'find-symbol)
         (lambda (string &optional package-designator)
           (let ((package
                   (package-designator-to-package client package-designator)))
             (parcl:find-symbol client package string))))
-  (setf (clostrum:fdefinition
-         client global-environment 'intern)
+  (setf (clo:fdefinition client global-environment 'intern)
         (lambda (string &optional package-designator)
           (let ((package
                   (package-designator-to-package client package-designator)))
             (parcl:intern client package string))))
-  (setf (clostrum:fdefinition
-         client global-environment 'use-package)
+  (setf (clo:fdefinition client global-environment 'use-package)
         (lambda (packages-to-use &optional package)
           (let ((canonicalized-packages-to-use
                   (loop for package-to-use in packages-to-use
@@ -205,8 +199,7 @@
                   (package-designator-to-package client package)))
             (parcl:use-packages
              client canonicalized-package canonicalized-packages-to-use))))
-  (setf (clostrum:fdefinition
-         client global-environment 'export)
+  (setf (clo:fdefinition client global-environment 'export)
         (lambda (symbols &optional package)
           (let ((canonicalized-symbols
                   (typecase symbols
@@ -217,8 +210,7 @@
                   (package-designator-to-package client package)))
             (loop for symbol in canonicalized-symbols
                   do (parcl:export client canonicalized-package symbol)))))
-  (setf (clostrum:fdefinition
-         client global-environment 'shadow)
+  (setf (clo:fdefinition client global-environment 'shadow)
         (lambda (symbol-names &optional package)
           (let ((canonicalized-symbol-names
                   (etypecase symbol-names

@@ -24,7 +24,7 @@
     (loop with global-environment
             = (trucler:global-environment client environment)
           for condition in undefined-functions
-          do (unless (clostrum:fboundp
+          do (unless (clo:fboundp
                       client global-environment (common-boot:name condition))
                (warn condition)))))
 

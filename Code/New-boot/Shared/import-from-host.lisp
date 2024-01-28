@@ -44,5 +44,5 @@
 
 (defun import-host-functions (client global-environment)
   (loop for name in *host-function-names*
-        do (setf (clostrum:fdefinition client global-environment name)
+        do (setf (clo:fdefinition client global-environment name)
                  (fdefinition name))))

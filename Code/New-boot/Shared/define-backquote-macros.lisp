@@ -5,7 +5,7 @@
 ;;; so that they can be expanded by the compiler.
 
 (defun define-backquote-macros (client environment)
-  (setf (clostrum:fdefinition client environment 'eclector.reader::expand)
+  (setf (clo:fdefinition client environment 'eclector.reader::expand)
         (fdefinition 'eclector.reader::expand))
-  (setf (clostrum:macro-function client environment 'eclector.reader::quasiquote)
+  (setf (clo:macro-function client environment 'eclector.reader::quasiquote)
         (macro-function 'eclector.reader::quasiquote)))
