@@ -9,4 +9,5 @@
     (loop for name in '("COMMON-LISP-USER" "KEYWORD")
           do (setf (gethash name *packages*) (find-package name)))
     (values boot *packages* *symbol-package*
-            (sicl-new-boot-phase-1:boot boot))))
+            (sicl-new-boot-phase-1:boot boot)
+            (sicl-new-boot-phase-2:boot boot))))
