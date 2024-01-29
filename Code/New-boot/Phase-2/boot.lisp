@@ -10,5 +10,6 @@
     (reinitialize-instance client
       :environment global-environment)
     (sb:define-backquote-macros client global-environment)
-    (import-from-host client global-environment))
+    (import-from-host client global-environment)
+    (sb:import-khazern client global-environment))
   boot)
