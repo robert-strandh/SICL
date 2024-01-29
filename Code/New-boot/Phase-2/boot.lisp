@@ -10,5 +10,5 @@
     (reinitialize-instance client
       :environment global-environment)
     (sb:define-backquote-macros client global-environment)
-    (import-from-host client global-environment)
-    boot)
+    (import-from-host client global-environment))
+  boot)
