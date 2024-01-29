@@ -14,6 +14,7 @@
    #:define-backquote-macros
    #:ensure-asdf-system
    #:import-host-functions
+   #:define-setf-function
    #:intern-parcl-symbol
    #:define-package-functions
    #:define-environment-functions
