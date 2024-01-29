@@ -46,3 +46,25 @@
   (loop for name in *host-function-names*
         do (setf (clo:fdefinition client global-environment name)
                  (fdefinition name))))
+
+(defparameter *host-setf-functions*
+  `(((setf car)
+     ,(lambda (object cons)
+        (setf (car cons) object)))
+    ((setf cdr)
+     ,(lambda (object cons)
+        (setf (cdr cons) object)))
+    ((setf cadr)
+     ,(lambda (object cons)
+        (setf (cadr cons) object)))
+    ((setf cddr)
+     ,(lambda (object cons)
+        (setf (cddr cons) object)))
+    ((setf first)
+     ,(lambda (object cons)
+        (setf (first cons) object)))))
+
+(defun define-setf-functions (client global-environment)
+  (loop for (name definition) in *host-setf-functions*
+        do (setf (clo:fdefinition client global-environment name)
+                 definition)))
