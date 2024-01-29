@@ -17,22 +17,7 @@
                  (find-class 't))))
 
 (defparameter *host-setf-functions*
-  `(((setf car)
-     ,(lambda (object cons)
-        (setf (car cons) object)))
-    ((setf cdr)
-     ,(lambda (object cons)
-        (setf (cdr cons) object)))
-    ((setf cadr)
-     ,(lambda (object cons)
-        (setf (cadr cons) object)))
-    ((setf cddr)
-     ,(lambda (object cons)
-        (setf (cddr cons) object)))
-    ((setf first)
-     ,(lambda (object cons)
-        (setf (first cons) object)))
-    ((setf gethash)
+  `(((setf gethash)
      ,(lambda (object key table)
         (setf (gethash key table) object)))
     ((setf slot-value)
@@ -43,6 +28,7 @@
         (setf (documentation object documentation-type) documentation)))))
 
 (defun define-setf-functions (client global-environment)
+  (sb:define-setf-functions client global-environment)
   (loop for (name definition) in *host-setf-functions*
         do (setf (clo:fdefinition client global-environment name)
                  definition)))
