@@ -14,5 +14,16 @@
     (sb:import-khazern client global-environment)
     (sb:define-environment-functions client global-environment)
     (clo:make-variable
-     client global-environment '*package* (find-package '#:common-lisp-user)))
+     client global-environment '*package* (find-package '#:common-lisp-user))    (sb:ensure-asdf-system
+     client environment "sicl-environment-package")
+    (let ((environment-symbol
+            (sb:intern-parcl-symbol
+             client "SICL-ENVIRONMENT" "*ENVIRONMENT*"))
+          (client-symbol
+            (sb:intern-parcl-symbol
+             client "SICL-ENVIRONMENT" "*CLIENT*")))
+      (clo:make-variable
+       client global-environment environment-symbol global-environment)
+      (clo:make-variable
+       client global-environment client-symbol client)))
   boot)
