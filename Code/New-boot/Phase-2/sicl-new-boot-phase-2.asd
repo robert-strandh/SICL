@@ -7,5 +7,6 @@
   ((:file "packages")
    (:file "client")
    (:file "environment")
+   (:file "configuration")
    (:file "import-from-host")
    (:file "boot")))
