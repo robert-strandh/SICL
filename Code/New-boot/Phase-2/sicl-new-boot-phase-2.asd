@@ -5,5 +5,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "environment")
    (:file "import-from-host")
    (:file "boot")))
