@@ -12,5 +12,7 @@
     (sb:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
     (sb:import-khazern client global-environment)
-    (sb:define-environment-functions client global-environment))
+    (sb:define-environment-functions client global-environment)
+    (clo:make-variable
+     client global-environment '*package* (find-package '#:common-lisp-user)))
   boot)
