@@ -1,5 +1,29 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+(defun define-ensure-generic-function (client e1 e2)
+  (setf (clo:fdefinition client e2 'ensure-generic-function)
+        (lambda (name
+                 &key
+                   argument-precedence-order
+                   declare
+                   documentation
+                   environment
+                   generic-function-class
+                   lambda-list
+                   method-class
+                   method-combination)
+          (declare (ignore declare documentation environment))
+          (check-type generic-function-class symbol)
+          (check-type method-class symbol)
+          (assert (null (clo:fboundp client e2 name)))
+          (setf (clo:fdefinition client e2 name)
+                (make-instance
+                    (clo:find-class client e1 generic-function-class)
+                  :argument-precedence-order argument-precedence-order
+                  :lambda-list lambda-list
+                  :method-class (clo:find-class client e1 method-class)
+                  :method-combination method-combination)))))
+
 (defun boot (boot)
   (let* ((client (make-instance 'client))
          (environment (create-environment client))
