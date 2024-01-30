@@ -36,5 +36,5 @@
               ;; It is not fbound, so we return NIL so that we can
               ;; pass it to ENSURE-GENERIC-FUNCTION-USING-CLASS.
               nil)))
-    (apply #'ensure-generic-function-using-class
+    (apply #'^ensure-generic-function-using-class
            generic-function name keys)))

@@ -6,7 +6,7 @@
   (unless (and (symbolp name) (not (null name)))
     (error 'class-name-must-be-non-nil-symbol
            :name name))
-  (apply #'ensure-class-using-class
+  (apply #'^ensure-class-using-class
          (find-class name nil)
          name
          arguments))
