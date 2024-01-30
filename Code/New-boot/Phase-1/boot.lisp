@@ -202,6 +202,4 @@
     (setf (clo:fdefinition client global-environment 'change-class)
           (lambda (&rest arguments)
             (error "CHANGE-CLASS called with arguments ~s" arguments)))
-    (sb:ensure-asdf-system
-     client environment "sicl-clos-ensure-metaobject-using-class")
     global-environment))
