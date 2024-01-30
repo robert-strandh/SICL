@@ -29,23 +29,5 @@
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
     (sb:ensure-asdf-system
-     client environment "sicl-clos-package")
-    (let ((e1-symbol
-            (sb:intern-parcl-symbol
-             client "SICL-CLOS" "ENSURE-GENERIC-FUNCTION-USING-CLASS"))
-          (e2-symbol
-            (sb:intern-parcl-symbol
-             client "SICL-CLOS" "^ENSURE-GENERIC-FUNCTION-USING-CLASS")))
-      (setf (clo:fdefinition client global-environment e2-symbol)
-            (clo:fdefinition client (sb:e1 boot) e1-symbol)))
-    (let ((e1-symbol
-            (sb:intern-parcl-symbol
-             client "SICL-CLOS" "ENSURE-CLASS-USING-CLASS"))
-          (e2-symbol
-            (sb:intern-parcl-symbol
-             client "SICL-CLOS" "^ENSURE-CLASS-USING-CLASS")))
-      (setf (clo:fdefinition client global-environment e2-symbol)
-            (clo:fdefinition client (sb:e1 boot) e1-symbol))
-      (sb:ensure-asdf-system
-       client environment "sicl-clos-ensure-metaobject")))
+     client environment "sicl-clos-package"))
   boot)
