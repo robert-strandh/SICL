@@ -2,6 +2,14 @@
 
 (defun define-environment-functions (client global-environment)
   (setf (clo:fdefinition
+         client global-environment 'fboundp)
+        (lambda (name)
+          (clo:fboundp client global-environment name)))
+  (setf (clo:fdefinition
+         client global-environment 'fdefinition)
+        (lambda (name)
+          (clo:fdefinition client global-environment name)))
+  (setf (clo:fdefinition
          client global-environment '(setf fdefinition))
         (lambda (definition name)
           (setf (clo:fdefinition client global-environment name)
@@ -10,6 +18,10 @@
          client global-environment 'find-class)
         (lambda (name)
           (clo:find-class client global-environment name)))
+  (setf (clo:fdefinition
+         client global-environment 'macro-function)
+        (lambda (name)
+          (clo:macro-function client global-environment name)))
   (setf (clo:fdefinition
          client global-environment '(setf macro-function))
         (lambda (definition name)
