@@ -1,7 +1,9 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
 (defparameter *host-function-names*
-  '(;; Objects
+  '(;; Evaluation and Compilation
+    special-operator-p
+    ;; Objects
     initialize-instance reinitialize-instance shared-initialize
     slot-boundp slot-value allocate-instance class-of))
 
