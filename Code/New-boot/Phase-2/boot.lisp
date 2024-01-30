@@ -45,5 +45,7 @@
             (sb:intern-parcl-symbol
              client "SICL-CLOS" "^ENSURE-CLASS-USING-CLASS")))
       (setf (clo:fdefinition client global-environment e2-symbol)
-            (clo:fdefinition client (sb:e1 boot) e1-symbol))))
+            (clo:fdefinition client (sb:e1 boot) e1-symbol))
+      (sb:ensure-asdf-system
+       client environment "sicl-clos-ensure-metaobject")))
   boot)
