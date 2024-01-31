@@ -10,4 +10,5 @@
    (:file "configuration")
    (:file "import-from-host")
    (:file "define-ensure-generic-function")
+   (:file "define-ensure-class")
    (:file "boot")))
