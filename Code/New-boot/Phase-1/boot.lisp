@@ -156,8 +156,6 @@
      client environment "clostrophilia-slot-definition-initialization")
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-finalization")
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-method-combination")
     (let ((symbol
             (sb:intern-parcl-symbol
              client "CLOSTROPHILIA" "SET-FUNCALLABLE-INSTANCE-FUNCTION")))
