@@ -9,4 +9,5 @@
    (:file "environment")
    (:file "configuration")
    (:file "import-from-host")
+   (:file "define-ensure-generic-function")
    (:file "boot")))
