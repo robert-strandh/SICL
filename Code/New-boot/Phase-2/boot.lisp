@@ -53,6 +53,6 @@
      client environment "clostrophilia-package")
     (sb:ensure-asdf-system
      client environment "sicl-clos-package")
-    (define-ensure-generic-function client (sb:e1 boot) environment)
-    (define-ensure-class client (sb:e1 boot) environment))
+    (define-ensure-generic-function client (sb:e1 boot) global-environment)
+    (define-ensure-class client (sb:e1 boot) global-environment))
   boot)
