@@ -7,8 +7,8 @@
            "CLOSTROPHILIA"
            "ENSURE-METHOD-COMBINATION-TEMPLATE")))
     (setf (clo:fdefinition client e2 symbol)
-          (lambda (name
-                   &key
+          (lambda (&key
+                     name
                      documentation
                      variant-signature-determiner
                      effective-method-form-function)
@@ -19,7 +19,7 @@
                 (let* ((symbol
                          (sb:intern-parcl-symbol
                           client
-                          "SICL-METHOD-COMBINATION"
+                          "CLOSTROPHILIA"
                           "METHOD-COMBINATION-TEMPLATE"))
                        (class (clo:find-class client e1 symbol t)))
                   (setf template
