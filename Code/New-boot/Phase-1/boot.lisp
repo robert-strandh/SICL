@@ -68,6 +68,7 @@
                  (break))))))
 
 (defun boot (boot)
+  (format *trace-output* "**************** Phase 1~%")
   (let* ((client (make-instance 'client))
          (environment (create-environment client))
          (global-environment

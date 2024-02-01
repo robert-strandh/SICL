@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
 (defun boot (boot)
+  (format *trace-output* "**************** Phase 2~%")
   (let* ((client (make-instance 'client))
          (environment (create-environment client))
          (global-environment
