@@ -33,6 +33,8 @@
      client environment "sicl-clos-package")
     (define-ensure-method-combination-template
         client (sb:e1 boot) global-environment)
+    (define-^ensure-method-combination
+        client (sb:e1 boot) global-environment)
     (define-find-method-combination-template client global-environment)
     (define-ensure-generic-function client (sb:e1 boot) global-environment)
     (define-ensure-class client (sb:e1 boot) global-environment)
