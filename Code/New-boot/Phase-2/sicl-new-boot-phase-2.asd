@@ -12,5 +12,6 @@
    (:file "define-ensure-generic-function")
    (:file "define-ensure-class")
    (:file "define-ensure-method-combination-template")
+   (:file "define-find-method-combination-template")
    (:file "define-ecclesia-functions")
    (:file "boot")))
