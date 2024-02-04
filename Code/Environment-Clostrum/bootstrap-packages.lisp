@@ -4,4 +4,5 @@
   (:export #:*environment*
            #:*client*
            #:fdefinition
-           #:find-class))
+           #:find-class
+           #:type-expander))
