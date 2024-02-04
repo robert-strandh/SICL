@@ -40,19 +40,20 @@
      documentation-option
      environment)
   (declare (ignore documentation-option method-class-name))
-  (let* ((method-combination
-           (closer-mop:find-method-combination
-            #'print-object
-            method-combination-name
-            method-combination-arguments))
-         (result 
-           (make-instance 'standard-generic-function
-             :name name
-             :lambda-list lambda-list
-             :argument-precedence-order argument-precedence-order
-             :method-combination method-combination)))
-    (setf (clo:fdefinition client (sb:environment client) name)
-          result)))
+  (unless (clo:fboundp client (sb:environment client) name)
+    (let* ((method-combination
+             (closer-mop:find-method-combination
+              #'print-object
+              method-combination-name
+              method-combination-arguments))
+           (result 
+             (make-instance 'standard-generic-function
+               :name name
+               :lambda-list lambda-list
+               :argument-precedence-order argument-precedence-order
+               :method-combination method-combination)))
+      (setf (clo:fdefinition client (sb:environment client) name)
+            result))))
 
 ;;; PROCLAIM programming.
 
