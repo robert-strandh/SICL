@@ -6,4 +6,5 @@
   ((:file "variables")
    (:file "fdefinition")
    (:file "find-class")
-   (:file "macro-function")))
+   (:file "macro-function")
+   (:file "compiler-macro-function")))
