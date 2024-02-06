@@ -10,6 +10,7 @@
           #:find-package
           #:fboundp
           #:fmakunbound
-          #:macro-function))
+          #:macro-function
+          #:compiler-macro-function))
   (:export
    . #1#))
