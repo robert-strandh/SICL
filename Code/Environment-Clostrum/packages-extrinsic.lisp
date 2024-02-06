@@ -9,6 +9,7 @@
           #:find-class
           #:find-package
           #:fboundp
-          #:fmakunbound))
+          #:fmakunbound
+          #:macro-function))
   (:export
    . #1#))
