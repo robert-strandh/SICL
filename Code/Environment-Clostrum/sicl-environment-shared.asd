@@ -5,4 +5,5 @@
   :components
   ((:file "variables")
    (:file "fdefinition")
-   (:file "find-class")))
+   (:file "find-class")
+   (:file "macro-function")))
