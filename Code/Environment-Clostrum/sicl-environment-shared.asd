@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "variables")
-   (:file "fdefinition")))
+   (:file "fdefinition")
+   (:file "find-class")))
