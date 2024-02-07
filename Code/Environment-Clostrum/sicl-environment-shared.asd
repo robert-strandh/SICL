@@ -9,4 +9,5 @@
    (:file "macro-function")
    (:file "compiler-macro-function")
    (:file "boundp")
-   (:file "symbol-value")))
+   (:file "symbol-value")
+   (:file "find-package")))
