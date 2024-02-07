@@ -17,5 +17,6 @@
           #:boundp
           #:symbol-value))
   (:export
+   #:type-expander
    #:define-constant
    . #1#))

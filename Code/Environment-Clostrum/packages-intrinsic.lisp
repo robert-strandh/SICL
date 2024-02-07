@@ -6,4 +6,5 @@
    (#:clo #:clostrum)
    (#:rt #:sicl-run-time))
   (:export
+   #:type-expander
    #:define-constant))
