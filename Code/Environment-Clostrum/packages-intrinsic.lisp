@@ -5,4 +5,5 @@
   (:local-nicknames
    (#:clo #:clostrum)
    (#:rt #:sicl-run-time))
-  (:export))
+  (:export
+   #:define-constant))
