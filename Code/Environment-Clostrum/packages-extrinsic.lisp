@@ -2,7 +2,9 @@
 
 (defpackage #:sicl-environment
   (:use #:common-lisp)
-  (:local-nicknames (#:clo #:clostrum))
+  (:local-nicknames
+   (#:clo #:clostrum)
+   (#:rt #:common-boot-ast-evaluator))
   (:shadow
    . #1= (#:symbol-function
           #:fdefinition
