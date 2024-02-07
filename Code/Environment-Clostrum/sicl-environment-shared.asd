@@ -7,4 +7,5 @@
    (:file "fdefinition")
    (:file "find-class")
    (:file "macro-function")
-   (:file "compiler-macro-function")))
+   (:file "compiler-macro-function")
+   (:file "boundp")))
