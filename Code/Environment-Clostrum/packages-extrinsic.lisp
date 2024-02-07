@@ -13,6 +13,8 @@
           #:fboundp
           #:fmakunbound
           #:macro-function
-          #:compiler-macro-function))
+          #:compiler-macro-function
+          #:boundp
+          #:symbol-value))
   (:export
    . #1#))
