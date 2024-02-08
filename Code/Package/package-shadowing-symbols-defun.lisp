@@ -2,4 +2,4 @@
 
 (defun package-shadowing-symbols (package-designator)
   (let ((package (package-designator-to-package package-designator)))
-    (copy-list (shadowing-symbols package))))
+    (parcl:shadowing-symbol env:*client* package)))
