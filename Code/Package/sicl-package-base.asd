@@ -20,7 +20,6 @@
     (:file "package-defparameter")
     (:file "utilities")
     (:file "find-symbol-defun")
-    (:file "resolve-conflict")
     (:file "do-symbols-defmacro")
     (:file "do-external-symbols-defmacro")
     (:file "export-defun")
