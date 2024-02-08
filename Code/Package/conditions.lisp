@@ -32,11 +32,3 @@
 
 (define-condition package-error (error)
   ((%package :initarg :package :reader package-error-package)))
-
-(define-condition symbol-conflict (package-error)
-  ((%conflicting-symbols
-    :initarg :conflicting-symbols
-    :reader conflicting-symbols)))
-
-(define-condition symbol-is-not-accessible (package-error)
-  ((%symbol :initarg :symbol :reader inaccessible-symbol)))
