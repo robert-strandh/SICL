@@ -2,4 +2,4 @@
 
 (defun package-name (package-designator)
   (let ((package (package-designator-to-package package-designator)))
-    (name package)))
+    (parcl:name env:*client* package)))
