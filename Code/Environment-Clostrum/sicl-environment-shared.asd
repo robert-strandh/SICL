@@ -4,6 +4,7 @@
   :serial t
   :components
   ((:file "variables")
+   (:file "environment")
    (:file "fdefinition")
    (:file "find-class")
    (:file "macro-function")
