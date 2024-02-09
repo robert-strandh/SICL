@@ -4,6 +4,7 @@
   :depends-on ("common-boot"
                "common-boot-macros"
                "common-macro-definitions"
+               "sicl-environment-extrinsic"
                "eclector-concrete-syntax-tree"
                "parcl-extrinsic"
                "parcl-class"
