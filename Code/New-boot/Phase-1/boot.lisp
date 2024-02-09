@@ -72,7 +72,9 @@
   (let* ((client (make-instance 'client))
          (environment (create-environment client))
          (global-environment
-           (trucler:global-environment client environment)))
+           (trucler:global-environment client environment))
+         (env:*client* client)
+         (env:*environment* global-environment))
     (sb:define-package-functions client global-environment)
     (setf (sb:e1 boot) global-environment)
     (reinitialize-instance client
@@ -203,4 +205,17 @@
     (setf (clo:fdefinition client global-environment 'change-class)
           (lambda (&rest arguments)
             (error "CHANGE-CLASS called with arguments ~s" arguments)))
+    ;; Do this better
+    (setf (gethash "ECC" sb::*packages*)
+          (gethash "ECCLESIA" sb::*packages*))
+    (sb:ensure-asdf-system
+     client environment "common-macro-definitions-packages-intrinsic")
+    (let ((symbol
+            (sb:intern-parcl-symbol
+             client "SICL-ENVIRONMENT" "TYPE-EXPANDER")))
+      (setf (clo:fdefinition client global-environment `(setf ,symbol))
+            (lambda (expander client environment name)
+              (setf (clo:type-expander client environment name)
+                    expander))))
+    (sb:ensure-asdf-system client environment "sicl-macro-programming")
     global-environment))
