@@ -1,19 +1,12 @@
 (cl:in-package #:sicl-new-boot)
 
 (defun define-environment-functions (client global-environment)
-  (setf (clo:fdefinition
-         client global-environment 'fboundp)
-        (lambda (name)
-          (clo:fboundp client global-environment name)))
-  (setf (clo:fdefinition
-         client global-environment 'fdefinition)
-        (lambda (name)
-          (clo:fdefinition client global-environment name)))
-  (setf (clo:fdefinition
-         client global-environment '(setf fdefinition))
-        (lambda (definition name)
-          (setf (clo:fdefinition client global-environment name)
-                definition)))
+  (setf (clo:fdefinition client global-environment 'fboundp)
+        #'env:fboundp)
+  (setf (clo:fdefinition client global-environment 'fdefinition)
+        #'env:fdefinition)
+  (setf (clo:fdefinition client global-environment '(setf fdefinition))
+        #'(setf env:fdefinition))
   (setf (clo:fdefinition
          client global-environment 'find-class)
         (lambda (name)
