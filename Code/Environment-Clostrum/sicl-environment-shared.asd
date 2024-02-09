@@ -5,6 +5,7 @@
   :components
   ((:file "variables")
    (:file "environment")
+   (:file "fboundp")
    (:file "fdefinition")
    (:file "find-class")
    (:file "macro-function")
