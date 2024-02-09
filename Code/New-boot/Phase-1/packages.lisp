@@ -3,6 +3,7 @@
 (defpackage #:sicl-new-boot-phase-1
   (:use #:common-lisp)
   (:local-nicknames
+   (#:env #:sicl-environment)
    (#:sb #:sicl-new-boot)
    (#:cb #:common-boot)
    (#:clo #:clostrum)
