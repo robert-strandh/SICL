@@ -30,7 +30,6 @@
     (:file "shadowing-import-defun")
     (:file "use-package-defun")
     (:file "make-package-defun")
-    (:file "defpackage-defmacro")
     (:file "conditions")
     (:file "documentation-strings-english")))
 
