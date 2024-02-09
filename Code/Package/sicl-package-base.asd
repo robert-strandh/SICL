@@ -8,8 +8,7 @@
                #:cleavir-code-utilities-separate-body))
 
 (defparameter *sicl-package-component-designators*
-  '((:file "package-defclass")
-    (:file "packagep-defgeneric")
+  '((:file "packagep-defgeneric")
     (:file "string-designator-deftype")
     (:file "package-designator-deftype")
     (:file "package-designator-to-package-defun")
