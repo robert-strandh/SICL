@@ -3,6 +3,7 @@
 (defpackage #:sicl-new-boot
   (:use #:common-lisp)
   (:local-nicknames
+   (#:env #:sicl-environment)
    (#:abp #:architecture.builder-protocol)
    (#:cmd #:common-macro-definitions)
    (#:clo #:clostrum)
