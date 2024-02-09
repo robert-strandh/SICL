@@ -5,7 +5,9 @@
   (let* ((client (make-instance 'client))
          (environment (create-environment client))
          (global-environment
-           (trucler:global-environment client environment)))
+           (trucler:global-environment client environment))
+         (env:*client* client)
+         (env:*environment* global-environment))
     (sb:define-package-functions client global-environment)
     (setf (sb:e2 boot) global-environment)
     (reinitialize-instance client
