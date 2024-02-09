@@ -6,5 +6,9 @@
    (#:clo #:clostrum)
    (#:rt #:sicl-run-time))
   (:export
+   #:*client*
+   #:*environment*
    #:type-expander
-   #:define-constant))
+   #:define-constant
+   #:run-time-environment
+   #:find-method-combination-template))

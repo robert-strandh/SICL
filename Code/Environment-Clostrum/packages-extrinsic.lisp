@@ -17,6 +17,10 @@
           #:boundp
           #:symbol-value))
   (:export
+   #:*client*
+   #:*environment*
    #:type-expander
    #:define-constant
+   #:run-time-environment
+   #:find-method-combination-template
    . #1#))
