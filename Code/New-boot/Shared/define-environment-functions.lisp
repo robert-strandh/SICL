@@ -17,10 +17,10 @@
     (import-function 'boundp #'env:boundp)
     (import-function 'symbol-value #'env:symbol-value)
     (import-function '(setf symbol-value) #'(setf env:symbol-value))
-    (setf (clo:fdefinition
-           client global-environment 'define-constant)
-          (lambda (name value)
-            (clo:make-constant client global-environment name value)))
+    (let ((symbol-define-constant
+            (intern-parcl-symbol
+             client "SICL-ENVIRONMENT" "DEFINE-CONSTANT")))
+      (import-function symbol-define-constant #'env:define-constant))
     (setf (clo:macro-function client global-environment 'defconstant)
           (lambda (form environment)
             (declare (ignore environment))
