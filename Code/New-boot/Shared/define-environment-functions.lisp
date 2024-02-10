@@ -16,13 +16,7 @@
                      #'(setf env:compiler-macro-function))
     (import-function 'boundp #'env:boundp)
     (import-function 'symbol-value #'env:symbol-value)
-    (setf (clo:fdefinition
-           client global-environment '(setf symbol-value))
-          (lambda (value name)
-            (let ((cell (clo:ensure-variable-cell
-                         client global-environment name)))
-              (setf (cbae:symbol-value name cell cbae:*dynamic-environment*)
-                    value))))
+    (import-function '(setf symbol-value) #'(setf env:symbol-value))
     (setf (clo:fdefinition
            client global-environment 'define-constant)
           (lambda (name value)
