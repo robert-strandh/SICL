@@ -86,15 +86,15 @@
     (setf (clo:fdefinition client global-environment 'closer-mop:method-function)
           #'closer-mop:method-function)
     (sb:import-khazern client global-environment)
-    (sb:define-environment-functions client global-environment)
     (clo:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
+    (sb:ensure-asdf-system
+     client environment "sicl-environment-packages-intrinsic")
+    (sb:define-environment-functions client global-environment)
     (define-make-instance client global-environment)
     (setf (clo:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
     (define-ensure-class client global-environment)
-    (sb:ensure-asdf-system
-     client environment "sicl-environment-package")
     (let ((environment-symbol
             (sb:intern-parcl-symbol
              client "SICL-ENVIRONMENT" "*ENVIRONMENT*"))

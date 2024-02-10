@@ -15,10 +15,11 @@
     (sb:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
     (sb:import-khazern client global-environment)
-    (sb:define-environment-functions client global-environment)
     (clo:make-variable
-     client global-environment '*package* (find-package '#:common-lisp-user))    (sb:ensure-asdf-system
-     client environment "sicl-environment-package")
+     client global-environment '*package* (find-package '#:common-lisp-user))
+    (sb:ensure-asdf-system
+     client environment "sicl-environment-packages-intrinsic")
+    (sb:define-environment-functions client global-environment)
     (let ((environment-symbol
             (sb:intern-parcl-symbol
              client "SICL-ENVIRONMENT" "*ENVIRONMENT*"))
