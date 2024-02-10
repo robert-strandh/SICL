@@ -12,4 +12,5 @@
    (:file "compiler-macro-function")
    (:file "boundp")
    (:file "symbol-value")
-   (:file "find-package")))
+   (:file "find-package")
+   (:file "define-constant")))
