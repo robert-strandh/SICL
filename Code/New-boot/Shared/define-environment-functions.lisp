@@ -10,11 +10,9 @@
     (import-function 'find-class #'env:find-class)
     (import-function 'macro-function #'env:macro-function)
     (import-function '(setf macro-function) #'(setf env:macro-function))
-    (setf (clo:fdefinition
-           client global-environment '(setf compiler-macro-function))
-          (lambda (definition name)
-            (setf (clo:compiler-macro-function client global-environment name)
-                  definition)))
+    (import-function 'compiler-macro-function #'env:compiler-macro-function)
+    (import-function '(setf compiler-macro-function)
+                     #'(setf env:compiler-macro-function))
     (setf (clo:fdefinition
            client global-environment '(setf find-class))
           (lambda (class name)
