@@ -7,19 +7,9 @@
     (import-function 'fboundp #'env:fboundp)
     (import-function 'fdefinition #'env:fdefinition)
     (import-function '(setf fdefinition) #'(setf env:fdefinition))
-    (setf (clo:fdefinition
-           client global-environment 'find-class)
-          (lambda (name)
-            (clo:find-class client global-environment name)))
-    (setf (clo:fdefinition
-           client global-environment 'macro-function)
-          (lambda (name)
-            (clo:macro-function client global-environment name)))
-    (setf (clo:fdefinition
-           client global-environment '(setf macro-function))
-          (lambda (definition name)
-            (setf (clo:macro-function client global-environment name)
-                  definition)))
+    (import-function 'find-class #'env:find-class)
+    (import-function 'macro-function #'env:macro-function)
+    (import-function '(setf macro-function) #'(setf env:macro-function))
     (setf (clo:fdefinition
            client global-environment '(setf compiler-macro-function))
           (lambda (definition name)
