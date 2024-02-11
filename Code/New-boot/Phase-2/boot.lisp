@@ -17,8 +17,6 @@
     (sb:import-khazern client global-environment)
     (clo:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
-    (sb:ensure-asdf-system
-     client environment "sicl-environment-packages-intrinsic")
     (sb:define-environment-functions client global-environment)
     (let ((environment-symbol
             (sb:intern-parcl-symbol
@@ -30,10 +28,6 @@
        client global-environment environment-symbol global-environment)
       (clo:make-variable
        client global-environment client-symbol client))
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-package")
-    (sb:ensure-asdf-system
-     client environment "sicl-clos-package")
     (define-ensure-method-combination-template
         client (sb:e1 boot) global-environment)
     (define-^ensure-method-combination
