@@ -14,6 +14,69 @@
   (setf (clo:fdefinition client environment 'make-instance)
         #'my-make-instance))
 
+(defun create-reader-generic-function (name)
+  (let* ((sample-generic-function #'print-object)
+         (method-combination
+           (closer-mop:find-method-combination
+            sample-generic-function 'standard '())))
+    (make-instance 'standard-generic-function
+      :lambda-list '(object)
+      :method-combination method-combination
+      :name name)))
+
+(defun define-readers (client environment slot-name readers class)
+  (loop for reader in readers
+        do (let* ((generic-function
+                    (if (clo:fboundp client environment reader)
+                        (clo:fdefinition client environment reader)
+                        ;; We must create it.
+                        (let ((generic-function
+                                (create-reader-generic-function reader)))
+                          (setf (clo:fdefinition client environment reader)
+                                generic-function)
+                          generic-function)))
+                  (method
+                    (make-instance 'standard-method
+                      :lambda-list '(object)
+                      :specializers (list class)
+                      :function (lambda (arguments next-methods)
+                                  (declare (ignore next-methods))
+                                  (slot-value
+                                   (first arguments) slot-name)))))
+             (add-method generic-function method))))
+
+(defun create-writer-generic-function (name)
+  (let* ((sample-generic-function #'print-object)
+         (method-combination
+           (closer-mop:find-method-combination
+            sample-generic-function 'standard '())))
+    (make-instance 'standard-generic-function
+      :lambda-list '(new-value object)
+      :method-combination method-combination
+      :name name)))
+
+(defun define-writers (client environment slot-name writers class)
+  (loop for writer in writers
+        do (let* ((generic-function
+                    (if (clo:fboundp client environment writer)
+                        (clo:fdefinition client environment writer)
+                        ;; We must create it.
+                        (let ((generic-function
+                                (create-writer-generic-function writer)))
+                          (setf (clo:fdefinition client environment writer)
+                                generic-function)
+                          generic-function)))
+                  (method
+                    (make-instance 'standard-method
+                      :lambda-list '(new-value object)
+                      :specializers (list (find-class 't) class)
+                      :function (lambda (arguments next-methods)
+                                  (declare (ignore next-methods))
+                                  (setf (slot-value
+                                         (second arguments) slot-name)
+                                        (first arguments))))))
+             (add-method generic-function method))))
+
 (defun define-ensure-class (client global-environment)
   (setf (clo:fdefinition client global-environment 'ensure-class)
         (lambda (name
@@ -43,7 +106,15 @@
                      :direct-default-initargs direct-default-initargs
                      :direct-slots new-slots
                      :direct-superclasses new-superclasses)))
-          (setf (clo:find-class client global-environment name)
+            (loop for direct-slot in direct-slots
+                  for slot-name = (getf direct-slot :name)
+                  for readers = (getf direct-slot :readers)
+                  for writers = (getf direct-slot :writers)
+                  do (define-readers
+                         client global-environment slot-name readers result)
+                     (define-writers
+                         client global-environment slot-name writers result))
+            (setf (clo:find-class client global-environment name)
                 result)))))
 
 (defun define-typep (client global-environment)
