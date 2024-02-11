@@ -11,14 +11,14 @@
   ()
   (:metaclass built-in-class))
 
-(defgeneric symbol-name (symbol))
+(defgeneric %symbol-name (symbol))
 
 (defgeneric symbol-package (symbol))
 
 (defclass symbol ()
   ((%name
     :initarg :name
-    :reader symbol-name)
+    :reader %symbol-name)
    (%package
     :initarg :package
     :reader symbol-package)))
