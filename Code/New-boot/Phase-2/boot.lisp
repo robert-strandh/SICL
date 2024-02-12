@@ -8,15 +8,16 @@
            (trucler:global-environment client environment))
          (env:*client* client)
          (env:*environment* global-environment))
-    (sb:define-package-functions client global-environment)
-    (setf (sb:e2 boot) global-environment)
+    (setf (sb:e2 boot) global-environment
+          (sb:c2 boot) client)
     (reinitialize-instance client
       :environment global-environment)
+    (clo:make-variable
+     client global-environment '*package* (find-package '#:common-lisp-user))
+    (sb:define-package-functions client global-environment)
     (sb:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
     (sb:import-khazern client global-environment)
-    (clo:make-variable
-     client global-environment '*package* (find-package '#:common-lisp-user))
     (sb:define-environment-functions client global-environment)
     (let ((environment-symbol
             (sb:intern-parcl-symbol
