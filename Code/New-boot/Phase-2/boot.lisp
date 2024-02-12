@@ -36,6 +36,14 @@
     (define-find-method-combination-template client global-environment)
     (define-ensure-generic-function client (sb:e1 boot) global-environment)
     (define-ensure-class client (sb:e1 boot) global-environment)
+    ;; We are loading this system into E1, but *ENVIRONMENT* is set to
+    ;; E2, so when the extrinsic environment functions in E1 are
+    ;; invoked, they will call the Clostrum functions with E2, thereby
+    ;; defining the macros in E2.
+    (let ((environment (make-instance 'trucler-reference:environment
+                         :global-environment (sb:e1 boot))))
+      (sb:ensure-asdf-system
+       (sb:c1 boot) environment "common-macro-definitions-shared"))
     (define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination"))
