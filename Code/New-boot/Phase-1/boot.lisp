@@ -244,13 +244,6 @@
      client environment "sicl-new-boot-phase-1-additional-classes")
     (let ((symbol
             (sb:intern-parcl-symbol
-             client "SICL-ENVIRONMENT" "FDEFINITION")))
-      (setf (clo:fdefinition client global-environment symbol)
-            (fdefinition 'clo:fdefinition))
-      (setf (clo:fdefinition client global-environment `(setf ,symbol))
-            (fdefinition '(setf clo:fdefinition))))
-    (let ((symbol
-            (sb:intern-parcl-symbol
              client "SICL-ENVIRONMENT" "FIND-CLASS")))
       (setf (clo:find-class client global-environment symbol)
             (fdefinition 'clo:find-class))
