@@ -92,8 +92,8 @@
                       :name function-name
                       :method-combination method-combination
                       remaining-keys))))
-    (let ((*environment* function-environment))
-      (setf (fdefinition function-name) result))))
+    (setf (fdefinition function-name :environment function-environment)
+          result)))
 
 (defmethod ensure-generic-function-using-class
     ((generic-function generic-function)
