@@ -26,7 +26,7 @@
     ;; Symbols
     gensym symbolp symbol-name
     ;; Strings
-    string stringp
+    string stringp string-downcase
     ;; Characters
     char
     ;; Conditions
