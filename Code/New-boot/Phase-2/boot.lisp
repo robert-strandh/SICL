@@ -34,6 +34,7 @@
     (define-^ensure-method-combination
         client (sb:e1 boot) global-environment)
     (define-find-method-combination-template client global-environment)
+    (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination"))
