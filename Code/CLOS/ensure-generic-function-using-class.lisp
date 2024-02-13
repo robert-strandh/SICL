@@ -27,8 +27,8 @@
     (generic-function-class environment)
   (cond ((symbolp generic-function-class)
          (find-class generic-function-class t environment))
-        ((member (find-class 'generic-function)
-                 (class-precedence-list generic-function-class))
+        ((subtypep generic-function-class
+                   (find-class 'generic-function t environment))
          generic-function-class)
         (t
          (error 'generic-function-class-must-be-class-or-name
@@ -92,9 +92,8 @@
                       :name function-name
                       :method-combination method-combination
                       remaining-keys))))
-    (setf (sicl-environment:fdefinition
-           sicl-environment:*client* function-environment function-name)
-          result)))
+    (let ((*environment* function-environment))
+      (setf (fdefinition function-name) result))))
 
 (defmethod ensure-generic-function-using-class
     ((generic-function generic-function)
