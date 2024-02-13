@@ -239,13 +239,6 @@
             (fdefinition 'closer-mop:set-funcallable-instance-function)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
-    (let ((symbol
-            (sb:intern-parcl-symbol
-             client "SICL-ENVIRONMENT" "FIND-CLASS")))
-      (setf (clo:find-class client global-environment symbol)
-            (fdefinition 'env:find-class))
-      (setf (clo:find-class client global-environment `(setf ,symbol))
-            (fdefinition '(setf env:find-class))))
     ;; The method on ENSURE-GENERIC-FUNCTION-USING-CLASS specialized
     ;; to NULL calls CLASS-FINAILIZED-P to determine whether it can
     ;; instantiate the class, but the GENERIC-FUNCTION class has an
