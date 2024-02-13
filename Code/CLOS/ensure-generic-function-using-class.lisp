@@ -37,7 +37,7 @@
 (defun canonicalize-method-class (method-class environment)
   (cond ((symbolp method-class)
          (find-class method-class t environment))
-        ((member (find-class 'method) (class-precedence-list method-class))
+        ((subtypep method-class (find-class 'method t environment))
          method-class)
         (t
          (error "method class must be a class or a name"))))
