@@ -204,8 +204,7 @@
             (cons 'progn (rest (rest form)))))
     (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
-    (sb:ensure-asdf-system
-     client environment "ecclesia")
+    (sb:ensure-asdf-system client environment "ecclesia")
     (define-typep client global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
