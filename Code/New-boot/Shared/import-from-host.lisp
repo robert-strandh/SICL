@@ -39,6 +39,8 @@
     format
     ;; Environment
     documentation
+    ;; Types and Classes.
+    subtypep
     ;; Hash tables
     make-hash-table gethash hash-table-count))
 
