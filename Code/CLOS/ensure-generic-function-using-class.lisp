@@ -82,7 +82,7 @@
       (finalize-inheritance generic-function-class))
     (let ((proto (class-prototype generic-function-class)))
       (setf method-combination
-            (find-method-combination proto 'standard '()))))
+            (clostrophilia:find-method-combination proto 'standard '()))))
   (let* ((remaining-keys
            (canonicalize-keyword-arguments all-keyword-arguments))
          (result
