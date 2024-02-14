@@ -188,6 +188,19 @@
     ;; so we just replace the one we just loaded.
     (setf (clo:find-class client global-environment 't)
           (find-class 't))
+    ;; And, there are methods that specialize to the NULL class, like
+    ;; ENSURE-CLASS-USING-CLASS, ENSURE-GENERIC-FUNCTION-USING-CLASS,
+    ;; and they should be applicable when given NIL, so we need for
+    ;; them to specialize on the host class named NULL.  For that
+    ;; reason, we import that class from the host.
+    (setf (clo:find-class client global-environment 'null)
+          (find-class 'null))
+    ;; We may also have methods that specialize to CONS or LIST, so we
+    ;; import those as well.
+    (setf (clo:find-class client global-environment 'cons)
+          (find-class 'cons))
+    (setf (clo:find-class client global-environment 'list)
+          (find-class 'list))
     ;; It would be better to load the condition system here.
     (setf (clo:macro-function client global-environment 'define-condition)
           (lambda (form environment)
