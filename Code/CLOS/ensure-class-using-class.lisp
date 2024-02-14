@@ -77,6 +77,8 @@
      &allow-other-keys)
   (unless metaclass-p
     (setf metaclass 'standard-class))
+  (when (symbolp metaclass)
+    (setf metaclass (find-class metaclass t metaclass-environment)))
   (setf direct-superclasses
         (process-direct-superclasses direct-superclasses class-environment))
   (let ((remaining-keys (copy-list keys)))
