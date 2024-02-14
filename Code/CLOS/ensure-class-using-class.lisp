@@ -82,7 +82,7 @@
   (let ((remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
-    (setf (find-class name)
+    (setf (find-class name nil class-environment)
           (apply #'make-instance metaclass
                  :direct-default-initargs direct-default-initargs
                  :direct-slots direct-slots
