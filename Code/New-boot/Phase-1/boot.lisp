@@ -285,6 +285,28 @@
             (lambda (expander client environment name)
               (setf (clo:type-expander client environment name)
                     expander))))
+    ;; ENSURE-GENERIC-FUNCTION-USING-CLASS calls
+    ;; FIND-METHOD-COMBINATION in the method specialized to NULL
+    ;; (i.e., the generic function is being created) when the
+    ;; METHOD-COMBINATION keyword argument is not supplied.  But
+    ;; during bootstrapping we always call
+    ;; ENSURE-GENERIC-FUNCTION-USING-CLASS from
+    ;; ENSURE-GENERIC-FUNCTION, and the METHOD-COMBINATION keyword
+    ;; argument must be supplied to ENSURE-GENERIC-FUNCTION, at least
+    ;; as the standard version of ENSURE-GENERIC-FUNCTION is defined.
+    ;; So to avoid that errors get propagated, we define
+    ;; FIND-METHOD-COMBINATION to signal an error.
+    (let ((symbol
+            (sb:intern-parcl-symbol
+             client "CLOSTROPHILIA" "FIND-METHOD-COMBINATION")))
+      (setf (clo:fdefinition client global-environment symbol)
+            (lambda (generic-function
+                     method-combination-type-name
+                     method-combination-options)
+              (declare (ignore generic-function
+                               method-combination-type-name
+                               method-combination-options))
+              (error "FIND-METHOD-COMBINATION called in E1")))) 
     (sb:ensure-asdf-system
      client environment "sicl-clos-ensure-metaobject-using-class")
     global-environment))
