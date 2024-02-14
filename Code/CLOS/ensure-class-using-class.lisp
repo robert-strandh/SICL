@@ -77,6 +77,11 @@
      &allow-other-keys)
   (unless metaclass-p
     (setf metaclass 'standard-class))
+  ;; MAKE-INSTANCE might be the host version during early
+  ;; bootstrapping phases, so we can't give it a symbol as an argment,
+  ;; because then the host would resolve that symbol to a class in the
+  ;; host environment.  For that reason, we find the metaclass in the
+  ;; metaclass environment here.
   (when (symbolp metaclass)
     (setf metaclass (find-class metaclass t metaclass-environment)))
   (setf direct-superclasses
