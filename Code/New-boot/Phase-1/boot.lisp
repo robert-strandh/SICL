@@ -285,4 +285,6 @@
             (lambda (expander client environment name)
               (setf (clo:type-expander client environment name)
                     expander))))
+    (sb:ensure-asdf-system
+     client environment "sicl-clos-ensure-metaobject-using-class")
     global-environment))
