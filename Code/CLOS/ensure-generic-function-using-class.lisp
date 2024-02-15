@@ -34,6 +34,16 @@
          (error 'generic-function-class-must-be-class-or-name
                 :object generic-function-class))))
 
+;;; The MOP specification of ENSURE-GENERIC-FUNCTION-USING-CLASS says
+;;; that if the :METHOD-CLASS argument was received, it is converted
+;;; into a class metaobject before MAKE-INSTANCE is called, which
+;;; suggests that only a symbol is valid here.  But then, the Common
+;;; Lisp standard description of ENSURE-GENERIC-FUNCTION says that the
+;;; METHOD-CLASS can also be a class object.  So obviously, if
+;;; ENSURE-GENERIC-FUNCTION receives a class object, it will transmit
+;;; that object to ENSURE-GENERIC-FUNCTION-USING-CLASS.  Therefore
+;;; ENSURE-GENERIC-FUNCTION-USING-CLASS must also be able to handle a
+;;; class object as this argument.
 (defun canonicalize-method-class (method-class environment)
   (cond ((symbolp method-class)
          (find-class method-class t environment))
