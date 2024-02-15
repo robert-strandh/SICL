@@ -34,6 +34,26 @@
     (define-^ensure-method-combination
         client (sb:e1 boot) global-environment)
     (define-find-method-combination-template client global-environment)
+    (let ((ensure-generic-function-using-class
+            (sb:intern-parcl-symbol
+             client "SICL-CLOS" "ENSURE-GENERIC-FUNCTION-USING-CLASS"))
+          (^ensure-generic-function-using-class
+            (sb:intern-parcl-symbol
+             client "SICL-CLOS" "^ENSURE-GENERIC-FUNCTION-USING-CLASS"))
+          (ensure-class-using-class
+            (sb:intern-parcl-symbol
+             client "SICL-CLOS" "ENSURE-CLASS-USING-CLASS"))
+          (^ensure-class-using-class
+            (sb:intern-parcl-symbol
+             client "SICL-CLOS" "^ENSURE-CLASS-USING-CLASS")))
+      (setf (clo:fdefinition
+             client global-environment ^ensure-generic-function-using-class)
+            (clo:fdefinition
+             client (sb:e1 boot) ensure-generic-function-using-class))
+      (setf (clo:fdefinition
+             client global-environment ^ensure-class-using-class)
+            (clo:fdefinition
+             client (sb:e1 boot) ensure-class-using-class)))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
