@@ -1,16 +1,6 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
-;;; We program the reader so that we can write:
-;;; @package-name symbol-name to intern a symbol in a
-;;; Parcl package at run time.
-(eval-when (:compile-toplevel)
-  (setf *readtable* (copy-readtable))
-  (set-macro-character
-   #\@ (lambda (stream character)
-         (declare (ignore character))
-         (multiple-value-bind (package-name symbol-name)
-             (sb:read-symbol-components stream)
-           `(sb:intern-parcl-symbol client ,package-name ,symbol-name)))))
+(eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
 
 (defun boot (boot)
   (format *trace-output* "**************** Phase 2~%")
