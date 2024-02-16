@@ -19,4 +19,5 @@
    #:intern-parcl-symbol
    #:define-package-functions
    #:define-environment-functions
-   #:import-khazern))
+   #:import-khazern
+   #:read-symbol-components))
