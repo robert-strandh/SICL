@@ -1,5 +1,17 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+;;; We program the reader so that we can write:
+;;; @package-name symbol-name to intern a symbol in a
+;;; Parcl package at run time.
+(eval-when (:compile-toplevel)
+  (setf *readtable* (copy-readtable))
+  (set-macro-character
+   #\@ (lambda (stream character)
+         (declare (ignore character))
+         (multiple-value-bind (package-name symbol-name)
+             (sb:read-symbol-components stream)
+           `(sb:intern-parcl-symbol client ,package-name ,symbol-name)))))
+
 (defun boot (boot)
   (format *trace-output* "**************** Phase 2~%")
   (let* ((client (make-instance 'client))
@@ -19,41 +31,27 @@
     (import-from-host client global-environment)
     (sb:import-khazern client global-environment)
     (sb:define-environment-functions client global-environment)
-    (let ((environment-symbol
-            (sb:intern-parcl-symbol
-             client "SICL-ENVIRONMENT" "*ENVIRONMENT*"))
-          (client-symbol
-            (sb:intern-parcl-symbol
-             client "SICL-ENVIRONMENT" "*CLIENT*")))
-      (clo:make-variable
-       client global-environment environment-symbol global-environment)
-      (clo:make-variable
-       client global-environment client-symbol client))
+    (clo:make-variable client global-environment
+                       @sicl-environment:*environment*
+                       global-environment)
+    (clo:make-variable client global-environment
+                       @sicl-environment:*client*
+                       client)
     (define-ensure-method-combination-template
         client (sb:e1 boot) global-environment)
     (define-^ensure-method-combination
         client (sb:e1 boot) global-environment)
     (define-find-method-combination-template client global-environment)
-    (let ((ensure-generic-function-using-class
-            (sb:intern-parcl-symbol
-             client "SICL-CLOS" "ENSURE-GENERIC-FUNCTION-USING-CLASS"))
-          (^ensure-generic-function-using-class
-            (sb:intern-parcl-symbol
-             client "SICL-CLOS" "^ENSURE-GENERIC-FUNCTION-USING-CLASS"))
-          (ensure-class-using-class
-            (sb:intern-parcl-symbol
-             client "SICL-CLOS" "ENSURE-CLASS-USING-CLASS"))
-          (^ensure-class-using-class
-            (sb:intern-parcl-symbol
-             client "SICL-CLOS" "^ENSURE-CLASS-USING-CLASS")))
-      (setf (clo:fdefinition
-             client global-environment ^ensure-generic-function-using-class)
-            (clo:fdefinition
-             client (sb:e1 boot) ensure-generic-function-using-class))
-      (setf (clo:fdefinition
-             client global-environment ^ensure-class-using-class)
-            (clo:fdefinition
-             client (sb:e1 boot) ensure-class-using-class)))
+    (setf (clo:fdefinition
+           client global-environment
+           @sicl-clos:^ensure-generic-function-using-class)
+          (clo:fdefinition
+           client (sb:e1 boot)
+           @sicl-clos:ensure-generic-function-using-class))
+    (setf (clo:fdefinition
+           client global-environment @sicl-clos:^ensure-class-using-class)
+          (clo:fdefinition
+           client (sb:e1 boot) @sicl-clos:ensure-class-using-class))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
