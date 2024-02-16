@@ -20,4 +20,5 @@
    #:define-package-functions
    #:define-environment-functions
    #:import-khazern
+   #:enable-parcl-symbols
    #:read-symbol-components))
