@@ -24,7 +24,7 @@
 ;;; Parcl package at run time.
 
 (defmacro enable-parcl-symbols (client-variable)
-  `(eval-when (:compile-toplevel)
+  `(progn
      (setf *readtable* (copy-readtable))
      (set-macro-character
       #\@ (lambda (stream character)
