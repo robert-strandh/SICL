@@ -1,5 +1,17 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
+;;; We program the reader so that we can write:
+;;; @package-name symbol-name to intern a symbol in a
+;;; Parcl package at run time.
+(eval-when (:compile-toplevel)
+  (setf *readtable* (copy-readtable))
+  (set-macro-character
+   #\@ (lambda (stream character)
+         (declare (ignore character))
+         (multiple-value-bind (package-name symbol-name)
+             (sb:read-symbol-components stream)
+           `(sb:intern-parcl-symbol client ,package-name ,symbol-name)))))
+
 (defgeneric my-make-instance (class &rest initargs))
 
 (defun define-make-instance (client environment)
@@ -167,16 +179,10 @@
     (setf (clo:find-class client global-environment 'package)
           (find-class 'parcl-class:package))
     (define-ensure-class client global-environment)
-    (let ((environment-symbol
-            (sb:intern-parcl-symbol
-             client "SICL-ENVIRONMENT" "*ENVIRONMENT*"))
-          (client-symbol
-            (sb:intern-parcl-symbol
-             client "SICL-ENVIRONMENT" "*CLIENT*")))
-      (clo:make-variable
-       client global-environment environment-symbol global-environment)
-      (clo:make-variable
-       client global-environment client-symbol client))
+    (clo:make-variable client global-environment
+                       @sicl-environment:*environment*)
+    (clo:make-variable client global-environment
+                       @sicl-environment:*client*)
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
     (sb:ensure-asdf-system
@@ -245,11 +251,9 @@
      client environment "clostrophilia-class-finalization")
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination-base")
-    (let ((symbol
-            (sb:intern-parcl-symbol
-             client "CLOSTROPHILIA" "SET-FUNCALLABLE-INSTANCE-FUNCTION")))
-      (setf (clo:fdefinition client global-environment symbol)
-            (fdefinition 'closer-mop:set-funcallable-instance-function)))
+    (setf (clo:fdefinition client global-environment
+                           @clostrophilia:set-funcallable-instance-function)
+          (fdefinition 'closer-mop:set-funcallable-instance-function))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
     ;; The method on ENSURE-GENERIC-FUNCTION-USING-CLASS specialized
@@ -259,11 +263,9 @@
     ;; normal.  However, in this phase, all classes are host classes,
     ;; so they are finalized.  For that reason, we make
     ;; finalize-inheritance return T always.
-    (let ((symbol
-            (sb:intern-parcl-symbol
-             client "CLOSTROPHILIA" "FINALIZE-INHERITANCE")))
-      (setf (clo:fdefinition client global-environment symbol)
-            (constantly t)))
+    (setf (clo:fdefinition client global-environment
+                           @clostrophilia:finalize-inheritance)
+          (constantly t))
     ;; The method on ENSURE-CLASS-USING-CLASS specialized to
     ;; FORWARD-REFERENCED-CLASS calls CHANGE-CLASS to turn the class
     ;; into something other than a FORWARD-REFERENCED-CLASS.  But in
@@ -278,9 +280,7 @@
           (gethash "ECCLESIA" sb::*packages*))
     (sb:ensure-asdf-system
      client environment "common-macro-definitions-packages-intrinsic")
-    (let ((symbol
-            (sb:intern-parcl-symbol
-             client "SICL-ENVIRONMENT" "TYPE-EXPANDER")))
+    (let ((symbol @sicl-environment:type-expander))
       (setf (clo:fdefinition client global-environment `(setf ,symbol))
             (lambda (expander client environment name)
               (setf (clo:type-expander client environment name)
@@ -296,17 +296,15 @@
     ;; as the standard version of ENSURE-GENERIC-FUNCTION is defined.
     ;; So to avoid that errors get propagated, we define
     ;; FIND-METHOD-COMBINATION to signal an error.
-    (let ((symbol
-            (sb:intern-parcl-symbol
-             client "CLOSTROPHILIA" "FIND-METHOD-COMBINATION")))
-      (setf (clo:fdefinition client global-environment symbol)
-            (lambda (generic-function
-                     method-combination-type-name
-                     method-combination-options)
-              (declare (ignore generic-function
-                               method-combination-type-name
-                               method-combination-options))
-              (error "FIND-METHOD-COMBINATION called in E1")))) 
+    (setf (clo:fdefinition client global-environment
+                           @clostrophilia:find-method-combination)
+          (lambda (generic-function
+                   method-combination-type-name
+                   method-combination-options)
+            (declare (ignore generic-function
+                             method-combination-type-name
+                             method-combination-options))
+            (error "FIND-METHOD-COMBINATION called in E1")))
     (sb:ensure-asdf-system
      client environment "sicl-clos-ensure-metaobject-using-class")
     (sb:ensure-asdf-system
