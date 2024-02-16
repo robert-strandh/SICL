@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+(eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
+
 ;;; Before we can start creating generic functions, we need to define
 ;;; method combinations, but method combinations reqiure a few
 ;;; functions from Ecclesia.  But we can't load Ecclesia first because
@@ -9,18 +11,12 @@
 ;;; taken from E1.
 
 (defun define-ecclesia-functions (client e1 e2)
-  (let ((symbol
-          (sb:intern-parcl-symbol
-           client "ECCLESIA" "PROPER-LIST-P")))
+  (let ((symbol @ecclesia:proper-list-p))
     (setf (clo:fdefinition client e2 symbol)
           (clo:fdefinition client e1 symbol)))
-  (let ((symbol
-          (sb:intern-parcl-symbol
-           client "ECCLESIA" "EXTRACT-LAMBDA-LIST-VARIABLES")))
+  (let ((symbol @ecclesia:extract-lambda-list-variables))
     (setf (clo:fdefinition client e2 symbol)
           (clo:fdefinition client e1 symbol)))
-  (let ((symbol
-          (sb:intern-parcl-symbol
-           client "ECCLESIA" "SEPARATE-FUNCTION-BODY")))
+  (let ((symbol @ecclesia:separate-function-body))
     (setf (clo:fdefinition client e2 symbol)
           (clo:fdefinition client e1 symbol))))
