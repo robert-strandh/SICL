@@ -180,9 +180,11 @@
           (find-class 'parcl-class:package))
     (define-ensure-class client global-environment)
     (clo:make-variable client global-environment
-                       @sicl-environment:*environment*)
+                       @sicl-environment:*environment*
+                       global-environment)
     (clo:make-variable client global-environment
-                       @sicl-environment:*client*)
+                       @sicl-environment:*client*
+                       client)
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
     (sb:ensure-asdf-system
