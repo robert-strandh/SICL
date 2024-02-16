@@ -22,4 +22,5 @@
    (:file "define-backquote-macros")
    (:file "import-from-host")
    (:file "define-environment-functions")
-   (:file "import-khazern")))
+   (:file "import-khazern")
+   (:file "read-symbol-components")))
