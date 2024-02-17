@@ -14,6 +14,7 @@
   :components
   ((:file "packages")
    (:file "boot-class")
+   (:file "environment")
    (:file "client")
    (:file "package-programming")
    (:file "cst-to-ast")
