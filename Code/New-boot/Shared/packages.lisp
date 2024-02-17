@@ -12,6 +12,7 @@
   (:export
    #:boot #:e1 #:c1 #:e2 :c2 #:e3 #:c3
    #:client #:environment
+   #:name
    #:define-backquote-macros
    #:ensure-asdf-system
    #:import-host-functions
