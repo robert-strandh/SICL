@@ -3,5 +3,6 @@
 (defun create-environment (client)
   (let ((environment (cb:create-environment)))
     (change-class (trucler:global-environment client environment)
-                  'sicl-environment:run-time-environment)
+                  'sb:environment
+                  :name :E1)
     environment))
