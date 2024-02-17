@@ -9,4 +9,5 @@
   (apply #'^ensure-class-using-class
          (find-class name nil)
          name
+         :class-environment sicl-environment:*environment*
          arguments))
