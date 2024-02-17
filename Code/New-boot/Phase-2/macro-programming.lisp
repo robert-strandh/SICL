@@ -13,7 +13,7 @@
   nil)
 
 (defmethod cmd:ensure-class-name ((client client))
-  'ensure-class)
+  @sicl-clos:ensure-class)
 
 ;;; DEFGENERIC programming.
 
