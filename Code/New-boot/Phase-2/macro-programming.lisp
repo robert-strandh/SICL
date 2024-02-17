@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+(eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
+
 ;;; DEFCLASS programming.
 
 (defmethod cmd:defclass-compile-time-action
@@ -40,14 +42,14 @@
      documentation-option
      environment)
   (declare (ignore documentation-option environment))
-  `(ensure-generic-function
+  `(@sicl-clos:ensure-generic-function
     ,name
     :lambda-list lambda-list
     :argument-precedence-order argument-precedence-order
     :generic-function-class generic-function-class-name
     :method-class method-class-name
     :method-combination
-    (find-method-combination
+    (@clostrophilia:find-method-combination
      ',method-combination-name ',method-combination-arguments)))
 
 ;;; PROCLAIM programming.
