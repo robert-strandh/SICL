@@ -149,8 +149,7 @@
          (env:*client* client)
          (env:*environment* global-environment))
     (sb:define-package-functions client global-environment)
-    (setf (sb:e1 boot) global-environment
-          (sb:c1 boot) client)
+    (setf (sb:e1 boot) global-environment)
     (reinitialize-instance client
       :environment global-environment)
     (sb:define-backquote-macros client global-environment)

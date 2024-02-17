@@ -10,8 +10,7 @@
            (trucler:global-environment client environment))
          (env:*client* client)
          (env:*environment* global-environment))
-    (setf (sb:e2 boot) global-environment
-          (sb:c2 boot) client)
+    (setf (sb:e2 boot) global-environment)
     (reinitialize-instance client
       :environment global-environment)
     (clo:make-variable
@@ -45,5 +44,7 @@
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
-     client environment "clostrophilia-method-combination"))
+     client environment "clostrophilia-method-combination")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-class-hierarchy"))
   boot)
