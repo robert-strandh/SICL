@@ -3,7 +3,8 @@
 (defsystem #:sicl-new-boot-backtrace-inspector
   :depends-on (#:mcclim
                #:common-boot-ast-evaluator
-               #:sicl-source-tracking)
+               #:sicl-source-tracking
+               #:clouseau)
   :serial t
   :components
   ((:file "mcclim-configuration")
