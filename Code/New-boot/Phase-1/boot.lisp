@@ -104,7 +104,7 @@
                           client global-environment direct-superclass)))
                  (result
                    (make-instance 'standard-class
-                     :name name
+                     :name (make-symbol (symbol-name name))
                      :direct-default-initargs direct-default-initargs
                      :direct-slots new-slots
                      :direct-superclasses new-superclasses)))
