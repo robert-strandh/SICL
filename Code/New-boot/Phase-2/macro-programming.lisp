@@ -42,7 +42,7 @@
      documentation-option
      environment)
   (declare (ignore documentation-option environment))
-  `(@sicl-clos:ensure-generic-function
+  `(ensure-generic-function
     ,name
     :lambda-list lambda-list
     :argument-precedence-order argument-precedence-order
