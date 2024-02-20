@@ -21,4 +21,4 @@
                     :direct-default-initargs direct-default-initargs
                     :direct-slots direct-slots
                     :direct-superclasse superclasses
-                    :name name))))))
+                    :name (make-symbol (symbol-name name))))))))
