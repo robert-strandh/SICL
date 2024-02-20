@@ -42,15 +42,19 @@
      documentation-option
      environment)
   (declare (ignore documentation-option environment))
-  `(ensure-generic-function
-    ,name
-    :lambda-list lambda-list
-    :argument-precedence-order argument-precedence-order
-    :generic-function-class generic-function-class-name
-    :method-class method-class-name
-    :method-combination
-    (@clostrophilia:find-method-combination
-     ',method-combination-name ',method-combination-arguments)))
+  (let ((find-method-combination-symbol
+          @clostrophilia:find-method-combination))
+    `(ensure-generic-function
+      ',name
+      :lambda-list ',lambda-list
+      ,@(if (null argument-precedence-order)
+            '()
+            `(:argument-precedence-order ',argument-precedence-order))
+      :generic-function-class ',generic-function-class-name
+      :method-class ',method-class-name
+      :method-combination
+      (funcall #',find-method-combination-symbol
+       nil ',method-combination-name ',method-combination-arguments))))
 
 ;;; PROCLAIM programming.
 
