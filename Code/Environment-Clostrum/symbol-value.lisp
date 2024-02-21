@@ -1,16 +1,16 @@
 (cl:in-package #:sicl-environment)
 
-(defun symbol-value (name)
+(defun symbol-value (name &key (environment *environment*))
   (unless (symbolp name)
     (error 'type-error :datum name :expected-type 'symbol))
-  (let ((cell (clostrum-sys:variable-cell *client* *environment* name)))
+  (let ((cell (clostrum-sys:variable-cell *client* environment name)))
     ;; CELL might be NIL, but RT:SYMBOL-VALUE can deal with that.
     (rt:symbol-value name cell rt:*dynamic-environment*)))
 
-(defun (setf symbol-value) (new-value name)
+(defun (setf symbol-value) (new-value name &key (environment *environment*))
   (unless (symbolp name)
     (error 'type-error :datum name :expected-type 'symbol))
-  (let ((cell (clostrum-sys:variable-cell *client* *environment* name)))
+  (let ((cell (clostrum-sys:variable-cell *client* environment name)))
     ;; CELL might be NIL.  We don't know whether there is a binding of
     ;; the variable on the stack.  If there is, then that binding will
     ;; be affected.  But if not, then (SETF RT:SYMBOL-VALUE) will set
@@ -28,7 +28,7 @@
             ;; We must create a global cell.
             (setf cell
                   (clostrum-sys:ensure-variable-cell
-                   *client* *environment* name))
+                   *client* environment name))
             ;; And we set the CAR of the created cell to the value
             ;; that the run time supplied.
             (setf (car cell) (car new-cell))))
