@@ -137,6 +137,16 @@
                  (format *trace-output*
                          "Assuming ~s is a method combination~%" object)
                  t)
+                ((and (symbolp type-specifier)
+                      (string= (symbol-name type-specifier)
+                               "DIRECT-SLOT-DEFINITION"))
+                 (format *trace-output*
+                         "Assuming ~s is a direct slot-definition~%" object)
+                 t)
+                ((symbolp object)
+                 (typep object type-specifier))
+                ((typep object '(cons (eql setf) (cons symbol null)))
+                 (typep object type-specifier))
                 (t
                  (format *trace-output*
                          "Don't know whether ~s is of type ~s~%"
