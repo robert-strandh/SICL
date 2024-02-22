@@ -244,7 +244,7 @@
     (setf (clo:fdefinition
            client global-environment 'ensure-generic-function)
           (lambda (name &key &allow-other-keys)
-            (error "Attempts to create generic function named ~s" name)))
+            (error "Attempt to create generic function named ~s" name)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
     (sb:ensure-asdf-system
