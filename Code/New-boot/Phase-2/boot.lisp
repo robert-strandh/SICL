@@ -55,6 +55,21 @@
     (setf (clo:fdefinition
            client (sb:e1 boot) @clostrophilia:validate-superclass)
           (constantly t))
+    ;; This might be a mistake.  The thing is that the code for adding
+    ;; reader and writer methods loaded into E1 calls
+    ;; ENSURE-GENERIC-FUNCTION, but the generic function it needs to
+    ;; ensure is in E2.  And ENSURE-GENERIC-FUNCTION in E1 has been
+    ;; set in phase 1 to call ERROR.  The easy way to fix this is to
+    ;; replace ENSURE-GENERIC-FUNCTION in E1 by the new one now in E2.
+    ;; But I am not very happy about modifying E1 in phase 2.  A
+    ;; better solution would be for the code that adds readers and
+    ;; writers to call (say) _ENSURE-GENERIC-FUNCTION, and to define
+    ;; that function in E1 to be the ENSURE-GENERIC-FUNCTION of E2.
+    ;; But that code is in Clostrophilia, and it is not ideal to have
+    ;; Clostrophilia code reflect the SICL bootstrapping procedure. 
+    (setf (clo:fdefinition client (sb:e1 boot) 'ensure-generic-function)
+          (clo:fdefinition
+           client global-environment 'ensure-generic-function))
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy"))
   boot)
