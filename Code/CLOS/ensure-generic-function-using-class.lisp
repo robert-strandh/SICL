@@ -121,6 +121,7 @@
        (generic-function-class
         (find-class 'standard-generic-function t class-environment))
        (method-class nil method-class-p)
+       (method-combination nil method-combination-p)
      &allow-other-keys)
   (declare (ignore function-name function-environment))
   (setf generic-function-class
@@ -132,12 +133,18 @@
   (when method-class-p
     (setf method-class
           (canonicalize-method-class method-class class-environment)))
+  (unless method-combination-p
+    (setf method-combination
+          (clostrophilia:generic-function-method-combination
+           generic-function)))
   (let ((remaining-keys
           (canonicalize-keyword-arguments all-keyword-arguments)))
     (if method-class-p
         (apply #'reinitialize-instance generic-function
+               :method-combination method-combination
                :method-class method-class
                remaining-keys)
         (apply #'reinitialize-instance generic-function
+               :method-combination method-combination
                remaining-keys)))
   generic-function)
