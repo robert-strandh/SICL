@@ -134,9 +134,13 @@
                          "Assuming ~s is a method~%" object)
                  t)
                 ((eq type-specifier 'method-combination)
-                 (format *trace-output*
-                         "Assuming ~s is a method combination~%" object)
-                 t)
+                 (if (null object)
+                     nil
+                     (progn 
+                       (format *trace-output*
+                               "Assuming ~s is a method combination~%"
+                               object)
+                       t)))
                 ((and (symbolp type-specifier)
                       (string= (symbol-name type-specifier)
                                "DIRECT-SLOT-DEFINITION"))
