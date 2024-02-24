@@ -13,6 +13,11 @@
     (setf (sb:e2 boot) global-environment)
     (reinitialize-instance client
       :environment global-environment)
+    ;; We saved the SICL class named T under the name sb::sicl-t.  Now
+    ;; we need to put it back as class T in E1, because it is going to
+    ;; be used as a specializer in bridge generic functions.
+    (setf (clo:find-class client (sb:e1 boot) 't)
+          (clo:find-class client (sb:e1 boot) 'sb::sicl-t))
     (clo:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
     (sb:define-package-functions client global-environment)
