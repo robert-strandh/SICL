@@ -200,6 +200,8 @@
     ;; Now, the class T is defined as a host standard class, but when
     ;; methods specialize to T, we must find the host class named T,
     ;; so we just replace the one we just loaded.
+    (setf (clo:find-class client global-environment 'sb::sicl-t)
+          (clo:find-class client global-environment 't))
     (setf (clo:find-class client global-environment 't)
           (find-class 't))
     ;; And, there are methods that specialize to the NULL class, like
