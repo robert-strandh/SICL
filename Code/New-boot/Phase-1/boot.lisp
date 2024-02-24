@@ -103,7 +103,7 @@
                          (clo:find-class
                           client global-environment direct-superclass)))
                  (result
-                   (make-instance 'standard-class
+                   (make-instance 'closer-mop:funcallable-standard-class
                      :name (make-symbol (symbol-name name))
                      :direct-default-initargs direct-default-initargs
                      :direct-slots new-slots
