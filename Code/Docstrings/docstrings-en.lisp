@@ -273,13 +273,6 @@
               even if the result could be expressed as an exact rational number.~@
               The consequences are undefine if NUMBER is not a number."))
 
-(fundoc 'acons
-        (fmt "Lambda List: (KEY DATUM ALIST).~@
-              Return a new association list with a CONS of the~@
-              KEY and the DATUM as a first element, and ALIST as the~@
-              rest.  It is entirely equivalent to~@
-              (cons (cons KEY DATUM) ALIST."))
-
 (fundoc 'acos 
         (fmt "Lambda list: (NUMBER).~@
               Return the arc cosine of the number NUMBER.~@
@@ -354,21 +347,6 @@
               The consequences are undefined if GENERIC-FUNCTION~@
               is not a generic function, or of METHOD is not a method."))
 
-(fundoc 'adjoin
-        (fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT).~@
-              If ITEM is already an element of LIST, then return LIST.~@
-              Otherwise return LIST with ITEM as an additional element,~@
-              as if (cons ITEM LIST) had been called.~@
-              KEY is a designator for a function that takes one argument~@
-              which is applied to ITEM and the elements of LIST before~@
-              an equality test is applied.~@
-              TEST and TEST-NOT are designators functions of functions~@
-              that take two arguments and which return a true value if~@
-              and only if their arguments are considered equal.~@
-              TEST and TEST-NOT must not be given simultaneously.~@
-              ADJOIN might signal an error of type TYPE-ERROR is LIST is~@
-              not a proper list."))
-
 (fundoc 'adjustable-array-p
         (fmt "Lambda list: (ARRAY).~@
               Return a true value if and only if ARRAY is an adjustable~@
@@ -389,18 +367,6 @@
               Return false otherwise.~@
               If CHARACTER is not a character, an error of type type-error~@
               is signaled."))
-
-(fundoc 'append
-	(fmt "Lambda list: (&rest LISTS).~@
-              Return a new list which is the concatenation of the lists in LISTS.~@
-              All arguments except the last one must be proper lists.~@
-              The last argument may be any object.~@
-              Each of the argument except the last one is copied.~@
-              The last argument is not copied, and shares structure with
-              the return value.~@
-              As a special case, when every argument except the last is NIL~@
-              (which includes the case where there is only one argument),~@
-              then the last argument is returned.~@"))
 
 (fundoc 'array-dimension
 	(fmt "Lambda list: (ARRAY AXIS-NUMBER).~@
@@ -498,28 +464,6 @@
               a function of one argument.  It is then applied to the car of each~@
               entry of ALIST before the test is applied.  When KEY is not given~@
               or NIL, it is as if IDENTITY were used."))
-
-(fundoc 'assoc-if
-	(fmt "Lambda list: (PREDICATE ALIST &key KEY).~@
-              Return the first cons in ALIST that has a car that satisfies~@
-              the test.~@
-              PREDICATE is a designator for a function of one argument.~@
-              When KEY is not given, the test is satisified when PREDICATE~@
-              returns true when applied to the car of an entry of ALIST.~@
-              When KEY is given, and not NIL, it must be a designator for~@
-              a function of one argument, and it is then applied to the car~@
-              of the entry of ALIST before PREDICATE is applied."))
-
-(fundoc 'assoc-if-not
-	(fmt "Lambda list: (PREDICATE ALIST &key KEY).~@
-              Return the first cons in ALIST that has a car that satisfies~@
-              the test.~@
-              PREDICATE is a designator for a function of one argument.~@
-              When KEY is not given, the test is satisified when PREDICATE~@
-              returns false when applied to the car of an entry of ALIST.~@
-              When KEY is given, and not NIL, it must be a designator for~@
-              a function of one argument, and it is then applied to the car~@
-              of the entry of ALIST before PREDICATE is applied."))
 
 (fundoc 'atom
         (fmt "Lambda list: (OBJECT).~@
