@@ -75,6 +75,10 @@
     (setf (clo:fdefinition client (sb:e1 boot) 'ensure-generic-function)
           (clo:fdefinition
            client global-environment 'ensure-generic-function))
+    (setf (clo:fdefinition
+           client (sb:e1 boot) @clostrophilia:find-class-t)
+          (lambda ()
+            (clo:find-class client global-environment 't)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy"))
   boot)
