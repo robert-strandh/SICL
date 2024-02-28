@@ -32,7 +32,7 @@
 ;;; SPECIALIZERS is a list of specializer designators.  A specializer
 ;;; designator is either a specializer metaobject (designating
 ;;; itself), a symbol (designating a class with that name), or a list
-;;; of the form (SETF <object>) (designating an EQL specializer with
+;;; of the form (EQL <object>) (designating an EQL specializer with
 ;;; <object> as the specializer object. An error is signaled if this
 ;;; argument is not a proper list, or if any element of the list is
 ;;; not a specializer designator.  If this argument is not supplied,
