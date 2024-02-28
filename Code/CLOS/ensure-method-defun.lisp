@@ -48,7 +48,6 @@
 (defun ensure-method
     (generic-function-or-name
      &key
-       (generic-function-class 'standard-generic-function)
        (method-class 'standard-method)
        (lambda-list nil lambda-list-p)
        (qualifiers '())
@@ -58,12 +57,7 @@
   (let ((generic-function
           (if (or (symbolp generic-function-or-name)
                   (consp  generic-function-or-name))
-              (ensure-generic-function
-               generic-function-or-name
-               :generic-function-class generic-function-class
-               :method-class method-class
-               :lambda-list
-               (ecclesia:generate-congruent-lambda-list lambda-list))
+              (ensure-generic-function generic-function-or-name)
               generic-function-or-name)))
     (let ((method
             (^make-instance method-class
