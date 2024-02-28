@@ -95,7 +95,7 @@
                  :lambda-list (extract-lambda-list lambda-list)
                  :method-class method-class))))
     (let ((method
-            (make-instance method-class
+            (^make-instance method-class
               :lambda-list (extract-lambda-list lambda-list)
               :qualifiers qualifiers
               :specializers specializers
