@@ -44,11 +44,6 @@
 ;;;
 ;;; FUNCTION is a method function.  If this argument is not supplied,
 ;;; an error is signaled.
-;;;
-;;; SLOT-DEFINITION is a slot-definition metaobject.  If METHOD-CLASS
-;;; is a subclass of the class STANDARD-METHOD, and this argument is
-;;; not supplied, an error is signaled.  If this argument is supplied,
-;;; it must be a subclass of the class named DIRECT-SLOT-DEFINITION.
 
 (defun ensure-method
     (generic-function-or-name
@@ -60,8 +55,7 @@
        (qualifiers '())
        (specializers nil specializers-p)
        (documentation nil)
-       (function nil function-p)
-       (slot-definition nil slot-definition-p))
+       (function nil function-p))
   (let ((generic-function
           (cond ((typep generic-function-or-name 'generic-function)
                  generic-function-or-name)
