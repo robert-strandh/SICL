@@ -11,7 +11,6 @@
    (:file "macro-programming")
    (:file "import-from-host")
    (:file "define-ensure-generic-function")
-   (:file "define-ensure-class")
    (:file "define-ensure-method-combination-template")
    (:file "define-find-method-combination-template")
    (:file "define-ensure-method-combination")
