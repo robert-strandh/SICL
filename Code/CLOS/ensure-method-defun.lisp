@@ -48,8 +48,7 @@
 (defun ensure-method
     (generic-function-or-name
      &key
-       (generic-function-class
-        'standard-generic-function generic-function-class-p)
+       (generic-function-class 'standard-generic-function)
        (method-class 'standard-method)
        (lambda-list nil lambda-list-p)
        (qualifiers '())
@@ -57,43 +56,15 @@
        (documentation nil)
        (function nil function-p))
   (let ((generic-function
-          (cond ((typep generic-function-or-name 'generic-function)
-                 generic-function-or-name)
-                ((symbolp generic-function-or-name)
-                 (cond ((not (fboundp generic-function-or-name))
-                        nil)
-                       ((special-operator-p generic-function-or-name)
-                        (error 'name-refers-to-a-special-operator
-                               :name generic-function-or-name))
-                       ((not (null (macro-function generic-function-or-name)))
-                        (error 'name-refers-to-a-macro
-                               :name generic-function-or-name))
-                       (t
-                        (fdefinition generic-function-or-name))))
-                ((typep generic-function-or-name
-                        '(cons (eql setf) (cons symbol null)))
-                 (if (fboundp generic-function-or-name)
-                     (fdefinition generic-function-or-name)
-                     nil))
-                (t
-                 (error 'invalid-function-name
-                        :name generic-function-or-name)))))
-    (when (null generic-function)
-      (setf generic-function
-            (if generic-function-class-p
-                (ensure-generic-function
-                 generic-function-or-name
-                 ;; FIXME: This is wrong.  The default values for &key
-                 ;; and &optional must be removed, and the &AUX
-                 ;; variables must all be removed.
-                 :lambda-list (extract-lambda-list lambda-list)
-                 :generic-function-class generic-function-class
-                 :method-class method-class)
-                (ensure-generic-function
-                 generic-function-or-name
-                 ;; FIXME: This too is wrong.
-                 :lambda-list (extract-lambda-list lambda-list)
-                 :method-class method-class))))
+          (if (or (symbolp generic-function-or-name)
+                  (consp  generic-function-or-name))
+              (ensure-generic-function
+               generic-function-or-name
+               :generic-function-class generic-function-class
+               :method-class method-class
+               :lambda-list
+               (ecclesia:generate-congruent-lambda-list lambda-list))
+              generic-function-or-name)))
     (let ((method
             (^make-instance method-class
               :lambda-list (extract-lambda-list lambda-list)
