@@ -88,7 +88,6 @@
     (setf (clo:fdefinition
            client global-environment @sicl-clos:^make-instance)
           (clo:fdefinition client (sb:e1 boot) 'make-instance))
-    (sb:ensure-asdf-system client environment "sicl-clos-ensure-method")
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy"))
   boot)
