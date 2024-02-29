@@ -317,7 +317,7 @@
                              method-combination-options))
             (error "FIND-METHOD-COMBINATION called in E1")))
     (sb:ensure-asdf-system
-     client environment "sicl-clos-ensure-metaobject-using-class")
+     client environment "sicl-clos-ensure-metaobject-using")
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination-base")
     global-environment))
