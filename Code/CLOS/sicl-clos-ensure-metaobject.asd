@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "ensure-generic-function")
-   (:file "ensure-class")))
+   (:file "ensure-class")
+   (:file "ensure-method")))
