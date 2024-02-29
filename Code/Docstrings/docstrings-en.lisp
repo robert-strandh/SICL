@@ -108,31 +108,6 @@
         (fmt "Lambda list: (OBJECT-1 OBJECT-2)~@
               Return a new CONS cell with OBJECT-1 in the~@
               CAR field and OBJECT-2 in the CDR field."))
-
-(fundoc 'nth
-        (fmt "Lambda list: (N LIST)~@
-              where N is a non-negative integer~@
-              and LIST is a (not necessarily proper) list.~@
-              Return the Nth element of the list LIST~@
-              where the first element is the zeroth.~@
-              When LIST is not a proper list, and it has fewer than~@
-              N+1 elements, an error is signaled.~@
-              In particular, when LIST is neither a list nor NIL,~@
-              an error is signaled.~@
-              When N is not a non-negative integer, an error~@
-              of type TYPE-ERROR is signaled."))
-
-(fundoc 'nthcdr
-        (fmt "Lambda list: (N LIST)~@
-              where N is a non-negative integer~@
-              and LIST is a (not necessarily proper) list.~@
-              Return the result of calling CDR N times on LIST.~@
-              When LIST is not a proper list, and it has fewer than~@
-              N elements, an error is signaled.~@
-              In particular, when LIST is neither a list nor NIL,~@
-              an error is signaled.~@
-              When N is not a non-negative integer, an error~@
-              of type TYPE-ERROR is signaled."))
               
 (fundoc '<
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -444,27 +419,6 @@
 	(fmt "Lambda list: (ARRAY).~@
               Return true if ARRAY is of type array, and fals otherwise."))
 
-(fundoc 'assoc
-	(fmt "Lambda list: (ITEM ALIST &key KEY TEST TEST-NOT).~@
-              Return the first cons in ALIST that has a car that satisfies~@
-              the test.~@
-              When neither of KEY, TEST and TEST-NOT are given, the test is~@
-              satisfied when the car of the entry in alist is EQL to ITEM.~@
-              When TEST is given, it must be a designator for a function of~@
-              two arguments that is used in place of EQL to determine wheter~@
-              the test is satisified, i.e., if the function returns true when~@
-              applied to ITEM and the car of the entry of ALIST, then that~@
-              entry is returned. 
-              When TEST-NOT is given, it must be a designator for a function of~@
-              two arguments that is is applied to ITEM and the the car of the~@
-              entries of ALIST, and if the function then returns false for some~@
-              entry, then that entry is returned.~@
-              At most one of TEST and TEST-NOT may be given.~@
-              When KEY is given and not NIL, then it must be a designator for~@
-              a function of one argument.  It is then applied to the car of each~@
-              entry of ALIST before the test is applied.  When KEY is not given~@
-              or NIL, it is as if IDENTITY were used."))
-
 (fundoc 'atom
         (fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is an atom (i.e. anything other than~@
@@ -703,15 +657,6 @@
         (fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is a cons cell, false otherwise."))
 
-(fundoc 'copy-tree
-        (fmt "Lambda list: (TREE).~@
-              Return a copy of the tree TREE.~@
-              A deep copy of TREE is constructed, in that all the cons cells~@
-              of TREE are recursively copied.  Only the leaves (i.e. atoms)~@
-              of TREE are not copied.~@
-              Circularity or partial substructure sharing in TREE~@
-              are not preserved."))
-
 (fundoc 'decode-float
 	(fmt "Lambda list: (FLOAT).~@
               Return three values: the significand, the expnent, and the sign~@
@@ -789,25 +734,6 @@
               exponent is some arbitrary integer.~@
               The sign is an integer equal to -1 if the argument is negative~@
               and equal to 1 if the argument is positive or 0."
-
-(fundoc 'nsublis
-        (fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT).~@
-              Return a new tree, which is like TREE, except that occurrences~@
-              of keys of the association list ALIST in TREE are replaced by~@
-              the object associated with that key in ALIST.  When no substitutions~@
-              are made, the original tree TREE is returned.~@
-              Relevant parts of TREE may be destructively modified.~@
-              When KEY is given and not NIL, it is a designator for a function of~@
-              one argument which is applied to the elements of TREE before~@
-              testing against the keys of ALIST.~@
-              When TEST is given, it must be a designator for a function that~@
-              returns a generalized Boolean, and it is used to determine whether~@
-              elements of TREE correspond to a key of ALIST.~@
-              When TEST-NOT is given, it must be a designator for a function that~@
-              returns a generalized Boolean, and it is used to determine whether~@
-              elements of TREE do not correspond to a key of ALIST.~@
-              At most one of TEST and TEST-NOT can be given.~@
-              If neither TEST nor TEST-NOT is given, EQL is used."))
 
 (fundoc 'rationalp
 	(fmt "Lambda list: (OBJECT).~@
