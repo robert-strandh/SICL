@@ -123,16 +123,10 @@
   (setf (clo:fdefinition client global-environment 'typep)
         (lambda (object type-specifier)
           (cond ((eq type-specifier 'class)
-                 (if (symbolp object)
-                     nil
-                     (progn 
-                       (format *trace-output*
-                               "Assuming ~s is a class~%" object)
-                       t)))
-                ((eq type-specifier 'method)
-                 (format *trace-output*
-                         "Assuming ~s is a method~%" object)
-                 t)
+                 (typep object
+                        (clo:find-class
+                         client global-environment
+                         'class)))
                 ((eq type-specifier 'method-combination)
                  (typep object
                         (clo:find-class
