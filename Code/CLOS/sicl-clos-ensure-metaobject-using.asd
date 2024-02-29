@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem "sicl-clos-ensure-metaobject-using-class"
+(defsystem "sicl-clos-ensure-metaobject-using"
   :serial t
   :components
   ((:file "ensure-generic-function-using-class")
