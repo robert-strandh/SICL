@@ -134,19 +134,20 @@
                          "Assuming ~s is a method~%" object)
                  t)
                 ((eq type-specifier 'method-combination)
-                 (if (null object)
-                     nil
-                     (progn 
+                 (typep object
+                        (clo:find-class
+                         client global-environment
+                         @clostrophilia:method-combination)))
+                ((eq type-specifier @clostrophilia:direct-slot-definition)
+                 (or (typep object
+                            (clo:find-class
+                             client global-environment
+                             @clostrophilia:direct-slot-definition))
+                     (progn
                        (format *trace-output*
-                               "Assuming ~s is a method combination~%"
+                               "Assuming ~s is a direct slot-definition~%"
                                object)
                        t)))
-                ((and (symbolp type-specifier)
-                      (string= (symbol-name type-specifier)
-                               "DIRECT-SLOT-DEFINITION"))
-                 (format *trace-output*
-                         "Assuming ~s is a direct slot-definition~%" object)
-                 t)
                 ((symbolp object)
                  (typep object type-specifier))
                 ((typep object '(cons (eql setf) (cons symbol null)))
