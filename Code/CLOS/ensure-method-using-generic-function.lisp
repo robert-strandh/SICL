@@ -2,7 +2,12 @@
 
 (defgeneric ensure-method-using-generic-function
     (generic-function
-     &key lambda-list qualifiers specializers documentation function))
+     &key
+       unspecialized-lambda-list
+       qualifiers
+       specializer-designators
+       documentation
+       function))
 
 (defmethod ensure-method-using-generic-function
     ((generic-function standard-generic-function)
@@ -21,7 +26,7 @@
                                 (find-class specializer-designator))
                                (t specializer-designator))))
          (method-class
-           (clostrophila:generic-function-method-class generic-function))
+           (clostrophilia:generic-function-method-class generic-function))
          (method
            (make-instance method-class
              :lambda-list unspecialized-lambda-list
