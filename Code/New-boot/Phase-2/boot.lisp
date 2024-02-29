@@ -46,6 +46,12 @@
            client global-environment @sicl-clos:^ensure-class-using-class)
           (clo:fdefinition
            client (sb:e1 boot) @sicl-clos:ensure-class-using-class))
+    (setf (clo:fdefinition
+           client global-environment
+           @sicl-clos:^ensure-method-using-generic-function)
+          (clo:fdefinition
+           client (sb:e1 boot)
+           @sicl-clos:ensure-method-using-generic-function))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
