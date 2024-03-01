@@ -6,12 +6,6 @@
 ;;; environment are contained in this table.
 (defvar *packages*)
 
-;;; When a target symbol is created in a package other than KEYWORD,
-;;; we instead create an uninterned host symbol, and we use this table
-;;; to determine to which extrinsic Parcl package the target symbol
-;;; belongs.
-(defvar *symbol-package*)
-
 (defun current-package (client)
   (let* ((global-environment (environment client))
          (package-cell
@@ -28,7 +22,7 @@
 ;;; SYMBOL-NAME in the current Parcl package.  If there is no such
 ;;; symbol, we create a host uninterned symbol, and enter it into the
 ;;; current Parcl package.  We also update the hash table in
-;;; *SYMBOL-PACKAGE*.
+;;; (SYMBOL-PACKAGE *BOOT*).
 (defmethod eclector.reader:interpret-symbol
     ((client client)
      input-stream
@@ -52,7 +46,7 @@
          (unless (null status)
            (return-from eclector.reader:interpret-symbol symbol)))
        (let ((symbol (make-symbol symbol-name)))
-         (setf (gethash symbol *symbol-package*) current-package)
+         (setf (gethash symbol (symbol-package *boot*)) current-package)
          (parcl:import client current-package symbol)
          symbol)))))
 
@@ -91,7 +85,7 @@
             ((nil)
              (if internp
                  (let ((symbol (make-symbol symbol-name)))
-                   (setf (gethash symbol *symbol-package*) package)
+                   (setf (gethash symbol (symbol-package *boot*)) package)
                    (parcl:import client package symbol)
                    symbol)
                  (error "Symbol ~a does not exist in package ~a"
@@ -100,20 +94,20 @@
 (defmethod parcl:make-symbol ((client client) name package)
   (let ((result (make-symbol name)))
     (unless (null package)
-      (setf (gethash result *symbol-package*) package))
+      (setf (gethash result (symbol-package *boot*)) package))
     result))
 
 (defmethod parcl:symbol-name ((client client) symbol)
   (symbol-name symbol))
 
 (defmethod parcl:symbol-package ((client client) symbol)
-  (gethash symbol *symbol-package*))
+  (gethash symbol (symbol-package *boot*)))
 
 (defmethod parcl:symbol-names-equal ((client client) symbol1 symbol2)
   (string= symbol1 symbol2))
 
 (defmethod (setf parcl:symbol-package) (new-package (client client) symbol)
-  (setf (gethash symbol *symbol-package*) new-package))
+  (setf (gethash symbol (symbol-package *boot*)) new-package))
 
 (defmethod parcl:find-symbol ((client client) (package package) name)
   (find-symbol name package))
