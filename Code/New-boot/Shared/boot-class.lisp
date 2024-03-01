@@ -18,3 +18,7 @@
    (%e1 :accessor e1)
    (%e2 :accessor e2)
    (%e3 :accessor e3)))
+
+;;; This variable contains an instance of the class BOOT during
+;;; bootstrapping.
+(defvar *boot*)
