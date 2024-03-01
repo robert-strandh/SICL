@@ -8,6 +8,7 @@
     (create-common-lisp-package client)
     (loop for name in '("COMMON-LISP-USER" "KEYWORD")
           do (setf (gethash name *packages*) (find-package name)))
-    (values boot *packages*
-            (sicl-new-boot-phase-1:boot boot)
-            (sicl-new-boot-phase-2:boot boot))))
+    (sicl-new-boot-phase-1:boot boot)
+    (sicl-new-boot-phase-2:boot boot)
+    boot))
+
