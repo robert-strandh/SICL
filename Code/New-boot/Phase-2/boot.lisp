@@ -94,5 +94,9 @@
            client (sb:e1 boot) @clostrophilia:add-direct-method)
           (constantly nil))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-class-hierarchy"))
+     client environment "clostrophilia-class-hierarchy")
+    (sb:ensure-asdf-system
+     client environment "sicl-asdf-packages")
+    (sb:ensure-asdf-system
+     client environment "predicament-base"))
   boot)
