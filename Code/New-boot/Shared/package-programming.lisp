@@ -1,11 +1,5 @@
 (cl:in-package #:sicl-new-boot)
 
-;;; This variable contains a hash table of extrinsic Parcl packages
-;;; plus two host packages, namely COMMON-LISP-USER and KEYWORD.
-;;; Packages created as a result of loading code into a Clostrum
-;;; environment are contained in this table.
-(defvar *packages*)
-
 (defun current-package (client)
   (let* ((global-environment (environment client))
          (package-cell
@@ -69,7 +63,7 @@
           (string= package-indicator "KEYWORD"))
       (call-next-method)
       (multiple-value-bind (package existsp)
-          (gethash package-indicator *packages*)
+          (gethash package-indicator (packages *boot*))
         (unless existsp
           (error "No package named ~s" package-indicator))
         (multiple-value-bind (symbol status)
@@ -131,7 +125,7 @@
        (cond ((equal package-name "KEYWORD")
               (find-package "KEYWORD"))
              (t
-              (gethash package-name *packages*)))))
+              (gethash package-name (packages *boot*))))))
     (null
      (current-package client))
     (otherwise
@@ -141,8 +135,8 @@
   (let* ((name1 "COMMON-LISP")
          (name2 "CL")
          (package (parcl:make-package client name1)))
-    (setf (gethash name1 *packages*) package)
-    (setf (gethash name2 *packages*) package)
+    (setf (gethash name1 (packages *boot*)) package)
+    (setf (gethash name2 (packages *boot*)) package)
     (loop for symbol being each external-symbol of name1
           do (setf (parcl:symbol-package client symbol) package)
              (parcl:import client package symbol)
@@ -160,14 +154,14 @@
             (let ((result (parcl:make-package client canonicalized-name)))
               (setf (parcl:nicknames client result) canonicalized-nicknames)
               (parcl:use-packages client result canonicalized-packages)
-              (setf (gethash package-name *packages*) result)
+              (setf (gethash package-name (packages *boot*)) result)
               result))))
   (setf (clo:fdefinition client global-environment 'find-package)
         (lambda (package-designator)
           (package-designator-to-package client package-designator)))
   (setf (clo:fdefinition client global-environment '(setf find-package))
         (lambda (package package-designator)
-          (setf (gethash (string package-designator) *packages*)
+          (setf (gethash (string package-designator) (packages *boot*))
                 package)))
   (setf (clo:fdefinition client global-environment 'find-symbol)
         (lambda (string &optional package-designator)
@@ -186,7 +180,8 @@
                         collect
                         (typecase package-to-use
                           ((or string character symbol)
-                           (gethash (string package-to-use) *packages*))
+                           (gethash (string package-to-use)
+                                    (packages *boot*)))
                           (otherwise
                            package-to-use))))
                 (canonicalized-package
@@ -218,5 +213,5 @@
                       client canonicalized-package symbol-name))))))
 
 (defun intern-parcl-symbol (client package-name symbol-name)
-  (let* ((package (gethash package-name *packages*)))
+  (let* ((package (gethash package-name (packages *boot*))))
     (parcl:intern client package symbol-name)))
