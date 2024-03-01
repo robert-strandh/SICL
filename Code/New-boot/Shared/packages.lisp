@@ -10,7 +10,7 @@
    (#:cb #:common-boot)
    (#:cbae #:common-boot-ast-evaluator))
   (:export
-   #:boot #:e1 #:c1 #:e2 :c2 #:e3 #:c3
+   #:boot #:e1 #:e2 #:e3 #:packages
    #:client #:environment
    #:name
    #:define-backquote-macros
