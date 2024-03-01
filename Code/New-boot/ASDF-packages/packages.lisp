@@ -1,7 +1,9 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:asdf
-  (:use #:common-lisp))
+  (:use #:common-lisp)
+  (:export #:defsystem))
 
 (defpackage #:asdf-user
-  (:use #:common-lisp))
+  (:use #:common-lisp)
+  (:export #:defsystem))
