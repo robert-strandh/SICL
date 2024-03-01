@@ -9,8 +9,9 @@
    (#:clo #:clostrum)
    (#:cb #:common-boot)
    (#:cbae #:common-boot-ast-evaluator))
+  (:shadow #:symbol-package)
   (:export
-   #:boot #:e1 #:e2 #:e3 #:packages
+   #:boot #:e1 #:e2 #:e3 #:packages #:symbol-package
    #:client #:environment
    #:name
    #:define-backquote-macros
