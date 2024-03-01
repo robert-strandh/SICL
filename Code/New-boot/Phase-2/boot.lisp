@@ -100,6 +100,9 @@
     (setf (clo:macro-function
            client global-environment @asdf-user:defsystem)
           (constantly nil))
+    (setf (clo:macro-function
+           client global-environment @asdf:defsystem)
+          (constantly nil))
     (sb:ensure-asdf-system
-     client environment "predicament-base"))
+     client environment "predicament-base" :load-system-file t))
   boot)
