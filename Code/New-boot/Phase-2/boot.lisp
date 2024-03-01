@@ -97,6 +97,9 @@
      client environment "clostrophilia-class-hierarchy")
     (sb:ensure-asdf-system
      client environment "sicl-asdf-packages")
+    (setf (clo:macro-function
+           client global-environment @asdf-user:defsystem)
+          (constantly nil))
     (sb:ensure-asdf-system
      client environment "predicament-base"))
   boot)
