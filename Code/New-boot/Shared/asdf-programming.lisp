@@ -29,8 +29,7 @@
     (format *trace-output*
             "Loading ASDF system ~s into environment ~a~%"
             (asdf/system:primary-system-name asdf-system)
-            "some-name"
-            #+(or)(name environment))
+            (name (trucler:global-environment client environment)))
     (load-asdf-system-files client environment asdf-system)
     ;; (push asdf-system (loaded-asdf-systems environment))
     (format *trace-output*
