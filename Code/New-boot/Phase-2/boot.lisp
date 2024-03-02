@@ -115,5 +115,7 @@
     ;; with the following code.
     (let* ((symbol @predicament-asdf:*string-designators*)
            (value (clo:symbol-value client global-environment symbol)))
-      (eval `(defparameter ,symbol ',value))))
+      (eval `(defparameter ,symbol ',value)))
+    (sb:ensure-asdf-system
+     client environment "predicament-packages-intrinsic"))
   boot)
