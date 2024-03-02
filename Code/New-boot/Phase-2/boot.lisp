@@ -104,5 +104,16 @@
            client global-environment @asdf:defsystem)
           (constantly nil))
     (sb:ensure-asdf-system
-     client environment "predicament-base" :load-system-file t))
+     client environment "predicament-base" :load-system-file t)
+    ;; The system predicament base contains the definition of the
+    ;; variable PREDICAMENT-ASDF:*STRING-DESIGNATORS*, so when we
+    ;; loaded that system into E2, that variable got defined in E2.
+    ;; However, we now want to load a a package definition into E2
+    ;; that uses the value of that variable at read time.  But read
+    ;; time is done by Eclector in the host envronment, and that
+    ;; variable is not defined in the host environment.  So we do that
+    ;; with the following code.
+    (let* ((symbol @predicament-asdf:*string-designators*)
+           (value (clo:symbol-value client global-environment symbol)))
+      (eval `(defparameter ,symbol ',value))))
   boot)
