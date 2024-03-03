@@ -129,6 +129,11 @@
           (constantly (clo:find-class
                        client global-environment
                        @clostrophilia:funcallable-standard-object)))
+    (let* ((name @clostrophilia:find-method-combination)
+           (function (clo:fdefinition client global-environment name)))
+      (clo:make-variable client (sb:e1 boot)
+                         @sicl-clos:*standard-method-combination*
+                         (funcall function client 'standard '())))
     (sb:ensure-asdf-system
      client environment "predicament-common"))
   boot)
