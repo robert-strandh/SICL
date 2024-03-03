@@ -58,6 +58,8 @@
     (loop while (remf result :environment))
     result))
 
+(defvar *standard-method-combination*)
+
 (defmethod ensure-generic-function-using-class
     ((generic-function null)
      function-name
@@ -88,11 +90,7 @@
     ;; initialization protocol to default the method combination, and
     ;; just not pass that keword argument if it was not supplied here.
     ;; But that would make this code more twisted.
-    (unless (class-finalized-p generic-function-class)
-      (finalize-inheritance generic-function-class))
-    (let ((proto (class-prototype generic-function-class)))
-      (setf method-combination
-            (clostrophilia:find-method-combination proto 'standard '()))))
+    (setf method-combination *standard-method-combination*))
   (let* ((remaining-keys
            (canonicalize-keyword-arguments all-keyword-arguments))
          (result
