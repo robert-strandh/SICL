@@ -117,5 +117,18 @@
            (value (clo:symbol-value client global-environment symbol)))
       (eval `(defparameter ,symbol ',value)))
     (sb:ensure-asdf-system
-     client environment "predicament-packages-intrinsic"))
+     client environment "predicament-packages-intrinsic")
+    (setf (clo:fdefinition
+           client (sb:e1 boot)
+           @clostrophilia:find-class-standard-object)
+          (constantly (clo:find-class
+                       client global-environment 'standard-object)))
+    (setf (clo:fdefinition
+           client (sb:e1 boot)
+           @clostrophilia:find-class-funcallable-standard-object)
+          (constantly (clo:find-class
+                       client global-environment
+                       @clostrophilia:funcallable-standard-object)))
+    (sb:ensure-asdf-system
+     client environment "predicament-common"))
   boot)
