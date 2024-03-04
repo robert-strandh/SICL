@@ -14,21 +14,6 @@
         (t
          (format stream "Invoke the anonymous restart ~S." restart))))
 
-;;; Restart visibility and association
-
-(defun restart-visible-p (restart condition)
-  ;; FIXME: A call to COMPUTE-RESTARTS -- from an error,
-  ;; from user code, whatever -- inside the test
-  ;; function would cause infinite recursion here, so
-  ;; we disable each restart using
-  ;; *restart-test-stack* for the duration of the
-  ;; test call.
-  (and (funcall (restart-test-function restart) condition)
-       (or (null condition)
-           (let ((associated-conditions (restart-associated-conditions restart)))
-             (or (null associated-conditions)
-                 (member condition associated-conditions))))))
-
 (defmacro with-condition-restarts (condition (&rest restarts) &body body)
   (let ((condition-var (gensym "CONDITION"))
         (restarts-var (gensym "RESTARTS"))
@@ -44,13 +29,6 @@
            (pop (restart-associated-conditions ,restart)))))))
 
 ;;; Restart functions
-
-(defgeneric compute-restarts (&optional condition))
-
-(defmethod compute-restarts (&optional condition)
-  (loop for restart in (apply #'append *restart-clusters*)
-        when (restart-visible-p restart condition)
-          collect restart))
 
 (defgeneric find-restart (name &optional condition))
 
