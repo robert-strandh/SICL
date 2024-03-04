@@ -2,14 +2,6 @@
 
 (in-package #:portable-condition-system)
 
-(defun report-simple-condition (condition stream)
-  (let ((format-control (simple-condition-format-control condition))
-        (format-args (simple-condition-format-arguments condition)))
-    (if format-control
-        (apply #'format stream format-control format-args)
-        (format stream "Condition ~S was signaled with format arguments ~S."
-                (type-of condition) format-args))))
-
 (defun report-type-error (condition stream)
   (format stream "~@<The value ~@:_~2@T~S ~@:_is not of type ~@:_~2@T~S.~:@>"
           (type-error-datum condition)
