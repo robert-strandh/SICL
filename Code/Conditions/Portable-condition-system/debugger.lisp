@@ -141,17 +141,6 @@
 
 ;;; Debugger interface
 
-(defvar *debugger-hook* nil)
-
-(defgeneric invoke-debugger (condition))
-
-(defmethod invoke-debugger ((condition condition))
-  (when *debugger-hook*
-    (let ((hook *debugger-hook*)
-          (*debugger-hook* nil))
-      (funcall hook condition hook)))
-  (standard-debugger condition))
-
 (defun break (&optional (format-control "Break") &rest format-arguments)
   (let ((*debugger-hook* nil))
     (with-simple-restart (continue "Return from BREAK.")
