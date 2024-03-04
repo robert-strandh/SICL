@@ -7,7 +7,6 @@
    (:file "report-mixin-defclass")
    (:file "support")
    (:file "debugger-hook-defparameter")
-   (:file "break-on-signals-defparameter")
    (:file "condition-defclass")
    (:file "debugger")
    (:file "define-condition-support")
