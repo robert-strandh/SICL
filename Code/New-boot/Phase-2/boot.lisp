@@ -135,6 +135,13 @@
       (clo:make-variable client (sb:e1 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
+    ;; Predicament defines ERROR and WARN as generic functions, but
+    ;; currently, ERROR and WARN are imported from the host, so we
+    ;; need to remove them first.
+    (clo:fmakunbound client global-environment 'error)
+    (clo:fmakunbound client global-environment 'warn)
+    (setf (clo:macro-function client global-environment 'check-type)
+          (constantly nil))
     (sb:ensure-asdf-system
      client environment "predicament-common"))
   boot)
