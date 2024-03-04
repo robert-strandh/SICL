@@ -163,35 +163,3 @@
                        (restart-case-expand-signaling-form expression env)
                        expression)))
               ,@(apply #'append (mapcar #'make-restart-case data))))))))
-
-;;; WITH-SIMPLE-RESTART
-
-(defmacro with-simple-restart ((name format-control &rest args) &body forms)
-  (let ((stream (gensym "STREAM")))
-    `(restart-case ,(if (= 1 (length forms)) (car forms) `(progn ,@forms))
-       (,name ()
-         :report (lambda (,stream) (format ,stream ,format-control ,@args))
-         (values nil t)))))
-
-;;; System-defined restarts
-
-(defun maybe-invoke-restart (restart-name &optional condition errorp &rest arguments)
-  (let ((restart (find-restart restart-name condition)))
-    (cond (restart (apply #'invoke-restart restart arguments))
-          (errorp (error 'restart-not-found :restart-name restart-name)))))
-
-(defun abort (&optional condition)
-  (maybe-invoke-restart 'abort condition t)
-  (error 'abort-failure))
-
-(defun continue (&optional condition)
-  (maybe-invoke-restart 'continue condition))
-
-(defun muffle-warning (&optional condition)
-  (maybe-invoke-restart 'muffle-warning condition t))
-
-(defun store-value (value &optional condition)
-  (maybe-invoke-restart 'store-value condition nil value))
-
-(defun use-value (value &optional condition)
-  (maybe-invoke-restart 'use-value condition nil value))
