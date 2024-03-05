@@ -1,14 +1,5 @@
 (cl:in-package #:sicl-conditions)
 
-(defgeneric type-error-datum (type-error))
-
-(defgeneric type-error-expected-type (type-error))
-
-(defun report-type-error (condition stream)
-  (format stream "~@<The value ~@:_~2@T~S ~@:_is not of type ~@:_~2@T~S.~:@>"
-          (type-error-datum condition)
-          (type-error-expected-type condition)))
-
 (defgeneric cell-error-name (cell-error))
 
 (defun report-unbound-variable (condition stream)
