@@ -48,14 +48,6 @@
         condition argument is supplied, omits all restarts which are associated~@
         with conditions other than the provided one."))
 
-(setf (documentation
-       (find-method #'find-restart '() (list (find-class 't)))
-       t)
-      (format
-       nil
-       "Walks all restart clusters and returns the first restart with the~@
-        correct name and visibility status."))
-
 (setf (documentation 'invoke-restart 'function)
       (format
        nil
