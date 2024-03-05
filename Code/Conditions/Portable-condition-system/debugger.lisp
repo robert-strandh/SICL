@@ -138,14 +138,3 @@
     (run-debugger-command :report stream condition)
     (format stream "~&;; Type :HELP for available commands.~%")
     (loop (read-eval-print-command stream condition))))
-
-;;; Debugger interface
-
-(defun break (&optional (format-control "Break") &rest format-arguments)
-  (let ((*debugger-hook* nil))
-    (with-simple-restart (continue "Return from BREAK.")
-      (invoke-debugger
-       (make-condition 'simple-condition
-                       :format-control format-control
-                       :format-arguments format-arguments))))
-  nil)
