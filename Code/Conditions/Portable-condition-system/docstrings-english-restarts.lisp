@@ -48,63 +48,6 @@
         condition argument is supplied, omits all restarts which are associated~@
         with conditions other than the provided one."))
 
-(setf (documentation 'invoke-restart 'function)
-      (format
-       nil
-       "Invokes a restart with the provided argument. If the restart~@
-        is provided by name, this function calls FIND-RESTART with the~@
-        provided name first and signals an error if no such restart is~@
-        available. If the restart returns normally, returns the value~@
-        returned by the restart function."))
-
-(setf (documentation
-       (find-method #'invoke-restart '() (list (find-class 'symbol)))
-       t)
-      (format
-       nil
-       "Find the restart with the provided name and invoke it."))
-
-(setf (documentation
-       (find-method #'invoke-restart '() (list (find-class 'restart)))
-       t)
-      (format
-       nil
-       "Apply the restart function to the provided arguments."))
-
-(setf (documentation 'invoke-restart-interactively 'function)
-      (format
-       nil
-       "Invokes a restart after calling the restart's interactive~@
-        function to retrieve a list of arguments for invoking the~@
-        restart. If the restart is provided by name, this function~@
-        calls FIND-RESTART with the provided name first and signals~@
-        an error if no such restart is available. If the restart returns~@
-        normally, returns the value returned by the restart function."))
-
-(setf (documentation
-       (find-method #'invoke-restart-interactively '() (list (find-class 't)))
-       t)
-      (format
-       nil
-       "Signal an error that an invalid argument has been passed to~@
-        INVOKE-RESTART-INTERACTIVELY."))
-
-(setf (documentation
-       (find-method #'invoke-restart-interactively '() (list (find-class 'symbol)))
-       t)
-      (format
-       nil
-       "Find the restart with the provided name and invoke it."))
-
-
-(setf (documentation
-       (find-method #'invoke-restart-interactively '() (list (find-class 'restart)))
-       t)
-      (format
-       nil
-       "Call the restart's interactive function to obtain the list of~@
-        arguments and apply the restart functions to them."))
-
 (setf (documentation 'restart-bind-transform-binding 'function)
       (format
        nil
