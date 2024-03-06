@@ -20,6 +20,5 @@
    (:file "handlers")
    (:file "make-condition-defgeneric")
    (:file "make-condition-defmethods")
-   (:file "coerce-to-condition")
    (:file "signaling")
    (:file "assert-defmacro")))
