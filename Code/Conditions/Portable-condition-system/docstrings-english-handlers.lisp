@@ -42,12 +42,3 @@
         established handlers are available. Each handler immediately~@
         transfers control to its handler case upon invocation, executing~@
         the body forms of the case and returning their value from HANDLER-CASE."))
-
-(setf (documentation 'ignore-errors 'function)
-      (format
-       nil
-       "Executes the body forms in a dynamic context where a newly~@
-        established ERROR handler is available. This handler handler~@
-        immediately transfers control outside the form upon invocation,~@
-        returning NIL as its primary value and the signaled condition~@
-        object as its secondary value."))
