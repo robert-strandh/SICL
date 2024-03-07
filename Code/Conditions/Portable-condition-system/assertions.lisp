@@ -25,22 +25,6 @@
         else
           collect key-or-keys))
 
-;;; Case assertions - non-correctable
-
-(defmacro ecase (keyform &rest cases)
-  (let ((keys (case-accumulate-keys cases))
-        (variable (gensym "ECASE-VARIABLE")))
-    `(let ((,variable ,keyform))
-       (case ,variable ,@(case-transform-t-otherwise-cases cases)
-             (t (case-failure ,variable 'member 'ecase ',keys))))))
-
-(defmacro etypecase (keyform &rest cases)
-  (let ((keys (mapcar #'first cases))
-        (variable (gensym "ETYPECASE-VARIABLE")))
-    `(let ((,variable ,keyform))
-       (typecase ,variable ,@cases
-                 (t (case-failure ,variable 'or 'etypecase ',keys))))))
-
 ;;; Correctable assertions - utilities
 
 (defun store-value-read-evaluated-form ()
@@ -60,52 +44,3 @@
            (setf ,temp-var ,new-value-var
                  ,place ,new-value-var)
            (go ,tag))))))
-
-;;; Case assertions - correctable
-
-(defmacro ccase (keyform &rest cases)
-  (let ((keys (case-accumulate-keys cases))
-        (variable (gensym "CCASE-VARIABLE"))
-        (block-name (gensym "CCASE-BLOCK"))
-        (tag (gensym "CCASE-TAG")))
-    `(block ,block-name
-       (let ((,variable ,keyform))
-         (tagbody ,tag
-            (return-from ,block-name
-              (case ,variable ,@(case-transform-t-otherwise-cases cases)
-                    (t (with-store-value-restart (,variable ,keyform ,tag)
-                         (case-failure ,variable 'member 'ccase ',keys))))))))))
-
-(defmacro ctypecase (keyform &rest cases)
-  (let ((keys (mapcar #'first cases))
-        (variable (gensym "CTYPECASE-VARIABLE"))
-        (block-name (gensym "CTYPECASE-BLOCK"))
-        (tag (gensym "CTYPECASE-TAG")))
-    `(block ,block-name
-       (let ((,variable ,keyform))
-         (tagbody ,tag
-            (return-from ,block-name
-              (typecase ,keyform ,@cases
-                        (t (with-store-value-restart (,variable ,keyform ,tag)
-                             (case-failure ,variable 'or 'ctypecase ',keys))))))))))
-
-;;; CHECK-TYPE
-
-(defun check-type-error (place value type type-string)
-  (error
-   'simple-type-error
-   :datum value
-   :expected-type type
-   :format-control (if type-string
-                       "The value of ~S is ~S, which is not ~A."
-                       "The value of ~S is ~S, which is not of type ~S.")
-   :format-arguments (list place value (or type-string type))))
-
-(defmacro check-type (place type &optional type-string)
-  (let ((variable (gensym "CHECK-TYPE-VARIABLE"))
-        (tag (gensym "CHECK-TYPE-TAG")))
-    `(let ((,variable ,place))
-       (tagbody ,tag
-          (unless (typep ,variable ',type)
-            (with-store-value-restart (,variable ,place ,tag)
-              (check-type-error ',place ,variable ',type ,type-string)))))))
