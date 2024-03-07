@@ -5,5 +5,5 @@
   :components
   ((:file "packages")
    (:file "condition-class-defclass")
-   (:file "condition-defclass")))
-
+   (:file "condition-defclass")
+   (:file "define-condition-defmacro")))
