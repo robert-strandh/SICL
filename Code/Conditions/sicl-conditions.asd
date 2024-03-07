@@ -20,5 +20,4 @@
    (:file "handlers")
    (:file "make-condition-defgeneric")
    (:file "make-condition-defmethods")
-   (:file "signaling")
-   (:file "assert-defmacro")))
+   (:file "signaling")))
