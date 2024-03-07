@@ -18,9 +18,3 @@
       (0 (make-handler-case-without-no-error-case form cases))
       (1 (make-handler-case-with-no-error-case form cases))
       (t (error "Multiple :NO-ERROR cases found in HANDLER-CASE.")))))
-
-;;; IGNORE-ERRORS
-
-(defmacro ignore-errors (&rest forms)
-  `(handler-case (progn ,@forms)
-     (error (condition) (values nil condition))))
