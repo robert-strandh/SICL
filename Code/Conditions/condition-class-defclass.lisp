@@ -1,4 +1,4 @@
 (cl:in-package #:sicl-conditions)
 
-(defclass condition-class (sicl-clos:regular-class)
+(defclass condition-class (clostrophilia:regular-class)
   ())
