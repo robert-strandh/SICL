@@ -9,7 +9,6 @@
    (:file "debugger-hook-defparameter")
    (:file "condition-defclass")
    (:file "debugger")
-   (:file "define-condition-support")
    (:file "define-condition-defmacro")
    (:file "condition-hierarchy")
    (:file "with-store-value-restart-defmacro")
