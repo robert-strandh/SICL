@@ -142,6 +142,6 @@
     (clo:fmakunbound client global-environment 'warn)
     (setf (clo:macro-function client global-environment 'check-type)
           (constantly nil))
-    (sb:ensure-asdf-system
-     client environment "predicament-common"))
+    (sb:ensure-asdf-system client environment "sicl-conditions")
+    (sb:ensure-asdf-system client environment "predicament-common"))
   boot)
