@@ -142,6 +142,10 @@
                                "Assuming ~s is a direct slot-definition~%"
                                object)
                        t)))
+                ((eq type-specifier 'null)
+                 (null object))
+                ((eq type-specifier 'string)
+                 (stringp object))
                 ((symbolp object)
                  (typep object type-specifier))
                 ((typep object '(cons (eql setf) (cons symbol null)))
@@ -233,6 +237,10 @@
             (macroexpand expression)))
     (clo:fmakunbound client global-environment 'error)
     (clo:fmakunbound client global-environment 'warn)
+    (clo:make-variable client global-environment '*error-output*
+                       *error-output*)
+    (clo:make-variable client global-environment '*query-io*
+                       *query-io*)
     (sb:ensure-asdf-system
      client environment "predicament-base" :load-system-file t)
     (let* ((symbol @predicament-asdf:*string-designators*)
