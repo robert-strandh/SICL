@@ -212,13 +212,38 @@
           (find-class 'cons))
     (setf (clo:find-class client global-environment 'list)
           (find-class 'list))
-    ;; It would be better to load the condition system here.
-    (setf (clo:macro-function client global-environment 'define-condition)
-          (lambda (form environment)
-            (declare (ignore environment))
-            (list 'defclass (second form) '() '())))
+    ;; ;; It would be better to load the condition system here.
+    ;; (setf (clo:macro-function client global-environment 'define-condition)
+    ;;       (lambda (form environment)
+    ;;         (declare (ignore environment))
+    ;;         (list 'defclass (second form) '() '())))
+    (define-typep client global-environment)
+    (sb:ensure-asdf-system client environment "sicl-conditions")
     (sb:ensure-asdf-system
-     client environment "acclimation")
+     client environment "sicl-asdf-packages")
+    (setf (clo:macro-function
+           client global-environment @asdf-user:defsystem)
+          (constantly nil))
+    (setf (clo:macro-function
+           client global-environment @asdf:defsystem)
+          (constantly nil))
+    (setf (clo:fdefinition client global-environment 'macroexpand)
+          (lambda (expression environment)
+            (declare (ignore environment))
+            (macroexpand expression)))
+    (clo:fmakunbound client global-environment 'error)
+    (clo:fmakunbound client global-environment 'warn)
+    (sb:ensure-asdf-system
+     client environment "predicament-base" :load-system-file t)
+    (let* ((symbol @predicament-asdf:*string-designators*)
+           (value (clo:symbol-value client global-environment symbol)))
+      (eval `(defparameter ,symbol ',value)))
+    (sb:ensure-asdf-system
+     client environment "predicament-packages-intrinsic")
+    (setf (clo:find-class client global-environment 'string)
+          (find-class 'string))
+    (sb:ensure-asdf-system client environment "predicament-common")
+    (sb:ensure-asdf-system client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
     ;; The way we define it is that it just expands to a PROGN of the
     ;; forms in the body, with the bindings having no effect.
@@ -229,7 +254,6 @@
     (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sb:ensure-asdf-system client environment "ecclesia")
-    (define-typep client global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
     (sb:ensure-asdf-system
