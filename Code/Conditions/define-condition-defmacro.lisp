@@ -21,8 +21,6 @@
          (supertypes supertypes))
     (when (null supertypes)
       (push 'condition supertypes))
-    (unless (null report-option)
-      (push 'report-mixin supertypes))
     `(progn (defclass ,name ,supertypes
               ,direct-slots
               (:metaclass condition-class)
