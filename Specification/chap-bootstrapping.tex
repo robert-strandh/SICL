@@ -225,6 +225,32 @@ could be represented as immediate inputs to the instruction, but this
 code is executed only at load time, so performance is not a major
 issue. 
 
+\section{External libraries}
+
+Most of the code in \sysname{} is supplied by external libraries.
+These libraries require some existing functionality in order to work
+properly, and this functionality must be supplied by the bootstrapping
+procedure before the library is loaded.  If there are mutual
+dependencies between libraries, we need to resolve these dependencies
+temporarily during bootstrapping.  In this section, we enumerate the
+external libraries \sysname{} depends on, and the functionality that
+each one requires.  We list only functionality above and beyond what
+host code can easily supply, such as functions on \texttt{cons}es and
+similar.  The dependencies will determine the best order in which to
+load these libraries, so as to minimize temporary bootstrapping code.
+
+\subsection{Acclimation}
+
+\subsubsection{Description}
+
+Acclimation is a small library that is mainly used for
+internationalized condition reporting.
+
+\subsubsection{Dependencies}
+
+Acclimation requires functionality for defining classes and generic
+functions.
+
 \section{Bootstrapping phases}
 
 \subsection{Definitions}
