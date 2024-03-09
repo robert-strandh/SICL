@@ -1,4 +1,4 @@
-\chapter{Bootstrapping}
+3\chapter{Bootstrapping}
 
 \section{General technique}
 
@@ -36,6 +36,9 @@ to their target counterparts as follows:
 \item A target \texttt{cons} cell is represented as a host
   \texttt{cons} cell.
 \item A target \texttt{symbol} is represented as a host symbol.
+  Target symbols in the packages {\sc common-lisp} and {\sc keyword}
+  are represented as the identical host symbols.  Target symbols in
+  other packages are represented as uninterned host symbols.
 \item A target standard object is represented as a host
   \texttt{standard-object} for the \emph{header} and a host
   \texttt{simple-vector} for the \emph{rack}.
