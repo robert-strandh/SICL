@@ -143,5 +143,7 @@
     (setf (clo:macro-function client global-environment 'check-type)
           (constantly nil))
     (sb:ensure-asdf-system client environment "sicl-conditions")
+    (sb:ensure-asdf-system client environment "sicl-array-support")
+    (sb:ensure-asdf-system client environment "sicl-array-load-time")
     (sb:ensure-asdf-system client environment "predicament-common"))
   boot)
