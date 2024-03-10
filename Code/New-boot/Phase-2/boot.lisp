@@ -145,5 +145,6 @@
     (sb:ensure-asdf-system client environment "sicl-conditions")
     (sb:ensure-asdf-system client environment "sicl-array-support")
     (sb:ensure-asdf-system client environment "sicl-array-load-time")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
     (sb:ensure-asdf-system client environment "predicament-common"))
   boot)
