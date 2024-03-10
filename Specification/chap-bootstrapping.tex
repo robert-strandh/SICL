@@ -249,7 +249,30 @@ internationalized condition reporting.
 \subsubsection{Dependencies}
 
 Acclimation requires functionality for defining classes and generic
-functions.
+functions.  It also invokes the macro \texttt{define-condition} to
+create a condition type.  One way to satisfy this dependency is to
+depend on the system Predicament.
+
+\subsection{SICL-conditions}
+
+\subsubsection{Description}
+
+SICL-conditions is a small system that defines the classes
+\texttt{condition-class} (which is the metaclass for all condition
+classes) and \texttt{condition} (which is a superclass of all
+condition classes).  It also defines methods on
+\texttt{reader-method-class} (that returns the class
+\texttt{standard-reader-method}) and \texttt{writer-method-class}
+(that returns the class \texttt{standard-writer-method}).  The home
+package of the last four symbols is \texttt{clostrophilia}.
+
+This system is a requirement for the system Predicament
+(\seesec{sec-predicament}), because Predicament does not define the
+metaclass for condition classes, nor the superclass for all condition
+classes.
+
+\subsection{Predicament}
+\label{sec-predicament}
 
 \section{Bootstrapping phases}
 
