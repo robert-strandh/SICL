@@ -254,6 +254,7 @@ create a condition type.  One way to satisfy this dependency is to
 depend on the system Predicament.
 
 \subsection{SICL-conditions}
+\label{sec-sicl-conditions}
 
 \subsubsection{Description}
 
@@ -271,8 +272,22 @@ This system is a requirement for the system Predicament
 metaclass for condition classes, nor the superclass for all condition
 classes.
 
+\subsubsection{Dependencies}
+
+SICL-conditions requires the package \texttt{clostrophilia} to
+exist. It also requires the ability to create classes and generic
+functions.
+
 \subsection{Predicament}
 \label{sec-predicament}
+
+\subsubsection{Description}
+
+Predicament is an implementation of the \commonlisp{} condition system.
+
+\subsubsection{Dependencies}
+
+Predicament depends on SICL-conditions (seesec{sec-sicl-conditions}.
 
 \section{Bootstrapping phases}
 
