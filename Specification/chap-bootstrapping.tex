@@ -251,7 +251,7 @@ internationalized condition reporting.
 Acclimation requires functionality for defining classes and generic
 functions.  It also invokes the macro \texttt{define-condition} to
 create a condition type.  One way to satisfy this dependency is to
-depend on the system Predicament.
+depend on the system Predicament (\seesec{sec-predicament}).
 
 \subsection{SICL-conditions}
 \label{sec-sicl-conditions}
@@ -288,6 +288,32 @@ Predicament is an implementation of the \commonlisp{} condition system.
 \subsubsection{Dependencies}
 
 Predicament depends on SICL-conditions (seesec{sec-sicl-conditions}.
+
+\subsection{ctype}
+\label{sec-subtype}
+
+\subsubsection{Description}
+
+This system is a complete implementation of the \commonlisp{} type
+system, and in particular it provides implementations of the standard
+functions \texttt{typep} and \texttt{subtypep}.
+
+\subsubsection{Dependencies}
+
+This system requires the ability to define generic functions, method,
+and standard classes.  It also requires
+\texttt{define-method-combination} because it uses a custom method
+combination for many of its generic functions.
+
+When \texttt{ctype} is configured for \sysname{}, it also requires
+Regalia (\seesec{sec-regalia}, and ...
+
+\subsection{Regalia}
+\label{sec-regalia}
+
+\subsubsection{Description}
+
+\subsubsection{Dependencies}
 
 \section{Bootstrapping phases}
 
