@@ -151,6 +151,7 @@
           (symbol2 (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
       (setf (clo:fdefinition client global-environment symbol2)
             (clo:fdefinition client (sb:e1 boot) symbol1)))
+    (sb:ensure-asdf-system client environment "sicl-type-support")
     (let ((*features* '(:sicl)))
       (sb:ensure-asdf-system client environment "ctype"))
     (sb:ensure-asdf-system client environment "predicament-common"))
