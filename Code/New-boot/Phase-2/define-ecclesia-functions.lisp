@@ -19,4 +19,7 @@
           (clo:fdefinition client e1 symbol)))
   (let ((symbol @ecclesia:separate-function-body))
     (setf (clo:fdefinition client e2 symbol)
+          (clo:fdefinition client e1 symbol)))
+  (let ((symbol @ecclesia:list-structure))
+    (setf (clo:fdefinition client e2 symbol)
           (clo:fdefinition client e1 symbol))))
