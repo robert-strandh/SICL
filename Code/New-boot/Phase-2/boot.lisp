@@ -146,5 +146,12 @@
     (sb:ensure-asdf-system client environment "sicl-array-support")
     (sb:ensure-asdf-system client environment "sicl-array-load-time")
     (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
+    ;; I have no idea why this is necessary
+    (let ((symbol1 @ecclesia:list-structure)
+          (symbol2 (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
+      (setf (clo:fdefinition client global-environment symbol2)
+            (clo:fdefinition client (sb:e1 boot) symbol1)))
+    (let ((*features* '(:sicl)))
+      (sb:ensure-asdf-system client environment "ctype"))
     (sb:ensure-asdf-system client environment "predicament-common"))
   boot)
