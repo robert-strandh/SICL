@@ -9,15 +9,23 @@
 (defun ensure-method
     (generic-function-or-name
      &rest initargs
-     &key
+     &key specializer-designators
      &allow-other-keys)
   (let ((generic-function
           (if (or (symbolp generic-function-or-name)
                   (consp  generic-function-or-name))
               (ensure-generic-function generic-function-or-name)
-              generic-function-or-name)))
+              generic-function-or-name))
+        (specializers
+          (loop for specializer-designator in specializer-designators
+                collect (cond ((consp specializer-designator)
+                               (intern-eql-specizalizer
+                                (second specializer-designator)))
+                              ((symbolp specializer-designator)
+                               (find-class specializer-designator))
+                              (t specializer-designator)))))
     (apply #'^ensure-method-using-generic-function
-           generic-function initargs)))
+           generic-function :specializers specializers initargs)))
 
 ;;  LocalWords:  specializer specializers SPECIALIZERS designators
 ;;  LocalWords:  designator metaobject
