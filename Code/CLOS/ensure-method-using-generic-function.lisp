@@ -31,9 +31,10 @@
      &key
        unspecialized-lambda-list
        qualifiers
-       specializer-designators
+       specializers
        documentation
-       function))
+       function
+     &allow-other-keys))
 
 ;;; FIXME: check for errors according to comment above.
 
@@ -42,18 +43,11 @@
      &key
        unspecialized-lambda-list
        qualifiers
-       specializer-designators
+       specializers
        documentation
-       function)
-  (let* ((specializers
-           (loop for specializer-designator in specializer-designators
-                 collect (cond ((consp specializer-designator)
-                                (make-instance 'clostrophilia:eql-specializer
-                                  :object (second specializer-designator)))
-                               ((symbolp specializer-designator)
-                                (find-class specializer-designator))
-                               (t specializer-designator))))
-         (method-class
+       function
+     &allow-other-keys)
+  (let* ((method-class
            (clostrophilia:generic-function-method-class generic-function))
          (method
            (make-instance method-class
