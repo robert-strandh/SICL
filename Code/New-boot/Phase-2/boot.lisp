@@ -171,5 +171,9 @@
           (lambda (form environment)
             (declare (ignore environment))
             (values form nil)))
+    (clo:make-variable client global-environment '*error-output*
+                       *error-output*)
+    (clo:make-variable client global-environment '*query-io*
+                       *query-io*)
     (sb:ensure-asdf-system client environment "predicament-common"))
   boot)
