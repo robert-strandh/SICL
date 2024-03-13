@@ -175,5 +175,7 @@
                        *error-output*)
     (clo:make-variable client global-environment '*query-io*
                        *query-io*)
-    (sb:ensure-asdf-system client environment "predicament-common"))
+    (sb:ensure-asdf-system client environment "predicament-common")
+    (clo:fmakunbound client global-environment 'typep)
+    (clo:fmakunbound client global-environment 'macroexpand))
   boot)
