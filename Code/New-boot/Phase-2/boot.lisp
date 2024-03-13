@@ -167,5 +167,9 @@
             (ecase type-specifier
               (null (null object))
               (string (stringp object)))))
+    (setf (clo:fdefinition client global-environment 'macroexpand)
+          (lambda (form environment)
+            (declare (ignore environment))
+            (values form nil)))
     (sb:ensure-asdf-system client environment "predicament-common"))
   boot)
