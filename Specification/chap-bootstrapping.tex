@@ -287,7 +287,38 @@ Predicament is an implementation of the \commonlisp{} condition system.
 
 \subsubsection{Dependencies}
 
-Predicament depends on SICL-conditions (seesec{sec-sicl-conditions}.
+Predicament depends on SICL-conditions (seesec{sec-sicl-conditions}).
+The reason is that Predicament does not define the class
+\texttt{condition} not its metaclass, which in \sysname{} is
+\texttt{sicl-condition:condition-class}.  It also does not define the
+macro \texttt{define-condition} because the expansion of that macro
+must mention the metaclass of the condition classes.
+
+Furthermore, Predicament defines methods on \texttt{error},
+\texttt{warning}, and \texttt{signal}, specialized to the class
+\texttt{string}, so that class must exist in the environment into
+which Predicament is loaded.  In early stages of bootstrapping, this
+class can be imported from the host, because it is likely that an
+argument of type string to one of these functions will be a literal
+string in the source code, in which case the reader returns a host
+string.
+
+Predicament also refers to two special variables, namely
+\texttt{*error-output*} and \texttt{*query-io*}.  These are used only
+at run time, so they just have to be defined during bootstrapping.
+The simplest solution is to import them from the host.
+
+Finally, Predicament calls \texttt{macroexpand} as part of the
+\texttt{restart-case} macro, in order to determine whether the
+signaling form is one of \texttt{signal}, \texttt{warn},
+\texttt{error}, or \texttt{cerror}.  Since the signaling form could be
+a macro form that expands to one of these, Predicament calls
+\texttt{macroexpand}.  The relevant phrase in the standard that
+supports this behavior is: ``If the restartable-form is a list whose
+car is any of the symbols signal, error, cerror, or warn (or is a
+macro form which macroexpands into such a list), then
+with-condition-restarts is used implicitly to associate the indicated
+restarts with the condition to be signaled.''
 
 \subsection{ctype}
 \label{sec-subtype}
