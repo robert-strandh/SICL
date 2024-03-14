@@ -308,6 +308,23 @@ Predicament also refers to two special variables, namely
 at run time, so they just have to be defined during bootstrapping.
 The simplest solution is to import them from the host.
 
+The macro \texttt{restart-case} calls three functions at
+macroexpansion time, namely \texttt{restart-case-make-report-subform},
+\texttt{restart-case-make-interactive-subform}, and
+\texttt{restart-case-make-test-subform}.  Each of these functions
+contains a \texttt{typecase} form that expands to a call to
+\texttt{typep}.  The types tested for are \texttt{null} and
+\texttt{string}.  Predicament could have used predicates \texttt{null}
+and \texttt{stringp} instead, but that is not currently the case.  And
+\texttt{restart-case} is used (directly or indirectly) in the
+definitions of the functions \texttt{cerror}, \texttt{break} and
+\texttt{warn}.  As a result, some version of \texttt{typep} must exist
+when Predicament is loaded.  It must also exist when
+\texttt{restart-case} is used in subsequently loaded systems, but its
+use is relatively rare.  So one solution is to define a special
+version of \texttt{typep} that can handle \texttt{null} and
+\texttt{string} for the duration of the loading of Predicament.
+
 Finally, Predicament calls \texttt{macroexpand} as part of the
 \texttt{restart-case} macro, in order to determine whether the
 signaling form is one of \texttt{signal}, \texttt{warn},
