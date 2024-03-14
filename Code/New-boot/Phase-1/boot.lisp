@@ -230,13 +230,13 @@
     (setf (clo:macro-function
            client global-environment @asdf:defsystem)
           (constantly nil))
+    (clo:fmakunbound client global-environment 'error)
+    (clo:fmakunbound client global-environment 'warn)
+    (sb:ensure-asdf-system client environment "sicl-conditions")
     (setf (clo:fdefinition client global-environment 'macroexpand)
           (lambda (form environment)
             (declare (ignore environment))
             (values form nil)))
-    (clo:fmakunbound client global-environment 'error)
-    (clo:fmakunbound client global-environment 'warn)
-    (sb:ensure-asdf-system client environment "sicl-conditions")
     (clo:make-variable client global-environment '*error-output*
                        *error-output*)
     (clo:make-variable client global-environment '*query-io*
