@@ -14,4 +14,5 @@
    (:file "define-find-method-combination-template")
    (:file "define-ensure-method-combination")
    (:file "define-ecclesia-functions")
+   (:file "load-predicament")
    (:file "boot")))

@@ -135,47 +135,5 @@
       (clo:make-variable client (sb:e1 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
-    ;; Predicament defines ERROR and WARN as generic functions, but
-    ;; currently, ERROR and WARN are imported from the host, so we
-    ;; need to remove them first.
-    (clo:fmakunbound client global-environment 'error)
-    (clo:fmakunbound client global-environment 'warn)
-    (setf (clo:macro-function client global-environment 'check-type)
-          (constantly nil))
-    (sb:ensure-asdf-system client environment "sicl-conditions")
-    (sb:ensure-asdf-system client environment "sicl-array-support")
-    (sb:ensure-asdf-system client environment "sicl-array-load-time")
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
-    ;; I have no idea why this is necessary
-    (let ((symbol1 @ecclesia:list-structure)
-          (symbol2 (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
-      (setf (clo:fdefinition client global-environment symbol2)
-            (clo:fdefinition client (sb:e1 boot) symbol1)))
-    (sb:ensure-asdf-system client environment "sicl-type-support")
-    ;; (let ((*features* '(:sicl)))
-    ;;   (sb:ensure-asdf-system client environment "ctype"))
-    (setf (clo:find-class client global-environment 'string)
-          (find-class 'string))
-    ;; The macro RESTART-CASE analyzes the REPORT expression using a
-    ;; TYPECASE form which expands to a sequence of calls to TYPEP, so
-    ;; we need to define TYPEP to handle those cases before we can
-    ;; load Predicament.  We must not forget to replace TYPEP later,
-    ;; because it is not fit to be used to determine the type of
-    ;; objects in E3.
-    (setf (clo:fdefinition client global-environment 'typep)
-          (lambda (object type-specifier)
-            (ecase type-specifier
-              (null (null object))
-              (string (stringp object)))))
-    (setf (clo:fdefinition client global-environment 'macroexpand)
-          (lambda (form environment)
-            (declare (ignore environment))
-            (values form nil)))
-    (clo:make-variable client global-environment '*error-output*
-                       *error-output*)
-    (clo:make-variable client global-environment '*query-io*
-                       *query-io*)
-    (sb:ensure-asdf-system client environment "predicament-common")
-    (clo:fmakunbound client global-environment 'typep)
-    (clo:fmakunbound client global-environment 'macroexpand))
+    (load-predicament client environment global-environment))
   boot)
