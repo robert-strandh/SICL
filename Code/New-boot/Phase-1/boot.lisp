@@ -222,7 +222,6 @@
     ;;         (declare (ignore environment))
     ;;         (list 'defclass (second form) '() '())))
     (define-typep client global-environment)
-    (sb:ensure-asdf-system client environment "sicl-conditions")
     (sb:ensure-asdf-system
      client environment "sicl-asdf-packages")
     (setf (clo:macro-function
@@ -232,11 +231,12 @@
            client global-environment @asdf:defsystem)
           (constantly nil))
     (setf (clo:fdefinition client global-environment 'macroexpand)
-          (lambda (expression environment)
+          (lambda (form environment)
             (declare (ignore environment))
-            (macroexpand expression)))
+            (values form nil)))
     (clo:fmakunbound client global-environment 'error)
     (clo:fmakunbound client global-environment 'warn)
+    (sb:ensure-asdf-system client environment "sicl-conditions")
     (clo:make-variable client global-environment '*error-output*
                        *error-output*)
     (clo:make-variable client global-environment '*query-io*
