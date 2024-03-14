@@ -337,6 +337,15 @@ macro form which macroexpands into such a list), then
 with-condition-restarts is used implicitly to associate the indicated
 restarts with the condition to be signaled.''
 
+\subsubsection{Conclusions}
+
+Predicament has a few dependencies, but they are not very hard to
+satisfy.  Furthermore, Predicament provides functionality that is used
+by several other systems, in particular the macros
+\texttt{define-condition}, \texttt{handler-case}, and
+\texttt{handler-bind}.  It therefore seems desirable to load
+Predicament early in the bootstrapping procedure.
+
 \subsection{ctype}
 \label{sec-subtype}
 
