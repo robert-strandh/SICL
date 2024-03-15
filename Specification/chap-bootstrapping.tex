@@ -346,6 +346,30 @@ by several other systems, in particular the macros
 \texttt{handler-bind}.  It therefore seems desirable to load
 Predicament early in the bootstrapping procedure.
 
+\subsection{Clostrophilia class hierarchy}
+\label{clostrophilia-class-hierarchy}
+
+\subsubsection{Description}
+
+This system provides the MOP class hierarchy as documented in the AMOP
+book.
+
+\subsubsection{Dependencies}
+
+This system depends on the ability to create generic functions and
+methods (for the slot accessors) and also classes.  In the first phase
+of bootstrapping, the host functionality for these abilities is used.
+In subsequent phases, when this system is loaded into some environment
+$E_i$, it depends on several systems to be loaded into $E_{i-1}$,
+namely:
+
+\begin{itemize}
+\item Clostrophilia generic-function initialization.
+\item Clostrophilia class initialization.
+\item Clostrophilia method initialization.
+\item Clostrophilia slot initialization.
+\end{itemize}
+
 \subsection{ctype}
 \label{sec-subtype}
 
@@ -764,3 +788,5 @@ used so far and transfer it to a \emph{memory image}.
 \subsection{Phase 10}
 
 Finally, the memory image is written to a binary file.
+
+% LocalWords:  Clostrophilia
