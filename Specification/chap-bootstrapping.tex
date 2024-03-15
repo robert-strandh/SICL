@@ -376,6 +376,27 @@ This system can be loaded very early in each phase, and it is needed
 in order for other systems to use the classes and the slot accessors
 that this system provides.
 
+\subsection{Clostrophilia standard-object initialization}
+
+\subsubsection{Description}
+
+This system provides definitions of the initialization generic
+functions \texttt{initialize-instance},
+\texttt{reinitialize-instance}, and \texttt{shared-initialize}.
+
+This system is not needed in phase 1 of bootstrapping, because the
+objects created in phase 1 are host objects instantiated from host
+classes, so the host functions for standard-object initialization are
+used in phase 1.
+
+In subsequent phases, this system is needed in some environment $E_i$
+in order to create instances of classes defined in $E_i$, but not to
+define objects in $E_i$.
+
+\subsubsection{Dependencies}
+
+\subsubsection{Conclusions}
+
 \subsection{ctype}
 \label{sec-subtype}
 
