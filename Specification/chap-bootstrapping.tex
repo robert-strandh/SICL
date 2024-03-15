@@ -397,6 +397,28 @@ define objects in $E_i$.
 
 \subsubsection{Conclusions}
 
+\subsection{\texttt{typep}}
+
+\subsubsection{Description}
+
+\begin{itemize}
+\item \texttt{class}.  The function \texttt{ensure-class-using-class}
+  in the system \texttt{sicl-ensure-metaobject-using-class} calls
+  \texttt{typep} to check whether a \emph{superclass} argument is a
+  class metaobject, a symbol, or something else.  If it is a symbol,
+  it turns it into a class by using \texttt{find-class}.  The system
+  Clostrophilia class-initialization uses \texttt{typep} to check that
+  each superclass in the list of superclasses is a class metaobject,
+  and calls \texttt{error} otherwise.
+
+\end{itemize}
+
+
+
+\subsubsection{Dependencies}
+
+\subsubsection{Conclusions}
+
 \subsection{ctype}
 \label{sec-subtype}
 
