@@ -251,6 +251,7 @@
     (setf (clo:find-class client global-environment 'string)
           (find-class 'string))
     (sb:ensure-asdf-system client environment "predicament-common")
+    (load-ctype client environment global-environment)
     (sb:ensure-asdf-system client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
     ;; The way we define it is that it just expands to a PROGN of the
