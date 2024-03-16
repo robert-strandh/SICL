@@ -230,27 +230,7 @@
     (setf (clo:macro-function
            client global-environment @asdf:defsystem)
           (constantly nil))
-    (clo:fmakunbound client global-environment 'error)
-    (clo:fmakunbound client global-environment 'warn)
-    (sb:ensure-asdf-system client environment "sicl-conditions")
-    (setf (clo:fdefinition client global-environment 'macroexpand)
-          (lambda (form environment)
-            (declare (ignore environment))
-            (values form nil)))
-    (clo:make-variable client global-environment '*error-output*
-                       *error-output*)
-    (clo:make-variable client global-environment '*query-io*
-                       *query-io*)
-    (sb:ensure-asdf-system
-     client environment "predicament-base" :load-system-file t)
-    (let* ((symbol @predicament-asdf:*string-designators*)
-           (value (clo:symbol-value client global-environment symbol)))
-      (eval `(defparameter ,symbol ',value)))
-    (sb:ensure-asdf-system
-     client environment "predicament-packages-intrinsic")
-    (setf (clo:find-class client global-environment 'string)
-          (find-class 'string))
-    (sb:ensure-asdf-system client environment "predicament-common")
+    (load-predicament client environment global-environment)
     (load-ctype client environment global-environment)
     (sb:ensure-asdf-system client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
