@@ -20,6 +20,12 @@
           (ecase type-specifier
             (null (null object))
             (string (stringp object)))))
+  ;; Predicament calls MACROEXPAND as part of the RESTART-CASE macro,
+  ;; in order to determine whether the signaling form is one of
+  ;; SIGNAL, WARN, ERROR, or CERROR.  Since the signaling form could
+  ;; be a macro form that expands to one of these, Predicament calls
+  ;; MACROEXPAND.  This behavior is documented in the Common Lisp
+  ;; standard.
   (setf (clo:fdefinition client global-environment 'macroexpand)
         (lambda (form environment)
           (declare (ignore environment))
