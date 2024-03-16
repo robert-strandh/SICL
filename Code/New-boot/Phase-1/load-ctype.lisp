@@ -28,5 +28,8 @@
   (setf (clo:find-class client global-environment 'sequence)
         (find-class 't))
   (sb:ensure-asdf-system client environment "sicl-array-load-time")
+  ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so we
+  ;; need to have the package SICL-TYPE defined.
+  (sb:ensure-asdf-system client environment "sicl-type-support")
   (let ((*features* '(:sicl)))
     (sb:ensure-asdf-system client environment "ctype")))
