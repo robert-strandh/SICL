@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
+(defun common-boot::expand-compiler-macro (compiler-macro cst environment)
+  (declare (ignore compiler-macro environment))
+  (cst:raw cst))
+
 (defun load-ctype (client environment global-environment)
   ;; The ctype library defines a method combination.  In phase 1, this
   ;; needs to be a host method combination, but it needs to be
@@ -31,5 +35,28 @@
   ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so we
   ;; need to have the package SICL-TYPE defined.
   (sb:ensure-asdf-system client environment "sicl-type-support")
+  ;; The ctype library defines a method on MAKE-LOAD-FORM that calls
+  ;; MAKE-LOAD-FORM-SAVING-SLOTS.
+  (setf (clo:fdefinition client global-environment 'make-load-form)
+        #'make-load-form)
+  (setf (clo:fdefinition
+         client global-environment 'make-load-form-saving-slots)
+        #'make-load-form-saving-slots)
+  (setf (clo:fdefinition client global-environment 'print-object)
+        #'print-object)
+  ;; The ctype library calls FIND-CLASS at load time with lots of
+  ;; names that we need to define.
+  (flet ((import-class (name)
+           (setf (clo:find-class client global-environment name)
+                 (find-class name))))
+    (loop for class-name in '(hash-table readtable pathname
+                              stream random-state structure-object complex)
+          do (import-class class-name)))
+  (clo:make-variable client global-environment 'most-negative-fixnum
+                     most-negative-fixnum)
+  (clo:make-variable client global-environment 'most-positive-fixnum
+                     most-positive-fixnum)
+  (clo:make-variable client global-environment 'char-code-limit
+                     char-code-limit)
   (let ((*features* '(:sicl)))
     (sb:ensure-asdf-system client environment "ctype")))
