@@ -4,7 +4,7 @@
   '(;; Arithmetic
     + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
     zerop plusp minusp
-    numberp integerp random
+    numberp integerp realp rationalp floatp random
     ;; Conses
     cons list list* null endp
     car cdr caar cadr cdar cddr
@@ -13,8 +13,9 @@
     first second third fourth fifth sixth seventh eighth ninth tenth
     rest last butlast nth nthcdr append getf
     consp listp atom member mapcar mapc set-difference set-exclusive-or
-    assoc ldiff tailp list-length make-list union
+    assoc ldiff tailp list-length make-list union intersection
     adjoin copy-list
+    subsetp
     ;; Sequences
     elt subseq reduce length reverse nreverse
     count count-if count-if-not
@@ -28,13 +29,14 @@
     ;; Strings
     string stringp string-downcase
     ;; Characters
-    char
+    char characterp
     ;; Conditions
     error warn break assert
     ;; Evaluation and compilation
     constantp
     ;; Data and control flow
     values not funcall apply eq eql equal identity functionp every
+    notany
     ;; Printer
     format
     ;; Environment
