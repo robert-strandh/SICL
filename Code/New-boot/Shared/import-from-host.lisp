@@ -5,6 +5,7 @@
     + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
     zerop plusp minusp
     numberp integerp realp rationalp floatp random
+    logcount lognot integer-length
     ;; Conses
     cons list list* null endp
     car cdr caar cadr cdar cddr
@@ -36,7 +37,7 @@
     constantp
     ;; Data and control flow
     values not funcall apply eq eql equal identity functionp every
-    notany
+    notany some
     ;; Printer
     format
     ;; Environment
