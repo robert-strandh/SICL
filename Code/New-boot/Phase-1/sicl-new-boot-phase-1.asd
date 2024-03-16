@@ -11,4 +11,5 @@
    (:file "macro-programming")
    (:file "import-from-host")
    (:file "cst-to-ast")
+   (:file "load-ctype")
    (:file "boot")))
