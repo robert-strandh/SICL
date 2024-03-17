@@ -3,7 +3,7 @@
 (defparameter *host-function-names*
   '(;; Arithmetic
     + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
-    zerop plusp minusp
+    zerop plusp minusp expt
     numberp integerp realp rationalp floatp random
     logcount lognot integer-length
     ;; Conses
@@ -24,7 +24,7 @@
     position position-if position-if-not
     remove remove-if remove-if-not
     delete delete-if delete-if-not
-    remove-duplicates sort
+    remove-duplicates sort map substitute
     ;; Symbols
     gensym symbolp symbol-name
     ;; Strings
