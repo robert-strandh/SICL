@@ -22,15 +22,12 @@
   (let ((symbol (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
     (setf (clo:fdefinition client global-environment symbol)
           (fdefinition symbol)))
+  (sb:ensure-asdf-system
+   client environment "sicl-new-boot-phase-1-additional-classes")
   (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
   ;; The ctype library needs for the classes in the module SICL-ARRAY
   ;; to be defined.
   (sb:ensure-asdf-system client environment "sicl-array-support")
-  ;; The SICL-ARRAY module defines vector to have SEQUENCE as a
-  ;; superclass, but it doesn't have to work in this phase, so we
-  ;; define SEQUENCE to be the host class T.
-  (setf (clo:find-class client global-environment 'sequence)
-        (find-class 't))
   (sb:ensure-asdf-system client environment "sicl-array-load-time")
   ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so we
   ;; need to have the package SICL-TYPE defined.
@@ -44,14 +41,6 @@
         #'make-load-form-saving-slots)
   (setf (clo:fdefinition client global-environment 'print-object)
         #'print-object)
-  ;; The ctype library calls FIND-CLASS at load time with lots of
-  ;; names that we need to define.
-  (flet ((import-class (name)
-           (setf (clo:find-class client global-environment name)
-                 (find-class name))))
-    (loop for class-name in '(hash-table readtable pathname
-                              stream random-state structure-object complex)
-          do (import-class class-name)))
   (clo:make-variable client global-environment 'most-negative-fixnum
                      most-negative-fixnum)
   (clo:make-variable client global-environment 'most-positive-fixnum
