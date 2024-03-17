@@ -7,22 +7,20 @@
 (defclass list (sequence) ()
   (:metaclass built-in-class))
 
-(defclass cons (list sequence t)
-  ()
+(defclass hash-table () ())
+
+(defclass readtable () ())
+
+(defclass pathname () ())
+
+(defclass stream () ())
+
+(defclass random-state () ())
+
+(defclass structure-object (standard-object) ())
+
+(defclass number () ()
   (:metaclass built-in-class))
 
-(defgeneric %symbol-name (symbol))
-
-(defgeneric symbol-package (symbol))
-
-(defclass symbol ()
-  ((%name
-    :initarg :name
-    :reader %symbol-name)
-   (%package
-    :initarg :package
-    :reader symbol-package)))
-
-(defclass null (symbol list)
-  ()
-  (:default-initargs :name "NIL" :package (find-package '#:common-lisp)))
+(defclass complex (number) ()
+  (:metaclass built-in-class))
