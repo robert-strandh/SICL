@@ -16,14 +16,14 @@
           (declare (ignore environment))
           (eval form)
           nil))
+  (sb:ensure-asdf-system
+   client environment "sicl-new-boot-phase-1-additional-classes")
   ;; The ctype library needs for the system SICL-ARITHMETIC to be
   ;; loaded.
   ;; I have no idea why this is necessary.
   (let ((symbol (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
     (setf (clo:fdefinition client global-environment symbol)
           (fdefinition symbol)))
-  (sb:ensure-asdf-system
-   client environment "sicl-new-boot-phase-1-additional-classes")
   (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
   ;; The ctype library needs for the classes in the module SICL-ARRAY
   ;; to be defined.
