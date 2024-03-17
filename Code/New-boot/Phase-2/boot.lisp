@@ -52,6 +52,10 @@
           (clo:fdefinition
            client (sb:e1 boot)
            @sicl-clos:ensure-method-using-generic-function))
+    (setf (clo:fdefinition
+           client global-environment @sicl-clos:^method-function)
+          (clo:fdefinition
+           client (sb:e1 boot) @clostrophilia:method-function))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
