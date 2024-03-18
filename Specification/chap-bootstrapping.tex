@@ -438,8 +438,32 @@ and standard classes.  It also requires
 \texttt{define-method-combination} because it uses a custom method
 combination for many of its generic functions.
 
-When \texttt{ctype} is configured for \sysname{}, it also requires
-Regalia (\seesec{sec-regalia}, and ...
+When \texttt{ctype} is configured for \sysname{}, it also requires the
+existence of all standardized system classes.  During bootstrapping,
+many of these classes can be created with no slots and be redefined
+later.  This is especially true for classes that are not otherwise
+used during bootstrapping, such as \texttt{random-state} and
+\texttt{readtable}.
+
+At the end of the procedure of loading \texttt{ctype}, it creates
+instances of the classes that it defines.  The very purpose if the
+code loaded into some environment $E_i$ is to make it possible to
+create instances of the classes defined in $E_i$, in particular
+instances of \texttt{generic-function} and of \texttt{class}, but also
+of other classes.  Therefore, before any instances of classes defined
+in $E_i$ can be created, the machinery for allocating and initializing
+objects must have already been loaded.  This machinery consists of
+\texttt{allocate-instance}, \texttt{make-instance},
+\texttt{initialize-instance}, and \texttt{shared-initialize}.  So the
+code for this machinery must be loaded before \texttt{ctype} can be
+loaded.  In phase 1, this machinery is provided by the host, so it
+suffices to make sure that the host version of \texttt{make-instance}
+is.  In subsequent phases, the code for this machinery must be loaded
+before \texttt{ctype} can be loaded.
+
+\subsubsection{Conclusions}
+
+The \texttt{ctype} library must be loaded very late in each phase.
 
 \subsection{Regalia}
 \label{sec-regalia}
