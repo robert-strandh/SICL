@@ -3,10 +3,10 @@
 (defun load-ctype (client environment global-environment)
   (sb:ensure-asdf-system
    client environment "sicl-new-boot-phase-1-additional-classes")
-  ;; ;; I have no idea why this is necessary.
-  ;; (let ((symbol (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
-  ;;   (setf (clo:fdefinition client global-environment symbol)
-  ;;         (fdefinition symbol)))
+  ;; I have no idea why this is necessary.
+  (let ((symbol (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
+    (setf (clo:fdefinition client global-environment symbol)
+          (fdefinition symbol)))
   ;; The ctype library needs for the system SICL-ARITHMETIC to be
   ;; loaded.
   (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
@@ -17,10 +17,6 @@
   ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so we
   ;; need to have the package SICL-TYPE defined.
   (sb:ensure-asdf-system client environment "sicl-type-support")
-  ;; The ctype library defines a method on MAKE-LOAD-FORM that calls
-  ;; MAKE-LOAD-FORM-SAVING-SLOTS.
-  (setf (clo:fdefinition client global-environment 'make-load-form)
-        #'make-load-form)
   (setf (clo:fdefinition
          client global-environment 'make-load-form-saving-slots)
         #'make-load-form-saving-slots)
