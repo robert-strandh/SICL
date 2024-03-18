@@ -2,10 +2,7 @@
 
 (defparameter *host-function-names*
   '(;; Evaluation and Compilation
-    special-operator-p
-    ;; Objects
-    initialize-instance reinitialize-instance shared-initialize
-    slot-boundp slot-value allocate-instance class-of))
+    special-operator-p))
 
 (defun import-host-functions (client global-environment)
   (sb:import-host-functions client global-environment)
