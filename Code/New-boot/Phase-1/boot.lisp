@@ -216,11 +216,6 @@
           (find-class 'cons))
     (setf (clo:find-class client global-environment 'list)
           (find-class 'list))
-    ;; ;; It would be better to load the condition system here.
-    ;; (setf (clo:macro-function client global-environment 'define-condition)
-    ;;       (lambda (form environment)
-    ;;         (declare (ignore environment))
-    ;;         (list 'defclass (second form) '() '())))
     (define-typep client global-environment)
     (sb:ensure-asdf-system
      client environment "sicl-asdf-packages")
