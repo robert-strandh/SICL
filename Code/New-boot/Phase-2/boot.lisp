@@ -142,6 +142,10 @@
     (load-predicament client environment global-environment)
     (clo:make-variable client global-environment
                        @clostrophilia:+instance-slots-offset+ 1)
+    (clo:make-variable client (sb:e1 boot)
+                       @predicament:*condition-maker* 'make-condition)
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-instance-structure")
     (sb:ensure-asdf-system
      client environment "clostrophilia-standard-object-initialization"))
   boot)
