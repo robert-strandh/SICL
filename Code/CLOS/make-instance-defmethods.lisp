@@ -24,14 +24,6 @@
 ;;; possible to call (MAKE-INSTANCE 'SYMBOL) in SBCL.  It does not
 ;;; complain in MAKE-INSTANCE, but in ALLOCATE-INSTANCE.
 
-;;; The AMOP says that ALLOCATE-INSTANCE checks whether the class is
-;;; finalized, and if not, calls FINALIZE-INHERITANCE.  However, the
-;;; INITARGS received by ALLOCATE-INSTANCE should be the defaulted
-;;; initargs, and computing the defaulted initargs requires the class
-;;; to be finalized.  A peek at PCL shows that the class is finalized
-;;; in MAKE-INSTANCE, before ALLOCATE-INSTANCE is called, which makes
-;;; more sense.
-
 ;;; FIXME: check validity also for generic functions
 
 (defmethod make-instance ((class regular-class) &rest initargs)
