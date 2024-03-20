@@ -139,6 +139,7 @@
       (clo:make-variable client (sb:e1 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
+    (sb:ensure-asdf-system client environment "sicl-clos-make-instance")
     (load-predicament client environment global-environment)
     (clo:make-variable client global-environment
                        @clostrophilia:+instance-slots-offset+ 1)
