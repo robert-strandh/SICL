@@ -3,7 +3,7 @@
 (defparameter *host-function-names*
   '(;; Objects
     initialize-instance reinitialize-instance shared-initialize
-    slot-boundp slot-value allocate-instance class-of))
+    slot-boundp slot-value class-of))
 
 (defun import-host-functions (client global-environment)
   (sb:import-host-functions client global-environment)
