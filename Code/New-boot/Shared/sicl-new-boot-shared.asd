@@ -24,4 +24,5 @@
    (:file "import-from-host")
    (:file "define-environment-functions")
    (:file "import-khazern")
-   (:file "read-symbol-components")))
+   (:file "read-symbol-components")
+   (:file "standard-object")))
