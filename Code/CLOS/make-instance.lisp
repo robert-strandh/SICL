@@ -35,5 +35,21 @@
 
 ;;; FIXME: check validity also for generic functions
 
-(defmethod make-instance ((class clostrophilia:regular-class) &rest initargs)
-  (apply #'^make-instance-using-class class initargs))
+;;; During bootstrapping, we leave this method unspecialized.  The
+;;; reason is that MAKE-INSTANCE in environment Ei makes an instance
+;;; of a class also in Ei, which means that it operates on an object
+;;; in Ei, which means that it must be defined in Ei-1 in order to be
+;;; specialized.  But we can't put MAKE-INSTANCE in Ei-1, because it
+;;; needs to call INITIALIZE-INSTANCE in Ei.
+;;;
+;;; Also, MAKE-INSTANCE needs to call INITIALIZE-INSTANCE with
+;;; defaulted initargs, but the defaulted initargs are computed by
+;;; code in Ei-1 since that code operates on a class in Ei.  We solve
+;;; this dilemma by calling an intermediate function
+;;; ALLOCATE-INSTANCE-USING-CLASS in Ei-1 that compoutes the defaulted
+;;; initargs, calls ALLOCATE-INSTANCE and returns two values, the
+;;; instance and the defaulted initargs.
+(defmethod make-instance (class &rest initargs)
+  (multiple-value-bind (instance defaulted-initargs)
+      (apply #'^allocate-instance-using-class class initargs)
+    (apply #'initialize-instance instance defaulted-initargs)))
