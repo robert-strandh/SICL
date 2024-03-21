@@ -140,9 +140,9 @@
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
     (setf (clo:fdefinition
-           client global-environment @sicl-clos:^make-instance-using-class)
+           client global-environment @sicl-clos:^allocate-instance-using-class)
           (clo:fdefinition
-           client (sb:e1 boot) @clostrophilia:make-instance-using-class))
+           client (sb:e1 boot) @clostrophilia:allocate-instance-using-class))
     (sb:ensure-asdf-system client environment "sicl-clos-make-instance")
     (load-predicament client environment global-environment)
     (clo:make-variable client (sb:e1 boot)
