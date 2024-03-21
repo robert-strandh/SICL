@@ -25,4 +25,5 @@
    #:import-khazern
    #:enable-parcl-symbols
    #:read-symbol-components
+   #:allocate-general-instance
    #:class))
