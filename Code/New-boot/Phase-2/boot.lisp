@@ -147,6 +147,11 @@
     (load-predicament client environment global-environment)
     (clo:make-variable client (sb:e1 boot)
                        @predicament:*condition-maker* 'make-condition)
+    (let ((symbol @clostrophilia:standard-instance-access))
+      (setf (clo:fdefinition client global-environment symbol)
+            #'sb:standard-instance-access)
+      (setf (clo:fdefinition client global-environment `(setf ,symbol))
+            #'(setf sb:standard-instance-access)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-instance-structure")
     (sb:ensure-asdf-system
