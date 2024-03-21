@@ -26,4 +26,5 @@
    #:enable-parcl-symbols
    #:read-symbol-components
    #:allocate-general-instance
+   #:standard-instance-access
    #:class))
