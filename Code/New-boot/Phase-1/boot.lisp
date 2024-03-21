@@ -254,6 +254,9 @@
            client global-environment 'ensure-generic-function)
           (lambda (name &key &allow-other-keys)
             (error "Attempt to create generic function named ~s" name)))
+    (setf (clo:fdefinition
+           client global-environment @clostrophilia:allocate-general-instance)
+          #'sb:allocate-general-instance)
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
     (sb:ensure-asdf-system
