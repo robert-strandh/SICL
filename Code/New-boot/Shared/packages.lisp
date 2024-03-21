@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-new-boot
   (:use #:common-lisp)
+  (:shadow #:class)
   (:local-nicknames
    (#:env #:sicl-environment)
    (#:abp #:architecture.builder-protocol)
@@ -23,4 +24,5 @@
    #:define-environment-functions
    #:import-khazern
    #:enable-parcl-symbols
-   #:read-symbol-components))
+   #:read-symbol-components
+   #:class))
