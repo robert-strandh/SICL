@@ -30,7 +30,7 @@
 
 (defun load-source-file (client filename environment)
   (format *trace-output* "Loading ~s into ~s~%"
-          filename environment)
+          filename (name (trucler:global-environment client environment)))
   (finish-output *trace-output*)
   (sicl-source-tracking:with-source-tracking-stream-from-file (stream filename)
     (load-stream client stream environment)))
