@@ -4,6 +4,11 @@
   ((%class :initarg :class :accessor class)
    (%rack :initarg :rack :accessor rack)))
 
+(defun allocate-general-instance (class size)
+  (make-instance 'header
+    :class class
+    :rack (make-array size :initial-element 99999)))
+
 (defgeneric standard-instance-access (object location))
 
 (defgeneric (setf standard-instance-access) (value object location))
