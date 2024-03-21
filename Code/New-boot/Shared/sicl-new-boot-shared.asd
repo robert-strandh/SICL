@@ -25,4 +25,4 @@
    (:file "define-environment-functions")
    (:file "import-khazern")
    (:file "read-symbol-components")
-   (:file "standard-object")))
+   (:file "ersatz-object")))
