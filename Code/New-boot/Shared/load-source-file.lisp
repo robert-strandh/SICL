@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-new-boot)
 
+(defun eval-cst (client cst environment)
+  (let* ((ast (cst-to-ast client cst environment))
+         (top-level-function (cbae:compile-ast client ast environment)))
+    (funcall top-level-function)))
+
 (defun load-stream (client stream environment)
   (let ((eclector.base:*client* client)
         (abp:*builder* (cb::make-builder client environment))
@@ -17,10 +22,7 @@
       (loop with eof = (list nil)
             for cst = (eclector.concrete-syntax-tree:read stream nil eof)
             until (eq cst eof)
-            do (let* ((ast (cst-to-ast client cst environment))
-                      (top-level-function 
-                        (cbae:compile-ast client ast environment)))
-                 (funcall top-level-function))))
+            do (eval-cst client cst environment)))
     (loop with global-environment
             = (trucler:global-environment client environment)
           for condition in undefined-functions
