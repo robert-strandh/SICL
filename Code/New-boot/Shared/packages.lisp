@@ -27,4 +27,5 @@
    #:read-symbol-components
    #:allocate-general-instance
    #:standard-instance-access
-   #:class))
+   #:class
+   #:eval-cst))
