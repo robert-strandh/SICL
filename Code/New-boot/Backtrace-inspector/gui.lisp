@@ -51,7 +51,7 @@
             (values 20 y)))
     (clim:with-output-as-presentation
         (pane entry 'cbae:stack-entry)
-      (if (null origin)
+      (if (or (null origin) (null (cst:source origin)))
           (clim:with-drawing-options (pane :ink clim:+red+)
             (format pane "entry with no source information~%"))
           (clim:with-drawing-options (pane :ink clim:+dark-green+)
