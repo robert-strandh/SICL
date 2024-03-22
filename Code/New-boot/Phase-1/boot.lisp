@@ -330,4 +330,9 @@
      client environment "sicl-clos-ensure-metaobject-using")
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination-base")
+    (setf (clo:fdefinition client global-environment 'compile)
+          (lambda (should-be-nil lambda-expression)
+            (assert (null should-be-nil))
+            (let ((cst (cst:cst-from-expression lambda-expression)))
+              (sb:eval-cst client cst environment))))
     global-environment))
