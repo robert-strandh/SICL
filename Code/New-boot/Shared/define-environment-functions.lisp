@@ -3,7 +3,9 @@
 (defun define-environment-functions (client global-environment)
   (setf (clo:fdefinition client global-environment 'find-class)
         (lambda (name &optional (errorp t) (environment global-environment))
-          (clo:find-class client environment name errorp)))
+          (if (symbolp name)
+              (clo:find-class client environment name errorp)
+              name)))
   (setf (clo:fdefinition client global-environment '(setf find-class))
         (lambda (new-class name
                  &optional (errorp t) (environment global-environment))
