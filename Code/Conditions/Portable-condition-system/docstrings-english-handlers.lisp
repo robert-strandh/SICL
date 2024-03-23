@@ -1,11 +1,5 @@
 (cl:in-package #:portable-condition-system)
 
-(setf (documentation 'handler-bind 'function)
-      (format
-       nil
-       "Executes the body forms in a dynamic context where the newly~@
-        established handlers are available."))
-
 (setf (documentation 'make-handler-case-with-no-error-case 'function)
       (format
        nil
