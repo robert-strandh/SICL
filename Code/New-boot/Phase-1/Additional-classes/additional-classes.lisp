@@ -19,7 +19,16 @@
 
 (defclass structure-object (standard-object) ())
 
-(defclass number () ()
+(defclass number (t) ()
+  (:metaclass built-in-class))
+
+(defclass fixnum (number) ()
+  (:metaclass built-in-class))
+
+(defclass cons (t) ()
+  (:metaclass built-in-class))
+
+(defclass character (t) ()
   (:metaclass built-in-class))
 
 (defclass complex (number) ()
