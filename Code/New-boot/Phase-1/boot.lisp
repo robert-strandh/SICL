@@ -226,6 +226,8 @@
            client global-environment @asdf:defsystem)
           (constantly nil))
     (load-predicament client environment global-environment)
+    (sb:ensure-asdf-system
+     client environment "sicl-new-boot-phase-1-additional-classes")
     (load-ctype client environment global-environment)
     (sb:ensure-asdf-system client environment "acclimation")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.

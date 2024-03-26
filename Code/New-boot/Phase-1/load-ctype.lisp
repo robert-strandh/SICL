@@ -16,8 +16,6 @@
           (declare (ignore environment))
           (eval form)
           nil))
-  (sb:ensure-asdf-system
-   client environment "sicl-new-boot-phase-1-additional-classes")
   ;; The ctype library needs for the system SICL-ARITHMETIC to be
   ;; loaded.
   ;; I have no idea why this is necessary.
