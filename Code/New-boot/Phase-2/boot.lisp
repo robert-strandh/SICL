@@ -145,6 +145,7 @@
            client (sb:e1 boot) @clostrophilia:allocate-instance-using-class))
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-2-additional-classes")
+    (define-class-of-and-stamp client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system client environment "sicl-clos-make-instance")
     (load-predicament client environment global-environment)
     (clo:make-variable client (sb:e1 boot)
