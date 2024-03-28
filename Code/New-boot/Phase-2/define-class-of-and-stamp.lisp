@@ -13,6 +13,8 @@
     (flet ((local-class-of (object)
              (cond ((integerp object)
                     (find-class-e2 'fixnum))
+                   ((symbolp object)
+                    (find-class-e2 'symbol))
                    ((characterp object)
                     (find-class-e2 'character))
                    ((consp object)
