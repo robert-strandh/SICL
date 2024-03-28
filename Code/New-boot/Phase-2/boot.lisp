@@ -146,6 +146,8 @@
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-2-additional-classes")
     (define-class-of-and-stamp client (sb:e1 boot) global-environment)
+    (setf (clo:fdefinition client (sb:e1 boot) @clostrophilia:class-of+1)
+          (clo:fdefinition client global-environment 'class-of))
     (sb:ensure-asdf-system client environment "sicl-clos-make-instance")
     (load-predicament client environment global-environment)
     (clo:make-variable client (sb:e1 boot)
