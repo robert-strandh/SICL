@@ -1,0 +1,27 @@
+(cl:in-package #:sicl-new-boot-phase-2)
+
+(eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
+
+(defun define-class-of-and-stamp (client e1 e2)
+  (flet ((find-class-e2 (class-name)
+           (let ((f (clo:fdefinition client e2 'find-class)))
+             (funcall f class-name)))
+         (unique-number (class-in-e1)
+           (let ((f (clo:fdefinition
+                     client e1 @clostrophilia:unique-number)))
+             (funcall f class-in-e1))))
+    (flet ((local-class-of (object)
+             (cond ((integerp object)
+                    (find-class-e2 'fixnum))
+                   ((characterp object)
+                    (find-class-e2 'character))
+                   ((consp object)
+                    (find-class-e2 'cons))
+                   ((typep object 'sb:header)
+                    (sb:class object))
+                   (t (error "Don't know how to take the class of ~s"
+                             object)))))
+      (setf (clo:fdefinition client e2 'class-of) #'local-class-of)
+      (setf (clo:fdefinition client e2 @clostrophilia:stamp)
+            (lambda (object)
+              (unique-number (local-class-of object)))))))

@@ -16,4 +16,5 @@
    (:file "define-ecclesia-functions")
    (:file "load-predicament")
    (:file "load-ctype")
+   (:file "define-class-of-and-stamp")
    (:file "boot")))
