@@ -27,5 +27,5 @@
    #:read-symbol-components
    #:allocate-general-instance
    #:standard-instance-access
-   #:class
+   #:header #:class #:rack
    #:eval-cst))
