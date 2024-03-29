@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-new-boot-backtrace-inspector
   :depends-on (#:mcclim
+               #:common-boot
                #:common-boot-ast-evaluator
                #:sicl-source-tracking
                #:clouseau)
