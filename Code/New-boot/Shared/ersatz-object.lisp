@@ -2,7 +2,8 @@
 
 (defclass header (closer-mop:funcallable-standard-object)
   ((%class :initarg :class :accessor class)
-   (%rack :initarg :rack :accessor rack)))
+   (%rack :initarg :rack :accessor rack))
+  (:metaclass closer-mop:funcallable-standard-class))
 
 (defun allocate-general-instance (class size)
   (make-instance 'header
