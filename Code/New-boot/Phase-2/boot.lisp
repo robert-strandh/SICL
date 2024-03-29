@@ -160,5 +160,11 @@
     (sb:ensure-asdf-system
      client environment "clostrophilia-instance-structure")
     (sb:ensure-asdf-system
-     client environment "clostrophilia-standard-object-initialization"))
+     client environment "clostrophilia-standard-object-initialization")
+    (let ((symbol-class (clo:find-class client global-environment 'symbol))
+          (finalize-inheritance
+            (clo:fdefinition
+             client (sb:e1 boot) @clostrophilia:finalize-inheritance)))
+      (funcall finalize-inheritance symbol-class))
+    (load-ctype client environment global-environment))
   boot)
