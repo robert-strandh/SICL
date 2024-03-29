@@ -279,16 +279,6 @@
           (fdefinition 'closer-mop:set-funcallable-instance-function))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
-    ;; The method on ENSURE-GENERIC-FUNCTION-USING-CLASS specialized
-    ;; to NULL calls CLASS-FINAILIZED-P to determine whether it can
-    ;; instantiate the class, but the GENERIC-FUNCTION class has an
-    ;; initform that sets the corresponding slot to NIL, which is
-    ;; normal.  However, in this phase, all classes are host classes,
-    ;; so they are finalized.  For that reason, we make
-    ;; finalize-inheritance return T always.
-    (setf (clo:fdefinition client global-environment
-                           @clostrophilia:finalize-inheritance)
-          (constantly t))
     ;; The method on ENSURE-CLASS-USING-CLASS specialized to
     ;; FORWARD-REFERENCED-CLASS calls CHANGE-CLASS to turn the class
     ;; into something other than a FORWARD-REFERENCED-CLASS.  But in
@@ -337,4 +327,9 @@
             (assert (null should-be-nil))
             (let ((cst (cst:cst-from-expression lambda-expression)))
               (sb:eval-cst client cst environment))))
+    (setf (clo:fdefinition client global-environment 'break)
+          (lambda (&rest arguments)
+            (declare (ignore arguments))
+            (sicl-new-boot-backtrace-inspector:inspect
+             common-boot-ast-evaluator::*stack*)))
     global-environment))
