@@ -332,4 +332,6 @@
             (declare (ignore arguments))
             (sicl-new-boot-backtrace-inspector:inspect
              common-boot-ast-evaluator::*stack*)))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-standard-object-initialization-aux")
     global-environment))
