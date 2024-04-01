@@ -19,11 +19,11 @@
                     (find-class-e2 'character))
                    ((consp object)
                     (find-class-e2 'cons))
+                   ((typep object 'sb:header)
+                    (sb:class object))
                    ((typep object 'standard-object)
                     ;; This case is for MAKE-INSTANCE.
                     (find-class-e2 't))
-                   ((typep object 'sb:header)
-                    (sb:class object))
                    (t (error "Don't know how to take the class of ~s"
                              object)))))
       (setf (clo:fdefinition client e2 'class-of) #'local-class-of)
