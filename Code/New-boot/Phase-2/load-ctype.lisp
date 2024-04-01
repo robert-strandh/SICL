@@ -20,8 +20,6 @@
   (setf (clo:fdefinition
          client global-environment 'make-load-form-saving-slots)
         #'make-load-form-saving-slots)
-  (setf (clo:fdefinition client global-environment 'print-object)
-        #'print-object)
   (clo:make-variable client global-environment 'most-negative-fixnum
                      (- (expt 2 62)))
   (clo:make-variable client global-environment 'most-positive-fixnum
