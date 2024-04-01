@@ -49,7 +49,7 @@
       :lambda-list ',lambda-list
       ,@(if (null argument-precedence-order)
             '()
-            `(:argument-precedence-order ',argument-precedence-order))
+            `(:argument-precedence-order ',(cdr argument-precedence-order)))
       :generic-function-class ',generic-function-class-name
       :method-class ',method-class-name
       :method-combination
