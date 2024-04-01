@@ -13,6 +13,8 @@
 
 (defclass pathname () ())
 
+(defclass package () ())
+
 (defclass stream () ())
 
 (defclass random-state () ())
