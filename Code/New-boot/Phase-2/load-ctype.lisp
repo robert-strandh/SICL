@@ -27,4 +27,5 @@
   (clo:make-variable client global-environment 'char-code-limit
                      (1- (expt 2 24)))
   (let ((*features* '(:sicl)))
-    (sb:ensure-asdf-system client environment "ctype")))
+    (sb:ensure-asdf-system client environment "ctype"))
+  (sb:ensure-asdf-system client environment "sicl-typep-subtypep"))
