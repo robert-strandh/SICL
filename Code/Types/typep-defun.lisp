@@ -2,4 +2,4 @@
 
 (defun typep (object type-specifier
               &optional (environment sicl-environment:*environment*))
-  (ctypep object (specifier-ctype type-specifier environment)))
+  (ctype:ctypep object (specifier-ctype type-specifier environment)))
