@@ -187,5 +187,9 @@
           (lambda (type-specifier &optional environment)
             (declare (ignore environment))
             (values type-specifier nil)))
+    (setf (clo:fdefinition
+           client global-environment @sicl-clos:intern-eql-specializer-1)
+          (clo:fdefinition
+           client (sb:e1 boot) @sicl-clos:intern-eql-specializer))
     (load-ctype client environment global-environment))
   boot)
