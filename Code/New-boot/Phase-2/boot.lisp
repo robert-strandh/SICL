@@ -186,7 +186,6 @@
            client global-environment @sicl-type:typexpand)
           (lambda (type-specifier &optional environment)
             (declare (ignore environment))
-            (when (eq type-specifier 'cons) (break))
             (values type-specifier nil)))
     (load-ctype client environment global-environment))
   boot)
