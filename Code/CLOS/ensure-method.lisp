@@ -1,16 +1,5 @@
 (cl:in-package #:sicl-clos)
 
-(defparameter *eql-specializers* '())
-
-(defun intern-eql-specializer (object)
-  (let ((entry (assoc object *eql-specializers*)))
-    (if (null entry)
-        (let ((eql-specializer (make-instance 'eql-specializer
-                                 :object object)))
-          (push (cons object eql-specializer) *eql-specializers*)
-          eql-specializer)
-        (cdr entry))))
-
 ;;; This function is not required by the standard.
 ;;;
 ;;; GENERIC-FUNCTION-OR-NAME is either a generic-function metaobject,
@@ -30,7 +19,7 @@
         (specializers
           (loop for specializer-designator in specializer-designators
                 collect (cond ((consp specializer-designator)
-                               (intern-eql-specializer
+                               (intern-eql-specializer-1
                                 (second specializer-designator)))
                               ((symbolp specializer-designator)
                                (find-class specializer-designator))

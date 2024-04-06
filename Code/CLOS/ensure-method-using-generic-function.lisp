@@ -57,7 +57,14 @@
              :documentation documentation
              :function function)))
     (clostrophilia:add-method generic-function method)))
-    
-                               
 
+(defparameter *eql-specializers* '())
 
+(defun intern-eql-specializer (object)
+  (let ((entry (assoc object *eql-specializers*)))
+    (if (null entry)
+        (let ((eql-specializer (make-instance 'eql-specializer
+                                 :object object)))
+          (push (cons object eql-specializer) *eql-specializers*)
+          eql-specializer)
+        (cdr entry))))
