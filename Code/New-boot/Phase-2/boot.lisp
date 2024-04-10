@@ -191,5 +191,16 @@
            client global-environment @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
            client (sb:e1 boot) @sicl-clos:intern-eql-specializer))
-    (load-ctype client environment global-environment))
+    (load-ctype client environment global-environment)
+    ;; The ctype library defines SUBCLASSP to call
+    ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
+    ;; argument.  But in E2, the arguments to SUBCLASSP are bridge
+    ;; objects, so they need to be accessed using host generic
+    ;; functions locaed in E1.  So we redefine SUBCLASSP here.
+    (setf (clo:fdefinition client global-environment @ctype:subclassp)
+          (lambda (sub super)
+            (let ((class-precedence-list
+                    (clo:fdefinition
+                     client (sb:e1 boot) @sicl-clos:class-precedence-list)))
+              (member super (funcall class-precedence-list sub))))))
   boot)
