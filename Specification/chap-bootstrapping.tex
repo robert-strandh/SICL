@@ -1,4 +1,26 @@
-3\chapter{Bootstrapping}
+\chapter{Bootstrapping}
+
+\section{Objectives and principles}
+
+\sysname{} is created from a fairly large number of external
+libraries.  Some of these libraries were originally written as modules
+of \sysname{}, but some were not.  Many of those libraries use a large
+number of features of the \commonlisp{} language, including features
+of \clos{} such as the possibility of creating generic functions,
+classes, and even new method combinations.  For that reason, we must
+provide a bootstrapping procedure that can handle pretty much
+arbitrary \commonlisp{} code.  In particular, we cannot do what many
+existing \commonlisp{} implementations do, namely load \clos{} late in
+the bootstrapping process.
+
+Furthermore, the \sysname{} bootstrapping procedure aims to improve on
+the way the main existing \clos{} implementation (Portable Common
+Loops, or PCL) and its derivatives work.  Specifically, PCL avoids
+metastability issues by special-casing certain situations as
+documented in appendix C of the book ``the Art of the Metaobject
+Protocol'' \cite{Kiczales:1991:AMP:574212}.  We do that by applying
+the techniques documented in two of our articles
+(\cite{Strandh:2014:RMI:2635648.2635656}, \cite{durand:hal-02417646}).
 
 \section{General technique}
 
