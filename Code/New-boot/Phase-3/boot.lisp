@@ -12,5 +12,18 @@
          (env:*environment* global-environment))
     (setf (sb:e3 boot) global-environment)
     (reinitialize-instance client
-      :environment global-environment))
+      :environment global-environment)
+    (clo:make-variable
+     client global-environment '*package* (find-package '#:common-lisp-user))
+    (sb:define-package-functions client global-environment)
+    (sb:define-backquote-macros client global-environment)
+    (import-from-host client global-environment)
+    (sb:import-khazern client global-environment)
+    (sb:define-environment-functions client global-environment)
+    (clo:make-variable client global-environment
+                       @sicl-environment:*environment*
+                       global-environment)
+    (clo:make-variable client global-environment
+                       @sicl-environment:*client*
+                       client))
   boot)
