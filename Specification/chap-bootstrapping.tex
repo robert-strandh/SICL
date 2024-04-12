@@ -22,6 +22,19 @@ Protocol'' \cite{Kiczales:1991:AMP:574212}.  We do that by applying
 the techniques documented in two of our articles
 (\cite{Strandh:2014:RMI:2635648.2635656}, \cite{durand:hal-02417646}).
 
+Essentially, we make sure important slot accessors operate by
+accessing the standard object by index directly, rather than by going
+through \texttt{slot-value}.  As a result, the example of
+\texttt{class-slots} in appendix C of the book is not a problem in
+\sysname{}, because it never needs to call \texttt{slot-value}.  But
+to accomplish this direct access, at some point, the slot metaobject
+had to be accessed so that the index of the slot in the instance could
+be determined.  We accomplish this possibility by calling a
+preexisting version of \texttt{class-slots}.  This recursion
+terminates by a version of \texttt{class-slots} that we define as a
+generic function in the host \commonlisp{} system used for
+bootstrapping, and so it is already operational.
+
 \section{General technique}
 
 \sysname{} is bootstrapped from an existing \commonlisp{}
