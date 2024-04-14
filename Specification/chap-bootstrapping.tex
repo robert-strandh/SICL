@@ -679,6 +679,28 @@ important operators depends on the environment in question as follows:
   calling the host function \texttt{make-instance} with the class name
   \texttt{standard-method} and then calling the host function
   \texttt{add-method} to add the method to the generic function.
+\item \texttt{defclass} creates an instance of the host class
+  \texttt{funcallable-standard-class} and binds it to a name in $E_1$.
+  The system Common Macro Definitions requires us to supply a method
+  on \texttt{ensure-class-name}, and we supply the name
+  \texttt{ensure-class} in the boot package.  We define the
+  bootstrapping-specific function to call the host function
+  \texttt{make-instance}, but there are some complications due to the
+  way class initialization is defined in the MOP.  The problem is that
+  \texttt{ensure-class} is defined to call
+  \texttt{ensure-class-using-class} which calls \texttt{make-instance}
+  without first processing the slot specifications.  Such a slot
+  specification contains a list of function names to be used as slot
+  readers and a list of function names to be used as slot writers.  If
+  we were to include these canonical slot specifications in the call
+  to the host function \texttt{make-instance} then the
+  class-initialization protocol of the host would create host generic
+  functions with names in the host global environment corresponding to
+  these readers and writers, and we clearly do not want that.  So we
+  need to do two things: First, we need to remove those slot options
+  before calling host \texttt{make-instance}, and second, we must then
+  add those reader and writer methods to the generic functions being
+  named, and create those functions in case they do not exist.
 \end{itemize}
 
 \subsubsection{Environment $E_2$}
