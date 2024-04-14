@@ -28,6 +28,12 @@
      environment)
   nil)
 
+;;; This method is meant to provide an expansion that contains a call
+;;; to ENSURE-GENERIC-FUNCTION, but we accomplish the action at
+;;; macro-expansion time instaed, and provide the expansion NIL.  If
+;;; the generic function exists, we do nothing, assuming that a second
+;;; invocation of DEFGENERIC is meant to create the same generic
+;;; function.  
 (defmethod cmd:ensure-generic-function
     ((client client)
      name
@@ -40,8 +46,15 @@
      documentation-option
      environment)
   (declare (ignore documentation-option method-class-name))
+  ;; If a generic function named NAME already exists, we assume that
+  ;; the second invocation of DEFGENERIC has the same characteristics
+  ;; as the first one, so that it is safe to do nothing in that case.
   (unless (clo:fboundp client (sb:environment client) name)
     (let* ((method-combination
+             ;; At least SBCL requires a generic function as the first
+             ;; argument of FIND-METHOD-COMBINATION, but then this
+             ;; argument is ignored, so we can pass any host generic
+             ;; function.
              (closer-mop:find-method-combination
               #'print-object
               method-combination-name
@@ -53,7 +66,8 @@
                :argument-precedence-order argument-precedence-order
                :method-combination method-combination)))
       (setf (clo:fdefinition client (sb:environment client) name)
-            result))))
+            result)))
+  nil)
 
 ;;; PROCLAIM programming.
 
