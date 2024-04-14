@@ -645,7 +645,40 @@ important operators depends on the environment in question as follows:
 \item \texttt{defgeneric} creates an instance of the host class
   \texttt{standard-generic-function} and binds its name to the
   resulting object in $E_1$.  We accomplish this effect by a method on
-  \texttt{common-macro-definitions:ensure-generic-function}.
+  \texttt{common-macro-definitions:ensure-generic-function}.  This
+  method is meant to provide an expansion that contains
+  \texttt{ensure-generic-function}, but we create the generic function
+  at macro-expansion time.  The generic function is created by a call
+  to the host function \texttt{make-instance}, and the result is then
+  associated with the name in $E_1$.
+\item \texttt{defmethod} creates an instance of the host class
+  \texttt{standard-method} and adds it to the named generic function
+  in $E_1$.  For \texttt{defmethod} we can not create the method at
+  macro-expansion time, because the \texttt{defmethod} form can occur
+  in a non-null lexical environment.  So we must create a working
+  expansion that can then be compiled in the appropriate lexical
+  environment.  The system Common Macro Definitions requires us to
+  define a method on \texttt{wrap-in-make-method-lambda} and on
+  \texttt{wrap-in-ensure-method}.  For
+  \texttt{wrap-in-make-method-lambda}, we are given a lambda
+  expression representing the body of the method, and the expansion
+  should be that body wrapped in the macro form
+  \texttt{make-method-lambda} defined by the MOP.  However,
+  \texttt{make-method-lambda} is not available on all platforms, and
+  we can assume that the default action is what is required.  The
+  default action for a standard method is to wrap the lambda
+  expression in a lambda expression that has two required parameters,
+  namely the list of arguments to the method, and a list of next
+  methods to be executed as a result of a call to
+  \texttt{call-next-method}.  Furthermore, the wrapper should contain
+  definitions of \texttt{next-method-p} and \texttt{call-next-method}.
+  We accomplish this with a \texttt{flet} expression defining these
+  local functions.  For \texttt{wrap-in-ensure-method}, we wrap the
+  method function in a form calling a special bootstrapping-version of
+  \texttt{ensure-method}.  This special version creates the method by
+  calling the host function \texttt{make-instance} with the class name
+  \texttt{standard-method} and then calling the host function
+  \texttt{add-method} to add the method to the generic function.
 \end{itemize}
 
 \subsubsection{Environment $E_2$}
