@@ -10,6 +10,7 @@
    environment)
   nil)
 
+;;; The function ENSURE-CLASS mentioned here is defined in boot.lisp.
 (defmethod cmd:ensure-class-name ((client client))
   'ensure-class)
 
