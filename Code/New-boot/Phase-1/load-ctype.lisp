@@ -9,7 +9,13 @@
   ;; needs to be a host method combination, but it needs to be
   ;; available to DEFGENERIC.  We have programmed the DEFGENERIC macro
   ;; to search for method combinations in the host, so there is
-  ;; nothing else we need to do.
+  ;; nothing else we need to do.  Doing it this way is safe because
+  ;; the symbol used to name the method combination will have been
+  ;; translated by Eclector and the extrinsic package system to an
+  ;; uninterned host symbol.  And in phase 1, we do not load any
+  ;; DEFINE-METHOD-COMBINATION forms defining standardized method
+  ;; combination types, so no name is a symbol in the COMMON-LISP
+  ;; package.
   (setf (clo:macro-function
          client global-environment 'define-method-combination)
         (lambda (form environment)
