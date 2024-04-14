@@ -701,6 +701,12 @@ important operators depends on the environment in question as follows:
   before calling host \texttt{make-instance}, and second, we must then
   add those reader and writer methods to the generic functions being
   named, and create those functions in case they do not exist.
+\item \texttt{defun} creates a host function FIXME: SAY MORE.
+\item \texttt{define-method-combination} creates a host method
+  combination, accomplished by a call to host \texttt{eval}.  In phase
+  1, only custom method-combination types are defined so their names
+  are translated by the combination Eclector and the extrinsic Parcl
+  system to host uninterned symbols.
 \end{itemize}
 
 \subsubsection{Environment $E_2$}
