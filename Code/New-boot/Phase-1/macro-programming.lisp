@@ -80,6 +80,12 @@
   nil)
 
 ;;; DEFMETHOD programming.
+;;;
+;;; We can't really use the same technique as we did for DEFGENERIC,
+;;; i.e., to do the action at macro-expansion time.  The reason is
+;;; that the DEFMETHOD form might be evaluated in a non-NULL lexical
+;;; environment, so we must provide some expansion of DEFMETHOD that
+;;; will then be evaluated in the appropriate lexical environment.
 
 (defmethod cmd:wrap-in-make-method-lambda
     ((client client)
