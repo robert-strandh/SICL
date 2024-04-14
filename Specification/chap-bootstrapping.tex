@@ -629,6 +629,31 @@ several definitions such as:
 \item etc.
 \end{itemize}
 
+When code is loaded into one of the environments, the behavior of some
+important operators depends on the environment in question as follows:
+
+\subsubsection{Environment $E_1$}
+
+\begin{itemize}
+\item \texttt{make-instance} creates an instance of a class in $E_1$.
+  We accomplish this effect by defining a special bootstrapping
+  version of \texttt{make-instance}.  When given a symbol as its first
+  argument, this special version looks up the class in $E_1$ and calls
+  the host version of \texttt{make-instance}, passing that class as
+  the first argument.  Put differently, \texttt{make-instance} in
+  $E_1$ creates a \emph{bridge object}.
+\item \texttt{defgeneric} creates an instance of the host class
+  \texttt{standard-generic-function} and binds its name to the
+  resulting object in $E_1$.  We accomplish this effect by a method on
+  \texttt{common-macro-definitions:ensure-generic-function}.
+\end{itemize}
+
+\subsubsection{Environment $E_2$}
+
+\subsubsection{Environment $E_3$}
+
+\subsubsection{Environment $E_4$}
+
 \subsection{Phase 1}
 
 In phase $1$, we load enough functionality into environment $E0$ to be
