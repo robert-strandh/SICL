@@ -131,7 +131,7 @@
                  (typep object
                         (clo:find-class
                          client global-environment
-                         @clostrophilia:method-combination)))
+                         'method-combination)))
                 ((eq type-specifier @clostrophilia:direct-slot-definition)
                  (or (typep object
                             (clo:find-class
