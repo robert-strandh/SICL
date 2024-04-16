@@ -10,7 +10,7 @@
 ;;; If SYMBOL has a definition as a method-combination template, then
 ;;; that template is returned.  Otherwise NIL is returned.
 
-(defgeneric find-method-combination-template (symbol environment))
+(defgeneric find-method-combination-template (client environment symbol))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -23,11 +23,9 @@
 ;;; object is associated with the name SYMBOL in ENVIRONMENT.  If
 ;;; SYMBOL already names a method-combination template in ENVIRONMENT
 ;;; than that association is lost.
-;;;
-;;; If NEW-CLASS is NIL, then SYMBOL is no longer associated with a
-;;; method-combination class in ENVIRONMENT.
 
-(defgeneric (setf find-method-combination-template) (new-template symbol environment))
+(defgeneric (setf find-method-combination-template)
+    (new-template client environment symbol))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
