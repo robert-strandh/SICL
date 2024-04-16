@@ -5,11 +5,10 @@
 (defun define-ensure-method-combination-template (client e1 e2)
   (setf (clo:fdefinition
          client e2 @clostrophilia:ensure-method-combination-template)
-        (lambda (&key
-                   name
-                   documentation
-                   variant-signature-determiner
-                   effective-method-form-function)
+        (lambda (name
+                 variant-signature-determiner
+                 effective-method-form-function
+                 &key documentation)
           (let ((template
                   (sicl-environment:find-method-combination-template
                    name e2)))
