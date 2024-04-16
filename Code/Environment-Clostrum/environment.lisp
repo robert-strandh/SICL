@@ -8,10 +8,10 @@
     :accessor method-combination-templates)))
 
 (defmethod find-method-combination-template
-    (symbol (env run-time-environment))
+    (client (env run-time-environment) symbol)
   (gethash symbol (method-combination-templates env)))
 
 (defmethod (setf find-method-combination-template)
-    (new-template symbol (env run-time-environment))
+    (new-template client (env run-time-environment) symbol)
   (setf (gethash symbol (method-combination-templates env)) new-template)
   new-template)
