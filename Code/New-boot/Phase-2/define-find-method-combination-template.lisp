@@ -6,5 +6,5 @@
   (setf (clo:fdefinition
          client e2 @clostrophilia:find-method-combination-template)
         (lambda (client name)
-          (declare (ignore client))
-          (sicl-environment:find-method-combination-template name e2))))
+          (sicl-environment:find-method-combination-template
+           client e2 name))))

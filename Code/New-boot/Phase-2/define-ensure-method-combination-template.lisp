@@ -11,7 +11,7 @@
                  &key documentation)
           (let ((template
                   (sicl-environment:find-method-combination-template
-                   name e2)))
+                    client e2 name)))
             (when (null template)
               (let* ((class (clo:find-class
                              client e1
@@ -25,6 +25,6 @@
                         :effective-method-form-function
                         effective-method-form-function))
                 (setf (sicl-environment:find-method-combination-template
-                       name e2)
+                       client e2 name)
                       template)))
             name))))

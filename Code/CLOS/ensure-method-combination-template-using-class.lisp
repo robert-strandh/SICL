@@ -25,9 +25,7 @@
             :documentation documentation
             :variant-signature-determiner variant-signature-determiner
             :effective-method-form-function effective-method-form-function)))
-    ;; FIXME: FIND-METHOD-COMBINATION-TEMPLATE should take a CLIENT
-    ;; argument too, and the ENVIRONMENT argumetn should be second.
     (setf (sicl-environment:find-method-combination-template
-           name environment)
+           client environment name)
           template))
   name)
