@@ -3,6 +3,11 @@
 (eval-when (:compile-toplevel) (enable-parcl-symbols client))
 
 (defun define-environment-functions (client global-environment)
+  (flet ((import-clostrum-function (clostrum-function sicl-environment-name)
+           (setf (clo:fdefinition
+                  client global-environment sicl-environment-name)
+                 clostrum-function)))
+    (import-clostrum-function #'clo:find-class @sicl-environment:find-class))
   (setf (clo:fdefinition client global-environment 'find-class)
         (lambda (name &optional (errorp t) (environment global-environment))
           (if (symbolp name)
