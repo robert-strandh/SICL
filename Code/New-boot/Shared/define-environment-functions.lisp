@@ -10,7 +10,21 @@
     (let ((items (list (cons #'clo:find-class
                              @sicl-environment:find-class)
                        (cons #'(setf clo:find-class)
-                             (list 'setf @sicl-environment:find-class)))))
+                             (list 'setf @sicl-environment:find-class))
+                       (cons #'clo:fboundp
+                             @sicl-environment:fboundp)
+                       (cons #'clo:fdefinition
+                             @sicl-environment:fdefinition)
+                       (cons #'(setf clo:fdefinition)
+                             (list 'setf @sicl-environment:fdefinition))
+                       (cons #'clo:macro-function
+                             @sicl-environment:macro-function)
+                       (cons #'(setf clo:macro-function)
+                             (list 'setf @sicl-environment:macro-function))
+                       (cons #'clo:compiler-macro-function
+                             @sicl-environment:compiler-macro-function)
+                       (cons #'(setf clo:compiler-macro-function)
+                             (list 'setf @sicl-environment:compiler-macro-function)))))
       (loop for (function . name) in items
             do (import-clostrum-function function name))))
   (setf (clo:fdefinition client global-environment 'find-class)
