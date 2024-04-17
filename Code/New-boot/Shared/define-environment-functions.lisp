@@ -48,9 +48,7 @@
         (lambda (new-value name &key (environment global-environment))
           (setf (env:symbol-value name :environment environment)
                 new-value)))
-  (let ((symbol-define-constant
-          (intern-parcl-symbol
-           client "SICL-ENVIRONMENT" "DEFINE-CONSTANT")))
+  (let ((symbol-define-constant @sicl-environment:define-constant))
     (setf (clo:fdefinition
            client global-environment symbol-define-constant)
           (lambda (name initial-value
