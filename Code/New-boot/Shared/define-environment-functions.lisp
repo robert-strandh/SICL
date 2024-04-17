@@ -7,7 +7,12 @@
            (setf (clo:fdefinition
                   client global-environment sicl-environment-name)
                  clostrum-function)))
-    (import-clostrum-function #'clo:find-class @sicl-environment:find-class))
+    (let ((items (list (cons #'clo:find-class
+                             @sicl-environment:find-class)
+                       (cons #'(setf clo:find-class)
+                             (list 'setf @sicl-environment:find-class)))))
+      (loop for (function . name) in items
+            do (import-clostrum-function function name))))
   (setf (clo:fdefinition client global-environment 'find-class)
         (lambda (name &optional (errorp t) (environment global-environment))
           (if (symbolp name)
