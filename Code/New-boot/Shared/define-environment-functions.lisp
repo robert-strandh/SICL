@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-new-boot)
 
+(eval-when (:compile-toplevel) (enable-parcl-symbols client))
+
 (defun define-environment-functions (client global-environment)
   (setf (clo:fdefinition client global-environment 'find-class)
         (lambda (name &optional (errorp t) (environment global-environment))
