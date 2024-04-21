@@ -71,7 +71,6 @@
 (defmethod cmd:wrap-in-make-method-lambda
     ((client client)
      lambda-expression
-     generic-function-name
      environment)
   (let ((arguments (gensym))
         (next-methods (gensym))
