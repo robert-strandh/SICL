@@ -104,24 +104,6 @@
            (declare (ignorable #'next-method-p #'call-next-method))
            (apply ,lambda-expression ,arguments))))))
 
-(defmethod cmd:wrap-in-make-method-lambda
-    ((client client)
-     lambda-expression
-     environment)
-  (let ((arguments (gensym))
-        (next-methods (gensym)))
-    `(lambda (,arguments ,next-methods)
-       (flet ((next-method-p ()
-                (not (null ,next-methods)))
-              (call-next-method (&rest arguments)
-                (when (null ,next-methods)
-                  (error "no next method"))
-                (funcall (closer-mop:method-function (first ,next-methods))
-                         (or arguments ,arguments)
-                         (rest ,next-methods))))
-         (declare (ignorable #'next-method-p #'call-next-method))
-         (apply ,lambda-expression ,arguments)))))
-
 (defun ensure-method
     (generic-function method-function lambda-list qualifiers specializers)
   (let ((method
