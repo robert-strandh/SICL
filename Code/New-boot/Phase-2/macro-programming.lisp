@@ -85,6 +85,22 @@
            (declare (ignorable #'next-method-p #'call-next-method))
            (apply ,lambda-expression ,arguments))))))
 
+(defmethod cmd:ensure-method-wrapper ((client client))
+  (lambda (function-name
+           lambda-list
+           qualifiers
+           specializers
+           documentation
+           method-lambda)
+    (let ((symbol @sicl-clos:ensure-method))
+      `(,symbol
+        ',function-name
+        :unspecialized-lambda-list ',lambda-list
+        :qualifiers ',qualifiers
+        :specializer-designators ',specializers
+        :documentation ',documentation
+        :function ,method-lambda))))
+
 (defmethod cmd:wrap-in-ensure-method
     ((client client)
      function-name

@@ -114,6 +114,41 @@
             :qualifiers qualifiers)))
     (add-method generic-function method)))
 
+(defmethod cmd:ensure-method-wrapper ((client client))
+  (lambda (function-name
+           lambda-list
+           qualifiers
+           specializers
+           documentation
+           method-lambda)
+    (declare (ignore documentation))
+    (let* ((environment (sb:environment client))
+           (gf (clo:fdefinition client environment function-name)))
+      (when (null gf)
+        (warn "Creating generic function ~s" function-name)
+        (let ((method-combination
+                (closer-mop:find-method-combination
+                 #'print-object 'standard '())))
+          (setf gf
+                (make-instance 'standard-generic-function
+                  :name function-name
+                  :lambda-list lambda-list
+                  :method-combination method-combination))
+          (setf (clo:fdefinition
+                 client (sb:environment client) function-name)
+                gf)))
+      `(ensure-method
+        ,gf
+        ,method-lambda
+        ',lambda-list
+        ',qualifiers
+        ',(loop for specializer in specializers
+                collect 
+                (if (symbolp specializer)
+                    (clo:find-class client environment specializer)
+                    (make-instance 'closer-mop:eql-specializer
+                      :object (second specializer))))))))
+
 (defmethod cmd:wrap-in-ensure-method
     ((client client)
      function-name
