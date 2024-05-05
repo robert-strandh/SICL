@@ -7,7 +7,7 @@
                "sicl-environment-extrinsic"
                "eclector-concrete-syntax-tree"
                "parcl-extrinsic"
-               "parcl-class"
+               "parcl-low-class"
                "khazern-extrinsic"
                "sicl-source-tracking")
   :serial t
