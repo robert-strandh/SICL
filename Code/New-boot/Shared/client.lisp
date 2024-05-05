@@ -2,5 +2,5 @@
 
 (defclass client (cb:macro-transforming-client
                   eclector.concrete-syntax-tree:cst-client
-                  parcl-class:client)
+                  parcl-low-class:client)
   ((%environment :initarg :environment :reader environment)))
