@@ -182,7 +182,7 @@
     (sb:define-environment-functions client global-environment)
     (define-make-instance client global-environment)
     (setf (clo:find-class client global-environment 'package)
-          (find-class 'parcl-class:package))
+          (find-class 'parcl-low-class:package))
     (define-ensure-class client global-environment)
     (clo:make-variable client global-environment
                        @sicl-environment:*environment*
