@@ -36,12 +36,12 @@
        (call-next-method))
       (otherwise
        (multiple-value-bind (symbol status)
-           (parcl:find-symbol client current-package symbol-name)
+           (parcl-low:find-symbol client current-package symbol-name)
          (unless (null status)
            (return-from eclector.reader:interpret-symbol symbol)))
        (let ((symbol (make-symbol symbol-name)))
          (setf (gethash symbol (symbol-package *boot*)) current-package)
-         (parcl:import client current-package symbol)
+         (parcl-low:import client current-package symbol)
          symbol)))))
 
 ;;; This method is applicable when Eclector sees a symbol with one or
@@ -67,55 +67,55 @@
         (unless existsp
           (error "No package named ~s" package-indicator))
         (multiple-value-bind (symbol status)
-            (parcl:find-symbol client package symbol-name)
+            (parcl-low:find-symbol client package symbol-name)
           (case status
             ((:internal :inherited)
              (if internp
                  (return-from eclector.reader:interpret-symbol symbol)
                  (error "Symbol ~a is not external in package ~a"
-                        symbol-name (parcl:name client package))))
+                        symbol-name (parcl-low:name client package))))
             (:external
              (return-from eclector.reader:interpret-symbol symbol))
             ((nil)
              (if internp
                  (let ((symbol (make-symbol symbol-name)))
                    (setf (gethash symbol (symbol-package *boot*)) package)
-                   (parcl:import client package symbol)
+                   (parcl-low:import client package symbol)
                    symbol)
                  (error "Symbol ~a does not exist in package ~a"
-                        symbol-name (parcl:name client package)))))))))
+                        symbol-name (parcl-low:name client package)))))))))
 
-(defmethod parcl:make-symbol ((client client) name package)
+(defmethod parcl-low:make-symbol ((client client) name package)
   (let ((result (make-symbol name)))
     (unless (null package)
       (setf (gethash result (symbol-package *boot*)) package))
     result))
 
-(defmethod parcl:symbol-name ((client client) symbol)
+(defmethod parcl-low:symbol-name ((client client) symbol)
   (symbol-name symbol))
 
-(defmethod parcl:symbol-package ((client client) symbol)
+(defmethod parcl-low:symbol-package ((client client) symbol)
   (gethash symbol (symbol-package *boot*)))
 
-(defmethod parcl:symbol-names-equal ((client client) symbol1 symbol2)
+(defmethod parcl-low:symbol-names-equal ((client client) symbol1 symbol2)
   (string= symbol1 symbol2))
 
-(defmethod (setf parcl:symbol-package) (new-package (client client) symbol)
+(defmethod (setf parcl-low:symbol-package) (new-package (client client) symbol)
   (setf (gethash symbol (symbol-package *boot*)) new-package))
 
-(defmethod parcl:find-symbol ((client client) (package package) name)
+(defmethod parcl-low:find-symbol ((client client) (package package) name)
   (find-symbol name package))
 
-(defmethod parcl:intern ((client client) (package package) name)
+(defmethod parcl-low:intern ((client client) (package package) name)
   (intern name package))
 
-(defmethod parcl:make-table ((client client))
+(defmethod parcl-low:make-table ((client client))
   (make-hash-table :test #'equal))
 
-(defmethod parcl:name-to-entry ((client client) name table)
+(defmethod parcl-low:name-to-entry ((client client) name table)
   (gethash name table))
 
-(defmethod (setf parcl:name-to-entry) (entry (client client) name table)
+(defmethod (setf parcl-low:name-to-entry) (entry (client client) name table)
   (setf (gethash name table) entry))
 
 (defun package-designator-to-package (client package-designator)
@@ -134,13 +134,13 @@
 (defun create-common-lisp-package (client)
   (let* ((name1 "COMMON-LISP")
          (name2 "CL")
-         (package (parcl:make-package client name1)))
+         (package (parcl-low:make-package client name1)))
     (setf (gethash name1 (packages *boot*)) package)
     (setf (gethash name2 (packages *boot*)) package)
     (loop for symbol being each external-symbol of name1
-          do (setf (parcl:symbol-package client symbol) package)
-             (parcl:import client package symbol)
-             (parcl:export client package symbol))))
+          do (setf (parcl-low:symbol-package client symbol) package)
+             (parcl-low:import client package symbol)
+             (parcl-low:export client package symbol))))
 
 (defun define-package-functions (client global-environment)
   (setf (clo:fdefinition client global-environment 'make-package)
@@ -151,9 +151,9 @@
                   (loop for package-to-use in use
                         collect (package-designator-to-package
                                  client package-to-use))))
-            (let ((result (parcl:make-package client canonicalized-name)))
-              (setf (parcl:nicknames client result) canonicalized-nicknames)
-              (parcl:use-packages client result canonicalized-packages)
+            (let ((result (parcl-low:make-package client canonicalized-name)))
+              (setf (parcl-low:nicknames client result) canonicalized-nicknames)
+              (parcl-low:use-packages client result canonicalized-packages)
               (setf (gethash package-name (packages *boot*)) result)
               result))))
   (setf (clo:fdefinition client global-environment 'find-package)
@@ -167,12 +167,12 @@
         (lambda (string &optional package-designator)
           (let ((package
                   (package-designator-to-package client package-designator)))
-            (parcl:find-symbol client package string))))
+            (parcl-low:find-symbol client package string))))
   (setf (clo:fdefinition client global-environment 'intern)
         (lambda (string &optional package-designator)
           (let ((package
                   (package-designator-to-package client package-designator)))
-            (parcl:intern client package string))))
+            (parcl-low:intern client package string))))
   (setf (clo:fdefinition client global-environment 'use-package)
         (lambda (packages-to-use &optional package)
           (let ((canonicalized-packages-to-use
@@ -186,7 +186,7 @@
                            package-to-use))))
                 (canonicalized-package
                   (package-designator-to-package client package)))
-            (parcl:use-packages
+            (parcl-low:use-packages
              client canonicalized-package canonicalized-packages-to-use))))
   (setf (clo:fdefinition client global-environment 'export)
         (lambda (symbols &optional package)
@@ -198,7 +198,7 @@
                 (canonicalized-package
                   (package-designator-to-package client package)))
             (loop for symbol in canonicalized-symbols
-                  do (parcl:export client canonicalized-package symbol)))))
+                  do (parcl-low:export client canonicalized-package symbol)))))
   (setf (clo:fdefinition client global-environment 'shadow)
         (lambda (symbol-names &optional package)
           (let ((canonicalized-symbol-names
@@ -209,9 +209,9 @@
                 (canonicalized-package
                   (package-designator-to-package client package)))
             (loop for symbol-name in canonicalized-symbol-names
-                  do (parcl:shadow
+                  do (parcl-low:shadow
                       client canonicalized-package symbol-name))))))
 
 (defun intern-parcl-symbol (client package-name symbol-name)
   (let* ((package (gethash package-name (packages *boot*))))
-    (parcl:intern client package symbol-name)))
+    (parcl-low:intern client package symbol-name)))
