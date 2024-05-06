@@ -6,7 +6,7 @@
                "common-macro-definitions"
                "sicl-environment-extrinsic"
                "eclector-concrete-syntax-tree"
-               "parcl-extrinsic"
+               "parcl-low"
                "parcl-low-class"
                "khazern-extrinsic"
                "sicl-source-tracking")
