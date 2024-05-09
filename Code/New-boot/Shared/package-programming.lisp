@@ -171,10 +171,8 @@
         (fdefinition (find-symbol (symbol-name 'find-symbol)
                                   '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'intern)
-        (lambda (string &optional package-designator)
-          (let ((package
-                  (package-designator-to-package client package-designator)))
-            (parcl-low:intern client package string))))
+        (fdefinition (find-symbol (symbol-name 'intern)
+                                  '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'use-package)
         (lambda (packages-to-use &optional package)
           (let ((canonicalized-packages-to-use
