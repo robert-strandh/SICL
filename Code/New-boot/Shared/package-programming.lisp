@@ -174,20 +174,8 @@
         (fdefinition (find-symbol (symbol-name 'intern)
                                   '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'use-package)
-        (lambda (packages-to-use &optional package)
-          (let ((canonicalized-packages-to-use
-                  (loop for package-to-use in packages-to-use
-                        collect
-                        (typecase package-to-use
-                          ((or string character symbol)
-                           (gethash (string package-to-use)
-                                    (packages *boot*)))
-                          (otherwise
-                           package-to-use))))
-                (canonicalized-package
-                  (package-designator-to-package client package)))
-            (parcl-low:use-packages
-             client canonicalized-package canonicalized-packages-to-use))))
+        (fdefinition (find-symbol (symbol-name 'use-package)
+                                  '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'export)
         (lambda (symbols &optional package)
           (let ((canonicalized-symbols
