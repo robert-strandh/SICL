@@ -7,6 +7,7 @@
                "sicl-environment-extrinsic"
                "eclector-concrete-syntax-tree"
                "parcl-low"
+               "parcl-extrinsic"
                "parcl-low-class"
                "khazern-extrinsic"
                "sicl-source-tracking")
