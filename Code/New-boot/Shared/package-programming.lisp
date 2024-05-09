@@ -143,6 +143,10 @@
              (parcl-low:export client package symbol))))
 
 (defun define-package-functions (client global-environment)
+  (setf (fdefinition (find-symbol (symbol-name 'find-package)
+                                  '#:sicl-new-boot-parcl-extrinsic))
+        (lambda (package-designator)
+          (package-designator-to-package client package-designator)))
   (setf (clo:fdefinition client global-environment 'make-package)
         (lambda (package-name &key nicknames use)
           (let ((canonicalized-name (string package-name))
@@ -164,10 +168,8 @@
           (setf (gethash (string package-designator) (packages *boot*))
                 package)))
   (setf (clo:fdefinition client global-environment 'find-symbol)
-        (lambda (string &optional package-designator)
-          (let ((package
-                  (package-designator-to-package client package-designator)))
-            (parcl-low:find-symbol client package string))))
+        (fdefinition (find-symbol (symbol-name 'find-symbol)
+                                  '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'intern)
         (lambda (string &optional package-designator)
           (let ((package
