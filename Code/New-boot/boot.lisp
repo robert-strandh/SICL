@@ -1,6 +1,11 @@
 (cl:in-package #:sicl-new-boot)
 
 (defun boot ()
+  (unless (null (find-package '#:parcl))
+    (rename-package '#:parcl '#:sicl-new-boot-parcl-extrinsic))
+  (setf (symbol-value
+         (find-symbol "*CLIENT*" '#:sicl-new-boot-parcl-extrinsic))
+        (make-instance 'client))
   (let* ((boot (make-instance 'boot))
          (*boot* boot)
          (client (make-instance 'client)))
