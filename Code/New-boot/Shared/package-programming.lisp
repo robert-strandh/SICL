@@ -177,16 +177,8 @@
         (fdefinition (find-symbol (symbol-name 'use-package)
                                   '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'export)
-        (lambda (symbols &optional package)
-          (let ((canonicalized-symbols
-                  (typecase symbols
-                    (cons symbols)
-                    (null '())
-                    (otherwise (list symbols))))
-                (canonicalized-package
-                  (package-designator-to-package client package)))
-            (loop for symbol in canonicalized-symbols
-                  do (parcl-low:export client canonicalized-package symbol)))))
+        (fdefinition (find-symbol (symbol-name 'export)
+                                  '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'shadow)
         (lambda (symbol-names &optional package)
           (let ((canonicalized-symbol-names
