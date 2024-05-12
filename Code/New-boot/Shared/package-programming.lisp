@@ -153,18 +153,8 @@
           (loop for name in (cons name nicknames)
                 do (setf (gethash name (packages *boot*)) package))))
   (setf (clo:fdefinition client global-environment 'make-package)
-        (lambda (package-name &key nicknames use)
-          (let ((canonicalized-name (string package-name))
-                (canonicalized-nicknames (mapcar #'string nicknames))
-                (canonicalized-packages
-                  (loop for package-to-use in use
-                        collect (package-designator-to-package
-                                 client package-to-use))))
-            (let ((result (parcl-low:make-package client canonicalized-name)))
-              (setf (parcl-low:nicknames client result) canonicalized-nicknames)
-              (parcl-low:use-packages client result canonicalized-packages)
-              (setf (gethash package-name (packages *boot*)) result)
-              result))))
+        (fdefinition (find-symbol (symbol-name 'make-package)
+                                  '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'find-package)
         (lambda (package-designator)
           (package-designator-to-package client package-designator)))
