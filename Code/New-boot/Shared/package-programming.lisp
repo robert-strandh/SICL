@@ -178,7 +178,11 @@
                                   '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'shadow)
         (fdefinition (find-symbol (symbol-name 'shadow)
-                                  '#:sicl-new-boot-parcl-extrinsic))))
+                                  '#:sicl-new-boot-parcl-extrinsic)))
+  (let ((symbol @sicl-new-boot-parcl-extrinsic@add-package-local-nickname))
+    (setf (clo:fdefinition client global-environment symbol)
+          (fdefinition (find-symbol "ADD-PACKAGE-LOCAL-NICKNAME"
+                                    '#:sicl-new-boot-parcl-extrinsic)))))
 
 (defun intern-parcl-symbol (client package-name symbol-name)
   (let* ((package (gethash package-name (packages *boot*))))
