@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-new-boot)
 
+(eval-when (:compile-toplevel) (enable-parcl-symbols client))
+
 (defun current-package (client)
   (let* ((global-environment (environment client))
          (package-cell
