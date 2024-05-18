@@ -100,3 +100,6 @@
         :specializer-designators ',specializers
         :documentation ',documentation
         :function ,method-lambda))))    
+
+(defmethod cmd:add-local-nickname ((client client))
+  'sb:add-package-local-nickname)

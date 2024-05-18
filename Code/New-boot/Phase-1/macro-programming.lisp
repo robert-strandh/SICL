@@ -148,3 +148,6 @@
                     (clo:find-class client environment specializer)
                     (make-instance 'closer-mop:eql-specializer
                       :object (second specializer))))))))
+
+(defmethod cmd:add-local-nickname ((client client))
+  'sb:add-package-local-nickname)
