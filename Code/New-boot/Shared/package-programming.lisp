@@ -179,9 +179,13 @@
   (setf (clo:fdefinition client global-environment 'shadow)
         (fdefinition (find-symbol (symbol-name 'shadow)
                                   '#:sicl-new-boot-parcl-extrinsic)))
-  (let ((symbol @sicl-new-boot-parcl-extrinsic@add-package-local-nickname))
+  ;; For the purpose of bootstrapping, the environment will contain a
+  ;; symbol SICL-NEW-BOOT:ADD-PACKAGE-LOCAL-NICKNAME and it will have
+  ;; as its FDEFINITION that of ADD-PACKAGE-LOCAL-NICKNAME in the
+  ;; extrinsic Parcl package.
+  (let ((symbol 'add-package-local-nickname))
     (setf (clo:fdefinition client global-environment symbol)
-          (fdefinition (find-symbol "ADD-PACKAGE-LOCAL-NICKNAME"
+          (fdefinition (find-symbol (symbol-name symbol)
                                     '#:sicl-new-boot-parcl-extrinsic)))))
 
 (defun intern-parcl-symbol (client package-name symbol-name)
