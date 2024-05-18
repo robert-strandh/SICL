@@ -28,4 +28,5 @@
    #:allocate-general-instance
    #:standard-instance-access
    #:header #:class #:rack
-   #:eval-cst))
+   #:eval-cst
+   #:add-package-local-nickname))
