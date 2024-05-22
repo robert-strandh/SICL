@@ -118,14 +118,24 @@
 (defmethod (setf parcl-low:name-to-entry) (entry (client client) name table)
   (setf (gethash name table) entry))
 
-(defun package-designator-to-package (client package-designator)
+(defun package-designator-to-package (client environment package-designator)
   (typecase package-designator
     ((or string character symbol)
-     (let ((package-name (string package-designator)))
-       (cond ((equal package-name "KEYWORD")
-              (find-package "KEYWORD"))
-             (t
-              (gethash package-name (packages *boot*))))))
+     (let ((package-name (string package-designator))
+           (current-package
+             (env:symbol-value '*package* :environment environment)))
+       (let ((local-nicknames
+               (if (typep current-package 'package)
+                   '()
+                   (parcl-low:local-nicknames client current-package))))
+         (let ((entry (assoc package-name local-nicknames
+                             :test #'string=)))
+           (if (null entry)
+               (cond ((equal package-name "KEYWORD")
+                      (find-package "KEYWORD"))
+                     (t
+                      (gethash package-name (packages *boot*))))
+               (second entry))))))
     (null
      (current-package client))
     (otherwise
@@ -146,7 +156,8 @@
   (setf (fdefinition (find-symbol (symbol-name 'find-package)
                                   '#:sicl-new-boot-parcl-extrinsic))
         (lambda (package-designator)
-          (package-designator-to-package client package-designator)))
+          (package-designator-to-package
+           client global-environment package-designator)))
   (setf (fdefinition (find-symbol (symbol-name 'store-package)
                                   '#:sicl-new-boot-parcl-extrinsic))
         (lambda (package name nicknames)
@@ -157,7 +168,8 @@
                                   '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'find-package)
         (lambda (package-designator)
-          (package-designator-to-package client package-designator)))
+          (package-designator-to-package
+           client global-environment package-designator)))
   (setf (clo:fdefinition client global-environment '(setf find-package))
         (lambda (package package-designator)
           (setf (gethash (string package-designator) (packages *boot*))
