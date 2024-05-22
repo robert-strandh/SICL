@@ -178,6 +178,8 @@
     (clo:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
     (sb:ensure-asdf-system
+     client environment "sicl-environment-clostrum-package")
+    (sb:ensure-asdf-system
      client environment "sicl-environment-packages-intrinsic")
     (sb:define-environment-functions client global-environment)
     (define-make-instance client global-environment)
