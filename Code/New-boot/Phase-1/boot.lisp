@@ -292,9 +292,6 @@
     (setf (clo:fdefinition client global-environment 'change-class)
           (lambda (&rest arguments)
             (error "CHANGE-CLASS called with arguments ~s" arguments)))
-    ;; Do this better
-    (setf (gethash "ECC" (sb:packages boot))
-          (gethash "ECCLESIA" (sb:packages boot)))
     (sb:ensure-asdf-system
      client environment "common-macro-definitions-packages-intrinsic")
     (let ((symbol @sicl-environment:type-expander))
