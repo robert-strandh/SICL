@@ -8,23 +8,23 @@
                   client global-environment sicl-environment-name)
                  clostrum-function)))
     (let ((items (list (cons #'clo:find-class
-                             @sicl-environment:find-class)
+                             @clostrum:find-class)
                        (cons #'(setf clo:find-class)
-                             (list 'setf @sicl-environment:find-class))
+                             (list 'setf @clostrum:find-class))
                        (cons #'clo:fboundp
-                             @sicl-environment:fboundp)
+                             @clostrum:fboundp)
                        (cons #'clo:fdefinition
-                             @sicl-environment:fdefinition)
+                             @clostrum:fdefinition)
                        (cons #'(setf clo:fdefinition)
-                             (list 'setf @sicl-environment:fdefinition))
+                             (list 'setf @clostrum:fdefinition))
                        (cons #'clo:macro-function
-                             @sicl-environment:macro-function)
+                             @clostrum:macro-function)
                        (cons #'(setf clo:macro-function)
-                             (list 'setf @sicl-environment:macro-function))
+                             (list 'setf @clostrum:macro-function))
                        (cons #'clo:compiler-macro-function
-                             @sicl-environment:compiler-macro-function)
+                             @clostrum:compiler-macro-function)
                        (cons #'(setf clo:compiler-macro-function)
-                             (list 'setf @sicl-environment:compiler-macro-function)))))
+                             (list 'setf @clostrum:compiler-macro-function)))))
       (loop for (function . name) in items
             do (import-clostrum-function function name))))
   (setf (clo:fdefinition client global-environment 'find-class)
