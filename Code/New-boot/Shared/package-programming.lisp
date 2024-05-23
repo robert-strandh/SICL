@@ -62,9 +62,8 @@
           (string= package-indicator "CL")
           (string= package-indicator "KEYWORD"))
       (call-next-method)
-      (multiple-value-bind (package existsp)
-          (gethash package-indicator (packages *boot*))
-        (unless existsp
+      (let ((package (gethash package-indicator (packages *boot*))))
+        (when (null package)
           (error "No package named ~s" package-indicator))
         (multiple-value-bind (symbol status)
             (parcl-low:find-symbol client package symbol-name)
