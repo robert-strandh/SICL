@@ -183,7 +183,6 @@
      client environment "sicl-environment-run-time-package")
     (sb:ensure-asdf-system
      client environment "sicl-environment-packages-intrinsic")
-    (sb:define-environment-functions client global-environment)
     (define-make-instance client global-environment)
     (setf (clo:find-class client global-environment 'package)
           (find-class 'parcl-low-class:package))
@@ -194,6 +193,7 @@
     (clo:make-variable client global-environment
                        @sicl-environment:*client*
                        client)
+    (sb:define-environment-functions client global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
     (sb:ensure-asdf-system

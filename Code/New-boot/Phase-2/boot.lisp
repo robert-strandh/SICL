@@ -24,13 +24,13 @@
     (sb:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
     (sb:import-khazern client global-environment)
-    (sb:define-environment-functions client global-environment)
     (clo:make-variable client global-environment
                        @sicl-environment:*environment*
                        global-environment)
     (clo:make-variable client global-environment
                        @sicl-environment:*client*
                        client)
+    (sb:define-environment-functions client global-environment)
     (define-ensure-method-combination-template
         client (sb:e1 boot) global-environment)
     (define-^ensure-method-combination
