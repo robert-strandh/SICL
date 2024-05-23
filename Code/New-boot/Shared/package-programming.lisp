@@ -62,7 +62,9 @@
           (string= package-indicator "CL")
           (string= package-indicator "KEYWORD"))
       (call-next-method)
-      (let ((package (gethash package-indicator (packages *boot*))))
+      (let* ((environment (environment client))
+             (package (package-designator-to-package
+                       client environment package-indicator)))
         (when (null package)
           (error "No package named ~s" package-indicator))
         (multiple-value-bind (symbol status)
