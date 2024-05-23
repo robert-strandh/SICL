@@ -27,6 +27,7 @@
                              (list 'setf @clostrum:compiler-macro-function)))))
       (loop for (function . name) in items
             do (import-clostrum-function function name))))
+  (ensure-asdf-system client global-environment "sicl-environment-shared")
   (setf (clo:fdefinition client global-environment 'find-class)
         (lambda (name &optional (errorp t) (environment global-environment))
           (if (symbolp name)
