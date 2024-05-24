@@ -6,4 +6,5 @@
    #:fboundp
    #:fdefinition
    #:macro-function
-   #:compiler-macro-function))
+   #:compiler-macro-function
+   #:make-constant))
