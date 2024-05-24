@@ -24,7 +24,9 @@
                        (cons #'clo:compiler-macro-function
                              @clostrum:compiler-macro-function)
                        (cons #'(setf clo:compiler-macro-function)
-                             (list 'setf @clostrum:compiler-macro-function)))))
+                             (list 'setf @clostrum:compiler-macro-function))
+                       (cons #'clo:make-constant
+                             @clostrum:make-constant))))
       (loop for (function . name) in items
             do (import-clostrum-function function name))))
   (setf (clo:fdefinition client global-environment '(setf fdefinition))
@@ -46,12 +48,6 @@
           (setf (env:symbol-value name :environment environment)
                 new-value)))
   (let ((symbol-define-constant @sicl-environment:define-constant))
-    (setf (clo:fdefinition
-           client global-environment symbol-define-constant)
-          (lambda (name initial-value
-                   &key (environment global-environment))
-            (env:define-constant
-                name initial-value :environment environment)))
     (setf (clo:macro-function client global-environment 'defconstant)
           (lambda (form environment)
             (declare (ignore environment))
