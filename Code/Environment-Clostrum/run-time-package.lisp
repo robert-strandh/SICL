@@ -6,4 +6,5 @@
    . #1=(#:boundp
          #:symbol-value))
   (:export
+   #:*dynamic-environment*
    . #1#))
