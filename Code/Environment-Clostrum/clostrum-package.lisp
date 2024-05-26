@@ -8,3 +8,7 @@
    #:macro-function
    #:compiler-macro-function
    #:make-constant))
+
+(defpackage #:clostrum-sys
+  (:export
+   #:variable-cell))
