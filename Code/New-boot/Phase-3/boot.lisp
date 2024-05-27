@@ -25,5 +25,7 @@
     (clo:make-variable client global-environment
                        @sicl-environment:*client*
                        client)
+    (clo:make-variable
+     client global-environment @sicl-run-time:*dynamic-environment* '())
     (sb:define-environment-functions client global-environment))
   boot)
