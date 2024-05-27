@@ -33,15 +33,19 @@
         (lambda (new-definition name &key (environment global-environment))
           (setf (clo:fdefinition client environment name)
                 new-definition)))
+  (clo:make-variable
+   client global-environment @sicl-run-time:*dynamic-environment* '())
+  (setf (clo:fdefinition
+         client global-environment @clostrum-sys:variable-cell)
+        #'clostrum-sys:variable-cell)
+  (setf (clo:fdefinition client global-environment @sicl-run-time:boundp)
+        #'cbae:boundp)
   (let ((environment
           (make-instance 'trucler-reference:environment
             :global-environment global-environment)))
     (ensure-asdf-system client environment "sicl-environment-shared"))
   (setf (clo:fdefinition client global-environment @sicl-run-time:boundp)
         #'common-boot-ast-evaluator:boundp)
-  (setf (clo:fdefinition client global-environment 'boundp)
-        (lambda (name &key (environment global-environment))
-          (env:boundp name :environment environment)))
   (setf (clo:fdefinition client global-environment 'symbol-value)
         (lambda (name &key (environment global-environment))
           (env:symbol-value name :environment environment)))
