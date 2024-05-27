@@ -40,6 +40,11 @@
         #'clostrum-sys:variable-cell)
   (setf (clo:fdefinition client global-environment @sicl-run-time:boundp)
         #'cbae:boundp)
+  (let ((symbol @sicl-run-time:symbol-value))
+    (setf (clo:fdefinition client global-environment symbol)
+          #'cbae:symbol-value)
+    (setf (clo:fdefinition client global-environment `(setf ,symbol))
+          #'(setf cbae:symbol-value)))
   (let ((environment
           (make-instance 'trucler-reference:environment
             :global-environment global-environment)))
