@@ -38,6 +38,9 @@
   (setf (clo:fdefinition
          client global-environment @clostrum-sys:variable-cell)
         #'clostrum-sys:variable-cell)
+  (setf (clo:fdefinition
+         client global-environment @clostrum-sys:ensure-variable-cell)
+        #'clostrum-sys:ensure-variable-cell)
   (setf (clo:fdefinition client global-environment @sicl-run-time:boundp)
         #'cbae:boundp)
   (let ((symbol @sicl-run-time:symbol-value))
@@ -49,13 +52,6 @@
           (make-instance 'trucler-reference:environment
             :global-environment global-environment)))
     (ensure-asdf-system client environment "sicl-environment-shared"))
-  (setf (clo:fdefinition client global-environment 'symbol-value)
-        (lambda (name &key (environment global-environment))
-          (env:symbol-value name :environment environment)))
-  (setf (clo:fdefinition client global-environment '(setf symbol-value))
-        (lambda (new-value name &key (environment global-environment))
-          (setf (env:symbol-value name :environment environment)
-                new-value)))
   (let ((symbol-define-constant @sicl-environment:define-constant))
     (setf (clo:macro-function client global-environment 'defconstant)
           (lambda (form environment)
