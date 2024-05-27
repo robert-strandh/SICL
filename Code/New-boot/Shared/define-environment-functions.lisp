@@ -44,8 +44,6 @@
           (make-instance 'trucler-reference:environment
             :global-environment global-environment)))
     (ensure-asdf-system client environment "sicl-environment-shared"))
-  (setf (clo:fdefinition client global-environment @sicl-run-time:boundp)
-        #'common-boot-ast-evaluator:boundp)
   (setf (clo:fdefinition client global-environment 'symbol-value)
         (lambda (name &key (environment global-environment))
           (env:symbol-value name :environment environment)))
