@@ -11,4 +11,5 @@
 
 (defpackage #:clostrum-sys
   (:export
-   #:variable-cell))
+   #:variable-cell
+   #:ensure-variable-cell))
