@@ -181,8 +181,6 @@
      client environment "sicl-environment-clostrum-package")
     (sb:ensure-asdf-system
      client environment "sicl-environment-run-time-package")
-    (clo:make-variable
-     client global-environment @sicl-run-time:*dynamic-environment* '())
     (sb:ensure-asdf-system
      client environment "sicl-environment-packages-intrinsic")
     (define-make-instance client global-environment)

@@ -30,8 +30,6 @@
     (clo:make-variable client global-environment
                        @sicl-environment:*client*
                        client)
-    (clo:make-variable
-     client global-environment @sicl-run-time:*dynamic-environment* '())
     (sb:define-environment-functions client global-environment)
     (define-ensure-method-combination-template
         client (sb:e1 boot) global-environment)
