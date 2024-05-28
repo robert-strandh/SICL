@@ -5,4 +5,5 @@
   :components
   ((:file "ensure-generic-function")
    (:file "ensure-class")
-   (:file "ensure-method")))
+   (:file "ensure-method")
+   (:file "ensure-method-combination-template")))
