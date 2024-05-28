@@ -53,6 +53,12 @@
            client (sb:e1 boot)
            @sicl-clos:ensure-method-using-generic-function))
     (setf (clo:fdefinition
+           client global-environment
+           @sicl-clos:^ensure-method-combination-template-using-class)
+          (clo:fdefinition
+           client (sb:e1 boot)
+           @sicl-clos:ensure-method-combination-template-using-class))
+    (setf (clo:fdefinition
            client global-environment @sicl-clos:^method-function)
           (clo:fdefinition
            client (sb:e1 boot) @clostrophilia:method-function))
