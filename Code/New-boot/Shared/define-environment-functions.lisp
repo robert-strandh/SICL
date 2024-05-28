@@ -48,6 +48,11 @@
           #'cbae:symbol-value)
     (setf (clo:fdefinition client global-environment `(setf ,symbol))
           #'(setf cbae:symbol-value)))
+  (let ((symbol @sicl-environment:find-method-combination-template))
+    (setf (clo:fdefinition client global-environment symbol)
+          #'sicl-environment:find-method-combination-template)
+    (setf (clo:fdefinition client global-environment `(setf ,symbol))
+          #'(setf sicl-environment:find-method-combination-template)))
   (let ((environment
           (make-instance 'trucler-reference:environment
             :global-environment global-environment)))
