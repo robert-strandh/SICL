@@ -31,8 +31,6 @@
                        @sicl-environment:*client*
                        client)
     (sb:define-environment-functions client global-environment)
-    (define-ensure-method-combination-template
-        client (sb:e1 boot) global-environment)
     (define-^ensure-method-combination
         client (sb:e1 boot) global-environment)
     (define-find-method-combination-template client global-environment)
