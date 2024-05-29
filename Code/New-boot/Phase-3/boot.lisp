@@ -26,11 +26,11 @@
                        @sicl-environment:*client*
                        client)
     (sb:define-environment-functions client global-environment)
+    (sb:define-clostrophilia-find-method-combination-template
+        client global-environment)
     (setf (clo:fdefinition
            client global-environment
            @clostrophilia:^ensure-method-combination)
           (clo:fdefinition
-           client (sb:e2 boot) @clostrophilia:ensure-method-combination))
-    (sb:define-clostrophilia-find-method-combination-template
-        client global-environment))
+           client (sb:e2 boot) @clostrophilia:ensure-method-combination)))
   boot)
