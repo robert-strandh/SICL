@@ -36,7 +36,8 @@
            @clostrophilia:^ensure-method-combination)
           (clo:fdefinition
            client (sb:e1 boot) @clostrophilia:ensure-method-combination))
-    (define-find-method-combination-template client global-environment)
+    (sb:define-clostrophilia-find-method-combination-template
+        client global-environment)
     (setf (clo:fdefinition
            client global-environment
            @sicl-clos:^ensure-generic-function-using-class)
