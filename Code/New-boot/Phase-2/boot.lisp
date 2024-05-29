@@ -31,8 +31,11 @@
                        @sicl-environment:*client*
                        client)
     (sb:define-environment-functions client global-environment)
-    (define-^ensure-method-combination
-        client (sb:e1 boot) global-environment)
+    (setf (clo:fdefinition
+           client global-environment
+           @clostrophilia:^ensure-method-combination)
+          (clo:fdefinition
+           client (sb:e1 boot) @clostrophilia:ensure-method-combination))
     (define-find-method-combination-template client global-environment)
     (setf (clo:fdefinition
            client global-environment
