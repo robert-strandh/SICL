@@ -30,4 +30,5 @@
    #:header #:class #:rack
    #:eval-cst
    #:define-clostrophilia-find-method-combination-template
+   #:define-client-and-environment-variables
    #:add-package-local-nickname))
