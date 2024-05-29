@@ -29,4 +29,5 @@
    #:standard-instance-access
    #:header #:class #:rack
    #:eval-cst
+   #:define-clostrophilia-find-method-combination-template
    #:add-package-local-nickname))
