@@ -10,7 +10,6 @@
    (:file "configuration")
    (:file "macro-programming")
    (:file "import-from-host")
-   (:file "define-find-method-combination-template")
    (:file "define-ecclesia-functions")
    (:file "load-predicament")
    (:file "load-ctype")
