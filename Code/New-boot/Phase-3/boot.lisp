@@ -25,5 +25,10 @@
     (clo:make-variable client global-environment
                        @sicl-environment:*client*
                        client)
-    (sb:define-environment-functions client global-environment))
+    (sb:define-environment-functions client global-environment)
+    (setf (clo:fdefinition
+           client global-environment
+           @clostrophilia:^ensure-method-combination)
+          (clo:fdefinition
+           client (sb:e2 boot) @clostrophilia:ensure-method-combination)))
   boot)
