@@ -30,5 +30,7 @@
            client global-environment
            @clostrophilia:^ensure-method-combination)
           (clo:fdefinition
-           client (sb:e2 boot) @clostrophilia:ensure-method-combination)))
+           client (sb:e2 boot) @clostrophilia:ensure-method-combination))
+    (sb:define-clostrophilia-find-method-combination-template
+        client global-environment))
   boot)
