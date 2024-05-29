@@ -27,4 +27,5 @@
    (:file "define-environment-functions")
    (:file "import-khazern")
    (:file "ersatz-object")
+   (:file "define-clostrophilia-find-method-combination-template")
    (:file "repl")))
