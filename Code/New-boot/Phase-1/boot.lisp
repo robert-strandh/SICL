@@ -187,12 +187,7 @@
     (setf (clo:find-class client global-environment 'package)
           (find-class 'parcl-low-class:package))
     (define-ensure-class client global-environment)
-    (clo:make-variable client global-environment
-                       @sicl-environment:*environment*
-                       global-environment)
-    (clo:make-variable client global-environment
-                       @sicl-environment:*client*
-                       client)
+    (sb:define-client-and-environment-variables client global-environment)
     (sb:define-environment-functions client global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
