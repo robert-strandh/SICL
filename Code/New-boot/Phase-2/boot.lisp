@@ -198,6 +198,8 @@
            client global-environment @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
            client (sb:e1 boot) @sicl-clos:intern-eql-specializer))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-method-combination-base")
     (load-ctype client environment global-environment)
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
