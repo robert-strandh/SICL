@@ -29,4 +29,5 @@
    (:file "ersatz-object")
    (:file "define-clostrophilia-find-method-combination-template")
    (:file "define-client-and-environment-variables")
+   (:file "define-straddle-functions")
    (:file "repl")))
