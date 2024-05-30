@@ -5,10 +5,7 @@
      name
      variant-signature-determiner
      effective-method-form-function
-     &key
-       documentation
-       (client *client*)
-       (environment *environment*)))
+     &key documentation client environment))
 
 (defmethod ensure-method-combination-template-using-class
     ((method-combination-template null)
