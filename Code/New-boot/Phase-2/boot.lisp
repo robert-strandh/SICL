@@ -28,37 +28,7 @@
     (sb:define-environment-functions client global-environment)
     (sb:define-clostrophilia-find-method-combination-template
         client global-environment)
-    (setf (clo:fdefinition
-           client global-environment
-           @clostrophilia:^ensure-method-combination)
-          (clo:fdefinition
-           client (sb:e1 boot) @clostrophilia:ensure-method-combination))
-    (setf (clo:fdefinition
-           client global-environment
-           @sicl-clos:^ensure-generic-function-using-class)
-          (clo:fdefinition
-           client (sb:e1 boot)
-           @sicl-clos:ensure-generic-function-using-class))
-    (setf (clo:fdefinition
-           client global-environment @sicl-clos:^ensure-class-using-class)
-          (clo:fdefinition
-           client (sb:e1 boot) @sicl-clos:ensure-class-using-class))
-    (setf (clo:fdefinition
-           client global-environment
-           @sicl-clos:^ensure-method-using-generic-function)
-          (clo:fdefinition
-           client (sb:e1 boot)
-           @sicl-clos:ensure-method-using-generic-function))
-    (setf (clo:fdefinition
-           client global-environment
-           @sicl-clos:^ensure-method-combination-template-using-class)
-          (clo:fdefinition
-           client (sb:e1 boot)
-           @sicl-clos:ensure-method-combination-template-using-class))
-    (setf (clo:fdefinition
-           client global-environment @sicl-clos:^method-function)
-          (clo:fdefinition
-           client (sb:e1 boot) @clostrophilia:method-function))
+    (sb:define-straddle-functions client global-environment (sb:e1 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
@@ -207,5 +177,7 @@
             (let ((class-precedence-list
                     (clo:fdefinition
                      client (sb:e1 boot) @sicl-clos:class-precedence-list)))
-              (member super (funcall class-precedence-list sub))))))
+              (member super (funcall class-precedence-list sub)))))
+    (sb:ensure-asdf-system
+     client environment "sicl-clos-ensure-metaobject-using"))
   boot)
