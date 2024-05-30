@@ -23,5 +23,6 @@
     (sb:define-environment-functions client global-environment)
     (sb:define-clostrophilia-find-method-combination-template
         client global-environment)
-    (sb:define-straddle-functions client global-environment (sb:e2 boot)))
+    (sb:define-straddle-functions client global-environment (sb:e2 boot))
+    (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject"))
   boot)
