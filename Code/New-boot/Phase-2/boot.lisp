@@ -30,7 +30,7 @@
         client global-environment)
     (sb:define-straddle-functions client global-environment (sb:e1 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
-    (define-ecclesia-functions client (sb:e1 boot) global-environment)
+    (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination")
     ;; VALIDATE-SUPERCLASS is going to be called with the class T as
