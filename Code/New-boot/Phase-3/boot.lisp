@@ -25,5 +25,7 @@
         client global-environment)
     (sb:define-straddle-functions client global-environment (sb:e2 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
-    (sb:define-ecclesia-functions client (sb:e1 boot) global-environment))
+    (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-method-combination"))
   boot)
