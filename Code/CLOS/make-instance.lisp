@@ -46,7 +46,7 @@
 ;;; defaulted initargs, but the defaulted initargs are computed by
 ;;; code in Ei-1 since that code operates on a class in Ei.  We solve
 ;;; this dilemma by calling an intermediate function
-;;; ALLOCATE-INSTANCE-USING-CLASS in Ei-1 that compoutes the defaulted
+;;; ALLOCATE-INSTANCE-USING-CLASS in Ei-1 that computes the defaulted
 ;;; initargs, calls ALLOCATE-INSTANCE and returns two values, the
 ;;; instance and the defaulted initargs.
 (defmethod make-instance (class &rest initargs)
