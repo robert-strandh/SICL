@@ -328,6 +328,11 @@
              common-boot-ast-evaluator::*stack*)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-instance-structure")
+    ;;; During bootstrapping, we set the unbound slot value to
+    ;;; something that is easier to manipulate during debugging.
+    (setf (clo:symbol-value
+           client global-environment @clostrophilia:+unbound-slot-value+)
+          99999)
     (sb:ensure-asdf-system
      client environment "clostrophilia-standard-object-initialization-aux")
     global-environment))

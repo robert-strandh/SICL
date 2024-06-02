@@ -134,6 +134,11 @@
             #'(setf sb:standard-instance-access)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-instance-structure")
+    ;;; During bootstrapping, we set the unbound slot value to
+    ;;; something that is easier to manipulate during debugging.
+    (setf (clo:symbol-value
+           client global-environment @clostrophilia:+unbound-slot-value+)
+          99999)
     (sb:ensure-asdf-system
      client environment "clostrophilia-standard-object-initialization")
     (let ((symbol-class (clo:find-class client global-environment 'symbol))
