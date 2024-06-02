@@ -40,7 +40,7 @@
     values values-list not funcall apply eq eql equal identity
     functionp every notany some
     ;; Printer
-    format
+    format finish-output
     ;; Environment
     documentation
     ;; Types and Classes.
