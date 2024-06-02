@@ -142,6 +142,11 @@
                                "Assuming ~s is a direct slot-definition~%"
                                object)
                        t)))
+                ((eq type-specifier @clostrophilia:standard-accessor-method)
+                 (typep object
+                        (clo:find-class
+                         client global-environment
+                         @clostrophilia:standard-accessor-method)))
                 ((eq type-specifier 'null)
                  (null object))
                 ((eq type-specifier 'string)
