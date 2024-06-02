@@ -27,5 +27,7 @@
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
-     client environment "clostrophilia-method-combination"))
+     client environment "clostrophilia-method-combination")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-class-hierarchy"))
   boot)
