@@ -28,6 +28,8 @@
     (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination")
+    (setf (clo:fdefinition client (sb:e2 boot) @sicl-clos:subtypep-1)
+          (constantly t))
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy"))
   boot)
