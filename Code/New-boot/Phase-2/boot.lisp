@@ -70,6 +70,10 @@
     (setf (clo:fdefinition
            client (sb:e1 boot) @clostrophilia:add-direct-method)
           (constantly nil))
+    (setf (clo:fdefinition client (sb:e1 boot) @sicl-clos:subtypep-1)
+          #'subtypep)
+    (setf (clo:fdefinition client (sb:e1 boot) @clostrophilia:subtypep-1)
+          #'subtypep)
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
     (sb:ensure-asdf-system
