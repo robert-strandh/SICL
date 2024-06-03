@@ -27,8 +27,8 @@
     (generic-function-class environment)
   (cond ((symbolp generic-function-class)
          (find-class generic-function-class t environment))
-        ((subtypep generic-function-class
-                   (find-class 'generic-function t environment))
+        ((subtypep-1 generic-function-class
+                     (find-class 'generic-function t environment))
          generic-function-class)
         (t
          (error 'generic-function-class-must-be-class-or-name
@@ -47,7 +47,7 @@
 (defun canonicalize-method-class (method-class environment)
   (cond ((symbolp method-class)
          (find-class method-class t environment))
-        ((subtypep method-class (find-class 'method t environment))
+        ((subtypep-1 method-class (find-class 'method t environment))
          method-class)
         (t
          (error "method class must be a class or a name"))))
