@@ -28,6 +28,7 @@
     (sb:define-environment-functions client global-environment)
     (sb:define-clostrophilia-find-method-combination-template
         client global-environment)
+    (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
     (sb:define-straddle-functions client global-environment (sb:e1 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
@@ -137,7 +138,7 @@
       (setf (clo:fdefinition client global-environment `(setf ,symbol))
             #'(setf sb:standard-instance-access)))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-instance-structure")
+     client environment "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
     ;;; something that is easier to manipulate during debugging.
     (setf (clo:symbol-value
