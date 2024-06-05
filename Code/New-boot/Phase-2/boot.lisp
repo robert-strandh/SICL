@@ -183,6 +183,14 @@
      client environment "clostrophilia-method-combination-base")
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
+    (sb:ensure-asdf-system client environment "acclimation")
+    (clo:make-variable
+     client global-environment 'lambda-list-keywords lambda-list-keywords)
+    (sb:ensure-asdf-system client environment "ecclesia")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-dependent-maintenance")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-generic-function-initialization")
     (load-ctype client environment global-environment)
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
@@ -196,5 +204,8 @@
                      client (sb:e1 boot) @sicl-clos:class-precedence-list)))
               (member super (funcall class-precedence-list sub)))))
     (sb:ensure-asdf-system
-     client environment "sicl-clos-ensure-metaobject-using"))
+     client environment "sicl-clos-ensure-metaobject-using")
+    (setf (clo:fdefinition client global-environment
+                           @clostrophilia:set-funcallable-instance-function)
+          (fdefinition 'closer-mop:set-funcallable-instance-function)))
   boot)
