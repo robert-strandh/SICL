@@ -2,12 +2,16 @@
 
 (eval-when (:compile-toplevel) (enable-parcl-symbols client))
 
+;;; In environment E-DESTINATION, define the function NAME-DESTINATION
+;;; to be the function named NAME-SOURCE in environment E-SOURCE.
+(defun straddle (client e-destination name-destination e-source name-source)
+  (setf (clo:fdefinition client e-destination name-destination)
+        (clo:fdefinition client e-source name-source)))
+
 (defun define-straddle-functions (client ea eb)
-  (setf (clo:fdefinition
-         client ea
-         @clostrophilia:^ensure-method-combination)
-        (clo:fdefinition
-         client eb @clostrophilia:ensure-method-combination))
+  (straddle client
+            ea @clostrophilia:^ensure-method-combination
+            eb @clostrophilia:ensure-method-combination)
   (setf (clo:fdefinition
          client ea
          @sicl-clos:^ensure-generic-function-using-class)
