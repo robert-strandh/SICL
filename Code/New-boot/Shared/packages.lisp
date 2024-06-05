@@ -31,6 +31,7 @@
    #:eval-cst
    #:define-clostrophilia-find-method-combination-template
    #:define-client-and-environment-variables
+   #:straddle
    #:define-straddle-functions
    #:define-ecclesia-functions
    #:add-package-local-nickname))
