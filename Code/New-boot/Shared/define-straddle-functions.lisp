@@ -10,11 +10,17 @@
 
 (defun define-straddle-functions (client ea eb)
   (straddle client
+            eb @clostrophilia:slot-boundp-using-location+1
+            ea @clostrophilia:slot-boundp-using-location)
+  (straddle client
             eb @clostrophilia:slot-value-using-location+1
             ea @clostrophilia:slot-value-using-location)
   (straddle client
             eb (list 'setf @clostrophilia:slot-value-using-location+1)
             ea (list 'setf @clostrophilia:slot-value-using-location))
+  (straddle client
+            eb @clostrophilia:slot-makunbound-using-location+1
+            ea @clostrophilia:slot-makunbound-using-location)
   (straddle client
             ea @clostrophilia:slot-boundp-using-only-class-1
             eb @clostrophilia:slot-boundp-using-only-class)
