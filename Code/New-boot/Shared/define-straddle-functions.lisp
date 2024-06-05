@@ -12,29 +12,18 @@
   (straddle client
             ea @clostrophilia:^ensure-method-combination
             eb @clostrophilia:ensure-method-combination)
-  (setf (clo:fdefinition
-         client ea
-         @sicl-clos:^ensure-generic-function-using-class)
-        (clo:fdefinition
-         client eb
-         @sicl-clos:ensure-generic-function-using-class))
-  (setf (clo:fdefinition
-         client ea @sicl-clos:^ensure-class-using-class)
-        (clo:fdefinition
-         client eb @sicl-clos:ensure-class-using-class))
-  (setf (clo:fdefinition
-         client ea
-         @sicl-clos:^ensure-method-using-generic-function)
-        (clo:fdefinition
-         client eb
-         @sicl-clos:ensure-method-using-generic-function))
-  (setf (clo:fdefinition
-         client ea
-         @sicl-clos:^ensure-method-combination-template-using-class)
-        (clo:fdefinition
-         client eb
-         @sicl-clos:ensure-method-combination-template-using-class))
-  (setf (clo:fdefinition
-         client ea @sicl-clos:^method-function)
-        (clo:fdefinition
-         client eb @clostrophilia:method-function)))
+  (straddle client
+            ea @sicl-clos:^ensure-generic-function-using-class
+            eb @sicl-clos:ensure-generic-function-using-class)
+  (straddle client
+            ea @sicl-clos:^ensure-class-using-class
+            eb @sicl-clos:ensure-class-using-class)
+  (straddle client
+            ea @sicl-clos:^ensure-method-using-generic-function
+            eb @sicl-clos:ensure-method-using-generic-function)
+  (straddle client
+            ea @sicl-clos:^ensure-method-combination-template-using-class
+            eb @sicl-clos:ensure-method-combination-template-using-class)
+  (straddle client
+            ea @sicl-clos:^method-function
+            eb @clostrophilia:method-function))
