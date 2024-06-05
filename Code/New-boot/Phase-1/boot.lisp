@@ -263,11 +263,6 @@
     (setf (clo:fdefinition
            client global-environment @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
-    (let ((symbol @clostrophilia:standard-instance-access))
-      (setf (clo:fdefinition client global-environment symbol)
-            #'sb:standard-instance-access)
-      (setf (clo:fdefinition client global-environment `(setf ,symbol))
-            #'(setf sb:standard-instance-access)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
     (sb:ensure-asdf-system
@@ -332,7 +327,7 @@
             (sicl-new-boot-backtrace-inspector:inspect
              common-boot-ast-evaluator::*stack*)))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-instance-structure")
+     client environment "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
     ;;; something that is easier to manipulate during debugging.
     (setf (clo:symbol-value
