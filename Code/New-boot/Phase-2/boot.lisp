@@ -191,6 +191,14 @@
      client environment "clostrophilia-dependent-maintenance")
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-class-initialization")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-method-initialization")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-slot-definition-initialization")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-class-finalization")
     (load-ctype client environment global-environment)
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
