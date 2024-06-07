@@ -13,6 +13,8 @@
     (flet ((local-class-of (object)
              (cond ((integerp object)
                     (find-class-e2 'fixnum))
+                   ((typep object 'ratio)
+                    (find-class-e2 'ratio))
                    ((null object)
                     (find-class-e2 'null))
                    ((symbolp object)
