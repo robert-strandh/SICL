@@ -77,6 +77,8 @@
           #'subtypep)
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
+    (setf (clo:symbol-value client (sb:e1 boot) @clostrophilia:*class-t+1*)
+          (clo:find-class client global-environment 't))
     (sb:ensure-asdf-system
      client environment "sicl-asdf-packages")
     (setf (clo:macro-function
