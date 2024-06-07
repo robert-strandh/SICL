@@ -89,17 +89,24 @@
   (lambda (function-name
            lambda-list
            qualifiers
-           specializers
+           specializer-designators
            documentation
            method-lambda)
-    (let ((symbol @sicl-clos:ensure-method))
-      `(,symbol
+    (let* ((ensure-method-name @sicl-clos:ensure-method)
+           (intern-eql-specializer-name @sicl-clos:intern-eql-specializer-1)
+           (specializer-forms
+             (loop for specializer-designator in specializer-designators
+                   collect (if (consp specializer-designator)
+                               `(,intern-eql-specializer-name
+                                 ,(second specializer-designator))
+                               `(find-class ',specializer-designator)))))
+      `(,ensure-method-name
         ',function-name
         :unspecialized-lambda-list ',lambda-list
         :qualifiers ',qualifiers
-        :specializer-designators ',specializers
+        :specializer (list ,@specializer-forms)
         :documentation ',documentation
-        :function ,method-lambda))))    
+        :function ,method-lambda))))
 
 (defmethod cmd:add-local-nickname ((client client))
   'sb:add-package-local-nickname)
