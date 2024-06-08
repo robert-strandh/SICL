@@ -201,6 +201,14 @@
      client environment "clostrophilia-slot-definition-initialization")
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-finalization")
+    ;; We don't expect to see any floating-point numbers during
+    ;; bootstrapping.  Also, this function is invoked using host
+    ;; FUNCALL on the symbol, so the function needs to be defined in
+    ;; the host.
+    (setf (fdefinition @sicl-arithmetic:single-float-p)
+          (constantly nil))
+    (setf (fdefinition @sicl-arithmetic:double-float-p)
+          (constantly nil))
     (load-ctype client environment global-environment)
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
