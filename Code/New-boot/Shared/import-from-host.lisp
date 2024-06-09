@@ -37,7 +37,7 @@
     ;; Evaluation and compilation
     constantp
     ;; Data and control flow
-    values values-list not funcall apply eq eql equal identity
+    values values-list not apply eq eql equal identity
     functionp every notany some
     ;; Printer
     format finish-output
