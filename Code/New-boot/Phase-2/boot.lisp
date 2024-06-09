@@ -217,15 +217,6 @@
     (setf (clo:fdefinition
            client global-environment @sicl-arithmetic:double-float-p)
           (constantly nil))
-    ;; We don't expect to see any floating-point numbers during
-    ;; bootstrapping.  Also, this function is invoked using host
-    ;; FUNCALL on the symbol, so the function needs to be defined in
-    ;; the host.
-    ;; FIXME: define our own version of FUNCALL.
-    (setf (fdefinition @sicl-arithmetic:single-float-p)
-          (constantly nil))
-    (setf (fdefinition @sicl-arithmetic:double-float-p)
-          (constantly nil))
     (load-ctype client environment global-environment)
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
