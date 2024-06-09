@@ -18,6 +18,14 @@
     (sb:define-package-functions client global-environment)
     (sb:define-backquote-macros client global-environment)
     (import-from-host client global-environment)
+    (setf (clo:fdefinition client global-environment 'funcall)
+          (lambda (function-or-name &rest arguments)
+            (apply #'funcall
+                   (if (functionp function-or-name)
+                       function-or-name
+                       (clo:fdefinition
+                        client global-environment function-or-name))
+                   arguments)))
     (sb:import-khazern client global-environment)
     (sb:define-client-and-environment-variables client global-environment)
     (sb:define-environment-functions client global-environment)
