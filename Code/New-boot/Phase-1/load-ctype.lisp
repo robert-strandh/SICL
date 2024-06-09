@@ -31,6 +31,14 @@
     (setf (clo:fdefinition client global-environment symbol)
           (fdefinition symbol)))
   (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
+  ;; We don't expect to see any floating-point numbers during
+  ;; bootstrapping.
+  (setf (clo:fdefinition
+         client global-environment @sicl-arithmetic:single-float-p)
+        (constantly nil))
+  (setf (clo:fdefinition
+         client global-environment @sicl-arithmetic:double-float-p)
+        (constantly nil))
   ;; The ctype library needs for the classes in the module SICL-ARRAY
   ;; to be defined.
   (sb:ensure-asdf-system client environment "sicl-array-support")
