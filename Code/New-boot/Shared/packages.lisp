@@ -32,6 +32,7 @@
    #:define-clostrophilia-find-method-combination-template
    #:define-client-and-environment-variables
    #:straddle
+   #:with-intercepted-function-cells
    #:define-straddle-functions
    #:define-ecclesia-functions
    #:add-package-local-nickname))
