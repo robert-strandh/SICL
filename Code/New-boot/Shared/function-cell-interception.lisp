@@ -11,3 +11,9 @@
         (call-next-method)
         (cdr entry))))
 
+(defmacro with-intercepted-function-cells ((&body clauses) &body body)
+  `(let ((*intercepted-cells*
+           (append (list ,@(loop for (name cell) in clauses
+                                 collect `(cons ',name ,cell)))
+                   *intercepted-cells*)))
+     ,@body))
