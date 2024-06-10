@@ -217,7 +217,10 @@
     (setf (clo:fdefinition
            client global-environment @sicl-arithmetic:double-float-p)
           (constantly nil))
-    (load-ctype client environment global-environment)
+    (sb:with-intercepted-function-cells
+        ((class-name
+          (clo:ensure-operator-cell client (sb:e1 boot) 'class-name)))
+      (load-ctype client environment global-environment))
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
     ;; argument.  But in E2, the arguments to SUBCLASSP are bridge
