@@ -31,4 +31,5 @@
    (:file "define-client-and-environment-variables")
    (:file "define-straddle-functions")
    (:file "define-ecclesia-functions")
+   (:file "function-cell-interception")
    (:file "repl")))
