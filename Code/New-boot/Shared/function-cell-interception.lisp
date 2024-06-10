@@ -6,4 +6,8 @@
 
 (defmethod clostrum-sys:ensure-operator-cell :around
     ((client client) environment operator-name)
-  (call-next-method))
+  (let ((entry (assoc operator-name *intercepted-cells* :test #'equal)))
+    (if (null entry)
+        (call-next-method)
+        (cdr entry))))
+
