@@ -104,7 +104,7 @@
         ',function-name
         :unspecialized-lambda-list ',lambda-list
         :qualifiers ',qualifiers
-        :specializer (list ,@specializer-forms)
+        :specializers (list ,@specializer-forms)
         :documentation ',documentation
         :function ,method-lambda))))
 
