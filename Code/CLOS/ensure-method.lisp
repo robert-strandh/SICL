@@ -9,7 +9,7 @@
 (defun ensure-method
     (generic-function-or-name
      &rest initargs
-     &key specializers
+     &key
      &allow-other-keys)
   (let ((generic-function
           (if (or (symbolp generic-function-or-name)
@@ -17,7 +17,7 @@
               (ensure-generic-function generic-function-or-name)
               generic-function-or-name)))
     (apply #'^ensure-method-using-generic-function
-           generic-function :specializers specializers initargs)))
+           generic-function initargs)))
 
 ;;  LocalWords:  specializer specializers SPECIALIZERS designators
 ;;  LocalWords:  designator metaobject
