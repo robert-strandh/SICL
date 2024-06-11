@@ -34,6 +34,10 @@
     (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
     (sb:define-straddle-functions client global-environment (sb:e2 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
+    (setf (clo:fdefinition
+           client (sb:e2 boot) @clostrophilia:ensure-generic-function+1)
+          (clo:fdefinition
+           client global-environment 'ensure-generic-function))
     (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination")
