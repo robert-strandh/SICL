@@ -29,7 +29,7 @@
     ;; Symbols
     gensym symbolp symbol-name
     ;; Strings
-    string stringp string-downcase
+    string stringp string-downcase string=
     ;; Characters
     char characterp
     ;; Conditions
