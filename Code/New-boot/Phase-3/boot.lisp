@@ -48,5 +48,15 @@
           (lambda ()
             (clo:find-class client global-environment 't)))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-class-hierarchy"))
+     client environment "clostrophilia-class-hierarchy")
+    (setf (clo:symbol-value client (sb:e2 boot) @clostrophilia:*class-t+1*)
+          (clo:find-class client global-environment 't))
+        (setf (clo:macro-function
+           client global-environment @asdf-user:defsystem)
+          (constantly nil))
+    (setf (clo:macro-function
+           client global-environment @asdf:defsystem)
+          (constantly nil))
+    (sb:ensure-asdf-system
+     client environment "predicament-base" :load-system-file t))
   boot)
