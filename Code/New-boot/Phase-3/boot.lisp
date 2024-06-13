@@ -60,5 +60,28 @@
     (sb:ensure-asdf-system
      client environment "predicament-base" :load-system-file t)
         (sb:ensure-asdf-system
-     client environment "predicament-packages-intrinsic"))
+     client environment "predicament-packages-intrinsic")
+    (setf (clo:fdefinition
+           client (sb:e1 boot)
+           @clostrophilia:find-class-standard-object)
+          (constantly (clo:find-class
+                       client global-environment 'standard-object)))
+    (clo:make-variable
+     client (sb:e2 boot) @clostrophilia:*standard-object*
+     (clo:find-class client global-environment 'standard-object))
+    (clo:make-variable
+     client (sb:e2 boot) @clostrophilia:*funcallable-standard-object*
+     (clo:find-class
+      client global-environment @clostrophilia:funcallable-standard-object))
+    (let* ((name @clostrophilia:find-method-combination)
+           (function (clo:fdefinition client global-environment name)))
+      (clo:make-variable client (sb:e1 boot)
+                         @sicl-clos:*standard-method-combination*
+                         (funcall function client 'standard '())))
+    (setf (clo:fdefinition
+           client global-environment @sicl-clos:^allocate-instance-using-class)
+          (clo:fdefinition
+           client (sb:e1 boot) @clostrophilia:allocate-instance-using-class))
+    (sb:ensure-asdf-system
+     client environment "sicl-new-boot-phase-2-additional-classes"))
   boot)
