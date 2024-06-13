@@ -58,5 +58,7 @@
            client global-environment @asdf:defsystem)
           (constantly nil))
     (sb:ensure-asdf-system
-     client environment "predicament-base" :load-system-file t))
+     client environment "predicament-base" :load-system-file t)
+        (sb:ensure-asdf-system
+     client environment "predicament-packages-intrinsic"))
   boot)
