@@ -145,6 +145,8 @@
           99999)
     (sb:ensure-asdf-system
      client environment "clostrophilia-standard-object-initialization")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-standard-object-initialization-aux")
     (let ((symbol-class (clo:find-class client global-environment 'symbol))
           (finalize-inheritance
             (clo:fdefinition
@@ -190,6 +192,9 @@
      client environment "clostrophilia-dependent-maintenance")
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
+    (setf (clo:fdefinition
+           client global-environment @clostrophilia:allocate-general-instance)
+          #'sb:allocate-general-instance)
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-initialization")
     (sb:ensure-asdf-system
