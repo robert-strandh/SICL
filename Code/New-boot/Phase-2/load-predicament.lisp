@@ -7,8 +7,6 @@
   (clo:fmakunbound client global-environment 'error)
   (clo:fmakunbound client global-environment 'warn)
   (sb:ensure-asdf-system client environment "sicl-conditions")
-  (setf (clo:find-class client global-environment 'string)
-        (find-class 'string))
   ;; The macro RESTART-CASE analyzes the REPORT expression using a
   ;; TYPECASE form which expands to a sequence of calls to TYPEP, so
   ;; we need to define TYPEP to handle those cases before we can
