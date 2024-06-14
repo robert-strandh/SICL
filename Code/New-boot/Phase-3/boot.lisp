@@ -75,7 +75,7 @@
       client global-environment @clostrophilia:funcallable-standard-object))
     (let* ((name @clostrophilia:find-method-combination)
            (function (clo:fdefinition client global-environment name)))
-      (clo:make-variable client (sb:e1 boot)
+      (clo:make-variable client (sb:e2 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
     (setf (clo:fdefinition
@@ -84,5 +84,18 @@
            client (sb:e1 boot) @clostrophilia:allocate-instance-using-class))
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-2-additional-classes")
-    (define-class-of-and-stamp client (sb:e2 boot) global-environment))
+    (define-class-of-and-stamp client (sb:e2 boot) global-environment)
+    (setf (clo:fdefinition client (sb:e2 boot) @clostrophilia:class-of+1)
+          (clo:fdefinition client global-environment 'class-of))
+    (setf (clo:fdefinition client (sb:e2 boot) @clostrophilia:stamp+1)
+          (clo:fdefinition client global-environment @clostrophilia:stamp))
+    (sb:ensure-asdf-system client environment "sicl-clos-make-instance")
+    (load-predicament client environment global-environment)
+    (clo:make-variable client (sb:e2 boot)
+                       @predicament:*condition-maker* 'make-condition)
+    (let ((symbol @clostrophilia:standard-instance-access))
+      (setf (clo:fdefinition client global-environment symbol)
+            #'sb:standard-instance-access)
+      (setf (clo:fdefinition client global-environment `(setf ,symbol))
+            #'(setf sb:standard-instance-access))))
   boot)
