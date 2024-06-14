@@ -97,5 +97,28 @@
       (setf (clo:fdefinition client global-environment symbol)
             #'sb:standard-instance-access)
       (setf (clo:fdefinition client global-environment `(setf ,symbol))
-            #'(setf sb:standard-instance-access))))
+            #'(setf sb:standard-instance-access)))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-slot-value-etc-using-class")
+    ;;; During bootstrapping, we set the unbound slot value to
+    ;;; something that is easier to manipulate during debugging.
+    (setf (clo:symbol-value
+           client global-environment @clostrophilia:+unbound-slot-value+)
+          99999)
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-standard-object-initialization")
+    (let ((symbol-class (clo:find-class client global-environment 'symbol))
+          (finalize-inheritance
+            (clo:fdefinition
+             client (sb:e2 boot) @clostrophilia:finalize-inheritance)))
+      (funcall finalize-inheritance symbol-class))
+    (let ((null-class (clo:find-class client global-environment 'null))
+          (finalize-inheritance
+            (clo:fdefinition
+             client (sb:e2 boot) @clostrophilia:finalize-inheritance)))
+      (funcall finalize-inheritance null-class))
+    (setf (clo:fdefinition
+           client global-environment @clostrophilia:shared-initialize-aux-1)
+          (clo:fdefinition
+           client (sb:e2 boot) @clostrophilia:shared-initialize-aux)))
   boot)
