@@ -11,4 +11,5 @@
    (:file "macro-programming")
    (:file "import-from-host")
    (:file "define-class-of-and-stamp")
+   (:file "load-predicament")
    (:file "boot")))
