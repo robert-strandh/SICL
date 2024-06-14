@@ -83,5 +83,6 @@
           (clo:fdefinition
            client (sb:e1 boot) @clostrophilia:allocate-instance-using-class))
     (sb:ensure-asdf-system
-     client environment "sicl-new-boot-phase-2-additional-classes"))
+     client environment "sicl-new-boot-phase-2-additional-classes")
+    (define-class-of-and-stamp client (sb:e2 boot) global-environment))
   boot)
