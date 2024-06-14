@@ -39,3 +39,6 @@
 (defclass symbol () ())
 
 (defclass null (symbol list) ())
+
+;;; This one is for Predicament.
+(defclass string () ())
