@@ -182,6 +182,11 @@
            client (sb:e1 boot) @sicl-clos:intern-eql-specializer))
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination-base")
+    (setf (clo:fdefinition client global-environment 'compile)
+          (lambda (should-be-nil lambda-expression)
+            (assert (null should-be-nil))
+            (let ((cst (cst:cst-from-expression lambda-expression)))
+              (sb:eval-cst client cst environment))))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
     (sb:ensure-asdf-system client environment "acclimation")
