@@ -141,5 +141,10 @@
     (setf (clo:fdefinition
            client global-environment @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
-           client (sb:e2 boot) @sicl-clos:intern-eql-specializer)))
+           client (sb:e2 boot) @sicl-clos:intern-eql-specializer))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-method-combination-base")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-generic-function-invocation")
+    (sb:ensure-asdf-system client environment "acclimation"))
   boot)
