@@ -107,6 +107,8 @@
           99999)
     (sb:ensure-asdf-system
      client environment "clostrophilia-standard-object-initialization")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-standard-object-initialization-aux")
     (let ((symbol-class (clo:find-class client global-environment 'symbol))
           (finalize-inheritance
             (clo:fdefinition
@@ -120,5 +122,14 @@
     (setf (clo:fdefinition
            client global-environment @clostrophilia:shared-initialize-aux-1)
           (clo:fdefinition
-           client (sb:e2 boot) @clostrophilia:shared-initialize-aux)))
+           client (sb:e2 boot) @clostrophilia:shared-initialize-aux))
+    ;; ctype uses ASSERT and ASSERT expands to RESTART-CASE which
+    ;; contains a TYPECASE which expands to TYPEP, but we don't have
+    ;; TYPEP since the very purpose of ctype is to define TYPEP.  But
+    ;; assertions should not fail at this point in the process anyway.
+    (setf (clo:macro-function client global-environment 'assert)
+          (lambda (form environment)
+            ;; We might put some trace output here.
+            (declare (ignore form environment))
+            nil)))
   boot)
