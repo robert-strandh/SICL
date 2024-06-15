@@ -131,5 +131,15 @@
           (lambda (form environment)
             ;; We might put some trace output here.
             (declare (ignore form environment))
-            nil)))
+            nil))
+    ;; It might be a mistake to define TYPEXPAND this way.
+    (setf (clo:fdefinition
+           client global-environment @sicl-type:typexpand)
+          (lambda (type-specifier &optional environment)
+            (declare (ignore environment))
+            (values type-specifier nil)))
+    (setf (clo:fdefinition
+           client global-environment @sicl-clos:intern-eql-specializer-1)
+          (clo:fdefinition
+           client (sb:e2 boot) @sicl-clos:intern-eql-specializer)))
   boot)
