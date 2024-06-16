@@ -35,4 +35,5 @@
    #:with-intercepted-function-cells
    #:define-straddle-functions
    #:define-ecclesia-functions
-   #:add-package-local-nickname))
+   #:add-package-local-nickname
+   #:bt))
