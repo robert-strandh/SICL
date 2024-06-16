@@ -32,4 +32,5 @@
    (:file "define-straddle-functions")
    (:file "define-ecclesia-functions")
    (:file "function-cell-interception")
+   (:file "backtrace")
    (:file "repl")))
