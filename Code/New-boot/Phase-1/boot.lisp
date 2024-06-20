@@ -2,17 +2,6 @@
 
 (eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
 
-(defgeneric my-make-instance (class &rest initargs))
-
-(defun define-make-instance (client environment)
-
-  (defmethod my-make-instance ((name symbol) &rest initargs)
-    (let ((class (clo:find-class client environment name)))
-      (apply #'make-instance class initargs)))
-
-  (defmethod my-make-instance ((class class) &rest initargs)
-    (apply #'make-instance class initargs)))
-
 (defun create-reader-generic-function (name)
   (let* ((sample-generic-function #'print-object)
          (method-combination
