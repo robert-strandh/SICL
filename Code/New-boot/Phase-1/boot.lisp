@@ -331,4 +331,5 @@
           99999)
     (sb:ensure-asdf-system
      client environment "clostrophilia-standard-object-initialization-aux")
+    (sb:ensure-asdf-system client environment "sicl-clos-make-instance")
     global-environment))
