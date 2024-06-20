@@ -26,8 +26,6 @@
                     (find-class-e2 'cons))
                    ((typep object 'sb:header)
                     (sb:class object))
-                   ((typep object 'standard-object)
-                    (find-class-e2 't))
                    (t (error "Don't know how to take the class of ~s"
                              object)))))
       (setf (clo:fdefinition client e2 'class-of) #'local-class-of)
