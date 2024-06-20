@@ -11,10 +11,7 @@
       (apply #'make-instance class initargs)))
 
   (defmethod my-make-instance ((class class) &rest initargs)
-    (apply #'make-instance class initargs))
-
-  (setf (clo:fdefinition client environment 'make-instance)
-        #'my-make-instance))
+    (apply #'make-instance class initargs)))
 
 (defun create-reader-generic-function (name)
   (let* ((sample-generic-function #'print-object)
