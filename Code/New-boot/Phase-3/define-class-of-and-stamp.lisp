@@ -25,9 +25,6 @@
                     (find-class-e3 'cons))
                    ((typep object 'sb:header)
                     (sb:class object))
-                   ((typep object 'standard-object)
-                    ;; This case is for MAKE-INSTANCE.
-                    (find-class-e3 't))
                    (t (error "Don't know how to take the class of ~s"
                              object)))))
       (setf (clo:fdefinition client e3 'class-of) #'local-class-of)
