@@ -61,5 +61,7 @@
                      (1- (expt 2 62)))
   (clo:make-variable client global-environment 'char-code-limit
                      (1- (expt 2 24)))
-  (let ((*features* '(:sicl)))
-    (sb:ensure-asdf-system client environment "ctype")))
+  (sb:with-intercepted-function-cells
+      ((make-instance (cons #'my-make-instance nil)))
+    (let ((*features* '(:sicl)))
+      (sb:ensure-asdf-system client environment "ctype"))))
