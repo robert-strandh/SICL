@@ -60,9 +60,6 @@
            client (sb:e1 boot) @clostrophilia:find-class-t)
           (lambda ()
             (clo:find-class client global-environment 't)))
-    (setf (clo:fdefinition
-           client global-environment @sicl-clos:^make-instance)
-          (clo:fdefinition client (sb:e1 boot) 'make-instance))
     ;; ADD-DIRECT-METHOD is called by ADD-METHOD, but it doesn't make
     ;; sense to add a SICL method to a host class.
     (setf (clo:fdefinition
