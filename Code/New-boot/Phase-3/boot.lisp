@@ -85,7 +85,6 @@
           (clo:fdefinition client global-environment 'class-of))
     (setf (clo:fdefinition client (sb:e2 boot) @clostrophilia:stamp+1)
           (clo:fdefinition client global-environment @clostrophilia:stamp))
-    (sb:ensure-asdf-system client environment "sicl-clos-make-instance")
     (load-predicament client environment global-environment)
     (clo:make-variable client (sb:e2 boot)
                        @predicament:*condition-maker* 'make-condition)
@@ -145,5 +144,6 @@
      client environment "clostrophilia-method-combination-base")
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
-    (sb:ensure-asdf-system client environment "acclimation"))
+    (sb:ensure-asdf-system client environment "acclimation")
+    (sb:ensure-asdf-system client environment "sicl-clos-make-instance"))
   boot)

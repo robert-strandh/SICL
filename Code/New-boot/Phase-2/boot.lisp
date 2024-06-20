@@ -120,7 +120,6 @@
           (clo:fdefinition client global-environment 'class-of))
     (setf (clo:fdefinition client (sb:e1 boot) @clostrophilia:stamp+1)
           (clo:fdefinition client global-environment @clostrophilia:stamp))
-    (sb:ensure-asdf-system client environment "sicl-clos-make-instance")
     (load-predicament client environment global-environment)
     (clo:make-variable client (sb:e1 boot)
                        @predicament:*condition-maker* 'make-condition)
@@ -231,5 +230,6 @@
      client environment "sicl-clos-ensure-metaobject-using")
     (setf (clo:fdefinition client global-environment
                            @clostrophilia:set-funcallable-instance-function)
-          (fdefinition 'closer-mop:set-funcallable-instance-function)))
+          (fdefinition 'closer-mop:set-funcallable-instance-function))
+    (sb:ensure-asdf-system client environment "sicl-clos-make-instance"))
   boot)
