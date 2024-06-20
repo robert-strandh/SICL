@@ -78,10 +78,6 @@
       (clo:make-variable client (sb:e2 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
-    (setf (clo:fdefinition
-           client global-environment @sicl-clos:^allocate-instance-using-class)
-          (clo:fdefinition
-           client (sb:e1 boot) @clostrophilia:allocate-instance-using-class))
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-2-additional-classes")
     (define-class-of-and-stamp client (sb:e2 boot) global-environment)
