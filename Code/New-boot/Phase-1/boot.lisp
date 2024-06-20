@@ -227,7 +227,9 @@
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-1-additional-classes")
     (load-ctype client environment global-environment)
-    (sb:ensure-asdf-system client environment "acclimation")
+    (sb:with-intercepted-function-cells
+        ((make-instance (cons #'my-make-instance nil)))
+      (sb:ensure-asdf-system client environment "acclimation"))
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
     ;; The way we define it is that it just expands to a PROGN of the
     ;; forms in the body, with the bindings having no effect.
