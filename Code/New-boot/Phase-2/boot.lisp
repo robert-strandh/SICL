@@ -34,6 +34,8 @@
     (sb:import-khazern client global-environment)
     (sb:define-client-and-environment-variables client global-environment)
     (sb:define-environment-functions client global-environment)
+    (setf (clo:fdefinition client (sb:e1 boot) @sicl-clos:find-class+1)
+          (clo:fdefinition client global-environment 'find-class))
     (sb:define-clostrophilia-find-method-combination-template
         client global-environment)
     (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
