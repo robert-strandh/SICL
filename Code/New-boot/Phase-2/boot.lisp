@@ -139,7 +139,7 @@
      client environment "clostrophilia-standard-object-initialization")
     (setf (clo:fdefinition
            client (sb:e1 boot) @sicl-clos:initialize-instance+1)
-          (clo:fdefinition global-environment 'initialize-instance))
+          (clo:fdefinition client global-environment 'initialize-instance))
     (sb:ensure-asdf-system
      client environment "clostrophilia-standard-object-initialization-aux")
     (let ((symbol-class (clo:find-class client global-environment 'symbol))
