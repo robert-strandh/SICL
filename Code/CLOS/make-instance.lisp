@@ -8,7 +8,7 @@
 (defgeneric make-instance (class &rest initargs))
 
 (defmethod make-instance ((class symbol) &rest initargs)
-  (apply #'make-instance (find-class class) initargs))
+  (apply #'make-instance (find-class+1 class) initargs))
 
 ;;; The HyperSpec recognizes only methods on MAKE-INSTANCE specialized
 ;;; to SYMBOL and STANDARD-CLASS.  However, the AMOP clearly says
