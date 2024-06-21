@@ -14,6 +14,6 @@
           do (setf (gethash name (packages boot))
                    (find-package name)))
     (sicl-new-boot-phase-1:boot boot)
-    ;; (sicl-new-boot-phase-2:boot boot)
+    (sicl-new-boot-phase-2:boot boot)
     ;; (sicl-new-boot-phase-3:boot boot)
     (defparameter *b* boot)))
