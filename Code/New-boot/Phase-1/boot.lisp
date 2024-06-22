@@ -310,8 +310,10 @@
                              method-combination-type-name
                              method-combination-options))
             (error "FIND-METHOD-COMBINATION called in E1")))
-    (sb:ensure-asdf-system
-     client environment "sicl-clos-ensure-metaobject-using")
+    (sb:with-intercepted-function-cells
+        ((make-instance (cons #'my-make-instance nil)))
+      (sb:ensure-asdf-system
+       client environment "sicl-clos-ensure-metaobject-using"))
     (setf (clo:fdefinition client global-environment 'compile)
           (lambda (should-be-nil lambda-expression)
             (assert (null should-be-nil))
