@@ -177,8 +177,11 @@
            client global-environment @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
            client (sb:e1 boot) @sicl-clos:intern-eql-specializer))
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-method-combination-base")
+    (sb:with-intercepted-function-cells
+        ((make-instance
+          (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-method-combination-base"))
     (setf (clo:fdefinition client global-environment 'compile)
           (lambda (should-be-nil lambda-expression)
             (assert (null should-be-nil))
@@ -186,7 +189,10 @@
               (sb:eval-cst client cst environment))))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-invocation")
-    (sb:ensure-asdf-system client environment "acclimation")
+    (sb:with-intercepted-function-cells
+        ((make-instance
+          (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
+      (sb:ensure-asdf-system client environment "acclimation"))
     (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sb:ensure-asdf-system client environment "ecclesia")
@@ -197,8 +203,11 @@
     (setf (clo:fdefinition
            client global-environment @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-class-initialization")
+    (sb:with-intercepted-function-cells
+        ((make-instance
+          (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
@@ -228,8 +237,11 @@
                     (clo:fdefinition
                      client (sb:e1 boot) @sicl-clos:class-precedence-list)))
               (member super (funcall class-precedence-list sub)))))
-    (sb:ensure-asdf-system
-     client environment "sicl-clos-ensure-metaobject-using")
+    (sb:with-intercepted-function-cells
+        ((make-instance
+          (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
+      (sb:ensure-asdf-system
+       client environment "sicl-clos-ensure-metaobject-using"))
     (setf (clo:fdefinition client global-environment
                            @clostrophilia:set-funcallable-instance-function)
           (fdefinition 'closer-mop:set-funcallable-instance-function))
