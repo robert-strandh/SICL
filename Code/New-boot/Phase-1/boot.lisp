@@ -259,8 +259,10 @@
     (setf (clo:fdefinition
            client global-environment @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-class-initialization")
+    (sb:with-intercepted-function-cells
+        ((make-instance (cons #'my-make-instance nil)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
