@@ -267,10 +267,10 @@
      client environment "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
      client environment "clostrophilia-slot-definition-initialization")
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-class-finalization")
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
        client environment "clostrophilia-method-combination-base"))
     (setf (clo:fdefinition client global-environment
