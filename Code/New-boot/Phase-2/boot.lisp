@@ -181,6 +181,8 @@
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
       (sb:ensure-asdf-system
+       client environment "clostrophilia-class-finalization")
+      (sb:ensure-asdf-system
        client environment "clostrophilia-method-combination-base"))
     (setf (clo:fdefinition client global-environment 'compile)
           (lambda (should-be-nil lambda-expression)
@@ -212,8 +214,6 @@
      client environment "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
      client environment "clostrophilia-slot-definition-initialization")
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-class-finalization")
     ;; We don't expect to see any floating-point numbers during
     ;; bootstrapping.
     (setf (clo:fdefinition
@@ -223,7 +223,9 @@
            client global-environment @sicl-arithmetic:double-float-p)
           (constantly nil))
     (sb:with-intercepted-function-cells
-        ((class-name
+        ((make-instance
+             (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance))
+         (class-name
           (clo:ensure-operator-cell client (sb:e1 boot) 'class-name)))
       (load-ctype client environment global-environment))
     ;; The ctype library defines SUBCLASSP to call
