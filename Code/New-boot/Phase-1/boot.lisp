@@ -223,10 +223,14 @@
     (setf (clo:macro-function
            client global-environment @asdf:defsystem)
           (constantly nil))
-    (load-predicament client environment global-environment)
+    (sb:with-intercepted-function-cells
+        ((make-instance (cons #'my-make-instance nil)))
+      (load-predicament client environment global-environment))
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-1-additional-classes")
-    (load-ctype client environment global-environment)
+    (sb:with-intercepted-function-cells
+        ((make-instance (cons #'my-make-instance nil)))
+      (load-ctype client environment global-environment))
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (sb:ensure-asdf-system client environment "acclimation"))
