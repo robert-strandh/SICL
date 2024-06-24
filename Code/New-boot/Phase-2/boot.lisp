@@ -224,7 +224,7 @@
           (constantly nil))
     (sb:with-intercepted-function-cells
         ((make-instance
-             (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance))
+          (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance))
          (class-name
           (clo:ensure-operator-cell client (sb:e1 boot) 'class-name)))
       (load-ctype client environment global-environment))
