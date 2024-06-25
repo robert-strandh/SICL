@@ -199,8 +199,8 @@
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
       (sb:ensure-asdf-system
        client environment "clostrophilia-generic-function-invocation")
-      (sb:ensure-asdf-system client environment "acclimation"))
-    (sb:ensure-asdf-system client environment "ecclesia")
+      (sb:ensure-asdf-system client environment "acclimation")
+      (sb:ensure-asdf-system client environment "ecclesia"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
     (sb:ensure-asdf-system
