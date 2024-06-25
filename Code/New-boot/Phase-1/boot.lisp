@@ -275,9 +275,9 @@
       (sb:ensure-asdf-system
        client environment "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
-       client environment "clostrophilia-method-combination-base"))
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-generic-function-invocation")
+       client environment "clostrophilia-method-combination-base")
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-generic-function-invocation"))
     ;; The method on ENSURE-CLASS-USING-CLASS specialized to
     ;; FORWARD-REFERENCED-CLASS calls CHANGE-CLASS to turn the class
     ;; into something other than a FORWARD-REFERENCED-CLASS.  But in
