@@ -238,8 +238,8 @@
         ((make-instance (cons #'my-make-instance nil)))
       (load-predicament client environment global-environment)
       (load-ctype client environment global-environment)
-      (sb:ensure-asdf-system client environment "acclimation"))
-    (sb:ensure-asdf-system client environment "ecclesia")
+      (sb:ensure-asdf-system client environment "acclimation")
+      (sb:ensure-asdf-system client environment "ecclesia"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
     (sb:ensure-asdf-system
