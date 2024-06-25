@@ -122,7 +122,10 @@
           (clo:fdefinition client global-environment 'class-of))
     (setf (clo:fdefinition client (sb:e1 boot) @clostrophilia:stamp+1)
           (clo:fdefinition client global-environment @clostrophilia:stamp))
-    (load-predicament client environment global-environment)
+    (sb:with-intercepted-function-cells
+        ((make-instance
+          (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
+      (load-predicament client environment global-environment))
     (clo:make-variable client (sb:e1 boot)
                        @predicament:*condition-maker* 'make-condition)
     (let ((symbol @clostrophilia:standard-instance-access))
