@@ -192,11 +192,11 @@
             (assert (null should-be-nil))
             (let ((cst (cst:cst-from-expression lambda-expression)))
               (sb:eval-cst client cst environment))))
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-generic-function-invocation")
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-generic-function-invocation")
       (sb:ensure-asdf-system client environment "acclimation"))
     (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
