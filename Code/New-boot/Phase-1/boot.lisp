@@ -225,11 +225,6 @@
           (constantly nil))
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-1-additional-classes")
-    (sb:with-intercepted-function-cells
-        ((make-instance (cons #'my-make-instance nil)))
-      (load-predicament client environment global-environment)
-      (load-ctype client environment global-environment)
-      (sb:ensure-asdf-system client environment "acclimation"))
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
     ;; The way we define it is that it just expands to a PROGN of the
     ;; forms in the body, with the bindings having no effect.
@@ -239,6 +234,11 @@
             (cons 'progn (rest (rest form)))))
     (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
+    (sb:with-intercepted-function-cells
+        ((make-instance (cons #'my-make-instance nil)))
+      (load-predicament client environment global-environment)
+      (load-ctype client environment global-environment)
+      (sb:ensure-asdf-system client environment "acclimation"))
     (sb:ensure-asdf-system client environment "ecclesia")
     (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
