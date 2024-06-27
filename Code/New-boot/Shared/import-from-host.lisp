@@ -38,7 +38,7 @@
     constantp
     ;; Data and control flow
     values values-list not apply eq eql equal identity
-    functionp every notany some
+    functionp every notany some constantly
     ;; Printer
     format finish-output
     ;; Environment
