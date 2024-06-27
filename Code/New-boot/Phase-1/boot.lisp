@@ -242,6 +242,12 @@
       (sb:ensure-asdf-system client environment "ecclesia"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
+    (setf (clo:fdefinition
+           client global-environment @sicl-clos:subtypep-1)
+          #'subtypep)
+    (setf (clo:fdefinition 
+           client global-environment @clostrophilia:subtypep-1)
+          #'subtypep)
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
     ;; ENSURE-GENERIC-FUNCTION is called by the class initialization
