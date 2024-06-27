@@ -27,7 +27,7 @@
     delete delete-if delete-if-not
     remove-duplicates sort map substitute
     ;; Symbols
-    gensym symbolp symbol-name
+    gensym symbolp symbol-name get
     ;; Strings
     string stringp string-downcase string=
     ;; Characters
