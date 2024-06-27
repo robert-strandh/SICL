@@ -199,6 +199,12 @@
       (sb:ensure-asdf-system client environment "ecclesia"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
+    (setf (clo:fdefinition
+           client global-environment @clostrophilia:subtypep-1)
+          (constantly t))
+    (setf (clo:fdefinition
+           client global-environment @sicl-clos:subtypep-1)
+          (constantly t))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
     (setf (clo:fdefinition
