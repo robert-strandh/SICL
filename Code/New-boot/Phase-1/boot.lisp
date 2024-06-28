@@ -234,6 +234,9 @@
             (cons 'progn (rest (rest form)))))
     (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
+    ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so
+    ;; we need to have the package SICL-TYPE defined.
+    (sb:ensure-asdf-system client environment "sicl-type-support")
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (load-predicament client environment global-environment)

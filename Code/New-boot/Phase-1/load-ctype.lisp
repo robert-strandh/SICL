@@ -43,9 +43,6 @@
   ;; to be defined.
   (sb:ensure-asdf-system client environment "sicl-array-support")
   (sb:ensure-asdf-system client environment "sicl-array-load-time")
-  ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so we
-  ;; need to have the package SICL-TYPE defined.
-  (sb:ensure-asdf-system client environment "sicl-type-support")
   ;; The ctype library defines a method on MAKE-LOAD-FORM that calls
   ;; MAKE-LOAD-FORM-SAVING-SLOTS.
   (setf (clo:fdefinition client global-environment 'make-load-form)
