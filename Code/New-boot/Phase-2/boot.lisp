@@ -166,12 +166,11 @@
             ;; We might put some trace output here.
             (declare (ignore form environment))
             nil))
-    ;; It might be a mistake to define TYPEXPAND this way.
-    (setf (clo:fdefinition
-           client global-environment @sicl-type:typexpand)
-          (lambda (type-specifier &optional environment)
-            (declare (ignore environment))
-            (values type-specifier nil)))
+    ;; FIXME: TYPEXPAND should be defined by code from SICL-TYPE being
+    ;; loaded, rather than by defining it here. 
+    (setf (clo:fdefinition client global-environment @sicl-type:typexpand)
+          (lambda (type-specifier &optional (environment global-environment))
+            (clo:type-expand client environment type-specifier)))
     (setf (clo:fdefinition
            client global-environment @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
