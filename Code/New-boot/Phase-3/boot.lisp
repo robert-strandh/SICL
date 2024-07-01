@@ -140,8 +140,11 @@
            client (sb:e2 boot) @sicl-clos:intern-eql-specializer))
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination-base")
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-generic-function-invocation")
-    (sb:ensure-asdf-system client environment "acclimation")
+    (sb:with-intercepted-function-cells
+        ((make-instance
+          (clo:ensure-operator-cell client (sb:e2 boot) 'make-instance)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-generic-function-invocation")
+      (sb:ensure-asdf-system client environment "acclimation"))
     (sb:ensure-asdf-system client environment "sicl-clos-make-instance"))
   boot)
