@@ -140,6 +140,8 @@
            client (sb:e2 boot) @sicl-clos:intern-eql-specializer))
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-combination-base")
+    (setf (clo:fdefinition client (sb:e2 boot) @sicl-clos:find-class+1)
+          (clo:fdefinition client global-environment 'find-class))
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell client (sb:e2 boot) 'make-instance)))
