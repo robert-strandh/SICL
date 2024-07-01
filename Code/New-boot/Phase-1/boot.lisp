@@ -338,7 +338,9 @@
           (lambda (should-be-nil lambda-expression)
             (assert (null should-be-nil))
             (let ((cst (cst:cst-from-expression lambda-expression)))
-              (sb:eval-cst client cst environment))))
+              (sb:with-intercepted-function-cells
+                  ((make-instance (cons #'my-make-instance nil)))
+                (sb:eval-cst client cst environment)))))
     (setf (clo:fdefinition client global-environment 'break)
           (lambda (&rest arguments)
             (declare (ignore arguments))
