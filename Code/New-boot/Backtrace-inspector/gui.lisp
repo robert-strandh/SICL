@@ -3,7 +3,11 @@
 (clim:define-application-frame inspector ()
   ((%stack :initarg :stack :reader stack)
    (%current-entry :initform nil :accessor current-entry))
-  (:panes (arguments :application
+  (:panes (called-function :application
+                           :scroll-bars nil
+                           :end-of-line-action :allow
+                           :display-function 'display-called-function)
+          (arguments :application
                      :scroll-bars nil
                      :end-of-line-action :allow
                      :display-function 'display-arguments)
@@ -17,10 +21,21 @@
           (inter :interactor :scroll-bars nil))
   (:layouts (default (clim:horizontally (:width 1200 :height 900)
                        (1/2 (clim:vertically ()
+                              (1/10 (clim:scrolling () called-function))
                               (3/10 (clim:scrolling () arguments))
-                              (6/10 (clim:scrolling () backtrace))
+                              (5/10 (clim:scrolling () backtrace))
                               (1/10 (clim:scrolling () inter))))
                        (1/2 (clim:scrolling () source))))))
+
+(defclass called-function () ())
+
+(defun display-called-function (frame pane)
+  (let ((entry (current-entry frame)))
+    (unless (null entry)
+      (let ((called-function (cbae:called-function entry)))
+        (clim:with-output-as-presentation
+            (pane called-function 'called-function)
+          (format pane "~s~%" called-function))))))
 
 (defclass argument () ())
 
