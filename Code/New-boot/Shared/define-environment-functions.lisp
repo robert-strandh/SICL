@@ -29,6 +29,10 @@
                              @clostrum:make-constant))))
       (loop for (function . name) in items
             do (import-clostrum-function function name))))
+  (loop for symbol being each external-symbol
+          in (find-package '#:common-lisp)
+        when (special-operator-p symbol)
+          do (clo:make-special-operator client global-environment symbol t))
   (setf (clo:fdefinition client global-environment '(setf fdefinition))
         (lambda (new-definition name &key (environment global-environment))
           (setf (clo:fdefinition client environment name)
