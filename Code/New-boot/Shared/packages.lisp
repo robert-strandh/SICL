@@ -36,4 +36,5 @@
    #:define-straddle-functions
    #:define-ecclesia-functions
    #:add-package-local-nickname
+   #:fill-environment
    #:bt))
