@@ -39,6 +39,7 @@
           (clo:fdefinition client global-environment 'find-class))
     (sb:define-clostrophilia-find-method-combination-template
         client global-environment)
+    (sb:fill-environment client global-environment)
     (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
     (sb:define-straddle-functions client global-environment (sb:e1 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
