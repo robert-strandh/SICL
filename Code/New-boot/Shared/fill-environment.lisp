@@ -5,7 +5,7 @@
           in (find-package '#:common-macro-definitions)
         unless (or (null (macro-function symbol))
                  (eq (cl:symbol-package symbol) (find-package "CL"))
-                 (eq (cl:symbol-name symbol) "DEFMACRO"))
+                 (string= (cl:symbol-name symbol) "DEFMACRO"))
           do (let ((name (find-symbol (string-upcase (cl:symbol-name symbol))
                                       (find-package "CL"))))
                (setf (clo:macro-function client global-environment name)
