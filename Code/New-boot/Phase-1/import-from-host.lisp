@@ -14,7 +14,7 @@
 (defun import-host-classes (client global-environment)
   (loop for name in '(symbol)
         do (setf (clo:find-class client global-environment name)
-                 (find-class 't))))
+                 (find-class name))))
 
 (defparameter *host-setf-functions*
   `(((setf gethash)
