@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-setf)
+(cl:in-package #:sicl-evaluation-and-compilation)
 
 (define-setf-expander the (value-type place &environment env)
   (multiple-value-bind (temps forms store-vars storing-form accessing-form)
