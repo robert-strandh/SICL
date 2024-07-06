@@ -5,6 +5,4 @@
   :serial t
   :components
   ((:file "defmacro-defmacro")
-   (:file "declaim-support")
-   (:file "declaim-defmacro")
    (:file "define-compiler-macro-defmacro")))
