@@ -38,6 +38,5 @@
    (:file "header")
    (:file "utilities")
    (:file "asdf-programming")
-   (:file "create-accessor-generic-functions")
    (:file "create-classes")
    (:file "pointer")))
