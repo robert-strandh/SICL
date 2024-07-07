@@ -36,14 +36,3 @@
 
 (define-condition abort-failure (control-error) ()
   (:report "An ABORT restart failed to transfer control."))
-
-(defun report-case-failure (condition stream)
-  (format stream "~S fell through ~S expression.~%Wanted one of ~:S."
-          (type-error-datum condition)
-          (case-failure-name condition)
-          (case-failure-possibilities condition)))
-
-(define-condition case-failure (type-error)
-  ((name :reader case-failure-name :initarg :name)
-   (possibilities :reader case-failure-possibilities :initarg :possibilities))
-  (:report report-case-failure))

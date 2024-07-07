@@ -11,9 +11,3 @@
        nil
        "A condition type signaled when the ABORT restart invoked by function~@
         ABORT failed to transfer control outside of the function.")) 
-
-(setf (documentation 'case-failure 'type)
-      (format
-       nil
-       "A condition type signaled when a case assertion (such as ECASE,~@
-        ETYPECASE, CCASE, or CTYPECASE) fails to match its keyform."))

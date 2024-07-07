@@ -1,23 +1,5 @@
 (cl:in-package #:portable-condition-system)
 
-(setf (documentation 'case-failure 'function)
-      (format
-       nil
-       "Signals a CASE-FAILURE error using the provided datum,~@
-        the name of the case operator, complex type specifier,~@
-        and the case keys which were not matched."))
-
-(setf (documentation 'case-transform-t-otherwise-cases 'function)
-      (format
-       nil
-       "Transforms T/OTHERWISE cases to prevent them from having~@
-        a special effect in CASE."))
-
-(setf (documentation 'case-accumulate-keys 'function)
-      (format
-       nil
-       "Collects all keys from the provided cases into a single list."))
-
 (setf (documentation 'ecase 'function)
       (format
        nil

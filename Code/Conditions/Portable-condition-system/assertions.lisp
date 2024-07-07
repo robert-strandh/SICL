@@ -2,29 +2,6 @@
 
 (in-package #:portable-condition-system)
 
-;;; Case assertions - common
-
-(defun case-failure (datum complex-type operator-name keys)
-  (error 'case-failure :datum datum
-                       :expected-type `(,complex-type ,@keys)
-                       :name operator-name
-                       :possibilities keys))
-
-(defun case-transform-t-otherwise-cases (cases)
-  (loop for (key . forms) in cases
-        if (member key '(t otherwise))
-          collect `((,key) ,@forms)
-        else collect
-        `(,key ,@forms)))
-
-(defun case-accumulate-keys (cases)
-  (loop for case in cases
-        for key-or-keys = (first case)
-        if (listp key-or-keys)
-          append key-or-keys
-        else
-          collect key-or-keys))
-
 ;;; Correctable assertions - utilities
 
 (defun store-value-read-evaluated-form ()
