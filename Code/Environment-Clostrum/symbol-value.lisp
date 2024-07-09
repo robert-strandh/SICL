@@ -5,7 +5,7 @@
     (error 'type-error :datum name :expected-type 'symbol))
   (let ((cell (clostrum-sys:variable-cell *client* environment name)))
     ;; CELL might be NIL, but RT:SYMBOL-VALUE can deal with that.
-    (rt:symbol-value name cell rt:*dynamic-environment*)))
+    (rt:symbol-value name cell)))
 
 (defun (setf symbol-value) (new-value name &key (environment *environment*))
   (unless (symbolp name)
@@ -22,7 +22,7 @@
         (let ((new-cell (cons nil nil)))
           ;; Set the CAR to something unique.
           (setf (car new-cell) new-cell)
-          (setf (rt:symbol-value name new-cell rt:*dynamic-environment*)
+          (setf (rt:symbol-value name new-cell)
                 new-value)
           (unless (eq (car new-cell) new-cell)
             ;; We must create a global cell.
@@ -32,6 +32,6 @@
             ;; And we set the CAR of the created cell to the value
             ;; that the run time supplied.
             (setf (car cell) (car new-cell))))
-        (setf (rt:symbol-value name cell rt:*dynamic-environment*)
+        (setf (rt:symbol-value name cell)
               new-value)))
   new-value)
