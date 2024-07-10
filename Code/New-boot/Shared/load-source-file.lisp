@@ -1,6 +1,8 @@
 (cl:in-package #:sicl-new-boot)
 
-(defun eval-cst (client cst environment)
+(defvar *use-maclina-p* t)
+
+(defun maclina-eval-cst (client cst environment)
   (let* ((global-environment (trucler:global-environment client environment))
          (compilation-environment
            (make-instance 'clostrum-basic:compilation-environment
@@ -8,13 +10,17 @@
          (cmd:*client* client)
          (maclina.machine:*client* client)
          (form (cst:raw cst)))
-    (maclina.vm-cross:initialize-vm 20000)
     (maclina.compile:eval form compilation-environment)))
 
-;; (defun eval-cst (client cst environment)
-;;   (let* ((ast (cst-to-ast client cst environment))
-;;          (top-level-function (cbae:compile-ast client ast environment)))
-;;     (funcall top-level-function)))
+(defun ast-evaluator-eval-cst (client cst environment)
+  (let* ((ast (cst-to-ast client cst environment))
+         (top-level-function (cbae:compile-ast client ast environment)))
+    (funcall top-level-function)))
+
+(defun eval-cst (client cst environment)
+  (if *use-maclina-p*
+      (maclina-eval-cst client cst environment)
+      (ast-evaluator-eval-cst client cst environment)))
 
 (defun load-stream (client stream environment)
   (let ((eclector.base:*client* client)
