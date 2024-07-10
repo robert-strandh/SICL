@@ -13,6 +13,9 @@
     (loop for name in '("COMMON-LISP-USER" "KEYWORD")
           do (setf (gethash name (packages boot))
                    (find-package name)))
+    (when *use-maclina-p*
+      (let ((maclina.machine:*client* client))
+        (maclina.vm-cross:initialize-vm 20000)))
     (sicl-new-boot-phase-1:boot boot)
     (sicl-new-boot-phase-2:boot boot)
     (sicl-new-boot-phase-3:boot boot)
