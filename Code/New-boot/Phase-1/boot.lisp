@@ -287,6 +287,9 @@
     (setf (clo:fdefinition client global-environment
                            @clostrophilia:set-funcallable-instance-function)
           (fdefinition 'closer-mop:set-funcallable-instance-function))
+    (setf (clo:fdefinition client global-environment
+                           @clostrophilia:make-method-instance)
+          #'my-make-instance)
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (sb:ensure-asdf-system
