@@ -188,7 +188,11 @@
           (lambda (should-be-nil lambda-expression)
             (assert (null should-be-nil))
             (let ((cst (cst:cst-from-expression lambda-expression)))
-              (sb:eval-cst client cst environment))))
+              (sb:with-intercepted-function-cells
+                  ((make-instance 
+                       (clo:ensure-operator-cell
+                        client (sb:e1 boot) 'make-instance)))
+                (sb:eval-cst client cst environment)))))
     (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sb:with-intercepted-function-cells
