@@ -13,10 +13,8 @@
      variant-signature-determiner
      effective-method-form-function
      &key
-       ;; Maclina does not recognize :CLIENT and :ENVIRONMENT if
-       ;; DOCUMENTATION comes first.
-       (client sicl-environment:*client*)
        documentation
+       (client sicl-environment:*client*)
        (environment sicl-environment:*environment*))
   (let ((template
           (make-instance 'clostrophilia:method-combination-template
