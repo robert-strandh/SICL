@@ -12,6 +12,15 @@
          (form (cst:raw cst)))
     (maclina.compile:eval form compilation-environment)))
 
+(defun maclina-eval (form global-environment)
+  (let* ((compilation-environment
+           (make-instance 'clostrum-basic:compilation-environment
+             :parent global-environment))
+         (client (make-instance 'client))
+         (cmd:*client* client)
+         (maclina.machine:*client* client))
+    (maclina.compile:eval form compilation-environment)))
+
 (defun ast-evaluator-eval-cst (client cst environment)
   (let* ((ast (cst-to-ast client cst environment))
          (top-level-function (cbae:compile-ast client ast environment)))
