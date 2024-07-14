@@ -163,5 +163,10 @@
     (setf (clo:fdefinition
            client global-environment @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
+    (sb:with-intercepted-function-cells
+        ((make-instance
+          (clo:ensure-operator-cell client (sb:e2 boot) 'make-instance)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system client environment "sicl-clos-make-instance"))
   boot)
