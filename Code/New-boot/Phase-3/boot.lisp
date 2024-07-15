@@ -202,5 +202,8 @@
           (clo:ensure-operator-cell client (sb:e2 boot) 'make-instance)))
       (sb:ensure-asdf-system
        client environment "sicl-clos-ensure-metaobject-using"))
+    (setf (clo:fdefinition client global-environment
+                           @clostrophilia:set-funcallable-instance-function)
+          (fdefinition 'closer-mop:set-funcallable-instance-function))
     (sb:ensure-asdf-system client environment "sicl-clos-make-instance"))
   boot)
