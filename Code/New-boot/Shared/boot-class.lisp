@@ -17,7 +17,8 @@
     :reader symbol-package)
    (%e1 :accessor e1)
    (%e2 :accessor e2)
-   (%e3 :accessor e3)))
+   (%e3 :accessor e3)
+   (%e4 :accessor e4)))
 
 ;;; This variable contains an instance of the class BOOT during
 ;;; bootstrapping.
