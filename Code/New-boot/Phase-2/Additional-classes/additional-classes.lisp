@@ -24,6 +24,15 @@
 (defclass number (t) ()
   (:metaclass built-in-class))
 
+(defclass rational (number) ()
+  (:metaclass built-in-class))
+
+(defclass integer (rational) ()
+  (:metaclass built-in-class))
+
+(defclass ratio (integer) ()
+  (:metaclass built-in-class))
+
 (defclass fixnum (number) ()
   (:metaclass built-in-class))
 
