@@ -4,5 +4,5 @@
   (let ((environment (cb:create-environment)))
     (change-class (trucler:global-environment client environment)
                   'sb:environment
-                  :name :E3)
+                  :name :E4)
     environment))
