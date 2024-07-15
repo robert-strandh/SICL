@@ -1,8 +1,6 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
 (defun load-ctype (client environment global-environment)
-  (sb:ensure-asdf-system
-   client environment "sicl-new-boot-phase-1-additional-classes")
   ;; I have no idea why this is necessary.
   (let ((symbol (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
     (setf (clo:fdefinition client global-environment symbol)
