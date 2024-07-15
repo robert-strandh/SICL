@@ -189,8 +189,8 @@
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
     ;; argument.  But in E3, the arguments to SUBCLASSP are ersatz
-    ;; objects, so they need to be accessed using host generic
-    ;; functions located in E2.  So we redefine SUBCLASSP here.
+    ;; objects, so they need to be accessed using generic functions
+    ;; located in E2.  So we redefine SUBCLASSP here.
     (setf (clo:fdefinition client global-environment @ctype:subclassp)
           (lambda (sub super)
             (let ((class-precedence-list
