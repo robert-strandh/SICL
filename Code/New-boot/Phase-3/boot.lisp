@@ -186,5 +186,16 @@
          (class-name
           (clo:ensure-operator-cell client (sb:e2 boot) 'class-name)))
       (load-ctype client environment global-environment))
+    ;; The ctype library defines SUBCLASSP to call
+    ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
+    ;; argument.  But in E3, the arguments to SUBCLASSP are ersatz
+    ;; objects, so they need to be accessed using host generic
+    ;; functions located in E2.  So we redefine SUBCLASSP here.
+    (setf (clo:fdefinition client global-environment @ctype:subclassp)
+          (lambda (sub super)
+            (let ((class-precedence-list
+                    (clo:fdefinition
+                     client (sb:e2 boot) @sicl-clos:class-precedence-list)))
+              (member super (funcall class-precedence-list sub)))))
     (sb:ensure-asdf-system client environment "sicl-clos-make-instance"))
   boot)
