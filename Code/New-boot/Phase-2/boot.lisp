@@ -242,7 +242,7 @@
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
     ;; argument.  But in E2, the arguments to SUBCLASSP are bridge
     ;; objects, so they need to be accessed using host generic
-    ;; functions locaed in E1.  So we redefine SUBCLASSP here.
+    ;; functions located in E1.  So we redefine SUBCLASSP here.
     (setf (clo:fdefinition client global-environment @ctype:subclassp)
           (lambda (sub super)
             (let ((class-precedence-list
