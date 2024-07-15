@@ -30,7 +30,7 @@
 (defclass integer (rational) ()
   (:metaclass built-in-class))
 
-(defclass ratio (integer) ()
+(defclass ratio (rational) ()
   (:metaclass built-in-class))
 
 (defclass fixnum (integer) ()
