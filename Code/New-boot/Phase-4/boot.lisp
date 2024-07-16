@@ -28,5 +28,6 @@
                         client global-environment function-or-name))
                    arguments)))
     (sb:import-khazern client global-environment)
-    (sb:fill-environment client global-environment))
+    (sb:fill-environment client global-environment)
+    (sb:define-client-and-environment-variables client global-environment))
   boot)
