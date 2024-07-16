@@ -17,5 +17,6 @@
     (clo:make-variable
      client global-environment '*package* (find-package '#:common-lisp-user))
     (sb:define-package-functions client global-environment)
-    (sb:define-backquote-macros client global-environment))
+    (sb:define-backquote-macros client global-environment)
+    (import-from-host client global-environment))
   boot)
