@@ -27,5 +27,6 @@
                        (clo:fdefinition
                         client global-environment function-or-name))
                    arguments)))
-    (sb:import-khazern client global-environment))
+    (sb:import-khazern client global-environment)
+    (sb:fill-environment client global-environment))
   boot)
