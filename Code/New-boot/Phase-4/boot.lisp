@@ -33,5 +33,6 @@
     (sb:define-environment-functions client global-environment)
     (sb:define-clostrophilia-find-method-combination-template
         client global-environment)
-    (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc"))
+    (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
+    (sb:define-straddle-functions client global-environment (sb:e3 boot)))
   boot)
