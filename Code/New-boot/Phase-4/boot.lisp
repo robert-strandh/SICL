@@ -35,5 +35,9 @@
         client global-environment)
     (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
     (sb:define-straddle-functions client global-environment (sb:e3 boot))
-    (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject"))
+    (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
+    (setf (clo:fdefinition
+           client (sb:e3 boot) @clostrophilia:ensure-generic-function+1)
+          (clo:fdefinition
+           client global-environment 'ensure-generic-function)))
   boot)
