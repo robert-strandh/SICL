@@ -39,5 +39,6 @@
     (setf (clo:fdefinition
            client (sb:e3 boot) @clostrophilia:ensure-generic-function+1)
           (clo:fdefinition
-           client global-environment 'ensure-generic-function)))
+           client global-environment 'ensure-generic-function))
+    (sb:define-ecclesia-functions client (sb:e2 boot) global-environment))
   boot)
