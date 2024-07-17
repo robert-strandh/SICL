@@ -32,5 +32,6 @@
     (sb:define-client-and-environment-variables client global-environment)
     (sb:define-environment-functions client global-environment)
     (sb:define-clostrophilia-find-method-combination-template
-        client global-environment))
+        client global-environment)
+    (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc"))
   boot)
