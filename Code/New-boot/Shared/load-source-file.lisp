@@ -20,17 +20,27 @@
          (maclina.machine:*client* client))
     (maclina.compile:eval form compilation-environment)))
 
-(defun maclina-repl (global-environment)
-  (let* ((client (make-instance 'client)))
-    (loop (let* ((package
-                   (maclina-eval '*package* client global-environment))
+(defun maclina-repl (client global-environment)
+  (let ((cmd:*client* client)
+        (eclector.base:*client* client)
+        (maclina.machine:*client* client))
+    (loop (let* ((compilation-environment
+                   (make-instance 'clostrum-basic:compilation-environment
+                     :parent global-environment))
+                 (package
+                   (maclina.compile:eval
+                    '*package* compilation-environment))
                  (name (parcl-low:name client package)))
             (format t "~a>> " name)
             (finish-output))
-          (let* ((cst (eclector.concrete-syntax-tree:read *standard-input*))
+          (let* ((compilation-environment
+                   (make-instance 'clostrum-basic:compilation-environment
+                     :parent global-environment))
+                 (cst (eclector.concrete-syntax-tree:read *standard-input*))
                  (form (cst:raw cst))
                  (values (multiple-value-list
-                          (maclina-eval form client global-environment))))
+                          (maclina.compile:eval
+                           form compilation-environment))))
             (loop for value in values
                   do (format t "~s~%" value))))))
 
