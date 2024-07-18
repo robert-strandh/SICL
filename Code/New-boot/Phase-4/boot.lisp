@@ -46,5 +46,7 @@
     (setf (clo:fdefinition
            client (sb:e3 boot) @clostrophilia:find-class-t)
           (lambda ()
-            (clo:find-class client global-environment 't))))
+            (clo:find-class client global-environment 't)))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-class-hierarchy"))
   boot)
