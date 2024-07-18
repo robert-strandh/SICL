@@ -42,5 +42,9 @@
            client global-environment 'ensure-generic-function))
     (sb:define-ecclesia-functions client (sb:e2 boot) global-environment)
     (sb:ensure-asdf-system
-     client environment "clostrophilia-method-combination"))
+     client environment "clostrophilia-method-combination")
+    (setf (clo:fdefinition
+           client (sb:e3 boot) @clostrophilia:find-class-t)
+          (lambda ()
+            (clo:find-class client global-environment 't))))
   boot)
