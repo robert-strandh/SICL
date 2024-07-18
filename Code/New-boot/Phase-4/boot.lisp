@@ -60,5 +60,10 @@
     (sb:ensure-asdf-system
      client environment "predicament-base" :load-system-file t)
     (sb:ensure-asdf-system
-     client environment "predicament-packages-intrinsic"))
+     client environment "predicament-packages-intrinsic")
+    (setf (clo:fdefinition
+           client (sb:e2 boot)
+           @clostrophilia:find-class-standard-object)
+          (constantly (clo:find-class
+                       client global-environment 'standard-object))))
   boot)
