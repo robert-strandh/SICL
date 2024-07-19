@@ -65,5 +65,8 @@
            client (sb:e2 boot)
            @clostrophilia:find-class-standard-object)
           (constantly (clo:find-class
-                       client global-environment 'standard-object))))
+                       client global-environment 'standard-object)))
+    (clo:make-variable
+     client (sb:e2 boot) @clostrophilia:*standard-object*
+     (clo:find-class client global-environment 'standard-object)))
   boot)
