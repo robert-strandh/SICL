@@ -2,6 +2,11 @@
 
 (defvar *use-maclina-p* t)
 
+(defmethod eclector.parse-result:make-expression-result :before
+    ((client client) result children source)
+  (unless (null maclina.compile:*source-locations*)
+    (setf (gethash result maclina.compile:*source-locations*) source)))
+
 (defun maclina-eval-cst (client cst environment)
   (let* ((global-environment (trucler:global-environment client environment))
          (compilation-environment
@@ -57,7 +62,9 @@
 (defun load-stream (client stream environment)
   (let ((eclector.base:*client* client)
         (abp:*builder* (cb::make-builder client environment))
-        (undefined-functions '()))
+        (undefined-functions '())
+        (maclina.compile:*source-locations*
+          (if *use-maclina-p* (make-hash-table) nil)))
     (handler-bind
         ((common-boot:no-function-description
            (lambda (condition)
