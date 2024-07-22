@@ -1,5 +1,13 @@
 (cl:in-package #:sicl-compilation-environment-information)
 
+(defgeneric generic-function-class-name (generic-function-description))
+
+(defgeneric method-class-name (generic-function-description))
+
+(defgeneric method-combination-name (generic-function-description))
+
+(defgeneric method-combination-arguments (generic-function-description))
+
 (defclass generic-function-description (trucler:generic-function-description)
   ((%generic-function-class-name
     :initarg :generic-function-class-name
