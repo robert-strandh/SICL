@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-lexical-environment
+(defpackage #:sicl-compilation-environment-information
   (:use #:common-lisp)
   (:shadowing-import-from
    #:trucler

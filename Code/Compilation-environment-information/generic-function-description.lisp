@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-lexical-environment)
+(cl:in-package #:sicl-compilation-environment-information)
 
 (defclass generic-function-description (trucler:generic-function-description)
   ((%generic-function-class-name
