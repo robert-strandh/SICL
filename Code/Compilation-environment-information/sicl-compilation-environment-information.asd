@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-lexical-environment
+(defsystem #:sicl-compilation-environment-information
   :depends-on (#:trucler-reference)
   :serial t
   :components
