@@ -41,27 +41,28 @@
 
 (defclass argument () ())
 
-(defun display-arguments (frame pane)
-  (declare (ignore frame pane))
-  #+(or)
-  (let ((entry (current-entry frame)))
-    (unless (null entry)
-      (loop for argument in (cbae:arguments entry)
-            for i from 1
-            do (clim:with-drawing-options (pane :ink clim:+red+)
-                 (format pane "~a:" i))
-               (multiple-value-bind (x y)
-                   (clim:stream-cursor-position pane)
-                 (declare (ignore x))
-                 (setf (clim:stream-cursor-position pane)
-                       (values 30 y)))
-               (clim:with-output-as-presentation
-                   (pane argument 'argument)
-                 (format pane "~s~%" argument))))))
-
 (defclass stack-frame-pair ()
   ((%vm-frame :initarg :vm-frame :reader vm-frame)
    (%call-frame :initarg :call-frame :reader call-frame)))
+
+(defun display-arguments (frame pane)
+  (let ((entry (current-entry frame)))
+    (unless (null entry)
+      (let* ((stack-frame (call-frame entry))
+             (locals (dissect:locals stack-frame))
+             (arguments (cdr (assoc 'maclina.vm-cross::args locals))))
+        (loop for argument in arguments
+              for i from 1
+              do (clim:with-drawing-options (pane :ink clim:+red+)
+                   (format pane "~a:" i))
+                 (multiple-value-bind (x y)
+                     (clim:stream-cursor-position pane)
+                   (declare (ignore x))
+                   (setf (clim:stream-cursor-position pane)
+                         (values 30 y)))
+                 (clim:with-output-as-presentation
+                     (pane argument 'argument)
+                   (format pane "~s~%" argument)))))))
 
 (defun display-stack-frame (pane stack-frame-pair source-information)
   (clim:with-output-as-presentation
