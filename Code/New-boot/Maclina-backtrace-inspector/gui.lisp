@@ -29,6 +29,8 @@
 (defclass called-function () ())
 
 (defun display-called-function (frame pane)
+  (declare (ignore frame pane))
+  #+(or)
   (let ((entry (current-entry frame)))
     (unless (null entry)
       (let ((called-function (cbae:called-function entry)))
@@ -39,6 +41,8 @@
 (defclass argument () ())
 
 (defun display-arguments (frame pane)
+  (declare (ignore frame pane))
+  #+(or)
   (let ((entry (current-entry frame)))
     (unless (null entry)
       (loop for argument in (cbae:arguments entry)
@@ -67,18 +71,20 @@
               (values 20 y)))
       (format pane "~a~%" (subseq line char-index)))))
 
+(defun find-source-information (stack-frame)
+  (let* ((locals (dissect:locals stack-frame))
+         (module (cdr (assoc 'maclina.vm-cross::module locals)))
+         (pc-map (maclina.machine:bytecode-module-pc-map module)) 
+         (ip (cdr (assoc 'maclina.vm-cross::ip locals))))
+    (loop for info across pc-map
+          for start = (maclina.machine:start info)
+          for end = (maclina.machine:end info)
+          when (<= start ip end)
+            return (maclina.machine:source info))))
+
 (defun maybe-display-stack-frame (pane stack-frame)
   (when (eq (dissect:call stack-frame) 'maclina.vm-cross::vm)
-    (let* ((locals (dissect:locals stack-frame))
-           (module (cdr (assoc 'maclina.vf-cross::module locals)))
-           (pc-map (maclina.machine:bytecode-module-pc-map module)) 
-           (ip (cdr (assoc 'maclina.vf-cross::ip locals)))
-           (source-info
-             (loop for info across pc-map
-                   for start = (maclina-macine:start info)
-                   for end = (maclina-macine:end info)
-                   when (<= start ip end)
-                     return (maclina-machine:source info))))
+    (let ((source-info (find-source-information stack-frame)))
       (unless (null source-info)
         (display-stack-frame pane source-info)))))
 
@@ -88,14 +94,16 @@
         do (maybe-display-stack-frame pane stack-frame)))
 
 (defun display-source (frame pane)
-  (let ((entry (current-entry frame)))
-    (unless (or (null entry)
-                (null (cbae:origin entry)))
-      (let* ((origin (cbae:origin entry))
-             (start (car (cst:source origin)))
+  (let* ((stack-frame (current-entry frame))
+         (source-information
+           (if (null stack-frame)
+               nil
+               (find-source-information stack-frame))))
+    (unless (null source-information)
+      (let* ((start (car source-information))
              (start-line-index (sicl-source-tracking:line-index start))
              (start-character-index (sicl-source-tracking:character-index start))
-             (end (cdr (cst:source origin)))
+             (end (cdr source-information))
              (end-line-index (sicl-source-tracking:line-index end))
              (end-character-index (sicl-source-tracking:character-index end))
              (lines (sicl-source-tracking:lines start)))
@@ -124,9 +132,10 @@
         (setf (clim:stream-drawing-p pane) t)
         (clim:replay (clim:stream-output-history pane) pane)))))
 
-(defun inspect (stack &key new-process-p)
-  (let ((frame (clim:make-application-frame 'inspector
-                 :stack stack)))
+(defun inspect (&key new-process-p)
+  (let* ((stack (dissect:stack))
+         (frame (clim:make-application-frame 'inspector
+                  :stack stack)))
     (flet ((run ()
              (clim:run-frame-top-level frame)))
       (if new-process-p
