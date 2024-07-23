@@ -19,7 +19,7 @@
                   :scroll-bars nil
                   :display-function 'display-source)
           (inter :interactor :scroll-bars nil))
-  (:layouts (default (clim:horizontally (:width 1200 :height 900)
+  (:layouts (default (clim:horizontally (:width 2000 :height 1500)
                        (1/2 (clim:vertically ()
                               (1/10 (clim:scrolling () called-function))
                               (3/10 (clim:scrolling () arguments))
