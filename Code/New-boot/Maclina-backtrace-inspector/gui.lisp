@@ -59,9 +59,13 @@
                    (pane argument 'argument)
                  (format pane "~s~%" argument))))))
 
-(defun display-stack-frame (pane stack-frame source-information)
+(defclass stack-frame-pair ()
+  ((%vm-frame :initarg :vm-frame :reader vm-frame)
+   (%call-frame :initarg :call-frame :reader call-frame)))
+
+(defun display-stack-frame (pane stack-frame-pair source-information)
   (clim:with-output-as-presentation
-      (pane stack-frame 'dissect:call)
+      (pane stack-frame-pair 'stack-frame-pair)
     (clim:with-drawing-options (pane :ink clim:+dark-green+)
       (let* ((start (car source-information))
              (line-index (sicl-source-tracking:line-index start))
@@ -85,18 +89,22 @@
           when (<= start ip end)
             return (maclina.machine:source info))))
 
-(defun maybe-display-stack-frame (pane stack-frame)
-  (let ((source-info (find-source-information stack-frame)))
+(defun maybe-display-stack-frame (pane stack-frame-pair)
+  (let* ((vm-frame (vm-frame stack-frame-pair))
+         (source-info (find-source-information vm-frame)))
     (unless (null source-info)
-      (display-stack-frame pane stack-frame source-info))))
+      (display-stack-frame pane stack-frame-pair source-info))))
 
 (defun display-backtrace (frame pane)
   (loop for stack-frame-pair in (stack frame)
-        for stack-frame = (car stack-frame-pair)
-        do (maybe-display-stack-frame pane stack-frame)))
+        do (maybe-display-stack-frame pane stack-frame-pair)))
 
 (defun display-source (frame pane)
-  (let* ((stack-frame (current-entry frame))
+  (let* ((stack-frame-pair (current-entry frame))
+         (stack-frame
+           (if (null stack-frame-pair)
+               nil
+               (vm-frame stack-frame-pair)))
          (source-information
            (if (null stack-frame)
                nil
@@ -138,7 +146,9 @@
   (loop for (vm call) on (dissect:stack)
         when (and (eq (dissect:call vm) 'maclina.vm-cross::vm)
                   (eq (dissect:call call) 'maclina.vm-cross::bytecode-call))
-          collect (cons vm call)))
+          collect (make-instance 'stack-frame-pair
+                    :vm-frame vm
+                    :call-frame call)))
 
 (defun inspect (&key new-process-p)
   (let* ((stack (digested-stack))
