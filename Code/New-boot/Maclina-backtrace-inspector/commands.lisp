@@ -4,12 +4,12 @@
   (clim:frame-exit clim:*application-frame*))
 
 (define-inspector-command (com-show-source :name t)
-    ((entry 'dissect:call))
+    ((entry 'stack-frame-pair))
   (setf (current-entry clim:*application-frame*)
         entry))
 
 (clim:define-presentation-to-command-translator show-source
-    (dissect:call
+    (stack-frame-pair
      com-show-source
      inspector
      :documentation "Show Source")
