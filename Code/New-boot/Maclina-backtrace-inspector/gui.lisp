@@ -58,9 +58,9 @@
                    (pane argument 'argument)
                  (format pane "~s~%" argument))))))
 
-(defun display-stack-frame (pane origin)
+(defun display-stack-frame (pane source-information)
   (clim:with-drawing-options (pane :ink clim:+dark-green+)
-    (let* ((start (car (cst:source origin)))
+    (let* ((start (car source-information))
            (line-index (sicl-source-tracking:line-index start))
            (line (aref (sicl-source-tracking:lines start) line-index))
            (char-index (sicl-source-tracking:character-index start)))
