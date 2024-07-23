@@ -1,7 +1,8 @@
 (cl:in-package #:maclina-backtrace-inspector)
 
 (clim:define-application-frame inspector ()
-  ((%current-entry :initform nil :accessor current-entry))
+  ((%stack :initarg :stack :reader stack)
+   (%current-entry :initform nil :accessor current-entry))
   (:panes (called-function :application
                            :scroll-bars nil
                            :end-of-line-action :allow
@@ -85,14 +86,13 @@
             return (maclina.machine:source info))))
 
 (defun maybe-display-stack-frame (pane stack-frame)
-  (when (eq (dissect:call stack-frame) 'maclina.vm-cross::vm)
-    (let ((source-info (find-source-information stack-frame)))
-      (unless (null source-info)
-        (display-stack-frame pane stack-frame source-info)))))
+  (let ((source-info (find-source-information stack-frame)))
+    (unless (null source-info)
+      (display-stack-frame pane stack-frame source-info))))
 
 (defun display-backtrace (frame pane)
-  (declare (ignore frame))
-  (loop for stack-frame in (dissect:stack)
+  (loop for stack-frame-pair in (stack frame)
+        for stack-frame = (car stack-frame-pair)
         do (maybe-display-stack-frame pane stack-frame)))
 
 (defun display-source (frame pane)
@@ -134,8 +134,14 @@
         (setf (clim:stream-drawing-p pane) t)
         (clim:replay (clim:stream-output-history pane) pane)))))
 
+(defun digested-stack ()
+  (loop for (vm call) on (dissect:stack)
+        when (and (eq (dissect:call vm) 'maclina.vm-cross::vm)
+                  (eq (dissect:call call) 'maclina.vm-cross::bytecode-call))
+          collect (cons vm call)))
+
 (defun inspect (&key new-process-p)
-  (let* ((stack (dissect:stack))
+  (let* ((stack (digested-stack))
          (frame (clim:make-application-frame 'inspector
                   :stack stack)))
     (flet ((run ()
