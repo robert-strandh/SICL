@@ -65,6 +65,13 @@
                    (format pane "~s~%" argument)))))))
 
 (defun display-stack-frame (pane stack-frame-pair source-information)
+  (when (eq stack-frame-pair (current-entry clim:*application-frame*))
+    (format pane "+"))
+  (multiple-value-bind (x y)
+      (clim:stream-cursor-position pane)
+    (declare (ignore x))
+    (setf (clim:stream-cursor-position pane)
+          (values 20 y)))
   (clim:with-output-as-presentation
       (pane stack-frame-pair 'stack-frame-pair)
     (clim:with-drawing-options (pane :ink clim:+dark-green+)
