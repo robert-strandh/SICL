@@ -10,4 +10,5 @@
    (:file "configuration")
    (:file "macro-programming")
    (:file "import-from-host")
+   (:file "define-class-of-and-stamp")
    (:file "boot")))
