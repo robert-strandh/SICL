@@ -75,7 +75,7 @@
       client global-environment @clostrophilia:funcallable-standard-object))
     (let* ((name @clostrophilia:find-method-combination)
            (function (clo:fdefinition client global-environment name)))
-      (clo:make-variable client (sb:e2 boot)
+      (clo:make-variable client (sb:e3 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
     (sb:ensure-asdf-system
