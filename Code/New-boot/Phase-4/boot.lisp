@@ -84,5 +84,6 @@
     (setf (clo:fdefinition client (sb:e3 boot) @clostrophilia:class-of+1)
           (clo:fdefinition client global-environment 'class-of))
     (setf (clo:fdefinition client (sb:e3 boot) @clostrophilia:stamp+1)
-          (clo:fdefinition client global-environment @clostrophilia:stamp)))
+          (clo:fdefinition client global-environment @clostrophilia:stamp))
+    (load-predicament client environment global-environment))
   boot)
