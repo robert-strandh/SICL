@@ -80,5 +80,9 @@
                          (funcall function client 'standard '())))
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-2-additional-classes")
-    (define-class-of-and-stamp client (sb:e3 boot) global-environment))
+    (define-class-of-and-stamp client (sb:e3 boot) global-environment)
+    (setf (clo:fdefinition client (sb:e3 boot) @clostrophilia:class-of+1)
+          (clo:fdefinition client global-environment 'class-of))
+    (setf (clo:fdefinition client (sb:e3 boot) @clostrophilia:stamp+1)
+          (clo:fdefinition client global-environment @clostrophilia:stamp)))
   boot)
