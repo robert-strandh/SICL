@@ -67,10 +67,10 @@
           (constantly (clo:find-class
                        client global-environment 'standard-object)))
     (clo:make-variable
-     client (sb:e2 boot) @clostrophilia:*standard-object*
+     client (sb:e3 boot) @clostrophilia:*standard-object*
      (clo:find-class client global-environment 'standard-object))
     (clo:make-variable
-     client (sb:e2 boot) @clostrophilia:*funcallable-standard-object*
+     client (sb:e3 boot) @clostrophilia:*funcallable-standard-object*
      (clo:find-class
       client global-environment @clostrophilia:funcallable-standard-object))
     (let* ((name @clostrophilia:find-method-combination)
