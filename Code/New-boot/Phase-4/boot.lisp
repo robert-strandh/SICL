@@ -49,7 +49,7 @@
             (clo:find-class client global-environment 't)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
-    (setf (clo:symbol-value client (sb:e2 boot) @clostrophilia:*class-t+1*)
+    (setf (clo:symbol-value client (sb:e3 boot) @clostrophilia:*class-t+1*)
           (clo:find-class client global-environment 't))
     (setf (clo:macro-function
            client global-environment @asdf-user:defsystem)
