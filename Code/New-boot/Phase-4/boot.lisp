@@ -77,5 +77,7 @@
            (function (clo:fdefinition client global-environment name)))
       (clo:make-variable client (sb:e2 boot)
                          @sicl-clos:*standard-method-combination*
-                         (funcall function client 'standard '()))))
+                         (funcall function client 'standard '())))
+    (sb:ensure-asdf-system
+     client environment "sicl-new-boot-phase-2-additional-classes"))
   boot)
