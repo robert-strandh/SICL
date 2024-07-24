@@ -35,4 +35,3 @@
   (sb:ensure-asdf-system client environment "predicament-common")
   (clo:fmakunbound client global-environment 'typep)
   (clo:fmakunbound client global-environment 'macroexpand))
-
