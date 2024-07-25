@@ -92,5 +92,7 @@
       (setf (clo:fdefinition client global-environment symbol)
             #'sb:standard-instance-access)
       (setf (clo:fdefinition client global-environment `(setf ,symbol))
-            #'(setf sb:standard-instance-access))))
+            #'(setf sb:standard-instance-access)))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-slot-value-etc-using-class"))
   boot)
