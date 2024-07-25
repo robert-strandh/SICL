@@ -129,5 +129,9 @@
     ;; loaded, rather than by defining it here.
     (setf (clo:fdefinition client global-environment @sicl-type:typexpand)
           (lambda (type-specifier &optional (environment global-environment))
-            (clo:type-expand client environment type-specifier))))
+            (clo:type-expand client environment type-specifier)))
+    (setf (clo:fdefinition
+           client global-environment @sicl-clos:intern-eql-specializer-1)
+          (clo:fdefinition
+           client (sb:e3 boot) @sicl-clos:intern-eql-specializer)))
   boot)
