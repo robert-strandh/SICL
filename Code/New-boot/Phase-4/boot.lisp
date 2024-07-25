@@ -133,5 +133,12 @@
     (setf (clo:fdefinition
            client global-environment @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
-           client (sb:e3 boot) @sicl-clos:intern-eql-specializer)))
+           client (sb:e3 boot) @sicl-clos:intern-eql-specializer))
+    (sb:with-intercepted-function-cells
+        ((make-instance
+             (clo:ensure-operator-cell client (sb:e3 boot) 'make-instance)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-class-finalization")
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-method-combination-base")))
   boot)
