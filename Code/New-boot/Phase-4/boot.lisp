@@ -140,5 +140,7 @@
       (sb:ensure-asdf-system
        client environment "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
-       client environment "clostrophilia-method-combination-base")))
+       client environment "clostrophilia-method-combination-base"))
+    (setf (clo:fdefinition client (sb:e3 boot) @sicl-clos:find-class+1)
+          (clo:fdefinition client global-environment 'find-class)))
   boot)
