@@ -99,5 +99,7 @@
     ;;; something that is easier to manipulate during debugging.
     (setf (clo:symbol-value
            client global-environment @clostrophilia:+unbound-slot-value+)
-          99999))
+          99999)
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-standard-object-initialization"))
   boot)
