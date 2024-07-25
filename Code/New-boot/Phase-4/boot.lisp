@@ -111,5 +111,9 @@
           (finalize-inheritance
             (clo:fdefinition
              client (sb:e3 boot) @clostrophilia:finalize-inheritance)))
-      (funcall finalize-inheritance symbol-class)))
+      (funcall finalize-inheritance symbol-class))
+    (setf (clo:fdefinition
+           client global-environment @clostrophilia:shared-initialize-aux-1)
+          (clo:fdefinition
+           client (sb:e3 boot) @clostrophilia:shared-initialize-aux)))
   boot)
