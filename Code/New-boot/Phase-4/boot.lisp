@@ -101,5 +101,8 @@
            client global-environment @clostrophilia:+unbound-slot-value+)
           99999)
     (sb:ensure-asdf-system
-     client environment "clostrophilia-standard-object-initialization"))
+     client environment "clostrophilia-standard-object-initialization")
+    (setf (clo:fdefinition
+           client (sb:e3 boot) @sicl-clos:initialize-instance+1)
+          (clo:fdefinition client global-environment 'initialize-instance)))
   boot)
