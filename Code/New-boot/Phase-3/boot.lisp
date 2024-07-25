@@ -146,6 +146,15 @@
        client environment "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
        client environment "clostrophilia-method-combination-base"))
+    (setf (clo:fdefinition client global-environment 'compile)
+          (lambda (should-be-nil lambda-expression)
+            (assert (null should-be-nil))
+            (let ((cst (cst:cst-from-expression lambda-expression)))
+              (sb:with-intercepted-function-cells
+                  ((make-instance 
+                       (clo:ensure-operator-cell
+                        client (sb:e1 boot) 'make-instance)))
+                (sb:eval-cst client cst environment)))))
     (setf (clo:fdefinition client (sb:e2 boot) @sicl-clos:find-class+1)
           (clo:fdefinition client global-environment 'find-class))
     (sb:with-intercepted-function-cells
