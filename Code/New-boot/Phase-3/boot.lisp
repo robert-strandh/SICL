@@ -153,8 +153,10 @@
               (sb:with-intercepted-function-cells
                   ((make-instance 
                        (clo:ensure-operator-cell
-                        client (sb:e1 boot) 'make-instance)))
+                        client (sb:e2 boot) 'make-instance)))
                 (sb:eval-cst client cst environment)))))
+    (clo:make-variable
+     client global-environment 'lambda-list-keywords lambda-list-keywords)
     (setf (clo:fdefinition client (sb:e2 boot) @sicl-clos:find-class+1)
           (clo:fdefinition client global-environment 'find-class))
     (sb:with-intercepted-function-cells
