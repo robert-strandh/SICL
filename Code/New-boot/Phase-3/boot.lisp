@@ -146,6 +146,9 @@
        client environment "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
        client environment "clostrophilia-method-combination-base"))
+    (setf (clo:fdefinition client global-environment
+                           @clostrophilia:make-method-instance)
+          (clo:fdefinition client (sb:e2 boot) 'make-instance))
     (setf (clo:fdefinition client global-environment 'compile)
           (lambda (should-be-nil lambda-expression)
             (assert (null should-be-nil))
