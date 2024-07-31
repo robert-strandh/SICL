@@ -1,15 +1,5 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(define-condition odd-number-of-arguments-to-setf
-    (program-error)
-  ((%form :initarg :form :reader form))
-  (:report (lambda (condition stream)
-             (format stream
-                     "An odd number of arguments was given to SETF~@
-                      in the following form:~@
-                      ~s"
-                     (form condition)))))
-
 (define-condition odd-number-of-arguments-to-psetf
     (program-error)
   ((%form :initarg :form :reader form))
@@ -83,4 +73,3 @@
                      "Too many arguments supplied for the lambda list:~@
                       ~s"
                      (lambda-list condition)))))
-
