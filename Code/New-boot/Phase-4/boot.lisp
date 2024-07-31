@@ -149,5 +149,7 @@
       (sb:ensure-asdf-system
        client environment "clostrophilia-generic-function-invocation")
       (sb:ensure-asdf-system client environment "acclimation")
-      (sb:ensure-asdf-system client environment "ecclesia")))
+      (sb:ensure-asdf-system client environment "ecclesia"))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-dependent-maintenance"))
   boot)
