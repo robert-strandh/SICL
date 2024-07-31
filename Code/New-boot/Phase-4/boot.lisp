@@ -159,5 +159,8 @@
            client global-environment @sicl-clos:subtypep-1)
           (constantly t))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-generic-function-initialization"))
+     client environment "clostrophilia-generic-function-initialization")
+    (setf (clo:fdefinition
+           client global-environment @clostrophilia:allocate-general-instance)
+          #'sb:allocate-general-instance))
   boot)
