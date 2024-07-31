@@ -157,5 +157,7 @@
           (constantly t))
     (setf (clo:fdefinition
            client global-environment @sicl-clos:subtypep-1)
-          (constantly t)))
+          (constantly t))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-generic-function-initialization"))
   boot)
