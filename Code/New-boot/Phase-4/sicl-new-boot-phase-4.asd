@@ -12,4 +12,5 @@
    (:file "import-from-host")
    (:file "define-class-of-and-stamp")
    (:file "load-predicament")
+   (:file "load-ctype")
    (:file "boot")))
