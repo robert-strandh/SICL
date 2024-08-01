@@ -171,5 +171,13 @@
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
-     client environment "clostrophilia-slot-definition-initialization"))
+     client environment "clostrophilia-slot-definition-initialization")
+    ;; We don't expect to see any floating-point numbers during
+    ;; bootstrapping.
+    (setf (clo:fdefinition
+           client global-environment @sicl-arithmetic:single-float-p)
+          (constantly nil))
+    (setf (clo:fdefinition
+           client global-environment @sicl-arithmetic:double-float-p)
+          (constantly nil)))
   boot)
