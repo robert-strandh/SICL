@@ -196,5 +196,10 @@
             (let ((class-precedence-list
                     (clo:fdefinition
                      client (sb:e3 boot) @sicl-clos:class-precedence-list)))
-              (member super (funcall class-precedence-list sub))))))
+              (member super (funcall class-precedence-list sub)))))
+    (sb:with-intercepted-function-cells
+        ((make-instance
+             (clo:ensure-operator-cell client (sb:e3 boot) 'make-instance)))
+      (sb:ensure-asdf-system
+       client environment "sicl-clos-ensure-metaobject-using")))
   boot)
