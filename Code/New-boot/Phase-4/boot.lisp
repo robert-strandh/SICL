@@ -179,5 +179,11 @@
           (constantly nil))
     (setf (clo:fdefinition
            client global-environment @sicl-arithmetic:double-float-p)
-          (constantly nil)))
+          (constantly nil))
+    (sb:with-intercepted-function-cells
+        ((make-instance
+          (clo:ensure-operator-cell client (sb:e3 boot) 'make-instance))
+         (class-name
+          (clo:ensure-operator-cell client (sb:e3 boot) 'class-name)))
+      (load-ctype client environment global-environment)))
   boot)
