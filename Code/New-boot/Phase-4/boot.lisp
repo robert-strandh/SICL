@@ -167,5 +167,7 @@
         ((make-instance
           (clo:ensure-operator-cell client (sb:e3 boot) 'make-instance)))
       (sb:ensure-asdf-system
-       client environment "clostrophilia-class-initialization")))
+       client environment "clostrophilia-class-initialization"))
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-method-initialization"))
   boot)
