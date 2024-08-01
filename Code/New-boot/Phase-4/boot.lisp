@@ -169,5 +169,7 @@
       (sb:ensure-asdf-system
        client environment "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-method-initialization"))
+     client environment "clostrophilia-method-initialization")
+    (sb:ensure-asdf-system
+     client environment "clostrophilia-slot-definition-initialization"))
   boot)
