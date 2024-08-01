@@ -218,7 +218,7 @@
               (member super (funcall class-precedence-list sub)))))
     (sb:with-intercepted-function-cells
         ((make-instance
-          (clo:ensure-operator-cell client (sb:e2 boot) 'make-instance)))
+             (clo:ensure-operator-cell client (sb:e2 boot) 'make-instance)))
       (sb:ensure-asdf-system
        client environment "sicl-clos-ensure-metaobject-using"))
     (setf (clo:fdefinition client global-environment
