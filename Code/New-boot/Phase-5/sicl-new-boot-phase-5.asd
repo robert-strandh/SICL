@@ -5,4 +5,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "client")
+   (:file "finalize-inheritance")
    (:file "boot")))
