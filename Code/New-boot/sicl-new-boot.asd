@@ -5,6 +5,7 @@
                "sicl-new-boot-phase-1"
                "sicl-new-boot-phase-2"
                "sicl-new-boot-phase-3"
-               "sicl-new-boot-phase-4")
+               "sicl-new-boot-phase-4"
+               "sicl-new-boot-phase-5")
   :components
   ((:file "boot")))
