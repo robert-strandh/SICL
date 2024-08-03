@@ -13,7 +13,9 @@
 
 (defun initialize-class-names (client)
   (setf *class-names*
-        (list 'standard-class)))
+        (list 'standard-class
+              @clostrophilia:standard-direct-slot-definition
+              @clostrophilia:standard-effective-slot-definition)))
 
 (defun finalize-inheritance (client e3 e4)
   (let ((find-class 
