@@ -14,6 +14,14 @@
 (defun initialize-class-names (client)
   (setf *class-names*
         (list 'standard-class
+              'built-in-class
+              @clostrophilia:forward-referenced-class
+              @clostrophilia:funcallable-standard-class
+              @clostrophilia:funcallable-standard-object
+              'standard-generic-function
+              @clostrophilia:standard-method
+              @clostrophilia:standard-reader-method
+              @clostrophilia:standard-writer-method
               @clostrophilia:standard-direct-slot-definition
               @clostrophilia:standard-effective-slot-definition)))
 
