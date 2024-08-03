@@ -9,6 +9,9 @@
 ;;;; finalized.  So this function is responsible for finalizing those
 ;;;; classes in E4 that may have instances.
 
+(defparameter *class-names*
+  (list 'standard-class))
+
 (defun finalize-inheritance (client e3 e4)
   (let ((find-class 
           (clo:fdefinition client e4 'find-class))
@@ -17,6 +20,6 @@
         (finalize-inheritance
           (clo:fdefinition client e3 @clostrophilia:finalize-inheritance)))
     (declare (ignore class-finalized-p))
-    (loop for symbol in (list 'standard-class)
+    (loop for symbol in  *class-names*
           for class = (funcall find-class symbol)
           do (funcall finalize-inheritance class))))
