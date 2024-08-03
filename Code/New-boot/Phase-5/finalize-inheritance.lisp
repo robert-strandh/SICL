@@ -2,6 +2,13 @@
 
 (eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
 
+;;;; The main purpose of phase 5 is to turn the objects in environment
+;;;; E4 into a cyclic graph.  As a consequence, some classes in E4
+;;;; will have instances.  However, most standard classes in E4 have
+;;;; not been finalized, and a class can't have instances unless it is
+;;;; finalized.  So this function is responsible for finalizing those
+;;;; classes in E4 that may have instances.
+
 (defun finalize-inheritance (client e3 e4)
   (let ((find-class 
           (clo:fdefinition client e4 'find-class))
