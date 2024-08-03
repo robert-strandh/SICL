@@ -10,5 +10,6 @@
         (finalize-inheritance
           (clo:fdefinition client e3 @clostrophilia:finalize-inheritance)))
     (declare (ignore class-finalized-p))
-    (let ((standard-class (funcall find-class 'standard-class)))
-      (funcall finalize-inheritance standard-class))))
+    (loop for symbol in (list 'standard-class)
+          for class = (funcall find-class symbol)
+          do (funcall finalize-inheritance class))))
