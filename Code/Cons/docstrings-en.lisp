@@ -58,98 +58,10 @@
               CDR of the last CONS cell created.~@
               When given a single argument, return that argument."))
 
-(fundoc 'first
-        (fmt "Lambda list: (LIST)~@
-              Return the first element of the list LIST.~@
-              When LIST is neither a CONS cell nor NIL,~@
-              an error of type TYPE-ERROR is signaled."))
-
-(defmacro make-nth-documentation (function-name number)
-  `(progn (fundoc ',function-name
-                  ,(fmt "Lambda list: (LIST)~@
-                          Return the ~a element of the list LIST.~@
-                          When LIST is a proper list with fewer than ~a element,~@
-                          NIL is returned.~@
-                          When LIST is not a proper list, and it has fewer than~@
-                          ~a elements, an error of type TYPE-ERROR is signaled.~@
-                          In particular, when LIST is neither a list nor NIL,~@
-                          an error of type TYPE-ERROR is signaled."
-                        (string-downcase (symbol-name function-name))
-                        number
-                        number))
-          (fundoc '(setf ,function-name)
-                  ,(fmt "Lambda list: (NEW-VALUE LIST)~@
-                         Replace the ~a element of LIST by NEW-VALUE,~@
-                         and return NEW-VALUE.~@
-                         If list has fewer than ~a top-level CONS cells,~@
-                         or if it an atom, then an error of type TYPE-ERROR~@
-                         is signaled."
-                        (string-downcase (symbol-name function-name))
-                        number))
-          (setf (documentation ',function-name 'setf)
-                    ,(fmt "Syntax: (SETF (~a OBJECT) NEW-VALUE)~@
-                          Replace the ~a element of LIST by NEW-VALUE,~@
-                          and return NEW-VALUE.~@
-                          If list has fewer than ~a top-level CONS cells,~@
-                          or if it an atom, then an error of type TYPE-ERROR~@
-                          is signaled."
-                          function-name
-                          (string-downcase (symbol-name function-name))
-                          number))))
-
-(make-nth-documentation second  "two")
-(make-nth-documentation third   "three")
-(make-nth-documentation fourth  "four")
-(make-nth-documentation fifth   "five")
-(make-nth-documentation sixth   "six")
-(make-nth-documentation seventh "seven")
-(make-nth-documentation eighth  "eight")
-(make-nth-documentation ninth   "nine")
-(make-nth-documentation tenth   "ten")
-
 (fundoc 'cons
         (fmt "Lambda list: (OBJECT-1 OBJECT-2)~@
               Return a new CONS cell with OBJECT-1 in the~@
               CAR field and OBJECT-2 in the CDR field."))
-
-(fundoc 'nth
-        (fmt "Lambda list: (N LIST)~@
-              where N is a non-negative integer~@
-              and LIST is a (not necessarily proper) list.~@
-              Return the Nth element of the list LIST~@
-              where the first element is the zeroth.~@
-              When LIST is not a proper list, and it has fewer than~@
-              N+1 elements, an error is signaled.~@
-              In particular, when LIST is neither a list nor NIL,~@
-              an error is signaled.~@
-              When N is not a non-negative integer, an error~@
-              of type TYPE-ERROR is signaled."))
-
-(fundoc '(setf nth)
-        (fmt "Lambda list: (NEW-VALUE N LIST)~@
-              Replace the Nth element of LIST by NEW-VALUE,~@
-              where N=0 indicates the first element of the LIST.~@
-              The LIST must have more than N top-level CONS cells.~@
-              If not, an error of type TYPE-ERROR is signaled."))
-
-(setf (documentation 'nth 'setf)
-      (fmt "Syntax: (setf (nth N LIST) NEW-VALUE~@
-            Replace the Nth element of LIST by NEW-VALUE,~@
-            where N=0 indicates the first element of the LIST.~@
-            The LIST must have more than N top-level CONS cells.~@
-            If not, an error of type TYPE-ERROR is signaled."))
-
-(fundoc 'nthcdr
-        (fmt "Lambda list: (N LIST)~@
-              where N is a non-negative integer~@
-              and LIST is a (not necessarily proper) list.~@
-              Return the result of calling CDR N times on LIST.~@
-              When LIST is not a proper list, and it has fewer than~@
-              N elements, an error is signaled.~@
-              In particular, when LIST is neither a list nor NIL,~@
-              an error is signaled.~@
-              When N is not a non-negative integer, an error~@
-              of type TYPE-ERROR is signaled."))
               
 (fundoc 'consp
         (fmt "Lambda list: (OBJECT)~@
@@ -202,40 +114,6 @@
               TREE might be altered to reflect the substitutions.~@
               An error is signaled if both TEST and TEST-NOT are given."))
 
-(fundoc 'nsubst-if 
-        (fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
-              where NEW is any objects, PREDICATE is a designator for~@
-              a function of one argument that returns a generalized boolean,~@
-              TREE is a tree consisting of internal nodes in the form of 
-              CONS cells, and leaves in the form of atoms.  KEY is a 
-              designator for a function of one argument which is applied
-              the nodes of the tree before the PREDICATE is applied,~@
-              or KEY could be NIL which means IDENTITY.~@
-              The tree is traversed top-down, and for each node~@
-              (including internal nodes) the KEY function is applied,~@
-              and then the PREDICATE is called with resulting value.~@
-              If the PREDICATE returns true NEW is substituted for the node in the tree.~@
-              If not, and the node is a CONS cell, then its CAR and CDR are~@
-              traversed recursively.  If it is an atom, the atom is returned.~@
-              TREE might be altered to reflect the substitutions."))
-
-(fundoc 'nsubst-if-not
-        (fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
-              where NEW is any objects, PREDICATE is a designator for~@
-              a function of one argument that returns a generalized boolean,~@
-              TREE is a tree consisting of internal nodes in the form of 
-              CONS cells, and leaves in the form of atoms.  KEY is a 
-              designator for a function of one argument which is applied
-              the nodes of the tree before the PREDICATE is applied,~@
-              or KEY could be NIL which means IDENTITY.~@
-              The tree is traversed top-down, and for each node~@
-              (including internal nodes) the KEY function is applied,~@
-              and then the PREDICATE is called with resulting value.~@
-              If the PREDICATE returns false NEW is substituted for the node in the tree.~@
-              If not, and the node is a CONS cell, then its CAR and CDR are~@
-              traversed recursively.  If it is an atom, the atom is returned.~@
-              TREE might be altered to reflect the substitutions."))
-
 (fundoc 'tree-equal
         (fmt "Lambda list: (TREE-1 TREE-2 &key TEST TEST-NOT)~@
               where TREE-1 and TREE-2 are trees consisting of internal nodes~@
@@ -262,15 +140,6 @@
               Return true if OBJECT is of type LIST, i.e., either a CONS cell~@
               or NIL.  Return false otherwise."))
 
-(fundoc 'make-list
-        (fmt "Lambda list: (SIZE &key INITIAL-ELEMENT)~@
-              where SIZE is a nonnegative integer, and INITIAL-ELEMENT is~@
-              any object.  The default for INITIAL-ELEMENT is NIL.~@
-              Return a proper list of length SIZE containing INITIAL-ELEMENT~@
-              as every element.~@
-              Signal an error of type TYPE-ERROR if SIZE is not a nonnegative ~@
-              integer."))
-
 (fundoc 'null
         (fmt "Lambda list: (OBJECT)~@
               where OBJECT is any object.~@
@@ -295,40 +164,6 @@
             When LIST is a CONS cell, replace the CAR of that CONS cell~@
             by NEW-VALUE, and return NEW-VALUE.~@
             Otherwise signal an error of type TYPE-ERROR."))
-
-(fundoc 'nintersection
-        (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
-              where LIST-1 and LIST-2 are proper lists,~@
-              KEY is is a designator of a function of one argument~@
-              or NIL, which means IDENTITY.~@
-              TEST and TEST-NOT are designators for functions of two~@
-              arguments that return a generalized boolean.  The default~@
-              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
-              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
-              Every element that occurs both in LIST-1 and LIST-2 is~@
-              returned in the result, which is a proper list.~@
-              The semantics are as if every element of LIST-1 were compared~@
-              to every element of LIST-2.  Before any test is made~@
-              between two elements, the KEY function is applied to both~@
-              elements.~@
-              Then, if TEST is given, it is applied to the result of the~@
-              application of the KEY function in such a way that the first~@
-              argument to the TEST comes from LIST-1 and the second argument~@
-              comes from LIST-2.  If the TEST returns true, then exactly~@
-              one of the elements are kept in the resulting list.~@
-              Else, if TEST-NOT is given, it is applied to the result of the~@
-              application of the KEY function in such a way that the first~@
-              argument to the TEST-NOT comes from LIST-1 and the second argument~@
-              comes from LIST-2.  If the TEST-NOT returns false, then exactly~@
-              one of the elements are kept in the resulting list.~@
-              The order of the elements in the resulting list is not~@
-              specified.~@
-              If either LIST-1 or LIST-2 contains duplicate elements (as~@
-              defined by KEY and TEST or TEST-NOT), then the result may~@
-              also contain duplicate elements.~@
-              LIST-2 is not modified, but LIST-1 may be destroyed.  It's CONS~@
-              cells may be used to build the result.~@
-              The result may share structure with LIST-1 and/or LIST-2."))
 
 (fundoc 'nset-difference
         (fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
