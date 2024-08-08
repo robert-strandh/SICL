@@ -8,10 +8,11 @@
   ;; The ctype library needs for the system SICL-ARITHMETIC to be
   ;; loaded.
   (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
-  ;; The ctype library needs for the classes in the module SICL-ARRAY
-  ;; to be defined.
+  ;; The ctype library needs for the classes in the REGALIA.
+  ;; to be defined, and referred to in package SICL-ARRAY.
+  (sb:ensure-asdf-system client environment "regalia-base-intrinsic")
+  (sb:ensure-asdf-system client environment "regalia-class-hierarchy")
   (sb:ensure-asdf-system client environment "sicl-array-support")
-  (sb:ensure-asdf-system client environment "sicl-array-load-time")
   ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so we
   ;; need to have the package SICL-TYPE defined.
   (sb:ensure-asdf-system client environment "sicl-type-support")
