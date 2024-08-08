@@ -39,10 +39,11 @@
   (setf (clo:fdefinition
          client global-environment @sicl-arithmetic:double-float-p)
         (constantly nil))
-  ;; The ctype library needs for the classes in the module SICL-ARRAY
-  ;; to be defined.
+  ;; The ctype library needs for the classes in the REGALIA.
+  ;; to be defined, and referred to in package SICL-ARRAY.
+  (sb:ensure-asdf-system client environment "regalia-base-intrinsic")
+  (sb:ensure-asdf-system client environment "regalia-class-hierarchy")
   (sb:ensure-asdf-system client environment "sicl-array-support")
-  (sb:ensure-asdf-system client environment "sicl-array-load-time")
   ;; The ctype library defines a method on MAKE-LOAD-FORM that calls
   ;; MAKE-LOAD-FORM-SAVING-SLOTS.
   (setf (clo:fdefinition client global-environment 'make-load-form)
