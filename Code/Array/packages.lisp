@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:sicl-array
-  (:use #:common-lisp)
+  (:use #:common-lisp #:regalia)
   (:export
    #:array
    #:arrayp
