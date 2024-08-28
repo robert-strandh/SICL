@@ -240,6 +240,29 @@ convention is used only when an unknown function is called, i.e., a
 function that is the value of some arbitrary form, and on the idea
 that calls to such functions are relatively infrequent.
 
+Normal call to an external function:
+
+\begin{enumerate}
+\item Compute the callee function and the arguments into a temporary
+  locations.
+\item Store RSP in a lexical variable, say $v$.
+\item Push RBP
+\item Load the rack of the callee function into a temporary register.
+\item Load the static environment of the callee from the rack of the
+  callee function object into R10.
+\item Load the initial frame size of the callee (which
+  includes the return address and the call-site descriptor, in
+  addition to all lexical variables required to parse arguments) from
+  the rack of the callee function object into a temporary register.
+\item Subtract from RSP the initial frame size computed in the
+  previous step.
+\item Push arguments.
+\item Load the dynamic environment into RBX.
+\item Subtract $v+1$ from RBP, thereby establishing the base pointer
+  for the callee.
+\item Execute the CALL instruction to the entry point.
+\end{enumerate}
+
 \section{Use of the dynamic environment}
 
 The dynamic environment is an ordinary list of \emph{entries}
