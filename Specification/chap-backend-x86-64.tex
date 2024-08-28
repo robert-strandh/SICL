@@ -233,6 +233,13 @@ Return from callee to caller, with at least one value:
 \item Return to the caller by executing the RET instruction.
 \end{enumerate}
 
+\section{Alternative calling convention}
+
+This calling convention is based on the fact that the calling
+convention is used only when an unknown function is called, i.e., a
+function that is the value of some arbitrary form, and on the idea
+that calls to such functions are relatively infrequent.
+
 \section{Use of the dynamic environment}
 
 The dynamic environment is an ordinary list of \emph{entries}
