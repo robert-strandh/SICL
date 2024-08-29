@@ -235,12 +235,18 @@ Return from callee to caller, with at least one value:
 
 \section{Alternative calling convention}
 
-This calling convention is based on the fact that the calling
-convention is used only when an unknown function is called, i.e., a
-function that is the value of some arbitrary form, and on the idea
-that calls to such functions are relatively infrequent.
+This calling convention is based on two ideas:
 
-Normal call to an external function:
+\begin{enumerate}
+\item The calling convention is used only when an unknown function is
+  called, i.e., a function that is the value of some arbitrary form.
+  Such calls are relatively infrequent, so the performance of the
+  calling convention is not extremely important.
+\item The result of evaluating a form for which all values are needed,
+  is that the values are pushed on top of the stack.
+\end{enumerate}
+
+\subsection{Normal call to an external function}
 
 \begin{enumerate}
 \item Compute the callee function and the arguments into a temporary
@@ -250,6 +256,7 @@ Normal call to an external function:
 \item Load the rack of the callee function into a temporary register.
 \item Load the static environment of the callee from the rack of the
   callee function object into R10.
+\item Load the call-site descriptor into R11.
 \item Load the initial frame size of the callee (which
   includes the return address and the call-site descriptor, in
   addition to all lexical variables required to parse arguments) from
@@ -272,6 +279,33 @@ The stack frame of the callee upon function entry is illustrated in
 \end{center}
 \caption{\label{fig-x86-64-alternative-stack-frame-at-entry}
 Stack frame at entry.}
+\end{figure}
+
+\subsection{Function entry}
+
+Prelude:
+
+\begin{enumerate}
+\item Pop the return address off the stack and store it into RBP-8.
+\item Store the call-site descriptor from R11 into RBP-16.
+\item If required, move the static environment from R10 into some
+  other lexical location, and dynamic environment from RBX into some
+  other lexical location.
+\item Parse the arguments and store the corresponding parameters in
+  lexical locations, either in registers or in the initial stack
+  frame.
+\end{enumerate}
+
+After the execution of the function prelude, the contents of the stack
+frame is as illustrated in
+\refFig{fig-x86-64-alternative-stack-frame-after-arguments-parsed}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-x86-64-alternative-stack-frame-after-arguments-parsed.pdf_t}
+\end{center}
+\caption{\label{fig-x86-64-alternative-stack-frame-after-arguments-parsed}
+Stack frame after arguments parsed.}
 \end{figure}
 
 \section{Use of the dynamic environment}
