@@ -496,6 +496,8 @@ Streams are standard objects and \texttt{stream} is a standard class.
 \section{Functions}
 \label{sec-data-representation-functions}
 
+\subsection{Function object}
+
 Ordinary (non-generic) \sysname{} functions are instances of the class
 named \texttt{simple\-function}.  The class \texttt{simple-function}
 is a direct subclass of \texttt{funcallable\-standard-object}.  These
@@ -554,6 +556,27 @@ applies both to the generic function object itself and to the
 \emph{discriminating function} of the generic function.  In addition
 to these slots, a generic function also contains other slots holding
 the list of its methods, and other information.
+
+\subsection{Code structure}
+\label{sec-function-code-structure}
+
+The general code structure of a function is illustrated in
+\refFig{fig-function-code-structure}.  The code in the \emph{general
+  prelude} parses arguments into the lexical variable locations
+required by the \emph{main function body}.
+
+The example in \refFig{fig-function-code-structure} indicates that
+there might be several places where the function returns, each place
+having different return values.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-function-code-structure.pdf_t}
+\end{center}
+\caption{\label{fig-function-code-structure}
+General code structure of a function.}
+\end{figure}
+
 
 \section{Structures}
 
