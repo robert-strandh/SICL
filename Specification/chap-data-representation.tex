@@ -519,13 +519,14 @@ functions were created from the same compilation unit, because they
 share the same code object. \seesec{data-representation-code-objects}.
 
 A function is represented as a two-word header (as usual) and a
-rack with three slots:
+rack with the following contents:
 
 \begin{enumerate}
 \item The obligatory \emph{stamp}.
-\item An \emph{environment}, which is the lexical environment in which
-  the function was defined.  We are not giving the details of how the
-  static environment is represented here.
+\item The obligatory copy of the list of effective slots of the class
+  \texttt{simple-function}.
+\item The \emph{static environment}.  This is a vector containing
+  closed-over variables and some other information.
 \item The \emph{entry point}.  The entry
   point is a \emph{raw address} of an aligned word in the vector
   containing the instructions of the function.  Functions are always
@@ -536,6 +537,9 @@ rack with three slots:
   point of a function to find the code object, thereby keeping the
   code object alive as long as there is at least one live function in
   the code object.
+\item A fixnum indicating the \emph{initial frame size} of the
+  function.  This is the size of the stack frame needed by the
+  function in order to parse arguments into its lexical variables.
 \end{enumerate}
 
 The static environment contains the \emph{code object} as one of its
@@ -550,33 +554,6 @@ applies both to the generic function object itself and to the
 \emph{discriminating function} of the generic function.  In addition
 to these slots, a generic function also contains other slots holding
 the list of its methods, and other information.
-
-When a function is called, there are several possible situations that
-can occur:
-
-\begin{itemize}
-\item The most general case is when an object of unknown type is given
-  as an argument to \texttt{funcall}.  Then no optimization is
-  attempted, and \texttt{funcall} is responsible for determining
-  whether the object is a function, a name that designates a function,
-  or an object that does not designate a function in which case an error is
-  signaled.
-\item When it can be determined statically that the object called is a
-  function (i.e. its class is a subclass of the class
-  \texttt{function}), but nothing else is know about it, then an
-  \emph{external call} is made.  Such a call consists of copying the
-  contents of the \emph{static environment} slot to the predetermined
-  place specific to the backend, and then to issue a \emph{call}
-  instruction (or equivalent) to the address indicated by the
-  \emph{entry point} slot of the function object.  When a function is
-  called using a name known at compile time, then the object is known
-  to be a function, though it may be a function that signals an error
-  because the intended function is undefined.
-\item When it can be determined statically that the object being
-  called is a function object in the \emph{same compilation unit} as
-  the caller, then we can make an \emph{internal call}, which can be
-  optimized in various ways.
-\end{itemize}
 
 \section{Structures}
 
