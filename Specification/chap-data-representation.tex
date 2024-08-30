@@ -565,6 +565,14 @@ The general code structure of a function is illustrated in
   prelude} parses arguments into the lexical variable locations
 required by the \emph{main function body}.
 
+\begin{figure}
+\begin{center}
+\inputfig{fig-function-code-structure.pdf_t}
+\end{center}
+\caption{\label{fig-function-code-structure}
+General code structure of a function.}
+\end{figure}
+
 The main function body is compiled so that a maximum of debug
 information is present and so that lexical variables are preserved for
 inspection from the debugger.  The main function body also contains
@@ -577,14 +585,22 @@ The example in \refFig{fig-function-code-structure} indicates that
 there might be several places where the function returns, each place
 having different return values.
 
+The general structure shown in \refFig{fig-function-code-structure} is
+the only one we plan to implement in the initial version of
+\sysname{}.  In subsequent versions of \sysname{}, we take advantage
+of the existence of the \emph{call-site manager} to optimize function
+code and function calls, while preserving the possibility of good
+debugging.  To accomplish this optimization, we include an additional
+\emph{optimized function body} in each function as shown in 
+\refFig{fig-function-code-structure-2}
+
 \begin{figure}
 \begin{center}
-\inputfig{fig-function-code-structure.pdf_t}
+\inputfig{fig-function-code-structure-2.pdf_t}
 \end{center}
-\caption{\label{fig-function-code-structure}
-General code structure of a function.}
+\caption{\label{fig-function-code-structure-2}
+Code structure of a function with optimized body.}
 \end{figure}
-
 
 \section{Structures}
 
