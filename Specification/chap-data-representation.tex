@@ -627,6 +627,16 @@ parsing arguments, which is why the optimized function body is not
 preceded by any prelude.  Instead, a call to this function goes
 directly to the optimized function body.
 
+Yet another optimization is possible when the function always returns
+the same number of values from each return point.  In this case, we
+compile the code so that the values are available from the same
+lexical locations no matter which return point is used.  In this case,
+the optimized function body does not communicate the values to the
+caller, nor does it eliminate the callee stack frame.  Instead, the
+call-site manager accesses the values in their locations and transmits
+those values to the caller, and finally it eliminates the callee stack
+frame.
+
 \section{Structures}
 
 Structures are standard objects.  The class \texttt{structure-object}
