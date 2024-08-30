@@ -81,7 +81,6 @@ These calling conventions are based on two ideas:
 \item Load the rack of the callee function into a temporary register.
 \item Load the static environment of the callee from the rack of the
   callee function object into R10.
-\item Load the call-site descriptor into R11.
 \item Load the initial frame size of the callee (which
   includes the return address and the call-site descriptor, in
   addition to all lexical variables required to parse arguments) from
@@ -92,6 +91,7 @@ These calling conventions are based on two ideas:
 \item Load the dynamic environment into RBX.
 \item Subtract $v+1$ from RBP, thereby establishing the base pointer
   for the callee.
+\item Store the call-site descriptor on the stack in RBP-16.
 \item Execute the CALL instruction to the entry point.
 \end{enumerate}
 
@@ -112,7 +112,6 @@ Prelude:
 
 \begin{enumerate}
 \item Pop the return address off the stack and store it into RBP-8.
-\item Store the call-site descriptor from R11 into RBP-16.
 \item If required, move the static environment from R10 into some
   other lexical location, and dynamic environment from RBX into some
   other lexical location.
