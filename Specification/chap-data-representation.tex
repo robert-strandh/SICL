@@ -602,6 +602,13 @@ debugging.  To accomplish this optimization, we include an additional
 Code structure of a function with optimized body.}
 \end{figure}
 
+The optimized function body is not suitable for debugging.  Some
+lexical variable may have been eliminated, and there are no code
+snippets for breakpoints.  The call-site manager is responsible for
+parsing arguments, which is why the optimized function body is not
+preceded by any prelude.  Instead, a call to this function goes
+directly to the optimized function body.
+
 \section{Structures}
 
 Structures are standard objects.  The class \texttt{structure-object}
