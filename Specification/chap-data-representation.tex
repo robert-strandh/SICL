@@ -579,7 +579,25 @@ inspection from the debugger.  The main function body also contains
 code for interacting with the debugger.  At each potential breakpoint,
 there is a code snippet that tests whether a breakpoint might be set
 there, and if so, communicates with the debugger to determine what the
-action should be.
+action should be.  Furthermore, the main function body is compiled so
+that each lexical variable has a fixed location in the stack frame,
+and this location is where the lexical variable is located when the
+application interacts with the debugger.  Therefore, the mapping from
+lexical variables to stack locations is a property of the function
+object and it is accessible to the debugger.  Furthermore, the
+function object contains a mapping from values of the program counter
+to bitmaps where a bitmap indicates which lexical variables are in
+scope and live at that value of the program counter.  This information
+is also included in the function object and it is accessible to the
+debugger.  Thus, all the application needs to communicate to the
+debugger at a breakpoint is the value of the program counter.  In
+addition, the code of the main function body is compiled without
+propagation of type information for lexical variables.  Whenever the
+function accesses a lexical variable, if needed for the correct
+execution of the function, the type of the value of the variable is
+checked.  Therefore, the debugger is free to assign any new value to a
+lexical variable.  If it is not the right type, this situation will be
+detected and an error is signaled.
 
 The example in \refFig{fig-function-code-structure} indicates that
 there might be several places where the function returns, each place
