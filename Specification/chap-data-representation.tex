@@ -565,6 +565,14 @@ The general code structure of a function is illustrated in
   prelude} parses arguments into the lexical variable locations
 required by the \emph{main function body}.
 
+The main function body is compiled so that a maximum of debug
+information is present and so that lexical variables are preserved for
+inspection from the debugger.  The main function body also contains
+code for interacting with the debugger.  At each potential breakpoint,
+there is a code snippet that tests whether a breakpoint might be set
+there, and if so, communicates with the debugger to determine what the
+action should be.
+
 The example in \refFig{fig-function-code-structure} indicates that
 there might be several places where the function returns, each place
 having different return values.
