@@ -58,4 +58,79 @@ situations including debugging support, etc.
 For information about the call-site descriptor, see
 \refSec{sec-call-site-descriptor}.
 
+
+\section{Calling conventions}
+
+These calling conventions are based on two ideas:
+
+\begin{enumerate}
+\item The calling conventions are used in very few cases.  Therefore,
+  the performance of the calling conventions is not extremely
+  important.
+\item The result of evaluating a form for which all values are needed,
+  is that the values are pushed on top of the stack.
+\end{enumerate}
+
+\subsection{Normal call}
+
+\begin{enumerate}
+\item Compute the callee function and the arguments into a temporary
+  locations.
+\item Store RSP in a lexical variable, say $v$.
+\item Push RBP
+\item Load the rack of the callee function into a temporary register.
+\item Load the static environment of the callee from the rack of the
+  callee function object into R10.
+\item Load the call-site descriptor into R11.
+\item Load the initial frame size of the callee (which
+  includes the return address and the call-site descriptor, in
+  addition to all lexical variables required to parse arguments) from
+  the rack of the callee function object into a temporary register.
+\item Subtract from RSP the initial frame size computed in the
+  previous step.
+\item Push arguments.
+\item Load the dynamic environment into RBX.
+\item Subtract $v+1$ from RBP, thereby establishing the base pointer
+  for the callee.
+\item Execute the CALL instruction to the entry point.
+\end{enumerate}
+
+The stack frame of the callee upon function entry is illustrated in
+\refFig{fig-x86-64-alternative-stack-frame-at-entry}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-x86-64-alternative-stack-frame-at-entry.pdf_t}
+\end{center}
+\caption{\label{fig-x86-64-alternative-stack-frame-at-entry}
+Stack frame at entry.}
+\end{figure}
+
+\subsection{Function entry}
+
+Prelude:
+
+\begin{enumerate}
+\item Pop the return address off the stack and store it into RBP-8.
+\item Store the call-site descriptor from R11 into RBP-16.
+\item If required, move the static environment from R10 into some
+  other lexical location, and dynamic environment from RBX into some
+  other lexical location.
+\item Parse the arguments and store the corresponding parameters in
+  lexical locations, either in registers or in the initial stack
+  frame.
+\end{enumerate}
+
+After the execution of the function prelude, the contents of the stack
+frame is as illustrated in
+\refFig{fig-x86-64-alternative-stack-frame-after-arguments-parsed}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-x86-64-alternative-stack-frame-after-arguments-parsed.pdf_t}
+\end{center}
+\caption{\label{fig-x86-64-alternative-stack-frame-after-arguments-parsed}
+Stack frame after arguments parsed.}
+\end{figure}
+
 % LocalWords:  callee
