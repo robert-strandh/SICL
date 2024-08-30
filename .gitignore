@@ -1,5 +1,6 @@
 *.fasl
 *~
+*.bak
 *.aux
 *.bbl
 *.blg
