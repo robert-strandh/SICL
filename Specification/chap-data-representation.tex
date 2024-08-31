@@ -386,58 +386,8 @@ The general consensus seems to be that other subtypes are allowed.
 \section{Arrays}
 \label{sec-data-representation-arrays}
 
-Arrays are standard objects, and \texttt{array} is a standard class.
-As a consequence, the exact layout of the rack of an array is
-determined by the MOP machinery for computing the slots when the class
-is finalized.  All arrays are simple.
-
-Every array class has a slot \texttt{dimensions} that contains a list
-of dimensions.  The length of the list is the \emph{rank} of the
-array.
-
-The element-type is determined by the exact subclass of the
-\texttt{array} class.  The elements follow the explicit slots in the
-rack.  The size of the rack is rounded up to the nearest multiple of a
-word.
-
-All arrays are \emph{adjustable} thanks to the split representation
-with a header and a rack.  Adjusting the array
-typically requires allocating a new rack.
-
-Specialized array classes with the following element types are
-provided:
-
-\begin{itemize}
-\item \texttt{double-float}
-\item \texttt{(unsigned-byte 64)}.
-\item \texttt{(signed-byte 64)}.
-\item \texttt{(unsigned-byte 32)}.
-\item \texttt{(signed-byte 32)}.
-\item \texttt{(unsigned-byte 8)}, used for code, interface with the
-  operating system, etc.
-\item \texttt{character} (i.e. strings) as required by the \hs{}.
-\item \texttt{bit}, as required by the \hs{}.
-\end{itemize}
-
-Since the element type determines where an element is located and how
-to access it, \texttt{row-major-aref} and \texttt{(setf
-  row-major-aref)} are \emph{generic functions} that specialize on the
-type of the array.
-
-\subsection{System class \texttt{vector}}
-
-A vector is a one-dimensional array.  As such, a vector has a rack
-where \texttt{dimensions} slot contains a proper list of a single
-element, namely the \emph{length} of the vector represented as a
-fixnum.
-
-All vectors have a slot for the \emph{fill pointer}.  This slot
-contains \texttt{nil} for vectors without a fill pointer.
-
-\subsection{System class \texttt{string}}
-
-Tentatively, we think that there is no need to optimize strings that
-contain only characters that could be represented in a single byte.
+Code for arrays is provided by the library Regalia, as described in
+\refChap{chap-array}.
 
 \section{Symbols}
 
@@ -462,27 +412,7 @@ explicit \emph{global environment} object.
 
 \section{Packages}
 
-A package is a standard object (and \texttt{package} is a standard
-class) with the following slots:
-
-\begin{enumerate}
-\item The \emph{name} of the package.  The value of this slot is a
-  string.
-\item The \emph{nicknames} of the package.  The value of this slot is
-  a list of strings.
-\item The \emph{use list} of the package.  The value of this slot is a
-  proper list of packages that are used by this package.
-\item The \emph{used-by list} of the package.  The value of this slot
-is a proper list of packages that use this package.
-\item The \emph{external symbols} of the package.  The value of this
-  slot is a proper list of symbols that are both present in and
-  exported from this package.
-\item The \emph{internal symbols} of the package.  The value of this
-  slot is a proper list of symbols that are present in the package but
-  that are not exported.
-\item The \emph{shadowing symbols} of the package.  The value of this
-  slot is a proper list of symbols.
-\end{enumerate}
+Code for packages is provide by the library Parcl, as described in \refChap{chap-packages}.
 
 \section{Hash tables}
 
