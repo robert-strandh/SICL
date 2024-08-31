@@ -628,14 +628,31 @@ preceded by any prelude.  Instead, a call to this function goes
 directly to the optimized function body.
 
 Yet another optimization is possible when the function always returns
-the same number of values from each return point.  In this case, we
-compile the code so that the values are available from the same
-lexical locations no matter which return point is used.  In this case,
-the optimized function body does not communicate the values to the
-caller, nor does it eliminate the callee stack frame.  Instead, the
-call-site manager accesses the values in their locations and transmits
-those values to the caller, and finally it eliminates the callee stack
-frame.
+the same number of values from each return point.  We call such a
+function \emph{values consistent}.  In this case, we compile the code
+so that the values are available from the same lexical locations no
+matter which return point is used.  A values-consistent function is
+organized as shown in
+\refFig{fig-function-code-structure-values-consistent}. 
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-function-code-structure-values-consistent.pdf_t}
+\end{center}
+\caption{\label{fig-function-code-structure-values-consistent}
+Code structure of a values-consistent function.}
+\end{figure}
+
+In addition to the general entry point, a values-consistent function
+has two additional entry points.  The entry point for optimized
+ordinary calls is used by the call-site manger when the
+values-consistent function is called in a non-tail position.  Then the
+function returns to the call-site manager that is then charged with
+accessing the return values and putting them where they are expected
+by the caller, and with eliminating the callee stack frame.
+
+The entry point for optimized tail calls is used by the call-site
+manager when this function is called in a tail-call position. 
 
 \section{Structures}
 
@@ -649,3 +666,5 @@ is a subclass of \texttt{standard-object}.  The class
 Conditions are standard objects.  The class \texttt{condition} is a
 subclass of \texttt{standard-object}.  The class \texttt{condition} is
 an instance of the class \texttt{sicl-clos:condition-class}.
+
+% LocalWords:  callee
