@@ -654,6 +654,9 @@ by the caller, and with eliminating the callee stack frame.
 The entry point for optimized tail calls is used by the call-site
 manager when this function is called in a tail-call position. 
 
+A function that does a tail call to some other function does not
+qualify as a values-consistent function.
+
 \section{Structures}
 
 Structures are standard objects.  The class \texttt{structure-object}
