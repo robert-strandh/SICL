@@ -8,52 +8,76 @@ debugger we plan to support is described in a separate repository.%
 chapter, we describe only the support that \sysname{} contains in
 order to make such a debugger possible.
 
-Each function contains two versions of the code, called the
-\emph{normal} version and the \emph{debugging} version.%
+Each function contains a version of the code called the \emph{general}
+version, but usually also one or more \emph{optimized} versions%
 \footnote{This idea was suggested by Michael Raskin.}
-Calls from the normal version of a caller are made to the normal version
-of callees, and calls from the debugging version of a caller are made to
-the debugging version of callees.
+The \emph{call-site manager} selects which version of the code to
+invoke as described in \refChap{chap-call-site-manager}.  When a
+breakpoint%
+\footnote{By ``breakpoint'' we mean any action to be performed in
+  addition to the main purpose of the code, including traditional
+  breakpoints, but also traces and other similar actions.}
+is set in a function, the general version is always selected by the
+call-site manager.
 
-The normal version is used when the thread is not run under the
-control of the debugger, so this version does not contain any code for
-communicating with the debugger.  Furthermore, this version is highly
-optimized.  In particular, variables that occur in the source code may
-have been eliminated by various optimization passes.
+The general version does not have optimizations applied to it that may
+make debugging harder.  Lexical variables that appear in source code
+may be kept, or code may be included that can compute their values
+from the lexical variables that \emph{are} kept, for the duration of
+their scope.
 
-The debugging version does not have optimizations applied to it that
-may make debugging harder.  Lexical variables that appear in source
-code may be kept, or code may be included that can compute their
-values from the lexical variables that \emph{are} kept, for the
-duration of their scope.
+Upon function entry, the general version of the code consults two the
+special variables \texttt{*summary-table*} and \texttt{*break-table*},
+and stores the values in lexical variables for faster access.  The
+\texttt{*summary-table*} contains a bitmap.  The site of a potential
+breakpoint has a fixed address since code is not moved.  This address
+is taken modulo the size of the bitmap (computed at compile time) to
+determine an index into the summary table.  If that entry contains a
+0, then this potential breakpoint is not a breakpoint.  If that entry
+contains 1, then this potential breakpoint \emph{might} be a
+breakpiont.  The \texttt{*break-table*} is then consulted.  It
+contains a hash table with the code address as a key.  If the break
+table contains a true value, then this potential breakpoint is
+definitely a breakpoint.  The default values of these two variables is
+a bitmap containing all zeros and and \texttt{nil} respectively.  When
+code is run from the debugger, the starts a new thread to run the
+application code, and the initial values of these variables are then
+set to values managed by the debugger.
 
-In the debugging version of a function, the compiler associates
-additional code with the program point immediately preceding the
-evaluation of a form and with the program point immediately following
-the evaluation of a form.  This code consists of a single call to a
-global function, the name of which is yet to be determined.  For now,
-let us call it \texttt{breakpoint}.  It is a function of no arguments.
-However, recall that functions take implicit arguments, and the
-important one for this discussion is the \emph{call-site information}
-implicit argument.  It contains information about the call site such
-as locations of live objects, and information for the garbage
-collector.  The call is a \emph{named call}, and the code generated
-such a call is just an unconditional \texttt{jump} instruction.  The
-\emph{call-site manager} is responsible for allocating a
-\emph{trampoline snippet} to mediate between the call-site and the
-callee, and it then modifies the target field of the instruction to
-contain the address of the snippet.  The call-site manager handles
-calls to the \texttt{breakpoint} function differently.  By default, no
-snippet is allocated, and the target field of the unconditional
-\texttt{jump} is just the next instruction.  However, when a
-breakpoint is set at some program point, the call-site manager
-generates a snippet that will actually call the \texttt{breakpoint}
-function, providing it with call-site information in the implicit
-argument.  The \texttt{breakpoint} starts by consulting the
-\texttt{thread} object, to determine whether this particular
-application thread has a breakpoint at this particular program point.
-If it does, the \texttt{breakpoint} function then accesses the
-relevant information about live variables etc., collects it in a form
-acceptable to the debugger, and then calls the debugger with this
-information.  Typically, the debugger will then block the thread and
-interact with the user for further actions.
+If the application code encounters a breakpoint as described above, it
+injects a command into the debugger command loop and then blocks upon
+reading a queue shared between the debugger and the application.  The
+debugger then takes whatever action has been decided by the user.
+
+%% I don't know whether this passage could be relevant some day.
+%%
+%% In the general version of a function, the compiler associates
+%% additional code with the program point immediately preceding the
+%% evaluation of a form and with the program point immediately following
+%% the evaluation of a form.  This code consists of a single call to a
+%% global function, the name of which is yet to be determined.  For now,
+%% let us call it \texttt{breakpoint}.  It is a function of no arguments.
+%% However, recall that functions take implicit arguments, and the
+%% important one for this discussion is the \emph{call-site information}
+%% implicit argument.  It contains information about the call site such
+%% as locations of live objects, and information for the garbage
+%% collector.  The call is a \emph{named call}, and the code generated
+%% such a call is just an unconditional \texttt{jump} instruction.  The
+%% \emph{call-site manager} is responsible for allocating a
+%% \emph{trampoline snippet} to mediate between the call-site and the
+%% callee, and it then modifies the target field of the instruction to
+%% contain the address of the snippet.  The call-site manager handles
+%% calls to the \texttt{breakpoint} function differently.  By default, no
+%% snippet is allocated, and the target field of the unconditional
+%% \texttt{jump} is just the next instruction.  However, when a
+%% breakpoint is set at some program point, the call-site manager
+%% generates a snippet that will actually call the \texttt{breakpoint}
+%% function, providing it with call-site information in the implicit
+%% argument.  The \texttt{breakpoint} starts by consulting the
+%% \texttt{thread} object, to determine whether this particular
+%% application thread has a breakpoint at this particular program point.
+%% If it does, the \texttt{breakpoint} function then accesses the
+%% relevant information about live variables etc., collects it in a form
+%% acceptable to the debugger, and then calls the debugger with this
+%% information.  Typically, the debugger will then block the thread and
+%% interact with the user for further actions.
