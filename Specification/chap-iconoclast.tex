@@ -1,2 +1,12 @@
 \chapter{Abstract syntax trees}
 \label{chap-ast}
+
+The Iconoclast library defines a large number of classes used to
+represent abstract syntax trees, or ASTs.  We use this library as the
+first compilation phase in that the s-expression-syntax library
+described in \refChap{chap-s-expression-syntax} is invoked to parse
+the source code and Iconoclast creates a graph of AST instances that
+represents all aspects of the source code, including source positions
+for each expression.
+
+The library can be found here: https://github.com/robert-strandh/Iconoclast
