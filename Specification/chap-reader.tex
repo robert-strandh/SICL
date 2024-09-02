@@ -4,8 +4,9 @@
 The \commonlisp{} reader is a prime candidate for an
 implementation-independent module.  We extracted the \sysname{} reader
 to an independent repository under the name \eclector{}%
-\footnote{https://github.com/robert-strandh/Eclector}, now maintained
-by Jan Moringen.
+\footnote{https://github.com/s-expressionists/Eclector}, which was
+subsequently greatly improved by Jan Moringen who is now also the
+maintainer.
 
 Aside from correctness, one of the main objectives of \eclector{} is
 the ability for client code to customize its behavior.  This
@@ -91,8 +92,8 @@ can be customized by client code:
 \item Client code can also define the representation of an
   \emph{interval}, i.e., two source positions, one for the start of an
   expression and another for the end of that expression.  By default,
-  \eclector{} creates a CONS cell containing the two individual
-  positions.
+  \eclector{} creates a \texttt{cons} cell containing the two
+  individual positions.
 \end{itemize}
 
 The entry point for the standard reader and the entry point for
