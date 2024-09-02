@@ -85,11 +85,12 @@ These calling conventions are based on two ideas:
   includes the return address and the call-site descriptor, in
   addition to all lexical variables required to parse arguments) from
   the rack of the callee function object into a temporary register.
+\item Load the entry point from the rack into a free register.
 \item Subtract from RSP the initial frame size computed in the
   previous step.
 \item Push arguments.
 \item Load the dynamic environment into RBX.
-\item Subtract $v+1$ from RBP, thereby establishing the base pointer
+\item Store $v-1$ into RBP, thereby establishing the base pointer
   for the callee.
 \item Store the call-site descriptor on the stack in RBP-16.
 \item Execute the CALL instruction to the entry point.
