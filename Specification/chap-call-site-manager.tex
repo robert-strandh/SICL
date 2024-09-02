@@ -80,6 +80,36 @@ customized for the callee in the following ways:
 \end{enumerate}
 
 Already, these constants save many memory operations, thereby making
-the call more efficient.
+the call more efficient.  However, the prelude of a function is
+followed by a \emph{general body} of the function, and that body
+contains instructions for communicating with the debugger as describe
+in \refChap{chap-debugger}.  So the call-site manager uses the entry
+point of the prelude only when a breakpoint has been set in the
+callee.
+
+The compiler generates an optimized function body to be used when
+there are no breakpoints.  This optimized function body is not
+preceded by a prelude for parsing arguments.  Instead, the call-site
+manager uses information provided in the callee to access arguments in
+the caller and put them in the locations expected by the optimized
+function body.  Thus, there is no argument parsing performed by the
+callee, which is particularly advantageous when the callee has
+optional and/or keyword parameters and the call-site provides those
+arguments in the most common way.%
+\footnote{So that keyword arguments are pairs, each one of which is a
+  symbol in the \texttt{keyword} package followed by a value.}
+In that case, the call-site manager generates code to access the
+relevant argument directly and put it directly where the optimize
+function body of the callee expects it.
+
+Further optimizations are possible when the callee is \emph{values
+  consistent}, meaning that it always returns the same number of
+values.  Then the call-site manager can directly access the return
+values from the lexical locations in the callee and put them in
+locations expected by the caller.
+
+Initial versions of \sysname{} will not include a call-site manager.
+Each call site will contain the general call sequence described
+above.
 
 % LocalWords:  callee
