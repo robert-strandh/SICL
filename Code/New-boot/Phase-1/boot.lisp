@@ -345,11 +345,6 @@
               (sb:with-intercepted-function-cells
                   ((make-instance (cons #'my-make-instance nil)))
                 (sb:eval-cst client cst environment)))))
-    (setf (clo:fdefinition client global-environment 'break)
-          (lambda (&rest arguments)
-            (declare (ignore arguments))
-            (sicl-new-boot-backtrace-inspector:inspect
-             common-boot-ast-evaluator::*stack*)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
