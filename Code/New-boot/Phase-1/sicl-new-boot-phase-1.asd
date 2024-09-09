@@ -10,7 +10,6 @@
    (:file "configuration")
    (:file "macro-programming")
    (:file "import-from-host")
-   (:file "cst-to-ast")
    (:file "load-predicament")
    (:file "define-my-make-instance")
    (:file "load-ctype")
