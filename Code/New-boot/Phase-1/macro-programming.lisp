@@ -61,11 +61,16 @@
               method-combination-name
               method-combination-arguments))
            (result 
-             (make-instance 'standard-generic-function
-               :name name
-               :lambda-list lambda-list
-               :argument-precedence-order argument-precedence-order
-               :method-combination method-combination)))
+             (if (null argument-precedence-order)
+                 (make-instance 'standard-generic-function
+                   :name name
+                   :lambda-list lambda-list
+                   :method-combination method-combination)
+                 (make-instance 'standard-generic-function
+                   :name name
+                   :lambda-list lambda-list
+                   :argument-precedence-order (cdr argument-precedence-order)
+                   :method-combination method-combination))))
       (setf (clo:fdefinition client (sb:environment client) name)
             result)))
   nil)
