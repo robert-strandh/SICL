@@ -3,7 +3,7 @@
 (defsystem #:sicl-new-boot-backtrace-inspector
   :depends-on (#:mcclim
                #:common-boot
-               #:common-boot-ast-evaluator
+               #:common-boot-fast-ast-evaluator
                #:sicl-source-tracking
                #:clouseau)
   :serial t
