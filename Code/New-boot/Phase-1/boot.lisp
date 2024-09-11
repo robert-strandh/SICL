@@ -149,8 +149,7 @@
 
 (defun boot (boot)
   (format *trace-output* "**************** Phase 1~%")
-  (let* (#+sbcl(sb-ext:*evaluator-mode* :interpret)
-         (client (make-instance 'client))
+  (let* ((client (make-instance 'client))
          (environment (create-environment client))
          (global-environment
            (trucler:global-environment client environment))
@@ -247,8 +246,7 @@
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (load-predicament client environment global-environment)
-      (let (#+sbcl(sb-ext:*evaluator-mode* :interpret))
-        (load-ctype client environment global-environment))
+      (load-ctype client environment global-environment)
       (sb:ensure-asdf-system client environment "acclimation")
       (sb:ensure-asdf-system client environment "ecclesia"))
     (sb:ensure-asdf-system

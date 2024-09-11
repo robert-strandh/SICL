@@ -4,8 +4,7 @@
 
 (defun boot (boot)
   (format *trace-output* "**************** Phase 2~%")
-  (let* (#+sbcl(sb-ext:*evaluator-mode* :interpret)
-         (client (make-instance 'client))
+  (let* ((client (make-instance 'client))
          (environment (create-environment client))
          (global-environment
            (trucler:global-environment client environment))
