@@ -2,6 +2,6 @@
 
 (defpackage #:sicl-new-boot-backtrace-inspector
   (:use #:common-lisp)
-  (:local-nicknames (#:cbae #:common-boot-ast-evaluator))
+  (:local-nicknames (#:cbae #:common-boot-fast-ast-evaluator))
   (:shadow #:inspect #:inspector)
   (:export #:inspect))
