@@ -4,7 +4,7 @@
   (:use #:common-lisp)
   (:local-nicknames
    (#:clo #:clostrum)
-   (#:rt #:common-boot-fast-ast-evaluator))
+   (#:rt #:common-boot-ast-interpreter))
   (:shadow
    . #1= (#:symbol-function
           #:fdefinition
