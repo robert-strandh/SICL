@@ -142,6 +142,8 @@
        client environment "clostrophilia-method-combination-base"))
     (setf (clo:fdefinition client (sb:e3 boot) @sicl-clos:find-class+1)
           (clo:fdefinition client global-environment 'find-class))
+    (clo:make-variable
+     client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell client (sb:e3 boot) 'make-instance)))
