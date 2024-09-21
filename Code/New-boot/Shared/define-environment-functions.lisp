@@ -41,15 +41,14 @@
   (setf (clo:fdefinition
          client global-environment @clostrum-sys:ensure-variable-cell)
         #'clostrum-sys:ensure-variable-cell)
-  (unless *use-maclina-p*
-    (setf (clo:fdefinition
-           client global-environment @sicl-run-time:boundp)
-          #'cbae:boundp)
-    (let ((symbol @sicl-run-time:symbol-value))
-      (setf (clo:fdefinition client global-environment symbol)
-            #'cbae:symbol-value)
-      (setf (clo:fdefinition client global-environment `(setf ,symbol))
-            #'(setf cbae:symbol-value))))
+  (setf (clo:fdefinition
+         client global-environment @sicl-run-time:boundp)
+        #'cbae:boundp)
+  (let ((symbol @sicl-run-time:symbol-value))
+    (setf (clo:fdefinition client global-environment symbol)
+          #'cbae:symbol-value)
+    (setf (clo:fdefinition client global-environment `(setf ,symbol))
+          #'(setf cbae:symbol-value)))
   (let ((symbol @sicl-environment:find-method-combination-template))
     (setf (clo:fdefinition client global-environment symbol)
           #'sicl-environment:find-method-combination-template)
@@ -59,21 +58,6 @@
           (make-instance 'trucler-reference:environment
             :global-environment global-environment)))
     (ensure-asdf-system client environment "sicl-environment-shared"))
-  (when *use-maclina-p*
-    ;; We need to redefine the functions on special variables.
-    (multiple-value-bind (symbol-value
-                          setf-symbol-value
-                          boundp
-                          makunbound)
-        (maclina.vm-cross:make-variable-access-closures
-         client global-environment)
-      (declare (ignore makunbound))
-      (setf (clo:fdefinition client global-environment 'boundp)
-            boundp)
-      (setf (clo:fdefinition client global-environment 'symbol-value)
-            symbol-value)
-      (setf (clo:fdefinition client global-environment '(setf symbol-value))
-            setf-symbol-value)))
   (let ((symbol-define-constant @sicl-environment:define-constant))
     (setf (clo:macro-function client global-environment 'defconstant)
           (lambda (form environment)
