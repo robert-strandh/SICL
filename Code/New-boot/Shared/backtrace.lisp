@@ -1,4 +1,6 @@
 (cl:in-package #:sicl-new-boot)
 
 (defun bt ()
-  (sicl-new-boot-backtrace-inspector:inspect cb:*stack*))
+  (let* ((package (find-package '#:sicl-new-boot-backtrace-inspector))
+         (inspect-symbol (find-symbol "INSPECT" package)))
+    (funcall inspect-symbol cb:*stack*)))
