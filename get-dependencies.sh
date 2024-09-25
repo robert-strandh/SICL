@@ -6,8 +6,6 @@ set -euo pipefail
 #
 DEPENDENCIES="
 https://github.com/robert-strandh/Clonedijk
-https://github.com/robert-strandh/Cluster
-https://github.com/robert-strandh/Stealth-mixin
 https://github.com/s-expressionists/Concrete-Syntax-Tree
 https://github.com/s-expressionists/Eclector
 https://github.com/s-expressionists/Khazern
@@ -16,8 +14,19 @@ https://github.com/s-expressionists/Clostrum
 https://github.com/s-expressionists/Incless
 https://github.com/s-expressionists/Invistra
 https://github.com/s-expressionists/ctype
-https://github.com/s-expressionists/Cyclosis
 https://github.com/yitzchak/trivial-package-locks
+https://gitlab.common-lisp.net/alexandria/alexandria
+https://github.com/scymtym/architecture.builder-protocol.git
+https://github.com/scymtym/s-expression-syntax.git
+https://github.com/robert-strandh/Iconoclast.git
+https://github.com/robert-strandh/Common-boot.git
+https://github.com/robert-strandh/Common-macros.git
+https://github.com/robert-strandh/Parcl.git
+https://github.com/s-expressionists/Ecclesia
+https://github.com/robert-strandh/Predicament.git
+https://github.com/robert-strandh/Regalia.git
+https://github.com/robert-strandh/Clostrophilia.git
+https://github.com/s-expressionists/Acclimation
 "
 
 PROJECTS_DIRECTORY=${1:-"$HOME/quicklisp/local-projects/"}
