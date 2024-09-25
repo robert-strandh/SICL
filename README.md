@@ -35,6 +35,8 @@ versions.
 [the Parcl repository]:https://github.com/robert-strandh/Parcl.git
 [the Ecclesia repository]:https://github.com/s-expressionists/Ecclesia
 [the Predicament repository]:https://github.com/robert-strandh/Predicament.git
+[the Regalia repository]:https://github.com/robert-strandh/Regalia.git
+[the Clostrophilia repository]:https://github.com/robert-strandh/Clostrophilia.git
 
    * A recent 64-bit version of SBCL
    * The system "clonedijk", from [the Clonedijk repository]
@@ -58,7 +60,8 @@ versions.
    * The systems in [the Parcl repository]
    * The system "ecclesia", from [the Ecclesia repository]
    * The systems in [the Predicament repository]
-
+   * The systems in [the Regalia repository]
+   * The systems in [the Clostrophilia repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 
