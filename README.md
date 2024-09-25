@@ -79,19 +79,19 @@ The bash script `get-dependencies.sh` will do this work for you.
 4. Compile the boot system as follows:
 
    ```lisp
-   (asdf:load-system :sicl-boot)
+   (asdf:load-system :sicl-new-boot)
    ```
 
 5. Change the package for convenience:
 
    ```lisp
-   (in-package #:sicl-boot)
+   (in-package #:sicl-new-boot)
    ```
 
 6. Create an instance of the BOOT class:
 
    ```lisp
-   (defparameter *b* (boot))
+   (boot)
    ```
 
    Bootstrapping may take a few minutes.
@@ -99,7 +99,7 @@ The bash script `get-dependencies.sh` will do this work for you.
 7. Start a REPL:
 
    ```lisp
-   (repl *e5*)
+   (repl4)
    ```
 
 [source]: https://github.com/robert-strandh/SICL
