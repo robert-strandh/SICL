@@ -30,6 +30,8 @@ versions.
 [the architecture.builder-protocol repository]:https://github.com/scymtym/architecture.builder-protocol.git
 [the s-expression-syntax repository]:https://github.com/scymtym/s-expression-syntax.git
 [the Iconoclast repository]:https://github.com/robert-strandh/Iconoclast.git
+[the Common Boot repository]:https://github.com/robert-strandh/Common-boot.git
+[the Common Macros repository]:https://github.com/robert-strandh/Common-macros.git
 
    * A recent 64-bit version of SBCL
    * The system "clonedijk", from [the Clonedijk repository]
@@ -47,7 +49,9 @@ versions.
    * The system "alexandria", from [the alexandria repository]
    * The system "architecture.builder-protocol", from [the architecture.builder-protocol repository]
    * The system "s-expression-syntax", from [the s-expression-syntax repository]
-   * The system "iconoclast", from [the Iconoclast repository]
+   * The systems in [the Iconoclast repository]
+   * The systems in [the Common Boot repository]
+   * The systems in [the Common Macros repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 
