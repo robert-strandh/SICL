@@ -32,6 +32,7 @@ versions.
 [the Iconoclast repository]:https://github.com/robert-strandh/Iconoclast.git
 [the Common Boot repository]:https://github.com/robert-strandh/Common-boot.git
 [the Common Macros repository]:https://github.com/robert-strandh/Common-macros.git
+[the Parcl repository]:https://github.com/robert-strandh/Parcl.git
 
    * A recent 64-bit version of SBCL
    * The system "clonedijk", from [the Clonedijk repository]
@@ -52,6 +53,7 @@ versions.
    * The systems in [the Iconoclast repository]
    * The systems in [the Common Boot repository]
    * The systems in [the Common Macros repository]
+   * The systems in [the Parcl repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 
