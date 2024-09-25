@@ -11,6 +11,6 @@
           for cst = (cst:cst-from-expression form)
           for values
             = (multiple-value-list (eval-cst client cst environment))
-          do (print values)
-             (terpri)
+          do (loop for value in values
+                   do (format t "~s~%" value))
              (finish-output))))
