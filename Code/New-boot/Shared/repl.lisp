@@ -14,3 +14,35 @@
           do (loop for value in values
                    do (format t "~s~%" value))
              (finish-output))))
+
+(defun repl1 (boot)
+  (let* ((environment (e1 boot))
+         (package (find-package '#:sicl-new-boot-phase-1))
+         (client-symbol (find-symbol "CLIENT" package))
+         (client-object (make-instance client-symbol
+                          :environment environment)))
+    (repl client-object environment)))
+
+(defun repl2 (boot)
+  (let* ((environment (e2 boot))
+         (package (find-package '#:sicl-new-boot-phase-2))
+         (client-symbol (find-symbol "CLIENT" package))
+         (client-object (make-instance client-symbol
+                          :environment environment)))
+    (repl client-object environment)))
+
+(defun repl3 (boot)
+  (let* ((environment (e3 boot))
+         (package (find-package '#:sicl-new-boot-phase-3))
+         (client-symbol (find-symbol "CLIENT" package))
+         (client-object (make-instance client-symbol
+                          :environment environment)))
+    (repl client-object environment)))
+
+(defun repl4 (boot)
+  (let* ((environment (e4 boot))
+         (package (find-package '#:sicl-new-boot-phase-4))
+         (client-symbol (find-symbol "CLIENT" package))
+         (client-object (make-instance client-symbol
+                          :environment environment)))
+    (repl client-object environment)))
