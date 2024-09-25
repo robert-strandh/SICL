@@ -1,8 +1,7 @@
 
 # SICL: A new Common Lisp Implementation
 
-This is the main source code repository for SICL. It contains the
-compiler, standard library, and documentation.
+This is the main source code repository for SICL.
 
 ## What is SICL?
 
@@ -18,8 +17,6 @@ versions.
 1. Make sure you have installed the dependencies:
 
 [the Clonedijk repository]:https://github.com/robert-strandh/Clonedijk
-[the Cluster repository]:https://github.com/robert-strandh/Cluster
-[the Stealth-mixin repository]:https://github.com/robert-strandh/Stealth-mixin
 [the Concrete-Syntax-Tree repository]:https://github.com/s-expressionists/Concrete-Syntax-Tree
 [the ctype repository]:https://github.com/s-expressionists/ctype
 [the Eclector repository]:https://github.com/s-expressionists/Eclector
@@ -29,6 +26,7 @@ versions.
 [the Incless repository]:https://github.com/s-expressionists/Incless
 [the Invistra repository]:https://github.com/s-expressionists/Invistra
 [the trivial-package-locks repository]:https://github.com/yitzchak/trivial-package-locks
+[the alexandria repository]:https://gitlab.common-lisp.net/alexandria/alexandria
 
    * A recent 64-bit version of SBCL
    * The system "clonedijk", from [the Clonedijk repository]
@@ -43,6 +41,7 @@ versions.
    * The system "incless-intrinsic", from [the Incless repository]
    * The system "invistra/intrinsic", from [the Invistra repository]
    * The system "trivial-package-locks", from [the trivial-package-locks repository]
+   * The system "alexandria", from [the alexandria repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 
