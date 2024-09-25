@@ -27,6 +27,9 @@ versions.
 [the Invistra repository]:https://github.com/s-expressionists/Invistra
 [the trivial-package-locks repository]:https://github.com/yitzchak/trivial-package-locks
 [the alexandria repository]:https://gitlab.common-lisp.net/alexandria/alexandria
+[the architecture.builder-protocol repository]:https://github.com/scymtym/architecture.builder-protocol.git
+[the s-expression-syntax repository]:https://github.com/scymtym/s-expression-syntax.git
+[the Iconoclast repository]:https://github.com/robert-strandh/Iconoclast.git
 
    * A recent 64-bit version of SBCL
    * The system "clonedijk", from [the Clonedijk repository]
@@ -42,6 +45,9 @@ versions.
    * The system "invistra/intrinsic", from [the Invistra repository]
    * The system "trivial-package-locks", from [the trivial-package-locks repository]
    * The system "alexandria", from [the alexandria repository]
+   * The system "architecture.builder-protocol", from [the architecture.builder-protocol repository]
+   * The system "s-expression-syntax", from [the s-expression-syntax repository]
+   * The system "iconoclast", from [the Iconoclast repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 
