@@ -40,7 +40,8 @@
     (repl client-object environment)))
 
 (defun repl4 (boot)
-  (let* ((environment (e4 boot))
+  (let* ((*boot* boot)
+         (environment (e4 boot))
          (package (find-package '#:sicl-new-boot-phase-4))
          (client-symbol (find-symbol "CLIENT" package))
          (client-object (make-instance client-symbol
