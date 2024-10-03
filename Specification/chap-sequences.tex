@@ -2,11 +2,11 @@
 
 This module was written entirely by Marco Heisig.  It provides
 high-performance implementations of the functions in the ``sequences''
-chapter of the \hs{}.  High performance is obtained by identifying
-important special cases such as the use of \texttt{:test} function
-\texttt{eq}, or \texttt{equal}, or the use of a \texttt{:key} of
-\texttt{identity}.  These special cases are handled by macros
-according to the technique described by our 2017 ELS paper
+chapter of the \commonlisp{} standard.  High performance is obtained
+by identifying important special cases such as the use of
+\texttt{:test} function \texttt{eq}, or \texttt{equal}, or the use of
+a \texttt{:key} of \texttt{identity}.  These special cases are handled
+by macros according to the technique described by our 2017 ELS paper
 \cite{Durand:2017:ELS:Sequence}.
 
 In addition to the technique described in that paper, Marco Heisig
@@ -45,8 +45,8 @@ there is an intermediate solution where a small amount of additional
 space is used whenever there is such space available, for example on
 the stack.
 
-Currently, this module is located in the \texttt{Code/Sequence}
-directory of the \sysname{} repository, but we may extract it to a
-separate repository in the future.
+This module has been extracted to a separate repository under the name
+\consecution{}.%
+\footnote{https://github.com/s-expressionists/Consecution}
 
 %%  LocalWords:  subclasses
