@@ -2,17 +2,10 @@
 
 Richard C Waters designed the pretty printer for
 \commonlisp{} (\cite{Waters89xp:a}, \cite{Waters:1992:UNC:1039991.1039996}).
-It may be possible to use it directly for \sysname{}.  Certainly, the
-existence of XP (i.e. what Waters designed) makes it low priority for
-\sysname{} to have its own. 
-
-As I recall, there are some minor differences between XP and what was
-ultimately incorporated in the standard, but a long time has passed
-since I looked at it.
-
-I also do not recall the license according to which XP is distributed.
-It may or may not be compatible with that of \sysname{}.  Finally, it
-may be that XP does not conform to the \sysname{} coding standards.
-
-
-
+It might seem a natural choice to use it for \sysname{}, but we found
+that the quality of the code was unacceptably low for the standards of
+\sysname{}.  As a result Tarn W. Burton created a completely new
+library for pretty printing, call \inravina{}%
+\footnote{https://github.com/s-expressionists/Inravina}.  \inravina{}
+is perfectly integrated with \incless{}, described in
+\refChap{chap-printer}.
