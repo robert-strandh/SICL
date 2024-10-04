@@ -1,33 +1,11 @@
 \chapter{Condition system}
 
-This module is located in the \texttt{Code/Conditions} directory.  It
-it meant to contain the complete \commonlisp{} condition system.  The module
-is fairly complete.  There are three main items in this module:
-
-\begin{itemize}
-\item A complete portable implementation of the \commonlisp{} condition
-  system signaling mechanism.
-\item Definitions of standard \commonlisp{} conditions.
-\item Definitions of additional \sysname{} conditions.
-\end{itemize}
-
-As it turns out, the \commonlisp{} condition signaling mechanism can be
-implemented in a completely portable way, using only special variables
-as the underlying mechanism.  In addition, this implementation method
-is likely to exhibit acceptable performance, because condition
-signaling is assumed to be fairly infrequent anyway.  
-
-The module assumes the existence of the \texttt{define-condition}
-macro.  The full hierarchy of \commonlisp{} conditions is implemented, and
-there is a file containing condition reporters for those conditions
-when the English language is used.
-
-The additional conditions are used by various \sysname{} modules.
-At the moment, this module does not contain all additional conditions
-used by the system.  We are still undecided concerning whether all
-additional conditions should be concentrated in one place, or on the
-contrary, they should be distributed with the particular module that
-uses them.  The first solution favors sharing of conditions that are
-usable by several modules, and the second solution lets the user of a
-module install only the conditions used by that module, without having
-to install a large number of conditions that will never be used.
+This module has been extracted to a separate repository named
+Predicament.%
+\footnote{https://github.com/robert-strandh/Predicament}
+It is based on the portable condition system written by Michał "phoe"
+Herda.%
+\footnote{https://github.com/phoe/portable-condition-system}
+With permission from the author, we modified the code so that it could
+be used as an intrinsic condition system in addition to the use as an
+extrinsic system it was originally designed for.
