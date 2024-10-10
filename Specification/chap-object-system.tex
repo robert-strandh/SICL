@@ -3,7 +3,7 @@
 \sysname{} will implement the full metaobject protocol (MOP) as
 described by the Art of the Metaobject Protocol (AMOP)
 \cite{Kiczales:1991:AMP:574212}, in as far it does not conflict with
-the \hs{}.
+the standard.
 
 \section{Classes of class metaobjects}
 
@@ -36,7 +36,7 @@ classes.  More about built-in classes in
   not yet been created by \texttt{defclass}.
 \end{itemize}
 
-In addition, the \hs{} requires the existence of a class metaclass
+In addition, the standard requires the existence of a class metaclass
 named \texttt{structure-class}.  Whether conditions have their own
 metaclass is not specified.  \sysname{} defines the class
 \texttt{condition-class} for this purpose.
@@ -79,8 +79,8 @@ for any interactive language.%
   modify the state of some \emph{global environment}.}
 
 When there are existing instances of a standard class that is
-modified, the \hs{} gives us very specific rules concerning how
-those instances are to be updated.  The \hs{} is also very clear
+modified, the standard gives us very specific rules concerning how
+those instances are to be updated.  The standard is also very clear
 that existing instances do not need to be updated immediately.  But
 they must be updated no later than immediately before an access to any
 of the slots of the instance is attempted.   The reason for that rule
@@ -118,7 +118,7 @@ Another very handy feature of standard classes, but a much simpler
 one, is that it allows for instances to \emph{change class}.  In other
 words, without changing the \emph{identity} of the instance, the class
 that it is an instance of can be changed to a different class.  Again,
-the \hs{} gives very specific rules about how the instance must be
+the standard gives very specific rules about how the instance must be
 transformed in order to be a legitimate instance of the new class.  No
 special mechanism is required for this feature to work, other than the
 ability to modify all aspects of an instance except its identity.  The
@@ -128,11 +128,11 @@ remains the same.
 \subsection{Built-in classes}
 \label{object-system-built-in-classes}
 
-The \hs{} contains a significant number of classes that every
+The standard contains a significant number of classes that every
 conforming implementation must contain.  Most (all?) of these classes
 are referred to as \emph{system classes}.  Some example of system
 classes are \texttt{symbol}, \texttt{package}, \texttt{list},
-\texttt{stream}, etc.  The \hs{} tells us that by \emph{system
+\texttt{stream}, etc.  The standard tells us that by \emph{system
   class} is meant ``a class that may be of type built-in-class in a
 conforming implementation and hence cannot be inherited by classes
 defined by conforming programs.'' 
@@ -144,7 +144,7 @@ class is really a standard class
 
 Some of the decisions are determined by the AMOP.  For instance, the
 classes \texttt{standard-class} and \texttt{built-in-class}, labeled
-by the \hs{} as system classes are required by the AMOP to be
+by the standard as system classes are required by the AMOP to be
 standard classes.  Any implementation that wants to have an
 implementation of the metaobject protocol as close as possible to what
 the AMOP requires should take this fact into account. 
@@ -175,7 +175,7 @@ maintenance.
 \subsection{Condition classes}
 \label{object-system-condition-classes}
 
-The \hs{} defines an entire hierarchy of classes with the class
+The standard defines an entire hierarchy of classes with the class
 \texttt{condition} as the root class.  This hierarchy is not mentioned
 by the AMOP.  
 
@@ -210,7 +210,7 @@ bootstrapping process.
 
 Just like condition classes \seesec{object-system-condition-classes},
 structure classes are not mentioned at all in the AMOP.  In addition,
-their description in the \hs{} is limited to the dictionary entry
+their description in the standard is limited to the dictionary entry
 for \texttt{defstruct}.  
 
 No part of \sysname{} uses structure classes.  The main reason is that
@@ -222,7 +222,7 @@ existing structure classes.%
   in the same way that it is possible to modify standard classes even
   though there are existing instances, but I don't remember where I
   read this, and I can't seem to find the place.  It might have been
-  in CLtL2 rather than the \hs{}, but I can't find it there
+  in CLtL2 rather than the standard, but I can't find it there
   either.  Oh well, when I find it, I will remove this footnote.}
 
 However, since we plan for \sysname{} to be a conforming
