@@ -2,11 +2,8 @@
 \label{chap-compiled-files}
 
 In order to simplify \sysname{} as much as possible, we will use the
-external format of the \cleavir{} abstract syntax tree as our so
-called \emph{\textsc{fasl}} format.  The \cleavir{} compiler already contains
-code that makes it possible to read and write abstract syntax trees,
-so with this decision, there is no need to design an additional file
-format.
+external format of the \iconoclast{} abstract syntax tree as our so
+called \emph{\textsc{fasl}} format.
 
 The external format for abstract syntax trees can be read using the
 \commonlisp{} standard \texttt{read} function with a single additional
@@ -22,10 +19,14 @@ The \commonlisp{} standard requires compiled files to be at least
 \emph{minimally compiled}, and the abstract syntax tree format
 fulfills the requirement for minimal compilation.
 
-The main downside of using this format for \textsc{fasl} files is decreased
-performance compared to a format containing native code.  However,
-loading \textsc{fasl} files is typically only done during the development phase
-of some software, and almost never at run-time.  The additional delay
-required when loading an abstract syntax tree as a result of
-converting it to intermediate code and then to native code is likely
-to be barely noticeable during development.
+A great advantage of using the abstract syntax tree as the
+\textsc{fasl} format is that it is independent of the backend, so it
+is therefore portable.
+
+The main downside of using this format for \textsc{fasl} files is
+decreased performance compared to a format containing native code.
+However, loading \textsc{fasl} files is typically done only during the
+development phase of some software, and almost never at run-time.  The
+additional delay required when loading an abstract syntax tree as a
+result of converting it to intermediate code and then to native code
+is likely to be barely noticeable during development.
