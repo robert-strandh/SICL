@@ -24,9 +24,9 @@ and identify their respective roles.
   \texttt{compile-file} is invoked.  It takes a \commonlisp{} source
   file and generates a so-called \emph{fasl} file.  Since \sysname{}
   \emph{fasl} files are merely textual versions of the abstract syntax
-  tree produced by the \texttt{cst-to-ast} phase of \cleavir{} as
-  described in \refChap{chap-compiled-files}, only that phase is
-  involved in file compilation.
+  tree produced by the \iconoclast{} library as described in
+  \refChap{chap-compiled-files}, only that phase is involved in file
+  compilation.
 
 \item AST compilation.  This use case is relevant when there is an
   existing abstract syntax tree that must be converted into a
@@ -59,8 +59,8 @@ In addition to these use cases, we also distinguish between different
 compilers along an orthogonal dimension:
 
 \begin{itemize}
-\item A \emph{native} compiler is a compiler that produces code for
-  its host \commonlisp{} system.
+\item An \emph{intrinsic} (or \emph{native}) compiler is a compiler
+  that produces code for its host \commonlisp{} system.
 \item An \emph{extrinsic} compiler is a compiler that produces code
   for a \commonlisp{} system other than its host system.  An extrinsic
   compiler is also known as a \emph{cross compiler}.
