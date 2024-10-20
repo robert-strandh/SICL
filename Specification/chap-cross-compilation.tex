@@ -22,7 +22,7 @@ environment because it can cause some problem.%
 \footnote{The main difference that is important to bootstrapping is
   that some implementations use implementation-specific functions in
   the result of the \emph{backquote} reader macro.  This practice is
-  explicitly allowed by the \hs{} (Section 2.4.6), and also encouraged
+  explicitly allowed by the standard (Section 2.4.6), and also encouraged
   (Section 2.4.6.1).}
 Instead, we use a the Eclector%
 \footnote{See \texttt{https://github.com/robert-strandh/Eclector}}
@@ -34,10 +34,10 @@ If the cross compiler generates \emph{fasl} files, then the compiler
 is necessarily a \emph{file compiler}, and we face the same
 restrictions concerning literal objects as a native file compiler
 does.%---------------------------------------------------------
-\footnote{See Section 3.2.4 in the \hs{}.}
+\footnote{See Section 3.2.4 in the standard.}
 
 For either compilation scenario, though, there are some restrictions
-due to differences between systems that the \hs{} explicitly allows.
+due to differences between systems that the standard explicitly allows.
 
 The most important such restriction has to do with floating-point
 numbers.  If (say) the host allows for fewer types of floating-point
@@ -55,7 +55,7 @@ do.
 
 \section{Environments}
 
-The \hs{}\footnote{See section 3.2.1 of the \hs{}.} gives a list of
+The standard\footnote{See section 3.2.1 of the standard.} gives a list of
 the environments that are related to compilation.  We briefly
 summarize them here:
 
@@ -68,7 +68,7 @@ summarize them here:
   declarations that the compiler needs, for instance definitions of
   macros and constant variables,  and declarations such as
   \texttt{inline} or \texttt{special}. 
-\item The \emph{evaluation environment} which the \hs{} says is a
+\item The \emph{evaluation environment} which the standard says is a
   run-time environment in which evaluations by the compiler takes
   place, typically executions of macro expanders, but also any other
   code that is indicated by \texttt{eval-when} to be evaluated at
@@ -196,14 +196,14 @@ compilation: \texttt{declaim}, \texttt{defconstant},
 We are left with the following macros: \texttt{defclass}, 
 \texttt{defgeneric}, and \texttt{defmethod}.
 
-For \texttt{defclass} the \hs{} says that the \emph{class name} must
+For \texttt{defclass} the standard says that the \emph{class name} must
 be made available for use as a specializer in \texttt{defmethod} and
 as the \texttt{:metaclass} option in subsequent invocations of
 \texttt{defclass}.  It is thus suggested that \texttt{defmethod}
-checks at compile-time that the specializers exist, though the \hs{}
+checks at compile-time that the specializers exist, though the standard
 does not mention any such checks. 
 
-The \hs{} also says that if \texttt{find-class} is called with the
+The standard also says that if \texttt{find-class} is called with the
 relevant environment argument, then the class object should be
 returned.  We can think of no need to invoke \texttt{find-class} at
 compile time.
@@ -214,17 +214,17 @@ standard \commonlisp{} function).  Our solution is thus to provide a
 compile-time version of \texttt{sicl-clos:ensure-class} that only
 makes the \emph{class name} available.
 
-For \texttt{defgeneric}, the \hs{} says that the implementation is not
+For \texttt{defgeneric}, the standard says that the implementation is not
 required to perform any compile-time side effects, but that it can
 choose to store information about arguments and such if it so wants.
 As a consequence, we handle it the same way we handle \texttt{defun}.
 
-For \texttt{defmethod}, the \hs{} says that the implementation is not
+For \texttt{defmethod}, the standard says that the implementation is not
 required to perform any compile-time side effects.  The
 compile-time side effects will be in the case where no prior
 \texttt{defgeneric} form has been seen, in which case we store
 information about the derived parameters of the implicitly created
-generic function.  As suggested by the \hs{} in the description of
+generic function.  As suggested by the standard in the description of
 \texttt{defclass}, we also verify that the specializer class names
 have been previously seen. 
 
