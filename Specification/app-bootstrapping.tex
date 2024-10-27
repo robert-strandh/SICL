@@ -48,6 +48,9 @@ functions of purity $p$, but during bootstrapping we can not always
 accomplish this restriction.  As a general principle, however, we want
 to minimize the exceptions to this rule, because these exceptions
 require specific bootstrapping code to be handled correctly.
+Furthermore, we want functions of purity $p$ to take arguments of
+purity $p+1$, but again we can not always accomplish this
+restriction.
 
 \section{Object creation}
 \label{sec-app-bootstrapping-object-allocation}
