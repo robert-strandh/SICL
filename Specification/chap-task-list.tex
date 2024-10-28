@@ -12,32 +12,4 @@ untabifying source code, fixing grammar in comments, and generally
 altering code to conform to the guidelines in the previous two
 chapters.
 
-\section{Implement streams}
-
-Streams have non yet been implemented in \sysname{}.  The full set of
-streams defined by the standard must be implemented at some point.
-
-Initially, we are not concerned with extreme performance
-requirements.  For that reason, we think that the protocol functions
-can be implemented on top of the Gray-streams protocol.
-
-The code should be structured so that it looks ``natural'' in
-intrinsic setting, i.e. when the code is loaded into \sysname{}.
-However, we would like for the code to be structured such that it can
-be tested in an extrinsic setting as well.
-
-\section{Better error messages for the \texttt{loop} module}
-
-The parser for the \texttt{loop} macro uses a home-grown version of
-combinator parsing.  Since \texttt{loop} clauses do not need
-backtracking, this feature of normal combinator parsing is not
-included.
-
-However, we think that combinator parsing is perhaps not a well suited
-technique when good error messages are a requirement.
-
-This task consists of investigating whether good error messages can be
-obtained with the current technique, while maintaining a reasonable
-structure of the code.  Or whether some other technique might be
-better suited.  We are thinking that Earley parsong might be a good
-candidate.
+To be filled in...
