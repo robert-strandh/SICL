@@ -79,15 +79,14 @@ Standard functions should always check the validity of their arguments
 and of any other aspect of the environment.  If such a function fails
 to accomplish its task, it should signal an appropriate condition.
 
-We would like error messages to be phrased in terms of the code that
-was directly invoked by user code, as opposed to in terms of code that
-was indirectly invoked by system code.  As an example, consider a
-sequence function such as \texttt{substitute}.  If it is detected that
-a dotted list has been passed to this function, it should not be
-reported by \texttt{endp} or any other system function that was not
-directly called by user code, but instead it should be reported by
-\texttt{substitute} in terms of the sequence that was originally
-passed as an argument.  On the other hand, if substitute invokes a
+We would like for errors to be signaled by the code that was directly
+invoked by user code, as opposed to in terms of code that was
+indirectly invoked by system code.  As an example, consider a sequence
+function such as \texttt{substitute}.  If it is detected that a dotted
+list has been passed to this function, it should not be reported by
+\texttt{endp} or any other system function that was not directly
+called by user code, but instead it should be reported by
+\texttt{substitute}.  On the other hand, if substitute invokes a
 user-supplied test that fails, we would like the error message to be
 reported in terms of that user-supplied code rather than by
 \texttt{substitute}.  This is how we are currently imagining solving
