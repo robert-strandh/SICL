@@ -116,12 +116,12 @@ documentation strings.
 One possible remedy for the noise problem is to separate the
 documentation strings from the code, by taking advantage of the
 function \texttt{(setf documentation)}.  The documentation string can
-then be placed in a separate file from the one containing the code.
-One possible problem with this separation is that it is then riskier
-that the documentation becomes incorrect as the code evolves.
-However, this risk is not as great as the analogous one for comments,
-since it is (or should be) much less common that client-visible code
-has its interface altered.
+then be placed \emph{after} the code it documents, or even in a
+separate file from the one containing the code.  One possible problem
+with this separation is that it is then riskier that the documentation
+becomes incorrect as the code evolves.  However, this risk is not as
+great as the analogous one for comments, since it is (or should be)
+much less common that client-visible code has its interface altered.
 
 A remedy for the problem of unappealing documentation strings, whether
 together with the code or in a separate file, is to use
@@ -221,8 +221,8 @@ code:
 \end{verbatim}
 
 To the compiler, it means ``execute the false branch of the \texttt{if}
-when either \texttt{x} is \texttt{nil}, or when \texttt{x} is a list
-whose first element is \texttt{nil}''.
+when either \texttt{x} is \texttt{nil}, or when \texttt{x} is a
+\texttt{cons} cell in which the \texttt{car} slot is \texttt{nil}''.
 
 To the person reading the code, it means something different
 altogether, namely ``\texttt{x} holds a non-empty list of Boolean
@@ -318,6 +318,32 @@ to the expectations would look like this:
 \begin{verbatim}
 (let ((item (find ...)))
   (unless (null item) ...))
+\end{verbatim}
+
+But even this example is often not very good, because it uses
+implementation details such as the container being a sequence and the
+default value being nil.  A much better solution is often to create an
+abstraction of those two things, for instance:
+
+\begin{verbatim}
+(let ((item (find-item ...)))
+  (when (itemp item) ...))
+\end{verbatim}
+
+Here, we have introduce an abstraction \texttt{find-item} and all the
+code is saying is that this function may return an object of type
+\texttt{item}, or some other object indicating that no item was
+found.  With these abstractions the implementation of the container
+may change (to a hash table for instance) and the default value may
+change as well.  An initial implementation of the abstractions would
+then be:
+
+\begin{verbatim}
+(defun find-item (...)
+  (find ...))
+
+(defun itemp (item)
+  (not (null item)))
 \end{verbatim}
 
 \section{General structure of recursive functions}
