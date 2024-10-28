@@ -100,12 +100,10 @@ this problem:
   might result in an error being signaled by $g$, that call is
   replaced by a call to a special version of the standard function,
   say $h$ that signals a more specific condition than is dictated by
-  the Common Lisp \hs{}.
+  the Common Lisp standard.
 \item If acceptable in terms of performance, a standard function such
   as $f$ that calls other functions that may signal an error, handles
   such errors by signaling an error that is directly related to $f$.
-\item Error reporting is done in terms of the name and arguments to
-  $f$.
 
 \end{itemize}
 
