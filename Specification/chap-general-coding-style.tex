@@ -381,10 +381,10 @@ handled first.  The following code violates the expectations:
 
 \begin{verbatim}
 (defun map-conses (function tree)
- (unless (atom node)
-   (funcall function node)
-   (map-conses function (car node))
-   (map-conses function (cdr node))))
+  (unless (atom node)
+    (funcall function node)
+    (map-conses function (car node))
+    (map-conses function (cdr node))))
 \end{verbatim}
 
 and should be written like this instead:
