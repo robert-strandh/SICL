@@ -124,3 +124,16 @@ to customize this behavior.  Instead, the default method on
 
 The \texttt{format} function is implemented in a different library as
 described in \refChap{chap-format}.
+
+\section{Pretty printer}
+\label{sec-pretty-printer}
+
+Richard C Waters designed the pretty printer for
+\commonlisp{} (\cite{Waters89xp:a}, \cite{Waters:1992:UNC:1039991.1039996}).
+It might seem a natural choice to use it for \sysname{}, but we found
+that the quality of the code was unacceptably low for the standards of
+\sysname{}.  As a result Tarn W. Burton created a completely new
+library for pretty printing, called \inravina{}%
+\footnote{https://github.com/s-expressionists/Inravina}.  \inravina{}
+is perfectly integrated with \incless{}, described in
+\refSec{sec-printer}.
