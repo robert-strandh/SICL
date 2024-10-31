@@ -45,5 +45,6 @@
          (package (find-package '#:sicl-new-boot-phase-4))
          (client-symbol (find-symbol "CLIENT" package))
          (client-object (make-instance client-symbol
-                          :environment environment)))
+                          :environment environment))
+         (env:*client* client-object))
     (repl client-object environment)))
