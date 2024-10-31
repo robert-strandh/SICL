@@ -260,6 +260,169 @@ This module has been extracted to a separate repository under the name
 \consecution{}.%
 \footnote{https://github.com/s-expressionists/Consecution}
 
+\section{Hash tables}
+\label{sec-hash-tables}
+
+This module was written by Hayley Patton.  It has been extracted to a
+separate repositor under the name \salmagundi{}%
+\footnote{https://github.com/robert-strandh/Salmagundi}
+
+\subsection{Package}
+
+The package for all symbols in this chapter is \texttt{sicl-hash-table}.
+
+\subsection{Protocol}
+
+Most of the standard functions on hash tables are implemented as
+generic functions:
+
+{\small\Defgeneric {hash-table-p} {hash-table}
+}
+
+{\small\Defgeneric {hash-table-count} {hash-table}
+}
+
+{\small\Defgeneric {hash-table-size} {hash-table}
+}
+
+{\small\Defgeneric {hash-table-rehash-size} {hash-table}
+}
+
+{\small\Defgeneric {hash-table-rehash-threshold} {hash-table}
+}
+
+{\small\Defgeneric {gethash} {key hash-table \optional default}
+}
+
+{\small\Defgeneric {(setf gethash)} {new-value key hash-table \optional default}
+}
+
+{\small\Defgeneric {hash-table-test} {hash-table}
+}
+
+{\small\Defgeneric {remhash} {key hash-table}
+}
+
+{\small\Defgeneric {clrhash} {hash-table}
+}
+
+{\small\Defgeneric {maphash} {hash-table}
+}
+
+Some additional generic functions are provided, which should be implemented
+by a hash table implementation:
+
+\Defgeneric {make-hash-table-iterator} {hash-table}
+
+Return a function which implements the iterator of
+\cl{with-hash-table-iterator}.
+
+Furthermore, some functions will be useful for implementing a hash
+table:
+
+\Defgeneric {\%hash-table-test} {hash-table}
+
+Return the test function used for comparing keys. This function is necessary
+because \cl{hash-table-test} must return a symbol which designates a
+standardized test function, and not the function itself; however, an
+implementor of a hash table is likely to want to avoid accessing the global
+environment when probing keys.
+
+\Defun {find-hash-function} {name}
+
+Return a hash function for the standardized hash table test function
+designated by the symbol \cl{name}, or signal an error.
+
+\subsection{Base classes}
+
+\Defclass {hash-table}
+
+This class is the base class of all hash tables.  It is a subclass of
+the class \texttt{standard-object}.
+
+\Defclass {hashing-hash-table}
+
+This class provides accessors common for all hash tables which hash
+the keys used.  It is a subclass of the class \cl{hash-table}.
+
+\subsection{Hashing hash table protocol}
+
+\Defgeneric {hash-table-hash-function} {hash-table}
+
+\Definitarg {:hash-function}
+
+Return a function which accepts a non-negative fixnum \term{offset value}
+and a key object to hash, returning a non-negative fixnum hash.
+
+The hash function defaults to
+\cl{(find-hash-function (hash-table-test hash-table))}.
+
+\Defgeneric {hash-table-offset} {hash-table}
+
+\Definitarg {:hash-offset}
+
+The random offset used for hashing with this hash table.  A random
+offset is used to avoid an \term{algorithmic complexity attack}, where
+an adversary could (indirectly) insert keys that they know will all
+collide in the hash table, greatly slowing down an application.  It is
+expected that this offset will be used to perturb the hashes
+generated, perhaps by being used as the initial state of a hashing
+algorithm.
+
+As such, this offset must not be exposed to an untrusted user; but the
+offset can be fixed and read for debugging purposes.
+
+\Defgeneric {hash} {hash-table key}
+
+Return the hash of the provided key, specific to the provided hash table.
+
+\subsection{Implementation}
+
+\subsubsection{Hash table implemented as a list of entries}
+
+\Defclass {list-hash-table}
+
+This class is a subclass of the class \texttt{hash-table}.
+It provides and implementation of the protocol where the entries are
+stored as an association list where the key is the \texttt{car} of the
+element in the list and the value is the \texttt{cdr} of the element
+in the list.
+
+{\small\Defmethod {gethash} {key (hash-table {\tt list-hash-table})
+    \optional default}
+}
+
+This method calls the generic function \texttt{contents} with
+\textit{hash-table} as an argument to obtain a list of entries of
+\texttt{hash-table}.  It also calls the generic function
+\texttt{hash-table-test} with \textit{hash-table} as an argument to
+obtain a function to be used to compare the keys of the entries to
+\texttt{key}.  It then calls the standard \commonlisp{} function
+\texttt{assoc}, passing it \textit{key}, the list of entries, and the
+test function as the value of the keyword argument \texttt{:test}.  If
+the call returns a non-\texttt{nil} value (i.e. a valid entry), then
+the method returns two values, the \texttt{cdr} of that entry and
+\texttt{t}.  Otherwise, the method return \texttt{nil} and
+\texttt{nil}.
+
+\subsubsection{Hash table implemented as a vector of buckets}
+
+\Defclass {bucket-hash-table}
+
+This class is a subclass of \texttt{hash-table}.  The implementation
+uses a vector of buckets.
+
+\subsubsection{Hash table implemented using linear probing}
+
+\Defclass {linear-probing-hash-table}
+
+This class is a subclass of \texttt{hash-table}.  The implementation
+uses linear probing, based on the cache-aware hash table designed by
+Matt Kulukundis and described in a CppCon talk entitled
+``Designing a Fast, Efficient, Cache-friendly Hash Table, Step by Step''
+\url{https://www.youtube.com/watch?v=ncHmEUmJZf4}.
+
+
 %%  LocalWords:  subclasses
 
 
