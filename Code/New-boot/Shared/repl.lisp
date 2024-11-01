@@ -16,27 +16,33 @@
              (finish-output))))
 
 (defun repl1 (boot)
-  (let* ((environment (e1 boot))
+  (let* ((*boot* boot)
+         (environment (e1 boot))
          (package (find-package '#:sicl-new-boot-phase-1))
          (client-symbol (find-symbol "CLIENT" package))
          (client-object (make-instance client-symbol
-                          :environment environment)))
+                          :environment environment))
+         (env:*client* client-object))
     (repl client-object environment)))
 
 (defun repl2 (boot)
-  (let* ((environment (e2 boot))
+  (let* ((*boot* boot)
+         (environment (e2 boot))
          (package (find-package '#:sicl-new-boot-phase-2))
          (client-symbol (find-symbol "CLIENT" package))
          (client-object (make-instance client-symbol
-                          :environment environment)))
+                          :environment environment))
+         (env:*client* client-object))
     (repl client-object environment)))
 
 (defun repl3 (boot)
-  (let* ((environment (e3 boot))
+  (let* ((*boot* boot)
+         (environment (e3 boot))
          (package (find-package '#:sicl-new-boot-phase-3))
          (client-symbol (find-symbol "CLIENT" package))
          (client-object (make-instance client-symbol
-                          :environment environment)))
+                          :environment environment))
+         (env:*client* client-object))
     (repl client-object environment)))
 
 (defun repl4 (boot)
