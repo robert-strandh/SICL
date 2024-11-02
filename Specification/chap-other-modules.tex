@@ -166,8 +166,21 @@ It uses the architecture.builder-protocol to communicate with a module
 that creates the result of the parse.
 
 We use it together with the Iconoclast library, described in
-\refChap{chap-ast} which creates abstract syntax trees represented as
+\refSec{sec-ast} which creates abstract syntax trees represented as
 a graph of instances of standard classes.
 
 The library can be found here:
 https://github.com/scymtym/s-expression-syntax 
+
+\section{Abstract syntax trees}
+\label{sec-ast}
+
+The Iconoclast library defines a large number of classes used to
+represent abstract syntax trees, or ASTs.  We use this library as the
+first compilation phase in that the s-expression-syntax library
+described in \refSec{sec-s-expression-syntax} is invoked to parse
+the source code and Iconoclast creates a graph of AST instances that
+represents all aspects of the source code, including source positions
+for each expression.
+
+The library can be found here: https://github.com/robert-strandh/Iconoclast
