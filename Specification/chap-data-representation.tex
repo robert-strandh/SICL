@@ -87,7 +87,10 @@ header always consists of two consecutive words aligned on a
 double-word boundary (just like \texttt{cons} cells).  The first word
 always contains a tagged pointer to a \emph{class} object (which is
 another standard object).  The second word contains a tagged pointer
-(with tag $111$) to the first word of the rack.
+(with tag $111$) to the first word of the rack.%
+\footnote{But see
+  \refApp{sec-alternative-representation-of-standard-objects}
+for a possible alternative representation of standard-objects.}
 
 One advantage of representing standard objects this way is that we can
 make sure that the rack is \emph{internally consistent}.  To explain
