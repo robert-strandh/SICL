@@ -6,5 +6,6 @@
   :components
   ((:file "packages")
    (:file "client")
+   (:file "configuration")
    (:file "finalize-inheritance")
    (:file "boot")))
