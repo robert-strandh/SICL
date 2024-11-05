@@ -2,6 +2,10 @@
 
 (eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
 
+(defun wrap-environment (environment)
+  (make-instance 'trucler-reference:environment
+    :global-environment environment))
+
 (defun boot (boot)
   (format *trace-output* "**************** Phase 5~%")
   (let* ((e3 (sb:e3 boot))
@@ -12,7 +16,4 @@
     (reinitialize-instance client :environment e4)
     (finalize-inheritance client e3 e4)
     (sb:ensure-asdf-system
-     client
-     (make-instance 'trucler-reference:environment
-       :global-environment e3)
-     "sicl-clos-satiation")))
+     client (wrap-environment e3) "sicl-clos-satiation")))
