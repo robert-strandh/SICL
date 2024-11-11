@@ -2,6 +2,8 @@
 
 (eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
 
+(defparameter *trace-stamp* nil)
+
 (defun define-class-of-and-stamp (client e1 e2)
   (flet ((find-class-e2 (class-name)
            (let ((f (clo:fdefinition client e2 'find-class)))
@@ -31,4 +33,14 @@
       (setf (clo:fdefinition client e2 'class-of) #'local-class-of)
       (setf (clo:fdefinition client e2 @clostrophilia:stamp)
             (lambda (object)
-              (unique-number (local-class-of object)))))))
+              (when *trace-stamp*
+                (format *trace-output*
+                        "In E2, taking the stamp of ~s~%"
+                        object))
+              (let ((result (unique-number (local-class-of object))))
+                (when *trace-stamp*
+                  (format *trace-output*
+                          "In E2, stamp of ~s is ~s~%"
+                          object
+                          result))
+                result))))))
