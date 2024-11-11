@@ -37,4 +37,5 @@
    #:define-ecclesia-functions
    #:add-package-local-nickname
    #:fill-environment
+   #:stamp
    #:bt))
