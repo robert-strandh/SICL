@@ -34,4 +34,5 @@
    (:file "function-cell-interception")
    (:file "fill-environment")
    (:file "backtrace")
-   (:file "repl")))
+   (:file "repl")
+   (:file "trace")))
