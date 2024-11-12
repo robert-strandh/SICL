@@ -36,7 +36,9 @@
                 (format *trace-output*
                         "In E3, taking the stamp of ~s~%"
                         object))
-              (let ((result (unique-number (local-class-of object))))
+              (let ((result (if (typep object 'sb:header)
+                                (sb:stamp object)
+                                (unique-number (local-class-of object)))))
                 (when *trace-stamp*
                   (format *trace-output*
                           "In E3, stamp of ~s is ~s~%"
