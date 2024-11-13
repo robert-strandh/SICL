@@ -42,12 +42,3 @@
     (when (typep wrapped-function 'trace-wrapper)
       (setf (clostrum:fdefinition client environment name)
             (original-function wrapped-function)))))
-
-(defun function-names (environment)
-  (let ((result '()))
-    (maphash
-     (lambda (name entry)
-       (when (eq (clostrum-basic::status entry) :function)
-         (push name result)))
-     (clostrum-basic::functions environment))
-    result))

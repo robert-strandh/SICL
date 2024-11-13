@@ -35,4 +35,5 @@
    (:file "fill-environment")
    (:file "backtrace")
    (:file "repl")
-   (:file "trace")))
+   (:file "trace")
+   (:file "debugging-tools")))
