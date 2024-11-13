@@ -14,3 +14,11 @@
 (defun fs (name package-name)
   (let ((package (gethash package-name (sicl-new-boot::packages *b*))))
     (parcl-low:find-symbol (make-instance 'client) package name)))
+
+;;; The name of this function means "find function" but is shorter for
+;;; convenience.
+(defun ff (function-name package-name environment)
+  (clostrum:fdefinition
+   (make-instance 'client)
+   environment
+   (fs function-name package-name)))
