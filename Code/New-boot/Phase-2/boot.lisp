@@ -183,6 +183,8 @@
        client environment "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
        client environment "clostrophilia-method-combination-base"))
+    (sb:ensure-asdf-system
+     client environment "sicl-new-boot-class-finalization")
     (setf (clo:fdefinition client global-environment
                            @clostrophilia:make-method-instance)
           (clo:fdefinition client (sb:e1 boot) 'make-instance))
