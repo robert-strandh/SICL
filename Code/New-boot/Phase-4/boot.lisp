@@ -32,6 +32,11 @@
     (sb:define-environment-functions client global-environment)
     (sb:define-clostrophilia-find-method-combination-template
         client global-environment)
+    (let ((symbol @clostrophilia:standard-instance-access))
+      (setf (clo:fdefinition client global-environment symbol)
+            #'sb:standard-instance-access)
+      (setf (clo:fdefinition client global-environment `(setf ,symbol))
+            #'(setf sb:standard-instance-access)))
     (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
     (sb:define-straddle-functions client global-environment (sb:e3 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
@@ -87,11 +92,6 @@
     (load-predicament client environment global-environment)
     (clo:make-variable client (sb:e3 boot)
                        @predicament:*condition-maker* 'make-condition)
-    (let ((symbol @clostrophilia:standard-instance-access))
-      (setf (clo:fdefinition client global-environment symbol)
-            #'sb:standard-instance-access)
-      (setf (clo:fdefinition client global-environment `(setf ,symbol))
-            #'(setf sb:standard-instance-access)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
