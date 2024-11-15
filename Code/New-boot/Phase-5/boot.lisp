@@ -16,6 +16,5 @@
          (env:*environment* e4))
     (reinitialize-instance c3 :environment e3)
     (reinitialize-instance c4 :environment e4)
-    (finalize-inheritance c4 e3 e4)
     (sb:ensure-asdf-system
      c3 (wrap-environment e3) "sicl-clos-satiation")))
