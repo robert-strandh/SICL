@@ -32,8 +32,9 @@
           (clo:fdefinition client e3 @clostrophilia:class-finalized-p))
         (finalize-inheritance
           (clo:fdefinition client e3 @clostrophilia:finalize-inheritance)))
-    (declare (ignore class-finalized-p))
     (initialize-class-names client)
     (loop for symbol in  *class-names*
           for class = (funcall find-class symbol)
-          do (funcall finalize-inheritance class))))
+          unless (funcall class-finalized-p class)
+            do (format *trace-output* "Name: ~s~%" symbol)
+               (funcall finalize-inheritance class))))
