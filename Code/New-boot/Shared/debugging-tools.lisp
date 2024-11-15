@@ -23,8 +23,15 @@
    environment
    (fs function-name package-name boot)))
 
+;;; The name of this function means "find class" but is shorter for
+;;; convenience.
 (defun fc (class-name package-name environment boot)
   (clostrum:find-class
    (make-instance 'client)
    environment
    (fs class-name package-name boot)))
+
+;;; The name of this function means "unique number" but is shorter for
+;;; convenience.
+(defun un (class)
+  (standard-instance-access class 2))
