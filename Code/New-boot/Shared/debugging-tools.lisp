@@ -22,3 +22,9 @@
    (make-instance 'client)
    environment
    (fs function-name package-name boot)))
+
+(defun fc (class-name package-name environment boot)
+  (clostrum:find-class
+   (make-instance 'client)
+   environment
+   (fs class-name package-name boot)))
