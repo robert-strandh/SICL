@@ -11,3 +11,9 @@
      &rest initargs
      &key &allow-other-keys)
   (finalize-inheritance class))
+
+(defmethod initialize-instance :after
+    ((class sicl-conditions:condition-class)
+     &rest initargs
+     &key &allow-other-keys)
+  (finalize-inheritance class))
