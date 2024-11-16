@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "client")
    (:file "configuration")
+   (:file "satiation")
    (:file "boot")))
