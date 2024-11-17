@@ -15,3 +15,14 @@
     (and (= (length methods) 1)
          (eq (funcall class-of-function (first methods))
              standard-slot-reader-class))))
+
+(defun generic-function-is-a-slot-writer-p
+    (generic-function
+     generic-function-methods-function
+     class-of-function
+     standard-slot-writer-class)
+  (let ((methods
+          (funcall generic-function-methods-function generic-function)))
+    (and (= (length methods) 1)
+         (eq (funcall class-of-function (first methods))
+             standard-slot-writer-class))))
