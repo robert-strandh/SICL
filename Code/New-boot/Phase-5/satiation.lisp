@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-new-boot-phase-5)
 
+(eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
+
 (defun class-is-subclass-of-metaobject-p
     (class metaobject-class class-precedence-list-function)
   (member metaobject-class (funcall class-precedence-list-function class)
