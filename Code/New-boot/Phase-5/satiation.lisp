@@ -81,3 +81,48 @@
         when (and (typep operator 'sb:header)
                   (eq (sb:class operator) standard-generic-function-class))
           collect operator))
+
+(defun satiate-metaobject-slot-accessors-1 (client e3 e4)
+  (let* ((generic-function-methods-function
+           (clo:fdefinition
+            client e3 @clostrophilia:generic-function-methods))
+         (class-of-function
+           (clo:fdefinition
+            client e3 @clostrophilia:class-of))
+         (standard-generic-function-class
+           (clo:find-class client e3 'standard-generic-function))
+         (standard-slot-reader-class
+           (clo:find-class client e3 @clostrophilia:standard-slot-reader))
+         (standard-slot-writer-class
+           (clo:find-class client e3 @clostrophilia:standard-slot-writer))
+         (method-specializers-function
+           (clo:fdefinition client e3 @clostrophilia:method-specializers))
+         (metaobject-class
+           (clo:find-class client e3 @clostrophilia:metaobject))
+         (class-precedence-list-function
+           (clo:fdefinition client e3 @clostrophilia:class-precedence-list))
+         (table (clostrum-basic::functions e4))
+         (standard-generic-functions
+           (find-all-standard-generic-functions
+            table standard-generic-function-class))
+         (satiate-function
+           (clo:fdefinition
+            client e3 @clostrophilia:satiate-generic-function)))
+    (loop for standard-generic-function in standard-generic-functions
+          when (or (generic-function-is-a-metaobject-slot-reader-p
+                    standard-generic-function
+                    generic-function-methods-function
+                    class-of-function
+                    standard-slot-reader-class
+                    method-specializers-function
+                    metaobject-class
+                    class-precedence-list-function)
+                   (generic-function-is-a-metaobject-slot-writer-p
+                    standard-generic-function
+                    generic-function-methods-function
+                    class-of-function
+                    standard-slot-writer-class
+                    method-specializers-function
+                    metaobject-class
+                    class-precedence-list-function))
+            do (funcall satiate-function standard-generic-function))))
