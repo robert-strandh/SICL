@@ -11,29 +11,29 @@
     (generic-function
      generic-function-methods-function
      class-of-function
-     standard-slot-reader-class)
+     standard-reader-method-class)
   (let ((methods
           (funcall generic-function-methods-function generic-function)))
     (and (= (length methods) 1)
          (eq (funcall class-of-function (first methods))
-             standard-slot-reader-class))))
+             standard-reader-method-class))))
 
 (defun generic-function-is-a-slot-writer-p
     (generic-function
      generic-function-methods-function
      class-of-function
-     standard-slot-writer-class)
+     standard-writer-method-class)
   (let ((methods
           (funcall generic-function-methods-function generic-function)))
     (and (= (length methods) 1)
          (eq (funcall class-of-function (first methods))
-             standard-slot-writer-class))))
+             standard-writer-method-class))))
 
 (defun generic-function-is-a-metaobject-slot-reader-p
     (generic-function
      generic-function-methods-function
      class-of-function
-     standard-slot-reader-class
+     standard-reader-method-class
      method-specializers-function
      metaobject-class
      class-precedence-list-function)
@@ -41,7 +41,7 @@
         generic-function
         generic-function-methods-function
         class-of-function
-        standard-slot-reader-class)
+        standard-reader-method-class)
        (let* ((methods
                 (funcall generic-function-methods-function generic-function))
               (method (first methods))
@@ -55,7 +55,7 @@
     (generic-function
      generic-function-methods-function
      class-of-function
-     standard-slot-writer-class
+     standard-writer-method-class
      method-specializers-function
      metaobject-class
      class-precedence-list-function)
@@ -63,7 +63,7 @@
         generic-function
         generic-function-methods-function
         class-of-function
-        standard-slot-writer-class)
+        standard-writer-method-class)
        (let* ((methods
                 (funcall generic-function-methods-function generic-function))
               (method (first methods))
@@ -91,10 +91,10 @@
             client e3 @clostrophilia:class-of))
          (standard-generic-function-class
            (clo:find-class client e3 'standard-generic-function))
-         (standard-slot-reader-class
-           (clo:find-class client e3 @clostrophilia:standard-slot-reader))
-         (standard-slot-writer-class
-           (clo:find-class client e3 @clostrophilia:standard-slot-writer))
+         (standard-reader-method-class
+           (clo:find-class client e3 @clostrophilia:standard-reader-method))
+         (standard-writer-method-class
+           (clo:find-class client e3 @clostrophilia:standard-writer-method))
          (method-specializers-function
            (clo:fdefinition client e3 @clostrophilia:method-specializers))
          (metaobject-class
@@ -113,7 +113,7 @@
                     standard-generic-function
                     generic-function-methods-function
                     class-of-function
-                    standard-slot-reader-class
+                    standard-reader-method-class
                     method-specializers-function
                     metaobject-class
                     class-precedence-list-function)
@@ -121,7 +121,7 @@
                     standard-generic-function
                     generic-function-methods-function
                     class-of-function
-                    standard-slot-writer-class
+                    standard-writer-method-class
                     method-specializers-function
                     metaobject-class
                     class-precedence-list-function))
