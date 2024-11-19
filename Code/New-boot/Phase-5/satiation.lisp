@@ -48,3 +48,25 @@
               (specializer (first specializers)))
          (class-is-subclass-of-metaobject-p
           specializer metaobject-class class-precedence-list-function)))) 
+
+(defun generic-function-is-a-metaobject-slot-writer-p
+    (generic-function
+     generic-function-methods-function
+     class-of-function
+     standard-slot-writer-class
+     method-specializers-function
+     metaobject-class
+     class-precedence-list-function)
+  (and (generic-function-is-a-slot-writer-p
+        generic-function
+        generic-function-methods-function
+        class-of-function
+        standard-slot-writer-class)
+       (let* ((methods
+                (funcall generic-function-methods-function generic-function))
+              (method (first methods))
+              (specializers
+                (funcall method-specializers-function method))
+              (specializer (first specializers)))
+         (class-is-subclass-of-metaobject-p
+          specializer metaobject-class class-precedence-list-function)))) 
