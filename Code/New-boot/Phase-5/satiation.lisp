@@ -26,3 +26,25 @@
     (and (= (length methods) 1)
          (eq (funcall class-of-function (first methods))
              standard-slot-writer-class))))
+
+(defun generic-function-is-a-metaobject-slot-reader-p
+    (generic-function
+     generic-function-methods-function
+     class-of-function
+     standard-slot-reader-class
+     method-specializers-function
+     metaobject-class
+     class-precedence-list-function)
+  (and (generic-function-is-a-slot-reader-p
+        generic-function
+        generic-function-methods-function
+        class-of-function
+        standard-slot-reader-class)
+       (let* ((methods
+                (funcall generic-function-methods-function generic-function))
+              (method (first methods))
+              (specializers
+                (funcall method-specializers-function method))
+              (specializer (first specializers)))
+         (class-is-subclass-of-metaobject-p
+          specializer metaobject-class class-precedence-list-function)))) 
