@@ -4,8 +4,9 @@
 
 (defun class-is-subclass-of-metaobject-p
     (class metaobject-class class-precedence-list-function)
-  (member metaobject-class (funcall class-precedence-list-function class)
-          :test #'eq))
+  (let ((class-precedence-list
+          (funcall class-precedence-list-function class)))
+    (member metaobject-class class-precedence-list :test #'eq)))
 
 (defun generic-function-is-a-slot-reader-p
     (generic-function
@@ -98,7 +99,7 @@
          (method-specializers-function
            (clo:fdefinition client e3 @clostrophilia:method-specializers))
          (metaobject-class
-           (clo:find-class client e3 @clostrophilia:metaobject))
+           (clo:find-class client e4 @clostrophilia:metaobject))
          (class-precedence-list-function
            (clo:fdefinition client e3 @clostrophilia:class-precedence-list))
          (table (clostrum-basic::functions e4))
