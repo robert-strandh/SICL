@@ -70,7 +70,7 @@
               (method (first methods))
               (specializers
                 (funcall method-specializers-function method))
-              (specializer (first specializers)))
+              (specializer (second specializers)))
          (class-is-subclass-of-metaobject-p
           specializer metaobject-class class-precedence-list-function))))
 
