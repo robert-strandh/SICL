@@ -165,10 +165,10 @@
 ;;; This variable contains the function GENERIC-FUNCTION-METHODS.
 (defvar *generic-function-methods-function*)
 
-(defun function-is-a-metaobject-function-p (function)
-  (and (typep function 'sb:header)
-       (eq (sb:class function) *standard-generic-function-class*)
+(defun operator-is-a-metaobject-function-p (operator)
+  (and (typep operator 'sb:header)
+       (eq (sb:class operator) *standard-generic-function-class*)
        (let ((methods
-               (funcall *generic-function-methods-function* function)))
+               (funcall *generic-function-methods-function* operator)))
          (loop for method in methods
                  thereis (method-is-a-metaobject-method-p method)))))
