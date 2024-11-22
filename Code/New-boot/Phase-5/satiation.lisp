@@ -128,3 +128,21 @@
                     class-precedence-list-function))
             do (format *trace-output* "Satiating: ~s~%" name)
                (funcall satiate-function function))))
+
+;;; A "metaobject method" is what we call a method that has at least
+;;; one parameter specialized to a subclass of METAOBJECT.  A
+;;; "metaobject function" is a generic function with at least one
+;;; metaobject method.
+
+;;; We use this function to find all the subclasses of the class
+;;; METAOBJECT so that we can use MEMBER directly on a specializer to
+;;; see whether it is a subclass of METAOBJECT.
+(defun find-all-subclasses (class class-direct-subclasses-function)
+  (let ((direct-subclasses (funcall class-direct-subclasses-function class)))
+    (if (null direct-subclasses)
+        (list class)
+        (cons class
+              (loop for direct-subclass in direct-subclasses
+                    append (find-all-subclasses
+                            direct-subclass
+                            class-direct-subclasses-function))))))
