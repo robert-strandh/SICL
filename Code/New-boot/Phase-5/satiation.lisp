@@ -158,3 +158,17 @@
   (let ((specializers (funcall *method-specializers-function* method)))
     (loop for specializer in specializers
             thereis (member specializer *metaobject-subclasses*))))
+
+;;; This variable contains the class STANDARD-GENERIC-FUNCTION.
+(defvar *standard-generic-function-class*)
+
+;;; This variable contains the function GENERIC-FUNCTION-METHODS.
+(defvar *generic-function-methods-function*)
+
+(defun function-is-a-metaobject-function-p (function)
+  (and (typep function 'sb:header)
+       (eq (sb:class function) *standard-generic-function-class*)
+       (let ((methods
+               (funcall *generic-function-methods-function* function)))
+         (loop for method in methods
+                 thereis (method-is-a-metaobject-method-p method)))))
