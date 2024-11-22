@@ -172,3 +172,28 @@
                (funcall *generic-function-methods-function* operator)))
          (loop for method in methods
                  thereis (method-is-a-metaobject-method-p method)))))
+
+(defun satiate-metaobject-functions-1 (client e3 e4)
+  (let* ((*generic-function-methods-function*
+           (clo:fdefinition
+            client e3 @clostrophilia:generic-function-methods))
+         (*standard-generic-function-class*
+           (clo:find-class client e3 'standard-generic-function))
+         (*method-specializers-function*
+           (clo:fdefinition client e3 @clostrophilia:method-specializers))
+         (metaobject-class
+           (clo:find-class client e4 @clostrophilia:metaobject))
+         (class-direct-subclasses-function
+           (clo:fdefinition client e3 @clostrophilia:class-direct-subclasses))
+         (*metaobject-subclasses*
+           (find-all-subclasses metaobject-class class-direct-subclasses-function))
+         (table (clostrum-basic::functions e4))
+         (satiate-function
+           (clo:fdefinition
+            client e3 @clostrophilia:satiate-generic-function)))
+    (loop for entry being each hash-value of table
+          for cell = (clostrum-basic::cell entry)
+          for operator = (car cell)
+          when (operator-is-a-metaobject-function-p operator)
+            do (funcall satiate-function operator))))
+          
