@@ -146,3 +146,9 @@
                     append (find-all-subclasses
                             direct-subclass
                             class-direct-subclasses-function))))))
+
+(defun method-is-a-metaobject-method-p
+    (method method-specializers-function metaobject-subclasses)
+  (let ((specializers (funcall method-specializers-function method)))
+    (loop for specializer in specializers
+            thereis (member specializer metaobject-subclasses))))
