@@ -196,4 +196,3 @@
           for operator = (car cell)
           when (operator-is-a-metaobject-function-p operator)
             do (funcall satiate-function operator))))
-          
