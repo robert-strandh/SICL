@@ -8,4 +8,5 @@
    (:file "client")
    (:file "configuration")
    (:file "satiation")
+   (:file "tie-the-knot")
    (:file "boot")))
