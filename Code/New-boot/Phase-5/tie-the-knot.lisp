@@ -34,6 +34,10 @@
         for class = (car cell)
         do (push class *worklist*)))
 
+(defun object-is-an-impure-ersatz-object-p (object)
+  (and (typep object 'sb:header)
+       (not (typep (sb:class object) 'sb:header))))
+
 (defun replacement (item)
   (unless (gethash item *visited*)
     (setf (gethash item *visited*) t)
