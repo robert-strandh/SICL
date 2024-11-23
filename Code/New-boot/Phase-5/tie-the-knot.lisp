@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-new-boot-phase-5)
 
+;;; Create a hash table mapping each classe in E3 to the analogous
+;;; class in E4.
 (defun create-class-mapping (e3 e4)
   (let ((table3 (clostrum-basic::types e3))
         (table4 (clostrum-basic::types e4))
