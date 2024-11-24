@@ -17,4 +17,5 @@
     (reinitialize-instance c3 :environment e3)
     (reinitialize-instance c4 :environment e4)
     (sb:ensure-asdf-system
-     c3 (wrap-environment e3) "sicl-clos-satiation")))
+     c3 (wrap-environment e3) "sicl-clos-satiation")
+    (satiate-metaobject-functions-1 c3 e3 e4)))
