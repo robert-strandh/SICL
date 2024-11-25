@@ -34,6 +34,7 @@
        (not (typep (sb:class object) 'sb:header))))
 
 (defun add-to-worklist (item)
+  (assert (not (object-is-an-impure-ersatz-object-p item)))
   (push item  *worklist*))
 
 (defun load-worklist-with-classes (e4)
