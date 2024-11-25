@@ -88,6 +88,23 @@
       ;; Otherwise this object already has a pure class.  Do nothing.
       nil))
     
+(defun find-operator-in-e3 (operator4 e3)
+  (loop with table = (clostrum-basic::functions e3)
+        for entry being each hash-value of table using (hash-key name)
+        for cell = (clostrum-basic::cell entry)
+        for operator3 = (car cell)
+        when (eq operator3 operator4)
+          do (format *trace-output* "************Name: ~s~%" name)))
+
+(defun find-shared-operators (e3 e4)
+  (loop with table = (clostrum-basic::functions e4)
+        for entry being each hash-value of table
+        for cell = (clostrum-basic::cell entry)
+        for operator = (car cell)
+        when (or (object-is-an-impure-ersatz-object-p operator)
+                 (typep operator 'common-boot-ast-interpreter::closure))
+          do (stuff2 operator e3)))
+
 (defmethod process-item ((item cons))
   (setf (car item) (replacement (car item)))
   (setf (cdr item) (replacement (cdr item))))
