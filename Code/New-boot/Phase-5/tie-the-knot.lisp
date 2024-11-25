@@ -70,7 +70,6 @@
 (defvar *class-slots-function*)
 
 (defmethod process-item ((item sb:header))
-  (assert (not (object-is-an-impure-ersatz-object-p item)))
   (if (object-is-an-impure-ersatz-object-p (sb:class item))
       ;; This is the case we want to fix up.
       (let* ((class (sb:class item))
