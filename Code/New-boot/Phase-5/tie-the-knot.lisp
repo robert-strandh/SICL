@@ -29,6 +29,10 @@
 ;;; This variable holds the list of objects yet to be processed.
 (defvar *worklist*)
 
+(defun object-is-an-impure-ersatz-object-p (object)
+  (and (typep object 'sb:header)
+       (not (typep (sb:class object) 'sb:header))))
+
 (defun add-to-worklist (item)
   (push item  *worklist*))
 
@@ -45,10 +49,6 @@
         for cell = (clostrum-basic::cell entry)
         for operator = (car cell)
         do (add-to-worklist operator)))
-
-(defun object-is-an-impure-ersatz-object-p (object)
-  (and (typep object 'sb:header)
-       (not (typep (sb:class object) 'sb:header))))
 
 (defun replacement (item)
   (if (object-is-an-impure-ersatz-object-p item)
