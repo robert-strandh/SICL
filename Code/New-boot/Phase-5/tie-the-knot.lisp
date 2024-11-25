@@ -29,12 +29,22 @@
 ;;; This variable holds the list of objects yet to be processed.
 (defvar *worklist*)
 
+(defun add-to-worklist (item)
+  (push item  *worklist*))
+
 (defun load-worklist-with-classes (e4)
   (loop with table = (clostrum-basic::types e4)
         for entry being each hash-value of table
         for cell = (clostrum-basic::cell entry)
         for class = (car cell)
-        do (push class *worklist*)))
+        do (add-to-worklist class)))
+
+(defun load-worklist-with-operators (e4)
+  (loop with table = (clostrum-basic::functions e4)
+        for entry being each hash-value of table
+        for cell = (clostrum-basic::cell entry)
+        for operator = (car cell)
+        do (add-to-worklist operator)))
 
 (defun object-is-an-impure-ersatz-object-p (object)
   (and (typep object 'sb:header)
@@ -48,7 +58,7 @@
         new-item)
       (progn (unless (gethash item *visited*)
                (setf (gethash item *visited*) t)
-               (push item *worklist*))
+               (add-to-worklist item))
              item)))
 
 (defgeneric process-item (item))
@@ -89,5 +99,6 @@
         (*class-slots-function*
           (clostrum:fdefinition client e3 @clostrophilia:class-slots)))
     (load-worklist-with-classes e4)
+    (load-worklist-with-operators e4)
     (loop until (null *worklist*)
           do (process-item (pop *worklist*)))))
