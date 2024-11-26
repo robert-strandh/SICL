@@ -26,6 +26,27 @@
     (fixup @clostrophilia:ensure-generic-function+1
            'ensure-generic-function)))
 
+(defun find-operator-in-e3 (operator4 e3)
+  (loop with table = (clostrum-basic::functions e3)
+        for entry being each hash-value of table using (hash-key name)
+        for cell = (clostrum-basic::cell entry)
+        for operator3 = (car cell)
+        when (eq operator3 operator4)
+          return name
+        finally (return nil)))
+
+(defun fix-backward-referring-functions (client e3 e4)
+  (loop with table = (clostrum-basic::functions e4)
+        for entry being each hash-value of table using (hash-key name4)
+        for cell = (clostrum-basic::cell entry)
+        for operator = (car cell)
+        when (or (object-is-an-impure-ersatz-object-p operator)
+                 (typep operator 'common-boot-ast-interpreter::closure))
+          do (let ((name3 (find-operator-in-e3 operator e3)))
+               (unless (null name3)
+                 (setf (clo:fdefinition client e4 name4)
+                       (clo:fdefinition client e4 name3))))))
+
 ;;; Create a hash table mapping each class in E3 to the analogous
 ;;; class in E4.
 (defun create-class-mapping (e3 e4)
@@ -111,28 +132,6 @@
                 do (setf (aref rack i) (replacement (aref rack i))))))
       ;; Otherwise this object already has a pure class.  Do nothing.
       nil))
-    
-(defun find-operator-in-e3 (operator4 e3)
-  (loop with table = (clostrum-basic::functions e3)
-        for entry being each hash-value of table using (hash-key name)
-        for cell = (clostrum-basic::cell entry)
-        for operator3 = (car cell)
-        when (eq operator3 operator4)
-          return name
-        finally (return nil)))
-
-(defun find-shared-operators (e3 e4)
-  (loop with table = (clostrum-basic::functions e4)
-        for entry being each hash-value of table using (hash-key name4)
-        for cell = (clostrum-basic::cell entry)
-        for operator = (car cell)
-        when (or (object-is-an-impure-ersatz-object-p operator)
-                 (typep operator 'common-boot-ast-interpreter::closure))
-          do (let ((name3 (find-operator-in-e3 operator e3)))
-               (unless (null name3)
-                 (format *trace-output*
-                         "************Name3: ~s Name4: ~s~%"
-                         name3 name4)))))
 
 (defmethod process-item ((item cons))
   (setf (car item) (replacement (car item)))
