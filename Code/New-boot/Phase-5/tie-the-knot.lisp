@@ -103,7 +103,7 @@
         for operator = (car cell)
         when (or (object-is-an-impure-ersatz-object-p operator)
                  (typep operator 'common-boot-ast-interpreter::closure))
-          do (stuff2 operator e3)))
+          do (find-operator-in-e3 operator e3)))
 
 (defmethod process-item ((item cons))
   (setf (car item) (replacement (car item)))
