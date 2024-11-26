@@ -2,6 +2,30 @@
 
 (eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
 
+;;; In phase 4, we set a number of function names of the form NAME+1
+;;; in E3 to refer to the analogous function NAME in E4.  In
+;;; subsequent code, we detect functions that are shared between E3
+;;; and E4, and we assume that the function in E4 must be changed, but
+;;; that's not the case for the functions of the form NAME+1 and NAME.
+;;; So we remove the NAME+1 function from E3, and we set NAME+1 in E4,
+;;; to refer to NAME in E4.
+(defun fix-forward-referring-functions (client e3 e4)
+  (flet ((fixup (name+1 name)
+           (clo:fmakunbound client e3 name+1)
+           (setf (clo:fdefinition client e4 name+1)
+                 (clo:fdefinition client e4 name))))
+    (fixup @sicl-clos:find-class+1 @sicl-clos:find-class)
+    (fixup @clostrophilia:slot-boundp-using-location+1
+           @clostrophilia:slot-boundp-using-location)
+    (let ((s+1 @clostrophilia:slot-value-using-location+1)
+          (s @clostrophilia:slot-value-using-location))
+      (fixup s+1 s)
+      (fixup `(setf ,s+1) `(setf ,s)))
+    (fixup @clostrophilia:slot-makunbound-using-location+1
+           @clostrophilia:slot-makunbound-using-location)
+    (fixup @clostrophilia:ensure-generic-function+1
+           'ensure-generic-function)))
+
 ;;; Create a hash table mapping each class in E3 to the analogous
 ;;; class in E4.
 (defun create-class-mapping (e3 e4)
@@ -94,16 +118,21 @@
         for cell = (clostrum-basic::cell entry)
         for operator3 = (car cell)
         when (eq operator3 operator4)
-          do (format *trace-output* "************Name: ~s~%" name)))
+          return name
+        finally (return nil)))
 
 (defun find-shared-operators (e3 e4)
   (loop with table = (clostrum-basic::functions e4)
-        for entry being each hash-value of table
+        for entry being each hash-value of table using (hash-key name4)
         for cell = (clostrum-basic::cell entry)
         for operator = (car cell)
         when (or (object-is-an-impure-ersatz-object-p operator)
                  (typep operator 'common-boot-ast-interpreter::closure))
-          do (find-operator-in-e3 operator e3)))
+          do (let ((name3 (find-operator-in-e3 operator e3)))
+               (unless (null name3)
+                 (format *trace-output*
+                         "************Name3: ~s Name4: ~s~%"
+                         name3 name4)))))
 
 (defmethod process-item ((item cons))
   (setf (car item) (replacement (car item)))
