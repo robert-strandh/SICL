@@ -20,13 +20,13 @@
     (sb:ensure-asdf-system
      c3 (wrap-environment e3) "sicl-clos-satiation")
     (satiate-metaobject-functions-1 c3 e3 e4)
-    ;; In phase 4, we set FIND-CLASS+1 in E3 to refer to FIND-CLASS in
-    ;; E4, because MAKE-INSTANCE calls FIND-CLASS+1.  In the following
-    ;; code, we detect functions that are shared between E3 and E4,
-    ;; and we assume that the function in E4 must be changed, but
-    ;; that's not the case for FIND-CLASS.  So we remove FIND-CLASS+1
-    ;; from E3, and we set FIND-CLASS+1 in E4, to refer to FIND-CLASS
-    ;; in E4.
+    ;; In phase 4, we set a number of function names of the form
+    ;; NAME+1 in E3 to refer to the analogous function NAME in E4.  In
+    ;; subsequent code, we detect functions that are shared between E3
+    ;; and E4, and we assume that the function in E4 must be changed,
+    ;; but that's not the case for the functions of the form NAME+1
+    ;; and NAME.  So we remove the NAME+1 function from E3, and we set
+    ;; NAME+1 in E4, to refer to NAME in E4.
     (flet ((fixup (name+1 name)
              (clo:fmakunbound c3 e3 name+1)
              (setf (clo:fdefinition c4 e4 name+1)
