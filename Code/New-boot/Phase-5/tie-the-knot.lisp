@@ -96,6 +96,11 @@
         for operator = (car cell)
         do (add-to-worklist operator)))
 
+(defun load-worklist-with-method-combination-templates (e4)
+  (loop with table = (sicl-environment::method-combination-templates e4)
+        for template being each hash-value of table
+        do (add-to-worklist template)))
+
 (defun replacement (item)
   (if (object-is-an-impure-ersatz-object-p item)
       ;; It had better be an E3 class.
@@ -145,5 +150,6 @@
           (clostrum:fdefinition client e3 @clostrophilia:class-slots)))
     (load-worklist-with-classes e4)
     (load-worklist-with-operators e4)
+    (load-worklist-with-method-combination-templates e4)
     (loop until (null *worklist*)
           do (process-item (pop *worklist*)))))
