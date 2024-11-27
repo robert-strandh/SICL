@@ -2,6 +2,20 @@
 
 (eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
 
+(defun fix-variables (client e3 e4)
+  ;; In phase 4, we define *STANDARD-OBJECT* in E3 to be the class
+  ;; named STANDARD-OBJECT in E4.  We must now define
+  ;; *STANDARD-OBJECT* to also be the class named STANDARD-OBJECT in
+  ;; E4, because the Clostrophilia function DEFAULT-SUPERCLASSES
+  ;; accesses the value of that variable.
+  (clo:make-variable
+   client e4 @clostrophilia:*standard-object*
+   (clo:find-class client e4 'standard-object))
+  ;; And similar for *FUNCALLABLE-STANDARD-OBJECT*.
+  (clo:make-variable
+   client e4 @clostrophilia:*funcallable-standard-object*
+   (clo:find-class client e4 @clostrophilia:funcallable-standard-object)))
+
 ;;; In phase 4, we set a number of function names of the form NAME+1
 ;;; in E3 to refer to the analogous function NAME in E4.  In
 ;;; subsequent code, we detect functions that are shared between E3
