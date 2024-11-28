@@ -20,7 +20,13 @@
   (setf (clo:symbol-value
          client e4 @clostrophilia:*class-unique-number*)
         (clo:symbol-value
-         client e3 @clostrophilia:*class-unique-number*)))
+         client e3 @clostrophilia:*class-unique-number*))
+  ;; The variable *STANDARD-METHOD-COMBINATION** in E3 reflects the
+  ;; value that it should have in E4 when the graph is cyclic.
+  (setf (clo:symbol-value
+         client e4 @clostrophilia:*standard-method-combination*)
+        (clo:symbol-value
+         client e3 @clostrophilia:*standard-method-combination*)))
 
 ;;; In phase 4, we set a number of function names of the form NAME+1
 ;;; in E3 to refer to the analogous function NAME in E4.  In
