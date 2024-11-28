@@ -26,7 +26,11 @@
   (setf (clo:symbol-value
          client e4 @clostrophilia:*standard-method-combination*)
         (clo:symbol-value
-         client e3 @clostrophilia:*standard-method-combination*)))
+         client e3 @clostrophilia:*standard-method-combination*))
+  (setf (clo:symbol-value
+         client e4 @clostrophilia:*eql-specialziers*)
+        (clo:symbol-value
+         client e3 @clostrophilia:*eql-specialziers*)))
 
 ;;; In phase 4, we set a number of function names of the form NAME+1
 ;;; in E3 to refer to the analogous function NAME in E4.  In
