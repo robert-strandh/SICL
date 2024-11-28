@@ -21,4 +21,5 @@
      c3 (wrap-environment e3) "sicl-clos-satiation")
     (satiate-metaobject-functions-1 c3 e3 e4)
     (fix-forward-referring-functions client e3 e4)
-    (fix-backward-referring-functions client e3 e4)))
+    (fix-backward-referring-functions client e3 e4)
+    (fix-variables client e3 e4)))
