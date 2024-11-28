@@ -126,6 +126,13 @@
         for operator = (car cell)
         do (add-to-worklist operator)))
 
+(defun load-worklist-with-variables (e4)
+  (loop with table = (clostrum-basic::variables e4)
+        for entry being each hash-value of table
+        for cell = (clostrum-basic::cell entry)
+        for value = (car cell)
+        do (add-to-worklist value)))
+
 (defun load-worklist-with-method-combination-templates (e4)
   (loop with table = (sicl-environment::method-combination-templates e4)
         for template being each hash-value of table
@@ -180,6 +187,7 @@
           (clostrum:fdefinition client e3 @clostrophilia:class-slots)))
     (load-worklist-with-classes e4)
     (load-worklist-with-operators e4)
+    (load-worklist-with-variables e4)
     (load-worklist-with-method-combination-templates e4)
     (loop until (null *worklist*)
           do (process-item (pop *worklist*)))))
