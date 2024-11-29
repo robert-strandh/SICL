@@ -43,4 +43,5 @@
       (setf (clo:fdefinition c3 e3 s+1)
             (clo:fdefinition c4 e4 s))
       (setf (clo:fdefinition c3 e3 `(setf ,s+1))
-            (clo:fdefinition c4 e4 `(setf ,s))))))
+            (clo:fdefinition c4 e4 `(setf ,s))))
+    (tie-the-knot c4 e3 e4)))
