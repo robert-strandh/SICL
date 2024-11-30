@@ -19,6 +19,8 @@
     (reinitialize-instance c4 :environment e4)
     (sb:ensure-asdf-system
      c3 (wrap-environment e3) "sicl-clos-satiation")
+    (sb:ensure-asdf-system
+     c4 (wrap-environment e4) "sicl-clos-satiation")
     (satiate-metaobject-functions-1 c3 e3 e4)
     (fix-forward-referring-functions client e3 e4)
     (fix-backward-referring-functions client e3 e4)
@@ -44,4 +46,6 @@
             (clo:fdefinition c4 e4 s))
       (setf (clo:fdefinition c3 e3 `(setf ,s+1))
             (clo:fdefinition c4 e4 `(setf ,s))))
+    (setf (clo:fdefinition c4 e4 @clostrophilia:initialize-instance+1)
+          (clo:fdefinition c4 e4 'initialize-instance))
     (tie-the-knot c4 e3 e4)))
