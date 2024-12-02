@@ -46,6 +46,6 @@
             (clo:fdefinition c4 e4 s))
       (setf (clo:fdefinition c3 e3 `(setf ,s+1))
             (clo:fdefinition c4 e4 `(setf ,s))))
-    (setf (clo:fdefinition c4 e4 @clostrophilia:initialize-instance+1)
+    (setf (clo:fdefinition c4 e4 @sicl-clos:initialize-instance+1)
           (clo:fdefinition c4 e4 'initialize-instance))
     (tie-the-knot c4 e3 e4)))
