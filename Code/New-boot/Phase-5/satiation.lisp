@@ -68,5 +68,5 @@
           for cell = (clostrum-basic::cell entry)
           for operator = (car cell)
           when (operator-is-a-metaobject-function-p operator)
-            do ;; (format *trace-output* "Satiating ~s~%" name)
+            do ; (format *trace-output* "Satiating ~s~%" name)
                (funcall satiate-function operator))))
