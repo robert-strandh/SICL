@@ -67,13 +67,14 @@
                                  relevant-classes
                                  methods))))))
 
-(defun load-call-history (generic-function)
+(defun load-call-history (generic-function include-default-methods)
   (setf (call-history generic-function) '())
   (loop with profile = (specializer-profile generic-function)
         for method in (generic-function-methods generic-function)
         for specializers = (method-specializers method)
         do (add-to-call-history generic-function specializers profile)))
 
-(defun satiate-generic-function (generic-function)
-  (load-call-history generic-function)
+(defun satiate-generic-function
+    (generic-function &key include-default-methods)
+  (load-call-history generic-function include-default-methods)
   (compute-and-install-discriminating-function generic-function))
