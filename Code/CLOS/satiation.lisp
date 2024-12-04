@@ -44,6 +44,11 @@
         for flag in profile
         thereis (and flag (eq specializer *class-t+1*))))
 
+(defun filter-methods (methods profile)
+  (loop for method in methods
+        unless (method-is-a-default-method-p method profile)
+          collect method))
+
 ;;; CLASSES-OF-METHOD is a list of specializers (which much be classes)
 ;;; of a single method of the generic function.
 (defun add-to-call-history (generic-function classes-of-method profile)
@@ -70,7 +75,11 @@
 (defun load-call-history (generic-function include-default-methods)
   (setf (call-history generic-function) '())
   (loop with profile = (specializer-profile generic-function)
-        for method in (generic-function-methods generic-function)
+        for all-methods = (generic-function-methods generic-function)
+        for methods = (if include-default-methods
+                          all-methods
+                          (filter-methods all-methods profile))
+        for method in methods
         for specializers = (method-specializers method)
         do (add-to-call-history generic-function specializers profile)))
 
