@@ -39,6 +39,11 @@
           return t
         finally (return nil)))
 
+(defun method-is-a-default-method-p (method profile)
+  (loop for specializer in (method-specializers method)
+        for flag in profile
+        thereis (and flag (eq specializer *class-t+1*))))
+
 ;;; CLASSES-OF-METHOD is a list of specializers (which much be classes)
 ;;; of a single method of the generic function.
 (defun add-to-call-history (generic-function classes-of-method profile)
