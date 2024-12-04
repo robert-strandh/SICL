@@ -75,10 +75,10 @@
 (defun load-call-history (generic-function include-default-methods)
   (setf (call-history generic-function) '())
   (loop with profile = (specializer-profile generic-function)
-        for all-methods = (generic-function-methods generic-function)
-        for methods = (if include-default-methods
-                          all-methods
-                          (filter-methods all-methods profile))
+        with all-methods = (generic-function-methods generic-function)
+        with methods = (if include-default-methods
+                           all-methods
+                           (filter-methods all-methods profile))
         for method in methods
         for specializers = (method-specializers method)
         do (add-to-call-history generic-function specializers profile)))
