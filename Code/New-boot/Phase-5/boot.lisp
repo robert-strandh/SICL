@@ -48,4 +48,6 @@
             (clo:fdefinition c4 e4 `(setf ,s))))
     (setf (clo:fdefinition c4 e4 @sicl-clos:initialize-instance+1)
           (clo:fdefinition c4 e4 'initialize-instance))
-    (tie-the-knot c4 e3 e4)))
+    (tie-the-knot c4 e3 e4)
+    (clo:make-variable c4 e4 @clostrophilia:*class-t+1*
+                       (clo:find-class c4 e4 't))))
