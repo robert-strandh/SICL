@@ -69,4 +69,15 @@
           for operator = (car cell)
           when (operator-is-a-metaobject-function-p operator)
             do ; (format *trace-output* "Satiating ~s~%" name)
-               (funcall satiate-function operator))))
+               (funcall satiate-function operator))
+    ;; As it turns out, METHOD-COMBINATION-TEMPLATE is not a subclass
+    ;; of METAOBJECT, so its slot accessors are not satiated by the
+    ;; preceding loop.  We satiate them explicitly here.
+    (funcall satiate-function
+             (clo:fdefinition
+              client e4 @clostrophilia:variant-signature-determiner))
+    (funcall satiate-function
+             (clo:fdefinition client e4 @clostrophilia:variants))
+    (funcall satiate-function
+             (clo:fdefinition
+              client e4 @clostrophilia:effective-method-form-function))))
