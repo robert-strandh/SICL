@@ -144,16 +144,6 @@
           (clo:fdefinition client global-environment 'initialize-instance))
     (sb:ensure-asdf-system
      client environment "clostrophilia-standard-object-initialization-aux")
-    (let ((symbol-class (clo:find-class client global-environment 'symbol))
-          (finalize-inheritance
-            (clo:fdefinition
-             client (sb:e1 boot) @clostrophilia:finalize-inheritance)))
-      (funcall finalize-inheritance symbol-class))
-    (let ((null-class (clo:find-class client global-environment 'null))
-          (finalize-inheritance
-            (clo:fdefinition
-             client (sb:e1 boot) @clostrophilia:finalize-inheritance)))
-      (funcall finalize-inheritance null-class))
     (setf (clo:fdefinition
            client global-environment @clostrophilia:shared-initialize-aux-1)
           (clo:fdefinition
