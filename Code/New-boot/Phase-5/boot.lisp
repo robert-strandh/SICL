@@ -50,4 +50,8 @@
           (clo:fdefinition c4 e4 'initialize-instance))
     (tie-the-knot c4 e3 e4)
     (clo:make-variable c4 e4 @clostrophilia:*class-t+1*
-                       (clo:find-class c4 e4 't))))
+                       (clo:find-class c4 e4 't))
+    (setf (clo:fdefinition client e4 @clostrophilia:make-method-instance)
+          (clo:fdefinition client e4 'make-instance))
+    (setf (clo:fdefinition client e4 @clostrophilia:stamp+1)
+          (clo:fdefinition client e4 @clostrophilia:stamp))))
