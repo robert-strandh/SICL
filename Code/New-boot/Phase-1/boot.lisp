@@ -277,6 +277,8 @@
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (sb:ensure-asdf-system
+       client environment "clostrophilia-generic-function-invocation")
+      (sb:ensure-asdf-system
        client environment "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-method-initialization")
@@ -290,9 +292,7 @@
       (sb:ensure-asdf-system
        client environment "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
-       client environment "clostrophilia-method-combination-base")
-      (sb:ensure-asdf-system
-       client environment "clostrophilia-generic-function-invocation"))
+       client environment "clostrophilia-method-combination-base"))
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-class-finalization")
     ;; The method on ENSURE-CLASS-USING-CLASS specialized to
