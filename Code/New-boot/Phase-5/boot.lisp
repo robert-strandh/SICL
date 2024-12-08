@@ -54,4 +54,6 @@
     (setf (clo:fdefinition client e4 @clostrophilia:make-method-instance)
           (clo:fdefinition client e4 'make-instance))
     (setf (clo:fdefinition client e4 @clostrophilia:stamp+1)
-          (clo:fdefinition client e4 @clostrophilia:stamp))))
+          (clo:fdefinition client e4 @clostrophilia:stamp))
+    (setf (clo:fdefinition client e4 @clostrophilia:class-of+1)
+          (clo:fdefinition client e4 'class-of))))
