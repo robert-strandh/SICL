@@ -46,7 +46,7 @@
          (loop for method in methods
                  thereis (method-is-a-metaobject-method-p method)))))
 
-(defun satiate-metaobject-functions-1 (client e3 e4)
+(defun satiate-metaobject-functions (client e3 e4)
   (let* ((*generic-function-methods-function*
            (clo:fdefinition
             client e3 @clostrophilia:generic-function-methods))
