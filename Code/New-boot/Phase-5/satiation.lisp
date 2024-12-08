@@ -46,24 +46,26 @@
          (loop for method in methods
                  thereis (method-is-a-metaobject-method-p method)))))
 
-(defun satiate-metaobject-functions (client e3 e4)
+;;; EX is E3 before the graph has been turned into a cycle, and E4
+;;; when the graph is cyclic.
+(defun satiate-metaobject-functions (client ex e4)
   (let* ((*generic-function-methods-function*
            (clo:fdefinition
-            client e3 @clostrophilia:generic-function-methods))
+            client ex @clostrophilia:generic-function-methods))
          (*standard-generic-function-class*
-           (clo:find-class client e3 'standard-generic-function))
+           (clo:find-class client ex 'standard-generic-function))
          (*method-specializers-function*
-           (clo:fdefinition client e3 @clostrophilia:method-specializers))
+           (clo:fdefinition client ex @clostrophilia:method-specializers))
          (metaobject-class
            (clo:find-class client e4 @clostrophilia:metaobject))
          (class-direct-subclasses-function
-           (clo:fdefinition client e3 @clostrophilia:class-direct-subclasses))
+           (clo:fdefinition client ex @clostrophilia:class-direct-subclasses))
          (*metaobject-subclasses*
            (find-all-subclasses metaobject-class class-direct-subclasses-function))
          (table (clostrum-basic::functions e4))
          (satiate-function
            (clo:fdefinition
-            client e3 @clostrophilia:satiate-generic-function)))
+            client ex @clostrophilia:satiate-generic-function)))
     (loop for entry being each hash-value of table using (hash-key name)
           for cell = (clostrum-basic::cell entry)
           for operator = (car cell)
