@@ -257,6 +257,10 @@
     (setf (clo:fdefinition 
            client global-environment @clostrophilia:subtypep-1)
           #'subtypep)
+    (sb:with-intercepted-function-cells
+        ((make-instance (cons #'my-make-instance nil)))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-generic-function-invocation"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
     ;; ENSURE-GENERIC-FUNCTION is called by the class initialization
@@ -276,8 +280,6 @@
           #'sb:allocate-general-instance)
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
-      (sb:ensure-asdf-system
-       client environment "clostrophilia-generic-function-invocation")
       (sb:ensure-asdf-system
        client environment "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system
