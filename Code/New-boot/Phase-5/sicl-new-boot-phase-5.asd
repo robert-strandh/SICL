@@ -9,4 +9,5 @@
    (:file "configuration")
    (:file "satiation")
    (:file "tie-the-knot")
+   (:file "set-default-discriminating-function")
    (:file "boot")))
