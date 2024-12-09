@@ -56,4 +56,6 @@
     (setf (clo:fdefinition client e4 @clostrophilia:stamp+1)
           (clo:fdefinition client e4 @clostrophilia:stamp))
     (setf (clo:fdefinition client e4 @clostrophilia:class-of+1)
-          (clo:fdefinition client e4 'class-of))))
+          (clo:fdefinition client e4 'class-of))
+    (satiate-metaobject-functions c4 e4 e4)
+    (set-default-discriminating-functions c4 e4)))
