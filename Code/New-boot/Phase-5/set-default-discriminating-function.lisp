@@ -9,7 +9,7 @@
        (eq (sb:class operator) *standard-generic-function-class*)
        (null (funcall *call-history-function* operator))))
 
-(defun set-default-discriminating-function (client e4)
+(defun set-default-discriminating-functions (client e4)
   (let* ((*standard-generic-function-class*
            (clo:find-class client e4 'standard-generic-function))
          (*call-history-function*
