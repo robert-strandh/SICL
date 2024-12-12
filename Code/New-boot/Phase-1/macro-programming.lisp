@@ -156,3 +156,15 @@
 
 (defmethod cmd:add-local-nickname ((client client))
   'sb:add-package-local-nickname)
+
+(defmethod cmd:setf-type-function-wrapper ((client client))
+  (lambda (type-name expander-expression environment)
+    (let ((expander (compile nil expander-expression))
+          (global-environment
+            (trucler:global-environment client environment))
+          (setf-type-expander #'(setf clo:type-expander)))
+      `(funcall ,setf-type-expander
+                ,expander
+                ,client
+                ,global-environment
+                ',type-name))))
