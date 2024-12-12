@@ -15,4 +15,5 @@
          (env:*environment* e4)
          (client c4))
     (reinitialize-instance c4 :environment e4)
-    (sb:ensure-asdf-system c4 w4 "regalia-class-hierarchy")))
+    (sb:ensure-asdf-system c4 w4 "regalia-class-hierarchy")
+    (sb:ensure-asdf-system c4 w4 "regalia-common")))
