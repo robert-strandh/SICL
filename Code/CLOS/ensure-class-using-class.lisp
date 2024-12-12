@@ -38,7 +38,7 @@
 ;;; requires.
 
 (defun process-direct-superclass (superclass-or-name environment)
-  (cond ((typep superclass-or-name 'class)
+  (cond ((clostrophilia:classp superclass-or-name)
          superclass-or-name)
         ((symbolp superclass-or-name)
          (let ((class (find-class superclass-or-name nil environment)))
@@ -119,7 +119,7 @@
   (when metaclass-p
     (cond ((symbolp metaclass)
            (setf metaclass (find-class metaclass t metaclass-environment)))
-          ((typep metaclass 'class)
+          ((clostrophilia:classp metaclass)
            nil)
           (t
            (error "metaclass must be a symbol or a class metaobject class")))
@@ -157,7 +157,7 @@
     (setf metaclass 'standard-class))
   (cond ((symbolp metaclass)
          (setf metaclass (find-class metaclass t metaclass-environment)))
-        ((typep metaclass 'class)
+        ((clostrophilia:classp metaclass)
          nil)
         (t
          (error "metaclass must be a symbol or a class metaobject class")))
