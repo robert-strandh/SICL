@@ -18,4 +18,5 @@
     (sicl-new-boot-phase-3:boot boot)
     (sicl-new-boot-phase-4:boot boot)
     (sicl-new-boot-phase-5:boot boot)
+    (sicl-new-boot-phase-6:boot boot)
     (defparameter *b* boot)))
