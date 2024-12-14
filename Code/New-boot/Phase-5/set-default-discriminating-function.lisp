@@ -6,14 +6,13 @@
 
 (defvar *setf-call-history-function*)
 
-(defun operator-is-a-fresh-generic-function-p (operator)
-  (and (typep operator 'sb:header)
-       (eq (sb:class operator) *standard-generic-function-class*)
-       (null (funcall *call-history-function* operator))))
+(defun generic-function-is-fresh-p (generic-function)
+  (null (funcall *call-history-function* generic-function)))
 
 (defun operator-is-a-candidate-p (name operator)
   (declare (ignore name))
-  (operator-is-a-fresh-generic-function-p operator))
+  (and (operator-is-a-generic-function-p operator)
+       (generic-function-is-fresh-p operator)))
 
 (defun set-default-discriminating-functions (client e4)
   (let* ((*standard-generic-function-class*
