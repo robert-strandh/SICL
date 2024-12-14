@@ -38,9 +38,12 @@
 ;;; This variable contains the function GENERIC-FUNCTION-METHODS.
 (defvar *generic-function-methods-function*)
 
-(defun operator-is-a-metaobject-function-p (operator)
+(defun operator-is-a-generic-function-p (operator)
   (and (typep operator 'sb:header)
-       (eq (sb:class operator) *standard-generic-function-class*)
+       (eq (sb:class operator) *standard-generic-function-class*)))
+
+(defun operator-is-a-metaobject-function-p (operator)
+  (and (operator-is-a-generic-function-p operator)
        (let ((methods
                (funcall *generic-function-methods-function* operator)))
          (loop for method in methods
