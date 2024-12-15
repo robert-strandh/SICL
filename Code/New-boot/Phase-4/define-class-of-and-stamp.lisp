@@ -23,6 +23,8 @@
                     (find-class-e4 'symbol))
                    ((characterp object)
                     (find-class-e4 'character))
+                   ((stringp object)
+                    (find-class-e4 'string))
                    ((consp object)
                     (find-class-e4 'cons))
                    ((typep object 'sb:header)
