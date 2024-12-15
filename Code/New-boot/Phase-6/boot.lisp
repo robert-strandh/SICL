@@ -26,4 +26,13 @@
     ;; E4.  But that's a temporary solution, because ctype now has a
     ;; cell that belong to E3.
     (setf (clo:fdefinition client (sb:e3 boot) 'make-instance)
-          (clo:fdefinition client e4 'make-instance))))
+          (clo:fdefinition client e4 'make-instance))
+    ;; We don't want to deal with the real UPGRADED-COMPLEX-PART-TYPE
+    ;; right now, but it is required by ctype triggered by a TYPECASE
+    ;; form in Alexandria, so we define it here.
+    (setf (clo:fdefinition c4 e4 'upgraded-complex-part-type)
+          (lambda (type-specifier &optional environment)
+            (declare (ignore environment))
+            (ecase type-specifier
+              (single-float 'single-float)
+              (double-float 'double-float))))))
