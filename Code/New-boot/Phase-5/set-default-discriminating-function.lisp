@@ -10,9 +10,13 @@
   (null (funcall *call-history-function* generic-function)))
 
 (defun operator-is-a-candidate-p (name operator)
-  (declare (ignore name))
   (and (operator-is-a-generic-function-p operator)
-       (generic-function-is-fresh-p operator)))
+       (or (generic-function-is-fresh-p operator)
+           (let* ((symbol (if (symbolp name) name (second name)))
+                  (table (sb::symbol-package sb::*boot*))
+                  (package (gethash symbol table))
+                  (name (parcl-low:name (make-instance 'client) package)))
+             (string= name "CTYPE")))))
 
 (defun set-default-discriminating-functions (client e4)
   (let* ((*standard-generic-function-class*
