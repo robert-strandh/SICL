@@ -18,15 +18,6 @@
     (sb:ensure-asdf-system c4 w4 "regalia-class-hierarchy")
     (sb:ensure-asdf-system c4 w4 "sicl-array-make-array-instance")
     (sb:ensure-asdf-system c4 w4 "regalia-common")
-    ;; When ctype was loaded in Phase 4, we intercepted references to
-    ;; MAKE-INSTANCE because ctype calls make-instance as part of
-    ;; being loaded, but that was make-instance in E3, and now we need
-    ;; for ctype to call MAKE-INSTANCE in E4, and the simplest way to
-    ;; do that is to set MAKE-INSTANCE in E3 to be make-instance of
-    ;; E4.  But that's a temporary solution, because ctype now has a
-    ;; cell that belong to E3.
-    (setf (clo:fdefinition client (sb:e3 boot) 'make-instance)
-          (clo:fdefinition client e4 'make-instance))
     ;; We don't want to deal with the real UPGRADED-COMPLEX-PART-TYPE
     ;; right now, but it is required by ctype triggered by a TYPECASE
     ;; form in Alexandria, so we define it here.
@@ -35,4 +26,8 @@
             (declare (ignore environment))
             (ecase type-specifier
               (single-float 'single-float)
-              (double-float 'double-float))))))
+              (double-float 'double-float))))
+    (let ((*features* *features*))
+      (setf *features* (remove :sbcl *features*))
+      (setf *features* (remove :sb-package-locks *features*))
+      (sb:ensure-asdf-system c4 w4 "alexandria"))))
