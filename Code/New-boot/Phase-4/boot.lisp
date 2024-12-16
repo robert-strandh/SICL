@@ -181,12 +181,17 @@
     (setf (clo:fdefinition
            client global-environment @sicl-arithmetic:double-float-p)
           (constantly nil))
-    (sb:with-intercepted-function-cells
-        ((make-instance
-          (clo:ensure-operator-cell client (sb:e3 boot) 'make-instance))
-         (class-name
-          (clo:ensure-operator-cell client (sb:e3 boot) 'class-name)))
-      (load-ctype client environment global-environment))
+    ;; The ctype library is unusual in that it creates instances of
+    ;; its classes at load time.  For that to work, we need to use the
+    ;; version of MAKE-INSTANCE in E3.  But we want to use the cell
+    ;; from E4 so that we can load the final version of MAKE-INSTANCE
+    ;; into it later.  We solve this dilemma by temporarily setting
+    ;; MAKE-INSTANCE in E4 to be the same as MAKE-INSTANCE in E3, and
+    ;; then we remove that definition after ctype has been loaded.
+    (setf (clo:fdefinition client (sb:e4 boot) 'make-instance)
+          (clo:fdefinition client (sb:e3 boot) 'make-instance))
+    (load-ctype client environment global-environment)
+    (clo:fmakunbound client (sb:e4 boot) 'make-instance)
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
     ;; argument.  But in E4, the arguments to SUBCLASSP are ersatz
