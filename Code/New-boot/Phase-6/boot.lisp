@@ -27,7 +27,14 @@
             (ecase type-specifier
               (single-float 'single-float)
               (double-float 'double-float))))
-    (let ((*features* *features*))
-      (setf *features* (remove :sbcl *features*))
-      (setf *features* (remove :sb-package-locks *features*))
-      (sb:ensure-asdf-system c4 w4 "alexandria"))))
+    ;; We don't want to deal with MACROEXPAND right now, because it
+    ;; involves calling Trucler which has not been loaded yet.
+    ;; MACROEXPAND is used by Predicament to check whether the form
+    ;; given to RESTART-CASE to check whether the (expansion of the)
+    ;; signaling form is one of a set of signaling functions, but we
+    ;; can safely assume that these forms are not macro forms.  So we
+    ;; can define macroexpand to return the original form.
+    (setf (clo:fdefinition c4 e4 'macroexpand)
+          (lambda (form &optional environment)
+            (declare (ignore environment))
+            (values form nil)))))
