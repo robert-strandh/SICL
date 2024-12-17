@@ -37,4 +37,18 @@
     (setf (clo:fdefinition c4 e4 'macroexpand)
           (lambda (form &optional environment)
             (declare (ignore environment))
-            (values form nil)))))
+            (values form nil)))
+    ;; [*sigh*] RESTART-CASE uses TYPECASE with STRING as one of the
+    ;; cases, but (TYPEP "mumble" 'STRING) returns false, so the
+    ;; expansion of the TYPECASE expression is wrong, resulting in a
+    ;; compilation error.  The only way I can think of fixing this is
+    ;; to define TYPEP to check for host strings first.
+    (let ((old (clo:fdefinition c4 e4 'typep)))
+      (setf (clo:fdefinition c4 e4 'typep)
+            (lambda (object type-specifier &optional (environment e4))
+              (or (and (eq type-specifier 'string) (stringp object))
+                  (funcall old object type-specifier environment)))))
+    (let ((*features* *features*))
+      (setf *features* (remove :sbcl *features*))
+      (setf *features* (remove :sb-package-locks *features*))
+      (sb:ensure-asdf-system c4 w4 "alexandria"))))
