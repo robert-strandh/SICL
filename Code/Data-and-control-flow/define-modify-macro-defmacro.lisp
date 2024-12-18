@@ -3,16 +3,16 @@
 (defmacro define-modify-macro
     (name lambda-list function &optional documentation)
   (let* ((canonicalized-lambda-list
-           (cleavir-code-utilities:canonicalize-define-modify-macro-lambda-list
+           (ecclesia:canonicalize-define-modify-macro-lambda-list
             lambda-list))
          (required
-           (cleavir-code-utilities:extract-required
+           (ecclesia:extract-required
             canonicalized-lambda-list))
          (optionals
-           (cleavir-code-utilities:extract-named-group
+           (ecclesia:extract-named-group
             canonicalized-lambda-list '&optional))
          (rest
-           (cleavir-code-utilities:extract-named-group
+           (ecclesia:extract-named-group
             canonicalized-lambda-list '&rest))
          (place-var (gensym)))
     `(defmacro ,name (,place-var ,@lambda-list)
