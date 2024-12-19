@@ -125,12 +125,11 @@
 
 (defmethod cmd:wrap-in-setf-setf-expander
     ((client client) name function environment)
-  (let ((expander (compile nil function))
-        (setf-get-setf-expander #'(setf clo:setf-expander))
+  (let ((setf-get-setf-expander #'(setf clo:setf-expander))
         (global-environment
           (trucler:global-environment client environment)))
     `(funcall ,setf-get-setf-expander
-              ,expander
+              ,function
               ,client
               ,global-environment
-              ,name)))
+              ',name)))
