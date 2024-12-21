@@ -51,4 +51,5 @@
     (setf (clo:macro-function c4 e4 'with-standard-io-syntax)
           (lambda (form environment)
             (declare (ignore environment))
-            `(progn ,@(rest form))))))
+            `(progn ,@(rest form))))
+    (sb:ensure-asdf-system c4 w4 "sicl-data-and-control-flow-setf-expanders")))
