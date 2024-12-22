@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "get-setf-expansion-defun")
    (:file "values-define-setf-expander")))
