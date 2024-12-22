@@ -4,7 +4,6 @@
   :depends-on (:sicl-data-and-control-flow-support)
   :serial t
   :components
-  ((:file "define-setf-expander-defmacro")
-   (:file "multiple-value-call-defmacro")
+  ((:file "multiple-value-call-defmacro")
    (:file "defconstant-defmacro")
    (:file "throw-defmacro")))
