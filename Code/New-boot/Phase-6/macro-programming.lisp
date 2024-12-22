@@ -133,3 +133,15 @@
               ,client
               ,global-environment
               ',name)))
+
+(defmethod cmd:get-setf-expansion
+    ((client client) place &optional environment)
+  (if (and (not (null environment))
+           (consp place))
+      (let* ((global-environment
+               (trucler:global-environment client environment))
+             (expander (clo:setf-expander client environment (car place))))
+        (if (null expander)
+            (call-next-method)
+            (funcall expander place global-environment)))
+      (call-next-method)))
