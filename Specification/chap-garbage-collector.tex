@@ -101,11 +101,9 @@ dyads ever becomes empty, then mutator threads must wait until more
 free dyads become available as a result of a garbage collection of the
 global heap.
 
-\section{Requesting roots}
+\section{Determining roots}
 
-
-See \refSec{sec-garbage-collection-synchronization-between-collectors}
-for more details on this phase.  During this phase, when application
+During this phase, when application
 threads request space from the global heap, objects are allocated
 \emph{black} (see below for more information on the tri-color
 technique).
@@ -478,139 +476,6 @@ When every relevant reference to a promoted object has been updated
 this way, the promotion bitmap is subtracted from the live
 bitmap.  This way, the live bitmap has a bit set only for live
 objects that are still in the nursery.
-
-\section{Synchronization between collectors}
-\label{sec-garbage-collection-synchronization-between-collectors}
-
-Since each thread is responsible for collecting its own heap and since
-the collector can not run until every application thread has
-run its own collector, we need to find a way of dealing with threads
-that are stopped for any reason, for instance waiting for
-input/output.
-
-We think that in cases like that, one of the threads of the
-collector would run the garbage collector on behalf of the stopped
-thread.  During the execution of the garbage collector, if the stopped
-thread becomes unstopped, it must then be prevented from running
-application code until the collection has run to completion.
-
-We do this by introducing a variable and two semaphores for each
-application thread. The variable and the semaphores are shared between
-that thread and the collector threads.  The variable has 4 bit
-positions with the following meanings:
-
-\begin{itemize}
-\item \texttt{application-blocked} meaning that the application thread
-  might be blocked when the bit is set, and is therefore not capable
-  of executing the local garbage collector.  This bit is both set and
-  cleared by the application thread.
-\item \texttt{gc-requested} meaning that the collector has
-  requested that the application thread run the garbage collector.
-  This bit is set by the collector and cleared by the
-  application thread.
-\item \texttt{gc-in-progress} meaning that the collector is
-  running the nursery garbage collector on behalf of the thread.  This
-  bit is both set and cleared by the collector.
-\item \texttt{application-waiting} meaning that the application is
-  waiting for the collector to finish the garbage collection on
-  behalf of the application thread.
-\end{itemize}
-
-The two semaphores work as follows:
-
-\begin{itemize}
-\item \texttt{global-gc-may-proceed}.  This semaphore is initialized to
-  $0$.  When the collector requests that an application thread
-  run the local garbage collector it waits on this semaphore.  The
-  application thread signals this semaphore, indicating that all
-  objects in the global heap reachable from the local heap have been
-  marked.
-\item \texttt{application-may-execute}.  This semaphore is initialized
-  to $0$.  When an application thread awakes after having been
-  blocked, it checks whether the collector is currently
-  executing on behalf of this application thread.  If so, the
-  application thread waits on this semaphore.  When the
-  collector has finished executing on behalf of this thread, it
-  signals this semaphore, allowing the application thread to continue
-  its execution.
-\end{itemize}
-
-\section{Running application thread}
-
-At every safe point (function call, function return, and a branch to
-an inferior address%
-\footnote{To minimize the overhead in case of a very tight loop, we
-  will use loop unrolling so that a branch to an inferior address will
-  be less frequent.}), the application thread consults the shared
-variable.  If the \texttt{gc-requested} bit is set, then it clears
-that bit and runs the nursery garbage collector.  At the end of the
-collection, it signals the \texttt{global-gc-may-proceed} semaphore
-indicating to the collector that it has finished, and finally
-continues the application thread.  No synchronization is required to
-read the shared variable, because once the \texttt{gc-request} bit is
-set, no other bit is going to move as the result of any action on the
-part of the collector.
-
-\section{Application thread about to block}
-
-When there is a possibility that an application thread is about to
-block, for example when it is about to execute some input or output
-operation,  it must inform the collector that it might be
-unable to run the local garbage collector itself, and that the
-collector may have to run it on behalf of the application thread.
-
-The application starts by reading the shared variable into an ordinary
-lexical variable.  If the \texttt{gc-request} bit is set, it clears
-the bit and runs the nursery garbage collector.  At the end of the
-collection, it signals the \texttt{global-gc-may-proceed} semaphore
-indicating to the collector that it has finished, and then
-starts over by reading the variable again.  This action is repeated
-until the \texttt{gc-request} bit is cleared.
-
-When the \texttt{gc-request} bit is cleared, it sets the
-\texttt{application-blocked} bit in a second local copy of the shared
-variable.  It then performs a CAS operation to set the
-\texttt{application-blocked} bit in the shared variable.  Should this
-operation fail, then it means that the \texttt{gc-request} bit has
-been set since the shared variable was read the first time.  The
-application thread then starts the entire operation over again.
-
-If the CAS operation succeeds, it means that the collector has
-been informed that, if it needs for this nursery heap to be garbage
-collected, it has to do it on behalf of the thread.  The application
-thread can now perform the operation that might block the thread.
-
-\section{Application thread waking up after block}
-
-When the application thread wakes up after having been blocked, there
-is a possibility that the garbage collector is in the process
-of running the nursery collector on behalf of the application thread.
-If that is the case, then the application thread must wait until the
-garbage collection is finished.
-
-The application thread starts by reading the shared variable into an
-ordinary lexical variable, and it also makes a second copy.  If the
-\texttt{gc-in-progress} bit is cleared, it then clears the
-\texttt{application-blocked} bit in the second copy and performs a CAS
-operation.  If the CAS operation succeeds, this means that the
-collector is not running on behalf of the application thread, and will
-not do so because it has been informed that the application thread is
-not blocked.  The application thread then returns to its normal
-operation without any further action.
-
-If the CAS operation fails, then that means that the collector
-has started a collection on behalf of the application thread since the
-shared variable was read.  Then the application thread
-reads the shared variable again.  If the
-\texttt{gc-in-progress} bit is set, then the application thread clears
-the \texttt{application-blocked} bit and sets the
-\texttt{application-waiting} bit in the second local copy of the
-shared variable.  It then performs a CAS operation.  If the CAS
-operation succeeds, it means that the collector is still
-running the nursery collector on behalf of the application thread, and
-that the collector has been informed that, when the nursery
-collection is finished, it should signal the
-\texttt{application-may-execute} semaphore.
 
 \section{Preparing for a collection}
 
