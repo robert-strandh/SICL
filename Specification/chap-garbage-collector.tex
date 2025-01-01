@@ -8,7 +8,9 @@ also recommend Paul Wilson's excellent survey paper
 \cite{Wilson:1992:UGC:645648.664824}.
 
 The current idea is to use only a single global collector where the
-objects never move.
+objects never move.  This collector is concurrent with mutator
+threads, and parallel in that several threads can be used to run the
+collector.
 
 In \refChap{chap-data-representation} we describe the data
 representation where every heap-allocated object is either a two-word
@@ -22,13 +24,13 @@ to either one as a \emph{dyad}.
 
 \section{General description}
 
-The global collector is a concurrent collector, i.e., it runs in
-parallel with the mutator threads.  With modern processors, it is
-probably practical to assign at least one core more or less
-permanently to the global collector.  According to current thinking,
-the global collector will be a combination of a mark-and-sweep
-collector and a  traditional memory allocator as implemented by
-\texttt{malloc()/free()} in a \clanguage{} environment.
+As mentioned previously, the collector is a concurrent collector,
+i.e., it runs in parallel with the mutator threads.  With modern
+processors, it is probably practical to assign at least one core more
+or less permanently to the collector.  According to current
+thinking, the collector will be a combination of a
+mark-and-sweep collector and a traditional memory allocator as
+implemented by \texttt{malloc()/free()} in a \clanguage{} environment.
 
 We define a global heap divided into two parts called the \emph{dyad
   part} and the \emph{rack part}.  The dyad part is a single vector
@@ -54,33 +56,31 @@ be done if code were being moved by the garbage collector.
 
 Another great advantage of racks being in a permanent position is that
 mutator threads can cache a pointer without the necessity of this
-pointer having to be updated as a result of a garbage collection in
-the global heap.  Garbage collection in the global heap can therefore
-be done in parallel with the execution of the mutator threads.
+pointer having to be updated as a result of a garbage collection.
+Garbage collection can therefore be done in parallel with the
+execution of the mutator threads.
 
-The global collector cycles through the following phases:
+The collector cycles through the following phases:
 
 \begin{enumerate}
-\item Idle.  In this phase, the global collector is not doing any
-  work.
-\item Requesting roots.  In this phase, the global collector indicates
-  to each running application thread that it needs to transmit its
-  part of the global root set to the global collector.  For each
-  blocked application thread, another thread (newly spawned or taken
-  from a thread pool) does the work on
-  its behalf.
-\item Waiting for roots.  In this phase, the global collector waits
+\item Idle.  In this phase, the collector is not doing any work.
+\item Determining roots.  In this phase, the collector
+  indicates to each running application thread that it needs to
+  transmit its part of the global root set to the collector.
+  For each blocked application thread, another thread (newly spawned
+  or taken from a thread pool) does the work on its behalf.
+\item Waiting for roots.  In this phase, the collector waits
   for each application thread or each spawned thread to finish
   indicating its part of the global root set.  Dyads and racks are
   treated as independent objects.
-\item Mark.  In this phase, the global collector traces and marks the
+\item Mark.  In this phase, the collector traces and marks the
   live objects starting with the marked roots.
-\item Collecting unmarked dyads.  In this phase, the global collector
+\item Collecting unmarked dyads.  In this phase, the collector
   scans the dyads and collects the unmarked ones into a linked list.
-\item Freeing unmarked racks.  In this phase, the global collector
+\item Freeing unmarked racks.  In this phase, the collector
   iterates through the allocated racks in the rack part of the heap
   and frees unmarked racks.
-\item Merging free lists.  In this phase, the global collector merges
+\item Merging free lists.  In this phase, the collector merges
   the newly created linked list of unmarked dyads with the existing
   free list.
 \item Clearing mark bits.  In this final phase, the mark bits used for
@@ -89,7 +89,7 @@ The global collector cycles through the following phases:
 
 \section{Idle phase}
 
-In this phase the global collector is not doing any work.  Whether it
+In this phase the collector is not doing any work.  Whether it
 has allocated threads that are blocked or no threads allocated
 remains to be decided.  During this phase, when application threads
 request space from the global heap, objects are allocated \emph{white}
@@ -119,7 +119,7 @@ part of the root set.
 
 \section{Mark}
 
-The global collector uses the traditional tri-color marking
+The collector uses the traditional tri-color marking
 technique.  Recall that the tri-color technique works as follows:
 
 \begin{itemize}
@@ -142,10 +142,10 @@ The root set is determined by requesting that each application thread
 trace live objects from their respective roots, and informing the
 global collector when this procedure reaches an object allocated in
 the global heap. For application threads that are blocked, for example
-waiting for input or output, the global collector spawns a thread to
+waiting for input or output, the collector spawns a thread to
 run the garbage collector on behalf of the application thread.
 
-The global collector maintains two bitmaps for the purpose of marking
+The collector maintains two bitmaps for the purpose of marking
 dyads, one for black objects and one for gray objects.  Each bitmap
 contains a bit for every dyad.  In addition, the gray bitmap has a
 multi-level \emph{index}, making it possible to find an arbitrary gray
@@ -198,7 +198,7 @@ entire rack zone for gray objects, or maintain additional separate
 mark bits with indices, just as we do for dyads.
 \footnote{We could allow for a rack to be gray, provided there is room
   for it in the fixed-size cache.  We could even evict a dyad from the
-  cache to make room for a rack.  If the global collector never colors
+  cache to make room for a rack.  If the collector never colors
   a rack gray, and instead always recursively scans it and colors the
   object it contains gray instead, then the only situation where a
   rack is colored gray would be when the mutator has a pointer to a
@@ -236,7 +236,7 @@ number of dyads left in the free list.
 
 \section{Write barrier}
 
-The global collector is subject to a write barrier.  Let G be some
+The collector is subject to a write barrier.  Let G be some
 object in the global heap, and let N be some object in a nursery.  The
 write barrier must prevent the existence of a reference from G to N.
 Therefore, when attempt is made to create such a reference, N and the
@@ -358,10 +358,10 @@ from the header.
 
 A flag determines whether a reference to an object allocated in the
 global heap should be marked or not.  This flag is set when the local
-garbage collection was requested by the global garbage collector, and
+garbage collection was requested by the garbage collector, and
 cleared when the local garbage collection was performed as a result of
 the local heap being full.  If a traced object is located in the
-global heap and the flag is set, then the global collector is informed
+global heap and the flag is set, then the collector is informed
 that it is live.  If the object is located in the nursery, the
 corresponding bits in the live bitmap are set.  If the root contains a
 pointer to a rack in the global heap, and the flag is set, then the
@@ -392,7 +392,7 @@ live space in the nursery.
 
 At the end of the mark phase, if the flag is set, a \emph{signal}
 operation is performed on a semaphore used for synchronization between
-the local and the global garbage collector.
+the local and the garbage collector.
 
 \section{Promotion phase}
 
@@ -485,12 +485,12 @@ objects that are still in the nursery.
 \label{sec-garbage-collection-synchronization-between-collectors}
 
 Since each thread is responsible for collecting its own heap and since
-the global collector can not run until every application thread has
+the collector can not run until every application thread has
 run its own collector, we need to find a way of dealing with threads
 that are stopped for any reason, for instance waiting for
 input/output.
 
-We think that in cases like that, one of the threads of the global
+We think that in cases like that, one of the threads of the
 collector would run the garbage collector on behalf of the stopped
 thread.  During the execution of the garbage collector, if the stopped
 thread becomes unstopped, it must then be prevented from running
@@ -498,7 +498,7 @@ application code until the collection has run to completion.
 
 We do this by introducing a variable and two semaphores for each
 application thread. The variable and the semaphores are shared between
-that thread and the global collector threads.  The variable has 4 bit
+that thread and the collector threads.  The variable has 4 bit
 positions with the following meanings:
 
 \begin{itemize}
@@ -506,15 +506,15 @@ positions with the following meanings:
   might be blocked when the bit is set, and is therefore not capable
   of executing the local garbage collector.  This bit is both set and
   cleared by the application thread.
-\item \texttt{gc-requested} meaning that the global collector has
+\item \texttt{gc-requested} meaning that the collector has
   requested that the application thread run the garbage collector.
-  This bit is set by the global collector and cleared by the
+  This bit is set by the collector and cleared by the
   application thread.
-\item \texttt{gc-in-progress} meaning that the global collector is
+\item \texttt{gc-in-progress} meaning that the collector is
   running the nursery garbage collector on behalf of the thread.  This
-  bit is both set and cleared by the global collector.
+  bit is both set and cleared by the collector.
 \item \texttt{application-waiting} meaning that the application is
-  waiting for the global collector to finish the garbage collection on
+  waiting for the collector to finish the garbage collection on
   behalf of the application thread.
 \end{itemize}
 
@@ -522,16 +522,16 @@ The two semaphores work as follows:
 
 \begin{itemize}
 \item \texttt{global-gc-may-proceed}.  This semaphore is initialized to
-  $0$.  When the global collector requests that an application thread
+  $0$.  When the collector requests that an application thread
   run the local garbage collector it waits on this semaphore.  The
   application thread signals this semaphore, indicating that all
   objects in the global heap reachable from the local heap have been
   marked.
 \item \texttt{application-may-execute}.  This semaphore is initialized
   to $0$.  When an application thread awakes after having been
-  blocked, it checks whether the global collector is currently
+  blocked, it checks whether the collector is currently
   executing on behalf of this application thread.  If so, the
-  application thread waits on this semaphore.  When the global
+  application thread waits on this semaphore.  When the
   collector has finished executing on behalf of this thread, it
   signals this semaphore, allowing the application thread to continue
   its execution.
@@ -547,25 +547,25 @@ an inferior address%
 variable.  If the \texttt{gc-requested} bit is set, then it clears
 that bit and runs the nursery garbage collector.  At the end of the
 collection, it signals the \texttt{global-gc-may-proceed} semaphore
-indicating to the global collector that it has finished, and finally
+indicating to the collector that it has finished, and finally
 continues the application thread.  No synchronization is required to
 read the shared variable, because once the \texttt{gc-request} bit is
 set, no other bit is going to move as the result of any action on the
-part of the global collector.
+part of the collector.
 
 \section{Application thread about to block}
 
 When there is a possibility that an application thread is about to
 block, for example when it is about to execute some input or output
-operation,  it must inform the global collector that it might be
-unable to run the local garbage collector itself, and that the global
+operation,  it must inform the collector that it might be
+unable to run the local garbage collector itself, and that the
 collector may have to run it on behalf of the application thread.
 
 The application starts by reading the shared variable into an ordinary
 lexical variable.  If the \texttt{gc-request} bit is set, it clears
 the bit and runs the nursery garbage collector.  At the end of the
 collection, it signals the \texttt{global-gc-may-proceed} semaphore
-indicating to the global collector that it has finished, and then
+indicating to the collector that it has finished, and then
 starts over by reading the variable again.  This action is repeated
 until the \texttt{gc-request} bit is cleared.
 
@@ -577,7 +577,7 @@ operation fail, then it means that the \texttt{gc-request} bit has
 been set since the shared variable was read the first time.  The
 application thread then starts the entire operation over again.
 
-If the CAS operation succeeds, it means that the global collector has
+If the CAS operation succeeds, it means that the collector has
 been informed that, if it needs for this nursery heap to be garbage
 collected, it has to do it on behalf of the thread.  The application
 thread can now perform the operation that might block the thread.
@@ -585,7 +585,7 @@ thread can now perform the operation that might block the thread.
 \section{Application thread waking up after block}
 
 When the application thread wakes up after having been blocked, there
-is a possibility that the global garbage collector is in the process
+is a possibility that the garbage collector is in the process
 of running the nursery collector on behalf of the application thread.
 If that is the case, then the application thread must wait until the
 garbage collection is finished.
@@ -594,13 +594,13 @@ The application thread starts by reading the shared variable into an
 ordinary lexical variable, and it also makes a second copy.  If the
 \texttt{gc-in-progress} bit is cleared, it then clears the
 \texttt{application-blocked} bit in the second copy and performs a CAS
-operation.  If the CAS operation succeeds, this means that the global
+operation.  If the CAS operation succeeds, this means that the
 collector is not running on behalf of the application thread, and will
 not do so because it has been informed that the application thread is
 not blocked.  The application thread then returns to its normal
 operation without any further action.
 
-If the CAS operation fails, then that means that the global collector
+If the CAS operation fails, then that means that the collector
 has started a collection on behalf of the application thread since the
 shared variable was read.  Then the application thread
 reads the shared variable again.  If the
@@ -608,17 +608,17 @@ reads the shared variable again.  If the
 the \texttt{application-blocked} bit and sets the
 \texttt{application-waiting} bit in the second local copy of the
 shared variable.  It then performs a CAS operation.  If the CAS
-operation succeeds, it means that the global collector is still
+operation succeeds, it means that the collector is still
 running the nursery collector on behalf of the application thread, and
-that the global collector has been informed that, when the nursery
+that the collector has been informed that, when the nursery
 collection is finished, it should signal the
 \texttt{application-may-execute} semaphore.
 
-\section{Preparing for a global collection}
+\section{Preparing for a collection}
 
-Before a global collection can take place, each nursery must first be
+Before a collection can take place, each nursery must first be
 collected, and references from the nurseries to the global heap must
-be marked so that the global collector will keep the referenced
+be marked so that the collector will keep the referenced
 objects.
 
 For each application thread, the following actions are performed:
@@ -660,19 +660,19 @@ When all the application threads have been processed this way, the
 global garbage collector executes a \emph{wait} operation sequentially
 on each semaphore in the saved set.
 
-Then the global collector waits for each the threads in the set of
+Then the collector waits for each the threads in the set of
 threads doing a nursery collection on behalf of an application thread
 to finish.  When such a thread finishes, the shared variable is read
 into an ordinary lexical variable and a second copy is made.  The
 \texttt{application-waiting} bit is examined.
 
 \begin{enumerate}
-\item If it is set, the global collector clears the bit, clears the
+\item If it is set, the collector clears the bit, clears the
   \texttt{gc-in-progress} bit, and executes a \emph{signal} operation
   on the \texttt{application-may-execute} semaphore.  No further
   synchronization is required.
 \item  If it is cleared, then that means that the application is still
-  blocked.  Then the global collector clears the
+  blocked.  Then the collector clears the
   \texttt{gc-in-progress} bit in the second copy and attempts a CAS
   operation.
   \begin{enumerate}
