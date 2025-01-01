@@ -64,15 +64,13 @@ The collector cycles through the following phases:
 
 \begin{enumerate}
 \item Idle.  In this phase, the collector is not doing any work.
-\item Determining roots.  In this phase, the collector
-  indicates to each running application thread that it needs to
-  transmit its part of the global root set to the collector.
-  For each blocked application thread, another thread (newly spawned
-  or taken from a thread pool) does the work on its behalf.
-\item Waiting for roots.  In this phase, the collector waits
-  for each application thread or each spawned thread to finish
-  indicating its part of the global root set.  Dyads and racks are
-  treated as independent objects.
+\item Determining roots.  In this phase, for each active thread, the
+  collector first stops the thread, creates a new thread (a ``marking
+  thread'') that marks all the objects accessible to that thread, and
+  finally unblocks the thread.
+\item Waiting for roots.  In this phase, the collector waits for each
+  marking thread to finish indicating its part of the global root set.
+  Dyads and racks are treated as independent objects.
 \item Mark.  In this phase, the collector traces and marks the
   live objects starting with the marked roots.
 \item Collecting unmarked dyads.  In this phase, the collector
