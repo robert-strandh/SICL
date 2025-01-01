@@ -32,10 +32,10 @@ thinking, the collector will be a combination of a
 mark-and-sweep collector and a traditional memory allocator as
 implemented by \texttt{malloc()/free()} in a \clanguage{} environment.
 
-We define a global heap divided into two parts called the \emph{dyad
+We use a global heap divided into two parts called the \emph{dyad
   part} and the \emph{rack part}.  The dyad part is a single vector
 consisting of two-word blocks.  This is where dyads are allocated.
-The rack part of the global heap is organized as the space managed by
+The rack part of the heap is organized as the space managed by
 an ordinary memory allocator.  Our adaptation of Doug Lea's memory
 allocator that we will used for this purpose can be found in
 \refApp{app-memory-allocator}.
@@ -47,12 +47,12 @@ move, which is preferable when they are used as keys in hash tables
 and when they are used to communicate with code in foreign languages
 that assume that an address of an object is fixed once and for all.
 
-Since the rack part of the global heap is managed by an ordinary
-memory allocator, the racks also do not move once allocated.  This
-fixed position is advantageous for code on some architectures.  For
-example, the correspondence between source code location and values of
-the program counter does not have to be updated, which would have to
-be done if code were being moved by the garbage collector.
+Since the rack part of the heap is managed by an ordinary memory
+allocator, the racks also do not move once allocated.  This fixed
+position is advantageous for code on some architectures.  For example,
+the correspondence between source code location and values of the
+program counter does not have to be updated, which would have to be
+done if code were being moved by the garbage collector.
 
 Another great advantage of racks being in a permanent position is that
 mutator threads can cache a pointer without the necessity of this
@@ -90,13 +90,13 @@ The collector cycles through the following phases:
 In this phase the collector is not doing any work.  Whether it
 has allocated threads that are blocked or no threads allocated
 remains to be decided.  During this phase, when application threads
-request space from the global heap, objects are allocated \emph{white}
+request space from the heap, objects are allocated \emph{white}
 (see below for more information on the tri-color technique).
 
 We maintain a free list of dyads to be used to grant requests for
 objects by mutator threads.  We start a collection before the free
 list is empty so that mutator threads can continue doing useful work
-during a garbage collection of the global heap.  If the free list of
+during a garbage collection of the heap.  If the free list of
 dyads ever becomes empty, then mutator threads must wait until more
 free dyads become available as a result of a garbage collection of the
 global heap.
@@ -104,7 +104,7 @@ global heap.
 \section{Determining roots}
 
 During this phase, when application
-threads request space from the global heap, objects are allocated
+threads request space from the heap, objects are allocated
 \emph{black} (see below for more information on the tri-color
 technique).
 
@@ -137,7 +137,7 @@ technique.  Recall that the tri-color technique works as follows:
 The root set is determined by requesting that each application thread
 trace live objects from their respective roots, and informing the
 global collector when this procedure reaches an object allocated in
-the global heap. For application threads that are blocked, for example
+the heap. For application threads that are blocked, for example
 waiting for input or output, the collector spawns a thread to
 run the garbage collector on behalf of the application thread.
 
@@ -232,32 +232,25 @@ number of dyads left in the free list.
 
 \section{Write barrier}
 
-The collector is subject to a write barrier.  Let G be some
-object in the global heap, and let N be some object in a nursery.  The
-write barrier must prevent the existence of a reference from G to N.
-Therefore, when attempt is made to create such a reference, N and the
-objects in its transitive closure are first moved to the global heap.
-As a result, there are no references from the global heap to objects
-in any nursery.  The write barrier is implemented as a test, emitted
-by the compiler, to determine:
+The collector is subject to a write barrier.  Let B be some object in
+the heap that is currently ``black'', and let W be some object in the
+heap that is currently ``white''.  The write barrier must prevent the
+existence of a reference from B to W.  Therefore, when attempt is made
+to create such a reference, W is turned ``gray'' so that it is
+considered live by the collector, and so that objects referred to by W
+can be traced.  The write barrier is implemented as a test, emitted by
+the compiler, to determine:
 
 \begin{enumerate}
-\item whether the object written to is indeed an object in the global
-  heap, and
+\item whether the object written to is indeed black,
 \item whether the datum being written is a reference to a
-  heap-allocated object (as opposed to an immediate object).
+  heap-allocated object (as opposed to an immediate object), and
+\item whether the datum being written is white.
 \end{enumerate}
 
 In many cases, this test can be omitted as a result of \emph{type
   inference}, for instance if the datum being written can be
 determined at compile time to be an immediate object.
-
-The write barrier is tripped whether the reference to be stored is to
-an object in the global heap or to an object in the local heap.  In
-the first case, the write barrier is used to make sure there is not a
-reference to a white object stored in a black object.  In the second
-case, the write barrier is used to trigger a migration of local
-objects to the global heap.
 
 \section{Protocol}
 
@@ -267,10 +260,10 @@ The names of these functions are exported by the package named
 \Defun {copy-object} {object}
 
 This function takes an object that is allocated in some thread-local
-heap, copies it, and returns a copy that is allocated in the global
+heap, copies it, and returns a copy that is allocated in the
 heap.  All the objects referred to by \textit{object}, including the
 class of a standard object, must either be immediate objects, or
-objects located in the global heap,
+objects located in the heap,
 
 \Defun {make-array} {dimensions \key element-type initial-element
   initial-contents adjustable fill-pointer}
@@ -280,7 +273,7 @@ name.  The difference is that this function can not be used to
 allocate displaced arrays.  This function can be used by client code
 to allocate arrays that are too big to be allocated in the
 thread-local heap.  All arguments must either be immediate objects, or
-objects located in the global heap.
+objects located in the heap.
 
 \Defun {allocate-rack} {size}
 
@@ -360,7 +353,7 @@ the local heap being full.  If a traced object is located in the
 global heap and the flag is set, then the collector is informed
 that it is live.  If the object is located in the nursery, the
 corresponding bits in the live bitmap are set.  If the root contains a
-pointer to a rack in the global heap, and the flag is set, then the
+pointer to a rack in the heap, and the flag is set, then the
 global collector is informed that this rack is live.
 
 Once the roots are found, the dyads marked as live in the nursery are
@@ -375,7 +368,7 @@ the information in the class.  The words that may contain live object
 of the rack are recursively visited.  If the object is a \texttt{cons}
 cell, the \texttt{car} and the \texttt{cdr} are recursively visited.
 Tracing stops when an object is reached that has already been traced,
-or when an object is reached that is located in the global heap.
+or when an object is reached that is located in the heap.
 
 The mark phase maintains an integer variable named \emph{live space}.
 It is initialized to $0$ at the beginning of the mark phase.  For
@@ -419,7 +412,7 @@ global heap, and the bit in the promotion bitmap corresponding to the
 first word of the dyad is set.
 
 To preserve the invariant of the garbage collector that there must be
-no references from the global heap to a nursery, whenever an object is
+no references from the heap to a nursery, whenever an object is
 promoted, other objects referenced from the promoted object, must be
 recursively promoted.
 
@@ -429,10 +422,10 @@ smallest address.  An object is skipped if it not live, as indicated
 by the bit in the live bitmap, and an object is skipped if it has
 already been promoted, as indicated by the bit in the promotion
 bitmap.  If the object is not to be skipped, it is promoted.  This
-means that a \emph{copy} of the object is allocated in the global
+means that a \emph{copy} of the object is allocated in the
 heap.  A forward reference is stored in the first word of the dyad of
 the original object, and a bit is set in the promotion bitmap.  Notice
-that, during this phase, there will be references from the global heap
+that, during this phase, there will be references from the heap
 to the nursery, but these references will never be followed by the
 global collector, and they will disappear at the end of the promotion
 phase.
@@ -444,7 +437,7 @@ reference indicates that it has already been promoted, as indicated by
 the corresponding bit being set in the promotion bitmap, the reference
 is replaced by the forward reference stored in the first word of the
 dyad in the nursery, and tracing stops.  If the visited object has
-not yet been promoted, then a copy is allocated in the global heap as
+not yet been promoted, then a copy is allocated in the heap as
 described above.  The corresponding bit in the promotion bitmap is set
 and a forwarding pointer is stored, again as above, and the copy is
 recursively traced.  Notice that if a functional programming style is
@@ -457,7 +450,7 @@ the amount of total space that has been promoted this way.  When the
 total amount of space is greater than or equal to the threshold that
 has been determined, the outer loop stops.  We can not, however, stop
 the tracing in each iteration, because stopping it prematurely means
-that there will be references from the global heap to the nursery
+that there will be references from the heap to the nursery
 remaining after this phase.
 
 When a sufficient number of objects have been promoted, the stack is
@@ -480,7 +473,7 @@ objects that are still in the nursery.
 \section{Preparing for a collection}
 
 Before a collection can take place, each nursery must first be
-collected, and references from the nurseries to the global heap must
+collected, and references from the nurseries to the heap must
 be marked so that the collector will keep the referenced
 objects.
 
