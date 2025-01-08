@@ -11,4 +11,5 @@
    #:type-expander
    #:define-constant
    #:run-time-environment
-   #:find-method-combination-template))
+   #:find-method-combination-template
+   #:get-setf-expansion))
