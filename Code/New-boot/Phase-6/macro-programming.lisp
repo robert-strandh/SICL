@@ -140,7 +140,8 @@
            (consp place))
       (let* ((global-environment
                (trucler:global-environment client environment))
-             (expander (clo:setf-expander client environment (car place))))
+             (expander
+               (clo:setf-expander client global-environment (car place))))
         (if (null expander)
             (call-next-method)
             (funcall expander place global-environment)))
