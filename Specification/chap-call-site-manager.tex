@@ -72,7 +72,9 @@ customized for the callee in the following ways:
 
 \begin{enumerate}
 \item The static environment is a constant and does not have to be
-  loaded from the rack.
+  loaded from the rack.  If the callee does not close over any
+  variables, the static environment does not have to be accessed at
+  all.
 \item The initial frame size of the callee is a constant and does not
   have to be loaded from the rack
 \item The entry point is a constant and does not have to be loaded
