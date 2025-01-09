@@ -5,6 +5,7 @@
   (:local-nicknames
    (#:clo #:clostrum)
    (#:rt #:sicl-run-time))
+  (:shadow #:get-setf-expansion)
   (:export
    #:*client*
    #:*environment*
