@@ -15,7 +15,8 @@
           #:macro-function
           #:compiler-macro-function
           #:boundp
-          #:symbol-value))
+          #:symbol-value
+          #:get-setf-expansion))
   (:export
    #:*client*
    #:*environment*
