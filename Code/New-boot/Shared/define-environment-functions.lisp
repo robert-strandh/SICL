@@ -54,6 +54,9 @@
           #'sicl-environment:find-method-combination-template)
     (setf (clo:fdefinition client global-environment `(setf ,symbol))
           #'(setf sicl-environment:find-method-combination-template)))
+  (setf (clo:fdefinition
+         client global-environment @sicl-environment:get-setf-expansion)
+        #'env:get-setf-expansion)
   (let ((environment
           (make-instance 'trucler-reference:environment
             :global-environment global-environment)))
