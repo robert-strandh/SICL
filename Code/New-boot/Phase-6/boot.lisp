@@ -52,4 +52,5 @@
           (lambda (form environment)
             (declare (ignore environment))
             `(progn ,@(rest form))))
-    (sb:ensure-asdf-system c4 w4 "sicl-data-and-control-flow-setf-expanders")))
+    (sb:ensure-asdf-system c4 w4 "sicl-data-and-control-flow-setf-expanders")
+    (clo:make-variable client e4 '*features* '(:sicl))))
