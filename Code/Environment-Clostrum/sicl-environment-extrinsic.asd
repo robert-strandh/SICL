@@ -16,4 +16,5 @@
    (:file "boundp")
    (:file "symbol-value")
    (:file "find-package")
-   (:file "define-constant")))
+   (:file "define-constant")
+   (:file "get-setf-expansion-defun")))
