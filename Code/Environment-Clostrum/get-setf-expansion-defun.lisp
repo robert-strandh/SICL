@@ -29,20 +29,26 @@
 (defun get-setf-expansion (client environment place)
   (let* ((global-env (trucler:global-environment client environment)))
     (if (symbolp place)
-        (let ((description (trucler:describe-variable client environment place)))
-          (if (typep description 'trucler:symbol-macro-description)
-              (get-setf-expansion client environment (trucler:expansion description))
-              (let ((temp (gensym)))
-                (values '() '() `(,temp) `(setq ,place ,temp) place))))
         (let ((description
-                (trucler:describe-function client environment (first place))))
+                (trucler:describe-variable client environment place)))
+          (if (typep description 'trucler:symbol-macro-description)
+              (get-setf-expansion
+               client environment (trucler:expansion description)))
+              (let ((temp (gensym)))
+                (values '() '() `(,temp) `(setq ,place ,temp) place)))
+        (let ((description
+                (trucler:describe-function
+                 client environment (first place))))
           (if (typep description 'trucler:macro-description)
               (let* ((expander (trucler:expander description))
                      (expansion (funcall expander place environment)))
                 (get-setf-expansion client environment expansion))
-              (let ((expander (setf-expander client global-env (first place))))
+              (let ((expander
+                      (clo:setf-expander client global-env (first place))))
                 (if (null expander)
-                    (let ((temps (mapcar (lambda (p) (declare (ignore p)) (gensym))
+                    (let ((temps (mapcar (lambda (p)
+                                           (declare (ignore p))
+                                           (gensym))
                                          (rest place)))
                           (new (gensym)))
                       (values temps
