@@ -26,6 +26,7 @@
     remove remove-if remove-if-not
     delete delete-if delete-if-not
     remove-duplicates sort map substitute
+    bit mismatch replace
     ;; Symbols
     gensym symbolp symbol-name get
     ;; Strings
