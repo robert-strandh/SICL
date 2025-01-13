@@ -12,10 +12,10 @@
     caaar caadr cadar caddr cdaar cdadr cddar cdddr
     cddadr
     first second third fourth fifth sixth seventh eighth ninth tenth
-    rest last butlast nth nthcdr append getf
+    rest last butlast nth nthcdr append nconc getf
     consp listp atom member member-if mapcar mapc set-difference
-    set-exclusive-or
-    assoc ldiff tailp list-length make-list union intersection
+    set-exclusive-or assoc rassoc acons
+    ldiff tailp list-length make-list union intersection
     adjoin copy-list
     subsetp
     ;; Sequences
