@@ -159,7 +159,8 @@
      environment
      (description trucler:symbol-macro-description)
      call-next-method)
-  (funcall call-next-method))
+  (let ((expansion (trucler:expansion description)))
+    (cmd:get-setf-expansion client expansion environment)))
 
 (defmethod cmd:get-setf-expansion
     ((client client) (place symbol) &optional environment)
