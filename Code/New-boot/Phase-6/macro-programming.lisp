@@ -146,7 +146,23 @@
             (call-next-method)
             (funcall expander place global-environment)))))
 
+(defgeneric get-setf-expansion-with-description
+    (client place environment description call-next-method))
+
+(defmethod get-setf-expansion-with-description
+    (client place environment description call-next-method)
+  (funcall call-next-method))
+
+(defmethod get-setf-expansion-with-description
+    (client
+     place
+     environment
+     (description trucler:symbol-macro-description)
+     call-next-method)
+  (funcall call-next-method))
+
 (defmethod cmd:get-setf-expansion
     ((client client) (place symbol) &optional environment)
-  (declare (ignore environment))
-  (call-next-method))
+  (let ((description (trucler:describe-variable client environment place)))
+    (get-setf-expansion-with-description
+     client place environment description #'call-next-method)))
