@@ -189,6 +189,9 @@
   (setf (clo:fdefinition client global-environment 'shadow)
         (fdefinition (find-symbol (symbol-name 'shadow)
                                   '#:sicl-new-boot-parcl-extrinsic)))
+  (setf (clo:fdefinition client global-environment 'shadowing-import)
+        (fdefinition (find-symbol (symbol-name 'shadowing-import)
+                                  '#:sicl-new-boot-parcl-extrinsic)))
   ;; For the purpose of bootstrapping, the environment will contain a
   ;; symbol SICL-NEW-BOOT:ADD-PACKAGE-LOCAL-NICKNAME and it will have
   ;; as its FDEFINITION that of ADD-PACKAGE-LOCAL-NICKNAME in the
