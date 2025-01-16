@@ -109,6 +109,9 @@
 (defmethod parcl-low:intern ((client client) (package package) name)
   (intern name package))
 
+(defmethod parcl-low:remove-entry ((client client) name table)
+  (remhash name table))
+
 (defmethod parcl-low:make-table ((client client))
   (make-hash-table :test #'equal))
 
