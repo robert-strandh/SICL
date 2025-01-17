@@ -5,7 +5,8 @@
     + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
     zerop plusp minusp expt
     numberp integerp realp rationalp floatp random
-    logcount lognot integer-length
+    lognot logand logior logxor lognand lognor
+    logcount integer-length
     ;; Conses
     cons list list* null endp
     car cdr caar cadr cdar cddr
