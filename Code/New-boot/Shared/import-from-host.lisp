@@ -2,11 +2,13 @@
 
 (defparameter *host-function-names*
   '(;; Arithmetic
-    + - * / floor ceiling 1+ 1- = /= < > <= >= max min evenp oddp
+    + - * / floor ceiling truncate mod
+    1+ 1- = /= < > <= >= max min evenp oddp
     zerop plusp minusp expt
     numberp integerp realp rationalp floatp random
     lognot logand logior logxor lognand lognor
-    logcount integer-length
+    logcount integer-length ash
+    log sqrt
     ;; Conses
     cons list list* null endp
     car cdr caar cadr cdar cddr
@@ -34,6 +36,7 @@
     string stringp string-downcase string=
     ;; Characters
     char characterp
+    char= char-equal char/= char-not-equal
     ;; Conditions
     error warn break assert
     ;; Evaluation and compilation
