@@ -8,7 +8,7 @@
     numberp integerp realp rationalp floatp random
     lognot logand logior logxor lognand lognor
     logcount integer-length ash
-    log sqrt
+    log sqrt ldb
     ;; Conses
     cons list list* null endp
     car cdr caar cadr cdar cddr
