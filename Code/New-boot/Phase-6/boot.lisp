@@ -92,4 +92,6 @@
           for value = (symbol-value symbol)
           do (clo:make-variable client e4 symbol value))
     (setf (clo:fdefinition c4 e4 'coerce) #'coerce)
-    (setf (clo:fdefinition c4 e4 'float-digits) #'float-digits)))
+    (setf (clo:fdefinition c4 e4 'float-digits) #'float-digits)
+    (setf (clo:fdefinition c4 e4 'integer-decode-float)
+          #'integer-decode-float)))
