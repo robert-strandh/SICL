@@ -95,4 +95,5 @@
     (setf (clo:fdefinition c4 e4 'float-digits) #'float-digits)
     (setf (clo:fdefinition c4 e4 'integer-decode-float)
           #'integer-decode-float)
-    (setf (clo:fdefinition c4 e4 'byte) #'byte)))
+    (setf (clo:fdefinition c4 e4 'byte) #'byte)
+    (setf (clo:fdefinition c4 e4 'ldb-test) #'ldb-test)))
