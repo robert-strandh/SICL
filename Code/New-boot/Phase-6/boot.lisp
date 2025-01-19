@@ -64,4 +64,14 @@
       (sb:ensure-asdf-system c4 w4 "cyclosis")
       (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
     (clo:make-variable
-     client e4 @predicament:*condition-maker* 'make-condition)))
+     client e4 @predicament:*condition-maker* 'make-condition)
+    (loop for symbol in '(most-negative-short-float
+                          most-positive-short-float
+                          most-negative-single-float
+                          most-positive-single-float
+                          most-negative-double-float
+                          most-positive-double-float
+                          most-negative-long-float
+                          most-positive-long-float)
+          for value = (symbol-value symbol)
+          do (clo:make-variable client e4 symbol value))))
