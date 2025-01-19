@@ -62,4 +62,6 @@
     (sb:ensure-asdf-system c4 w4 "sicl-posix-high-package")
     (let ((*features* '(:sicl)))
       (sb:ensure-asdf-system c4 w4 "cyclosis")
-      (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))))
+      (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
+    (clo:make-variable
+     client e4 @predicament:*condition-maker* 'make-condition)))
