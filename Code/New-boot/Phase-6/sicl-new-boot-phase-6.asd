@@ -8,4 +8,5 @@
    (:file "client")
    (:file "configuration")
    (:file "macro-programming")
+   (:file "load-quaviver")
    (:file "boot")))
