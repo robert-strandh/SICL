@@ -5,9 +5,6 @@
   (let ((symbol (find-symbol "LIST-STRUCTURE" "ECCLESIA")))
     (setf (clo:fdefinition client global-environment symbol)
           (fdefinition symbol)))
-  ;; The ctype library needs for the system SICL-ARITHMETIC to be
-  ;; loaded.
-  (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
   ;; The ctype library needs for the classes in the REGALIA.
   ;; to be defined, and referred to in package SICL-ARRAY.
   (sb:ensure-asdf-system client environment "regalia-base-intrinsic")
