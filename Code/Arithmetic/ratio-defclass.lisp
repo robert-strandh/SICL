@@ -4,6 +4,6 @@
 
 (defgeneric denominator (ratio))
 
-(defclass ratio (rational standard-object)
+(defclass ratio (rational)
   ((%numerator :initarg :numerator :reader numerator)
    (%denominator :initarg :denominator :reader denominator)))
