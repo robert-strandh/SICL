@@ -82,6 +82,8 @@
       (clo:make-variable client (sb:e3 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-load-time")
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-2-additional-classes")
     (define-class-of-and-stamp client (sb:e3 boot) global-environment)

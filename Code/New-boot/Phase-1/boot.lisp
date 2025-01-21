@@ -224,6 +224,8 @@
     (setf (clo:macro-function
            client global-environment @asdf:defsystem)
           (constantly nil))
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-load-time")
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-1-additional-classes")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
