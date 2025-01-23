@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-arithmetic)
 
-(defclass double-float (float)
+(defclass double-float (float standard-object)
   ())
 
 (defun double-float-p (object)
