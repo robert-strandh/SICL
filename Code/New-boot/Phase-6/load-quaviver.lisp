@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-new-boot-phase-6)
 
+(eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
+
 (defun load-quaviver (c4 w4 e4)
   (declare (ignorable w4))
   (let ((single-float
