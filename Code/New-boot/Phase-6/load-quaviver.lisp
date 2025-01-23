@@ -24,7 +24,14 @@
                buoy-simulate:most-positive-double-float
                double-float 0)
       (clo:make-variable c4 e4 'most-positive-long-float double-float)
-      (clo:make-variable c4 e4 'most-positive-double-float double-float)))
+      (clo:make-variable c4 e4 'most-positive-double-float double-float))
+    (let ((double-float
+            (funcall make-instance 'double-float :additional-size 1)))
+      (funcall setf-standard-instance-access
+               buoy-simulate:most-negative-double-float
+               double-float 0)
+      (clo:make-variable c4 e4 'most-negative-long-float double-float)
+      (clo:make-variable c4 e4 'most-negative-double-float double-float)))
   (setf (clo:fdefinition c4 e4 'coerce) #'coerce)
   (setf (clo:fdefinition c4 e4 'byte) #'byte)
   (setf (clo:fdefinition c4 e4 'ldb-test) #'ldb-test)
