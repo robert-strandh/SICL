@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-new-boot-phase-6)
 
-(defun load-quaviver (c4 e4)
+(defun load-quaviver (c4 w4 e4)
   (loop for symbol in '(most-negative-short-float
                         most-positive-short-float
                         least-negative-short-float
