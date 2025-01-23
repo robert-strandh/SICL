@@ -10,7 +10,8 @@
                "parcl-extrinsic"
                "parcl-low-class"
                "khazern-extrinsic"
-               "sicl-source-tracking")
+               "sicl-source-tracking"
+               "buoy-simulate")
   :serial t
   :components
   ((:file "packages")
