@@ -18,6 +18,7 @@
    (:file "client")
    (:file "environment")
    (:file "package-programming")
+   (:file "single-float-class")
    (:file "cst-to-ast")
    (:file "load-source-file")
    (:file "asdf-programming")
