@@ -38,4 +38,6 @@
    #:add-package-local-nickname
    #:fill-environment
    #:stamp
-   #:bt))
+   #:bt
+   #:simulated-single-float
+   #:bit-pattern))
