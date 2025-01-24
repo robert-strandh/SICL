@@ -16,6 +16,14 @@
     (clo:make-variable c4 e4 'least-positive-single-float single-float))
   (let ((single-float
           (make-instance 'sb:simulated-single-float
+            :bit-pattern
+            buoy-simulate:least-positive-normalized-single-float)))
+    (clo:make-variable
+     c4 e4 'least-positive-normalized-short-float single-float)
+    (clo:make-variable
+     c4 e4 'least-positive-normalized-single-float single-float))
+  (let ((single-float
+          (make-instance 'sb:simulated-single-float
             :bit-pattern buoy-simulate:most-negative-single-float)))
     (clo:make-variable c4 e4 'most-negative-short-float single-float)
     (clo:make-variable c4 e4 'most-negative-single-float single-float))
