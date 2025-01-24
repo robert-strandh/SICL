@@ -48,6 +48,14 @@
   (setf (clo:fdefinition c4 e4 'float-digits)
         (lambda (float)
           (if (typep float 'sb:simulated-single-float) 24 53)))
+  (setf (clo:fdefinition c4 e4 'integer-decode-float)
+        (lambda (float)
+          (if (typep float 'sb:simulated-single-float)
+              (buoy-simulate:integer-decode-single-float
+               (sb:bit-pattern float))
+              (let ((symbol @clostrophilia:standard-instance-access))
+                (buoy-simulate:integer-decode-double-float
+                 (funcall (clo:fdefinition c4 e4 symbol) float 0))))))
   (setf (clo:fdefinition c4 e4 'coerce) #'coerce)
   (setf (clo:fdefinition c4 e4 'byte) #'byte)
   (setf (clo:fdefinition c4 e4 'ldb-test) #'ldb-test)
