@@ -7,7 +7,7 @@
             (if (plusp result)
                 (make-bignum-from-overflowed-fixnum result)
                 result))
-          result)
+        result)
       (if (minusp y)
           result
           (if (minusp result)
