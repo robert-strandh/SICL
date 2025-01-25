@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-arithmetic
   (:use #:common-lisp)
+  (:local-nicknames (#:po #:sicl-primop))
   (:export
    #:binary-add
    #:binary-subtract
