@@ -1,11 +1,18 @@
 (cl:in-package #:sicl-arithmetic)
 
-(defmethod binary-subtract ((minuend fixnum) (subtrahend fixnum))
-  (cleavir-primop:let-uninitialized
-   (z)
-   (if (cleavir-primop:fixnum-sub minuend subtrahend z)
-       z
-       (convert-fixnum-to-bignum z))))
+(defmethod binary-subtract ((x fixnum) (y fixnum))
+  (let ((result (po:primop :fixnum-subtract x y)))
+    (if (minusp x)
+        (if (minusp y)
+            result
+            (if (plusp result)
+                (make-bignum-from-overflowed-fixnum result)
+                result)))
+      (if (minusp y)
+          (if (minusp result)
+              (make-bignum-from-overflowed-fixnum result)
+              result)
+          result)))
 
 (defmethod binary-subtract ((x integer) (y ratio))
   (let ((num (numerator y)) (den (denominator y)))
