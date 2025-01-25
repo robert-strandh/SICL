@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-arithmetic-load-time
+(defsystem #:sicl-arithmetic-class-hierarchy
   :depends-on (#:sicl-arithmetic-base)
   :serial t
   :components
