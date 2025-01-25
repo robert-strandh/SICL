@@ -40,4 +40,5 @@
    #:stamp
    #:bt
    #:simulated-single-float
-   #:bit-pattern))
+   #:bit-pattern
+   #:primop))
