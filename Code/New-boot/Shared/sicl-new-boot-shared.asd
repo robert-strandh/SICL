@@ -19,6 +19,7 @@
    (:file "client")
    (:file "environment")
    (:file "package-programming")
+   (:file "primop")
    (:file "single-float-class")
    (:file "cst-to-ast")
    (:file "load-source-file")
