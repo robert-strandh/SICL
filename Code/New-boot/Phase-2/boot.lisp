@@ -45,6 +45,8 @@
       (setf (clo:fdefinition client global-environment `(setf ,symbol))
             #'(setf sb:standard-instance-access)))
     (sb:ensure-asdf-system client environment "sicl-primop")
+    (setf (clo:fdefinition client global-environment @sicl-primop:primop)
+          #'sb:primop)
     (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
     (sb:define-straddle-functions client global-environment (sb:e1 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
