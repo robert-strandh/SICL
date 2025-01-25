@@ -199,7 +199,7 @@
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
     (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-load-time")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-class-hierarchy")
     ;; Now, the class T is defined as a host standard class, but when
     ;; methods specialize to T, we must find the host class named T,
     ;; so we just replace the one we just loaded.
