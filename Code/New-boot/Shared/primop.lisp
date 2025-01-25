@@ -15,7 +15,7 @@
           (- sum (ash 1 63))))))
 
 ;;; Multiply two positive fixnums.  Return the result as two values.
-(defmethod primop ((operation (eql :fixnum-add)) &rest arguments)
+(defmethod primop ((operation (eql :fixnum-multiply)) &rest arguments)
   (destructuring-bind (x y) arguments
     (check-type x (integer 0))
     (check-type y (integer 0))
