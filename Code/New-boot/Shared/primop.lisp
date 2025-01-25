@@ -17,6 +17,15 @@
             ((minusp sum) (+ sum (ash 1 63)))
             (t (- sum (ash 1 63)))))))
 
+(defmethod primop ((operation (eql :fixnum-subtract)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (check-type x fixnum)
+    (check-type y fixnum)
+    (let ((difference (- x y)))
+      (cond ((typep difference 'fixnum) difference)
+            ((minusp difference) (+ difference (ash 1 63)))
+            (t (- difference (ash 1 63)))))))
+
 ;;; Multiply two positive fixnums.  Return the result as two values.
 (defmethod primop ((operation (eql :fixnum-multiply)) &rest arguments)
   (destructuring-bind (x y) arguments
