@@ -56,6 +56,8 @@
             (clo:find-class client global-environment 't)))
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-load-time")
     (setf (clo:symbol-value client (sb:e3 boot) @clostrophilia:*class-t+1*)
           (clo:find-class client global-environment 't))
     (setf (clo:macro-function
@@ -85,8 +87,6 @@
       (clo:make-variable client (sb:e3 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-load-time")
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-2-additional-classes")
     (define-class-of-and-stamp client (sb:e3 boot) global-environment)

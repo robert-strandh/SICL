@@ -198,6 +198,8 @@
      client environment "sicl-clos-package")
     (sb:ensure-asdf-system
      client environment "clostrophilia-class-hierarchy")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-load-time")
     ;; Now, the class T is defined as a host standard class, but when
     ;; methods specialize to T, we must find the host class named T,
     ;; so we just replace the one we just loaded.
@@ -227,8 +229,6 @@
     (setf (clo:macro-function
            client global-environment @asdf:defsystem)
           (constantly nil))
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-load-time")
     (sb:ensure-asdf-system
      client environment "sicl-new-boot-phase-1-additional-classes")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
