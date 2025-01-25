@@ -51,7 +51,16 @@
                buoy-simulate:least-positive-double-float
                double-float 0)
       (clo:make-variable c4 e4 'least-positive-long-float double-float)
-      (clo:make-variable c4 e4 'least-positive-double-float double-float)))
+      (clo:make-variable c4 e4 'least-positive-double-float double-float))
+    (let ((double-float
+            (funcall make-instance 'double-float :additional-size 1)))
+      (funcall setf-standard-instance-access
+               buoy-simulate:least-positive-normalized-double-float
+               double-float 0)
+      (clo:make-variable
+       c4 e4 'least-positive-normalized-long-float double-float)
+      (clo:make-variable
+       c4 e4 'least-positive-normalized-double-float double-float)))
   (setf (clo:fdefinition c4 e4 'float-digits)
         (lambda (float)
           (if (typep float 'sb:simulated-single-float) 24 53)))
@@ -70,6 +79,6 @@
   (setf (clo:fdefinition c4 e4 'coerce) #'coerce)
   (setf (clo:fdefinition c4 e4 'byte) #'byte)
   (setf (clo:fdefinition c4 e4 'ldb-test) #'ldb-test)
-;;  #+(or)
+  #+(or)
   (let ((*features* '(:sicl)))
     (sb:ensure-asdf-system c4 w4 "quaviver")))
