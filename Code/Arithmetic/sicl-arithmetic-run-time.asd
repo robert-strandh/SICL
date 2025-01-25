@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-arithmetic-run-time
-  :depends-on (#:sicl-arithmetic-load-time)
+  :depends-on (#:sicl-arithmetic-class-hierarchy)
   :serial t
   :components
   ((:file "floatp-defgeneric")
