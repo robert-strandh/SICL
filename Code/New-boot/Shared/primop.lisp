@@ -2,9 +2,12 @@
 
 (defgeneric primop (operation &rest arguments))
 
-;;; Add two positive fixnums.  If the result is not a fixnum, then
-;;; substract from it so that it becomes a negative fixnum, thereby
-;;; simulating overflow behavior in most architectures.
+;;; Add two fixnums.  If the result is a fixnum, then return it.  If
+;;; the result is not a fixnum, then it is either positive or
+;;; negative.  If it is positive, substract 2^63 from it so that it
+;;; becomes a negative fixnum, thereby simulating overflow behavior in
+;;; most architectures.  If it is negative, add 2^63 to it so that it
+;;; becomes a positive fixnum, for the same reason.
 (defmethod primop ((operation (eql :fixnum-add)) &rest arguments)
   (destructuring-bind (x y) arguments
     (check-type x fixnum)
