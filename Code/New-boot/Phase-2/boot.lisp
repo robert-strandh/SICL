@@ -80,6 +80,7 @@
      client environment "clostrophilia-class-hierarchy")
     (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
     (sb:ensure-asdf-system client environment "sicl-arithmetic-class-hierarchy")
+    (sb:ensure-asdf-system client environment "sicl-arithmetic-run-time") 
     (setf (clo:symbol-value client (sb:e1 boot) @clostrophilia:*class-t+1*)
           (clo:find-class client global-environment 't))
     (sb:ensure-asdf-system
