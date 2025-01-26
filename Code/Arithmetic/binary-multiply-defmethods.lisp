@@ -9,17 +9,19 @@
         (error 'create-a-bignum))))
 
 (defmethod binary-multiply ((multiplier integer) (multiplicand ratio))
-  ;; We divide out common factors ahead of time rather than use the naive
-  ;; method, so as to avoid large intermediates.
+  ;; We divide out common factors ahead of time rather than use the
+  ;; naive method, so as to avoid large intermediates.
   (let* ((num (numerator multiplicand)) (den (denominator multiplicand))
          (g (gcd multiplier den))
-         ;; TODO?: All of these divisions are exact, so for large bignums
-         ;; it might be profitable to use an exact division algorithm like
-         ;; Jebelean's; these can be more efficient than general division.
+         ;; TODO?: All of these divisions are exact, so for large
+         ;; bignums it might be profitable to use an exact division
+         ;; algorithm like Jebelean's; these can be more efficient
+         ;; than general division.
          (nmul (truncate multiplier g)) (nden (truncate den g))
          (nnum (* nmul num)))
-    ;; We can end up with nden = 1, e.g. from (* 7 8/7); the gcd divisions will
-    ;; give us nmul = 1, nden = 1, nnum = 8 for that example.
+    ;; We can end up with nden = 1, e.g. from (* 7 8/7); the gcd
+    ;; divisions will give us nmul = 1, nden = 1, nnum = 8 for that
+    ;; example.
     (if (= nden 1)
         nnum
         (make-instance 'ratio :numerator nnum :denominator nden))))
