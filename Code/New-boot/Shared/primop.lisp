@@ -10,8 +10,6 @@
 ;;; becomes a positive fixnum, for the same reason.
 (defmethod primop ((operation (eql :fixnum-add)) &rest arguments)
   (destructuring-bind (x y) arguments
-    (check-type x fixnum)
-    (check-type y fixnum)
     (let ((sum (+ x y)))
       (cond ((typep sum 'fixnum) sum)
             ((minusp sum) (+ sum (ash 1 63)))
@@ -19,8 +17,6 @@
 
 (defmethod primop ((operation (eql :fixnum-subtract)) &rest arguments)
   (destructuring-bind (x y) arguments
-    (check-type x fixnum)
-    (check-type y fixnum)
     (let ((difference (- x y)))
       (cond ((typep difference 'fixnum) difference)
             ((minusp difference) (+ difference (ash 1 63)))
