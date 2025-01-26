@@ -1,33 +1,12 @@
 (cl:in-package #:sicl-arithmetic)
 
 (defmethod binary-multiply ((multiplier fixnum) (multiplicand fixnum))
-  (if (minusp multiplier)
-      (if (minusp multiplicand)
-          (multiple-value-bind (most-significant least-significant)
-              (po:primop :fixnum-multiply (- multiplier) (- multiplicand))
-            (if (zerop most-significant)
-                least-significant
-                ;; FIXME: create a bignum once we know how to do that.
-                (error 'create-a-bignum)))
-          (multiple-value-bind (most-significant least-significant)
-              (po:primop :fixnum-multiply (- multiplier) multiplicand)
-            (if (zerop most-significant)
-                (- least-significant)
-                ;; FIXME: create a bignum once we know how to do that.
-                (error 'create-a-bignum))))
-      (if (minusp multiplicand)
-          (multiple-value-bind (most-significant least-significant)
-              (po:primop :fixnum-multiply multiplier (- multiplicand))
-            (if (zerop most-significant)
-                (- least-significant)
-                ;; FIXME: create a bignum once we know how to do that.
-                (error 'create-a-bignum)))
-          (multiple-value-bind (most-significant least-significant)
-              (po:primop :fixnum-multiply multiplier multiplicand)
-            (if (zerop most-significant)
-                least-significant
-                ;; FIXME: create a bignum once we know how to do that.
-                (error 'create-a-bignum))))))
+  (multiple-value-bind (most-significant least-significant)
+      (po:primop :fixnum-multiply multiplier multiplicand)
+    (if (or (zerop most-significant) (= most-significant -1))
+        least-significant
+        ;; FIXME: create a bignum once we know how to do that.
+        (error 'create-a-bignum))))
 
 (defmethod binary-multiply ((multiplier integer) (multiplicand ratio))
   ;; We divide out common factors ahead of time rather than use the naive
@@ -44,6 +23,7 @@
     (if (= nden 1)
         nnum
         (make-instance 'ratio :numerator nnum :denominator nden))))
+
 (defmethod binary-multiply ((multiplier ratio) (multiplicand integer))
   (let* ((num (numerator multiplier)) (den (denominator multiplier))
          (g (gcd multiplicand den))
