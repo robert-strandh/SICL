@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-arithmetic-run-time
+(defsystem #:sicl-arithmetic-operations
   :depends-on (#:sicl-arithmetic-class-hierarchy)
   :serial t
   :components
