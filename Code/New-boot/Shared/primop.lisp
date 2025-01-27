@@ -28,3 +28,7 @@
     (let ((product (* x y)))
       (values (ldb (byte 31 31) product)
               (ldb (byte 31 0) product)))))
+
+(defmethod primop ((operation (eql :fixnum-equal)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (= x y)))
