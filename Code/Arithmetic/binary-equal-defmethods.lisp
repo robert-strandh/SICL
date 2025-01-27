@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-arithmetic)
 
 (defmethod binary-equal ((x fixnum) (y fixnum))
-  (if (cleavir-primop:fixnum-equal x y) t nil))
+  (if (po:primop :fixnum-equal x y) t nil))
 
 (defmethod binary-equal ((x fixnum) (y bignum)) nil)
 (defmethod binary-equal ((x bignum) (y fixnum)) nil)
