@@ -48,3 +48,11 @@
 (defmethod primop ((operation (eql :fixnum-logand)) &rest arguments)
   (destructuring-bind (x y) arguments
     (logand x y)))
+
+(defmethod primop ((operation (eql :fixnum-logior)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (logior x y)))
+
+(defmethod primop ((operation (eql :fixnum-logxor)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (logxor x y)))
