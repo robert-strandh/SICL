@@ -32,3 +32,11 @@
 (defmethod primop ((operation (eql :fixnum-equal)) &rest arguments)
   (destructuring-bind (x y) arguments
     (= x y)))
+
+(defmethod primop ((operation (eql :fixnum-less)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (< x y)))
+
+(defmethod primop ((operation (eql :fixnum-not-greater)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (<= x y)))
