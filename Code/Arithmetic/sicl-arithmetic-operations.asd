@@ -42,7 +42,7 @@
    (:file "binary-logxor-defgeneric")
    (:file "binary-logxor-defmethods")
    (:file "logxor-defun")
-   ;; (:file "lognot-defun")
+   (:file "lognot-defun")
    ;; (:file "logandc1-defun")
    ;; (:file "logandc2-defun")
    ;; (:file "logorc1-defun")
