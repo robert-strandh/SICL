@@ -56,3 +56,7 @@
 (defmethod primop ((operation (eql :fixnum-logxor)) &rest arguments)
   (destructuring-bind (x y) arguments
     (logxor x y)))
+
+(defmethod primop ((operation (eql :fixnum-divide)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (floor x y)))
