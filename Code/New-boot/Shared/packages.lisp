@@ -28,6 +28,7 @@
    #:allocate-general-instance
    #:standard-instance-access
    #:header #:class #:rack
+   #:cst-to-ast
    #:eval-cst
    #:define-clostrophilia-find-method-combination-template
    #:define-client-and-environment-variables
