@@ -66,6 +66,6 @@
    (:file "plusp-defun")
    (:file "minusp-defun")
    (:file "zerop-defun")
-   ;; (:file "convert-fixnum-to-bignum-defun")
+   (:file "convert-fixnum-to-bignum-defun")
    ;; (:file "floatp-defgeneric")
    ))
