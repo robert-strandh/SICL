@@ -15,6 +15,7 @@
                   :limb-count 2))
         (least-significant-limb
           (logand fixnum #.(- (expt 2 62) 1))))
-    (cleavir-primop:nook-write bignum 3 least-significant-limb)
-    (cleavir-primop:nook-write bignum 4 1)
-    bignum))
+    (setf (sicl-clos:standard-instance-access bignum 0)
+          least-significant-limb)
+    (setf (sicl-clos:standard-instance-access bignum 1)
+          1)))
