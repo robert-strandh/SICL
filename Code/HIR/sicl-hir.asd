@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "instruction")
    (:file "data")
-   (:file "parse-arguments-instruction")))
+   (:file "parse-arguments-instruction")
+   (:file "make-cell-instruction")))
