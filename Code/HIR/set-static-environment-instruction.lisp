@@ -7,5 +7,5 @@
 ;;; closure object is initialized to contain the objects of the
 ;;; remaining inputs in that order.
 
-(defclass write-static-environment-instruction (instruction)
+(defclass set-static-environment-instruction (instruction)
   ())
