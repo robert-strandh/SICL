@@ -12,4 +12,3 @@
   ((%lambda-list
     :initarg :lambda-list
     :reader lambda-list)))
-
