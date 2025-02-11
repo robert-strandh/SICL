@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "instruction")
-   (:file "data")))
+   (:file "data")
+   (:file "parse-arguments-instruction")))
