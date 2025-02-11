@@ -12,4 +12,5 @@
    (:file "read-cell-instruction")
    (:file "write-cell-instruction")
    (:file "set-static-environment-instruction")
-   (:file "static-environment-instruction")))
+   (:file "static-environment-instruction")
+   (:file "read-static-environment-instruction")))
