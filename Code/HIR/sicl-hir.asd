@@ -11,5 +11,5 @@
    (:file "make-cell-instruction")
    (:file "read-cell-instruction")
    (:file "write-cell-instruction")
-   (:file "write-static-environment-instruction")
+   (:file "set-static-environment-instruction")
    (:file "static-environment-instruction")))
