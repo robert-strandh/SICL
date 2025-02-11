@@ -8,4 +8,5 @@
    (:file "instruction")
    (:file "data")
    (:file "parse-arguments-instruction")
-   (:file "make-cell-instruction")))
+   (:file "make-cell-instruction")
+   (:file "read-cell-instruction")))
