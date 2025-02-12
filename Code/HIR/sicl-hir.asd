@@ -16,4 +16,5 @@
    (:file "dynamic-environment-instruction")
    (:file "read-static-environment-instruction")
    (:file "if-instruction")
-   (:file "exit-point-instruction")))
+   (:file "exit-point-instruction")
+   (:file "unwind-instruction")))

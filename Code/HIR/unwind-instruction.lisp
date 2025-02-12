@@ -1,0 +1,14 @@
+(cl:in-package #:sicl-hir)
+
+;;; This instruction has one or two inputs and no outputs.  The first
+;;; input is the unique identifier of an exit point as created by the
+;;; EXIT-POINT-INSTRUCTION.  The second input is used only when this
+;;; instruction is created from a RETURN-FROM, and is the value
+;;; (perhaps multiple values) to be transferred to the exit point.
+;;; The successor of this instruction is the successor of the last
+;;; instruction created from a BLOCK if this instruction is created
+;;; from a RETURN-FROM, or the instruction following a TABODY tag if
+;;; this instruction was created from a GO.
+
+(defclass unwind-instruction (instruction)
+  ())
