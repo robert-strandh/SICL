@@ -17,4 +17,5 @@
    (:file "read-static-environment-instruction")
    (:file "if-instruction")
    (:file "exit-point-instruction")
-   (:file "unwind-instruction")))
+   (:file "unwind-instruction")
+   (:file "funcall-instruction")))
