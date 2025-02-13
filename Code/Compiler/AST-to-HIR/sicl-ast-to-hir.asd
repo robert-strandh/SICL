@@ -8,4 +8,5 @@
   ((:file "packages")
    (:file "context")
    (:file "registers")
-   (:file "translate")))
+   (:file "translate")
+   (:file "variable-reference-ast")))
