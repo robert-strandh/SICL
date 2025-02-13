@@ -5,4 +5,5 @@
                "sicl-hir")
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "context")))
