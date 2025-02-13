@@ -7,4 +7,5 @@
   :components
   ((:file "packages")
    (:file "context")
-   (:file "registers")))
+   (:file "registers")
+   (:file "translate")))
