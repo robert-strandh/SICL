@@ -6,4 +6,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "context")))
+   (:file "context")
+   (:file "registers")))
