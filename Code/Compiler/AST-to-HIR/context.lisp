@@ -17,3 +17,12 @@
     :values-count values-count
     :next-instruction next-instruction
     :target-register target-register))
+
+(defmacro with-context-components ((context-form) &body body)
+  (let ((context-variable (gensym)))
+    `(let* ((,context-variable ,context-form)
+            (values-count (values-count ,context-variable))
+            (next-instruction (next-instruction ,context-variable))
+            (target-register (target-register ,context-variable)))
+       (declare (ignorable values-count next-instruction target-register))
+       ,@body)))
