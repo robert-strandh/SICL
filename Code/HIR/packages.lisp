@@ -17,6 +17,7 @@
    #:unwind-instruction
    #:funcall-instruction
    #:return-instruction
+   #:assignment-instruction
    #:register
    #:single-value-register
    #:multiple-value-register

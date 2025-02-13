@@ -19,4 +19,5 @@
    (:file "exit-point-instruction")
    (:file "unwind-instruction")
    (:file "funcall-instruction")
-   (:file "return-instruction")))
+   (:file "return-instruction")
+   (:file "assignment-instruction")))
