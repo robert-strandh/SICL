@@ -12,3 +12,8 @@
     :initarg :target-register
     :reader target-register)))
 
+(defun make-context (values-count next-instruction target-register)
+  (make-instance 'context
+    :values-count values-count
+    :next-instruction next-instruction
+    :target-register target-register))
