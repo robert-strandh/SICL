@@ -6,6 +6,8 @@
   (let* ((*registers* (make-hash-table :test #'eq))
          (*target-register*
            (make-instance 'hir:multiple-value-register))
+         (*dynamic-environment-register*
+           (make-instance 'hir:single-value-register))
          (*values-count* :all)
          (*next-instruction*
            (make-instance 'hir:return-instruction

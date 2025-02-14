@@ -5,3 +5,5 @@
 (defvar *next-instruction*)
 
 (defvar *target-register*)
+
+(defvar *dynamic-environment-register*)
