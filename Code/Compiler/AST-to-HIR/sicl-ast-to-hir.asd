@@ -13,4 +13,5 @@
    (:file "progn-ast")
    (:file "let-temporary-ast")
    (:file "set-static-environment-ast")
-   (:file "read-static-environment-ast")))
+   (:file "read-static-environment-ast")
+   (:file "static-environment-ast")))
