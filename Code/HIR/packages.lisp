@@ -18,6 +18,7 @@
    #:funcall-instruction
    #:return-instruction
    #:assignment-instruction
+   #:special-variable-binding-instruction
    #:register
    #:single-value-register
    #:multiple-value-register

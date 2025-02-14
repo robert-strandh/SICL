@@ -20,4 +20,5 @@
    (:file "unwind-instruction")
    (:file "funcall-instruction")
    (:file "return-instruction")
-   (:file "assignment-instruction")))
+   (:file "assignment-instruction")
+   (:file "special-variable-binding-instruction")))
