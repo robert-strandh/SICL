@@ -6,4 +6,5 @@
            (register (find-register variable-definition-ast)))
       (make-instance 'hir:assignment-instruction
         :inputs (list register)
-        :outputs (list target-register)))))
+        :outputs (list target-register)
+        :successors (list next-instruction)))))
