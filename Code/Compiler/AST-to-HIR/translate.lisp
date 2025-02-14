@@ -8,6 +8,8 @@
            (make-instance 'hir:multiple-value-register))
          (*dynamic-environment-register*
            (make-instance 'hir:single-value-register))
+         (*static-environment-register*
+           (make-instance 'hir:single-value-register))
          (*values-count* :all)
          (*next-instruction*
            (make-instance 'hir:return-instruction

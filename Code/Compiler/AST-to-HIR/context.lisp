@@ -7,3 +7,5 @@
 (defvar *target-register*)
 
 (defvar *dynamic-environment-register*)
+
+(defvar *static-environment-register*)
