@@ -9,4 +9,5 @@
    (:file "context")
    (:file "registers")
    (:file "translate")
-   (:file "variable-reference-ast")))
+   (:file "variable-reference-ast")
+   (:file "let-temporary-ast")))
