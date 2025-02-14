@@ -1,14 +1,13 @@
 (cl:in-package #:sicl-ast-to-hir)
 
-(defgeneric translate-ast (client ast context))
+(defgeneric translate-ast (client ast))
 
 (defun translate (client ast)
   (let* ((*registers* (make-hash-table :test #'eq))
-         (register
+         (*target-register*
            (make-instance 'hir:multiple-value-register))
-         (return-instruction
+         (*values-count* :all)
+         (*next-instruction*
            (make-instance 'hir:return-instruction
-             :inputs (list register)))
-         (context
-           (make-context :all return-instruction register)))
-    (translate-ast client ast context)))
+             :inputs (list *target-register*))))
+    (translate-ast client ast)))
