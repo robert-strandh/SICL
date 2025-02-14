@@ -15,6 +15,9 @@
   ())
 
 (defclass literal ()
-  ((%readers
+  ((%value
+    :initarg :value
+    :reader value)
+   (%readers
     :initarg :readers
     :accessor readers)))
