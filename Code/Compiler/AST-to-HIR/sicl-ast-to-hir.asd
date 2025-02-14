@@ -12,4 +12,5 @@
    (:file "variable-reference-ast")
    (:file "progn-ast")
    (:file "let-temporary-ast")
-   (:file "set-static-environment-ast")))
+   (:file "set-static-environment-ast")
+   (:file "read-static-environment-ast")))
