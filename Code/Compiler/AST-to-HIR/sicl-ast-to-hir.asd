@@ -14,4 +14,5 @@
    (:file "let-temporary-ast")
    (:file "set-static-environment-ast")
    (:file "read-static-environment-ast")
-   (:file "static-environment-ast")))
+   (:file "static-environment-ast")
+   (:file "tagbody-with-variable-ast")))
