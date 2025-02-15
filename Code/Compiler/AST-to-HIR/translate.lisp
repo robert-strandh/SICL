@@ -11,6 +11,13 @@
 
 (defvar *unwind-instructions-to-fix-up*)
 
+(defun fix-up-unwind-instructions ()
+  (loop for unwind-instruction in *unwind-instructions-to-fix-up*
+        for successors = (hir:successors unwind-instruction)
+        for (index instruction-vector) = successors
+        do (reinitialize-instance unwind-instruction
+             :successors (list (aref instruction-vector index)))))
+
 (defgeneric translate-ast (client ast))
 
 (defun translate (client ast)
@@ -26,4 +33,5 @@
            (make-instance 'hir:return-instruction
              :inputs (list *target-register*)))
          (*unwind-instructions-to-fix-up* '()))
-    (translate-ast client ast)))
+    (translate-ast client ast)
+    (fix-up-unwind-instructions)))
