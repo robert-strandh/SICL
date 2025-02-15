@@ -17,4 +17,5 @@
    (:file "static-environment-ast")
    (:file "tagbody-with-variable-ast")
    (:file "go-with-variable-ast")
-   (:file "block-with-variable-ast")))
+   (:file "block-with-variable-ast")
+   (:file "return-from-with-variable-ast")))
