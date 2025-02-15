@@ -15,4 +15,5 @@
    (:file "set-static-environment-ast")
    (:file "read-static-environment-ast")
    (:file "static-environment-ast")
-   (:file "tagbody-with-variable-ast")))
+   (:file "tagbody-with-variable-ast")
+   (:file "go-with-variable-ast")))
