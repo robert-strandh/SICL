@@ -1,10 +1,15 @@
 (cl:in-package #:sicl-ast-to-hir)
 
+(defparameter *block-next-instructions* '())
+
 (defmethod translate-ast (client (ast ico:block-with-variable-ast))
   (let ((variable-definition-ast (ico:variable-definition-ast ast))
         (identity-register (make-instance 'hir:single-value-register)))
     (setf (find-register variable-definition-ast) identity-register)
-    (let* ((current-dynamic-environment-register
+    (let* ((*block-next-instructions*
+             (acons variable-definition-ast *next-instruction*
+                    *block-next-instructions*))
+           (current-dynamic-environment-register
              *dynamic-environment-register*)
            (*dynamic-environment-register*
              (make-instance 'hir:single-value-register))
