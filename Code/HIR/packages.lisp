@@ -25,6 +25,7 @@
    #:register
    #:readers
    #:writers
+   #:value
    #:single-value-register
    #:multiple-value-register
    #:literal))
