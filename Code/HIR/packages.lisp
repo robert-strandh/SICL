@@ -23,6 +23,8 @@
    #:assignment-instruction
    #:special-variable-binding-instruction
    #:register
+   #:readers
+   #:writers
    #:single-value-register
    #:multiple-value-register
    #:literal))
