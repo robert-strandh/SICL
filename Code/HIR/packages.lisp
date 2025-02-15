@@ -4,6 +4,9 @@
   (:use #:common-lisp)
   (:export
    #:instruction
+   #:inputs
+   #:outputs
+   #:successors
    #:parse-arguments-instruction
    #:make-cell-instruction
    #:read-cell-instruction
