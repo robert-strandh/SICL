@@ -97,40 +97,40 @@
 ;;;
 ;;; Datum commands.
 
-;; (define-visualizer-command (com-inspect-datum :name t)
-;;     ((instruction 'datum))
-;;   (clouseau:inspect instruction))
+(define-visualizer-command (com-inspect-datum :name t)
+    ((instruction 'ir:datum))
+  (clouseau:inspect instruction))
 
-;; (clim:define-presentation-to-command-translator inspect-datum
-;;     (datum
-;;      com-inspect-datum
-;;      visualizer
-;;      :documentation "Inspect")
-;;     (object)
-;;   (list object))
+(clim:define-presentation-to-command-translator inspect-datum
+    (ir:datum
+     com-inspect-datum
+     visualizer
+     :documentation "Inspect")
+    (object)
+  (list object))
 
-;; (define-visualizer-command (com-highlight-clients :name t)
-;;     ((datum 'datum))
-;;   (setf (gethash datum (highlight-clients clim:*application-frame*))
-;;         t))
+(define-visualizer-command (com-highlight-clients :name t)
+    ((datum 'ir:datum))
+  (setf (gethash datum (highlight-clients clim:*application-frame*))
+        t))
 
-;; (clim:define-presentation-to-command-translator highlight-clients
-;;     (datum
-;;      com-highlight-clients
-;;      visualizer
-;;      :documentation "Highlight clients")
-;;     (object)
-;;   (list object))
+(clim:define-presentation-to-command-translator highlight-clients
+    (ir:datum
+     com-highlight-clients
+     visualizer
+     :documentation "Highlight clients")
+    (object)
+  (list object))
 
-;; (define-visualizer-command (com-unhighlight-clients :name t)
-;;     ((datum 'datum))
-;;   (setf (gethash datum (highlight-clients clim:*application-frame*))
-;;         nil))
+(define-visualizer-command (com-unhighlight-clients :name t)
+    ((datum 'ir:datum))
+  (setf (gethash datum (highlight-clients clim:*application-frame*))
+        nil))
 
-;; (clim:define-presentation-to-command-translator unhighlight-clients
-;;     (datum
-;;      com-unhighlight-clients
-;;      visualizer
-;;      :documentation "Unhighlight clients")
-;;     (object)
-;;   (list object))
+(clim:define-presentation-to-command-translator unhighlight-clients
+    (ir:datum
+     com-unhighlight-clients
+     visualizer
+     :documentation "Unhighlight clients")
+    (object)
+  (list object))
