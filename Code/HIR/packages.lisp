@@ -22,6 +22,7 @@
    #:return-instruction
    #:assignment-instruction
    #:special-variable-binding-instruction
+   #:datum
    #:register
    #:readers
    #:writers
