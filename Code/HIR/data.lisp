@@ -1,10 +1,12 @@
 (cl:in-package #:sicl-hir)
 
-(defclass register ()
+(defclass datum ()
   ((%readers
     :initarg :readers
-    :accessor readers)
-   (%writers
+    :accessor readers)))
+
+(defclass register (datum)
+  ((%writers
     :initarg :writers
     :accessor writers)))
 
@@ -14,10 +16,7 @@
 (defclass multiple-value-register (register)
   ())
 
-(defclass literal ()
+(defclass literal (datum)
   ((%value
     :initarg :value
-    :reader value)
-   (%readers
-    :initarg :readers
-    :accessor readers)))
+    :reader value)))
