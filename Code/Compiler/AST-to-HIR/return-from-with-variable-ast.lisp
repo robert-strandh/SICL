@@ -17,7 +17,7 @@
                            value-register)
              :outputs '()
              :successors
-             (list (assoc definition-ast *block-next-instructions*)))))
+             (list (assoc definition-ast *block-receive-instruction*)))))
     (translate-ast client form-ast)))
                                       
     
