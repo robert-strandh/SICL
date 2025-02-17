@@ -7,11 +7,13 @@
 (defparameter *block-receive-instruction* '())
 
 ;;; This variable holds an association list that maps
-;;; VARIABLE-DEFINITION-ASTs of BLOCK-WITH-VARIABLE-ASTs to
-;;; VALUES-COUNT (0, 1, or :ALL) to be used as the VALUES-COUNT
-;;; context variable when the FORM-AST of a
-;;; RETURN-FROM-WITH-VARIABLE-AST is translated.
-(defparameter *block-values-count* '())
+;;; VARIABLE-DEFINITION-ASTs of BLOCK-WITH-VARIABLE-ASTs to to a
+;;; target register (which can be NIL), but only the class of the
+;;; value is used, to encode the number of values required.  The value
+;;; of this variable is to be used to create a new register of the
+;;; same class for the translation of the FORM-AST of a
+;;; RETURN-FROM-WITH-VARIABLE-AST.
+(defparameter *block-target-register* '())
 
 (defmethod translate-ast (client (ast ico:block-with-variable-ast))
   (let ((variable-definition-ast (ico:variable-definition-ast ast))
@@ -23,9 +25,9 @@
            (*block-receive-instruction*
              (acons variable-definition-ast receive-instruction
                     *block-receive-instruction*))
-           (*block-values-count*
-             (acons variable-definition-ast *values-count*
-                    *block-values-count*))
+           (*block-target-register*
+             (acons variable-definition-ast *target-register*
+                    *block-target-register*))
            (current-dynamic-environment-register
              *dynamic-environment-register*)
            (*dynamic-environment-register*

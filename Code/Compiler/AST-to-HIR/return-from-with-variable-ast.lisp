@@ -5,20 +5,20 @@
          (definition-ast (ico:definition-ast variable-reference-ast))
          (identity-register (find-register definition-ast))
          (form-ast (ico:form-ast ast))
-         (value-register
-           (make-instance
-               (if (eql *values-count* :all)
-                   'hir:multiple-value-register
-                   'hir:single-value-register)))
+         (block-target-register
+           (assoc definition-ast *block-target-register*))
+         (*target-register*
+           (if (null block-target-register)
+               nil
+               (make-instance (class-of block-target-register))))
          (*next-instruction*
            (make-instance 'hir:unwind-instruction
              :inputs (list *dynamic-environment-register*
                            identity-register
-                           value-register)
+                           *target-register*)
              :outputs '()
              :successors
-             (list (assoc definition-ast *block-receive-instruction*))))
-         (*values-count* (assoc definition-ast *block-values-count*)))
+             (list (assoc definition-ast *block-receive-instruction*)))))
     (translate-ast client form-ast)))
                                       
     
