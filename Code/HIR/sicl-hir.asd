@@ -22,4 +22,5 @@
    (:file "funcall-instruction")
    (:file "return-instruction")
    (:file "assignment-instruction")
-   (:file "special-variable-binding-instruction")))
+   (:file "special-variable-binding-instruction")
+   (:file "enclose-instruction")))
