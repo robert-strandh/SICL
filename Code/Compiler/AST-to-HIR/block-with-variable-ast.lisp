@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-ast-to-hir)
 
+;;; This variable holds an association list that maps
+;;; VARIABLE-DEFINITION-ASTs of BLOCK-WITH-VARIABLE-ASTs to
+;;; RECEIVE-INSTRUCTIONs to be used by UNWIND-INSTRUCTIONs resulting
+;;; from the translation of RETURN-FROM-WITH-VARIABLE-AST
+
 (defparameter *block-receive-instruction* '())
 
 (defmethod translate-ast (client (ast ico:block-with-variable-ast))
