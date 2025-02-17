@@ -23,6 +23,7 @@
    #:return-instruction
    #:assignment-instruction
    #:special-variable-binding-instruction
+   #:enclose-instruction
    #:datum
    #:register
    #:readers
