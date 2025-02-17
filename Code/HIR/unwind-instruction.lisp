@@ -8,10 +8,11 @@
 ;;; instruction is created from a RETURN-FROM, and only when the
 ;;; corresponding BLOCK is in a context where its value is needed, and
 ;;; is the value (perhaps multiple values) to be transferred to the
-;;; exit point.  The successor of this instruction is the successor of
-;;; the last instruction created from a BLOCK if this instruction is
-;;; created from a RETURN-FROM, or the instruction following a TABODY
-;;; tag if this instruction was created from a GO.
+;;; exit point.  The successor of this instruction is a
+;;; RECEIVE-INSTRUCTION that receives the values and transmits them to
+;;; the right register if this instruction is created from a
+;;; RETURN-FROM, or the instruction following a TABODY tag if this
+;;; instruction was created from a GO.
 
 (defclass unwind-instruction (instruction)
   ())
