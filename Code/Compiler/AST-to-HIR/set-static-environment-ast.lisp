@@ -9,8 +9,7 @@
     (let ((*next-instruction*
             (make-instance 'hir:set-static-environment-instruction
               :inputs registers
-              :successors (list *next-instruction*)))
-          (*values-count* 1))
+              :successors (list *next-instruction*))))
       (loop with asts = (cons function-reference-ast form-asts)
             for ast in (reverse asts)
             for *target-register* in (reverse registers)

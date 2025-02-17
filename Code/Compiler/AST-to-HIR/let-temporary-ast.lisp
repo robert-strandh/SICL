@@ -9,6 +9,5 @@
     (setf (find-register variable-definition-ast) register)
       (let ((*next-instruction*
               (translate-implicit-progn client body-form-asts))
-            (*values-count* 1)
             (*target-register* register))
         (translate-ast client init-form-ast))))

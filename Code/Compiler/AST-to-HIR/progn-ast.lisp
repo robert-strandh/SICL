@@ -9,7 +9,7 @@
         (t
          (let ((*next-instruction*
                  (translate-implicit-progn client (rest asts)))
-               (*values-count* 0))
+               (*target-register* nil))
            (translate-ast client (first asts))))))
 
 (defmethod translate-ast (client (ast ico:progn-ast))

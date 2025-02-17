@@ -28,7 +28,6 @@
            (make-instance 'hir:single-value-register))
          (*static-environment-register*
            (make-instance 'hir:single-value-register))
-         (*values-count* :all)
          (*next-instruction*
            (make-instance 'hir:return-instruction
              :inputs (list *target-register*)))

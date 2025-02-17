@@ -29,12 +29,12 @@
            (*dynamic-environment-register*
              (make-instance 'hir:single-value-register))
            (*next-instruction*
-             (if (zerop *values-count*)
+             (if (null *target-register*)
                  *next-instruction*
                  (make-instance 'hir:assignment-instruction
                    :inputs (list (make-instance 'hir:literal :value nil))
                    :outputs *target-register*)))
-           (*values-count* 0)
+           (*target-register* nil)
            (*tagbody-vectors*
              (acons variable-definition-ast instruction-vector
                     *tagbody-vectors*))
