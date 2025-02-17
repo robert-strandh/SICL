@@ -18,6 +18,7 @@
    #:if-instruction
    #:exit-point-instruction
    #:unwind-instruction
+   #:receive-instruction
    #:funcall-instruction
    #:return-instruction
    #:assignment-instruction
