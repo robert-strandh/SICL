@@ -2,6 +2,7 @@
 
 (defsystem "sicl-ast-to-hir"
   :depends-on ("iconoclast"
+               "iconoclast-ast-transformations"
                "sicl-hir")
   :serial t
   :components
