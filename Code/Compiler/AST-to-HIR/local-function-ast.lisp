@@ -106,6 +106,8 @@
              (translate-implicit-progn client (ico:form-asts ast))))
       (fix-up-unwind-instructions)
       (make-instance 'hir:parse-arguments-instruction
+        :lambda-list
+        (register-lambda-list-from-lambda-list-ast lambda-list-ast)
         :inputs '()
         :outputs registers
         :successors (list body-instruction)))))
