@@ -32,5 +32,5 @@
            (make-instance 'hir:return-instruction
              :inputs (list *target-register*)))
          (*unwind-instructions-to-fix-up* '()))
-    (translate-ast client ast)
-    (fix-up-unwind-instructions)))
+    (prog1 (translate-ast client ast)
+      (fix-up-unwind-instructions))))
