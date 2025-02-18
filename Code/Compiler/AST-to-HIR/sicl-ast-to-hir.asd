@@ -20,4 +20,5 @@
    (:file "go-with-variable-ast")
    (:file "block-with-variable-ast")
    (:file "return-from-with-variable-ast")
-   (:file "special-variable-bind-ast")))
+   (:file "special-variable-bind-ast")
+   (:file "local-function-ast")))
