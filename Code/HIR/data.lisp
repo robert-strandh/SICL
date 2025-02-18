@@ -2,11 +2,13 @@
 
 (defclass datum ()
   ((%readers
+    :initform '()
     :initarg :readers
     :accessor readers)))
 
 (defclass register (datum)
   ((%writers
+    :initform '()
     :initarg :writers
     :accessor writers)))
 
