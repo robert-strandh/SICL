@@ -10,6 +10,7 @@
    (:file "context")
    (:file "registers")
    (:file "translate")
+   (:file "literal-ast")
    (:file "variable-reference-ast")
    (:file "progn-ast")
    (:file "let-temporary-ast")
