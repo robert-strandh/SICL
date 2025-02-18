@@ -22,4 +22,5 @@
    (:file "return-from-with-variable-ast")
    (:file "special-variable-bind-ast")
    (:file "local-function-ast")
-   (:file "labels-ast")))
+   (:file "labels-ast")
+   (:file "ast-to-hir")))
