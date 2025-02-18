@@ -12,5 +12,3 @@
 
 (defun (setf find-register) (register variable-definition-ast)
   (setf (gethash variable-definition-ast *registers*) register))
-
-        
