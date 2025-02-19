@@ -26,3 +26,6 @@
   ((%value
     :initarg :value
     :reader value)))
+
+(defmethod writers ((datum literal))
+  '())
