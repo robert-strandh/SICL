@@ -43,7 +43,7 @@
         (let ((dx1 (compute-dx to-instruction
                                (ir:successors from-instruction)))
               (dx2 (compute-dx from-instruction
-                               (predecessors to-instruction)))
+                               (ir:predecessors to-instruction)))
               (dy1 (/ (node-height pane) 2))
               (dy2 (- (/ (node-height pane) 2))))
           (make-instance 'short-arc
@@ -123,7 +123,7 @@
         (let ((dx1 (compute-dx to-instruction
                                (ir:successors from-instruction)))
               (dx2 (compute-dx from-instruction
-                               (predecessors to-instruction)))
+                               (ir:predecessors to-instruction)))
               (dy1 (/ (node-height pane) 2))
               (dy2 (- (/ (node-height pane) 2))))
           (make-instance 'long-arc
@@ -276,4 +276,5 @@
                                  (make-short-arc node successor pane)
                                  (make-long-arc node successor pane)))
         when (typep node 'enclose-instruction)
-          collect (make-enclosure-arc (code node) node pane)))
+          collect (make-enclosure-arc
+                   (parse-arguments-instruction node) node pane)))
