@@ -15,7 +15,7 @@
         ((listp item)
          (mapcar #'format-item item))
         ((typep item 'ir:register)
-         (name item))
+         (ir:name item))
         (t
          (error "unknown item in lambda list ~s" item))))
 
