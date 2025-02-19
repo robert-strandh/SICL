@@ -23,4 +23,5 @@
    (:file "return-instruction")
    (:file "assignment-instruction")
    (:file "special-variable-binding-instruction")
+   (:file "global-function-reference-instruction")
    (:file "enclose-instruction")))
