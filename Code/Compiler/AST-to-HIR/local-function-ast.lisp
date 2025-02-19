@@ -82,7 +82,8 @@
                 (funcall accessor lambda-list-ast))))
 
 (defmethod translate-ast (client (ast ico:local-function-ast))
-  (let* ((lambda-list-ast (ico:lambda-list-ast ast))
+  (let* ((*registers* (make-hash-table :test #'eq))
+         (lambda-list-ast (ico:lambda-list-ast ast))
          (variable-definition-asts
            (iat:extract-variable-asts-in-lambda-list lambda-list-ast))
          (registers
@@ -91,8 +92,7 @@
     (loop for variable-definition-ast in variable-definition-asts
           for register in registers
           do (setf (find-register variable-definition-ast) register))
-    (let* ((*registers* (make-hash-table :test #'eq))
-           (*target-register*
+    (let* ((*target-register*
              (make-instance 'hir:multiple-value-register))
            (*dynamic-environment-register*
              (make-instance 'hir:single-value-register))
