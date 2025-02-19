@@ -23,6 +23,8 @@
    #:return-instruction
    #:assignment-instruction
    #:special-variable-binding-instruction
+   #:global-function-reference-instruction
+   #:function-name
    #:enclose-instruction
    #:datum
    #:register
