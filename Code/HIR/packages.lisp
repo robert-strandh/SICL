@@ -6,6 +6,7 @@
    #:instruction
    #:inputs
    #:outputs
+   #:predecessors
    #:successors
    #:parse-arguments-instruction
    #:make-cell-instruction
