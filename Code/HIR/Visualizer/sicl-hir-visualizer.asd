@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "longest-path")
+   (:file "utilities")
    (:file "variables")
    (:file "instruction-position")
    (:file "instruction-layout")
