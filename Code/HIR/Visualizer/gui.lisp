@@ -178,7 +178,7 @@
           (if (datum-should-be-highlighted-p datum) clim:+magenta+ clim:+black+)))
     (clim:with-drawing-options (pane :ink ink :line-thickness line-thickness)
       (clim:with-output-as-presentation
-          (pane datum 'datum)
+          (pane datum 'ir:datum)
         (call-next-method)))))
 
 (defmethod draw-datum (datum pane)
