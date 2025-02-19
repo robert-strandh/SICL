@@ -45,7 +45,7 @@
     (labels ((traverse (instruction)
                (unless (gethash instruction table)
                  (setf (gethash instruction table) t)
-                 (when (typep instruction 'enclose-instruction)
+                 (when (typep instruction 'ir:enclose-instruction)
                    (push instruction result))
                  (loop for successor in (ir:successors instruction)
                        do (traverse successor)))))
@@ -56,7 +56,7 @@
   (loop for instruction in rack
         for enclose-instructions = (find-enclose-instructions instruction)
         for parse-arguments-instructions
-          = (mapcar #'parse-argument-instruction enclose-instructions)
+          = (mapcar #'ir:parse-arguments-instruction enclose-instructions)
         append parse-arguments-instructions))
 
 (defun layout-program (parse-arguments-instruction pane)
@@ -197,7 +197,7 @@
                      (floor datum-width 2) (floor datum-height 2)
                      :filled nil)
     (clim:with-text-size (pane :small)
-      (clim:draw-text* pane (string (name datum))
+      (clim:draw-text* pane (string (ir:name datum))
                        hpos vpos
                        :align-x :center :align-y :center
                        :ink (ink-for-location datum)))))
@@ -239,7 +239,27 @@
       (draw-data pane)
       (draw-arcs pane (make-arcs pane *instruction-position-table*)))))
 
+(defun initialize-predecessors-and-data (initial-instruction)
+  (map-instructions-arbitrary-order
+   (lambda (instruction)
+     (setf (ir:predecessors instruction) '())
+     (loop for input in (ir:inputs instruction)
+           do (setf (ir:readers input) '()))
+     (loop for output in (ir:outputs instruction)
+           do (setf (ir:writers output) '())))
+   initial-instruction)
+  (map-instructions-arbitrary-order
+   (lambda (instruction)
+     (loop for successor in (ir:successors instruction)
+           do (push instruction (ir:predecessors successor)))
+     (loop for input in (ir:inputs instruction)
+           do (push instruction (ir:readers input)))
+     (loop for output in (ir:outputs instruction)
+           do (push instruction (ir:writers output))))
+   initial-instruction))
+
 (defun visualize (initial-instruction &key new-process-p)
+  (initialize-predecessors-and-data initial-instruction)
   (let ((frame (clim:make-application-frame
                 'visualizer
                 :initial-instruction initial-instruction)))
