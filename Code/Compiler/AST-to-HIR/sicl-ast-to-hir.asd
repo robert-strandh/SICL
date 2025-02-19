@@ -13,6 +13,7 @@
    (:file "literal-ast")
    (:file "variable-reference-ast")
    (:file "progn-ast")
+   (:file "application-ast")
    (:file "let-temporary-ast")
    (:file "set-static-environment-ast")
    (:file "read-static-environment-ast")
