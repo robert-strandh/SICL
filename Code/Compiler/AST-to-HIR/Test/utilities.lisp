@@ -44,3 +44,9 @@
 
 (defun eval-expression (client expression environment)
   (cb:eval-expression client expression environment))
+
+(defun hir-from-expression (expression)
+  (with-default-parameters (client environment global-environment)
+    (let* ((cst (cst:cst-from-expression expression))
+           (ast (cb:cst-to-ast client cst environment)))
+      (sicl-ast-to-hir:ast-to-hir client ast))))
