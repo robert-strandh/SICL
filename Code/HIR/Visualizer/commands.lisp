@@ -98,8 +98,8 @@
 ;;; Datum commands.
 
 (define-visualizer-command (com-inspect-datum :name t)
-    ((instruction 'ir:datum))
-  (clouseau:inspect instruction))
+    ((datum 'ir:datum))
+  (clouseau:inspect datum))
 
 (clim:define-presentation-to-command-translator inspect-datum
     (ir:datum
