@@ -7,7 +7,11 @@
     :accessor readers)))
 
 (defclass register (datum)
-  ((%writers
+  ((%name
+    :initform "No name"
+    :initarg :name
+    :reader name)
+   (%writers
     :initform '()
     :initarg :writers
     :accessor writers)))
