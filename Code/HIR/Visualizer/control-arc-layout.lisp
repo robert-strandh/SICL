@@ -275,6 +275,6 @@
                      collect (if (arc-is-short-p node successor)
                                  (make-short-arc node successor pane)
                                  (make-long-arc node successor pane)))
-        when (typep node 'enclose-instruction)
+        when (typep node 'ir:enclose-instruction)
           collect (make-enclosure-arc
-                   (parse-arguments-instruction node) node pane)))
+                   (ir:parse-arguments-instruction node) node pane)))
