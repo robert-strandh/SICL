@@ -29,6 +29,7 @@
    #:enclose-instruction
    #:datum
    #:register
+   #:name
    #:readers
    #:writers
    #:value
