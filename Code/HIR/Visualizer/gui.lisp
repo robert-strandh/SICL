@@ -39,7 +39,7 @@
           then (+ hpos width horizontal-node-separation)
         finally (return hpos)))
 
-(defun find-enclose-instructions (enter-instruction)
+(defun find-enclose-instructions (parse-arguments-instruction)
   (let ((table (make-hash-table :test #'eq))
         (result '()))
     (labels ((traverse (instruction)
@@ -49,35 +49,36 @@
                    (push instruction result))
                  (loop for successor in (ir:successors instruction)
                        do (traverse successor)))))
-      (traverse enter-instruction))
+      (traverse parse-arguments-instruction))
     (reverse result)))
 
 (defun next-rack (rack)
   (loop for instruction in rack
         for enclose-instructions = (find-enclose-instructions instruction)
-        for enter-instructions = (mapcar #'code enclose-instructions)
-        append enter-instructions))
+        for parse-arguments-instructions
+          = (mapcar #'parse-argument-instruction enclose-instructions)
+        append parse-arguments-instructions))
 
-(defun layout-program (enter-instruction pane)
+(defun layout-program (parse-arguments-instruction pane)
   (loop for hpos = 50 then (+ hpos (+ rack-width horizontal-node-separation))
-        for rack = (list enter-instruction) then (next-rack rack)
+        for rack = (list parse-arguments-instruction) then (next-rack rack)
         for dimensions = (loop for inst in rack
                                collect (multiple-value-bind (width height)
                                            (compute-function-dimensions inst pane)
                                          (cons width height)))
         for rack-width = (loop for dim in dimensions maximize (car dim))
         until (null rack)
-        do (loop for enter-instruction in rack
+        do (loop for parse-arguments-instruction in rack
                  for dimension in dimensions
                  for vpos = 10
                    then (+ vpos (cdr dimension) vertical-rack-separation)
-                 do (layout-function enter-instruction hpos vpos))))
+                 do (layout-function parse-arguments-instruction hpos vpos))))
 
 (defun draw-node (node hpos vpos pane)
   (let ((width (node-width node pane))
         (height (node-height pane))
         (highlight-p
-          (loop for predecessor in (predecessors node)
+          (loop for predecessor in (ir:predecessors node)
                 thereis (gethash predecessor
                                  (highlight-successors clim:*application-frame*)))))
     (clim:with-output-as-presentation
