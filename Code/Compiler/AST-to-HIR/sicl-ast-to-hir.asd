@@ -3,7 +3,7 @@
 (defsystem "sicl-ast-to-hir"
   :depends-on ("iconoclast"
                "iconoclast-ast-transformations"
-               "sicl-hir")
+               "common-boot-hir")
   :serial t
   :components
   ((:file "packages")

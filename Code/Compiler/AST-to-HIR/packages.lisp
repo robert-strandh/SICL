@@ -3,6 +3,6 @@
 (defpackage #:sicl-ast-to-hir
   (:use #:common-lisp)
   (:local-nicknames (#:ico #:iconoclast)
-                    (#:hir #:sicl-hir)
+                    (#:hir #:common-boot-hir)
                     (#:iat #:iconoclast-ast-transformations))
   (:export #:ast-to-hir))
