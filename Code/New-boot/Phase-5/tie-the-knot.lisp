@@ -71,7 +71,7 @@
         for cell = (clostrum-basic::cell entry)
         for operator = (car cell)
         when (or (object-is-an-impure-ersatz-object-p operator)
-                 (typep operator 'common-boot-ast-interpreter::closure))
+                 (typep operator 'cbe:closure))
           do (let ((name3 (find-operator-in-e3 operator e3)))
                (unless (null name3)
                  (setf (clo:fdefinition client e4 name4)
