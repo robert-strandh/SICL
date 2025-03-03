@@ -6,6 +6,7 @@
    (#:env #:sicl-environment)
    (#:sb #:sicl-new-boot)
    (#:cb #:common-boot)
+   (#:cbe #:common-boot-ast-interpreter)
    (#:clo #:clostrum)
    (#:cmd #:common-macro-definitions)
    (#:abp #:architecture.builder-protocol))
