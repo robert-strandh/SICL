@@ -2,7 +2,7 @@
 
 (defun ast-evaluator-eval-cst (client cst environment)
   (let* ((ast (cst-to-ast client cst environment))
-         (top-level-function (cbae:compile-ast client ast environment)))
+         (top-level-function (cbe:compile-ast client ast environment)))
     (funcall top-level-function)))
 
 (defun eval-cst (client cst environment)
