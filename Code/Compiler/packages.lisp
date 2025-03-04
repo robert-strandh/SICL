@@ -13,7 +13,6 @@
            #:establish-call-site
            #:function-names
            #:hir
-           #:compile-ast
            #:tie-code-object
            #:ast-from-file
            #:ast-from-stream
