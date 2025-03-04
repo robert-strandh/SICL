@@ -12,5 +12,6 @@
              :global-environment global-environment))
          (eclector.base:*client* client-object)
          (abp:*builder* (cb::make-builder client-object environment))
-         (cst (cst:cst-from-expression expression)))
-    (cst-to-ast client-object cst environment)))
+         (cst (cst:cst-from-expression expression))
+         (cmd:*client* client))
+    (cb:cst-to-ast client cst environment)))
