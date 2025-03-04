@@ -1,9 +1,8 @@
 (cl:in-package #:sicl-new-boot)
 
 (defun ast-evaluator-eval-cst (client cst environment)
-  (let* ((ast (cst-to-ast client cst environment))
-         (top-level-function (cbe:compile-ast client ast environment)))
-    (funcall top-level-function)))
+  (let ((cmd:*client* client))
+    (cb:eval-cst client cst environment)))
 
 (defun eval-cst (client cst environment)
   (ast-evaluator-eval-cst client cst environment))
