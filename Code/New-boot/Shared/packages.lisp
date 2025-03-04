@@ -9,7 +9,8 @@
    (#:cmd #:common-macro-definitions)
    (#:clo #:clostrum)
    (#:cb #:common-boot)
-   (#:cbe #:common-boot-ast-interpreter))
+   #+(or)(#:cbe #:common-boot-hir-evaluator)
+   #+(and)(#:cbe #:common-boot-ast-interpreter))
   (:shadow #:symbol-package)
   (:export
    #:boot #:e1 #:e2 #:e3 #:e4 #:packages #:symbol-package
@@ -28,7 +29,6 @@
    #:allocate-general-instance
    #:standard-instance-access
    #:header #:class #:rack
-   #:cst-to-ast
    #:eval-cst
    #:define-clostrophilia-find-method-combination-template
    #:define-client-and-environment-variables
