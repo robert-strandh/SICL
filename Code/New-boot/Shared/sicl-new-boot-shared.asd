@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem "sicl-new-boot-shared"
-  :depends-on ("common-boot-ast-interpreter"
+  :depends-on (#+(or)"common-boot-hir-evaluator"
+               #+(and)"common-boot-ast-interpreter"
                "common-boot-macros"
                "common-macro-definitions"
                "sicl-environment-extrinsic"
@@ -21,7 +22,6 @@
    (:file "package-programming")
    (:file "primop")
    (:file "single-float-class")
-   (:file "cst-to-ast")
    (:file "load-source-file")
    (:file "asdf-programming")
    (:file "define-backquote-macros")
