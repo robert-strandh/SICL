@@ -9,8 +9,8 @@
    (#:cmd #:common-macro-definitions)
    (#:clo #:clostrum)
    (#:cb #:common-boot)
-   #+(or)(#:cbe #:common-boot-hir-evaluator)
-   #+(and)(#:cbe #:common-boot-ast-interpreter))
+   #+(and)(#:cbe #:common-boot-hir-evaluator)
+   #+(or)(#:cbe #:common-boot-ast-interpreter))
   (:shadow #:symbol-package)
   (:export
    #:boot #:e1 #:e2 #:e3 #:e4 #:packages #:symbol-package
