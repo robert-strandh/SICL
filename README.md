@@ -32,7 +32,7 @@ versions.
 [the Iconoclast repository]:https://github.com/robert-strandh/Iconoclast.git
 [the Common Boot repository]:https://github.com/robert-strandh/Common-boot.git
 [the Common Macros repository]:https://github.com/robert-strandh/Common-macros.git
-[the Parcl repository]:https://github.com/robert-strandh/Parcl.git
+[the Parcl repository]:https://github.com/s-expressionists/Parcl.git
 [the Ecclesia repository]:https://github.com/s-expressionists/Ecclesia
 [the Predicament repository]:https://github.com/robert-strandh/Predicament.git
 [the Regalia repository]:https://github.com/robert-strandh/Regalia.git
