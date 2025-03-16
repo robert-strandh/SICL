@@ -1,8 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem "sicl-new-boot-shared"
-  :depends-on (#+(and)"common-boot-hir-evaluator"
-               #+(or)"common-boot-ast-interpreter"
+  :depends-on ("common-boot-hir-evaluator"
                "common-boot-macros"
                "common-macro-definitions"
                "sicl-environment-extrinsic"
