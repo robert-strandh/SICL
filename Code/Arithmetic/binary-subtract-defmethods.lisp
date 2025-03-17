@@ -7,12 +7,12 @@
             result
             (if (plusp result)
                 (make-bignum-from-overflowed-fixnum result)
-                result)))
-      (if (minusp y)
-          (if (minusp result)
-              (make-bignum-from-overflowed-fixnum result)
-              result)
-          result)))
+                result))
+        (if (minusp y)
+            (if (minusp result)
+                (make-bignum-from-overflowed-fixnum result)
+                result)
+            result))))
 
 (defmethod binary-subtract ((x integer) (y ratio))
   (let ((num (numerator y)) (den (denominator y)))

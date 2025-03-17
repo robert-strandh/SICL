@@ -6,13 +6,13 @@
         (if (minusp y)
             (if (plusp result)
                 (make-bignum-from-overflowed-fixnum result)
-                result))
-        result)
-      (if (minusp y)
-          result
-          (if (minusp result)
-              (make-bignum-from-overflowed-fixnum result)
-              result))))
+                result)
+            result)
+        (if (minusp y)
+            result
+            (if (minusp result)
+                (make-bignum-from-overflowed-fixnum result)
+                result)))))
 
 (defmethod binary-add ((x integer) (y ratio))
   (let ((num (numerator y)) (den (denominator y)))
