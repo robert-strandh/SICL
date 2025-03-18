@@ -19,6 +19,7 @@
    (:file "binary-equal-defgeneric")
    (:file "binary-equal-defmethods")
    (:file "equal-defun")
+   (:file "not-equal-defun")
    (:file "binary-less-defgeneric")
    (:file "binary-less-defmethods")
    (:file "less-defun")
