@@ -65,4 +65,5 @@
       (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
     (clo:make-variable
      client e4 @predicament:*condition-maker* 'make-condition)
+    (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-bootstrap-classes")
     (load-quaviver c4 w4 e4)))
