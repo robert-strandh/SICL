@@ -18,3 +18,10 @@
 
 (defclass simulated-single-float (single-float standard-object)
   ((%bit-pattern :initarg :bit-pattern :reader bit-pattern)))
+
+(defconstant most-positive-single-float
+  (make-instance 'simulated-single-float
+    :bit-pattern buoy-simulate::most-positive-single-float))
+
+(defconstant most-positive-short-float
+  most-positive-single-float)
