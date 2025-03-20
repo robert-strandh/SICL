@@ -25,3 +25,10 @@
 
 (defconstant most-positive-short-float
   most-positive-single-float)
+
+(defconstant least-positive-single-float
+  (make-instance 'simulated-single-float
+    :bit-pattern buoy-simulate::least-positive-single-float))
+
+(defconstant least-positive-short-float
+  least-positive-single-float)
