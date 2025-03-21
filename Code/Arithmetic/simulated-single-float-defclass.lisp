@@ -32,3 +32,17 @@
 
 (defconstant least-positive-short-float
   least-positive-single-float)
+
+(defconstant least-positive-normalized-single-float
+  (make-instance 'simulated-single-float
+    :bit-pattern buoy-simulate:least-positive-normalized-single-float))
+
+(defconstant least-positive-normalized-short-float
+  least-positive-normalized-single-float)  
+
+(defconstant most-negative-single-float
+  (make-instance 'simulated-single-float
+    :bit-pattern buoy-simulate:most-negative-single-float))
+
+(defconstant most-negative-short-float
+  most-negative-single-float)
