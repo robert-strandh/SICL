@@ -4,4 +4,5 @@
   :depends-on (#:sicl-arithmetic-base)
   :serial t
   :components
-  ((:file "simulated-single-float-defclass")))
+  ((:file "simulated-single-float-defclass")
+   (:file "simulated-double-float-defclass")))
