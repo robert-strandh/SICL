@@ -194,6 +194,10 @@
     (sb:define-environment-functions client global-environment)
     (sb:ensure-asdf-system
      client environment "clostrophilia-package")
+    ;;; FIXME: Define this function by loading SICL-specific code
+    (setf (clo:fdefinition
+           client global-environment @clostrophilia:small-integer=)
+          #'=)
     (sb:ensure-asdf-system
      client environment "sicl-clos-package")
     (sb:ensure-asdf-system
