@@ -10,7 +10,7 @@
    (with-output-to-string (output-stream)
      (loop for character = (read-char input-stream)
            while (or (alphanumericp character)
-                     (member character '(#\- #\+ #\* #\^)))
+                     (member character '(#\- #\+ #\* #\^ #\=)))
            do (write-char character output-stream)
            finally (unread-char character input-stream)))))
 
