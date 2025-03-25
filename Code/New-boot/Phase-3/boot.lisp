@@ -32,10 +32,13 @@
     (sb:define-environment-functions client global-environment)
     (sb:define-clostrophilia-find-method-combination-template
         client global-environment)
-    ;;; FIXME: Define this function by loading SICL-specific code
+    ;;; FIXME: Define these functions by loading SICL-specific code
     (setf (clo:fdefinition
            client global-environment @clostrophilia:small-integer=)
           #'=)
+    (setf (clo:fdefinition
+           client global-environment @clostrophilia:small-integer<)
+          #'<)
     (let ((symbol @clostrophilia:standard-instance-access))
       (setf (clo:fdefinition client global-environment symbol)
             #'sb:standard-instance-access)
