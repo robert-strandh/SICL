@@ -60,3 +60,11 @@
 (defmethod primop ((operation (eql :fixnum-divide)) &rest arguments)
   (destructuring-bind (x y) arguments
     (floor x y)))
+
+(defmethod primop ((operation (eql :bits-to-single-float)) &rest arguments)
+  (destructuring-bind (x) arguments
+    (quaviver:bits-float 'single-float x)))
+
+(defmethod primop ((operation (eql :bits-to-double-float)) &rest arguments)
+  (destructuring-bind (x) arguments
+    (quaviver:bits-float 'double-float x)))
