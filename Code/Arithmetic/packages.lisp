@@ -62,4 +62,6 @@
    #:float-sign
    #:float-digits
    #:float-precision
-   #:integer-decode-float))
+   #:integer-decode-float
+   #:bits-to-single-float
+   #:bits-to-double-float))
