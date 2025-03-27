@@ -1,40 +1,40 @@
 (cl:in-package #:sicl-arithmetic)
 
 (defconstant most-positive-single-float
-  (float-features:bits-single-float #x7f7fffff))
+  (bits-to-single-float #x7f7fffff))
 
 (defconstant least-positive-single-float
-  (float-features:bits-single-float #x00000001))
+  (bits-to-single-float #x00000001))
 
 (defconstant least-positive-normalized-single-float
-  (float-features:bits-single-float #x00800000))
+  (bits-to-single-float #x00800000))
 
 (defconstant most-negative-single-float
-  (float-features:bits-single-float #xff7fffff))
+  (bits-to-single-float #xff7fffff))
 
 (defconstant least-negative-single-float
-  (float-features:bits-single-float #x80000001))
+  (bits-to-single-float #x80000001))
 
 (defconstant least-negative-normalized-single-float
-  (float-features:bits-single-float #x80800000))
+  (bits-to-single-float #x80800000))
 
 (defconstant most-positive-double-float
-  (float-features:bits-double-float #x7fefffffffffffff))
+  (bits-to-double-float #x7fefffffffffffff))
 
 (defconstant least-positive-double-float
-  (float-features:bits-double-float #x0000000000000001))
+  (bits-to-double-float #x0000000000000001))
 
 (defconstant least-positive-normalized-double-float
-  (float-features:bits-double-float #x0010000000000000))
+  (bits-to-double-float #x0010000000000000))
 
 (defconstant most-negative-double-float
-  (float-features:bits-double-float #xffefffffffffffff))
+  (bits-to-double-float #xffefffffffffffff))
 
 (defconstant least-negative-double-float
-  (float-features:bits-double-float #x8000000000000001))
+  (bits-to-double-float #x8000000000000001))
 
 (defconstant least-negative-normalized-double-float
-  (float-features:bits-double-float #x8010000000000000))
+  (bits-to-double-float #x8010000000000000))
 
 (defconstant most-positive-short-float
   most-positive-single-float)
