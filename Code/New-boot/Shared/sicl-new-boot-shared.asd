@@ -20,7 +20,6 @@
    (:file "environment")
    (:file "package-programming")
    (:file "primop")
-   (:file "single-float-class")
    (:file "load-source-file")
    (:file "asdf-programming")
    (:file "define-backquote-macros")

@@ -39,6 +39,5 @@
    #:fill-environment
    #:stamp
    #:bt
-   #:simulated-single-float
    #:bit-pattern
    #:primop))
