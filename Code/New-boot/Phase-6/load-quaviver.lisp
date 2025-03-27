@@ -9,6 +9,7 @@
           (declare (ignore float))
           2))
   (sb:ensure-asdf-system c4 w4 "sicl-type-coerce")
+  (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-floating-point")
   (setf (clo:fdefinition c4 e4 'byte) #'byte)
   (setf (clo:fdefinition c4 e4 'ldb-test) #'ldb-test)
   (let ((*features* '(:sicl)))
