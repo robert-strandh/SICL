@@ -11,8 +11,7 @@
                "parcl-low-class"
                "khazern-extrinsic"
                "sicl-source-tracking"
-               "quaviver"
-               "buoy-simulate")
+               "quaviver")
   :serial t
   :components
   ((:file "packages")
