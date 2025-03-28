@@ -16,5 +16,6 @@
   ;; are the same as the target floats.
   (setf (clo:fdefinition c4 e4 'float) #'float)
   (setf (clo:fdefinition c4 e4 'float-digits) #'float-digits)
+  (setf (clo:fdefinition c4 e4 'integer-decode-float) #'integer-decode-float)
   (let ((*features* '(:sicl)))
     (sb:ensure-asdf-system c4 w4 "quaviver")))
