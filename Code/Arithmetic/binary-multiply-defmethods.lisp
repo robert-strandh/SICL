@@ -45,3 +45,20 @@
     (if (= den 1)
         num
         (make-instance 'ratio :numerator num :denominator den))))
+
+(defmethod binary-multiply ((multiplier integer) (multiplicand float))
+  (binary-multiply multiplicand multiplier))
+
+(defmethod binary-multiply ((multiplier single-float) (multiplicand integer))
+  (binary-multiply multiplier (float multiplicand 1s0)))
+
+(defmethod binary-multiply ((multiplier double-float) (multiplicand integer))
+  (binary-multiply multiplier (float multiplicand 1d0)))
+
+(defmethod binary-multiply
+    ((multiplier single-float) (multiplicand single-float))
+  (po:primop :single-float-multiply multiplier multiplicand))
+
+(defmethod binary-multiply
+    ((multiplier double-float) (multiplicand double-float))
+  (po:primop :double-float-multiply multiplier multiplicand))
