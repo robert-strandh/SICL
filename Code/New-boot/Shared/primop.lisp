@@ -68,3 +68,11 @@
 (defmethod primop ((operation (eql :bits-to-double-float)) &rest arguments)
   (destructuring-bind (x) arguments
     (quaviver:bits-float 'double-float x)))
+
+(defmethod primop ((operation (eql :single-float-equal)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (= x y)))
+
+(defmethod primop ((operation (eql :double-float-equal)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (= x y)))
