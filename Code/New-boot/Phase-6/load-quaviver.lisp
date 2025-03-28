@@ -15,5 +15,6 @@
   ;; This is not quite correct because it assumes that the host floats
   ;; are the same as the target floats.
   (setf (clo:fdefinition c4 e4 'float) #'float)
+  (setf (clo:fdefinition c4 e4 'float-digits) #'float-digits)
   (let ((*features* '(:sicl)))
     (sb:ensure-asdf-system c4 w4 "quaviver")))
