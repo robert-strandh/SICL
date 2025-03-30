@@ -6,3 +6,6 @@
              :operation 'truncate
              :operands (list number divisor))
       (po:primop :fixnum-divide number divisor)))
+
+(defmethod generic-truncate ((number float) (divisor integer))
+  (generic-truncate number (float divisor)))
