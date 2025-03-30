@@ -16,3 +16,10 @@
         (integer-decode-float float-quotient)
       (let ((quotient (* sign (ash mantissa exponent))))
         (values quotient (- float-quotient quotient))))))
+
+(defmethod generic-truncate ((number double-float) (divisor double-float))
+  (let ((float-quotient (po:primop :double-float-divide number divisor)))
+    (multiple-value-bind (mantissa exponent sign)
+        (integer-decode-float float-quotient)
+      (let ((quotient (* sign (ash mantissa exponent))))
+        (values quotient (- float-quotient quotient))))))
