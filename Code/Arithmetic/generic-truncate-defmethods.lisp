@@ -1,25 +1,8 @@
 (cl:in-package #:sicl-arithmetic)
 
 (defmethod generic-truncate ((number fixnum) (divisor fixnum))
-  (cond ((zerop divisor)
-         (error 'division-by-zero
-                :operation 'truncate
-                :operands (list number divisor)))
-        ((zerop number)
-         (values 0 0))
-        ((minusp number)
-         (if (minusp divisor)
-             (multiple-value-bind (quotient remainder)
-                 (po:primop :fixnum-divide (- number) (- divisor))
-               (values quotient (- remainder)))
-             (multiple-value-bind (quotient remainder)
-                 (po:primop :fixnum-divide (- number) divisor)
-               (values (- quotient) (- remainder)))))
-        (t
-         (if (minusp divisor)
-             (multiple-value-bind (quotient remainder)
-                 (po:primop :fixnum-divide number (- divisor))
-               (values (- quotient) remainder))
-             (multiple-value-bind (quotient remainder)
-                 (po:primop :fixnum-divide number divisor)
-               (values quotient remainder))))))
+  (if (zerop divisor)
+      (error 'division-by-zero
+             :operation 'truncate
+             :operands (list number divisor))
+      (po:primop :fixnum-divide number divisor)))
