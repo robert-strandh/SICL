@@ -9,3 +9,10 @@
 
 (defmethod generic-truncate ((number float) (divisor integer))
   (generic-truncate number (float divisor)))
+
+(defmethod generic-truncate ((number single-float) (divisor single-float))
+  (let ((float-quotient (po:primop :single-float-divide number divisor)))
+    (multiple-value-bind (mantissa exponent sign)
+        (integer-decode-float float-quotient)
+      (let ((quotient (* sign (ash mantissa exponent))))
+        (values quotient (- float-quotient quotient))))))
