@@ -7,8 +7,11 @@
              :operands (list number divisor))
       (po:primop :fixnum-divide number divisor)))
 
-(defmethod generic-truncate ((number float) (divisor integer))
-  (generic-truncate number (float divisor)))
+(defmethod generic-truncate ((number single-float) (divisor integer))
+  (generic-truncate number (float divisor 1s0)))
+
+(defmethod generic-truncate ((number double-float) (divisor integer))
+  (generic-truncate number (float divisor 1d0)))
 
 (defmethod generic-truncate ((number single-float) (divisor single-float))
   (let ((float-quotient (po:primop :single-float-divide number divisor)))
