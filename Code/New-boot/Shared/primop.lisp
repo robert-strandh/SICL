@@ -79,6 +79,10 @@
   (destructuring-bind (x y) arguments
     (* x y)))
 
+(defmethod primop ((operation (eql :single-float-divide)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (/ x y)))
+
 (defmethod primop ((operation (eql :double-float-equal)) &rest arguments)
   (destructuring-bind (x y) arguments
     (= x y)))
