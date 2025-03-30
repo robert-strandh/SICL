@@ -90,3 +90,7 @@
 (defmethod primop ((operation (eql :double-float-multiply)) &rest arguments)
   (destructuring-bind (x y) arguments
     (* x y)))
+
+(defmethod primop ((operation (eql :double-float-divide)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (/ x y)))
