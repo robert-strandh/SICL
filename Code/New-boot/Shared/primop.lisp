@@ -59,7 +59,9 @@
 
 (defmethod primop ((operation (eql :fixnum-divide)) &rest arguments)
   (destructuring-bind (x y) arguments
-    (floor x y)))
+    ;; Apparently, most current architectures behave like TRUNCATE, so
+    ;; we will take that as the primitive operation.
+    (truncate x y)))
 
 (defmethod primop ((operation (eql :bits-to-single-float)) &rest arguments)
   (destructuring-bind (x) arguments
