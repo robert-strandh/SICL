@@ -29,25 +29,25 @@
     (/ (- (* xnum yden) (* ynum xden)) (* xden yden))))
 
 (defmethod binary-subtract ((x single-float) (y integer))
-  (binary-subtract x (float y 1s0)))
+  (po:primop :single-float-subtract x (float y 1s0)))
 
 (defmethod binary-subtract ((x integer) (y single-float))
-  (binary-subtract (float x 1s0) y))
+  (po:primop :single-float-subtract (float x 1s0) y))
 
 (defmethod binary-subtract ((x single-float) (y single-float))
   (po:primop :single-float-subtract x y))
 
 (defmethod binary-subtract ((x double-float) (y integer))
-  (binary-subtract x (float y 1d0)))
+  (po:primop :double-float-subtract x (float y 1d0)))
 
 (defmethod binary-subtract ((x integer) (y double-float))
-  (binary-subtract (float x 1d0) y))
+  (po:primop :double-float-subtract (float x 1d0) y))
 
 (defmethod binary-subtract ((x double-float) (y single-float))
-  (binary-subtract x (float y 1d0)))
+  (po:primop :double-float-subtract x (float y 1d0)))
 
 (defmethod binary-subtract ((x single-float) (y double-float))
-  (binary-subtract (float x 1d0) y))
+  (po:primop :double-float-subtract (float x 1d0) y))
 
 (defmethod binary-subtract ((x double-float) (y double-float))
   (po:primop :double-float-subtract x y))
