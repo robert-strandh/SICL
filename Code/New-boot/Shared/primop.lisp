@@ -75,6 +75,10 @@
   (destructuring-bind (x y) arguments
     (= x y)))
 
+(defmethod primop ((operation (eql :single-float-add)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (+ x y)))
+
 (defmethod primop ((operation (eql :single-float-multiply)) &rest arguments)
   (destructuring-bind (x y) arguments
     (* x y)))
