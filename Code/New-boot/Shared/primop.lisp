@@ -118,3 +118,11 @@
 (defmethod primop ((operation (eql :double-float-divide)) &rest arguments)
   (destructuring-bind (x y) arguments
     (/ x y)))
+
+(defmethod primop ((operation (eql :t-aref)) &rest arguments)
+  (destructuring-bind (array index) arguments
+    (standard-instance-access array (+ index 3))))
+
+(defmethod primop ((operation (eql :setf-t-aref)) &rest arguments)
+  (destructuring-bind (value array index) arguments
+    (setf (standard-instance-access array (+ index 3)) value)))
