@@ -70,3 +70,21 @@
     (if (= den 1)
         num
         (make-instance 'ratio :numerator num :denominator den))))
+
+(defmethod binary-divide ((dividend single-float) (divisor integer))
+  (po:primop :single-float-divide dividend (float divisor 1s0)))
+
+(defmethod binary-divide ((dividend integer) (divisor single-float))
+  (po:primop :single-float-divide (float dividend 1s0) divisor))
+
+(defmethod binary-divide ((dividend single-float) (divisor single-float))
+  (po:primop :single-float-divide dividend divisor))
+
+(defmethod binary-divide ((dividend double-float) (divisor integer))
+  (po:primop :double-float-divide dividend (float divisor 1d0)))
+
+(defmethod binary-divide ((dividend integer) (divisor double-float))
+  (po:primop :double-float-divide (float dividend 1d0) divisor))
+
+(defmethod binary-divide ((dividend double-float) (divisor double-float))
+  (po:primop :double-float-divide dividend divisor))
