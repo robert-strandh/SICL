@@ -27,7 +27,8 @@
     find find-if find-if-not
     position position-if position-if-not
     remove remove-if remove-if-not
-    delete delete-if delete-if-not
+    ;; DELETE is used by ctype, but only on lists.
+    delete
     remove-duplicates sort map substitute
     bit mismatch replace
     ;; Symbols
@@ -45,7 +46,7 @@
     values values-list not apply eq eql equal identity
     functionp every notany some constantly
     ;; Printer
-    format finish-output
+    format finish-output write-to-string
     ;; Environment
     documentation
     ;; Hash tables
