@@ -37,7 +37,7 @@ versions.
 [the Predicament repository]:https://github.com/robert-strandh/Predicament.git
 [the Regalia repository]:https://github.com/robert-strandh/Regalia.git
 [the Clostrophilia repository]:https://github.com/robert-strandh/Clostrophilia.git
-[the Acclimation repository]:https://github.com/s-expressionists/Acclimation
+[the Acclimation repository]:https://github.com/robert-strandh/Acclimation
 
    * A recent 64-bit version of SBCL
    * The system "clonedijk", from [the Clonedijk repository]
