@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-data-and-control-flow-support
-  :depends-on (:cleavir-code-utilities)
+  :depends-on ()
   :serial t
   :components
   ((:file "packages")
