@@ -26,7 +26,7 @@ https://github.com/s-expressionists/Ecclesia
 https://github.com/robert-strandh/Predicament.git
 https://github.com/robert-strandh/Regalia.git
 https://github.com/robert-strandh/Clostrophilia.git
-https://github.com/s-expressionists/Acclimation
+https://github.com/robert-strandh/Acclimation
 "
 
 PROJECTS_DIRECTORY=${1:-"$HOME/quicklisp/local-projects/"}
