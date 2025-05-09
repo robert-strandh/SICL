@@ -2,7 +2,7 @@
 
 (defsystem #:sicl-character-extrinsic
   :depends-on (#:cl-unicode
-               #:cleavir-code-utilities)
+               #:ecclesia)
   :serial t
   :components
   ((:file "packages-extrinsic")
