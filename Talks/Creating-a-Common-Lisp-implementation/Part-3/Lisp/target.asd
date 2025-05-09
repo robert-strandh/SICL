@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:target
-  :depends-on (#:cleavir-code-utilities)
+  :depends-on (#:ecclesia)
   :serial t
   :components
   ((:file "target-common-lisp-package")
