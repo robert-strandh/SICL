@@ -2,7 +2,7 @@
 
 (defsystem :cleavir-ssa-form
   :depends-on (:cleavir-utilities
-	       :cleavir-dominance)
+	       :hirundine-dominance)
   :serial t
   :components
   ((:file "packages")

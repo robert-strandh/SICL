@@ -8,7 +8,7 @@
 ;;; This function takes the following arguments:
 ;;;
 ;;;   * DOMINANCE-FRONTIERS.  The dominance frontiers of every node as
-;;;     computed by the function CLEAVIR-DOMINANCE:DOMINANCE-FRONTIERS.
+;;;     computed by the function HIRUNDINE-DOMINANCE:DOMINANCE-FRONTIERS.
 ;;;
 ;;;   * LIVE-P. A function of one argument that takes a node and
 ;;;     returns true if and only if V is live at that node.  Client
@@ -50,7 +50,7 @@
         (processed-p (make-hash-table :test #'eq)))
     (loop until (null worklist)
           for x = (pop worklist)
-          for df = (cleavir-dominance:dominance-frontier dominance-frontiers x)
+          for df = (hirundine-dominance:dominance-frontier dominance-frontiers x)
           do (loop for y in df
                    do (when (and (not (member y result :test #'eq))
                                  (funcall live-p y))
