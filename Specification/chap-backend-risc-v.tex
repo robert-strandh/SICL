@@ -35,6 +35,33 @@ use in the C ABI:
   \hline
 \end{tabular}}
 
+In \sysname{} we do not use callee-saves registers and we do not use
+registers to pass arguments in the default calling conventions, as
+explained in \refsec{sec-backend-risc-v-calling-conventions}.  The
+corresponding table for \sysname{} becomes:
+
+{\small
+\begin{tabular}{|l|l|l|}
+  \hline
+  Register & Description & Saver\\
+  \hline
+  \hline
+  x0 & Hard-wired zero & -\\
+  x1 & Return address & Caller\\
+  x2 & Stack pointer & Caller\\
+  x3 & Global pointer & -\\
+  x4 & Thread pointer & -\\
+  x5-x7 & Temporaries & Caller\\
+  x8 & Frame pointer & Caller\\
+  x9 & Temporary & Caller\\
+  x10 & Temporary/ first return value & Caller\\
+  x11 & Argument count, value count & Caller\\
+  x12-x31 & Temporaries & Caller\\
+  \hline
+  f0-f31 & FP temporaries & Caller\\
+  \hline
+\end{tabular}}
+
 \section{Calling conventions}
 \label{sec-backend-risc-v-calling-conventions}
 
