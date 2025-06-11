@@ -28,16 +28,28 @@ aligned to $16$ bytes.
 \begin{enumerate}
 \item Compute the callee function and the arguments into a temporary
   locations.
-\item Load the rack of the callee into a temporary register, say $rr$.
+\item Load the rack of the callee into a temporary register.
 \item Load the static environment from the rack of the callee into the
   register dedicated for the static environment.
-\item  Load the the initial frame size for the callee from the rack of
-  the callee, and put the result in some variable, say
-  $v$.  This number is a multiple of $16$.
-\item The number of arguments is known statically.  Call that number
-  plus $2$ ($1$ for the saved caller frame pointer and $1$ for the
-  call-site descriptor), and rounded up so that it is even $N$.  
-
+\item Load the initial frame size for the callee from the rack of the
+  callee, and put the result in some register, say $rf$.  This number
+  is a multiple of $16$.
+\item Load the entry point for the callee from the rack of the callee,
+  and put the result in some register, say $re$.
+\item The number of arguments is known statically, say $A$.  Let $N$
+  be $A$ plus $2$ ($1$ for the saved caller frame pointer and $1$ for
+  the call-site descriptor), and rounded up so that it is even.
+\item Save the stack pointer in some available register, say $rs$.
+\item Subtract the contents of $rf + N \cdot 8$ from the stack
+  pointer.
+\item Store the caller frame pointer on the stack at location $rs - 8$.
+\item Store the call-site descriptor on the stack at location $rs -
+  16$.
+\item Store arguments into locations $sp +  0$, $sp +  1$, etc.
+\item Load the dynamic environment into its dedicated register.
+\item Copy the $rs$ register into the frame pointer, thereby
+  establishing the initial frame for the callee.
+\item Call the entry point in $re$.
 \end{enumerate}
 
 % LocalWords:  callee
