@@ -51,7 +51,9 @@ corresponding table for \sysname{} becomes:
   x2 & Stack pointer & Caller\\
   x3 & Global pointer & -\\
   x4 & Thread pointer & -\\
-  x5-x7 & Temporaries & Caller\\
+  x5 & Static environment & Caller\\
+  x6 & Dynamic environment & Caller\\
+  x7 & Temporary & Caller\\
   x8 & Frame pointer & Caller\\
   x9 & Temporary & Caller\\
   x10 & Temporary/ first return value & Caller\\
@@ -83,12 +85,14 @@ These calling conventions are based on the following ideas:
 Note that the \riscv{} architecture requires the stack pointer to be
 aligned to $16$ bytes.
 
+Action by the caller to call the callee:
+
 \begin{enumerate}
-\item Compute the callee function and the arguments into a temporary
+\item Compute the callee function and the arguments into temporary
   locations.
 \item Load the rack of the callee into a temporary register.
 \item Load the static environment from the rack of the callee into the
-  register dedicated for the static environment.
+  register dedicated for the static environment (x5).
 \item Load the initial frame size for the callee from the rack of the
   callee, and put the result in some register, say $rf$.  This number
   is a multiple of $16$.
@@ -97,17 +101,20 @@ aligned to $16$ bytes.
 \item The number of arguments is known statically, say $A$.  Let $N$
   be $A$ plus $2$ ($1$ for the saved caller frame pointer and $1$ for
   the call-site descriptor), and rounded up so that it is even.
-\item Save the stack pointer in some available register, say $rs$.
+\item Save the stack pointer (x2) in some available register, say $rs$.
 \item Subtract the contents of $rf + N \cdot 8$ from the stack
-  pointer.
-\item Store the caller frame pointer on the stack at location $rs - 8$.
+  pointer (x2).
+\item Store the caller frame pointer (x8) on the stack at location $rs
+  - 8$.
 \item Store the call-site descriptor on the stack at location $rs -
   16$.
 \item Store arguments into locations $sp +  0$, $sp +  1$, etc.
-\item Load the dynamic environment into its dedicated register.
-\item Copy the $rs$ register into the frame pointer, thereby
+\item Load the dynamic environment into its dedicated register (x6).
+\item Store the argument count in the dedicated register (x11).
+\item Copy the $rs$ register into the frame pointer (x8), thereby
   establishing the initial frame for the callee.
-\item Call the entry point in $re$.
+\item Call the entry point in $re$ using the JALR instruction with
+  $re$ as the source register and x1 as the target register.
 \end{enumerate}
 
 % LocalWords:  callee
