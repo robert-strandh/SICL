@@ -28,12 +28,15 @@ aligned to $16$ bytes.
 \begin{enumerate}
 \item Compute the callee function and the arguments into a temporary
   locations.
-\item Access the slot in the function object containing the initial
-  frame size for the callee and put the result in some variable, say
+\item Load the rack of the callee into a temporary register, say $rr$.
+\item Load the static environment from the rack of the callee into the
+  register dedicated for the static environment.
+\item  Load the the initial frame size for the callee from the rack of
+  the callee, and put the result in some variable, say
   $v$.  This number is a multiple of $16$.
 \item The number of arguments is known statically.  Call that number
   plus $2$ ($1$ for the saved caller frame pointer and $1$ for the
-  call-site descriptor) $N$.  
+  call-site descriptor), and rounded up so that it is even $N$.  
 
 \end{enumerate}
 
