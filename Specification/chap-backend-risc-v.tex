@@ -4,6 +4,37 @@
 \section{Register usage}
 \label{sec-backend-risc-v-register-usage}
 
+The RISC-V manual contains the following table concerning the register
+use in the C ABI:
+
+{\small
+\begin{tabular}{|l|l|l|l|}
+  \hline
+  Register & ABI Name & Description & Saver\\
+  \hline
+  \hline
+  x0 & zero & Hard-wired zero & -\\
+  x1 & ra & Return address & Caller\\
+  x2 & sp & Stack pointer & Callee\\
+  x3 & gp & Global pointer & -\\
+  x4 & tp & Thread pointer & -\\
+  x5-x7 & t0-t2 & Temporaries & Caller\\
+  x8 & s0/fp & Saved register/frame pointer & Callee\\
+  x9 & s1 & Saved register & Callee\\
+  x10-x11 & a0-a1 & Function arguments/return values & Caller\\
+  x12-x17 & a2-a7 & Function arguments & Caller\\
+  x18-x27 & s2-s11 & Saved registers & Callee\\
+  x28-x31 & t3-t6 & Temporaries & Caller\\
+  \hline
+  f0-f7 & ft0-ft7 & FP temporaries & Caller\\
+  f8-f9 & fs0-fs1 & FP saved registers & Callee\\
+  f10-f11 & fa0-fa1 & FP arguments/return values & Caller\\
+  f12-f17 & fa2-fa7 & FP arguments & Caller\\
+  f18-f27 & fs2-fs11 & FP saved registers & Callee\\
+  f28-f31 & ft8-ft11 & FP temporaries & Caller\\
+  \hline
+\end{tabular}}
+
 \section{Calling conventions}
 \label{sec-backend-risc-v-calling-conventions}
 
