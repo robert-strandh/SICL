@@ -6,3 +6,35 @@
 
 \section{Calling conventions}
 \label{sec-backend-risc-v-calling-conventions}
+
+These calling conventions are based on the following ideas:
+
+\begin{enumerate}
+\item The calling conventions are used only when a call to an unknown
+  function is made.  When the call is to a known, globally defined,
+  function, the call-site manager bypasses the argument-parsing code
+  and stores the arguments directly where the callee expects them.
+  Therefore, the performance of the calling conventions is not
+  extremely important.
+\item The result of evaluating a form for which all values are needed,
+  is that the values are pushed on top of the stack.
+\end{enumerate}
+
+\subsection{Normal call}
+
+Note that the RISC-V architecture requires the stack pointer to be
+aligned to $16$ bytes.
+
+\begin{enumerate}
+\item Compute the callee function and the arguments into a temporary
+  locations.
+\item Access the slot in the function object containing the initial
+  frame size for the callee and put the result in some variable, say
+  $v$.  This number is a multiple of $16$.
+\item The number of arguments is known statically.  Call that number
+  plus $2$ ($1$ for the saved caller frame pointer and $1$ for the
+  call-site descriptor) $N$.  
+
+\end{enumerate}
+
+% LocalWords:  callee
