@@ -82,8 +82,10 @@ These calling conventions are based on the following ideas:
 
 \subsection{Normal call}
 
-Note that the \riscv{} architecture requires the stack pointer to be
-aligned to $16$ bytes.
+In the standard \riscv{} calling convention, the stack pointer is
+aligned to $16$ bytes, but we are not using the standard \riscv{}
+calling convention anyway, so there is no reason to respect this
+restriction.
 
 Action by the caller to call the callee:
 
@@ -94,13 +96,12 @@ Action by the caller to call the callee:
 \item Load the static environment from the rack of the callee into the
   register dedicated for the static environment (x5).
 \item Load the initial frame size for the callee from the rack of the
-  callee, and put the result in some register, say $rf$.  This number
-  is a multiple of $16$.
+  callee, and put the result in some register, say $rf$.
 \item Load the entry point for the callee from the rack of the callee,
   and put the result in some register, say $re$.
 \item The number of arguments is known statically, say $A$.  Let $N$
   be $A$ plus $2$ ($1$ for the saved caller frame pointer and $1$ for
-  the call-site descriptor), and rounded up so that it is even.
+  the call-site descriptor).
 \item Save the stack pointer (x2) in some available register, say $rs$.
 \item Subtract the contents of $rf + N \cdot 8$ from the stack
   pointer (x2).
@@ -118,3 +119,6 @@ Action by the caller to call the callee:
 \end{enumerate}
 
 % LocalWords:  callee
+
+Action by the callee upon entry:
+
