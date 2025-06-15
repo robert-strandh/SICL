@@ -53,11 +53,11 @@ corresponding table for \sysname{} becomes:
   x4 & Thread pointer & -\\
   x5 & Static environment & Caller\\
   x6 & Dynamic environment & Caller\\
-  x7 & Temporary & Caller\\
+  x7 & Frame pointer return (see below) & Caller\\
   x8 & Frame pointer & Caller\\
   x9 & Temporary & Caller\\
-  x10 & Temporary/ first return value & Caller\\
-  x11 & Argument count, value count & Caller\\
+  x10 & Temporary / first return value & Caller\\
+  x11 & Temporary & Caller\\
   x12-x31 & Temporaries & Caller\\
   \hline
   f0-f31 & FP temporaries & Caller\\
