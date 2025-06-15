@@ -87,7 +87,7 @@ aligned to $16$ bytes, but we are not using the standard \riscv{}
 calling convention anyway, so there is no reason to respect this
 restriction.
 
-Action by the caller to call the callee:
+Actions by the caller to call the callee:
 
 \begin{enumerate}
 \item Compute the callee function and the arguments into temporary
@@ -109,16 +109,51 @@ Action by the caller to call the callee:
   - 8$.
 \item Store the call-site descriptor on the stack at location $rs -
   16$.
-\item Store arguments into locations $sp +  0$, $sp +  1$, etc.
+\item Store arguments into locations $sp +  0$, $sp +  1$, etc. but in
+  reverse order, so that the last argument is on top of the stack.
 \item Load the dynamic environment into its dedicated register (x6).
-\item Store the argument count in the dedicated register (x11).
 \item Copy the $rs$ register into the frame pointer (x8), thereby
   establishing the initial frame for the callee.
 \item Call the entry point in $re$ using the JALR instruction with
   $re$ as the source register and x1 as the target register.
 \end{enumerate}
 
+Actions by the callee upon entry:
+
+\begin{enumerate}
+\item Store the return address in x1 in the initial stack frame.
+\item Parse the arguments and store the result in registers, or in the
+  initial stack frame. The number of arguments (say $A$) can be
+  computed as $fp$ - 16 - $F$ - $sp$ divided by $16$, where $F$ is the
+  initial frame size, which is known statically.
+\item Remove the arguments from the stack by adding $A \cdot 8$ to the
+  stack.  This is the state of the callee that is used by the
+  call-site manager to supply arguments directly, thereby avoiding
+  argument parsing. 
+\end{enumerate}
+
+Actions by the callee to return to caller:
+
+\begin{enumerate}
+\item Compute return values into temporary locations.
+\item Load the return address from the stack into x1.
+\item
+  \begin{enumerate}
+  \item If no values are to be returned, store \texttt{nil} in x10.
+    Then load $fp - 8$ into x7 so that x7 now contains the saved frame
+    pointer of the caller.  Finally copy $fp$ into $sp$ indicating
+    that there are no return values.
+  \item Otherwise, store the return values other than the first one on
+    the stack in locations $fp - 16$, $fp - 24$, etc.  Then load $fp -
+    8$ into x7 so that x7 now contains the saved frame pointer of the
+    caller.  Then put the first return value in x10.  Finally store
+    $fp - V \cdot 8$ in $sp$, where $V$ is the number of values to be
+    returned.
+  \end{enumerate}
+\item Return to the caller.
+\end{enumerate}
+
+
 % LocalWords:  callee
 
-Action by the callee upon entry:
 
