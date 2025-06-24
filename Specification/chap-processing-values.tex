@@ -1,1 +1,29 @@
 \chapter{Processing return values}
+
+Multiple values can be produced only as a result of a function call.
+With the default calling convention, a stack frame consists of:
+
+\begin{itemize}
+\item the frame pointer of the caller,
+\item the call-site descriptor,
+\item the return address (if saved), and
+\item lexical variables required to accomplish the task.
+\end{itemize}
+
+The caller creates this stack frame for the callee.  Information about
+the amount of space required for lexical variables is stored in the
+function object, and accessed by the caller.
+
+With the default calling convention, the caller stores the arguments
+on top of the callee stack frame in reverse order.  The initial task
+of the callee is then to parse the arguments and store the result in
+lexical variables, either in registers or in the stack frame.  The
+callee then removes the arguments from the stack.
+
+When the callee returns, its stack frame is replaced by the return
+values in reverse order.  The frame pointer of the caller has been
+store in a register so that the caller can access it and restore its
+frame pointer.
+
+
+% LocalWords:  callee
