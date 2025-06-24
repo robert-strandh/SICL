@@ -25,5 +25,41 @@ values in reverse order.  The frame pointer of the caller has been
 store in a register so that the caller can access it and restore its
 frame pointer.
 
+The following operators consume multiple values:
+
+\begin{itemize}
+\item \texttt{multiple-value-bind}
+\item \texttt{multiple-value-call}
+\item \texttt{multiple-value-setq}
+\item \texttt{multiple-value-prog1}
+\item \texttt{multiple-value-list}
+\item \texttt{setf} with \texttt{values}
+\end{itemize}
+
+\section{\texttt{multiple-value-bind}}
+
+The standard says that
+
+\begin{verbatim}
+(multiple-value-bind ({var}*) values-form {form}*)
+\end{verbatim}
+
+is equivalent to
+
+\begin{verbatim}
+(multiple-value-call
+    (lambda (&optional {var}* &rest #1=:ignore)
+      (declare (ignore #1#))
+      {form}*)
+  values-form)
+\end{verbatim}
+
+Provided that a \texttt{\&rest} variable that is declared
+\texttt{ignore} is handled by not allocating a list of the remaining
+arguments, this definition is not too bad.  Clearly,
+\texttt{multiple-value-bind} must check the number of arguments, and
+initialize optional parameters with \texttt{nil} when a corresponding
+argument is omitted.  This is the same work as the anonymous function
+is the second code snippet does. 
 
 % LocalWords:  callee
