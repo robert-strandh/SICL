@@ -101,4 +101,13 @@ It is very likely that allocating the \texttt{cons} cells that make up
 the list will dominate over the use of the default calling convention,
 so this equivalent form can be used without optimization. 
 
+\section{\texttt{setf} with \texttt{values}}
+
+According to the standard, \texttt{setf} with \texttt{values} binds
+the variables ``as if by \texttt{multiple-value-bind}'', and this is
+also a reasonable implementation.  Since \texttt{multiple-value-bind}
+is defined in terms of \texttt{multiple-value-call}.  Therefore, all
+operators that consume multiple values can be reduced to
+\texttt{multiple-value-call}.
+
 % LocalWords:  callee
