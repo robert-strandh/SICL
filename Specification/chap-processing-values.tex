@@ -83,4 +83,22 @@ Is defined to behave the same way as
 where the outermost \texttt{values} is there to make sure that a
 single value is returned, as the standard requires. 
 
+\section{\texttt{multiple-value-list}}
+
+The standard says that
+
+\begin{verbatim}
+(multiple-value-list values-form)
+\end{verbatim}
+
+is equivalent to
+
+\begin{verbatim}
+(multiple-value-call #'list values-form)
+\end{verbatim}
+
+It is very likely that allocating the \texttt{cons} cells that make up
+the list will dominate over the use of the default calling convention,
+so this equivalent form can be used without optimization. 
+
 % LocalWords:  callee
