@@ -1,4 +1,14 @@
-\chapter{Processing return values}
+\chapter{Calling conventions}
+
+In this chapter, we describe the \sysname{} calling conventions that
+are common for all native backends.  We describe only the
+\emph{default} calling conventions, i.e., the calling conventions that
+are applicable when an unknown callee is invoked.  The call-site
+manager described in \refChap{chap-call-site-manager} will tailor the
+calling conventions for each pair caller/callee when the callee is
+known. 
+
+\section{Processing return values}
 
 Multiple values can be produced only as a result of a function call.
 With the default calling convention, a stack frame consists of:
@@ -25,7 +35,7 @@ values in reverse order.  The frame pointer of the caller has been
 store in a register so that the caller can access it and restore its
 frame pointer.
 
-\section{Consumers of multiple values}
+\subsection{Consumers of multiple values}
 
 The following operators consume multiple values:
 
@@ -37,12 +47,12 @@ The following operators consume multiple values:
 \item \texttt{setf} with \texttt{values}
 \end{itemize}
 
-\subsection{\texttt{multiple-value-call}}
+\subsubsection{\texttt{multiple-value-call}}
 
 This operator can be seen as the most basic consumer of multiple
 values.
 
-\subsection{\texttt{multiple-value-bind}}
+\subsubsection{\texttt{multiple-value-bind}}
 
 The standard says that
 
@@ -68,7 +78,7 @@ initialize optional parameters with \texttt{nil} when a corresponding
 argument is omitted.  This is the same work as the anonymous function
 in the second code snippet does.
 
-\subsection{\texttt{multiple-value-setq}}
+\subsubsection{\texttt{multiple-value-setq}}
 
 The standard says that
 
@@ -85,7 +95,7 @@ Is defined to behave the same way as
 where the outermost \texttt{values} is there to make sure that a
 single value is returned, as the standard requires. 
 
-\subsection{\texttt{multiple-value-list}}
+\subsubsection{\texttt{multiple-value-list}}
 
 The standard says that
 
@@ -103,7 +113,7 @@ It is very likely that allocating the \texttt{cons} cells that make up
 the list will dominate over the use of the default calling convention,
 so this equivalent form can be used without optimization. 
 
-\subsection{\texttt{setf} with \texttt{values}}
+\subsubsection{\texttt{setf} with \texttt{values}}
 
 According to the standard, \texttt{setf} with \texttt{values} binds
 the variables ``as if by \texttt{multiple-value-bind}'', and this is
