@@ -8,6 +8,18 @@ manager described in \refChap{chap-call-site-manager} will tailor the
 calling conventions for each pair caller/callee when the callee is
 known. 
 
+We do not use callee-saves registers.  They complicate the calling
+conventions, and especially the stack-traversal code of the garbage
+collector.  And the default calling conventions do not use registers
+to pass arguments.  Using the default calling conventions, the callee
+must parse the arguments, and this task might involve looping over all
+arguments to determine keyword arguments.  This task is simplified if
+all arguments are passed on the stack.
+
+\section{Normal call}
+
+
+
 \section{Processing return values}
 
 Multiple values can be produced only as a result of a function call.
