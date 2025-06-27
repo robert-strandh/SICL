@@ -18,6 +18,8 @@ all arguments are passed on the stack.
 
 \section{Normal call}
 
+\subsection{Caller action before call}
+
 The caller starts by setting up the initial callee stack frame as
 shown in \refFig{fig-initial-callee-stack-frame}.
 
@@ -36,6 +38,15 @@ pointer to initialize every other slot, including the arguments.  The
 size of the callee stack frame is taken from the callee function
 object.  Arguments are in reverse order, i.e., the last argument is on
 top of the stack.
+
+Once the initial callee stack frame has been set up, the caller
+executes an instruction that transfers control to the callee and saves
+the return address.  On some backends, the return address is then
+pushed on top of the stack.  On such backends, the callee pops the
+return address and stores it in the slot marked ``unused'' in
+\refFig{fig-initial-callee-stack-frame}.  On some backends, the return
+address is saved in a register.  On such backends, the callee just
+saves the contents of that register in the ``unused'' slot.
 
 \section{Processing return values}
 
