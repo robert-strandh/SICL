@@ -18,7 +18,24 @@ all arguments are passed on the stack.
 
 \section{Normal call}
 
+The caller starts by setting up the initial callee stack frame as
+shown in \refFig{fig-initial-callee-stack-frame}.
 
+\begin{figure}
+\begin{center}
+\inputfig{fig-initial-callee-stack-frame.pdf_t}
+\end{center}
+\caption{\label{fig-initial-callee-stack-frame}
+Initial callee stack frame.}
+\end{figure}
+
+The slot marked ``unused'' in \refFig{fig-initial-callee-stack-frame}
+is reserved for the return address, should the callee need to save it.
+The callee frame pointer is set last, since the caller needs its frame
+pointer to initialize every other slot, including the arguments.  The
+size of the callee stack frame is taken from the callee function
+object.  Arguments are in reverse order, i.e., the last argument is on
+top of the stack.
 
 \section{Processing return values}
 
