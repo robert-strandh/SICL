@@ -28,7 +28,7 @@ shown in \refFig{fig-initial-callee-stack-frame}.
 \inputfig{fig-initial-callee-stack-frame.pdf_t}
 \end{center}
 \caption{\label{fig-initial-callee-stack-frame}
-Callee callee stack frame.}
+Callee stack frame set up by caller.}
 \end{figure}
 
 The callee stack frame does not evolve during the invocation of the
@@ -54,6 +54,22 @@ address is saved in a register.  On such backends, the callee just
 saves the contents of that register in the ``unused'' slot.
 
 \subsection{Callee action to parse arguments}
+
+The callee can determine the number of supplied arguments by using the
+size of its stack frame (which is computed by the compiler), the frame
+pointer, and the stack pointer.  It parses the arguments according to
+its lambda list, and stores parameter values in registers or in the
+stack frame.  It then removes the arguments from the top of the stack,
+giving the situation shown in
+\refFig{fig-callee-stack-frame-after-argument-parsing}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-callee-stack-frame-after-argument-parsing.pdf_t}
+\end{center}
+\caption{\label{fig-callee-stack-frame-after-argument-parsing}
+Callee stack frame after argument parsing.}
+\end{figure}
 
 \section{Processing return values}
 
