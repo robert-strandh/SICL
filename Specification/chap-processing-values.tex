@@ -20,7 +20,7 @@ all arguments are passed on the stack.
 
 \subsection{Caller action before call}
 
-The caller starts by setting up the initial callee stack frame as
+The caller starts by setting up the callee stack frame as
 shown in \refFig{fig-initial-callee-stack-frame}.
 
 \begin{figure}
@@ -28,8 +28,13 @@ shown in \refFig{fig-initial-callee-stack-frame}.
 \inputfig{fig-initial-callee-stack-frame.pdf_t}
 \end{center}
 \caption{\label{fig-initial-callee-stack-frame}
-Initial callee stack frame.}
+Callee callee stack frame.}
 \end{figure}
+
+The callee stack frame does not evolve during the invocation of the
+callee, or in other words, the stack frame set up by the caller
+contains all the lexical variables that can not be kept in registers,
+and for the duration of the invocation of the callee.
 
 The slot marked ``unused'' in \refFig{fig-initial-callee-stack-frame}
 is reserved for the return address, should the callee need to save it.
@@ -39,7 +44,7 @@ size of the callee stack frame is taken from the callee function
 object.  Arguments are in reverse order, i.e., the last argument is on
 top of the stack.
 
-Once the initial callee stack frame has been set up, the caller
+Once the callee stack frame has been set up, the caller
 executes an instruction that transfers control to the callee and saves
 the return address.  On some backends, the return address is then
 pushed on top of the stack.  On such backends, the callee pops the
@@ -47,6 +52,8 @@ return address and stores it in the slot marked ``unused'' in
 \refFig{fig-initial-callee-stack-frame}.  On some backends, the return
 address is saved in a register.  On such backends, the callee just
 saves the contents of that register in the ``unused'' slot.
+
+\subsection{Callee action to parse arguments}
 
 \section{Processing return values}
 
