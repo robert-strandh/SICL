@@ -95,7 +95,7 @@ Actions by the caller to call the callee:
 \item Load the rack of the callee into a temporary register.
 \item Load the static environment from the rack of the callee into the
   register dedicated for the static environment (x5).
-\item Load the initial frame size for the callee from the rack of the
+\item Load the frame size for the callee from the rack of the
   callee, and put the result in some register, say $rf$.
 \item Load the entry point for the callee from the rack of the callee,
   and put the result in some register, say $re$.
@@ -115,7 +115,7 @@ Actions by the caller to call the callee:
 \item Save registers that are needed after the callee returns on the
   stack, in particular $rs$.
 \item Copy the $rs$ register into the frame pointer (x8), thereby
-  establishing the initial frame for the callee.
+  establishing the stack frame for the callee.
 \item Call the entry point in $re$ using the JALR instruction with
   $re$ as the source register and x1 as the target register.
 \end{enumerate}
@@ -123,11 +123,11 @@ Actions by the caller to call the callee:
 Actions by the callee upon entry:
 
 \begin{enumerate}
-\item Store the return address in x1 in the initial stack frame.
+\item Store the return address in x1 in the stack frame.
 \item Parse the arguments and store the result in registers, or in the
-  initial stack frame. The number of arguments (say $A$) can be
+  stack frame. The number of arguments (say $A$) can be
   computed as $fp$ - 16 - $F$ - $sp$ divided by $16$, where $F$ is the
-  initial frame size, which is known statically.
+  frame size, which is known statically.
 \item Remove the arguments from the stack by adding $A \cdot 8$ to the
   stack.  This is the state of the callee that is used by the
   call-site manager to supply arguments directly, thereby avoiding
@@ -175,14 +175,14 @@ Actions by the caller after the callee returns.
 \begin{enumerate}
 \item Compute the callee function into some temporary location.
 \item Load the rack of the callee into some temporary location.
-\item Load the initial frame size for the callee from the rack of the
+\item Load the frame size for the callee from the rack of the
   callee, and put the result in some register, say $rf$.
 \item Save $sp$ in some register, say $rt$. 
 \item Subtract the contents of $fr + 16$ from the stack pointer.
 \item Store the caller frame pointer (x8) on the stack at location $rt
   - 8$.
 \item Store the call-site descriptor on the stack at location $rt -
-  16$.  We now have an initial stack frame for the callee, but we have
+  16$.  We now have an stack frame for the callee, but we have
   no arguments yet.
 \item To compute the arguments, evaluate each argument form.  If the
   argument form is a literal or a variable, push the value on the
@@ -197,7 +197,7 @@ Actions by the caller after the callee returns.
 \item Load the entry point for the callee from the rack of the callee,
   and put the result in some register, say $re$.
 \item Copy the $rt$ register into the frame pointer (x8), thereby
-  establishing the initial frame for the callee.
+  establishing the frame for the callee.
 \item Call the entry point in $re$ using the JALR instruction with
   $re$ as the source register and x1 as the target register.
 \end{enumerate}

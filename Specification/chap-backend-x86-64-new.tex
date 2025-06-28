@@ -81,12 +81,12 @@ These calling conventions are based on two ideas:
 \item Load the rack of the callee function into a temporary register.
 \item Load the static environment of the callee from the rack of the
   callee function object into R10.
-\item Load the initial frame size of the callee (which
+\item Load the frame size of the callee (which
   includes the return address and the call-site descriptor, in
   addition to all lexical variables required to parse arguments) from
   the rack of the callee function object into a temporary register.
 \item Load the entry point from the rack into a free register.
-\item Subtract from RSP the initial frame size computed in the
+\item Subtract from RSP the frame size computed in the
   previous step.
 \item Push arguments.
 \item Load the dynamic environment into RBX.
@@ -117,8 +117,7 @@ Prelude:
   other lexical location, and dynamic environment from RBX into some
   other lexical location.
 \item Parse the arguments and store the corresponding parameters in
-  lexical locations, either in registers or in the initial stack
-  frame.
+  lexical locations, either in registers or in the stack frame.
 \end{enumerate}
 
 After the execution of the function prelude, the contents of the stack

@@ -13,20 +13,20 @@ like this:
 \item Load the rack of the callee into a free register.
 \item Load the static environment from the rack into a dedicated
   register.
-\item Load the initial frame size of the callee into a free register.
+\item Load the frame size of the callee into a free register.
 \item Load the entry point from the rack to a free register.
-\item Subtract the initial frame size of the callee from the stack
+\item Subtract the frame size of the callee from the stack
   pointer.
 \item Push the arguments onto the stack.
 \item Load the dynamic environment into a dedicated register.
 \item Store the remembered value of the stack pointer (minus 1) into
-  the frame pointer, thereby establishing an initial frame for the
+  the frame pointer, thereby establishing the stack frame for the
   callee.
 \item Execute an instruction such as \texttt{call}.
 \end{enumerate}
 
 As we can see, all arguments are passed on the stack, which is
-obviously not optimal.  The initial frame of the callee is what the
+obviously not optimal.  The frame of the callee is what the
 callee needs in order to parse the arguments into its own lexical
 variables.  Parsing the arguments is done by a part of the function
 called the \emph{prelude}.
@@ -75,7 +75,7 @@ customized for the callee in the following ways:
   loaded from the rack.  If the callee does not close over any
   variables, the static environment does not have to be accessed at
   all.
-\item The initial frame size of the callee is a constant and does not
+\item The frame size of the callee is a constant and does not
   have to be loaded from the rack
 \item The entry point is a constant and does not have to be loaded
   from the rack.
