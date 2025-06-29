@@ -71,6 +71,26 @@ giving the situation shown in
 Callee stack frame after argument parsing.}
 \end{figure}
 
+\subsection{Callee action to return values}
+
+The callee returns values on top of the stack, in the same order as
+arguments are passed.  It removes the call-site descriptor, and it
+puts the caller frame pointer in an agreed-upon register.  Depending
+on the backend, it puts the return address either in a register or on
+top of the stack according to how the \texttt{return} instruction on
+the backend works.
+
+The difference between the callee frame pointer and the callee stack
+pointer determines the number of return values.  The first return
+values is returned in an agreed-upon register.  If there are zero
+return values, this register contains \texttt{nil}.  Otherwise, the
+stack holds return values beyond the first one, but there is still a
+slot on the stack for the first one.  The caller can save the first
+return value in that slot, should it be required.
+
+Once the return values have been put in their places, the callee
+returns to the caller.
+
 \section{Processing return values}
 
 When the callee returns, its stack frame is replaced by the return
