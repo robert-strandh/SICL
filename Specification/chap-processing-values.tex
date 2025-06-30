@@ -114,12 +114,11 @@ from the stack.  The function call is now complete.
 If multiple values are needed by the caller, then see below for how
 these values are handled.
 
-\section{Processing return values}
+\section{Handling multiple return values}
 
-When the callee returns, its stack frame is replaced by the return
-values in reverse order.  The frame pointer of the caller has been
-store in a register so that the caller can access it and restore its
-frame pointer.
+Multiple values can be created only as a result of a function call.
+The different ways multiple return values can be consumed is described
+in the next section.
 
 \subsection{Consumers of multiple values}
 
