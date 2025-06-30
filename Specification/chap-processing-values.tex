@@ -91,6 +91,29 @@ return value in that slot, should it be required.
 Once the return values have been put in their places, the callee
 returns to the caller.
 
+\subsection{Caller action to process return values}
+
+The caller starts by copying the agreed-upon register in which the
+callee put the caller frame pointer to the frame point.  This must be
+done first so that the caller can then use its frame pointer to access
+its own lexical variables.
+
+The caller can either have stored a copy of its stack pointer in a
+lexical variable, or it can use its statically known knowledge about
+its own stack-frame size to determine its old value of the stack
+pointer.  Return values are located on the stack in the locations
+determined by this value and the current value of the frame pointer,
+except the first return values which is located in an agreed-upon
+register.
+
+If a single return value is needed, then the caller accesses this
+value in the agreed-upon register.  It then copies the old value of
+the stack pointer to the stack pointer to remove the return values
+from the stack.  The function call is now complete.
+
+If multiple values are needed by the caller, then see below for how
+these values are handled.
+
 \section{Processing return values}
 
 When the callee returns, its stack frame is replaced by the return
