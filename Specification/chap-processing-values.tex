@@ -249,4 +249,42 @@ ordinary function call.
 
 To be filled in.
 
+\section{Tail call}
+
+For a tail call, the caller must replace its own stack frame with the
+callee stack frame and the arguments as shown in
+\refFig{fig-initial-callee-stack-frame}.  The caller frame pointer,
+the return address, and the call-site descriptor do not change.
+
+As with a normal call, the function object and the arguments are first
+computed and stored in temporary locations, either on the stack or in
+registers.
+
+When the callee stack frame is at least as large as the caller stack
+frame, the situation is relatively simple.  The arguments to pass are
+all outside the stack frame of the caller, so the caller can just
+subtract an appropriate amount from the stack pointer, and store the
+arguments in the place where the callee expects them.  When the callee
+stack frame is smaller than the caller stack frame, some, perhaps all,
+arguments must be put in locations that are currently inside the
+caller stack frame.  However, the number of arguments can not be
+greater than the number of slots in the caller stack frame plus the
+number of registers available, and the compiler can allocate a larger
+stack frame for the caller so that there are additional slots or
+additional registers available.
+
+The caller can then store the arguments one at a time in any order.
+For each argument, the following action is taken:
+
+\begin{enumerate}
+\item If the slot for the argument to place contains another argument
+  that has not yet been placed, that other argument is first moved to
+  a temporary location.
+\item The argument to place is then put in the corresponding stack
+  slot.  This action will free up the temporary location into which
+  the argument was originally computed, thereby preserving the number
+  of temporary locations available.
+\end{enumerate}
+
+
 % LocalWords:  callee
