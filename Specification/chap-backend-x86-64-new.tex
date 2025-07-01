@@ -1,29 +1,27 @@
-\chapter{x86-64 (new version)}
+\chapter{x86-64}
 \label{chapter-backend-x86-64-new}
+
+This chapter supplies the details omitted in the description of the
+default calling conventions in \refChap{chap-calling-conventions}.
 
 \section{Register usage}
 \label{sec-backend-x86-64-new-register-use}
 
-Most conventions for register usage are based on the idea that many
-registers need to permanently assigned to things like arguments and
-return values so that function calls between separately compiled
-functions can be as efficient as possible.  But one main feature of
-\sysname{} is the call-site manager which uses information about both
-the caller and the callee to transmit arguments and return values.  As
-a result, the default calling conventions are used only in some
-cases.  Therefore, it is more important to make the default calling
-conventions as simple as possible.
+As describe in \refChap{chap-calling-conventions}, the default calling
+conventions do not use registers to pass arguments.  Agreed-upon
+registers are used only for the following things:
 
-Furthermore, we do not use any callee-saves registers.  The call-site
-manager is able to optimize register use for leaf routines, by
-essentially treating every register as a callee-saves register, except
-that this optimization is more flexible, since, again, the call-site
-manager has knowledge about both the caller and the callee.  By not
-using callee-saves registers, we are also able to simplify both the
-register allocator, the compiler, and the root-finding phase of the
-garbage collector.
+\begin{itemize}
+\item the first return value,
+\item the caller frame pointer upon function return,
+\item the stack pointer,
+\item the frame pointer,
+\item the static environment argument,
+\item the dynamic environment argument, and
+\item the thread object.
+\end{itemize}
 
-As a result of these considerations, most registers can be used as
+As a result of these conventions, most registers can be used as
 general-purpose registers for holding lexical variables.  The
 following table shows the resulting register usage:
 
@@ -33,8 +31,8 @@ Name & Used for\\
 \hline
 \hline
 RAX & First return value\\
-RBX & Dynamic environment\\
-RCX & Register variable\\
+RBX & Dynamic environment argument\\
+RCX & Caller frame pointer upon function return\\
 RDX & Register variable\\
 RSP & Stack pointer \\
 RBP & Frame pointer \\
@@ -42,12 +40,13 @@ RSI & Register variable\\
 RDI & Register variable\\
 R8  & Register variable\\
 R9  & Register variable\\
-R10 & Static env. argument\\
+R10 & Static environment argument\\
 R11 & Register variable\\
 R12 & Register variable\\
 R13 & Register variable\\
 R14 & Register variable\\
 R15 & Register variable\\
+FS  & Thread object\\
 \hline
 \end{tabular}
 
@@ -57,7 +56,6 @@ situations including debugging support, etc.
 
 For information about the call-site descriptor, see
 \refSec{sec-call-site-descriptor}.
-
 
 \section{Calling conventions}
 
