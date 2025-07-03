@@ -67,19 +67,6 @@ corresponding table for \sysname{} becomes:
 \section{Calling conventions}
 \label{sec-backend-risc-v-calling-conventions}
 
-These calling conventions are based on the following ideas:
-
-\begin{enumerate}
-\item The calling conventions are used only when a call to an unknown
-  function is made.  When the call is to a known, globally defined,
-  function, the call-site manager bypasses the argument-parsing code
-  and stores the arguments directly where the callee expects them.
-  Therefore, the performance of the calling conventions is not
-  extremely important.
-\item The result of evaluating a form for which all values are needed,
-  is that the values are pushed on top of the stack.
-\end{enumerate}
-
 \subsection{Normal call}
 
 In the standard \riscv{} calling convention, the stack pointer is
