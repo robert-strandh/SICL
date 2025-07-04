@@ -90,15 +90,16 @@ Actions by the caller to call the callee:
 \item Load the entry point for the callee from the rack of the callee,
   and put the result in some register, say $re$.
 \item The number of arguments is known statically, say $A$.  Let $N$
-  be $A$ plus $2$ ($1$ for the saved caller frame pointer and $1$ for
-  the call-site descriptor).
+  be $A$ plus $3$ ($1$ for the saved caller frame pointer, one for the
+  slot to hold the return address, and $1$ for the call-site
+  descriptor).
 \item Save the stack pointer (x2) in some available register, say $rs$.
 \item Subtract the contents of $rf + N \cdot 8$ from the stack
   pointer (x2).
 \item Store the caller frame pointer (x8) on the stack at location $rs
   - 8$.
 \item Store the call-site descriptor on the stack at location $rs -
-  16$.
+  24$.
 \item Store arguments into locations $sp +  0$, $sp +  1$, etc. but in
   reverse order, so that the last argument is on top of the stack.
 \item Load the dynamic environment into its dedicated register (x6).
