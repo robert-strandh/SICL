@@ -130,7 +130,7 @@ Actions by the callee to return to caller:
 
 \begin{enumerate}
 \item Compute return values into temporary locations.
-\item Load the return address from the stack into x1.
+\item Load the return address from the stack (in $fp - 16$) into x1.
 \item
   \begin{enumerate}
   \item If no values are to be returned, store \texttt{nil} in x10.
