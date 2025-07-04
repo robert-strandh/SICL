@@ -114,10 +114,11 @@ Actions by the caller to call the callee:
 Actions by the callee upon entry:
 
 \begin{enumerate}
-\item Store the return address in x1 in the stack frame.
+\item Store the return address in x1 in the stack frame in the
+  location dedicated for this purpose ($fp - 16$).
 \item Parse the arguments and store the result in registers, or in the
   stack frame. The number of arguments (say $A$) can be
-  computed as $fp$ - 16 - $F$ - $sp$ divided by $16$, where $F$ is the
+  computed as $fp$ - 24 - $F$ - $sp$ divided by $16$, where $F$ is the
   frame size, which is known statically.
 \item Remove the arguments from the stack by adding $A \cdot 8$ to the
   stack.  This is the state of the callee that is used by the
