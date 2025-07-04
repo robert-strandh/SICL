@@ -1,6 +1,9 @@
 \chapter{\riscv{}}
 \label{chapter-backend-risc-v}
 
+This chapter supplies the details omitted in the description of the
+default calling conventions in \refChap{chap-calling-conventions}.
+
 \section{Register usage}
 \label{sec-backend-risc-v-register-usage}
 
@@ -35,9 +38,9 @@ use in the C ABI:
   \hline
 \end{tabular}}
 
-In \sysname{} we do not use callee-saves registers and we do not use
-registers to pass arguments in the default calling conventions, as
-explained in \refsec{sec-backend-risc-v-calling-conventions}.  The
+As explained in \refChap{chap-calling-conventions}, in \sysname{} we
+do not use callee-saves registers, and for the default calling
+conventions, we do not use registers to pass arguments.  The
 corresponding table for \sysname{} becomes:
 
 {\small
