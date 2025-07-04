@@ -147,17 +147,18 @@ Actions by the callee to return to caller:
 \item Return to the caller.
 \end{enumerate}
 
-Actions by the caller after the callee returns.
+Actions by the caller after the callee returns.  For the case when
+this call is an argument to \texttt{multiple-value-call}, refer to
+\refSec{sec-implementing-multiple-value-call} for actions after the
+callee returns.  Here, we describe only the case where the call is not
+one of the arguments to \texttt{multiple-value-call}.  Then, a single
+return value is required.
 
 \begin{enumerate}
 \item Copy x7 into $fp$ thereby re-establishing the stack frame of the
   caller.
-\item Load the saved $rs$ from the stack into $rs$.  The difference
-  between $rs$ and $sp$ (divided by 8) is the number of return
-  values.
-\item If a single return values is needed, use the value in x10.  If
-  more values are needed, get them from the stack in locations $rs -
-  16$, $rs-24$, etc.
+\item Load the saved $rs$ from the stack into $rs$.
+\item Use the value in x10.
 \item Copy $rs$ to $sp$ thereby removing the return values from the
   stack and restoring $sp$ to its value before the call.
 \end{enumerate}
