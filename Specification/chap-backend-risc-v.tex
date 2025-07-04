@@ -163,39 +163,4 @@ return value is required.
   stack and restoring $sp$ to its value before the call.
 \end{enumerate}
 
-\subsection{\texttt{multiple-value-call}}
-
-\begin{enumerate}
-\item Compute the callee function into some temporary location.
-\item Load the rack of the callee into some temporary location.
-\item Load the frame size for the callee from the rack of the
-  callee, and put the result in some register, say $rf$.
-\item Save $sp$ in some register, say $rt$. 
-\item Subtract the contents of $fr + 16$ from the stack pointer.
-\item Store the caller frame pointer (x8) on the stack at location $rt
-  - 8$.
-\item Store the call-site descriptor on the stack at location $rt -
-  16$.  We now have an stack frame for the callee, but we have
-  no arguments yet.
-\item To compute the arguments, evaluate each argument form.  If the
-  argument form is a literal or a variable, push the value on the
-  stack.  If the argument form is a function call, use the ordinary
-  calling convention to call it, except do not remove values from the
-  stack after the call returns.  If the call returns at least one
-  value store the first return value in x10 in its location on the
-  stack.
-\item Load the static environment from the rack of the callee into the
-  register dedicated for the static environment (x5).
-\item Load the dynamic environment into its dedicated register (x6).
-\item Load the entry point for the callee from the rack of the callee,
-  and put the result in some register, say $re$.
-\item Copy the $rt$ register into the frame pointer (x8), thereby
-  establishing the frame for the callee.
-\item Call the entry point in $re$ using the JALR instruction with
-  $re$ as the source register and x1 as the target register.
-\end{enumerate}
-
-The actions by the caller after the callee returns are the same as
-above, except that register $rt$ is used rather than $rs$.
-
 % LocalWords:  callee
