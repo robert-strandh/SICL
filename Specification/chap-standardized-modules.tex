@@ -172,12 +172,12 @@ The \texttt{loop} macro is implemented by the extracted system
 
 This module is meant to be a complete implementation of portable
 functions and macros in the Conses dictionary (chapter 14 in the
-\hs{}), except for the low-level functions such as \texttt{cons},
-\texttt{car}, \texttt{cdr}, \texttt{rplaca}, and \texttt{rplacd} which
-can not be implemented portably.  For its implementation, it uses the
-\texttt{loop} macro.  If any other functionality is required, it will
-supply special implementations of such functionality, so as to avoid
-dependencies on other modules.
+\commonlisp{} standard), except for the low-level functions such as
+\texttt{cons}, \texttt{car}, \texttt{cdr}, \texttt{rplaca}, and
+\texttt{rplacd} which can not be implemented portably.  For its
+implementation, it uses the \texttt{loop} macro.  If any other
+functionality is required, it will supply special implementations of
+such functionality, so as to avoid dependencies on other modules.
 
 We obtain high performance by identifying important special
 cases such as the use of \texttt{:test} function \texttt{eq}, or
