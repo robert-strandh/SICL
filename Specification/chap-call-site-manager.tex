@@ -72,12 +72,6 @@ In that case, the call-site manager generates code to access the
 relevant argument directly and put it directly where the optimize
 function body of the callee expects it.
 
-Further optimizations are possible when the callee is \emph{values
-  consistent}, meaning that it always returns the same number of
-values.  Then the call-site manager can directly access the return
-values from the lexical locations in the callee and put them in
-locations expected by the caller.
-
 Initial versions of \sysname{} will not include a call-site manager.
 Each call site will contain the general call sequence described
 above.
