@@ -234,10 +234,13 @@ argument ultimately results in a function call.
 
 For each argument, the caller saves a copy of the current stack
 pointer in a lexical variable.  If the argument is a function call,
-then it is handled as usual, and multiple values, except the first
-one, are returned on the stack.  The first return value (provided that
-there is at least one return value) is copied to its reserved location
-on the stack, using the saved copy of the current stack pointer.
+then it is handled as usual\footnote{The call is subject to
+  optimization by the call-site manager as describe in
+  \refChap{chap-call-site-manager}}, and multiple values, except the
+first one, are returned on the stack.  The first return value
+(provided that there is at least one return value) is copied to its
+reserved location on the stack, using the saved copy of the current
+stack pointer.
 
 When each argument has been computed, the callee stack frame and the
 arguments to be passed to the callee are correctly placed on the
