@@ -105,7 +105,10 @@ features include \emph{comments} (both line comments and block
 comments) and expressions that were excluded based on \emph{reader
   conditionals}.  Sometimes, however, such syntactic features are
 important, for example in a text editor that uses the reader to parse
-the contents of a \commonlisp{} code buffer.
+the contents of a \commonlisp{} code buffer.  To address this
+requirement, \eclector{} contains a system that returns \emph{parse
+  results} which contain not only the code begin read, but also such
+skipped material.
 
 \section{Printer}
 \label{sec-printer}
