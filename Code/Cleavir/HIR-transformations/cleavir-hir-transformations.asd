@@ -5,8 +5,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "eliminate-catches")
-   (:file "compute-ownership")
    (:file "function-dag")
    (:file "escape")
    (:file "segregate-lexicals")
