@@ -292,11 +292,10 @@ caller containing the call site:
 The bitmap meant for the garbage collector is present only in
 call-site descriptors. At every \emph{safe point} the thread tests the
 flag \texttt{gc-requested} described in
-\refSec{sec-garbage-collection-synchronization-between-collectors}.
-If that flag is set, a function call is made to the local garbage
-collector.  Therefore, every safe point corresponds to a function
-call, and thus the information is needed by the garbage collector only
-at function calls.
+\refChap{chap-garbage-collector}.  If that flag is set, a function
+call is made to the local garbage collector.  Therefore, every safe
+point corresponds to a function call, and thus the information is
+needed by the garbage collector only at function calls.
 
 Similarly, a debugger breakpoint corresponds to a function call to the
 debugger.  Therefore, information about live variables need to be
