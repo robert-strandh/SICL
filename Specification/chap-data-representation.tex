@@ -468,9 +468,12 @@ rack with the following contents:
   point of a function to find the code object, thereby keeping the
   code object alive as long as there is at least one live function in
   the code object.
-\item A fixnum indicating the \emph{initial frame size} of the
-  function.  This is the size of the stack frame needed by the
-  function in order to parse arguments into its lexical variables.
+\item A fixnum indicating the \emph{frame size} of the function.
+  While this information really belongs in the function descriptor as
+  described in \refSec{data-representation-function-descriptor}, we
+  duplicate it here for reasons of performance, because it is needed
+  by the default calling convention (as described in
+  \refChap{chap-calling-conventions}).
 \end{enumerate}
 
 The static environment contains the \emph{code object} as one of its
