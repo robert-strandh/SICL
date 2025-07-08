@@ -325,6 +325,9 @@ information:
   function, each one specifying an address of the entry point and the
   types of the arguments, and the location (a register or a stack
   location) where the function expects each argument.
+\item A fixnum indicating the \emph{frame size} of the function.  This
+  is the size of the stack frame that the function needs in order to
+  perform its task. 
 \end{itemize}
 
 A reference to the function descriptor is located in the aligned word
