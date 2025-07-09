@@ -72,6 +72,13 @@ In that case, the call-site manager generates code to access the
 relevant argument directly and put it directly where the optimized
 function body of the callee expects it.
 
+When a function is redefined, first every trampoline snippet that calls
+that function is updated so that it uses the default argument-parsing
+entry point of the function.  This entry point is always valid in each
+function, so redefining the function will cause no problem.  After the
+function has been updated, each of these trampoline snippets is again
+updated according to the optimized entry point of the new function.
+
 Initial versions of \sysname{} will not include a call-site manager.
 Each call site will contain the general call sequence described
 above.
