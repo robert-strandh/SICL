@@ -69,11 +69,29 @@ arguments in the most common way.%
 \footnote{So that keyword arguments are pairs, each one of which is a
   symbol in the \texttt{keyword} package followed by a value.}
 In that case, the call-site manager generates code to access the
-relevant argument directly and put it directly where the optimize
+relevant argument directly and put it directly where the optimized
 function body of the callee expects it.
 
 Initial versions of \sysname{} will not include a call-site manager.
 Each call site will contain the general call sequence described
 above.
+
+\section{Unfinished suggestion of further optimizations}
+
+This section contains a fairly radical suggestion for further
+optimizations that involve the call-site manager.
+
+\begin{itemize}
+\item Registers that need to be preserved across a function call are
+  not saved by the caller itself.  Instead, this becomes the
+  responsibility of the call-site manager.  The call-site contains a
+  list of pairs, each consisting of a register and a stack location,
+  where the register is one that needs to be preserved and the stack
+  location is where the register should be stored, should storing be
+  required.  In the most general case, the call-site manager stores
+  each registers in the list in its stack location before calling the
+  callee, and it restores the register after the callee returns.
+\end{itemize}
+
 
 % LocalWords:  callee
