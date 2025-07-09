@@ -84,14 +84,49 @@ optimizations that involve the call-site manager.
 \begin{itemize}
 \item Registers that need to be preserved across a function call are
   not saved by the caller itself.  Instead, this becomes the
-  responsibility of the call-site manager.  The call-site contains a
-  list of pairs, each consisting of a register and a stack location,
-  where the register is one that needs to be preserved and the stack
-  location is where the register should be stored, should storing be
-  required.  In the most general case, the call-site manager stores
+  responsibility of the trampoline snippet created by the call-site
+  manager.  The call-site contains a list of pairs, each consisting of
+  a register and a stack location, where the register is one that
+  needs to be preserved and the stack location is where the register
+  should be stored, should storing be required.  In the most general
+  case, the call-site manager creates a trampoline snippet that stores
   each registers in the list in its stack location before calling the
-  callee, and it restores the register after the callee returns.
+  callee, and restores the register after the callee returns.
+\item Each function contains a set (represented as a bitmap) of the
+  registers it itself uses, and the registers used by all of its
+  callees.  This information is basically the union of the similar
+  information of all its callees, and the set of registers the
+  function itself uses.
+\item For a given pair of a caller and a callee, the trampoline
+  snippet needs to save and restore a caller register that must be
+  preserved across the call only if that register is used by the
+  callee, directly or indirectly, as indicated by the bitmap of the
+  callee.
+\item When the compiler generates code for a function, the register
+  allocator chooses registers randomly, rather than systematically in
+  some (perhaps numerical) order.  This way, the likelihood that a
+  register that is used by a caller is also used by its callee is
+  lowered.
 \end{itemize}
 
+We believe that this technique will avoid many register spills across
+calls, and therefore it will save many memory accesses.
 
-% LocalWords:  callee
+The main difficulty of this suggestion is what happens when a function
+is redefined, especially if one of its callers is already on the
+invocation stack.  The new definition will use a different set of
+registers than the old definition, and it becomes very possible that
+one such register is also used by a caller, and that this register was
+not saved by the trampoline snippet.
+
+At the very least, the stack would have to be traversed, and registers
+would have to be saved to stack locations, according to the set of
+pairs of register and stack location of each call site.  But the
+trampoline snippet does not contain code for reloading such registers
+after the callee returns, so a new snippet would also have to be
+created.  It would even be possible to save every register in the list
+of pairs and create code in the snippet for restoring every such
+register.  Doing so would not be optimal, but no worse than the
+default.
+
+% LocalWords:  callee callees allocator
