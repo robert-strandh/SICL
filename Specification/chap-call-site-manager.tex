@@ -136,4 +136,9 @@ of pairs and create code in the snippet for restoring every such
 register.  Doing so would not be optimal, but no worse than the
 default.
 
+Another (minor) difficulty is the stack-scanning part of the garbage
+collector.  It would have to scan the stack from bottom to top in
+order to determine which registers are live (and contain \commonlisp{}
+objects) to trace.
+
 % LocalWords:  callee callees allocator
