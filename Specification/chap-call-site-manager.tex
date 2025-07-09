@@ -79,6 +79,25 @@ function, so redefining the function will cause no problem.  After the
 function has been updated, each of these trampoline snippets is again
 updated according to the optimized entry point of the new function.
 
+Section 3.2.2.3 of the \commonlisp{} standard says: ``Within a
+function named F, the compiler may (but is not required to) assume
+that an apparent recursive call to a function named F refers to the
+same definition of F, unless that function has been declared
+notinline. The consequences of redefining such a recursively defined
+function F while it is executing are undefined.''%
+\footnote{For one thing it is not clear what ``a function named F''
+  means, since functions do not have names.  And in general, the
+  compiler does not have any knowledge about any name when a lambda
+  expression is turned into a function.  Furthermore, if a form such
+  as \texttt{(progn (setf (fdefinition 'G) (fdefinition 'F))
+    (fmakunbound 'F))} is evaluated, does that mean that the name of
+  the function is now \texttt{G}?}
+We do not intend to take advantage of this possibility given by the
+standard, simply because the call-site manager will make the call very
+efficient whatever function it refers to.  Furthermore, the call-site
+manager will be able to turn a tail-recursive call into the equivalent
+of a loop.
+
 Initial versions of \sysname{} will not include a call-site manager.
 Each call site will contain the general call sequence described
 above.
