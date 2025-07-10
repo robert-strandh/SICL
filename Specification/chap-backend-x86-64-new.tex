@@ -104,12 +104,13 @@ Stack frame at entry.}
 Prelude:
 
 \begin{enumerate}
-\item Pop the return address off the stack and store it into RBP-8.
+\item Pop the return address off the stack and store it into RBP-16.
 \item If required, move the static environment from R10 into some
   other lexical location, and dynamic environment from RBX into some
   other lexical location.
 \item Parse the arguments and store the corresponding parameters in
   lexical locations, either in registers or in the stack frame.
+\item Remove the arguments from the stack.
 \end{enumerate}
 
 After the execution of the function prelude, the contents of the stack
