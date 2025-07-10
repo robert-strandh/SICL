@@ -64,23 +64,27 @@ For information about the call-site descriptor, see
 \begin{enumerate}
 \item Compute the callee function and the arguments into a temporary
   locations.
-\item Store RSP in a lexical variable, say $v$.
-\item Push RBP
 \item Load the rack of the callee function into a temporary register.
 \item Load the static environment of the callee from the rack of the
   callee function object into R10.
-\item Load the frame size of the callee (which
-  includes the return address and the call-site descriptor, in
-  addition to all lexical variables required to parse arguments) from
-  the rack of the callee function object into a temporary register.
-\item Load the entry point from the rack into a free register.
-\item Subtract from RSP the frame size computed in the
-  previous step.
-\item Push arguments.
+\item Load the frame size of the callee from the rack of the callee
+  function object into a temporary register, say $rf$.
+\item Load the entry point from the rack into a free register, say $re$.
+\item The number of arguments is known statically, say $A$.  Let $N$
+  be $A$ plus $3$ ($1$ for the saved caller frame pointer, one for the
+  slot to hold the return address, and $1$ for the call-site
+  descriptor).
+\item Store RSP in a some available register, say $rs$.
+\item Subtract the contents of $rf + N \cdot 8$ from the stack
+  pointer.
+\item Store the caller frame pointer on the stack at location $rs -
+  8$.
+\item Store the call-site descriptor on the stack in $rs - 24$.
+\item Store arguments into locations $RSP + 0$, $RSP + 1$, etc. but in
+  reverse order, so that the last argument is on top of the stack.
 \item Load the dynamic environment into RBX.
-\item Store $v-1$ into RBP, thereby establishing the base pointer
+\item Store $rs$ into RBP, thereby establishing the base pointer
   for the callee.
-\item Store the call-site descriptor on the stack in RBP-16.
 \item Execute the CALL instruction to the entry point.
 \end{enumerate}
 
