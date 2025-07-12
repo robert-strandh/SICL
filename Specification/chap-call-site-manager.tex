@@ -147,7 +147,11 @@ after the callee returns, so a new snippet would also have to be
 created.  It would even be possible to save every register in the list
 of pairs and create code in the snippet for restoring every such
 register.  Doing so would not be optimal, but no worse than the
-default.
+default.  So perhaps the snippet could contain two addresses to return
+to, one that restores only registers saved, and one that restores all
+registers that need to be preserved across a call.  Then when a
+function is modified, the stack could be scanned and the return
+addresses modified.
 
 Another (minor) difficulty is the stack-scanning part of the garbage
 collector.  It would have to scan the stack from bottom to top in
