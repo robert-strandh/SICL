@@ -397,12 +397,6 @@ but in other places it explicitly allows for other subtypes of
 \footnote{See the definition of the system class \texttt{sequence}.}
 The general consensus seems to be that other subtypes are allowed.
 
-\section{Arrays}
-\label{sec-data-representation-arrays}
-
-Code for arrays is provided by the library Regalia, as described in
-\refSec{sec-array}.
-
 \section{Symbols}
 
 A symbol is a standard object, and \texttt{symbol} is a standard
@@ -423,21 +417,6 @@ explicit \emph{global environment} object.
 Notice also that the symbol does not contain the \emph{property list}
 associated with it.  This information is also kept separately in an
 explicit \emph{global environment} object.
-
-\section{Packages}
-
-Code for packages is provide by the library Parcl, as described in
-\refSec{sec-packages}.
-
-\section{Hash tables}
-
-Code for hash tables is provide by the library \salmagundi{}, as
-described in \refSec{sec-hash-tables}.
-
-\section{Streams}
-
-Code for streams is provide by the library \cyclosis{}, as described
-in \refSec{sec-streams}.
 
 \section{Functions}
 \label{sec-data-representation-functions}
@@ -572,14 +551,6 @@ snippets for breakpoints.  The call-site manager is responsible for
 parsing arguments, which is why the optimized function body is not
 preceded by any prelude.  Instead, a call to this function goes
 directly to the optimized function body.
-
-\section{Structures}
-
-Structures are standard objects.  The class \texttt{structure-object}
-is a subclass of \texttt{standard-object}.  The class
-\texttt{structure-object} is an instance of the class
-\texttt{structure-class}.  We are using the library \anatomicl{} to
-implement structures, as described in \refSec{sec-structures}.
 
 \section{Conditions}
 
