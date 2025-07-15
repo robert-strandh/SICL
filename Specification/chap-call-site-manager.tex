@@ -151,11 +151,21 @@ default.  So perhaps the snippet could contain two addresses to return
 to, one that restores only registers saved, and one that restores all
 registers that need to be preserved across a call.  Then when a
 function is modified, the stack could be scanned and the return
-addresses modified.
+addresses modified.  A better suggestion would be for the snippet to
+contain enough space for instructions to restore all registers that
+need to be preserved around a function call, but by default only
+instructions to restore registers used by the callee are present.
+When a function is redefined that has callers on the stack, the all
+registers that need to be preserved around a function call are saved,
+and then the snippet is altered to restore all those registers.
 
 Another (minor) difficulty is the stack-scanning part of the garbage
 collector.  It would have to scan the stack from bottom to top in
 order to determine which registers are live (and contain \commonlisp{}
 objects) to trace.
+
+This idea might be too radical, though.  A typical function may have
+many of callers, so a lot of work may have to be done when such a
+function is redefined.
 
 % LocalWords:  callee callees allocator
