@@ -171,19 +171,15 @@ should be initialized according to the lambda list stored in that
 instruction.  This process is deliberately hidden in the initial HIR
 version, because it is highly dependent on the implementation.
 
-\subsubsection{Handling \texttt{named-call-instruction}s and similar}
+\subsubsection{Handling \texttt{global-function-reference-instruction}s and similar}
 
-It used to be the case that the AST-to-HIR phase generated
-\texttt{fdefinition-instruction}s, but it no longer does.  Instead,
-for function calls with a name in the operator position, it now
-generates \texttt{named-call-instruction}s.  These instructions
-(together with other instructions that will ultimately turn into calls
-to known functions; see below) are scanned for in the HIR code, and a
-list of \emph{call-sites} is established.  Otherwise, these
-instructions are not processed at all.  In the final native code, they
-will turn into unconditional jumps, and the target address will be
-filled in by the call-site manager when the code is tied to an
-environment.
+These instructions (together with other instructions that will
+ultimately turn into calls to known functions; see below) are scanned
+for in the HIR code, and a list of \emph{call-sites} is established.
+Otherwise, these instructions are not processed at all.  In the final
+native code, they will turn into unconditional jumps, and the target
+address will be filled in by the call-site manager when the code is
+tied to an environment.
 
 Other instructions are treated the same way.  In particular
 \texttt{catch-instruction}s, \texttt{bind-instruction}s,
