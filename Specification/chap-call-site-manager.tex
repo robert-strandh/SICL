@@ -169,6 +169,21 @@ objects) to trace.
 
 This idea might be too radical, though.  A typical function may have
 many of callers, so a lot of work may have to be done when such a
-function is redefined.
+function is redefined.  The following idea might avoid this problem,
+though.
 
-% LocalWords:  callee callees allocator
+It is never an error to overestimate the set of registers used by a
+function.  If a function that is likely to take considerable time to
+execute (where the time includes the execution time of its callees)
+can be marked as using all its registers.  The overhead of a caller to
+save all its precious registers is then small.  So the compiler can
+estimate the execution time of a function and if it is sufficiently
+large, it can mark it as having all its registers used.  Then, only
+simple function will have a smaller set indicated as used.  This
+suggestion will limit the propagation of register sets so that is
+might be more reasonable.  The effect will then be the same as that of
+inlining simple functions, but without the problems of inlining (i.e.,
+that the function doing the inlining must be recompiled when the
+callee is redefined).
+
+% LocalWords:  callee callees allocator inlining
