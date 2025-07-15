@@ -101,17 +101,20 @@ above.
 This section contains a fairly radical suggestion for further
 optimizations that involve the call-site manager.
 
+For the purpose of this section, let's call a register that needs to
+be preserved around a function call a \emph{precious} register.
+
 \begin{itemize}
-\item Registers that need to be preserved across a function call are
-  not saved by the caller itself.  Instead, this becomes the
-  responsibility of the trampoline snippet created by the call-site
-  manager.  The call-site contains a list of pairs, each consisting of
-  a register and a stack location, where the register is one that
-  needs to be preserved and the stack location is where the register
-  should be stored, should storing be required.  In the most general
-  case, the call-site manager creates a trampoline snippet that stores
-  each registers in the list in its stack location before calling the
-  callee, and restores the register after the callee returns.
+\item Precious registers are not saved by the caller itself.  Instead,
+  this becomes the responsibility of the trampoline snippet created by
+  the call-site manager.  The call-site contains a list of pairs, each
+  consisting of a register and a stack location, where the register is
+  one that needs to be preserved and the stack location is where the
+  register should be stored, should storing be required.  In the most
+  general case, the call-site manager creates a trampoline snippet
+  that stores each registers in the list in its stack location before
+  calling the callee, and restores the register after the callee
+  returns.
 \item Each function contains a set (represented as a bitmap) of the
   registers it itself uses, and the registers used by all of its
   callees.  This information is basically the union of the similar
