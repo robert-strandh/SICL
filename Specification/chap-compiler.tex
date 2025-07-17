@@ -200,28 +200,8 @@ of constants allocated separately.
 \subsubsection{Eliminating \texttt{create-cell-instruction}s}
 
 A \texttt{create-cell-instruction} is turned into a
-\texttt{funcall-instruction} with \texttt{cons} as the function to
-call and \texttt{nil} as both the arguments.
-
-The \texttt{cons} function is loaded from the static environment.  To
-do that, we emit an \texttt{aref-instruction} with the static
-environment location and the offset of the \texttt{cons} function in
-the static environment.
-
-Similarly, the constant \texttt{nil} is loaded from the static
-environment.  Again, we emit an \texttt{aref-instruction}, this time with
-an index corresponding to the position of \texttt{nil} in the
-static environment.%
-\fixme{Investigate whether we could annotate the
-  \texttt{create-cell-instruction}s with inputs representing the
-  \texttt{cons} function as output from an
-  \texttt{fdefinition-instruction} and the constant \texttt{nil}.  It
-  may not be possible since a \texttt{create-cell} instruction is
-  created as a result of closure conversion, and adding an
-  \texttt{fdefinition-instruction} means that it must be hoisted, and
-  followed by closure conversion.  Perhaps it is possible if we do the
-  closure conversion inside-out, since there are no
-  \texttt{create-cell-instruction}s in the innermost function.}
+\texttt{global-function-reference-instruction} with \texttt{cons} as
+the function to call and \texttt{nil} as both the arguments.
 
 \subsubsection{Eliminating \texttt{fetch-instruction}s}
 
