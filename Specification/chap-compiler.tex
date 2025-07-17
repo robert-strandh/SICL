@@ -205,18 +205,15 @@ the function to call and \texttt{nil} as both the arguments.
 
 \subsubsection{Eliminating \texttt{read-cell-instruction}s}
 
-A \texttt{read-cell-instruction} is simply replaced by a
-\texttt{car-instruction}.  The \texttt{car-instruction} assumes that
-its argument is a \texttt{cons} cell, but we know that is the case,
-because we created the cell by a call to the \texttt{cons} function.
+A \texttt{read-cell-instruction} is replaced by a
+\texttt{global-function-reference-instruction} with the function name
+\texttt{car}. 
 
 \subsubsection{Eliminating \texttt{write-cell-instruction}s}
 
-A \texttt{write-cell-instruction} is simply replaced by a
-\texttt{rplaca-instruction}.  The \texttt{rplaca-instruction} assumes
-that its argument is a \texttt{cons} cell, but we know that is the
-case, because we created the cell by a call to the \texttt{cons}
-function.
+A \texttt{write-cell-instruction} is replaced by a
+\texttt{global-function-reference-instruction} with the function name
+\texttt{rplaca}. 
 
 \subsection{Conversion from HIR to MIR}
 
