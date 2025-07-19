@@ -164,14 +164,6 @@ library.
 
 \subsection{HIR transformations}
 
-\subsubsection{Introducing explicit argument processing}
-
-When HIR code is created by Common boot, the outputs of a
-\texttt{parse-arguments-instruction} consist of lexical variables that
-should be initialized according to the lambda list stored in that
-instruction.  This process is deliberately hidden in the initial HIR
-version, because it is highly dependent on the implementation.
-
 \subsubsection{Handling \texttt{global-function-reference-instruction}s and similar}
 
 These instructions (together with other instructions that will
@@ -204,17 +196,9 @@ A \texttt{create-cell-instruction} is turned into a
 \texttt{global-function-reference-instruction} with \texttt{cons} as
 the function to call and \texttt{nil} as both the arguments.
 
-\subsubsection{Eliminating \texttt{read-cell-instruction}s}
-
-A \texttt{read-cell-instruction} is replaced by a
-\texttt{global-function-reference-instruction} with the function name
-\texttt{car}. 
-
-\subsubsection{Eliminating \texttt{write-cell-instruction}s}
-
-A \texttt{write-cell-instruction} is replaced by a
-\texttt{global-function-reference-instruction} with the function name
-\texttt{rplaca}. 
+Instructions for reading and writing cells are not transformed at the
+HIR level, and are instead turned into explicit memory instructions
+when HIR is translated to MIR.
 
 \subsection{Conversion from HIR to MIR}
 
