@@ -265,15 +265,4 @@ excluded either.  An exception to the rule is when the global function
 is a standard \commonlisp{} function, in which case it can not be replaced, so
 it is safe to cache the function in a register.
 
-\section{Random thoughts}
-
-The compiler should be as portable as possible.  It should use
-portable Common Lisp for as many of the passes as possible.
-
-The compiler should keep information about which registers are live,
-and how values are represented in live registers, for all values of
-the program counter.  This information is used by the garbage
-collector to determine what registers should be scanned, and how.   It
-is also used by the debugger.
-
 %%  LocalWords:  disjunction
