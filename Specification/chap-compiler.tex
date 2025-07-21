@@ -32,6 +32,27 @@ this is the phase where these primitives are turned into code that
 exposes the representation of objects and that representation is
 \sysname{} specific.
 
+Primitives are defined with names in a separate package called
+\texttt{sicl-primitives}.  The following primitives are defined by
+\sysname{}:
+
+\begin{itemize}
+\item \texttt{car}.  Return the \texttt{car} slot of an object known
+  to be a \texttt{cons} cell.
+\item \texttt{rplaca}.  Store an arbitrary object in the \texttt{car}
+  slot an object known to be a \texttt{cons} cell.
+\item \texttt{cdr}.  Return the \texttt{cdr} slot of an object known
+  to be a \texttt{cons} cell.
+\item \texttt{rplacd}.  Store an arbitrary object in the \texttt{cdr}
+  slot an object known to be a \texttt{cons} cell.
+\item \texttt{standard-instance-access}.  Return the contents of a
+  slot at a particular index of an object known to be a standard
+  object.
+\item \texttt{(setf standard-instance-access)}.  Store an arbitrary
+  object in a slot at a particular index of an object known to be a
+  standard object.
+\end{itemize}
+
 \section{Different uses of the compiler}
 \label{sec-different-uses-of-the-compiler}
 
