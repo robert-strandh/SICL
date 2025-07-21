@@ -33,8 +33,17 @@ exposes the representation of objects and that representation is
 \sysname{} specific.
 
 Primitives are defined with names in a separate package called
-\texttt{sicl-primitives}.  The following primitives are defined by
-\sysname{}:
+\texttt{sicl-primitives}, and they can be divided into groups
+according to the kind of objects they operate on:
+
+\begin{itemize}
+\item \texttt{cons} cells.
+\item standard objects.
+\item arrays.
+\item numbers.
+\end{itemize}
+
+The following primitives are defined for \texttt{cons} cells:
 
 \begin{itemize}
 \item \texttt{car}.  Return the \texttt{car} slot of an object known
@@ -45,6 +54,11 @@ Primitives are defined with names in a separate package called
   to be a \texttt{cons} cell.
 \item \texttt{rplacd}.  Store an arbitrary object in the \texttt{cdr}
   slot an object known to be a \texttt{cons} cell.
+\end{itemize}
+
+The following primitives are defined for standard objects:
+
+\begin{itemize}
 \item \texttt{standard-instance-access}.  Return the contents of a
   slot at a particular index of an object known to be a standard
   object.
