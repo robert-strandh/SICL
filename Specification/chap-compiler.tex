@@ -141,8 +141,9 @@ environments that evolve during the compilation procedure, as describe
 in \refSec{sec-lexical-compile-time-environments}.
 
 In the AST, all macro calls have been expanded, and all other aspects
-of the compilation environment have been taken into account.  For that
-reason, the AST is independent of the compilation environment.
+of the environment in which the conversion was made have been taken
+into account.  For that reason, the AST is independent of any
+particular environment.
 
 The AST has a textual representation, so the AST can be saved to a
 file and a \emph{similar} AST can be created by an application of the
