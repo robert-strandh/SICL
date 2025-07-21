@@ -3,7 +3,37 @@
 
 \section{General description}
 
+The \sysname{} compiler turns source code into executable machine
+code.  The source code can be either a \emph{file} or an
+\emph{s-expression} depending on how the compiler is used, as
+described in \refSec{sec-different-uses-of-the-compiler}.
+
+User-supplied code is relatively simple in that the end result
+consists of literals, references and calls to functions, and
+references and assignments of variable.
+
+However, the compiler is also used to compiler system-specific code.
+For example, the \texttt{car} function must refer to en even
+lower-level primitive that takes the \texttt{car} of an object known
+to be a \texttt{cons} cell.  Similarly the function
+\texttt{standard-instance-access} must refer to an even lower-level
+primitive that accesses the slots of a standard object.  The compiler
+must be able to compile these functions as well, in addition to
+user-level code.  For that reason, \sysname{} defines a set of
+\emph{primitive operations} or \emph{primitives} for short.  In code
+such as the definition of \texttt{car} the primitive is invoked as if
+it were a function, with the semantics of a function call, but it is
+not defined as a function.  In High-level Intermediate Representation
+(or HIR, \refSec{sec-conversion-from-ast-to-hir}) these primitives
+look like calls to global functions.  The only \sysname{}-specific
+aspect of the compiler is the conversion of High-level Intermediate
+Representation to Medium-level Intermediate Representation, because
+this is the phase where these primitives are turned into code that
+exposes the representation of objects and that representation is
+\sysname{} specific.
+
 \section{Different uses of the compiler}
+\label{sec-different-uses-of-the-compiler}
 
 The compiler is used in several different situations.  There are
 different use cases, so it is appropriate to distinguish these cases
@@ -154,6 +184,7 @@ format that \sysname{} uses.  It fulfills the requirements for
 For more information, see \refChap{chap-compiled-files}.
 
 \subsection{Conversion from AST to HIR}
+\label{sec-conversion-from-ast-to-hir}
 
 The acronym HIR stands for \emph{High-level Intermediate
   Representation}.  This representation is defined by the \hirundine{}
