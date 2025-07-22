@@ -67,6 +67,42 @@ The following primitives are defined for standard objects:
   standard object.
 \end{itemize}
 
+For arrays, there is a pair of primitives for each specialized type of
+array, as required by the Regalia library:
+
+\begin{itemize}
+\item \texttt{t-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf t-aref)}
+\item \texttt{signed-64-bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf signed-64-bit-aref)}
+\item \texttt{unsigned-64-bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf unsigned-64-bit-aref)}
+\item \texttt{signed-32-bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf signed-32-bit-aref)}
+\item \texttt{unsigned-32-bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf unsigned-32-bit-aref)}
+\item \texttt{signed-16-bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf signed-16-bit-aref)}
+\item \texttt{unsigned-16-bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf unsigned-16-bit-aref)}
+\item \texttt{signed-8-bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf signed-8-bit-aref)}
+\item \texttt{unsigned-8-bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf unsigned-8-bit-aref)}
+\item \texttt{single-float-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf single-float-aref)}
+\item \texttt{double-float-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf double-float-aref)}
+\item \texttt{complex-single-float-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf complex-single-float-aref)}
+\item \texttt{complex-double-float-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf complex-double-float-aref)}
+\item \texttt{character-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf character-aref)}
+\item \texttt{bit-aref}.  Return an element of an unspecialized array.
+\item \texttt{(setf bit-aref)}
+\end{itemize}
+
 \section{Different uses of the compiler}
 \label{sec-different-uses-of-the-compiler}
 
