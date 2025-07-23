@@ -103,6 +103,31 @@ array, as required by the \regalia{} library described in \refSec{sec-array}:
 \item \texttt{(setf bit-aref)}
 \end{itemize}
 
+The following primitives are defined for numbers:
+
+\begin{itemize}
+\item \texttt{fixnum-add}.  Add two fixnums the result of which is
+  guaranteed to be a fixnum.
+\item \texttt{fixnum-subtract}.  Subtract two fixnums the result of
+  which is guaranteed to be a fixnum.
+\item \texttt{fixnum-multiply}.  Multiply two fixnums, the result of
+  which is guaranteed to be a fixnum.
+\item \texttt{fixnum-divide}.  Divide two fixnums, ...
+\item \texttt{fixnum-equal}.  Return true if and only if two fixnums
+  are equal.
+\item \texttt{fixnum-less}.  Return true if and only if the first
+  fixnum is strictly less than the second fixnum.
+\item \texttt{fixnum-not-greater}.  Return true if and only if the first
+  fixnum is less than or equal to the second fixnum.
+\item \texttt{fixnum-logand}.  Return a fixnum that is the bitwise
+  logical \emph{and} between two given fixnums.
+\item \texttt{fixnum-logior}.  Return a fixnum that is the bitwise
+  logical inclusive \emph{or} between two given fixnums.
+\item \texttt{fixnum-logxor}.  Return a fixnum that is the bitwise
+  logical exclusive \emph{or} between two given fixnums.
+\end{itemize}
+
+
 \section{Different uses of the compiler}
 \label{sec-different-uses-of-the-compiler}
 
