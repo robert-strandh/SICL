@@ -84,7 +84,7 @@ the backend works.
 
 The difference between the callee frame pointer and the callee stack
 pointer determines the number of return values.  The first return
-values is returned in an agreed-upon register.  If there are zero
+value is returned in an agreed-upon register.  If there are zero
 return values, this register contains \texttt{nil}.  Otherwise, the
 stack holds return values beyond the first one, but there is still a
 slot on the stack for the first one.  The caller can save the first
@@ -105,7 +105,7 @@ lexical variable, or it can use its statically known knowledge about
 its own stack-frame size to determine its old value of the stack
 pointer.  Return values are located on the stack in the locations
 determined by this value and the current value of the frame pointer,
-except the first return values which is located in an agreed-upon
+except the first return value which is located in an agreed-upon
 register.
 
 If a single return value is needed, then the caller accesses this
