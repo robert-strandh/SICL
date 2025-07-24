@@ -71,36 +71,68 @@ For arrays, there is a pair of primitives for each specialized type of
 array, as required by the \regalia{} library described in \refSec{sec-array}:
 
 \begin{itemize}
-\item \texttt{t-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf t-aref)}
-\item \texttt{signed-64-bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf signed-64-bit-aref)}
-\item \texttt{unsigned-64-bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf unsigned-64-bit-aref)}
-\item \texttt{signed-32-bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf signed-32-bit-aref)}
-\item \texttt{unsigned-32-bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf unsigned-32-bit-aref)}
-\item \texttt{signed-16-bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf signed-16-bit-aref)}
-\item \texttt{unsigned-16-bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf unsigned-16-bit-aref)}
-\item \texttt{signed-8-bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf signed-8-bit-aref)}
-\item \texttt{unsigned-8-bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf unsigned-8-bit-aref)}
-\item \texttt{single-float-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf single-float-aref)}
-\item \texttt{double-float-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf double-float-aref)}
-\item \texttt{complex-single-float-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf complex-single-float-aref)}
-\item \texttt{complex-double-float-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf complex-double-float-aref)}
-\item \texttt{character-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf character-aref)}
-\item \texttt{bit-aref}.  Return an element of an unspecialized array.
-\item \texttt{(setf bit-aref)}
+\item \texttt{t-aref}.  Return an element at a given index of an
+  unspecialized array.
+\item \texttt{(setf t-aref)}.  Store an object in the element at a
+  given index of an unspecialized array.
+\item \texttt{signed-64-bit-aref}.  Return an element at a given index
+  of an array of signed 64-bit integers.
+\item \texttt{(setf signed-64-bit-aref)}.  Store an object in the
+  element at a given index of
+\item \texttt{unsigned-64-bit-aref}.  Return an element at a given
+  index of an array of unsigned 64-bit integers.
+\item \texttt{(setf unsigned-64-bit-aref)}.  Store an object in the
+  element at a given index of an array of unsigned 64-bit integers.
+\item \texttt{signed-32-bit-aref}.  Return an element at a given index
+  of an array of signed 32-bit integers. 
+\item \texttt{(setf signed-32-bit-aref)}.  Store an object in the
+  element at a given index of an array of signed 32-bit integers.
+\item \texttt{unsigned-32-bit-aref}.  Return an element at a given
+  index of an array of unsigned 32-bit integers. 
+\item \texttt{(setf unsigned-32-bit-aref)}.  Store an object in the
+  element at a given index of an array of unsigned 32-bit integers.
+\item \texttt{signed-16-bit-aref}.  Return an element at a given index
+  of an array of signed 16-bit integers. 
+\item \texttt{(setf signed-16-bit-aref)}.  Store an object in the
+  element at a given index of an array of signed 16-bit integers.
+\item \texttt{unsigned-16-bit-aref}.  Return an element at a given
+  index of an array of unsigned 16-bit integers. 
+\item \texttt{(setf unsigned-16-bit-aref)}.  Store an object in the
+  element at a given index of an array of unsigned 16-bit integers.
+\item \texttt{signed-8-bit-aref}.  Return an element at a given index
+  of an array of signed 8-bit integers.
+\item \texttt{(setf signed-8-bit-aref)}.  Store an object in the
+  element at a given index of an array of signed 8-bit integers.
+\item \texttt{unsigned-8-bit-aref}.  Return an element at a given index
+  of an array of unsigned 8-bit integers.
+\item \texttt{(setf unsigned-8-bit-aref)}.  Store an object in the
+  element at a given index of an array of unsigned 8-bit integers.
+\item \texttt{single-float-aref}.  Return an element at a given index
+  of an array of single floats.
+\item \texttt{(setf single-float-aref)}.  Store an object in the
+  element at a given index of an array of single floats.
+\item \texttt{double-float-aref}.  Return an element at a given index
+  of an array of double floats.
+\item \texttt{(setf double-float-aref)}.  Store an object in the
+  element at a given index of an array of double floats.
+\item \texttt{complex-single-float-aref}.  Return an element at a given
+  index of an array of single float complex numbers.
+\item \texttt{(setf complex-single-float-aref)}.  Store an object in
+  the element at a given index of an array of single float complex
+  numbers.
+\item \texttt{complex-double-float-aref}.  Return an element at a given
+  index of an array of double float complex numbers.
+\item \texttt{(setf complex-double-float-aref)}.  Store an object in
+  the element at a given index of an array of double float complex
+  numbers.
+\item \texttt{character-aref}.  Return an element at a given index of
+  an array of characters.
+\item \texttt{(setf character-aref)}.  Store an object in the element
+  at a given index of an array of characters.
+\item \texttt{bit-aref}.  Return an element at a given index of an
+  array of bits.
+\item \texttt{(setf bit-aref)}.  Store an object in the element at a
+  given index of an array of bits.
 \end{itemize}
 
 The following primitives are defined for numbers:
