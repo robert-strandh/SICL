@@ -144,7 +144,9 @@ The following primitives are defined for numbers:
   which is guaranteed to be a fixnum.
 \item \texttt{fixnum-multiply}.  Multiply two fixnums, the result of
   which is guaranteed to be a fixnum.
-\item \texttt{fixnum-divide}.  Divide two fixnums, ...
+\item \texttt{fixnum-divide}.  Divide two fixnums.  Return the result
+  as two values: the quotient and the remainder.  The quotient is
+  rounded towards zero.
 \item \texttt{fixnum-equal}.  Return true if and only if two fixnums
   are equal.
 \item \texttt{fixnum-less}.  Return true if and only if the first
