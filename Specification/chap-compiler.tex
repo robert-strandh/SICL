@@ -386,9 +386,20 @@ when HIR is translated to MIR.
 
 \subsection{Conversion from HIR to MIR}
 
-MIR differs from HIR in that address calculations are explicit.
+MIR differs from HIR in that address calculations and stack
+manipulations are explicit.  MIR operations are defined by the
+Posterior library.  In summary, it defines a graph of
+\emph{instructions} similar to HIR, but with instructions that are
+similar to what most physical processors offer.
+
+We allocate Posterior registers to be used as the stack pointer and
+the frame pointer.  Stack operations are then defined in terms of
+explicit memory read/write operations involving those registers.
 
 \subsection{Code generation}
+
+Code generation will be handled by the Posterior library, but that
+library is still work in progress.
 
 \subsection{Access to special variables and global functions}
 
