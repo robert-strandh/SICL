@@ -6,8 +6,7 @@
   (format *trace-output* "**************** Phase 4~%")
   (let* ((client (make-instance 'client))
          (environment (create-environment client))
-         (e4
-           (trucler:global-environment client environment))
+         (e4 (trucler:global-environment client environment))
          (env:*client* client)
          (env:*environment* e4))
     (setf (sb:e4 boot) e4)
@@ -69,11 +68,9 @@
     (sb:ensure-asdf-system client environment "sicl-arithmetic-operations") 
     (setf (clo:symbol-value client (sb:e3 boot) @clostrophilia:*class-t+1*)
           (clo:find-class client e4 't))
-    (setf (clo:macro-function
-           client e4 @asdf-user:defsystem)
+    (setf (clo:macro-function client e4 @asdf-user:defsystem)
           (constantly nil))
-    (setf (clo:macro-function
-           client e4 @asdf:defsystem)
+    (setf (clo:macro-function client e4 @asdf:defsystem)
           (constantly nil))
     (sb:ensure-asdf-system
      client environment "predicament-base" :load-system-file t)
@@ -167,11 +164,9 @@
       (sb:ensure-asdf-system client environment "ecclesia"))
     (sb:ensure-asdf-system
      client environment "clostrophilia-dependent-maintenance")
-    (setf (clo:fdefinition
-           client e4 @clostrophilia:subtypep-1)
+    (setf (clo:fdefinition client e4 @clostrophilia:subtypep-1)
           (constantly t))
-    (setf (clo:fdefinition
-           client e4 @sicl-clos:subtypep-1)
+    (setf (clo:fdefinition client e4 @sicl-clos:subtypep-1)
           (constantly t))
     (sb:ensure-asdf-system
      client environment "clostrophilia-generic-function-initialization")
@@ -189,11 +184,9 @@
      client environment "clostrophilia-slot-definition-initialization")
     ;; We don't expect to see any floating-point numbers during
     ;; bootstrapping.
-    (setf (clo:fdefinition
-           client e4 @sicl-arithmetic:single-float-p)
+    (setf (clo:fdefinition client e4 @sicl-arithmetic:single-float-p)
           (constantly nil))
-    (setf (clo:fdefinition
-           client e4 @sicl-arithmetic:double-float-p)
+    (setf (clo:fdefinition client e4 @sicl-arithmetic:double-float-p)
           (constantly nil))
     ;; The ctype library is unusual in that it creates instances of
     ;; its classes at load time.  For that to work, we need to use the
