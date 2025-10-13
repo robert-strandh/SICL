@@ -25,3 +25,13 @@
                                  collect `(cons ',name ,cell)))
                    *intercepted-cells*)))
      ,@body))
+
+;;; This variable contains an association list where the key is the
+;;; name of a function, and the value is the alternative name of that
+;;; function to be used in place of the name in the key.
+(defparameter *intercepted-names* '())
+
+(defmacro with-intercepted-function-names (pairs &body body)
+  `(let ((*intercepted-names*
+           (append ,pairs *intercepted-names*)))
+     ,@body))
