@@ -27,7 +27,7 @@
     (fix-variables client e3 e4)
     ;; Normally, when a method function of a method in E4 calls some
     ;; other function, the callee will also be in E4.  However, when
-    ;; the effective method involving a slot accessor is computer, the
+    ;; the effective method involving a slot accessor is computed, the
     ;; code for computing the effective method substitutes a different
     ;; method function that calls SLOT-VALUE-USING-LOCATION+1, and
     ;; since the code for computing the effective method is so far in
