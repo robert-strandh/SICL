@@ -126,7 +126,7 @@
                 (loop for i from (1+ end-line-index) below (length lines)
                       do (format pane "~a~%" (aref lines i)))
                 (setf (clim:stream-drawing-p pane) t)
-                (clim:replay (clim:stream-output-history pane) pane)))))))))
+                #+(or)(clim:replay (clim:stream-output-history pane) pane)))))))))
 
 (defun inspect (stack &key new-process-p)
   (let ((frame (clim:make-application-frame 'inspector
