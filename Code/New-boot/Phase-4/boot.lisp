@@ -62,8 +62,7 @@
             (clo:find-class c4 e4 't)))
     (sb:ensure-asdf-system c4 w4 "clostrophilia-class-hierarchy")
     (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-base")
-    (sb:ensure-asdf-system c4 w4
-                           "sicl-arithmetic-class-hierarchy")
+    (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-class-hierarchy")
     (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-operations") 
     (setf (clo:symbol-value c4 e3 @clostrophilia:*class-t+1*)
           (clo:find-class c4 e4 't))
@@ -71,8 +70,7 @@
           (constantly nil))
     (setf (clo:macro-function c4 e4 @asdf:defsystem)
           (constantly nil))
-    (sb:ensure-asdf-system
-     c4 w4 "predicament-base" :load-system-file t)
+    (sb:ensure-asdf-system c4 w4 "predicament-base" :load-system-file t)
     (sb:ensure-asdf-system c4 w4 "predicament-packages-intrinsic")
     (setf (clo:fdefinition
            c4 (sb:e2 boot)
@@ -97,8 +95,7 @@
     (setf (clo:fdefinition c4 e3 @clostrophilia:stamp+1)
           (clo:fdefinition c4 e4 @clostrophilia:stamp))
     (load-predicament c4 w4 e4)
-    (clo:make-variable c4 e3
-                       @predicament:*condition-maker* 'make-condition)
+    (clo:make-variable c4 e3 @predicament:*condition-maker* 'make-condition)
     (sb:ensure-asdf-system
      c4 w4 "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
@@ -119,9 +116,9 @@
     ;; TYPEP since the very purpose of ctype is to define TYPEP.  But
     ;; assertions should not fail at this point in the process anyway.
     (setf (clo:macro-function c4 e4 'assert)
-          (lambda (form w4)
+          (lambda (form environment)
             ;; We might put some trace output here.
-            (declare (ignore form w4))
+            (declare (ignore form environment))
             nil))
     ;; FIXME: TYPEXPAND should be defined by code from SICL-TYPE being
     ;; loaded, rather than by defining it here.
@@ -134,8 +131,7 @@
     (sb:with-intercepted-function-cells
         ((make-instance
              (clo:ensure-operator-cell c4 e3 'make-instance)))
-      (sb:ensure-asdf-system
-       c4 w4 "clostrophilia-class-finalization")
+      (sb:ensure-asdf-system c4 w4 "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
        c4 w4 "clostrophilia-method-combination-base"))
     (setf (clo:fdefinition c4 e3 @sicl-clos:find-class+1)
@@ -153,8 +149,7 @@
        c4 w4 "clostrophilia-generic-function-invocation")
       (sb:ensure-asdf-system c4 w4 "acclimation")
       (sb:ensure-asdf-system c4 w4 "ecclesia"))
-    (sb:ensure-asdf-system
-     c4 w4 "clostrophilia-dependent-maintenance")
+    (sb:ensure-asdf-system c4 w4 "clostrophilia-dependent-maintenance")
     (setf (clo:fdefinition c4 e4 @clostrophilia:subtypep-1)
           (constantly t))
     (setf (clo:fdefinition c4 e4 @sicl-clos:subtypep-1)
@@ -166,10 +161,8 @@
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell c4 e3 'make-instance)))
-      (sb:ensure-asdf-system
-       c4 w4 "clostrophilia-class-initialization"))
-    (sb:ensure-asdf-system
-     c4 w4 "clostrophilia-method-initialization")
+      (sb:ensure-asdf-system c4 w4 "clostrophilia-class-initialization"))
+    (sb:ensure-asdf-system c4 w4 "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
      c4 w4 "clostrophilia-slot-definition-initialization")
     ;; We don't expect to see any floating-point numbers during
@@ -200,8 +193,7 @@
                     (clo:fdefinition
                      c4 e3 @sicl-clos:class-precedence-list)))
               (member super (funcall class-precedence-list sub)))))
-    (sb:ensure-asdf-system
-     c4 w4 "sicl-clos-ensure-metaobject-using")
+    (sb:ensure-asdf-system c4 w4 "sicl-clos-ensure-metaobject-using")
     (setf (clo:fdefinition c4 e4
                            @clostrophilia:set-funcallable-instance-function)
           (fdefinition 'closer-mop:set-funcallable-instance-function))
