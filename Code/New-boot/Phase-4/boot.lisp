@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-new-boot-phase-4)
 
+;;; In phases 1, 2, and 3, we allowed for cells from an environment E'
+;;; (or completely constructed cells) to be inserted into a different
+;;; environment E through the use of the macro
+;;; WITH-INTERCEPTED-FUNCTION-CELLS.  In phase 4, we can no longer
+;;; allow this, because environment E4 is supposed to be the model for
+;;; the main environment in the final system.
+
 (eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
 
 (defun boot (boot)
