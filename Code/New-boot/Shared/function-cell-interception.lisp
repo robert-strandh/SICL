@@ -12,9 +12,12 @@
 (defmethod clostrum:ensure-operator-cell :around
     ((client client) environment operator-name)
   (let ((entry (assoc operator-name *intercepted-cells* :test #'equal)))
-    (if (null entry)
-        (call-next-method)
-        (cdr entry))))
+    (if (consp entry)
+        (cdr entry)
+        (let ((pair (assoc operator-name *intercepted-names* :test #'equal)))
+          (if (consp pair)
+              (call-next-method client environment (cdr pair))
+              (call-next-method))))))
 
 (defmethod trucler:describe-function :around
     ((client client) environment operator-name)
