@@ -17,10 +17,8 @@
          (env:*client* c4)
          (env:*environment* e4))
     (setf (sb:e4 boot) e4)
-    (reinitialize-instance c4
-      :environment e4)
-    (clo:make-variable
-     c4 e4 '*package* (find-package '#:common-lisp-user))
+    (reinitialize-instance c4 :environment e4)
+    (clo:make-variable c4 e4 '*package* (find-package '#:common-lisp-user))
     (sb:define-package-functions c4 e4)
     (sb:define-backquote-macros c4 e4)
     (import-from-host c4 e4)
@@ -29,21 +27,17 @@
             (apply #'funcall
                    (if (functionp function-or-name)
                        function-or-name
-                       (clo:fdefinition
-                        c4 e4 function-or-name))
+                       (clo:fdefinition c4 e4 function-or-name))
                    arguments)))
     (sb:import-khazern c4 e4)
     (sb:fill-environment c4 e4)
     (sb:define-client-and-environment-variables c4 e4)
     (sb:define-environment-functions c4 e4)
-    (sb:define-clostrophilia-find-method-combination-template
-        c4 e4)
+    (sb:define-clostrophilia-find-method-combination-template c4 e4)
     ;;; FIXME: Define these functions by loading SICL-specific code
-    (setf (clo:fdefinition
-           c4 e4 @clostrophilia:small-integer=)
+    (setf (clo:fdefinition c4 e4 @clostrophilia:small-integer=)
           #'=)
-    (setf (clo:fdefinition
-           c4 e4 @clostrophilia:small-integer<)
+    (setf (clo:fdefinition c4 e4 @clostrophilia:small-integer<)
           #'<)
     (let ((symbol @clostrophilia:standard-instance-access))
       (setf (clo:fdefinition c4 e4 symbol)
@@ -61,14 +55,11 @@
           (clo:fdefinition
            c4 e4 'ensure-generic-function))
     (sb:define-ecclesia-functions c4 (sb:e2 boot) e4)
-    (sb:ensure-asdf-system
-     c4 environment "clostrophilia-method-combination")
-    (setf (clo:fdefinition
-           c4 (sb:e3 boot) @clostrophilia:find-class-t)
+    (sb:ensure-asdf-system c4 environment "clostrophilia-method-combination")
+    (setf (clo:fdefinition c4 (sb:e3 boot) @clostrophilia:find-class-t)
           (lambda ()
             (clo:find-class c4 e4 't)))
-    (sb:ensure-asdf-system
-     c4 environment "clostrophilia-class-hierarchy")
+    (sb:ensure-asdf-system c4 environment "clostrophilia-class-hierarchy")
     (sb:ensure-asdf-system c4 environment "sicl-arithmetic-base")
     (sb:ensure-asdf-system c4 environment
                            "sicl-arithmetic-class-hierarchy")
@@ -81,20 +72,17 @@
           (constantly nil))
     (sb:ensure-asdf-system
      c4 environment "predicament-base" :load-system-file t)
-    (sb:ensure-asdf-system
-     c4 environment "predicament-packages-intrinsic")
+    (sb:ensure-asdf-system c4 environment "predicament-packages-intrinsic")
     (setf (clo:fdefinition
            c4 (sb:e2 boot)
            @clostrophilia:find-class-standard-object)
-          (constantly (clo:find-class
-                       c4 e4 'standard-object)))
+          (constantly (clo:find-class c4 e4 'standard-object)))
     (clo:make-variable
      c4 (sb:e3 boot) @clostrophilia:*standard-object*
      (clo:find-class c4 e4 'standard-object))
     (clo:make-variable
      c4 (sb:e3 boot) @clostrophilia:*funcallable-standard-object*
-     (clo:find-class
-      c4 e4 @clostrophilia:funcallable-standard-object))
+     (clo:find-class c4 e4 @clostrophilia:funcallable-standard-object))
     (let* ((name @clostrophilia:find-method-combination)
            (function (clo:fdefinition c4 e4 name)))
       (clo:make-variable c4 (sb:e3 boot)
@@ -114,18 +102,15 @@
      c4 environment "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
     ;;; something that is easier to manipulate during debugging.
-    (setf (clo:symbol-value
-           c4 e4 @clostrophilia:+unbound-slot-value+)
+    (setf (clo:symbol-value c4 e4 @clostrophilia:+unbound-slot-value+)
           99999)
     (sb:ensure-asdf-system
      c4 environment "clostrophilia-standard-object-initialization")
-    (setf (clo:fdefinition
-           c4 (sb:e3 boot) @sicl-clos:initialize-instance+1)
+    (setf (clo:fdefinition c4 (sb:e3 boot) @sicl-clos:initialize-instance+1)
           (clo:fdefinition c4 e4 'initialize-instance))
     (sb:ensure-asdf-system
      c4 environment "clostrophilia-standard-object-initialization-aux")
-    (setf (clo:fdefinition
-           c4 e4 @clostrophilia:shared-initialize-aux-1)
+    (setf (clo:fdefinition c4 e4 @clostrophilia:shared-initialize-aux-1)
           (clo:fdefinition
            c4 (sb:e3 boot) @clostrophilia:shared-initialize-aux))
     ;; ctype uses ASSERT and ASSERT expands to RESTART-CASE which
@@ -142,8 +127,7 @@
     (setf (clo:fdefinition c4 e4 @sicl-type:typexpand)
           (lambda (type-specifier &optional (environment e4))
             (clo:type-expand c4 environment type-specifier)))
-    (setf (clo:fdefinition
-           c4 e4 @sicl-clos:intern-eql-specializer-1)
+    (setf (clo:fdefinition c4 e4 @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
            c4 (sb:e3 boot) @sicl-clos:intern-eql-specializer))
     (sb:with-intercepted-function-cells
@@ -160,8 +144,7 @@
             (assert (null should-be-nil))
             (let ((cst (cst:cst-from-expression lambda-expression)))
               (sb:eval-cst c4 cst environment))))
-    (clo:make-variable
-     c4 e4 'lambda-list-keywords lambda-list-keywords)
+    (clo:make-variable c4 e4 'lambda-list-keywords lambda-list-keywords)
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell c4 (sb:e3 boot) 'make-instance)))
@@ -177,8 +160,7 @@
           (constantly t))
     (sb:ensure-asdf-system
      c4 environment "clostrophilia-generic-function-initialization")
-    (setf (clo:fdefinition
-           c4 e4 @clostrophilia:allocate-general-instance)
+    (setf (clo:fdefinition c4 e4 @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
     (sb:with-intercepted-function-cells
         ((make-instance
