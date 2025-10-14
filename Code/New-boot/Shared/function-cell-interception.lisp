@@ -22,10 +22,14 @@
 (defmethod trucler:describe-function :around
     ((client client) environment operator-name)
   (let ((entry (assoc operator-name *intercepted-cells* :test #'equal)))
-    (if (null entry)
-        (call-next-method)
+    (if (consp entry)
         (make-instance 'trucler:global-function-description
-          :name operator-name))))
+          :name operator-name)
+        (let ((pair (assoc operator-name *intercepted-names* :test #'equal)))
+          (if (consp pair)
+              (make-instance 'trucler:global-function-description
+                :name (cdr pair))
+              (call-next-method))))))
 
 (defmacro with-intercepted-function-cells ((&body clauses) &body body)
   `(let ((*intercepted-cells*
