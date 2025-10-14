@@ -14,6 +14,7 @@
   (let* ((c4 (make-instance 'client))
          (environment (create-environment c4))
          (e4 (trucler:global-environment c4 environment))
+         (e3 (sb:e3 boot))
          (env:*client* c4)
          (env:*environment* e4))
     (setf (sb:e4 boot) e4)
@@ -48,15 +49,15 @@
     (setf (clo:fdefinition c4 e4 @sicl-primop:primop)
           #'sb:primop)
     (sb:ensure-asdf-system c4 environment "clostrophilia-slot-value-etc")
-    (sb:define-straddle-functions c4 e4 (sb:e3 boot))
+    (sb:define-straddle-functions c4 e4 e3)
     (sb:ensure-asdf-system c4 environment "sicl-clos-ensure-metaobject")
     (setf (clo:fdefinition
-           c4 (sb:e3 boot) @clostrophilia:ensure-generic-function+1)
+           c4 e3 @clostrophilia:ensure-generic-function+1)
           (clo:fdefinition
            c4 e4 'ensure-generic-function))
     (sb:define-ecclesia-functions c4 (sb:e2 boot) e4)
     (sb:ensure-asdf-system c4 environment "clostrophilia-method-combination")
-    (setf (clo:fdefinition c4 (sb:e3 boot) @clostrophilia:find-class-t)
+    (setf (clo:fdefinition c4 e3 @clostrophilia:find-class-t)
           (lambda ()
             (clo:find-class c4 e4 't)))
     (sb:ensure-asdf-system c4 environment "clostrophilia-class-hierarchy")
@@ -64,7 +65,7 @@
     (sb:ensure-asdf-system c4 environment
                            "sicl-arithmetic-class-hierarchy")
     (sb:ensure-asdf-system c4 environment "sicl-arithmetic-operations") 
-    (setf (clo:symbol-value c4 (sb:e3 boot) @clostrophilia:*class-t+1*)
+    (setf (clo:symbol-value c4 e3 @clostrophilia:*class-t+1*)
           (clo:find-class c4 e4 't))
     (setf (clo:macro-function c4 e4 @asdf-user:defsystem)
           (constantly nil))
@@ -78,25 +79,25 @@
            @clostrophilia:find-class-standard-object)
           (constantly (clo:find-class c4 e4 'standard-object)))
     (clo:make-variable
-     c4 (sb:e3 boot) @clostrophilia:*standard-object*
+     c4 e3 @clostrophilia:*standard-object*
      (clo:find-class c4 e4 'standard-object))
     (clo:make-variable
-     c4 (sb:e3 boot) @clostrophilia:*funcallable-standard-object*
+     c4 e3 @clostrophilia:*funcallable-standard-object*
      (clo:find-class c4 e4 @clostrophilia:funcallable-standard-object))
     (let* ((name @clostrophilia:find-method-combination)
            (function (clo:fdefinition c4 e4 name)))
-      (clo:make-variable c4 (sb:e3 boot)
+      (clo:make-variable c4 e3
                          @sicl-clos:*standard-method-combination*
                          (funcall function c4 'standard '())))
     (sb:ensure-asdf-system
      c4 environment "sicl-new-boot-phase-2-additional-classes")
-    (define-class-of-and-stamp c4 (sb:e3 boot) e4)
-    (setf (clo:fdefinition c4 (sb:e3 boot) @clostrophilia:class-of+1)
+    (define-class-of-and-stamp c4 e3 e4)
+    (setf (clo:fdefinition c4 e3 @clostrophilia:class-of+1)
           (clo:fdefinition c4 e4 'class-of))
-    (setf (clo:fdefinition c4 (sb:e3 boot) @clostrophilia:stamp+1)
+    (setf (clo:fdefinition c4 e3 @clostrophilia:stamp+1)
           (clo:fdefinition c4 e4 @clostrophilia:stamp))
     (load-predicament c4 environment e4)
-    (clo:make-variable c4 (sb:e3 boot)
+    (clo:make-variable c4 e3
                        @predicament:*condition-maker* 'make-condition)
     (sb:ensure-asdf-system
      c4 environment "clostrophilia-slot-value-etc-using-class")
@@ -106,13 +107,13 @@
           99999)
     (sb:ensure-asdf-system
      c4 environment "clostrophilia-standard-object-initialization")
-    (setf (clo:fdefinition c4 (sb:e3 boot) @sicl-clos:initialize-instance+1)
+    (setf (clo:fdefinition c4 e3 @sicl-clos:initialize-instance+1)
           (clo:fdefinition c4 e4 'initialize-instance))
     (sb:ensure-asdf-system
      c4 environment "clostrophilia-standard-object-initialization-aux")
     (setf (clo:fdefinition c4 e4 @clostrophilia:shared-initialize-aux-1)
           (clo:fdefinition
-           c4 (sb:e3 boot) @clostrophilia:shared-initialize-aux))
+           c4 e3 @clostrophilia:shared-initialize-aux))
     ;; ctype uses ASSERT and ASSERT expands to RESTART-CASE which
     ;; contains a TYPECASE which expands to TYPEP, but we don't have
     ;; TYPEP since the very purpose of ctype is to define TYPEP.  But
@@ -129,15 +130,15 @@
             (clo:type-expand c4 environment type-specifier)))
     (setf (clo:fdefinition c4 e4 @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
-           c4 (sb:e3 boot) @sicl-clos:intern-eql-specializer))
+           c4 e3 @sicl-clos:intern-eql-specializer))
     (sb:with-intercepted-function-cells
         ((make-instance
-             (clo:ensure-operator-cell c4 (sb:e3 boot) 'make-instance)))
+             (clo:ensure-operator-cell c4 e3 'make-instance)))
       (sb:ensure-asdf-system
        c4 environment "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
        c4 environment "clostrophilia-method-combination-base"))
-    (setf (clo:fdefinition c4 (sb:e3 boot) @sicl-clos:find-class+1)
+    (setf (clo:fdefinition c4 e3 @sicl-clos:find-class+1)
           (clo:fdefinition c4 e4 'find-class))
     (setf (clo:fdefinition c4 e4 'compile)
           (lambda (should-be-nil lambda-expression)
@@ -147,7 +148,7 @@
     (clo:make-variable c4 e4 'lambda-list-keywords lambda-list-keywords)
     (sb:with-intercepted-function-cells
         ((make-instance
-          (clo:ensure-operator-cell c4 (sb:e3 boot) 'make-instance)))
+          (clo:ensure-operator-cell c4 e3 'make-instance)))
       (sb:ensure-asdf-system
        c4 environment "clostrophilia-generic-function-invocation")
       (sb:ensure-asdf-system c4 environment "acclimation")
@@ -164,7 +165,7 @@
           #'sb:allocate-general-instance)
     (sb:with-intercepted-function-cells
         ((make-instance
-          (clo:ensure-operator-cell c4 (sb:e3 boot) 'make-instance)))
+          (clo:ensure-operator-cell c4 e3 'make-instance)))
       (sb:ensure-asdf-system
        c4 environment "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system
@@ -185,7 +186,7 @@
     ;; MAKE-INSTANCE in E4 to be the same as MAKE-INSTANCE in E3, and
     ;; then we remove that definition after ctype has been loaded.
     (setf (clo:fdefinition c4 (sb:e4 boot) 'make-instance)
-          (clo:fdefinition c4 (sb:e3 boot) 'make-instance))
+          (clo:fdefinition c4 e3 'make-instance))
     (load-ctype c4 environment e4)
     (clo:fmakunbound c4 (sb:e4 boot) 'make-instance)
     ;; The ctype library defines SUBCLASSP to call
@@ -197,7 +198,7 @@
           (lambda (sub super)
             (let ((class-precedence-list
                     (clo:fdefinition
-                     c4 (sb:e3 boot) @sicl-clos:class-precedence-list)))
+                     c4 e3 @sicl-clos:class-precedence-list)))
               (member super (funcall class-precedence-list sub)))))
     (sb:ensure-asdf-system
      c4 environment "sicl-clos-ensure-metaobject-using")
