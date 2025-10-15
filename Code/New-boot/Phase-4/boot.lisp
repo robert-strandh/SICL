@@ -35,7 +35,7 @@
     (sb:define-client-and-environment-variables c4 e4)
     (sb:define-environment-functions c4 e4)
     (sb:define-clostrophilia-find-method-combination-template c4 e4)
-    (setf (clo:fdefinition c4 e4 'make-instance-1)
+    (setf (clo:fdefinition c4 e4 @sicl-clos:make-instance-1)
           (clo:fdefinition c4 e3 'make-instance))
     ;;; FIXME: Define these functions by loading SICL-specific code
     (setf (clo:fdefinition c4 e4 @clostrophilia:small-integer=)
