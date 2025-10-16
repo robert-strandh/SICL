@@ -130,9 +130,8 @@
     (setf (clo:fdefinition c4 e4 @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
            c4 e3 @sicl-clos:intern-eql-specializer))
-    (sb:with-intercepted-function-cells
-        ((make-instance
-             (clo:ensure-operator-cell c4 e3 'make-instance)))
+    (sb:with-intercepted-function-names
+        (list (cons 'make-instance @sicl-clos:make-instance-1))
       (sb:ensure-asdf-system c4 w4 "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
        c4 w4 "clostrophilia-method-combination-base"))
@@ -144,9 +143,8 @@
             (let ((cst (cst:cst-from-expression lambda-expression)))
               (sb:eval-cst c4 cst w4))))
     (clo:make-variable c4 e4 'lambda-list-keywords lambda-list-keywords)
-    (sb:with-intercepted-function-cells
-        ((make-instance
-          (clo:ensure-operator-cell c4 e3 'make-instance)))
+    (sb:with-intercepted-function-names
+        (list (cons 'make-instance @sicl-clos:make-instance-1))
       (sb:ensure-asdf-system
        c4 w4 "clostrophilia-generic-function-invocation")
       (sb:ensure-asdf-system c4 w4 "acclimation")
@@ -160,9 +158,8 @@
      c4 w4 "clostrophilia-generic-function-initialization")
     (setf (clo:fdefinition c4 e4 @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
-    (sb:with-intercepted-function-cells
-        ((make-instance
-          (clo:ensure-operator-cell c4 e3 'make-instance)))
+    (sb:with-intercepted-function-names
+        (list (cons 'make-instance @sicl-clos:make-instance-1))
       (sb:ensure-asdf-system c4 w4 "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system c4 w4 "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
