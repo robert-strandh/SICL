@@ -58,8 +58,11 @@
     (sb:define-straddle-functions client global-environment (sb:e1 boot))
     (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
     (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
-    (sb:ensure-asdf-system
-     client environment "clostrophilia-method-combination")
+    (sb:with-intercepted-function-names
+        (list (cons @clostrophilia:ensure-method-combination
+                    @clostrophilia:^ensure-method-combination))
+      (sb:ensure-asdf-system
+       client environment "clostrophilia-method-combination"))
     ;; VALIDATE-SUPERCLASS is going to be called with the class T as
     ;; one of the arguments, but in phase 1 we replace the target
     ;; class T by the host class T so that unspecialized methods, or
