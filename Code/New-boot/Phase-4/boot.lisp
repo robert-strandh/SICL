@@ -58,7 +58,10 @@
           (clo:fdefinition
            c4 e4 'ensure-generic-function))
     (sb:define-ecclesia-functions c4 (sb:e2 boot) e4)
-    (sb:ensure-asdf-system c4 w4 "clostrophilia-method-combination")
+    (sb:with-intercepted-function-names
+        (list (cons @clostrophilia:ensure-method-combination
+                    @clostrophilia:^ensure-method-combination))
+      (sb:ensure-asdf-system c4 w4 "clostrophilia-method-combination"))
     (setf (clo:fdefinition c4 e3 @clostrophilia:find-class-t)
           (lambda ()
             (clo:find-class c4 e4 't)))
