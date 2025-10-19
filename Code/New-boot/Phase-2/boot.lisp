@@ -5,9 +5,9 @@
 (defun boot (boot)
   (format *trace-output* "**************** Phase 2~%")
   (let* ((client (make-instance 'client))
-         (environment (create-environment client))
+         (w2 (create-environment client))
          (global-environment
-           (trucler:global-environment client environment))
+           (trucler:global-environment client w2))
          (env:*client* client)
          (env:*environment* global-environment))
     (setf (sb:e2 boot) global-environment)
@@ -51,18 +51,18 @@
             #'sb:standard-instance-access)
       (setf (clo:fdefinition client global-environment `(setf ,symbol))
             #'(setf sb:standard-instance-access)))
-    (sb:ensure-asdf-system client environment "sicl-primop")
+    (sb:ensure-asdf-system client w2 "sicl-primop")
     (setf (clo:fdefinition client global-environment @sicl-primop:primop)
           #'sb:primop)
-    (sb:ensure-asdf-system client environment "clostrophilia-slot-value-etc")
+    (sb:ensure-asdf-system client w2 "clostrophilia-slot-value-etc")
     (sb:define-straddle-functions client global-environment (sb:e1 boot))
-    (sb:ensure-asdf-system client environment "sicl-clos-ensure-metaobject")
+    (sb:ensure-asdf-system client w2 "sicl-clos-ensure-metaobject")
     (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
     (sb:with-intercepted-function-names
         (list (cons @clostrophilia:ensure-method-combination
                     @clostrophilia:^ensure-method-combination))
       (sb:ensure-asdf-system
-       client environment "clostrophilia-method-combination"))
+       client w2 "clostrophilia-method-combination"))
     ;; VALIDATE-SUPERCLASS is going to be called with the class T as
     ;; one of the arguments, but in phase 1 we replace the target
     ;; class T by the host class T so that unspecialized methods, or
@@ -87,14 +87,14 @@
            client (sb:e1 boot) @clostrophilia:add-direct-method)
           (constantly nil))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-class-hierarchy")
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-base")
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-class-hierarchy")
-    (sb:ensure-asdf-system client environment "sicl-arithmetic-operations") 
+     client w2 "clostrophilia-class-hierarchy")
+    (sb:ensure-asdf-system client w2 "sicl-arithmetic-base")
+    (sb:ensure-asdf-system client w2 "sicl-arithmetic-class-hierarchy")
+    (sb:ensure-asdf-system client w2 "sicl-arithmetic-operations") 
     (setf (clo:symbol-value client (sb:e1 boot) @clostrophilia:*class-t+1*)
           (clo:find-class client global-environment 't))
     (sb:ensure-asdf-system
-     client environment "sicl-asdf-packages")
+     client w2 "sicl-asdf-packages")
     (setf (clo:macro-function
            client global-environment @asdf-user:defsystem)
           (constantly nil))
@@ -102,7 +102,7 @@
            client global-environment @asdf:defsystem)
           (constantly nil))
     (sb:ensure-asdf-system
-     client environment "predicament-base" :load-system-file t)
+     client w2 "predicament-base" :load-system-file t)
     ;; The system predicament base contains the definition of the
     ;; variable PREDICAMENT-ASDF:*STRING-DESIGNATORS*, so when we
     ;; loaded that system into E2, that variable got defined in E2.
@@ -115,7 +115,7 @@
            (value (clo:symbol-value client global-environment symbol)))
       (eval `(defparameter ,symbol ',value)))
     (sb:ensure-asdf-system
-     client environment "predicament-packages-intrinsic")
+     client w2 "predicament-packages-intrinsic")
     (setf (clo:fdefinition
            client (sb:e1 boot)
            @clostrophilia:find-class-standard-object)
@@ -134,7 +134,7 @@
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
     (sb:ensure-asdf-system
-     client environment "sicl-new-boot-phase-2-additional-classes")
+     client w2 "sicl-new-boot-phase-2-additional-classes")
     (define-class-of-and-stamp client (sb:e1 boot) global-environment)
     (setf (clo:fdefinition client (sb:e1 boot) @clostrophilia:class-of+1)
           (clo:fdefinition client global-environment 'class-of))
@@ -143,23 +143,23 @@
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
-      (load-predicament client environment global-environment))
+      (load-predicament client w2 global-environment))
     (clo:make-variable client (sb:e1 boot)
                        @predicament:*condition-maker* 'make-condition)
     (sb:ensure-asdf-system
-     client environment "clostrophilia-slot-value-etc-using-class")
+     client w2 "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
     ;;; something that is easier to manipulate during debugging.
     (setf (clo:symbol-value
            client global-environment @clostrophilia:+unbound-slot-value+)
           99999)
     (sb:ensure-asdf-system
-     client environment "clostrophilia-standard-object-initialization")
+     client w2 "clostrophilia-standard-object-initialization")
     (setf (clo:fdefinition
            client (sb:e1 boot) @sicl-clos:initialize-instance+1)
           (clo:fdefinition client global-environment 'initialize-instance))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-standard-object-initialization-aux")
+     client w2 "clostrophilia-standard-object-initialization-aux")
     (setf (clo:fdefinition
            client global-environment @clostrophilia:shared-initialize-aux-1)
           (clo:fdefinition
@@ -186,11 +186,11 @@
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
       (sb:ensure-asdf-system
-       client environment "clostrophilia-class-finalization")
+       client w2 "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
-       client environment "clostrophilia-method-combination-base"))
+       client w2 "clostrophilia-method-combination-base"))
     (sb:ensure-asdf-system
-     client environment "sicl-new-boot-class-finalization")
+     client w2 "sicl-new-boot-class-finalization")
     (setf (clo:fdefinition client global-environment
                            @clostrophilia:make-method-instance)
           (clo:fdefinition client (sb:e1 boot) 'make-instance))
@@ -202,18 +202,18 @@
                   ((make-instance 
                        (clo:ensure-operator-cell
                         client (sb:e1 boot) 'make-instance)))
-                (sb:eval-cst client cst environment)))))
+                (sb:eval-cst client cst w2)))))
     (clo:make-variable
      client global-environment 'lambda-list-keywords lambda-list-keywords)
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
       (sb:ensure-asdf-system
-       client environment "clostrophilia-generic-function-invocation")
-      (sb:ensure-asdf-system client environment "acclimation")
-      (sb:ensure-asdf-system client environment "ecclesia"))
+       client w2 "clostrophilia-generic-function-invocation")
+      (sb:ensure-asdf-system client w2 "acclimation")
+      (sb:ensure-asdf-system client w2 "ecclesia"))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-dependent-maintenance")
+     client w2 "clostrophilia-dependent-maintenance")
     (setf (clo:fdefinition
            client global-environment @clostrophilia:subtypep-1)
           (constantly t))
@@ -221,7 +221,7 @@
            client global-environment @sicl-clos:subtypep-1)
           (constantly t))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-generic-function-initialization")
+     client w2 "clostrophilia-generic-function-initialization")
     (setf (clo:fdefinition
            client global-environment @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
@@ -229,11 +229,11 @@
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
       (sb:ensure-asdf-system
-       client environment "clostrophilia-class-initialization"))
+       client w2 "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system
-     client environment "clostrophilia-method-initialization")
+     client w2 "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
-     client environment "clostrophilia-slot-definition-initialization")
+     client w2 "clostrophilia-slot-definition-initialization")
     ;; We don't expect to see any floating-point numbers during
     ;; bootstrapping.
     (setf (clo:fdefinition
@@ -247,7 +247,7 @@
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance))
          (class-name
           (clo:ensure-operator-cell client (sb:e1 boot) 'class-name)))
-      (load-ctype client environment global-environment))
+      (load-ctype client w2 global-environment))
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
     ;; argument.  But in E2, the arguments to SUBCLASSP are bridge
@@ -263,9 +263,9 @@
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
       (sb:ensure-asdf-system
-       client environment "sicl-clos-ensure-metaobject-using"))
+       client w2 "sicl-clos-ensure-metaobject-using"))
     (setf (clo:fdefinition client global-environment
                            @clostrophilia:set-funcallable-instance-function)
           (fdefinition 'closer-mop:set-funcallable-instance-function))
-    (sb:ensure-asdf-system client environment "sicl-clos-make-instance"))
+    (sb:ensure-asdf-system client w2 "sicl-clos-make-instance"))
   boot)
