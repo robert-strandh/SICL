@@ -6,58 +6,58 @@
   (format *trace-output* "**************** Phase 2~%")
   (let* ((client (make-instance 'client))
          (w2 (create-environment client))
-         (global-environment
+         (e2
            (trucler:global-environment client w2))
          (env:*client* client)
-         (env:*environment* global-environment))
-    (setf (sb:e2 boot) global-environment)
+         (env:*environment* e2))
+    (setf (sb:e2 boot) e2)
     (reinitialize-instance client
-      :environment global-environment)
+      :environment e2)
     ;; We saved the SICL class named T under the name sb::sicl-t.  Now
     ;; we need to put it back as class T in E1, because it is going to
     ;; be used as a specializer in bridge generic functions.
     (setf (clo:find-class client (sb:e1 boot) 't)
           (clo:find-class client (sb:e1 boot) 'sb::sicl-t))
     (clo:make-variable
-     client global-environment '*package* (find-package '#:common-lisp-user))
-    (sb:define-package-functions client global-environment)
-    (sb:define-backquote-macros client global-environment)
-    (import-from-host client global-environment)
-    (setf (clo:fdefinition client global-environment 'funcall)
+     client e2 '*package* (find-package '#:common-lisp-user))
+    (sb:define-package-functions client e2)
+    (sb:define-backquote-macros client e2)
+    (import-from-host client e2)
+    (setf (clo:fdefinition client e2 'funcall)
           (lambda (function-or-name &rest arguments)
             (apply #'funcall
                    (if (functionp function-or-name)
                        function-or-name
                        (clo:fdefinition
-                        client global-environment function-or-name))
+                        client e2 function-or-name))
                    arguments)))
-    (sb:import-khazern client global-environment)
-    (sb:fill-environment client global-environment)
-    (sb:define-client-and-environment-variables client global-environment)
-    (sb:define-environment-functions client global-environment)
+    (sb:import-khazern client e2)
+    (sb:fill-environment client e2)
+    (sb:define-client-and-environment-variables client e2)
+    (sb:define-environment-functions client e2)
     (setf (clo:fdefinition client (sb:e1 boot) @sicl-clos:find-class+1)
-          (clo:fdefinition client global-environment 'find-class))
+          (clo:fdefinition client e2 'find-class))
     ;;; FIXME: Define these functions by loading SICL-specific code
     (setf (clo:fdefinition
-           client global-environment @clostrophilia:small-integer=)
+           client e2 @clostrophilia:small-integer=)
           #'=)
     (setf (clo:fdefinition
-           client global-environment @clostrophilia:small-integer<)
+           client e2 @clostrophilia:small-integer<)
           #'<)
     (sb:define-clostrophilia-find-method-combination-template
-        client global-environment)
+        client e2)
     (let ((symbol @clostrophilia:standard-instance-access))
-      (setf (clo:fdefinition client global-environment symbol)
+      (setf (clo:fdefinition client e2 symbol)
             #'sb:standard-instance-access)
-      (setf (clo:fdefinition client global-environment `(setf ,symbol))
+      (setf (clo:fdefinition client e2 `(setf ,symbol))
             #'(setf sb:standard-instance-access)))
     (sb:ensure-asdf-system client w2 "sicl-primop")
-    (setf (clo:fdefinition client global-environment @sicl-primop:primop)
+    (setf (clo:fdefinition client e2 @sicl-primop:primop)
           #'sb:primop)
     (sb:ensure-asdf-system client w2 "clostrophilia-slot-value-etc")
-    (sb:define-straddle-functions client global-environment (sb:e1 boot))
+    (sb:define-straddle-functions client e2 (sb:e1 boot))
     (sb:ensure-asdf-system client w2 "sicl-clos-ensure-metaobject")
-    (sb:define-ecclesia-functions client (sb:e1 boot) global-environment)
+    (sb:define-ecclesia-functions client (sb:e1 boot) e2)
     (sb:with-intercepted-function-names
         (list (cons @clostrophilia:ensure-method-combination
                     @clostrophilia:^ensure-method-combination))
@@ -76,11 +76,11 @@
     (setf (clo:fdefinition
            client (sb:e1 boot) @clostrophilia:ensure-generic-function+1)
           (clo:fdefinition
-           client global-environment 'ensure-generic-function))
+           client e2 'ensure-generic-function))
     (setf (clo:fdefinition
            client (sb:e1 boot) @clostrophilia:find-class-t)
           (lambda ()
-            (clo:find-class client global-environment 't)))
+            (clo:find-class client e2 't)))
     ;; ADD-DIRECT-METHOD is called by ADD-METHOD, but it doesn't make
     ;; sense to add a SICL method to a host class.
     (setf (clo:fdefinition
@@ -92,14 +92,14 @@
     (sb:ensure-asdf-system client w2 "sicl-arithmetic-class-hierarchy")
     (sb:ensure-asdf-system client w2 "sicl-arithmetic-operations") 
     (setf (clo:symbol-value client (sb:e1 boot) @clostrophilia:*class-t+1*)
-          (clo:find-class client global-environment 't))
+          (clo:find-class client e2 't))
     (sb:ensure-asdf-system
      client w2 "sicl-asdf-packages")
     (setf (clo:macro-function
-           client global-environment @asdf-user:defsystem)
+           client e2 @asdf-user:defsystem)
           (constantly nil))
     (setf (clo:macro-function
-           client global-environment @asdf:defsystem)
+           client e2 @asdf:defsystem)
           (constantly nil))
     (sb:ensure-asdf-system
      client w2 "predicament-base" :load-system-file t)
@@ -112,7 +112,7 @@
     ;; not defined in the host environment.  So we do that with the
     ;; following code.
     (let* ((symbol @predicament-asdf:*string-designators*)
-           (value (clo:symbol-value client global-environment symbol)))
+           (value (clo:symbol-value client e2 symbol)))
       (eval `(defparameter ,symbol ',value)))
     (sb:ensure-asdf-system
      client w2 "predicament-packages-intrinsic")
@@ -120,30 +120,30 @@
            client (sb:e1 boot)
            @clostrophilia:find-class-standard-object)
           (constantly (clo:find-class
-                       client global-environment 'standard-object)))
+                       client e2 'standard-object)))
     (clo:make-variable
      client (sb:e1 boot) @clostrophilia:*standard-object*
-     (clo:find-class client global-environment 'standard-object))
+     (clo:find-class client e2 'standard-object))
     (clo:make-variable
      client (sb:e1 boot) @clostrophilia:*funcallable-standard-object*
      (clo:find-class
-      client global-environment @clostrophilia:funcallable-standard-object))
+      client e2 @clostrophilia:funcallable-standard-object))
     (let* ((name @clostrophilia:find-method-combination)
-           (function (clo:fdefinition client global-environment name)))
+           (function (clo:fdefinition client e2 name)))
       (clo:make-variable client (sb:e1 boot)
                          @sicl-clos:*standard-method-combination*
                          (funcall function client 'standard '())))
     (sb:ensure-asdf-system
      client w2 "sicl-new-boot-phase-2-additional-classes")
-    (define-class-of-and-stamp client (sb:e1 boot) global-environment)
+    (define-class-of-and-stamp client (sb:e1 boot) e2)
     (setf (clo:fdefinition client (sb:e1 boot) @clostrophilia:class-of+1)
-          (clo:fdefinition client global-environment 'class-of))
+          (clo:fdefinition client e2 'class-of))
     (setf (clo:fdefinition client (sb:e1 boot) @clostrophilia:stamp+1)
-          (clo:fdefinition client global-environment @clostrophilia:stamp))
+          (clo:fdefinition client e2 @clostrophilia:stamp))
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
-      (load-predicament client w2 global-environment))
+      (load-predicament client w2 e2))
     (clo:make-variable client (sb:e1 boot)
                        @predicament:*condition-maker* 'make-condition)
     (sb:ensure-asdf-system
@@ -151,35 +151,35 @@
     ;;; During bootstrapping, we set the unbound slot value to
     ;;; something that is easier to manipulate during debugging.
     (setf (clo:symbol-value
-           client global-environment @clostrophilia:+unbound-slot-value+)
+           client e2 @clostrophilia:+unbound-slot-value+)
           99999)
     (sb:ensure-asdf-system
      client w2 "clostrophilia-standard-object-initialization")
     (setf (clo:fdefinition
            client (sb:e1 boot) @sicl-clos:initialize-instance+1)
-          (clo:fdefinition client global-environment 'initialize-instance))
+          (clo:fdefinition client e2 'initialize-instance))
     (sb:ensure-asdf-system
      client w2 "clostrophilia-standard-object-initialization-aux")
     (setf (clo:fdefinition
-           client global-environment @clostrophilia:shared-initialize-aux-1)
+           client e2 @clostrophilia:shared-initialize-aux-1)
           (clo:fdefinition
            client (sb:e1 boot) @clostrophilia:shared-initialize-aux))
     ;; ctype uses ASSERT and ASSERT expands to RESTART-CASE which
     ;; contains a TYPECASE which expands to TYPEP, but we don't have
     ;; TYPEP since the very purpose of ctype is to define TYPEP.  But
     ;; assertions should not fail at this point in the process anyway.
-    (setf (clo:macro-function client global-environment 'assert)
+    (setf (clo:macro-function client e2 'assert)
           (lambda (form environment)
             ;; We might put some trace output here.
             (declare (ignore form environment))
             nil))
     ;; FIXME: TYPEXPAND should be defined by code from SICL-TYPE being
     ;; loaded, rather than by defining it here. 
-    (setf (clo:fdefinition client global-environment @sicl-type:typexpand)
-          (lambda (type-specifier &optional (environment global-environment))
+    (setf (clo:fdefinition client e2 @sicl-type:typexpand)
+          (lambda (type-specifier &optional (environment e2))
             (clo:type-expand client environment type-specifier)))
     (setf (clo:fdefinition
-           client global-environment @sicl-clos:intern-eql-specializer-1)
+           client e2 @sicl-clos:intern-eql-specializer-1)
           (clo:fdefinition
            client (sb:e1 boot) @sicl-clos:intern-eql-specializer))
     (sb:with-intercepted-function-cells
@@ -191,10 +191,10 @@
        client w2 "clostrophilia-method-combination-base"))
     (sb:ensure-asdf-system
      client w2 "sicl-new-boot-class-finalization")
-    (setf (clo:fdefinition client global-environment
+    (setf (clo:fdefinition client e2
                            @clostrophilia:make-method-instance)
           (clo:fdefinition client (sb:e1 boot) 'make-instance))
-    (setf (clo:fdefinition client global-environment 'compile)
+    (setf (clo:fdefinition client e2 'compile)
           (lambda (should-be-nil lambda-expression)
             (assert (null should-be-nil))
             (let ((cst (cst:cst-from-expression lambda-expression)))
@@ -204,7 +204,7 @@
                         client (sb:e1 boot) 'make-instance)))
                 (sb:eval-cst client cst w2)))))
     (clo:make-variable
-     client global-environment 'lambda-list-keywords lambda-list-keywords)
+     client e2 'lambda-list-keywords lambda-list-keywords)
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
@@ -215,15 +215,15 @@
     (sb:ensure-asdf-system
      client w2 "clostrophilia-dependent-maintenance")
     (setf (clo:fdefinition
-           client global-environment @clostrophilia:subtypep-1)
+           client e2 @clostrophilia:subtypep-1)
           (constantly t))
     (setf (clo:fdefinition
-           client global-environment @sicl-clos:subtypep-1)
+           client e2 @sicl-clos:subtypep-1)
           (constantly t))
     (sb:ensure-asdf-system
      client w2 "clostrophilia-generic-function-initialization")
     (setf (clo:fdefinition
-           client global-environment @clostrophilia:allocate-general-instance)
+           client e2 @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
     (sb:with-intercepted-function-cells
         ((make-instance
@@ -237,23 +237,23 @@
     ;; We don't expect to see any floating-point numbers during
     ;; bootstrapping.
     (setf (clo:fdefinition
-           client global-environment @sicl-arithmetic:single-float-p)
+           client e2 @sicl-arithmetic:single-float-p)
           (constantly nil))
     (setf (clo:fdefinition
-           client global-environment @sicl-arithmetic:double-float-p)
+           client e2 @sicl-arithmetic:double-float-p)
           (constantly nil))
     (sb:with-intercepted-function-cells
         ((make-instance
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance))
          (class-name
           (clo:ensure-operator-cell client (sb:e1 boot) 'class-name)))
-      (load-ctype client w2 global-environment))
+      (load-ctype client w2 e2))
     ;; The ctype library defines SUBCLASSP to call
     ;; SICL-CLOS:CLASS-PRECEDENCE-LIST with the subclass as an
     ;; argument.  But in E2, the arguments to SUBCLASSP are bridge
     ;; objects, so they need to be accessed using host generic
     ;; functions located in E1.  So we redefine SUBCLASSP here.
-    (setf (clo:fdefinition client global-environment @ctype:subclassp)
+    (setf (clo:fdefinition client e2 @ctype:subclassp)
           (lambda (sub super)
             (let ((class-precedence-list
                     (clo:fdefinition
@@ -264,7 +264,7 @@
           (clo:ensure-operator-cell client (sb:e1 boot) 'make-instance)))
       (sb:ensure-asdf-system
        client w2 "sicl-clos-ensure-metaobject-using"))
-    (setf (clo:fdefinition client global-environment
+    (setf (clo:fdefinition client e2
                            @clostrophilia:set-funcallable-instance-function)
           (fdefinition 'closer-mop:set-funcallable-instance-function))
     (sb:ensure-asdf-system client w2 "sicl-clos-make-instance"))
