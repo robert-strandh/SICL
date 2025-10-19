@@ -50,7 +50,16 @@
     (sb:ensure-asdf-system c4 w4 "sicl-primop")
     (setf (clo:fdefinition c4 e4 @sicl-primop:primop)
           #'sb:primop)
-    (sb:ensure-asdf-system c4 w4 "clostrophilia-slot-value-etc")
+    (sb:with-intercepted-function-names
+        (list (cons @clostrophilia:slot-boundp-using-only-class
+                    @clostrophilia:slot-boundp-using-only-class-1)
+              (cons @clostrophilia:slot-value-using-only-class
+                    @clostrophilia:slot-value-using-only-class-1)
+              (cons (list 'setf @clostrophilia:slot-boundp-using-only-class)
+                    (list 'setf @clostrophilia:slot-boundp-using-only-class-1))
+              (cons @clostrophilia:slot-makunbound-using-only-class
+                    @clostrophilia:slot-makunbound-using-only-class-1))
+      (sb:ensure-asdf-system c4 w4 "clostrophilia-slot-value-etc"))
     (sb:define-straddle-functions c4 e4 e3)
     (sb:ensure-asdf-system c4 w4 "sicl-clos-ensure-metaobject")
     (setf (clo:fdefinition
