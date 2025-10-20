@@ -12,15 +12,15 @@
       :method-combination method-combination
       :name name)))
 
-(defun define-readers (client environment slot-name readers class)
+(defun define-readers (client e1 slot-name readers class)
   (loop for reader in readers
         do (let* ((generic-function
-                    (if (clo:fboundp client environment reader)
-                        (clo:fdefinition client environment reader)
+                    (if (clo:fboundp client e1 reader)
+                        (clo:fdefinition client e1 reader)
                         ;; We must create it.
                         (let ((generic-function
                                 (create-reader-generic-function reader)))
-                          (setf (clo:fdefinition client environment reader)
+                          (setf (clo:fdefinition client e1 reader)
                                 generic-function)
                           generic-function)))
                   (method
@@ -43,15 +43,15 @@
       :method-combination method-combination
       :name name)))
 
-(defun define-writers (client environment slot-name writers class)
+(defun define-writers (client e1 slot-name writers class)
   (loop for writer in writers
         do (let* ((generic-function
-                    (if (clo:fboundp client environment writer)
-                        (clo:fdefinition client environment writer)
+                    (if (clo:fboundp client e1 writer)
+                        (clo:fdefinition client e1 writer)
                         ;; We must create it.
                         (let ((generic-function
                                 (create-writer-generic-function writer)))
-                          (setf (clo:fdefinition client environment writer)
+                          (setf (clo:fdefinition client e1 writer)
                                 generic-function)
                           generic-function)))
                   (method
