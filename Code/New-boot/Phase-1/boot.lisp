@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
-(eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
+(eval-when (:compile-toplevel) (sb:enable-parcl-symbols c1))
 
 (defun create-reader-generic-function (name)
   (let* ((sample-generic-function #'print-object)
@@ -12,15 +12,15 @@
       :method-combination method-combination
       :name name)))
 
-(defun define-readers (client e1 slot-name readers class)
+(defun define-readers (c1 e1 slot-name readers class)
   (loop for reader in readers
         do (let* ((generic-function
-                    (if (clo:fboundp client e1 reader)
-                        (clo:fdefinition client e1 reader)
+                    (if (clo:fboundp c1 e1 reader)
+                        (clo:fdefinition c1 e1 reader)
                         ;; We must create it.
                         (let ((generic-function
                                 (create-reader-generic-function reader)))
-                          (setf (clo:fdefinition client e1 reader)
+                          (setf (clo:fdefinition c1 e1 reader)
                                 generic-function)
                           generic-function)))
                   (method
@@ -43,15 +43,15 @@
       :method-combination method-combination
       :name name)))
 
-(defun define-writers (client e1 slot-name writers class)
+(defun define-writers (c1 e1 slot-name writers class)
   (loop for writer in writers
         do (let* ((generic-function
-                    (if (clo:fboundp client e1 writer)
-                        (clo:fdefinition client e1 writer)
+                    (if (clo:fboundp c1 e1 writer)
+                        (clo:fdefinition c1 e1 writer)
                         ;; We must create it.
                         (let ((generic-function
                                 (create-writer-generic-function writer)))
-                          (setf (clo:fdefinition client e1 writer)
+                          (setf (clo:fdefinition c1 e1 writer)
                                 generic-function)
                           generic-function)))
                   (method
@@ -65,8 +65,8 @@
                                         (first arguments))))))
              (add-method generic-function method))))
 
-(defun define-ensure-class (client e1)
-  (setf (clo:fdefinition client e1 'ensure-class)
+(defun define-ensure-class (c1 e1)
+  (setf (clo:fdefinition c1 e1 'ensure-class)
         (lambda (name
                  &key
                    direct-default-initargs
@@ -87,7 +87,7 @@
                    (loop for direct-superclass in direct-superclasses
                          collect
                          (clo:find-class
-                          client e1 direct-superclass)))
+                          c1 e1 direct-superclass)))
                  (result
                    (make-instance 'closer-mop:funcallable-standard-class
                      :name (make-symbol (symbol-name name))
@@ -99,29 +99,29 @@
                   for readers = (getf direct-slot :readers)
                   for writers = (getf direct-slot :writers)
                   do (define-readers
-                         client e1 slot-name readers result)
+                         c1 e1 slot-name readers result)
                      (define-writers
-                         client e1 slot-name writers result))
-            (setf (clo:find-class client e1 name)
+                         c1 e1 slot-name writers result))
+            (setf (clo:find-class c1 e1 name)
                 result)))))
 
-(defun define-typep (client e1)
-  (setf (clo:fdefinition client e1 'typep)
+(defun define-typep (c1 e1)
+  (setf (clo:fdefinition c1 e1 'typep)
         (lambda (object type-specifier)
           (cond ((eq type-specifier 'class)
                  (typep object
                         (clo:find-class
-                         client e1
+                         c1 e1
                          'class)))
                 ((eq type-specifier 'method-combination)
                  (typep object
                         (clo:find-class
-                         client e1
+                         c1 e1
                          'method-combination)))
                 ((eq type-specifier @clostrophilia:direct-slot-definition)
                  (or (typep object
                             (clo:find-class
-                             client e1
+                             c1 e1
                              @clostrophilia:direct-slot-definition))
                      (progn
                        (format *trace-output*
@@ -131,7 +131,7 @@
                 ((eq type-specifier @clostrophilia:standard-accessor-method)
                  (typep object
                         (clo:find-class
-                         client e1
+                         c1 e1
                          @clostrophilia:standard-accessor-method)))
                 ((eq type-specifier 'null)
                  (null object))
@@ -149,132 +149,132 @@
 
 (defun boot (boot)
   (format *trace-output* "**************** Phase 1~%")
-  (let* ((client (make-instance 'client))
-         (w1 (create-environment client))
+  (let* ((c1 (make-instance 'client))
+         (w1 (create-environment c1))
          (e1
-           (trucler:global-environment client w1))
-         (env:*client* client)
+           (trucler:global-environment c1 w1))
+         (env:*client* c1)
          (env:*environment* e1))
-    (sb:define-package-functions client e1)
+    (sb:define-package-functions c1 e1)
     (setf (sb:e1 boot) e1)
-    (reinitialize-instance client
+    (reinitialize-instance c1
       :environment e1)
-    (sb:define-backquote-macros client e1)
-    (import-from-host client e1)
-    (setf (clo:fdefinition client e1 'funcall)
+    (sb:define-backquote-macros c1 e1)
+    (import-from-host c1 e1)
+    (setf (clo:fdefinition c1 e1 'funcall)
           (lambda (function-or-name &rest arguments)
             (apply #'funcall
                    (if (functionp function-or-name)
                        function-or-name
                        (clo:fdefinition
-                        client e1 function-or-name))
+                        c1 e1 function-or-name))
                    arguments)))
-    (setf (clo:fdefinition client e1 'ensure-method)
+    (setf (clo:fdefinition c1 e1 'ensure-method)
           #'ensure-method)
-    (setf (clo:fdefinition client e1 'closer-mop:method-function)
+    (setf (clo:fdefinition c1 e1 'closer-mop:method-function)
           #'closer-mop:method-function)
-    (sb:import-khazern client e1)
+    (sb:import-khazern c1 e1)
     (clo:make-variable
-     client e1 '*package* (find-package '#:common-lisp-user))
-    (sb:fill-environment client e1)
-    (sb:ensure-asdf-system client w1 "sicl-primop")
-    (setf (clo:fdefinition client e1 @sicl-primop:primop)
+     c1 e1 '*package* (find-package '#:common-lisp-user))
+    (sb:fill-environment c1 e1)
+    (sb:ensure-asdf-system c1 w1 "sicl-primop")
+    (setf (clo:fdefinition c1 e1 @sicl-primop:primop)
           #'sb:primop)
     (sb:ensure-asdf-system
-     client w1 "sicl-environment-clostrum-package")
+     c1 w1 "sicl-environment-clostrum-package")
     (sb:ensure-asdf-system
-     client w1 "sicl-environment-run-time-package")
+     c1 w1 "sicl-environment-run-time-package")
     (sb:ensure-asdf-system
-     client w1 "sicl-environment-packages-intrinsic")
-    (define-make-instance client e1)
-    (setf (clo:find-class client e1 'package)
+     c1 w1 "sicl-environment-packages-intrinsic")
+    (define-make-instance c1 e1)
+    (setf (clo:find-class c1 e1 'package)
           (find-class 'parcl-low-class:package))
-    (define-ensure-class client e1)
-    (sb:define-client-and-environment-variables client e1)
-    (sb:define-environment-functions client e1)
+    (define-ensure-class c1 e1)
+    (sb:define-client-and-environment-variables c1 e1)
+    (sb:define-environment-functions c1 e1)
     (sb:ensure-asdf-system
-     client w1 "clostrophilia-package")
+     c1 w1 "clostrophilia-package")
     ;;; FIXME: Define these functions by loading SICL-specific code
     (setf (clo:fdefinition
-           client e1 @clostrophilia:small-integer=)
+           c1 e1 @clostrophilia:small-integer=)
           #'=)
     (setf (clo:fdefinition
-           client e1 @clostrophilia:small-integer<)
+           c1 e1 @clostrophilia:small-integer<)
           #'<)
     (sb:ensure-asdf-system
-     client w1 "sicl-clos-package")
+     c1 w1 "sicl-clos-package")
     (sb:ensure-asdf-system
-     client w1 "clostrophilia-class-hierarchy")
-    (sb:ensure-asdf-system client w1 "sicl-arithmetic-base")
-    (sb:ensure-asdf-system client w1 "sicl-arithmetic-class-hierarchy")
+     c1 w1 "clostrophilia-class-hierarchy")
+    (sb:ensure-asdf-system c1 w1 "sicl-arithmetic-base")
+    (sb:ensure-asdf-system c1 w1 "sicl-arithmetic-class-hierarchy")
     ;; Now, the class T is defined as a host standard class, but when
     ;; methods specialize to T, we must find the host class named T,
     ;; so we just replace the one we just loaded.
-    (setf (clo:find-class client e1 'sb::sicl-t)
-          (clo:find-class client e1 't))
-    (setf (clo:find-class client e1 't)
+    (setf (clo:find-class c1 e1 'sb::sicl-t)
+          (clo:find-class c1 e1 't))
+    (setf (clo:find-class c1 e1 't)
           (find-class 't))
     ;; And, there are methods that specialize to the NULL class, like
     ;; ENSURE-CLASS-USING-CLASS, ENSURE-GENERIC-FUNCTION-USING-CLASS,
     ;; and they should be applicable when given NIL, so we need for
     ;; them to specialize on the host class named NULL.  For that
     ;; reason, we import that class from the host.
-    (setf (clo:find-class client e1 'null)
+    (setf (clo:find-class c1 e1 'null)
           (find-class 'null))
     ;; We may also have methods that specialize to CONS or LIST, so we
     ;; import those as well.
-    (setf (clo:find-class client e1 'cons)
+    (setf (clo:find-class c1 e1 'cons)
           (find-class 'cons))
-    (setf (clo:find-class client e1 'list)
+    (setf (clo:find-class c1 e1 'list)
           (find-class 'list))
-    (define-typep client e1)
+    (define-typep c1 e1)
     (sb:ensure-asdf-system
-     client w1 "sicl-asdf-packages")
+     c1 w1 "sicl-asdf-packages")
     (setf (clo:macro-function
-           client e1 @asdf-user:defsystem)
+           c1 e1 @asdf-user:defsystem)
           (constantly nil))
     (setf (clo:macro-function
-           client e1 @asdf:defsystem)
+           c1 e1 @asdf:defsystem)
           (constantly nil))
     (sb:ensure-asdf-system
-     client w1 "sicl-new-boot-phase-1-additional-classes")
+     c1 w1 "sicl-new-boot-phase-1-additional-classes")
     ;; We need to define HANDLER-BIND becuase it is used by Ecclesia.
     ;; The way we define it is that it just expands to a PROGN of the
     ;; forms in the body, with the bindings having no effect.
-    (setf (clo:macro-function client e1 'handler-bind)
+    (setf (clo:macro-function c1 e1 'handler-bind)
           (lambda (form environment)
             (declare (ignore environment))
             (cons 'progn (rest (rest form)))))
     (clo:make-variable
-     client e1 'lambda-list-keywords lambda-list-keywords)
+     c1 e1 'lambda-list-keywords lambda-list-keywords)
     ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so
     ;; we need to have the package SICL-TYPE defined.
-    (sb:ensure-asdf-system client w1 "sicl-type-support")
+    (sb:ensure-asdf-system c1 w1 "sicl-type-support")
     ;; FIXME: TYPEXPAND should be defined by code from SICL-TYPE being
     ;; loaded, rather than by defining it here. 
-    (setf (clo:fdefinition client e1 @sicl-type:typexpand)
+    (setf (clo:fdefinition c1 e1 @sicl-type:typexpand)
           (lambda (type-specifier &optional (environment e1))
-            (clo:type-expand client environment type-specifier)))
+            (clo:type-expand c1 environment type-specifier)))
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
-      (load-predicament client w1 e1)
-      (load-ctype client w1 e1)
-      (sb:ensure-asdf-system client w1 "acclimation")
-      (sb:ensure-asdf-system client w1 "ecclesia"))
+      (load-predicament c1 w1 e1)
+      (load-ctype c1 w1 e1)
+      (sb:ensure-asdf-system c1 w1 "acclimation")
+      (sb:ensure-asdf-system c1 w1 "ecclesia"))
     (sb:ensure-asdf-system
-     client w1 "clostrophilia-dependent-maintenance")
+     c1 w1 "clostrophilia-dependent-maintenance")
     (setf (clo:fdefinition
-           client e1 @sicl-clos:subtypep-1)
+           c1 e1 @sicl-clos:subtypep-1)
           #'subtypep)
     (setf (clo:fdefinition 
-           client e1 @clostrophilia:subtypep-1)
+           c1 e1 @clostrophilia:subtypep-1)
           #'subtypep)
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (sb:ensure-asdf-system
-       client w1 "clostrophilia-generic-function-invocation"))
+       c1 w1 "clostrophilia-generic-function-invocation"))
     (sb:ensure-asdf-system
-     client w1 "clostrophilia-generic-function-initialization")
+     c1 w1 "clostrophilia-generic-function-initialization")
     ;; ENSURE-GENERIC-FUNCTION is called by the class initialization
     ;; protocol in order to put reader and writer methods on the
     ;; resulting function.  However, we remove the READER and WRITER
@@ -284,46 +284,46 @@
     ;; to create, which means that ENSURE-GENERIC-FUNCTION will not be
     ;; called.  So we define it here to signal an error.
     (setf (clo:fdefinition
-           client e1 'ensure-generic-function)
+           c1 e1 'ensure-generic-function)
           (lambda (name &key &allow-other-keys)
             (error "Attempt to create generic function named ~s" name)))
     (setf (clo:fdefinition
-           client e1 @clostrophilia:allocate-general-instance)
+           c1 e1 @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (sb:ensure-asdf-system
-       client w1 "clostrophilia-class-initialization"))
+       c1 w1 "clostrophilia-class-initialization"))
     (sb:ensure-asdf-system
-     client w1 "clostrophilia-method-initialization")
+     c1 w1 "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
-     client w1 "clostrophilia-slot-definition-initialization")
-    (setf (clo:fdefinition client e1
+     c1 w1 "clostrophilia-slot-definition-initialization")
+    (setf (clo:fdefinition c1 e1
                            @clostrophilia:set-funcallable-instance-function)
           (fdefinition 'closer-mop:set-funcallable-instance-function))
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (sb:ensure-asdf-system
-       client w1 "clostrophilia-class-finalization")
+       c1 w1 "clostrophilia-class-finalization")
       (sb:ensure-asdf-system
-       client w1 "clostrophilia-method-combination-base"))
+       c1 w1 "clostrophilia-method-combination-base"))
     (sb:ensure-asdf-system
-     client w1 "sicl-new-boot-class-finalization")
+     c1 w1 "sicl-new-boot-class-finalization")
     ;; The method on ENSURE-CLASS-USING-CLASS specialized to
     ;; FORWARD-REFERENCED-CLASS calls CHANGE-CLASS to turn the class
     ;; into something other than a FORWARD-REFERENCED-CLASS.  But in
     ;; this phase, we do not have any instances of
     ;; FORWARD-REFERENCED-CLASS, so we define CHANGE-CLASS to signal
     ;; an error.
-    (setf (clo:fdefinition client e1 'change-class)
+    (setf (clo:fdefinition c1 e1 'change-class)
           (lambda (&rest arguments)
             (error "CHANGE-CLASS called with arguments ~s" arguments)))
     (sb:ensure-asdf-system
-     client w1 "common-macro-definitions-packages-intrinsic")
+     c1 w1 "common-macro-definitions-packages-intrinsic")
     (let ((symbol @sicl-environment:type-expander))
-      (setf (clo:fdefinition client e1 `(setf ,symbol))
-            (lambda (expander client environment name)
-              (setf (clo:type-expander client environment name)
+      (setf (clo:fdefinition c1 e1 `(setf ,symbol))
+            (lambda (expander c1 environment name)
+              (setf (clo:type-expander c1 environment name)
                     expander))))
     ;; ENSURE-GENERIC-FUNCTION-USING-CLASS calls
     ;; FIND-METHOD-COMBINATION in the method specialized to NULL
@@ -336,7 +336,7 @@
     ;; as the standard version of ENSURE-GENERIC-FUNCTION is defined.
     ;; So to avoid that errors get propagated, we define
     ;; FIND-METHOD-COMBINATION to signal an error.
-    (setf (clo:fdefinition client e1
+    (setf (clo:fdefinition c1 e1
                            @clostrophilia:find-method-combination)
           (lambda (generic-function
                    method-combination-type-name
@@ -348,25 +348,25 @@
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
       (sb:ensure-asdf-system
-       client w1 "sicl-clos-ensure-metaobject-using"))
-    (setf (clo:fdefinition client e1
+       c1 w1 "sicl-clos-ensure-metaobject-using"))
+    (setf (clo:fdefinition c1 e1
                            @clostrophilia:make-method-instance)
           #'my-make-instance)
-    (setf (clo:fdefinition client e1 'compile)
+    (setf (clo:fdefinition c1 e1 'compile)
           (lambda (should-be-nil lambda-expression)
             (assert (null should-be-nil))
             (let ((cst (cst:cst-from-expression lambda-expression)))
               (sb:with-intercepted-function-cells
                   ((make-instance (cons #'my-make-instance nil)))
-                (sb:eval-cst client cst w1)))))
+                (sb:eval-cst c1 cst w1)))))
     (sb:ensure-asdf-system
-     client w1 "clostrophilia-slot-value-etc-using-class")
+     c1 w1 "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
     ;;; something that is easier to manipulate during debugging.
     (setf (clo:symbol-value
-           client e1 @clostrophilia:+unbound-slot-value+)
+           c1 e1 @clostrophilia:+unbound-slot-value+)
           99999)
     (sb:ensure-asdf-system
-     client w1 "clostrophilia-standard-object-initialization-aux")
-    (sb:ensure-asdf-system client w1 "sicl-clos-make-instance")
+     c1 w1 "clostrophilia-standard-object-initialization-aux")
+    (sb:ensure-asdf-system c1 w1 "sicl-clos-make-instance")
     e1))
