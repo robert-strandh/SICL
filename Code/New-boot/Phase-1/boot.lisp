@@ -110,14 +110,10 @@
         (lambda (object type-specifier)
           (cond ((eq type-specifier 'class)
                  (typep object
-                        (clo:find-class
-                         c1 e1
-                         'class)))
+                        (clo:find-class c1 e1 'class)))
                 ((eq type-specifier 'method-combination)
                  (typep object
-                        (clo:find-class
-                         c1 e1
-                         'method-combination)))
+                        (clo:find-class c1 e1 'method-combination)))
                 ((eq type-specifier @clostrophilia:direct-slot-definition)
                  (or (typep object
                             (clo:find-class
@@ -151,8 +147,7 @@
   (format *trace-output* "**************** Phase 1~%")
   (let* ((c1 (make-instance 'client))
          (w1 (create-environment c1))
-         (e1
-           (trucler:global-environment c1 w1))
+         (e1 (trucler:global-environment c1 w1))
          (env:*client* c1)
          (env:*environment* e1))
     (sb:define-package-functions c1 e1)
@@ -180,12 +175,9 @@
     (sb:ensure-asdf-system c1 w1 "sicl-primop")
     (setf (clo:fdefinition c1 e1 @sicl-primop:primop)
           #'sb:primop)
-    (sb:ensure-asdf-system
-     c1 w1 "sicl-environment-clostrum-package")
-    (sb:ensure-asdf-system
-     c1 w1 "sicl-environment-run-time-package")
-    (sb:ensure-asdf-system
-     c1 w1 "sicl-environment-packages-intrinsic")
+    (sb:ensure-asdf-system c1 w1 "sicl-environment-clostrum-package")
+    (sb:ensure-asdf-system c1 w1 "sicl-environment-run-time-package")
+    (sb:ensure-asdf-system c1 w1 "sicl-environment-packages-intrinsic")
     (define-make-instance c1 e1)
     (setf (clo:find-class c1 e1 'package)
           (find-class 'parcl-low-class:package))
@@ -195,16 +187,12 @@
     (sb:ensure-asdf-system
      c1 w1 "clostrophilia-package")
     ;;; FIXME: Define these functions by loading SICL-specific code
-    (setf (clo:fdefinition
-           c1 e1 @clostrophilia:small-integer=)
+    (setf (clo:fdefinition c1 e1 @clostrophilia:small-integer=)
           #'=)
-    (setf (clo:fdefinition
-           c1 e1 @clostrophilia:small-integer<)
+    (setf (clo:fdefinition c1 e1 @clostrophilia:small-integer<)
           #'<)
-    (sb:ensure-asdf-system
-     c1 w1 "sicl-clos-package")
-    (sb:ensure-asdf-system
-     c1 w1 "clostrophilia-class-hierarchy")
+    (sb:ensure-asdf-system c1 w1 "sicl-clos-package")
+    (sb:ensure-asdf-system c1 w1 "clostrophilia-class-hierarchy")
     (sb:ensure-asdf-system c1 w1 "sicl-arithmetic-base")
     (sb:ensure-asdf-system c1 w1 "sicl-arithmetic-class-hierarchy")
     ;; Now, the class T is defined as a host standard class, but when
@@ -228,13 +216,10 @@
     (setf (clo:find-class c1 e1 'list)
           (find-class 'list))
     (define-typep c1 e1)
-    (sb:ensure-asdf-system
-     c1 w1 "sicl-asdf-packages")
-    (setf (clo:macro-function
-           c1 e1 @asdf-user:defsystem)
+    (sb:ensure-asdf-system c1 w1 "sicl-asdf-packages")
+    (setf (clo:macro-function c1 e1 @asdf-user:defsystem)
           (constantly nil))
-    (setf (clo:macro-function
-           c1 e1 @asdf:defsystem)
+    (setf (clo:macro-function c1 e1 @asdf:defsystem)
           (constantly nil))
     (sb:ensure-asdf-system
      c1 w1 "sicl-new-boot-phase-1-additional-classes")
@@ -245,8 +230,7 @@
           (lambda (form environment)
             (declare (ignore environment))
             (cons 'progn (rest (rest form)))))
-    (clo:make-variable
-     c1 e1 'lambda-list-keywords lambda-list-keywords)
+    (clo:make-variable c1 e1 'lambda-list-keywords lambda-list-keywords)
     ;; The ctype library calls the function SICL-TYPE:TYPE-EXPAND, so
     ;; we need to have the package SICL-TYPE defined.
     (sb:ensure-asdf-system c1 w1 "sicl-type-support")
@@ -261,13 +245,10 @@
       (load-ctype c1 w1 e1)
       (sb:ensure-asdf-system c1 w1 "acclimation")
       (sb:ensure-asdf-system c1 w1 "ecclesia"))
-    (sb:ensure-asdf-system
-     c1 w1 "clostrophilia-dependent-maintenance")
-    (setf (clo:fdefinition
-           c1 e1 @sicl-clos:subtypep-1)
+    (sb:ensure-asdf-system c1 w1 "clostrophilia-dependent-maintenance")
+    (setf (clo:fdefinition c1 e1 @sicl-clos:subtypep-1)
           #'subtypep)
-    (setf (clo:fdefinition 
-           c1 e1 @clostrophilia:subtypep-1)
+    (setf (clo:fdefinition c1 e1 @clostrophilia:subtypep-1)
           #'subtypep)
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
@@ -283,19 +264,15 @@
     ;; class initialization protocol will have no readers or writers
     ;; to create, which means that ENSURE-GENERIC-FUNCTION will not be
     ;; called.  So we define it here to signal an error.
-    (setf (clo:fdefinition
-           c1 e1 'ensure-generic-function)
+    (setf (clo:fdefinition c1 e1 'ensure-generic-function)
           (lambda (name &key &allow-other-keys)
             (error "Attempt to create generic function named ~s" name)))
-    (setf (clo:fdefinition
-           c1 e1 @clostrophilia:allocate-general-instance)
+    (setf (clo:fdefinition c1 e1 @clostrophilia:allocate-general-instance)
           #'sb:allocate-general-instance)
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
-      (sb:ensure-asdf-system
-       c1 w1 "clostrophilia-class-initialization"))
-    (sb:ensure-asdf-system
-     c1 w1 "clostrophilia-method-initialization")
+      (sb:ensure-asdf-system c1 w1 "clostrophilia-class-initialization"))
+    (sb:ensure-asdf-system c1 w1 "clostrophilia-method-initialization")
     (sb:ensure-asdf-system
      c1 w1 "clostrophilia-slot-definition-initialization")
     (setf (clo:fdefinition c1 e1
@@ -303,12 +280,9 @@
           (fdefinition 'closer-mop:set-funcallable-instance-function))
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
-      (sb:ensure-asdf-system
-       c1 w1 "clostrophilia-class-finalization")
-      (sb:ensure-asdf-system
-       c1 w1 "clostrophilia-method-combination-base"))
-    (sb:ensure-asdf-system
-     c1 w1 "sicl-new-boot-class-finalization")
+      (sb:ensure-asdf-system c1 w1 "clostrophilia-class-finalization")
+      (sb:ensure-asdf-system c1 w1 "clostrophilia-method-combination-base"))
+    (sb:ensure-asdf-system c1 w1 "sicl-new-boot-class-finalization")
     ;; The method on ENSURE-CLASS-USING-CLASS specialized to
     ;; FORWARD-REFERENCED-CLASS calls CHANGE-CLASS to turn the class
     ;; into something other than a FORWARD-REFERENCED-CLASS.  But in
@@ -347,10 +321,8 @@
             (error "FIND-METHOD-COMBINATION called in E1")))
     (sb:with-intercepted-function-cells
         ((make-instance (cons #'my-make-instance nil)))
-      (sb:ensure-asdf-system
-       c1 w1 "sicl-clos-ensure-metaobject-using"))
-    (setf (clo:fdefinition c1 e1
-                           @clostrophilia:make-method-instance)
+      (sb:ensure-asdf-system c1 w1 "sicl-clos-ensure-metaobject-using"))
+    (setf (clo:fdefinition c1 e1 @clostrophilia:make-method-instance)
           #'my-make-instance)
     (setf (clo:fdefinition c1 e1 'compile)
           (lambda (should-be-nil lambda-expression)
@@ -363,8 +335,7 @@
      c1 w1 "clostrophilia-slot-value-etc-using-class")
     ;;; During bootstrapping, we set the unbound slot value to
     ;;; something that is easier to manipulate during debugging.
-    (setf (clo:symbol-value
-           c1 e1 @clostrophilia:+unbound-slot-value+)
+    (setf (clo:symbol-value c1 e1 @clostrophilia:+unbound-slot-value+)
           99999)
     (sb:ensure-asdf-system
      c1 w1 "clostrophilia-standard-object-initialization-aux")
