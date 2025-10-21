@@ -149,6 +149,8 @@
                (add-to-worklist item))
              item)))
 
+;;; This function turns an impure ersatz object in E4 into a pure
+;;; ersatz object.
 (defgeneric process-item (item))
 
 (defmethod process-item (item)
