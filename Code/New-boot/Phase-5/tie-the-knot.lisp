@@ -65,6 +65,15 @@
           return name
         finally (return nil)))
 
+;;; A "backward-referring" function is a result of us having set a
+;;; name like NAME-1 in E4 to refer to the same function (say F) as
+;;; the one named NAME in E3.  But at this point, there is a function
+;;; (say F') named NAME in E4, and the name NAME-1 in E4 must now
+;;; refer to F'.  So we find each function in E4, and we check whether
+;;; that function is present in E3, and if so this is an instance of
+;;; F.  If so, we use the name of the function E3 (NAME) and we find
+;;; the binding of it in E4 which is then F', and we create a binding
+;;; in E4 of NAME-1 to F'.
 (defun fix-backward-referring-functions (client e3 e4)
   (loop with table = (clostrum-basic::functions e4)
         for entry being each hash-value of table using (hash-key name4)
