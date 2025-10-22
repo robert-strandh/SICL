@@ -20,3 +20,7 @@
     (sicl-new-boot-phase-5:boot boot)
     (sicl-new-boot-phase-6:boot boot)
     (defparameter *b* boot)))
+
+(defvar *c4*)
+(defvar *w4*)
+(defvar *e4*)
