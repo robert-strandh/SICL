@@ -63,6 +63,7 @@
     (setf sicl-new-boot::*w4* w4)
     (setf sicl-new-boot::*e4* e4)
     (let ((*features* '(:sicl)))
+      (sb:ensure-asdf-system c4 w4 "trivial-package-locks")
       (sb:ensure-asdf-system c4 w4 "trinsic")
       (sb:ensure-asdf-system c4 w4 "cyclosis")
       (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
