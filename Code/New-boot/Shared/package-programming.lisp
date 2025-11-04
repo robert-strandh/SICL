@@ -103,9 +103,11 @@
 (defmethod (setf parcl-low:symbol-package) (new-package (client client) symbol)
   (setf (gethash symbol (symbol-package *boot*)) new-package))
 
+;;; This method is executed when PACKAGE is the keyword package.
 (defmethod parcl-low:find-symbol ((client client) (package package) name)
   (find-symbol name package))
 
+;;; This method is executed when PACKAGE is the keyword package.
 (defmethod parcl-low:intern ((client client) (package package) name)
   (intern name package))
 
