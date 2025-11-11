@@ -52,7 +52,7 @@
             (declare (ignore environment))
             `(progn ,@(rest form))))
     (sb:ensure-asdf-system c4 w4 "sicl-data-and-control-flow-setf-expanders")
-    (clo:make-variable client e4 '*features* '(:sicl))
+    (clo:make-variable c4 e4 '*features* '(:sicl))
     (let ((*features* *features*))
       (setf *features* (remove :sbcl *features*))
       (setf *features* (remove :sb-package-locks *features*))
@@ -67,6 +67,5 @@
       (sb:ensure-asdf-system c4 w4 "trinsic")
       (sb:ensure-asdf-system c4 w4 "cyclosis")
       (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
-    (clo:make-variable
-     client e4 @predicament:*condition-maker* 'make-condition)
+    (clo:make-variable c4 e4 @predicament:*condition-maker* 'make-condition)
     (load-quaviver c4 w4 e4)))
