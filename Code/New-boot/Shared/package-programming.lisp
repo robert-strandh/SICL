@@ -183,8 +183,14 @@
         (fdefinition (find-symbol (symbol-name 'find-symbol)
                                   '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'intern)
-        (fdefinition (find-symbol (symbol-name 'intern)
-                                  '#:sicl-new-boot-parcl-extrinsic)))
+        (lambda (name &optional (package nil package-p))
+          (funcall (find-symbol (symbol-name 'intern)
+                                '#:sicl-new-boot-parcl-extrinsic)
+                   name
+                   (if package-p
+                       package
+                       (clo:symbol-value client global-environment
+                                         '*package*)))))
   (setf (clo:fdefinition client global-environment 'use-package)
         (fdefinition (find-symbol (symbol-name 'use-package)
                                   '#:sicl-new-boot-parcl-extrinsic)))
