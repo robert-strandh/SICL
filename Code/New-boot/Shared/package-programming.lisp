@@ -191,6 +191,11 @@
                        package
                        (clo:symbol-value client global-environment
                                          '*package*)))))
+  ;; We shadow SYMBOL-PACKAGE so we need to provide an explicit prefix
+  ;; here.
+  (setf (clo:fdefinition client global-environment 'cl:symbol-package)
+        (fdefinition (find-symbol (symbol-name 'cl:symbol-package)
+                                  '#:sicl-new-boot-parcl-extrinsic)))
   (setf (clo:fdefinition client global-environment 'use-package)
         (fdefinition (find-symbol (symbol-name 'use-package)
                                   '#:sicl-new-boot-parcl-extrinsic)))
