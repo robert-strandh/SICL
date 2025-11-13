@@ -13,6 +13,26 @@ then eliminate comments about refinement.
 
 The documentation is embryonic and needs to be improved.
 
+\subsection{Common macros}
+
+Currently, the repository ``Common-macros'' contains two systems,
+namely \texttt{common-macros} and \texttt{common-macro-definitions}.
+We intended for \texttt{common-macros} to contain standard macros in
+the form of AST transformations, but this turned out to be harder than
+we had expected, simply because the code for such a transformation
+because very ugly.  So we created the system
+\texttt{common-macro-definitions} to contain standard macros in the
+traditional way, using DEFMACRO forms.  Only
+\texttt{common-macro-definitions} is currently used, and
+\texttt{common-macros} is incomplete.
+
+We want to remove the system \texttt{common-macros} from this
+repository, rename it, and put it in a separate repository, say
+\texttt{common-ast-macro-transformations} or something like that.  We
+would have liked to rename \texttt{common-macro-definitions} to
+\texttt{common-macros}, but it is already used by others, and we don't
+want to force them to change their code.
+
 \section{Bootstrapping}
 
 \subsection{Replace cell sharing by renaming}
