@@ -45,3 +45,18 @@ usages, we now have a better macro
 obvious what functions call functions in other environments.  We
 should apply this new macro to various Clostrophilia subsystems to
 avoid funny symbol names.
+
+\subsection{Maybe use more than one final environment}
+
+The current idea is to make environment number 4 the ``final''
+environment to be used as a model for the one in the final system.
+But we have already suggested the use of several environments in the
+final system, like a separate environment for each nontrivial
+subsystem, like the compiler.  But there might already be some such
+nontrivial subsystems that could be put in separate environments.  For
+that to be a useful thing to do, the subsystem should contain a
+significant amount of code, but supply very few entry points for
+general use, like the compiler with \texttt{compile},
+\texttt{compile-file}, and \texttt{eval}.  One such existing system
+would be \texttt{ctype} that supplies only \texttt{typep} and
+\texttt{subtypep}. 
