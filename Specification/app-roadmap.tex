@@ -33,6 +33,36 @@ would have liked to rename \texttt{common-macro-definitions} to
 \texttt{common-macros}, but it is already used by others, and we don't
 want to force them to change their code.
 
+\subsection{Common boot}
+
+The essence of the repository ``Common-boot'' contains methods on
+\texttt{architecture.builder-protocol:finish-node}.  Such a method
+takes an unfinished abstract syntax tree (AST), i.e., one that
+contains unparsed slots, and recursively calls \texttt{convert-ast}
+that uses the \texttt{builder} of \texttt{Iconoclast} to parse the
+slots so that the result is a finished AST.
+
+But this repository also contains:
+
+\begin{itemize}
+\item definitions of node classes of a graph in high-level
+  intermediate representation (HIR),
+\item code for converting an AST to HIR,
+\item code for closure conversion of an AST,
+\item an evaluator working on the AST level, and
+\item and evaluator working on the HIR level.
+\end{itemize}
+
+We think that this repository could be split up into several different
+ones, given that some clients will not be interested in all this
+functionality.  In particular, we have already ``extracted'' the
+definitions of the HIR graph into the repository ``Hirundine''.  The
+AST evaluator is no longer used by \sysname{}, but it could be
+interesting for some other clients.  The HIR evaluator would be
+extracted either to Hirundine or to a separate repository.
+
+\subsection{Hirundine}
+
 \section{Bootstrapping}
 
 \subsection{Replace cell sharing by renaming}
