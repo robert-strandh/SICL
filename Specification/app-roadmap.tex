@@ -64,6 +64,17 @@ extracted either to Hirundine or to a separate repository.
 Each of the evaluators contains a fairly complete test suite that
 should follow the corresponding evaluator to its new repository.
 
+\subsection{Iconoclast}
+
+I would like to introduce slots with a cardinality of zero.  Such a
+slot would contain references that are not part of the AST tree
+structure, but that may reference other parts of the AST tree.  An
+example of this would be the mutual references of a variable
+definition and the corresponding references to that variable.  The AST
+walker would be modified not to follow objects in slot with
+cardinality zero.  Currently, slots that should not be traversed are
+handled specially.
+
 \subsection{Hirundine}
 
 \subsection{Ecclesia}
