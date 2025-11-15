@@ -66,6 +66,10 @@
             (find-symbol (symbol-name 'make-package)
                          '#:sicl-new-boot-parcl-extrinsic)))
       (funcall make-package-symbol "ECLECTOR.READTABLE"))
+    (let ((symbol
+            (sb:intern-parcl-symbol c4 "ECLECTOR.READTABLE" "SYNTAX-TYPE")))
+      (setf (clo:fdefinition c4 e4 symbol)
+            #'eclector.readtable:syntax-type))
     (let ((*features* '(:sicl)))
       (sb:ensure-asdf-system c4 w4 "trivial-package-locks")
       (sb:ensure-asdf-system c4 w4 "trinsic")
