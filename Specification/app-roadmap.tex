@@ -75,6 +75,23 @@ walker would be modified not to follow objects in slot with
 cardinality zero.  Currently, slots that should not be traversed are
 handled specially.
 
+\subsection{Consecution}
+
+Create a version of \texttt{remove} (and related functions) that
+shares as much structure as possible between the input and the output.
+
+Add documentation strings.
+
+Add compiler macros.  This part is not trivial.  Currently, each
+standard function is defined as a generic function with several
+methods.  A compiler macro should parse keyword arguments and then
+call a function with no keyword parameters.  But then that new
+function must be generic and it must be called by the standard
+function.
+
+Check that the use of :FROM-END on a list argument uses the technique
+in the paper by Durand and Strandh. 
+
 \subsection{Hirundine}
 
 \subsection{Ecclesia}
