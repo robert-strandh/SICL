@@ -62,6 +62,10 @@
     (setf sicl-new-boot::*c4* c4)
     (setf sicl-new-boot::*w4* w4)
     (setf sicl-new-boot::*e4* e4)
+    (let ((make-package-symbol
+            (find-symbol (symbol-name 'make-package)
+                         '#:sicl-new-boot-parcl-extrinsic)))
+      (funcall make-package-symbol "ECLECTOR.READTABLE"))
     (let ((*features* '(:sicl)))
       (sb:ensure-asdf-system c4 w4 "trivial-package-locks")
       (sb:ensure-asdf-system c4 w4 "trinsic")
