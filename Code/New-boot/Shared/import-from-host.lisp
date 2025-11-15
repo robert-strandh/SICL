@@ -18,7 +18,7 @@
     rest last butlast nth nthcdr append nconc getf
     consp listp atom member member-if mapcar mapc set-difference
     set-exclusive-or assoc rassoc acons
-    ldiff tailp list-length make-list union intersection
+    ldiff tailp list-length make-list union nunion intersection
     adjoin copy-list
     subsetp
     ;; Sequences
