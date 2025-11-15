@@ -76,6 +76,7 @@
       (setf (clo:fdefinition c4 e4 symbol)
             #'eclector.readtable:syntax-type)
       (funcall export-function symbol package))
+    (clo:make-variable c4 e4 '*readtable* eclector.readtable:*readtable*)
     (let ((*features* '(:sicl)))
       (sb:ensure-asdf-system c4 w4 "trivial-package-locks")
       (sb:ensure-asdf-system c4 w4 "trinsic")
