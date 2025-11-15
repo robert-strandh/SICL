@@ -67,9 +67,15 @@
                          '#:sicl-new-boot-parcl-extrinsic)))
       (funcall make-package-symbol "ECLECTOR.READTABLE"))
     (let ((symbol
-            (sb:intern-parcl-symbol c4 "ECLECTOR.READTABLE" "SYNTAX-TYPE")))
+            (sb:intern-parcl-symbol c4 "ECLECTOR.READTABLE" "SYNTAX-TYPE"))
+          (export-function
+            (fdefinition (find-symbol (symbol-name 'export)
+                                      '#:sicl-new-boot-parcl-extrinsic)))
+          (package
+            (sb::package-designator-to-package c4 e4 "ECLECTOR.READTABLE")))
       (setf (clo:fdefinition c4 e4 symbol)
-            #'eclector.readtable:syntax-type))
+            #'eclector.readtable:syntax-type)
+      (funcall export-function symbol package))
     (let ((*features* '(:sicl)))
       (sb:ensure-asdf-system c4 w4 "trivial-package-locks")
       (sb:ensure-asdf-system c4 w4 "trinsic")
