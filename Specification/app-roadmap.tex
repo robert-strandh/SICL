@@ -75,6 +75,26 @@ walker would be modified not to follow objects in slot with
 cardinality zero.  Currently, slots that should not be traversed are
 handled specially.
 
+Introduce AST types for representing the literals vector.  Perhaps an
+AST type \texttt{literals-vector} with no particular value, and that
+contains a list of forms to create the global literals vector.
+Perhaps a type \texttt{literal-reference} taking with an index into
+the literals vector, but no explicit reference to the vector.
+
+Introduce AST types for getting the cells of a global function and the
+global value of a variable. These ASTs go in the
+\texttt{literals-vector} AST. 
+
+Define transformations for turning existing AST types like
+\texttt{literal-ast} into a literals vector.  This is nontrivial
+because it requires something similar to \texttt{make-load-form}.
+
+Define transformation for turning \texttt{load-time-value-ast} into an
+element of the literals vector.
+
+Define syntax for input/output of ASTs, probably using the syntax
+``[class-name :initarg1 value1 ...''.
+
 See section on S-expression syntax for this remark.  Iconoclast will
 likely need the ability to represent ASTs for invalid syntax.
 
@@ -101,6 +121,9 @@ There are a few generic functions defined, but it would probably be
 best to get rid of those so that this system can be used without CLOS.
 
 \subsection{Hirundine}
+
+Define instructions for getting cells of global functions and global
+values of special variables.
 
 \subsection{Ecclesia}
 
