@@ -127,6 +127,25 @@ values of special variables.
 
 \subsection{Ecclesia}
 
+This library contains two different representations of lambda lists.
+One representation uses instances of standard classes with slots for
+each parameter type.  The other representation uses ordinary lists,
+but with a canonical representation that is then easier to access.  I
+used to think that the order of the different parameter types was
+important, because the \texttt{\&environment} parameter can appear
+anywhere in the lambda list.  However, the standard says that 
+the \texttt{\&environment} and \texttt{\&whole} parameters are bound
+before any other parameter.  Therefor the order does not matter.
+
+So now I think it is better to use instances of standard classes to
+represent lambda lists.  Unfortunately, I encourage Alex Wood to
+switch from the first representation to the list representation.  It
+is therefore not obvious how to fix this library without breaking
+existing client code.
+
+Perhaps the solution is to create an entirely new library and
+encourage the use of that library instead of Ecclesia. 
+
 \subsection{Posterior}
 
 This library is still embryonic.  The idea is that it contains
