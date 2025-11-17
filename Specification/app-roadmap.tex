@@ -129,6 +129,23 @@ values of special variables.
 
 \subsection{Posterior}
 
+This library is still embryonic.  The idea is that it contains
+definitions of instructions and data for a traditional control-flow
+graph in so-called Medium-level Intermediate Representation (MIR).
+This representation represents memory addresses explicitly.  The
+library also has backends for a variety of processor architectures.
+The instructions are similar to those that can be found on most real
+processor architectures, and they operate on virtual registers that
+can be translated into real registers for specific backends.  This
+library is also meant to contain optimizations that can be performed
+at the MIR level.
+
+Specific \commonlisp{} implementations translate programs using the
+High-level Intermediate Representation (HIR) into MIR, because this
+translation involves representations of objects that are specific to
+each \commonlisp{} implementation.  But this library should ideally be
+possible to use by other languages than \commonlisp{}.
+
 \subsection{Concrete Syntax Tree}
 
 There is a lambda-list parser that should probably not be in this
