@@ -28,6 +28,22 @@ details of it.
 
 \subsection{Trucler}
 
+This library provides lexical environments for use by compilers.  It
+currently supports its own reference implementation and also SBCL.
+
+It should be possible for a compiler to accomplish all its tasks by
+using only Trucler.  In particular, it should not be necessary to
+consult the global environment, since the global environment varies
+between \commonlisp{} implementations.
+
+To accomplish this goal, Trucler must be augmented with a number of
+functionalities, for example to determine whether an expression is a
+valid type specifier, and to determine whether a symbol has been
+proclaimed \texttt{declaration}.  We do not yet have any preferred
+design choice about type specifiers, so more research must be done.
+
+Trucler should also have more backends, at least for CCL, ECL.
+
 \subsection{Clostrophilia}
 
 We introduced symbols such as x+1, x-1, and x\^\ to indicate different
