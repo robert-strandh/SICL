@@ -44,6 +44,14 @@ design choice about type specifiers, so more research must be done.
 
 Trucler should also have more backends, at least for CCL, ECL.
 
+\subsection{Khazern}
+
+This library is an extensible implementation of the \texttt{loop}
+macro, and is maintained by Tarn W. Burton.  The only possible
+improvement I see is the clause parser.  It is written in a simplified
+version of combinator parsers, but it doesn't support full
+backtracking.  It would probably be better to use an external library.
+
 \subsection{Clostrophilia}
 
 We introduced symbols such as x+1, x-1, and x\^\ to indicate different
