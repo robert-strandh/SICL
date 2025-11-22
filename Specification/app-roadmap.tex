@@ -39,8 +39,19 @@ between \commonlisp{} implementations.
 To accomplish this goal, Trucler must be augmented with a number of
 functionalities, for example to determine whether an expression is a
 valid type specifier, and to determine whether a symbol has been
-proclaimed \texttt{declaration}.  We do not yet have any preferred
-design choice about type specifiers, so more research must be done.
+proclaimed \texttt{declaration}.  
+
+One suggestion is this:
+
+\begin{itemize}
+\item We add a new function \texttt{describe-declaration} that takes a
+  client, and environment and a symbol as arguments, and that returns
+  \textit{true} if and only if the symbol has been proclaimed
+  \texttt{declaration} in the global environment.
+\item We modify the contract of \texttt{add-variable-type} and
+  \texttt{add-function-type} so that they are required to return a new
+  environment in which the type has been fully expanded.
+\end{itemize}
 
 Trucler should also have more backends, at least for CCL, ECL.
 
