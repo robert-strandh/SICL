@@ -4,4 +4,5 @@
   :depends-on ()
   :serial t
   :components
-  ((:file "floating-point-constants")))
+  ((:file "floating-point-constants")
+   (:file "floating-point")))
