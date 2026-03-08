@@ -1,20 +1,61 @@
 (cl:in-package #:sicl-arithmetic)
 
+(defclass simulated-float ()
+  ((%sign :initarg :sign :reader sign)
+   (%floatr :initarg :floatr :reader floatr)))
+
 (setf (find-class 'single-float) nil)
 
-(defclass single-float ()
-  ((%bits :initarg :bits :reader bits)))
+(defclass single-float (simulated-float)
+  ())
 
 (setf (find-class 'double-float) nil)
 
-(defclass double-float ()
-  ((%bits :initarg :bits :reader bits)))
+(defclass double-float (simulated-float)
+  ())
 
 (defun bits-to-single-float (bits)
-  (make-instance 'single-float :bits bits))
+  (let* ((sign-bit (ldb (byte 1 31) bits))
+         (exponent-bits (ldb (byte 8 23) bits))
+         (mantissa-bits (ldb (byte 23 0) bits))
+         (numerator
+           (cond ((zerop exponent-bits)
+                  ;; We have a subnormal float.
+                  mantissa-bits)
+                 ((>= exponent-bits (+ 127 23))
+                  (* (+ mantissa-bits (ash 1 23))
+                     (ash 1 (- exponent-bits (+ 127 23)))))
+                 (t
+                  (+ mantissa-bits (ash 1 23)))))
+         (denominator
+           (if (>= exponent-bits (+ 127 23))
+               1
+               (ash 1 (- (+ 127 23) exponent-bits)))))
+    (make-instance 'single-float
+      :sign (if (zerop sign-bit) 1 -1)
+      :floatr (/ numerator denominator))))
 
 (defun bits-to-double-float (bits)
-  (make-instance 'double-float :bits bits))
+  (let* ((sign-bit (ldb (byte 1 63) bits))
+         (exponent-bits (ldb (byte 11 52) bits))
+         (mantissa-bits (ldb (byte 52 0) bits))
+         (numerator
+           (cond ((zerop exponent-bits)
+                  ;; We have a subnormal float.
+                  mantissa-bits)
+                 ((>= exponent-bits (+ 1023 52))
+                  (* (+ mantissa-bits (ash 1 52))
+                     (ash 1 (- exponent-bits (+ 1023 52)))))
+                 (t
+                  (+ mantissa-bits (ash 1 52)))))
+         (denominator
+           (if (>= exponent-bits (+ 1023 52))
+               1
+               (ash 1 (- (+ 1023 52) exponent-bits)))))
+    (make-instance 'double-float
+      :sign (if (zerop sign-bit) 1 -1)
+      :floatr (/ numerator denominator))))
+
 
 (defun coerce (value type)
   (assert (zerop value))
