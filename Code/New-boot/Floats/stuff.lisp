@@ -33,7 +33,7 @@
                (ash 1 (- (+ 127 23) exponent-bits)))))
     (make-instance 'single-float
       :sign (if (zerop sign-bit) 1 -1)
-      :floatr (/ numerator denominator))))
+      :floatr (make-ratio numerator denominator))))
 
 (defun bits-to-double-float (bits)
   (let* ((sign-bit (ldb (byte 1 63) bits))
@@ -54,7 +54,7 @@
                (ash 1 (- (+ 1023 52) exponent-bits)))))
     (make-instance 'double-float
       :sign (if (zerop sign-bit) 1 -1)
-      :floatr (/ numerator denominator))))
+      :floatr (make-ratio numerator denominator))))
 
 
 (defun coerce (value type)
