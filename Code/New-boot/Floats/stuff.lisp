@@ -23,8 +23,8 @@
                   ;; We have a subnormal float.
                   mantissa-bits)
                  ((>= exponent-bits (+ 127 23))
-                  (* (+ mantissa-bits (ash 1 23))
-                     (ash 1 (- exponent-bits (+ 127 23)))))
+                  (ash (+ mantissa-bits (ash 1 23))
+                       (- exponent-bits (+ 127 23))))
                  (t
                   (+ mantissa-bits (ash 1 23)))))
          (denominator
@@ -44,8 +44,8 @@
                   ;; We have a subnormal float.
                   mantissa-bits)
                  ((>= exponent-bits (+ 1023 52))
-                  (* (+ mantissa-bits (ash 1 52))
-                     (ash 1 (- exponent-bits (+ 1023 52)))))
+                  (ash (+ mantissa-bits (ash 1 52))
+                       (- exponent-bits (+ 1023 52))))
                  (t
                   (+ mantissa-bits (ash 1 52)))))
          (denominator
