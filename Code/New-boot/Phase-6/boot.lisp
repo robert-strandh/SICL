@@ -84,6 +84,12 @@
       (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
     (clo:make-variable c4 e4 @predicament:*condition-maker* 'make-condition)
     (sb:ensure-asdf-system c4 w4 "buoy-simulate")
+    ;; During bootstrapping, we simulate floats using rationals
+    ;; wrapped in instances of standard classes.  We don't want to use
+    ;; the target function / to create a target ratio, and instead we
+    ;; want to use a host ratio.
+    (setf (clo:fdefinition c4 e4 @sicl-arithmetic:make-ratio)
+          #'/)
     (sb:ensure-asdf-system c4 w4 "sicl-bootstrap-floats")
     (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-floating-point")
     (load-quaviver c4 w4 e4)))
