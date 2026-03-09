@@ -91,5 +91,13 @@
     (setf (clo:fdefinition c4 e4 @sicl-arithmetic:make-ratio)
           #'/)
     (sb:ensure-asdf-system c4 w4 "sicl-bootstrap-floats")
+    (setf (clo:fdefinition c4 e4 @sicl-arithmetic:bits-to-single-float)
+          #'bits-to-single-float)
+    (setf (clo:fdefinition c4 e4 @sicl-arithmetic:bits-to-double-float)
+          #'bits-to-double-float)
+    (setf *make-single-float*
+          (clo:fdefinition c4 e4 @sicl-arithmetic:make-single-float))
+    (setf *make-double-float*
+          (clo:fdefinition c4 e4 @sicl-arithmetic:make-double-float))
     (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-floating-point")
     (load-quaviver c4 w4 e4)))
