@@ -71,54 +71,6 @@
   (destructuring-bind (x) arguments
     (quaviver:bits-float 'double-float x)))
 
-(defmethod primop ((operation (eql :single-float-equal)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (= x y)))
-
-(defmethod primop ((operation (eql :single-float-less)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (< x y)))
-
-(defmethod primop ((operation (eql :single-float-add)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (+ x y)))
-
-(defmethod primop ((operation (eql :single-float-subtract)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (- x y)))
-
-(defmethod primop ((operation (eql :single-float-multiply)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (* x y)))
-
-(defmethod primop ((operation (eql :single-float-divide)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (/ x y)))
-
-(defmethod primop ((operation (eql :double-float-equal)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (= x y)))
-
-(defmethod primop ((operation (eql :double-float-less)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (< x y)))
-
-(defmethod primop ((operation (eql :double-float-add)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (+ x y)))
-
-(defmethod primop ((operation (eql :double-float-subtract)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (+ x y)))
-
-(defmethod primop ((operation (eql :double-float-multiply)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (* x y)))
-
-(defmethod primop ((operation (eql :double-float-divide)) &rest arguments)
-  (destructuring-bind (x y) arguments
-    (/ x y)))
-
 (defmethod primop ((operation (eql :t-aref)) &rest arguments)
   (destructuring-bind (array index) arguments
     (standard-instance-access array (+ index 3))))
