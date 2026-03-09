@@ -8,5 +8,6 @@
    (:file "client")
    (:file "configuration")
    (:file "macro-programming")
+   (:file "floats")
    (:file "load-quaviver")
    (:file "boot")))
