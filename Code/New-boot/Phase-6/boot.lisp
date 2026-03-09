@@ -92,5 +92,7 @@
           (clo:fdefinition c4 e4 @sicl-arithmetic:make-single-float))
     (setf *make-double-float*
           (clo:fdefinition c4 e4 @sicl-arithmetic:make-double-float))
+    (setf *float-components*
+          (clo:fdefinition c4 e4 @sicl-arithmetic:float-components))
     (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-floating-point")
     (load-quaviver c4 w4 e4)))
