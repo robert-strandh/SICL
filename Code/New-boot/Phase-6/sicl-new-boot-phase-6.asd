@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem "sicl-new-boot-phase-6"
-  :depends-on ()
+  :depends-on ("buoy-simulate")
   :serial t
   :components
   ((:file "packages")
