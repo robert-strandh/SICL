@@ -83,7 +83,6 @@
       (sb:ensure-asdf-system c4 w4 "cyclosis")
       (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
     (clo:make-variable c4 e4 @predicament:*condition-maker* 'make-condition)
-    (sb:ensure-asdf-system c4 w4 "buoy-simulate")
     (sb:ensure-asdf-system c4 w4 "sicl-bootstrap-floats")
     (setf (clo:fdefinition c4 e4 @sicl-arithmetic:bits-to-single-float)
           #'bits-to-single-float)
