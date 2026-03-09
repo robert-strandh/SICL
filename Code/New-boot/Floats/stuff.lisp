@@ -9,10 +9,18 @@
 (defclass single-float (simulated-float)
   ())
 
+(defun make-single-float (sign floatr)
+  (make-instance 'single-float
+    :sign sign :floatr floatr))
+
 (setf (find-class 'double-float) nil)
 
 (defclass double-float (simulated-float)
   ())
+
+(defun make-double-float (sign floatr)
+  (make-instance 'double-float
+    :sign sign :floatr floatr))
 
 (defun bits-to-single-float (bits)
   (let* ((sign-bit (ldb (byte 1 31) bits))
