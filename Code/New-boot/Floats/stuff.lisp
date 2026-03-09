@@ -22,6 +22,9 @@
   (make-instance 'double-float
     :sign sign :floatr floatr))
 
+(defun float-components (float)
+  (values (sign float) (floatr float)))
+
 (defun coerce (value type)
   (assert (zerop value))
   (ecase type
