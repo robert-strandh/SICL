@@ -13,6 +13,9 @@
   (make-instance 'single-float
     :sign sign :floatr floatr))
 
+(defmethod binary-equal ((x single-float) (y single-float))
+  (sicl-primop:primop :single-float-equal x y))
+
 (setf (find-class 'double-float) nil)
 
 (defclass double-float (simulated-float)
@@ -21,6 +24,9 @@
 (defun make-double-float (sign floatr)
   (make-instance 'double-float
     :sign sign :floatr floatr))
+
+(defmethod binary-equal ((x double-float) (y double-float))
+  (sicl-primop:primop :double-float-equal x y))
 
 (defun float-components (float)
   (values (sign float) (floatr float)))
