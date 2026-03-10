@@ -47,3 +47,38 @@
     (funcall *make-double-float*
              (if (zerop sign-bit) 1 -1)
              (/ numerator denominator))))
+
+(defmethod sicl-new-boot:primop
+    ((operation (eql :integer-decode-single-float)) &rest arguments)
+  (multiple-value-bind (sign floatr)
+      (funcall *float-components* (first arguments))
+    (multiple-value-bind (significand exponent)
+        (buoy-simulate:integer-decode-floatr floatr 23 8)
+      (let ((sign-value (funcall *make-single-float* sign 1)))
+        (values significand exponent sign-value)))))
+
+(defmethod sicl-new-boot:primop
+    ((operation (eql :integer-decode-double-float)) &rest arguments)
+  (multiple-value-bind (sign floatr)
+      (funcall *float-components* (first arguments))
+    (multiple-value-bind (significand exponent)
+        (buoy-simulate:integer-decode-floatr floatr 52 11)
+      (let ((sign-value (funcall *make-double-float* sign 1)))
+        (values significand exponent sign-value)))))
+
+(defmethod sicl-new-boot:primop
+    ((operation (eql :single-float-equal)) &rest arguments)
+  (multiple-value-bind (sign1 floatr1)
+      (funcall *float-components* (first arguments))
+    (multiple-value-bind (sign2 floatr2)
+        (funcall *float-components* (second arguments))
+      (and (= sign1 sign2) (= floatr1 floatr2)))))
+
+(defmethod sicl-new-boot:primop
+    ((operation (eql :double-float-equal)) &rest arguments)
+  (multiple-value-bind (sign1 floatr1)
+      (funcall *float-components* (first arguments))
+    (multiple-value-bind (sign2 floatr2)
+        (funcall *float-components* (second arguments))
+      (and (= sign1 sign2) (= floatr1 floatr2)))))
+  
