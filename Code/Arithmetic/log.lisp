@@ -24,7 +24,7 @@
 
 (defmethod log ((argument integer) &optional (base nil base-p))
   (if base-p
-      (log (float argument base))
+      (log (float argument) base)
       (log (float argument))))
 
 (defmethod log ((argument number) &optional (base nil base-p))
