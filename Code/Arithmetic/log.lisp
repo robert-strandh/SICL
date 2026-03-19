@@ -22,7 +22,7 @@
         (t
          (complex (log (abs argument)) (phase argument)))))
 
-(defmethod log ((argument integer) &optional (base nil base-p))
+(defmethod log ((argument rational) &optional (base nil base-p))
   (if base-p
       (log (float argument) base)
       (log (float argument))))
