@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "floating-point-constants")
-   (:file "floating-point")))
+   (:file "floating-point")
+   (:file "log")))
