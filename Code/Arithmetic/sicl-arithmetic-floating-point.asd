@@ -6,4 +6,5 @@
   :components
   ((:file "floating-point-constants")
    (:file "floating-point")
-   (:file "log")))
+   (:file "log")
+   (:file "sin")))
