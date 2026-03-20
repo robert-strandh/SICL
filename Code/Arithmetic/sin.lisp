@@ -14,5 +14,5 @@
 (defmethod sin ((argument number))
   (let ((realpart (realpart argument))
         (imagpart (imagpart argument)))
-    (+ (* (sin realpart) (cosh imagpart))
-       (* (complex (cos realpart) (sin imagpart))))))
+    (complex (* (sin realpart) (cosh imagpart))
+             (* (cos relpart) (sinh imagpart)))))
