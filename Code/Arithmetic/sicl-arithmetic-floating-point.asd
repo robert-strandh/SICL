@@ -7,5 +7,6 @@
   ((:file "floating-point-constants")
    (:file "floating-point")
    (:file "log")
+   (:file "exp")
    (:file "sin")
    (:file "cos")))
