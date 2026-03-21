@@ -10,4 +10,6 @@
    (:file "exp")
    (:file "sin")
    (:file "cos")
-   (:file "asin")))
+   (:file "asin")
+   (:file "acos")
+   (:file "atan")))
