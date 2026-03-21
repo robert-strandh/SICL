@@ -9,4 +9,5 @@
    (:file "log")
    (:file "exp")
    (:file "sin")
-   (:file "cos")))
+   (:file "cos")
+   (:file "asin")))
