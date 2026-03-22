@@ -12,4 +12,5 @@
    (:file "cos")
    (:file "asin")
    (:file "acos")
-   (:file "atan")))
+   (:file "atan")
+   (:file "sinh")))
