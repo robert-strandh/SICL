@@ -3,9 +3,9 @@
 (defgeneric acos (argument))
 
 (defun acos-general (argument)
-  (/ (log (+ argument
-             (sqrt (- (* argument argument) 1))))
-     (complex 0 1)))
+  (* (complex 0 -1)
+     (log (+ argument
+             (sqrt (- (* argument argument) 1))))))
 
 (defmethod acos ((argument single-float))
   (if (<= -1 argument 1)
