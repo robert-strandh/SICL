@@ -14,4 +14,5 @@
    (:file "acos")
    (:file "atan")
    (:file "sinh")
-   (:file "cosh")))
+   (:file "cosh")
+   (:file "tanh")))
