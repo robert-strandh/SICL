@@ -12,7 +12,7 @@
   (tanh (float argument)))
 
 (defmethod tanh ((argument number))
-  (/ (+ (sinh (* 2 realpart))
-        (* (complex 0 1) (sin (* 2 imagpart))))
+  (/ (complex (sinh (* 2 realpart))
+              (sin (* 2 imagpart)))
      (+ (cosh (* 2 realpart))
-        (* (cos (* 2 imagpart))))))
+        (cos (* 2 imagpart)))))

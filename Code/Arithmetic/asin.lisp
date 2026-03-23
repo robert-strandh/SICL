@@ -3,9 +3,9 @@
 (defgeneric asin (argument))
 
 (defun asin-general (argument)
-  (/ (log (+ (* (complex 0 1) argument)
-             (sqrt (1- (* argument argument)))))
-     (complex 0 1)))
+  (* (complex 0 -1)
+     (log (+ (* (complex 0 1) argument)
+             (sqrt (1- (* argument argument)))))))
 
 (defmethod asin ((argument single-float))
   (if (<= -1 argument 1)
