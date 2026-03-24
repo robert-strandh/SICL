@@ -14,4 +14,4 @@
 (defmethod atan ((argument number))
   (/ (log (/ (- (complex 0 1) argument)
              (+ (complex 0 1) argument)))
-     (complex 0 2))
+     (complex 0 2)))
