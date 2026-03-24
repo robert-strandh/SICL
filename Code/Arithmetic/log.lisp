@@ -3,8 +3,8 @@
 (defgeneric log (argument &optional base))
 
 (defmethod log ((argument single-float) &optional (base nil base-p))
-  (cond ((base-p
-          (/ (log argument) (log base))))
+  (cond (base-p
+         (/ (log argument) (log base)))
         ((zerop argument)
          (error 'floating-point-underflow))
         ((plusp argument)
@@ -13,8 +13,8 @@
          (complex (log (abs argument)) (phase argument)))))
 
 (defmethod log ((argument double-float) &optional (base nil base-p))
-  (cond ((base-p
-          (/ (log argument) (log base))))
+  (cond (base-p
+         (/ (log argument) (log base)))
         ((zerop argument)
          (error 'floating-point-underflow))
         ((plusp argument)
