@@ -14,6 +14,6 @@
 (defmethod exp ((argument number))
   (let* ((realpart (realpart argument))
          (imagpart (imagpart argument))
-         (magnitude (exp realpat)))
+         (magnitude (exp realpart)))
     (complex (* magnitude (cos imagpart))
              (* magnitude (sin imagpart)))))

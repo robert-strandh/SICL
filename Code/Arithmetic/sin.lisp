@@ -15,4 +15,4 @@
   (let ((realpart (realpart argument))
         (imagpart (imagpart argument)))
     (complex (* (sin realpart) (cosh imagpart))
-             (* (cos relpart) (sinh imagpart)))))
+             (* (cos realpart) (sinh imagpart)))))

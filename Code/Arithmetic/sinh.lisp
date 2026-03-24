@@ -12,7 +12,7 @@
   (sinh (float argument)))
 
 (defmethod sinh ((argument number))
-  (let ((relpart (realpart argument))
+  (let ((realpart (realpart argument))
         (imagpart (imagpart argument)))
     (complex (* (sinh realpart) (cos imagpart))
              (* (cosh realpart) (sin imagpart)))))

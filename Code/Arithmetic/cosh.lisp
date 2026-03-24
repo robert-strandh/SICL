@@ -12,7 +12,7 @@
   (cosh (float argument)))
 
 (defmethod cosh ((argument number))
-  (let ((relpart (realpart argument))
+  (let ((realpart (realpart argument))
         (imagpart (imagpart argument)))
     (complex (* (cosh realpart) (cos imagpart))
              (* (sinh realpart) (sin imagpart)))))
