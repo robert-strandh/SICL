@@ -1,5 +1,35 @@
 (cl:in-package #:sicl-new-boot-phase-6)
 
+(defvar *single-float-class*)
+
+(defvar *single-float-unique-number*)
+
+(defun make-single-float (sign rational)
+  (let* ((floatr (buoy-simulate:floatr32-from-rational rational))
+         (rack-contents
+           (list *single-float-unique-number* nil sign floatr))
+         (rack (make-array 4 :initial-contents rack-contents)))
+    (make-instance 'sb:header
+      :class *single-float-class*
+      :rack rack)))
+
+(defvar *double-float-class*)
+
+(defvar *double-float-unique-number*)
+
+(defun make-double-float (sign rational)
+  (let* ((floatr (buoy-simulate:floatr64-from-rational rational))
+         (rack-contents
+           (list *double-float-unique-number* nil sign floatr))
+         (rack (make-array 4 :initial-contents rack-contents)))
+    (make-instance 'sb:header
+      :class *double-float-class*
+      :rack rack)))
+
+(defun float-components (float)
+  (let* ((rack (sb:rack float)))
+    (values (aref rack 2) (aref rack 3))))
+
 (defun bits-to-single-float (bits)
   (let* ((sign-bit (ldb (byte 1 31) bits))
          (exponent-bits (ldb (byte 8 23) bits))
