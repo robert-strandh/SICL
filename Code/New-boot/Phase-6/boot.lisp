@@ -83,6 +83,16 @@
       (sb:ensure-asdf-system c4 w4 "cyclosis")
       (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
     (clo:make-variable c4 e4 @predicament:*condition-maker* 'make-condition)
+    (setf *single-float-class*
+          (clo:find-class c4 e4 'single-float))
+    (setf *double-float-class*
+          (clo:find-class c4 e4 'double-float))
+    (let ((unique-number-function
+            (clo:fdefinition c4 e4 @clostrophilia:unique-number)))
+      (setf *single-float-unique-number*
+            (funcall unique-number-function *single-float-class*))
+      (setf *double-float-unique-number*
+            (funcall unique-number-function *double-float-class*)))
     (setf (clo:fdefinition c4 e4 @sicl-arithmetic:bits-to-single-float)
           #'bits-to-single-float)
     (setf (clo:fdefinition c4 e4 @sicl-arithmetic:bits-to-double-float)
