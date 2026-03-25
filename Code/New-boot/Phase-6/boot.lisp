@@ -83,16 +83,9 @@
       (sb:ensure-asdf-system c4 w4 "cyclosis")
       (sb:ensure-asdf-system c4 w4 "cyclosis-intrinsic"))
     (clo:make-variable c4 e4 @predicament:*condition-maker* 'make-condition)
-    (sb:ensure-asdf-system c4 w4 "sicl-bootstrap-floats")
     (setf (clo:fdefinition c4 e4 @sicl-arithmetic:bits-to-single-float)
           #'bits-to-single-float)
     (setf (clo:fdefinition c4 e4 @sicl-arithmetic:bits-to-double-float)
           #'bits-to-double-float)
-    (setf *make-single-float*
-          (clo:fdefinition c4 e4 @sicl-arithmetic:make-single-float))
-    (setf *make-double-float*
-          (clo:fdefinition c4 e4 @sicl-arithmetic:make-double-float))
-    (setf *float-components*
-          (clo:fdefinition c4 e4 @sicl-arithmetic:float-components))
     (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-floating-point")
     (load-quaviver c4 w4 e4)))
