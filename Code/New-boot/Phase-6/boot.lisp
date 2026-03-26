@@ -19,12 +19,16 @@
           (clo:find-class c4 e4 'single-float))
     (setf *double-float-class*
           (clo:find-class c4 e4 'double-float))
+    (setf *complex-class*
+          (clo:find-class c4 e4 'complex))
     (let ((unique-number-function
             (clo:fdefinition c4 e4 @clostrophilia:unique-number)))
       (setf *single-float-unique-number*
             (funcall unique-number-function *single-float-class*))
       (setf *double-float-unique-number*
-            (funcall unique-number-function *double-float-class*)))
+            (funcall unique-number-function *double-float-class*))
+      (setf *complex-unique-number*
+            (funcall unique-number-function *complex-class*)))
     (sb:ensure-asdf-system c4 w4 "sicl-array-make-array-instance")
     (sb:ensure-asdf-system c4 w4 "regalia-common")
     ;; We don't want to deal with the real UPGRADED-COMPLEX-PART-TYPE
