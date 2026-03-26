@@ -30,6 +30,18 @@
   (let* ((rack (sb:rack float)))
     (values (aref rack 2) (aref rack 3))))
 
+(defvar *complex-class*)
+
+(defvar *complex-unique-number*)
+
+(defun make-complex (realpart imagpart)
+  (let* ((rack-contents
+           (list *complex-unique-number* nil realpart imagpart))
+         (rack (make-array 4 :initial-contents rack-contents)))
+    (make-instance 'sb:header
+      :class *complex-class*
+      :rack rack)))
+
 (defun bits-to-single-float (bits)
   (let* ((sign-bit (ldb (byte 1 31) bits))
          (exponent-bits (ldb (byte 8 23) bits))
