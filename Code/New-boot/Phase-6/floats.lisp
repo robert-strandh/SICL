@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-new-boot-phase-6)
 
+(eval-when (:compile-toplevel) (sb:enable-parcl-symbols client))
+
 (defvar *single-float-class*)
 
 (defvar *single-float-unique-number*)
@@ -41,6 +43,22 @@
     (make-instance 'sb:header
       :class *complex-class*
       :rack rack)))
+
+(defun find-arithmetic-classes (client e4)
+  (setf *single-float-class*
+        (clo:find-class client e4 'single-float))
+  (setf *double-float-class*
+        (clo:find-class client e4 'double-float))
+  (setf *complex-class*
+        (clo:find-class client e4 'complex))
+  (let ((unique-number-function
+          (clo:fdefinition client e4 @clostrophilia:unique-number)))
+    (setf *single-float-unique-number*
+          (funcall unique-number-function *single-float-class*))
+    (setf *double-float-unique-number*
+          (funcall unique-number-function *double-float-class*))
+    (setf *complex-unique-number*
+          (funcall unique-number-function *complex-class*))))
 
 (defun bits-to-single-float (bits)
   (let* ((sign-bit (ldb (byte 1 31) bits))
