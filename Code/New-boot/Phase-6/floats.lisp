@@ -60,6 +60,13 @@
     (setf *complex-unique-number*
           (funcall unique-number-function *complex-class*))))
 
+(defmethod eclector.reader:make-literal
+    ((client client) (kind eclector.reader::complex-kind)
+     &key
+       real-part
+       imaginary-part)
+  (make-complex real-part imaginary-part))
+
 (defun bits-to-single-float (bits)
   (let* ((sign-bit (ldb (byte 1 31) bits))
          (exponent-bits (ldb (byte 8 23) bits))
