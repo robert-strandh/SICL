@@ -32,10 +32,10 @@
     (/ (+ (* xnum yden) (* ynum xden)) (* xden yden))))
 
 (defmethod binary-add ((x single-float) (y integer))
-  (po:primop :single-float-add x (float y 1s0)))
+  (po:primop :single-float-add x (float y 1f0)))
 
 (defmethod binary-add ((x integer) (y single-float))
-  (po:primop :single-float-add (float x 1s0) y))
+  (po:primop :single-float-add (float x 1f0) y))
 
 (defmethod binary-add ((x single-float) (y single-float))
   (po:primop :single-float-add x y))

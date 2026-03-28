@@ -72,10 +72,10 @@
         (make-instance 'ratio :numerator num :denominator den))))
 
 (defmethod binary-divide ((dividend single-float) (divisor integer))
-  (po:primop :single-float-divide dividend (float divisor 1s0)))
+  (po:primop :single-float-divide dividend (float divisor 1f0)))
 
 (defmethod binary-divide ((dividend integer) (divisor single-float))
-  (po:primop :single-float-divide (float dividend 1s0) divisor))
+  (po:primop :single-float-divide (float dividend 1f0) divisor))
 
 (defmethod binary-divide ((dividend single-float) (divisor single-float))
   (po:primop :single-float-divide dividend divisor))

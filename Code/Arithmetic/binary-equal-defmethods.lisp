@@ -20,10 +20,10 @@
        (binary-equal (denominator x) (denominator y))))
 
 (defmethod binary-equal ((x single-float) (y integer))
-  (if (po:primop :single-float-equal x (float y 1s0)) t nil))
+  (if (po:primop :single-float-equal x (float y 1f0)) t nil))
 
 (defmethod binary-equal ((x integer) (y single-float))
-  (if (po:primop :single-float-equal (float x 1s0) y) t nil))
+  (if (po:primop :single-float-equal (float x 1f0) y) t nil))
 
 (defmethod binary-equal ((x single-float) (y single-float))
   (if (po:primop :single-float-equal x y) t nil))

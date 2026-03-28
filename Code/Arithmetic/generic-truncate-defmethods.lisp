@@ -8,7 +8,7 @@
       (po:primop :fixnum-divide number divisor)))
 
 (defmethod generic-truncate ((number single-float) (divisor integer))
-  (generic-truncate number (float divisor 1s0)))
+  (generic-truncate number (float divisor 1f0)))
 
 (defmethod generic-truncate ((number double-float) (divisor integer))
   (generic-truncate number (float divisor 1d0)))

@@ -50,7 +50,7 @@
   (binary-multiply multiplicand multiplier))
 
 (defmethod binary-multiply ((multiplier single-float) (multiplicand integer))
-  (binary-multiply multiplier (float multiplicand 1s0)))
+  (binary-multiply multiplier (float multiplicand 1f0)))
 
 (defmethod binary-multiply ((multiplier double-float) (multiplicand integer))
   (binary-multiply multiplier (float multiplicand 1d0)))

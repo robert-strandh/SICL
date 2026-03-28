@@ -14,10 +14,10 @@
                (* (numerator y) (denominator x))))
 
 (defmethod binary-less ((x single-float) (y integer))
-  (if (po:primop :single-float-less x (float y 1s0)) t nil))
+  (if (po:primop :single-float-less x (float y 1f0)) t nil))
 
 (defmethod binary-less ((x integer) (y single-float))
-  (if (po:primop :single-float-less (float x 1s0) y) t nil))
+  (if (po:primop :single-float-less (float x 1f0) y) t nil))
 
 (defmethod binary-less ((x single-float) (y single-float))
   (if (po:primop :single-float-less x y) t nil))
