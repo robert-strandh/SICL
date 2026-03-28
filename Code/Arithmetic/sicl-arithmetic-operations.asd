@@ -6,6 +6,7 @@
   :components
   ((:file "generic-float-defgeneric")
    (:file "generic-float-defmethods")
+   (:file "float-defun")
    (:file "binary-add-defgeneric")
    (:file "binary-add-defmethods")
    (:file "plus-defun")
