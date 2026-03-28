@@ -4,7 +4,8 @@
   :depends-on (#:sicl-arithmetic-class-hierarchy)
   :serial t
   :components
-  ((:file "binary-add-defgeneric")
+  ((:file "generic-float-defgeneric")
+   (:file "binary-add-defgeneric")
    (:file "binary-add-defmethods")
    (:file "plus-defun")
    (:file "binary-subtract-defgeneric")
