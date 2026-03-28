@@ -62,7 +62,7 @@
 (defmethod signum ((float single-float))
   (if (zerop float)
       float
-      (sicl-primop:primop :single-copysign 1s0 float)))
+      (sicl-primop:primop :single-copysign 1f0 float)))
 
 (defmethod signum ((float double-float))
   (if (zerop float)
