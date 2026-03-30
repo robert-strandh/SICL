@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "floating-point-constants")
+   (:file "generic-float-defmethods")
    (:file "floating-point")
    (:file "log")
    (:file "exp")
