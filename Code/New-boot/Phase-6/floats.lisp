@@ -15,6 +15,11 @@
       :class *single-float-class*
       :rack rack)))
 
+(defmethod sb:primop
+    ((operation (eql :convert-fixnum-to-single-float)) &rest arguments)
+  (let ((fixnum (car arguments)))
+    (make-single-float (if (minusp fixnum) -1 1) (abs fixnum))))
+
 (defvar *double-float-class*)
 
 (defvar *double-float-unique-number*)
@@ -27,6 +32,11 @@
     (make-instance 'sb:header
       :class *double-float-class*
       :rack rack)))
+
+(defmethod sb:primop
+    ((operation (eql :convert-fixnum-to-double-float)) &rest arguments)
+  (let ((fixnum (car arguments)))
+    (make-double-float (if (minusp fixnum) -1 1) (abs fixnum))))
 
 (defun float-components (float)
   (let* ((rack (sb:rack float)))
