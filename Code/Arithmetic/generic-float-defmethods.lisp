@@ -1,10 +1,10 @@
 (cl:in-package #:sicl-arithmetic)
 
-(defparameter *most-positive-single-float-as-integer*
-  (* (1- (ash 1 24)) (ash 1 (- 127 23))))
+;; (defparameter *most-positive-single-float-as-integer*
+;;   (* (1- (ash 1 24)) (ash 1 (- 127 23))))
 
-(defparameter *most-positive-double-float-as-integer*
-  (* (1- (ash 1 53)) (ash 1 (- 1023 52))))
+;; (defparameter *most-positive-double-float-as-integer*
+;;   (* (1- (ash 1 53)) (ash 1 (- 1023 52))))
 
 (defmethod generic-float ((number float) (prototype null))
   number)
@@ -19,7 +19,8 @@
   (sicl-primop:primop :convert-fixnum-to-double-float number))
 
 (defun bignum-to-single-float (bignum)
-  (if (> bignum *most-positive-single-float-as-integer*)
+  (if (> bignum (* (1- (ash 1 24)) (ash 1 (- 127 23))))
+      ;; (> bignum *most-positive-single-float-as-integer*)
       (error 'floating-point-overflow
              :operands (list bignum)
              :operation 'float)
@@ -32,7 +33,8 @@
   (bignum-to-single-float number))
 
 (defun bignum-to-double-float (bignum)
-  (if (> bignum *most-positive-double-float-as-integer*)
+  (if (> bignum (* (1- (ash 1 53)) (ash 1 (- 1023 52))))
+      ;; (> bignum *most-positive-double-float-as-integer*)
       (error 'floating-point-overflow
              :operands (list bignum)
              :operation 'float)
