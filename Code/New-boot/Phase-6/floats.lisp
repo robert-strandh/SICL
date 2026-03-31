@@ -104,8 +104,6 @@
              (floatr (buoy-simulate:floatr64-from-rational quotient)))
         (make-double-float (* sign1 sign2) floatr)))))
 
-(quotient (buoy-simulate:floatr64-from-rational ))
-
 (defvar *complex-class*)
 
 (defvar *complex-unique-number*)
