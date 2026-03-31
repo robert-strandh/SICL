@@ -85,6 +85,26 @@
       (make-double-float sign floatr))))
 
 (defmethod sb:primop
+    ((operation (eql :single-float-multiply)) &rest arguments)
+  (multiple-value-bind (sign1 floatr1)
+      (float-components (first arguments))
+    (multiple-value-bind (sign2 floatr2)
+        (float-components (second arguments))
+      (let* ((quotient (* floatr1 floatr2))
+             (floatr (buoy-simulate:floatr32-from-rational quotient)))
+        (make-double-float (* sign1 sign2) floatr)))))
+
+(defmethod sb:primop
+    ((operation (eql :double-float-multiply)) &rest arguments)
+  (multiple-value-bind (sign1 floatr1)
+      (float-components (first arguments))
+    (multiple-value-bind (sign2 floatr2)
+        (float-components (second arguments))
+      (let* ((quotient (* floatr1 floatr2))
+             (floatr (buoy-simulate:floatr64-from-rational quotient)))
+        (make-double-float (* sign1 sign2) floatr)))))
+
+(defmethod sb:primop
     ((operation (eql :single-float-divide)) &rest arguments)
   (multiple-value-bind (sign1 floatr1)
       (float-components (first arguments))
