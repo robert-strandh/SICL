@@ -84,6 +84,18 @@
            (floatr (buoy-simulate:floatr64-from-rational abs-value)))
       (make-double-float sign floatr))))
 
+(defmethod sb:primop
+    ((operation (eql :double-float-divide)) &rest arguments)
+  (multiple-value-bind (sign1 floatr1)
+      (float-components (first arguments))
+    (multiple-value-bind (sign2 floatr2)
+        (float-components (second arguments))
+      (let* ((quotient (/ floatr1 floatr2))
+             (floatr (buoy-simulate:floatr64-from-rational quotient)))
+        (make-double-float (* sign1 sign2) floatr)))))
+
+(quotient (buoy-simulate:floatr64-from-rational ))
+
 (defvar *complex-class*)
 
 (defvar *complex-unique-number*)
