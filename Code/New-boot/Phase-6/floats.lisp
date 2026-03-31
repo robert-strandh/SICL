@@ -63,6 +63,17 @@
           (and (= sign2 1) (> floatr2 floatr1))))))
 
 (defmethod sb:primop
+    ((operation (eql :single-float-ln)) &rest arguments)
+  (multiple-value-bind (sign floatr)
+      (float-components (first arguments))
+    (declare (ignore sign)) ; We know the float is positive
+    (let* ((rational-value (buoy-simulate:rational-ln floatr))
+           (sign (if (minusp rational-value) -1 1))
+           (abs-value (abs rational-value))
+           (floatr (buoy-simulate:floatr32-from-rational abs-value)))
+      (make-double-float sign floatr))))
+
+(defmethod sb:primop
     ((operation (eql :double-float-ln)) &rest arguments)
   (multiple-value-bind (sign floatr)
       (float-components (first arguments))
