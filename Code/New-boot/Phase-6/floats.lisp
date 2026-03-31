@@ -43,6 +43,16 @@
     (values (aref rack 2) (aref rack 3))))
 
 (defmethod sb:primop
+    ((operation (eql :single-float-less)) &rest arguments)
+  (multiple-value-bind (sign1 floatr1)
+      (float-components (first arguments))
+    (multiple-value-bind (sign2 floatr2)
+        (float-components (second arguments))
+      (if (= sign1 -1)
+          (or (= sign2 1) (< floatr2 floatr1))
+          (and (= sign2 1) (> floatr2 floatr1))))))
+
+(defmethod sb:primop
     ((operation (eql :double-float-less)) &rest arguments)
   (multiple-value-bind (sign1 floatr1)
       (float-components (first arguments))
