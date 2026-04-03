@@ -193,10 +193,11 @@
           (funcall unique-number-function *complex-class*))))
 
 (defmethod eclector.reader:make-literal
-    ((client client) (kind eclector.reader::complex-kind)
+    ((client client) input-stream (kind eclector.reader::complex-kind)
      &key
        real-part
        imaginary-part)
+  (declare (ignore input-stream))
   (make-complex real-part imaginary-part))
 
 (defun bits-to-single-float (bits)
