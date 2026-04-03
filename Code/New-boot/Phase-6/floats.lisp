@@ -180,7 +180,6 @@
 
 (defvar *ratio-unique-number*)
 
-
 (defun make-ratio (numerator denominator)
   (let* ((rack-contents
            (list *ratio-unique-number* nil numerator denominator))
@@ -216,6 +215,14 @@
        imaginary-part)
   (declare (ignore input-stream))
   (make-complex real-part imaginary-part))
+
+(defmethod eclector.reader:make-literal
+    ((client client) input-stream (kind eclector.reader::ratio-kind)
+     &key
+       numerator
+       denominator)
+  (declare (ignore input-stream))
+  (make-ratio numerator denominator))
 
 (defun bits-to-single-float (bits)
   (let* ((sign-bit (ldb (byte 1 31) bits))
