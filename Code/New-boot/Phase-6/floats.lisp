@@ -205,7 +205,7 @@
           (funcall unique-number-function *double-float-class*))
     (setf *complex-unique-number*
           (funcall unique-number-function *complex-class*))
-    (setf *complex-unique-number*
+    (setf *ratio-unique-number*
           (funcall unique-number-function *ratio-class*))))
 
 (defmethod eclector.reader:make-literal
