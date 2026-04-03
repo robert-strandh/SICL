@@ -61,3 +61,12 @@
              :operands (list number)
              :operation 'float)
       (sicl-primop:primop :convert-double-float-to-single-float)))
+
+(defmethod generic-float ((number ratio) (prototype null))
+  (sicl-primop:primop :convert-ratio-to-single-float))
+
+(defmethod generic-float ((number ratio) (prototype single-float))
+  (sicl-primop:primop :convert-ratio-to-single-float))
+
+(defmethod generic-float ((number ratio) (prototype double-float))
+  (sicl-primop:primop :convert-ratio-to-double-float))
