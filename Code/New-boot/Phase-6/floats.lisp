@@ -300,3 +300,24 @@
         (float-components (second arguments))
       (and (= sign1 sign2) (= floatr1 floatr2)))))
   
+(defun ratio-components (float)
+  (let* ((rack (sb:rack float)))
+    (values (aref rack 2) (aref rack 3))))
+
+(defmethod sicl-new-boot:primop
+    ((operation (eql :convert-ratio-to-single-float)) &rest arguments)
+  (multiple-value-bind (numerator denominator)
+      (ratio-components (first arguments))
+    (let ((sign (if (minusp numerator) -1 1))
+          (floatr (buoy-simulate:floatr32-from-rational
+                   (/ (abs numerator) denominator))))
+      (make-single-float sign floatr))))
+
+ (defmethod sicl-new-boot:primop
+    ((operation (eql :convert-ratio-to-double-float)) &rest arguments)
+  (multiple-value-bind (numerator denominator)
+      (ratio-components (first arguments))
+    (let ((sign (if (minusp numerator) -1 1))
+          (floatr (buoy-simulate:floatr64-from-rational
+                   (/ (abs numerator) denominator))))
+      (make-double-float sign floatr))))
