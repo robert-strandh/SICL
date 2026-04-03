@@ -176,6 +176,10 @@
       :class *complex-class*
       :rack rack)))
 
+(defvar *ratio-class*)
+
+(defvar *ratio-unique-number*)
+
 (defun find-arithmetic-classes (client e4)
   (setf *single-float-class*
         (clo:find-class client e4 'single-float))
@@ -183,6 +187,8 @@
         (clo:find-class client e4 'double-float))
   (setf *complex-class*
         (clo:find-class client e4 'complex))
+  (setf *ratio-class*
+        (clo:find-class client e4 'ratio))
   (let ((unique-number-function
           (clo:fdefinition client e4 @clostrophilia:unique-number)))
     (setf *single-float-unique-number*
@@ -190,7 +196,9 @@
     (setf *double-float-unique-number*
           (funcall unique-number-function *double-float-class*))
     (setf *complex-unique-number*
-          (funcall unique-number-function *complex-class*))))
+          (funcall unique-number-function *complex-class*))
+    (setf *complex-unique-number*
+          (funcall unique-number-function *ratio-class*))))
 
 (defmethod eclector.reader:make-literal
     ((client client) input-stream (kind eclector.reader::complex-kind)
