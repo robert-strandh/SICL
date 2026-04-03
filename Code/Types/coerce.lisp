@@ -90,7 +90,7 @@
     ((object real) (result-ctype ctype:range))
   (let ((result-type (ctype:unparse result-ctype)))
     (case result-type
-      (single-float (float object 1s0))
+      (single-float (float object 1f0))
       (double-float (float object 1d0))
       (otherwise (call-next-method)))))
 
