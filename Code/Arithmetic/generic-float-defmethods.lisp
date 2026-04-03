@@ -63,10 +63,10 @@
       (sicl-primop:primop :convert-double-float-to-single-float)))
 
 (defmethod generic-float ((number ratio) (prototype null))
-  (sicl-primop:primop :convert-ratio-to-single-float ratio))
+  (sicl-primop:primop :convert-ratio-to-single-float number))
 
 (defmethod generic-float ((number ratio) (prototype single-float))
-  (sicl-primop:primop :convert-ratio-to-single-float ratio))
+  (sicl-primop:primop :convert-ratio-to-single-float number))
 
 (defmethod generic-float ((number ratio) (prototype double-float))
-  (sicl-primop:primop :convert-ratio-to-double-float ratio))
+  (sicl-primop:primop :convert-ratio-to-double-float number))
