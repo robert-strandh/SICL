@@ -180,6 +180,15 @@
 
 (defvar *ratio-unique-number*)
 
+
+(defun make-ratio (numerator denominator)
+  (let* ((rack-contents
+           (list *ratio-unique-number* nil numerator denominator))
+         (rack (make-array 4 :initial-contents rack-contents)))
+    (make-instance 'sb:header
+      :class *ratio-class*
+      :rack rack)))
+
 (defun find-arithmetic-classes (client e4)
   (setf *single-float-class*
         (clo:find-class client e4 'single-float))
