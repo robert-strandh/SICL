@@ -14,13 +14,25 @@
                       (* (numerator y) (denominator x))))
 
 (defmethod binary-not-greater ((x rational) (y single-float))
-  (binary-not-greater (float x 1f0) y))
+  (po:primop :single-float-not-greater (float x 1f0) y))
 
 (defmethod binary-not-greater ((x rational) (y double-float))
-  (binary-not-greater (float x 1d0) y))
+  (po:primop :double-float-not-greater (float x 1d0) y))
 
 (defmethod binary-not-greater ((x single-float) (y rational))
-  (binary-not-greater x (float y 1f0)))
+  (po:primop :single-float-not-greater x (float y 1f0)))
 
 (defmethod binary-not-greater ((x double-float) (y rational))
-  (binary-not-greater x (float y 1d0)))
+  (po:primop :double-float-not-greater x (float y 1d0)))
+
+(defmethod binary-not-greater ((x single-float) (y single-float))
+  (po:primop :single-float-not-greater x y))
+
+(defmethod binary-not-greater ((x double-float) (y double-float))
+  (po:primop :double-float-not-greater x y))
+
+(defmethod binary-not-greater ((x single-float) (y double-float))
+  (po:primop :double-float-not-greater (float x 1d0) y))
+
+(defmethod binary-not-greater ((x double-float) (y single-float))
+  (po:primop :double-float-not-greater x (float y 1d0)))
