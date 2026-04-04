@@ -299,7 +299,27 @@
     (multiple-value-bind (sign2 floatr2)
         (float-components (second arguments))
       (and (= sign1 sign2) (= floatr1 floatr2)))))
-  
+
+(defmethod sicl-new-boot:primop
+    ((operation (eql :single-float-not-greater))  &rest arguments)
+  (multiple-value-bind (sign1 floatr1)
+      (float-components (first arguments))
+    (multiple-value-bind (sign2 floatr2)
+        (float-components (second arguments))
+      (if (minusp sign1)
+          (or (plusp sign2) (<= floatr1 floatr2))
+          (and (plusp sign2) (<= floatr1 floatr2))))))
+
+(defmethod sicl-new-boot:primop
+    ((operation (eql :double-float-not-greater))  &rest arguments)
+  (multiple-value-bind (sign1 floatr1)
+      (float-components (first arguments))
+    (multiple-value-bind (sign2 floatr2)
+        (float-components (second arguments))
+      (if (minusp sign1)
+          (or (plusp sign2) (<= floatr1 floatr2))
+          (and (plusp sign2) (<= floatr1 floatr2))))))
+
 (defun ratio-components (float)
   (let* ((rack (sb:rack float)))
     (values (aref rack 2) (aref rack 3))))
@@ -313,7 +333,7 @@
                    (/ (abs numerator) denominator))))
       (make-single-float sign floatr))))
 
- (defmethod sicl-new-boot:primop
+(defmethod sicl-new-boot:primop
     ((operation (eql :convert-ratio-to-double-float)) &rest arguments)
   (multiple-value-bind (numerator denominator)
       (ratio-components (first arguments))
