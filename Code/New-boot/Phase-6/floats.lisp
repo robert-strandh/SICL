@@ -272,8 +272,7 @@
       (float-components (first arguments))
     (multiple-value-bind (significand exponent)
         (buoy-simulate:integer-decode-floatr floatr 23 8)
-      (let ((sign-value (make-single-float sign 1)))
-        (values significand exponent sign-value)))))
+      (values significand exponent sign)))))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :integer-decode-double-float)) &rest arguments)
@@ -281,8 +280,7 @@
       (float-components (first arguments))
     (multiple-value-bind (significand exponent)
         (buoy-simulate:integer-decode-floatr floatr 52 11)
-      (let ((sign-value (make-double-float sign 1)))
-        (values significand exponent sign-value)))))
+      (values significand exponent sign))))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :single-float-equal)) &rest arguments)
