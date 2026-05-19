@@ -33,6 +33,7 @@
   (load-source-file "Stream/character-to-binary-output-stream.lisp" e5)
   (load-source-file "Stream/binary-to-character-input-stream.lisp" e5)
   (load-source-file "Stream/standard-stream-instances.lisp" e5)
+  (ensure-asdf-system '#:trivial-stream-column e5)
   (ensure-asdf-system '#:incless e5)
   (ensure-asdf-system '#:incless-implementation e5)
   (ensure-asdf-system '#:incless-intrinsic e5)

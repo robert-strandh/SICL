@@ -78,7 +78,7 @@
         (setf (env:fdefinition client e5 'schar) nil)
         (load-source-file "String/char-schar.lisp" e5)
         (ensure-asdf-system '#:invistra e5)
-        (ensure-asdf-system '#:invistra/intrinsic e5)
+        (ensure-asdf-system '#:invistra-intrinsic e5)
         ;; Disable the compiler macro for FORMAT.  It introduced
         ;; compile-time dependencies that are hard to manage at
         ;; bootstrapping time.
