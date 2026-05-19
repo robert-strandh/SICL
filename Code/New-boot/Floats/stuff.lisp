@@ -1,17 +1,16 @@
 (cl:in-package #:sicl-arithmetic)
 
 (defclass simulated-float ()
-  ((%sign :initarg :sign :reader sign)
-   (%floatr :initarg :floatr :reader floatr)))
+  ((%pfloat :initarg :pfloat :reader pfloat)))
 
 (setf (find-class 'single-float) nil)
 
 (defclass single-float (simulated-float)
   ())
 
-(defun make-single-float (sign floatr)
+(defun make-single-float (pfloat)
   (make-instance 'single-float
-    :sign sign :floatr floatr))
+    :pfloat pfloat))
 
 (defmethod binary-equal ((x single-float) (y single-float))
   (sicl-primop:primop :single-float-equal x y))
@@ -21,15 +20,12 @@
 (defclass double-float (simulated-float)
   ())
 
-(defun make-double-float (sign floatr)
+(defun make-double-float (pfloat)
   (make-instance 'double-float
-    :sign sign :floatr floatr))
+    :pfloat pfloat))
 
 (defmethod binary-equal ((x double-float) (y double-float))
   (sicl-primop:primop :double-float-equal x y))
-
-(defun float-components (float)
-  (values (sign float) (floatr float)))
 
 (defun coerce (value type)
   (assert (zerop value))

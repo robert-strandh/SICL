@@ -6,11 +6,11 @@
 
 (defvar *single-float-unique-number*)
 
-(defun make-single-float (sign rational)
-  (let* ((floatr (buoy-simulate:floatr32-from-rational rational))
+(defun make-single-float (pfloat)
+  (let* ((pfloat32 (pf:restrict-to-ieee-single pfloat))
          (rack-contents
-           (list *single-float-unique-number* nil sign floatr))
-         (rack (make-array 4 :initial-contents rack-contents)))
+           (list *single-float-unique-number* nil pfloat32))
+         (rack (make-array 3 :initial-contents rack-contents)))
     (make-instance 'sb:header
       :class *single-float-class*
       :rack rack)))
@@ -18,17 +18,17 @@
 (defmethod sb:primop
     ((operation (eql :convert-fixnum-to-single-float)) &rest arguments)
   (let ((fixnum (car arguments)))
-    (make-single-float (if (minusp fixnum) -1 1) (abs fixnum))))
+    (make-single-float (pf:pfloat-from-rational fixnum))))
 
 (defvar *double-float-class*)
 
 (defvar *double-float-unique-number*)
 
-(defun make-double-float (sign rational)
-  (let* ((floatr (buoy-simulate:floatr64-from-rational rational))
+(defun make-double-float (rational)
+  (let* ((pfloat64 (pf:restrict-to-ieee-double pfloat))
          (rack-contents
-           (list *double-float-unique-number* nil sign floatr))
-         (rack (make-array 4 :initial-contents rack-contents)))
+           (list *single-float-unique-number* nil pfloat64))
+         (rack (make-array 3 :initial-contents rack-contents)))
     (make-instance 'sb:header
       :class *double-float-class*
       :rack rack)))
@@ -36,133 +36,83 @@
 (defmethod sb:primop
     ((operation (eql :convert-fixnum-to-double-float)) &rest arguments)
   (let ((fixnum (car arguments)))
-    (make-double-float (if (minusp fixnum) -1 1) (abs fixnum))))
+    (make-double-float (pf:pfloat-from-rational fixnum))))
 
-(defun float-components (float)
+(defun float-pfloat (float)
   (let* ((rack (sb:rack float)))
-    (values (aref rack 2) (aref rack 3))))
+    (aref rack 2)))
 
 (defmethod sb:primop
     ((operation (eql :single-float-less)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (if (= sign1 -1)
-          (or (= sign2 1) (< floatr2 floatr1))
-          (and (= sign2 1) (> floatr2 floatr1))))))
+  (let* ((pfloat1 (float-pfloat (first arguments)))
+         (pfloat2 (float-pfloat (second arguments))))
+    (pf:< pfloat1 pfloat2)))
 
 (defmethod sb:primop
     ((operation (eql :double-float-less)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (if (= sign1 -1)
-          (or (= sign2 1) (< floatr2 floatr1))
-          (and (= sign2 1) (> floatr2 floatr1))))))
+  (let* ((pfloat1 (float-pfloat (first arguments)))
+         (pfloat2 (float-pfloat (second arguments))))
+    (pf:< pfloat1 pfloat2)))
 
 (defmethod sb:primop
     ((operation (eql :single-float-ln)) &rest arguments)
-  (multiple-value-bind (sign floatr)
-      (float-components (first arguments))
-    (declare (ignore sign)) ; We know the float is positive
-    (let* ((rational-value (buoy-simulate:rational-ln floatr))
-           (sign (if (minusp rational-value) -1 1))
-           (abs-value (abs rational-value))
-           (floatr (buoy-simulate:floatr32-from-rational abs-value)))
-      (make-double-float sign floatr))))
+  (let* ((pfloat (float-pfloat (first arguments)))
+         (pfloat-value (sim:pfloat-ln pfloat)))
+    (make-single-float pfloat-value)))
 
 (defmethod sb:primop
     ((operation (eql :double-float-ln)) &rest arguments)
-  (multiple-value-bind (sign floatr)
-      (float-components (first arguments))
-    (declare (ignore sign)) ; We know the float is positive
-    (let* ((rational-value (buoy-simulate:rational-ln floatr))
-           (sign (if (minusp rational-value) -1 1))
-           (abs-value (abs rational-value))
-           (floatr (buoy-simulate:floatr64-from-rational abs-value)))
-      (make-double-float sign floatr))))
+  (let* ((pfloat (float-pfloat (first arguments)))
+         (pfloat-value (sim:pfloat-ln pfloat)))
+    (make-double-float pfloat-value)))
 
 (defmethod sb:primop
     ((operation (eql :single-float-add)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (let* ((quotient (+ floatr1 floatr2))
-             (floatr (buoy-simulate:floatr32-from-rational quotient)))
-        (make-double-float (* sign1 sign2) floatr)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (make-single-float (pf:+ pfloat1 pfloat2))))
 
 (defmethod sb:primop
     ((operation (eql :double-float-add)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (let* ((quotient (+ floatr1 floatr2))
-             (floatr (buoy-simulate:floatr64-from-rational quotient)))
-        (make-double-float (* sign1 sign2) floatr)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (make-double-float (pf:+ pfloat1 pfloat2))))
 
 (defmethod sb:primop
     ((operation (eql :single-float-subtract)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (let* ((quotient (- floatr1 floatr2))
-             (floatr (buoy-simulate:floatr32-from-rational quotient)))
-        (make-double-float (* sign1 sign2) floatr)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (make-single-float (pf:- pfloat1 pfloat2))))
 
 (defmethod sb:primop
     ((operation (eql :double-float-subtract)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (let* ((quotient (- floatr1 floatr2))
-             (floatr (buoy-simulate:floatr64-from-rational quotient)))
-        (make-double-float (* sign1 sign2) floatr)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (make-double-float (pf:- pfloat1 pfloat2))))
 
 (defmethod sb:primop
     ((operation (eql :single-float-multiply)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (let* ((quotient (* floatr1 floatr2))
-             (floatr (buoy-simulate:floatr32-from-rational quotient)))
-        (make-double-float (* sign1 sign2) floatr)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (make-single-float (pf:* pfloat1 pfloat2))))
 
 (defmethod sb:primop
     ((operation (eql :double-float-multiply)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (let* ((quotient (* floatr1 floatr2))
-             (floatr (buoy-simulate:floatr64-from-rational quotient)))
-        (make-double-float (* sign1 sign2) floatr)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (make-double-float (pf:* pfloat1 pfloat2))))
 
 (defmethod sb:primop
     ((operation (eql :single-float-divide)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (let* ((quotient (/ floatr1 floatr2))
-             (floatr (buoy-simulate:floatr32-from-rational quotient)))
-        (make-double-float (* sign1 sign2) floatr)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (make-single-float (pf:/ pfloat1 pfloat2))))
 
 (defmethod sb:primop
     ((operation (eql :double-float-divide)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (let* ((quotient (/ floatr1 floatr2))
-             (floatr (buoy-simulate:floatr64-from-rational quotient)))
-        (make-double-float (* sign1 sign2) floatr)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (make-double-float (pf:/ pfloat1 pfloat2))))
 
 (defvar *complex-class*)
 
@@ -268,55 +218,39 @@
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :integer-decode-single-float)) &rest arguments)
-  (multiple-value-bind (sign floatr)
-      (float-components (first arguments))
-    (multiple-value-bind (significand exponent)
-        (buoy-simulate:integer-decode-floatr floatr 23 8)
-      (values significand exponent sign))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (values significand exponent sign)))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :integer-decode-double-float)) &rest arguments)
-  (multiple-value-bind (sign floatr)
-      (float-components (first arguments))
-    (multiple-value-bind (significand exponent)
-        (buoy-simulate:integer-decode-floatr floatr 52 11)
-      (values significand exponent sign))))
+  (let* ((pfloat1 (float-pfloat (first arguments)))
+         (pfloat2 (float-pfloat (second arguments))))
+      (values significand exponent sign)))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :single-float-equal)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (and (= sign1 sign2) (= floatr1 floatr2)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (pf:= pfloat1 pfloat2)))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :double-float-equal)) &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (and (= sign1 sign2) (= floatr1 floatr2)))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (pf:= pfloat1 pfloat2)))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :single-float-not-greater))  &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (if (minusp sign1)
-          (or (plusp sign2) (<= floatr1 floatr2))
-          (and (plusp sign2) (<= floatr1 floatr2))))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (not (pf:< pfloat2 pfloat1))))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :double-float-not-greater))  &rest arguments)
-  (multiple-value-bind (sign1 floatr1)
-      (float-components (first arguments))
-    (multiple-value-bind (sign2 floatr2)
-        (float-components (second arguments))
-      (if (minusp sign1)
-          (or (plusp sign2) (<= floatr1 floatr2))
-          (and (plusp sign2) (<= floatr1 floatr2))))))
+  (let ((pfloat1 (float-pfloat (first arguments)))
+        (pfloat2 (float-pfloat (second arguments))))
+    (not (pf:< pfloat2 pfloat1))))
 
 (defun ratio-components (float)
   (let* ((rack (sb:rack float)))
@@ -326,16 +260,10 @@
     ((operation (eql :convert-ratio-to-single-float)) &rest arguments)
   (multiple-value-bind (numerator denominator)
       (ratio-components (first arguments))
-    (let ((sign (if (minusp numerator) -1 1))
-          (floatr (buoy-simulate:floatr32-from-rational
-                   (/ (abs numerator) denominator))))
-      (make-single-float sign floatr))))
+    (make-single-float (pf:pfloat-from-rational (/ numerator denominator)))))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :convert-ratio-to-double-float)) &rest arguments)
   (multiple-value-bind (numerator denominator)
       (ratio-components (first arguments))
-    (let ((sign (if (minusp numerator) -1 1))
-          (floatr (buoy-simulate:floatr64-from-rational
-                   (/ (abs numerator) denominator))))
-      (make-double-float sign floatr))))
+    (make-double-float (pf:pfloat-from-rational (/ numerator denominator)))))
