@@ -24,7 +24,7 @@
 
 (defvar *double-float-unique-number*)
 
-(defun make-double-float (rational)
+(defun make-double-float (pfloat)
   (let* ((pfloat64 (pf:restrict-to-ieee-double pfloat))
          (rack-contents
            (list *single-float-unique-number* nil pfloat64))
@@ -218,15 +218,17 @@
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :integer-decode-single-float)) &rest arguments)
-  (let ((pfloat1 (float-pfloat (first arguments)))
-        (pfloat2 (float-pfloat (second arguments))))
-    (values significand exponent sign)))
+  (let* ((significand (float-pfloat (first arguments)))
+         (exponent (float-pfloat (second arguments)))
+         (sign (if (minusp significand) -1 1)))
+      (values (abs significand) exponent sign)))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :integer-decode-double-float)) &rest arguments)
-  (let* ((pfloat1 (float-pfloat (first arguments)))
-         (pfloat2 (float-pfloat (second arguments))))
-      (values significand exponent sign)))
+  (let* ((significand (float-pfloat (first arguments)))
+         (exponent (float-pfloat (second arguments)))
+         (sign (if (minusp significand) -1 1)))
+      (values (abs significand) exponent sign)))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :single-float-equal)) &rest arguments)
