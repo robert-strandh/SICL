@@ -8,6 +8,8 @@
    (#:cb #:common-boot)
    (#:clo #:clostrum)
    (#:cmd #:common-macro-definitions)
-   (#:abp #:architecture.builder-protocol))
+   (#:abp #:architecture.builder-protocol)
+   (#:sim #:buoy-simulate)
+   (#:pf #:buoy-pfloat))
   (:export
    #:boot))
