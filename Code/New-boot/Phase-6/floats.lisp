@@ -216,7 +216,7 @@
          (rational (* (if (zerop sign-bit) 1 -1)
                       (/ numerator denominator)))
          (pfloat (pf:pfloat-from-rational rational)))
-    (make-single-float pfloat)))
+    (make-double-float pfloat)))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :integer-decode-single-float)) &rest arguments)
