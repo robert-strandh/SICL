@@ -190,10 +190,11 @@
          (denominator
            (if (>= exponent-bits (+ 127 23))
                1
-               (ash 1 (- (+ 127 23) exponent-bits)))))
-    (make-single-float
-     (if (zerop sign-bit) 1 -1)
-     (/ numerator denominator))))
+               (ash 1 (- (+ 127 23) exponent-bits))))
+         (rational (* (if (zerop sign-bit) 1 -1)
+                      (/ numerator denominator)))
+         (pfloat (pf:pfloat-from-rational rational)))
+    (make-single-float pfloat)))
 
 (defun bits-to-double-float (bits)
   (let* ((sign-bit (ldb (byte 1 63) bits))
@@ -211,10 +212,11 @@
          (denominator
            (if (>= exponent-bits (+ 1023 52))
                1
-               (ash 1 (- (+ 1023 52) exponent-bits)))))
-    (make-double-float
-     (if (zerop sign-bit) 1 -1)
-     (/ numerator denominator))))
+               (ash 1 (- (+ 1023 52) exponent-bits))))
+         (rational (* (if (zerop sign-bit) 1 -1)
+                      (/ numerator denominator)))
+         (pfloat (pf:pfloat-from-rational rational)))
+    (make-single-float pfloat)))
 
 (defmethod sicl-new-boot:primop
     ((operation (eql :integer-decode-single-float)) &rest arguments)
