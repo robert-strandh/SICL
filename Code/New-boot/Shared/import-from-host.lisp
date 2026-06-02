@@ -6,7 +6,7 @@
     1+ 1- = /= < > <= >= max min evenp oddp
     zerop plusp minusp expt
     numberp integerp realp rationalp floatp random
-    lognot logand logior logxor lognand lognor
+    lognot logand logior logxor ; lognand lognor
     logcount integer-length ash
     sqrt ldb byte abs
     ;; Conses
@@ -46,7 +46,7 @@
     values values-list not apply eq eql equal identity
     functionp every notany some constantly
     ;; Printer
-    format finish-output write-to-string
+    format
     ;; Environment
     documentation
     ;; Hash tables
