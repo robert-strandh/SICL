@@ -10,6 +10,7 @@
    (:file "binary-add-defmethods")
    (:file "plus-defun")
    (:file "one-plus-defun")
+   (:file "one-minus-defun")
    (:file "binary-subtract-defgeneric")
    (:file "binary-subtract-defmethods")
    (:file "minus-defun")
