@@ -6,7 +6,7 @@
     1+ 1- = /= < > <= >= max min evenp oddp
     zerop plusp minusp expt
     numberp integerp realp rationalp floatp random
-    lognot logand logior logxor ; lognand lognor
+    lognot logand logior logxor
     logcount integer-length ash
     sqrt ldb byte abs
     ;; Conses
