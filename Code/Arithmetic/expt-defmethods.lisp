@@ -25,4 +25,4 @@
                    (cond ((= num 1) (expt den npower))
                          ((= num -1) (expt (- den) npower))
                          (t (%ratio (expt den npower) (expt num npower)))))
-                 (%ratio (expt num npower) (expt den npower))))))))
+                 (%ratio (expt num power) (expt den power))))))))
