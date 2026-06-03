@@ -74,5 +74,7 @@
    (:file "evenp-defun")
    (:file "oddp-defun")
    (:file "convert-fixnum-to-bignum-defun")
+   (:file "expt-defgeneric")
+   (:file "expt-defmethods")
    ;; (:file "floatp-defgeneric")
    ))
