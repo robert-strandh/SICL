@@ -2,7 +2,7 @@
 
 (defun char-code (char)
   (if (characterp char)
-      (cleavir-primop:char-code char)
+      (sicl-primop:primop :char-code char)
       (error 'type-error
              :datum char
              :expected-type 'character)))
