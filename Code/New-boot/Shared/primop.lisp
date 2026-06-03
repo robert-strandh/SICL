@@ -78,3 +78,25 @@
 (defmethod primop ((operation (eql :setf-t-aref)) &rest arguments)
   (destructuring-bind (value array index) arguments
     (setf (standard-instance-access array (+ index 3)) value)))
+
+(defparameter *char-codes*
+  (let ((table (make-hash-table)))
+    (loop for char across " !\"#$%&'(_*+,-./"
+          for i from 32
+          do (setf (gethash char table) i))
+    (loop for char across "0123456789:;<=>?"
+          for i from 48
+          do (setf (gethash char table) i))
+    (loop for char across "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]_"
+          for i from 64
+          do (setf (gethash char table) i))
+    (loop for char across "`abcdefghijklmnopqrstuvwxyz{|}~"
+          for i from 96
+          do (setf (gethash char table) i))
+    (setf (gethash #\Newline table) 10)
+    table))
+
+(defmethod primop ((operation (eql :char-code)) &rest arguments)
+  (let ((result (gethash (first arguments) *char-codes*)))
+    (check-type result integer)
+    result))
