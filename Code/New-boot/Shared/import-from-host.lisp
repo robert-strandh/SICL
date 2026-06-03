@@ -4,7 +4,7 @@
   '(;; Arithmetic
     + - * / floor ceiling truncate mod
     1+ 1- = /= < > <= >= max min evenp oddp
-    zerop plusp minusp expt
+    zerop plusp minusp
     numberp integerp realp rationalp floatp random
     lognot logand logior logxor
     logcount integer-length ash
