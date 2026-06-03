@@ -10,5 +10,3 @@
             unless (binary-char-not-greaterp char1 char2)
               return nil
             finally (return t))))
- 
-(proclaim '(notinline char-not-greaterp))

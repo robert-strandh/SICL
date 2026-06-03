@@ -9,5 +9,3 @@
                  when (binary-char-equal char1 char2)
                    do (return-from char-not-equal nil)))
   t)
-
-(proclaim '(notinline char-not-equal))

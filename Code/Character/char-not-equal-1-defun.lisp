@@ -9,5 +9,3 @@
                  when (binary-char= char1 char2)
                    do (return-from char/= nil)))
   t)
-
-(proclaim '(notinline char/=))

@@ -10,5 +10,3 @@
             unless (binary-char-lessp char1 char2)
               return nil
             finally (return t))))
-
-(proclaim '(notinline char-lessp))
