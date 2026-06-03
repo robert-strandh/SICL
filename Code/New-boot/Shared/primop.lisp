@@ -79,24 +79,34 @@
   (destructuring-bind (value array index) arguments
     (setf (standard-instance-access array (+ index 3)) value)))
 
-(defparameter *char-codes*
-  (let ((table (make-hash-table)))
+(defparameter *char-codes* (make-hash-table))
+
+(defparameter *code-chars* (make-hash-table))
+
+(let ((t1 *char-codes*)
+      (t2 *code-chars*))
+  (flet ((f (char code)
+           (setf (gethash char t1) code)
+           (setf (gethash code t2) char)))
     (loop for char across " !\"#$%&'(_*+,-./"
-          for i from 32
-          do (setf (gethash char table) i))
+          for code from 32
+          do (f char code))
     (loop for char across "0123456789:;<=>?"
-          for i from 48
-          do (setf (gethash char table) i))
+          for code from 48
+          do (f char code))
     (loop for char across "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]_"
-          for i from 64
-          do (setf (gethash char table) i))
+          for code from 64
+          do (f char code))
     (loop for char across "`abcdefghijklmnopqrstuvwxyz{|}~"
-          for i from 96
-          do (setf (gethash char table) i))
-    (setf (gethash #\Newline table) 10)
-    table))
+          for code from 96
+          do (f char code))))
 
 (defmethod primop ((operation (eql :char-code)) &rest arguments)
   (let ((result (gethash (first arguments) *char-codes*)))
     (check-type result integer)
+    result))
+
+(defmethod primop ((operation (eql :code-char)) &rest arguments)
+  (let ((result (gethash (first arguments) *code-chars*)))
+    (check-type result character)
     result))
