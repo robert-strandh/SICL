@@ -6,12 +6,5 @@
   :components
   ((:file "identity-defun")
    (:file "constantly-defun")
-   (:file "multiple-value-list-defmacro")
-   (:file "nth-value-defmacro")
-   ;; (:file "get-setf-expansion-defun")
-   (:file "return-defmacro")
-   (:file "prog1-prog2-defmacro")
-   (:file "prog-progstar-defmacro")
    (:file "not-defun")
-   (:file "eq-defun")
-   (:file "throw-defmacro")))
+   (:file "eq-defun")))
