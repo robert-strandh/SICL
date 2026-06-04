@@ -60,6 +60,7 @@
    (:file "generic-floor-defgeneric")
    (:file "generic-floor-defmethods")
    (:file "floor-defun")
+   (:file "mod-defun")
    (:file "generic-round-defgeneric")
    (:file "generic-round-defmethods")
    (:file "round-defun")
