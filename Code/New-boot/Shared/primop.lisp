@@ -110,3 +110,6 @@
   (let ((result (gethash (first arguments) *code-chars*)))
     (check-type result character)
     result))
+
+(defmethod primop ((operation (eql :consp)) &rest arguments)
+  (consp (first arguments)))
