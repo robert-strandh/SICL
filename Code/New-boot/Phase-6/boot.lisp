@@ -93,4 +93,5 @@
     (sb:ensure-asdf-system c4 w4 "sicl-arithmetic-floating-point")
     (sb:ensure-asdf-system c4 w4 "sicl-type-coerce")
     (sb:ensure-asdf-system c4 w4 "sicl-ascii-character")
-    (sb:ensure-asdf-system c4 w4 "sicl-cons")))
+    (sb:ensure-asdf-system c4 w4 "sicl-cons")
+    (sb:ensure-asdf-system c4 w4 "sicl-data-and-control-flow")))
