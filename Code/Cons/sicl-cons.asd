@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "consp")))
+   (:file "consp")
+   (:file "accessor-defuns")))
