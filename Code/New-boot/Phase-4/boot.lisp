@@ -191,6 +191,7 @@
     ;; then we remove that definition after ctype has been loaded.
     (setf (clo:fdefinition c4 e4 'make-instance)
           (clo:fdefinition c4 e3 'make-instance))
+    (setf (clo:find-class c4 e4 'string) nil)
     (load-ctype c4 w4 e4)
     (clo:fmakunbound c4 e4 'make-instance)
     ;; The ctype library defines SUBCLASSP to call
