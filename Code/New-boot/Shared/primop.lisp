@@ -113,3 +113,15 @@
 
 (defmethod primop ((operation (eql :consp)) &rest arguments)
   (consp (first arguments)))
+
+(defmethod primop ((operation (eql :car)) &rest arguments)
+  (car (first arguments)))
+
+(defmethod primop ((operation (eql :cdr)) &rest arguments)
+  (cdr (first arguments)))
+
+(defmethod primop ((operation (eql :rplaca)) &rest arguments)
+  (rplaca (first arguments) (second arguments)))
+
+(defmethod primop ((operation (eql :rplacd)) &rest arguments)
+  (rplacd (first arguments) (second arguments)))
