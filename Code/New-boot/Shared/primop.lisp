@@ -125,3 +125,16 @@
 
 (defmethod primop ((operation (eql :rplacd)) &rest arguments)
   (rplacd (first arguments) (second arguments)))
+
+;;; This is not quite right.  We should take into account single
+;;; floats.
+(defmethod primop ((operation (eql :eq)) &rest arguments)
+  (destructuring-bind (x y) arguments
+    (cond ((and (characterp x) (characterp y))
+           (char= x y))
+          ((and (integerp x) (integerp y))
+           (and (= x y)
+                (< (abs x) #.(ash 1 63))))
+          (t
+           (eq x y)))))
+
