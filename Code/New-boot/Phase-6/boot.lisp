@@ -94,4 +94,5 @@
     (sb:ensure-asdf-system c4 w4 "sicl-type-coerce")
     (sb:ensure-asdf-system c4 w4 "sicl-ascii-character")
     (sb:ensure-asdf-system c4 w4 "sicl-cons")
-    (sb:ensure-asdf-system c4 w4 "sicl-data-and-control-flow")))
+    (sb:ensure-asdf-system c4 w4 "sicl-data-and-control-flow")
+    (sb:ensure-asdf-system c4 w4 "fast-generic-functions")))
