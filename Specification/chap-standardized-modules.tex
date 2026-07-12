@@ -304,25 +304,27 @@ under the name \anatomicl{}.%
 \section{Arithmetic}
 
 The code for arithmetic functions is contained in the directory
-\texttt{Code/Arithmetic}.  At the moment, this code is very
-preliminary.  There is not even a package definition for the package
-used in the file \texttt{arithmetic.lisp}.
+\texttt{Code/Arithmetic}.  There are several \asdf{} system
+definitions for various aspects of this code.  The package for this
+code is \texttt{sicl-arithmetic}.
 
-The code contains definitions of the functions \texttt{+}, \texttt{-},
-\texttt{*}, and \texttt{/}.  These functions call binary versions also
-defined in the same file.  There are also compiler macros to turn
-calls to these functions with a known number of arguments into calls
-to the binary versions.
+The code contains definitions of the functions functions in the
+\texttt{numbers} dictionary of the standard.  Each function that takes
+an arbitrary number of arguments calls a version that takes exactly
+two arguments and this version is generic with methods specialized to
+the different classes of the arguments.  Functions that take a fixed
+number of arguments are already generic.
 
-The binary versions of the arithmetic functions dispatch according to
-the exact type of the arguments to binary versions of the function
-with a specific combination of types, but those specific functions
-have not yet been written.  Some of those functions can be written
-using portable code, but most of them will probably use
-machine-specific low-level instructions. 
+Methods that cannot be implemented using portable code call the
+function \texttt{sicl-primop:primop}.
 
-We have no specific advice for anyone who might be interested in
-working on code for arithmetic functions.  
+During bootstrapping time, methods on \texttt{sicl-primop:primop} for
+integer arithmetic are implemented using host code.  Methods for
+floating-point arithmetic use simulated floating-point arithmetic with
+functions supplied by the system \texttt{buoy-simulate}.
+
+Run-time definitions of the elementary functions such as \texttt{sin},
+\texttt{exp}, etc. will be supplied by the \texttt{Buoy} library.
 
 \section{\clos{}}
 \label{sec-clos}
