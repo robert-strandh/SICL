@@ -52,18 +52,6 @@
         (fmt "Lambda list: (OBJECT-1 OBJECT-2)~@
               Return a new CONS cell with OBJECT-1 in the~@
               CAR field and OBJECT-2 in the CDR field."))
-              
-(fundoc '<
-        (fmt "Lambda list: (&rest NUMBERS).~@
-              At least one argument is required.~@
-              Return true if the numbers in NUMBERS are in~@
-              monotonically strictly increasing order.~@
-              The consequences are undefined if some of the objects~@
-              in numbers are not real numbers, but if that is the case~@
-              and a condition is signaled, that condition is an error~@
-              of type TYPE-ERROR.~@
-              Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfill its contract."))
 
 (fundoc '<=
         (fmt "Lambda list: (&rest NUMBERS).~@
