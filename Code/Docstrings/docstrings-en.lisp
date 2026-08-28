@@ -18,35 +18,6 @@
         (fmt "Lambda list: (OBJECT)~@
               When OBJECT is a CONS cell, return the CDR of that cell.~@
               When OBJECT is NIL, return NIL."))
-(fundoc 'first
-        (fmt "Lambda list: (LIST)~@
-              Return the first element of the list LIST.~@
-              When LIST is neither a list nor NIL,~@
-              an error is signaled."))
-
-(defmacro make-nth-documentation (function-name number)
-  `(fundoc ',function-name
-            ,(fmt "Lambda list: (LIST)~@
-                   Return the ~a element of the list LIST.~@
-                   When LIST is a proper list with fewer than ~a element,~@
-                   NIL is returned.~@
-                   When LIST is not a proper list, and it has fewer than~@
-                   ~a elements, an error is signaled.~@
-                   In particular, when LIST is neither a list nor NIL,~@
-                   an error is signaled."
-                  (string-downcase (symbol-name function-name))
-                  number
-                  number)))
-
-(make-nth-documentation second  "two")
-(make-nth-documentation third   "three")
-(make-nth-documentation fourth  "four")
-(make-nth-documentation fifth   "five")
-(make-nth-documentation sixth   "six")
-(make-nth-documentation seventh "seven")
-(make-nth-documentation eighth  "eight")
-(make-nth-documentation ninth   "nine")
-(make-nth-documentation tenth   "ten")
 
 (fundoc 'cons
         (fmt "Lambda list: (OBJECT-1 OBJECT-2)~@
