@@ -92,22 +92,6 @@
               In that case, the return value might be a floating point number,~@
               even if the result could be expressed as an exact rational number.~@
               The consequences are undefine if NUMBER is not a number."))
-
-(fundoc 'acos 
-        (fmt "Lambda list: (NUMBER).~@
-              Return the arc cosine of the number NUMBER.~@
-              If NUMBER is not a number, then an error of type~@
-              TYPE-ERROR is signaled.~@
-              Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfill its contract."))
-        
-(fundoc 'asin 
-        (fmt "Lambda list: (NUMBER).~@
-              Return the arc sine of the number NUMBER.~@
-              If NUMBER is not a number, then an error of type~@
-              TYPE-ERROR is signaled.~@
-              Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfill its contract."))
         
 (fundoc 'atan 
         (fmt "Lambda list: (NUMBER1 &optional NUMBER2).~@
