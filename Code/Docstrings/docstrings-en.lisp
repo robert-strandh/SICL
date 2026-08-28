@@ -93,26 +93,6 @@
               even if the result could be expressed as an exact rational number.~@
               The consequences are undefine if NUMBER is not a number."))
         
-(fundoc 'atan 
-        (fmt "Lambda list: (NUMBER1 &optional NUMBER2).~@
-              If NUMBER2 is not supplied, return the arc tangent~@
-              of the number NUMBER1.  In that case, NUMBER1 can be~@
-              any number.~@
-              If NUMBER2 is supplied, return the arc tangent of~@
-              NUMBER1/NUMBER2.  In that case, NUMBER1 and NUMBER2 must~@
-              both be real numbers.~@
-              If NUMBER2 is not given, the result is in the interval~@
-              ]-pi/2,pi/2[~@
-              If number2 is given, the result is in the interval~@
-              [-pi,pi[ when minus zero is NOT supported, and in the interval~@
-              [-pi,pi] when minus zero IS supported.~@
-              If NUMBER2 is not supplied and NUMBER1 is not a number,~@
-              then an error of type TYPE-ERROR is signaled.~@
-              If NUMBER2 is supplied, and at least one of the two~@
-              numbers is not real, an error of type TYPE-ERROR is signaled.~@
-              Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfill its contract."))
-        
 (fundoc 'asinh 
         (fmt "Lambda list: (NUMBER).~@
               Return the hyperbolic arc sine of the number NUMBER.~@
