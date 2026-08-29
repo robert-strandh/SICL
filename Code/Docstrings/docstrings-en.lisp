@@ -47,20 +47,6 @@
               TYPE-ERROR is signaled.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
               unable to fulfill its contract."))
-        
-(fundoc 'add-method
-        (fmt "Lambda list: (GENERIC-FUNCTION METHOD).~@
-              Add a method to a generic function.~@
-              If there is already a method of GENERIC-FUNCTION~@
-              with the same parameter specializers, and the same~@
-              qualifiers, then METHOD replaces the existing one.~@
-              If the lambda list of the method function of METHOD~@
-              is not congruent with that of GENERIC-FUNCTION,~@
-              then an error of type TYPE-ERROR is signaled.~@
-              If METHOD is a method of a generic function other than~@
-              GENERIC-FUNCTION, then an error of type TYPE-ERROR is signaled.~@
-              The consequences are undefined if GENERIC-FUNCTION~@
-              is not a generic function, or of METHOD is not a method."))
 
 (fundoc 'adjustable-array-p
         (fmt "Lambda list: (ARRAY).~@
