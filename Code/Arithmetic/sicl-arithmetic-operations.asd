@@ -77,5 +77,6 @@
    (:file "convert-fixnum-to-bignum-defun")
    (:file "expt-defgeneric")
    (:file "expt-defmethods")
+   (:file "abs")
    ;; (:file "floatp-defgeneric")
    ))
