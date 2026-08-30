@@ -24,14 +24,6 @@
               Return a new CONS cell with OBJECT-1 in the~@
               CAR field and OBJECT-2 in the CDR field."))
 
-(fundoc 'asinh 
-        (fmt "Lambda list: (NUMBER).~@
-              Return the hyperbolic arc sine of the number NUMBER.~@
-              If NUMBER is not a number, then an error of type~@
-              TYPE-ERROR is signaled.~@
-              Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfill its contract."))
-        
 (fundoc 'acosh
         (fmt "Lambda list: (NUMBER).~@
               Return the hyperbolic arc cosine of the number NUMBER.~@
